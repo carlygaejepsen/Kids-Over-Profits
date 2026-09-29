@@ -10,8 +10,8 @@
  *
  * Checks the tier helpers, the "most relevant" order (including that an
  * unrated library keeps the order the page had before tiers existed), the
- * facility tags (stored ids, chips, the picker's search and the id validator,
- * against a stub $wpdb) and the markup the sort control, the chips and the
+ * facility and parent company tags (stored ids, chips, the picker's search
+ * and the id validators, against a stub $wpdb and operator index) and the markup the sort control, the chips and the
  * editor dialog depend on. Nothing is written and nothing touches a database.
  * The browser half of the sort lives in scripts/test-research-sort.js.
  */
@@ -45,6 +45,8 @@ $GLOBALS['kop_test_meta'] = array(
 
 // Facility tags: one meta row per facility, and 404 is not a real facility.
 $GLOBALS['kop_test_meta'][501]['kop_research_facilities'] = array(10371, 9779, 404);
+// Company tags: 78 is a duplicate record of 77, 999 is no company at all.
+$GLOBALS['kop_test_meta'][501]['kop_research_operators'] = array(78, 999, 12);
 
 /**
  * Just enough $wpdb for the facility lookups: the three facilities_v2 columns
@@ -97,6 +99,20 @@ function kop_facility_page_url($id) {
 }
 function kop_facility_pages_location_search_url($name) {
     return 'https://example.test/location-index/?search=' . rawurlencode((string) $name);
+}
+/** The cached operator index (inc/operator-pages.php), as much as the tags read. */
+function kop_operator_pages_index() {
+    return array(
+        'ids' => array(
+            77 => array('slug' => 'universal-health-services', 'name' => 'Universal Health Services (UHS)', 'display' => 'Universal Health Services', 'members' => array(77, 78)),
+            12 => array('slug' => 'acadia-healthcare', 'name' => 'Acadia Healthcare', 'display' => 'Acadia Healthcare', 'members' => array(12)),
+        ),
+        'alias_of' => array(78 => 77),
+        'names'    => array('universal health services' => 77, 'uhs' => 77, 'acadia healthcare' => 12),
+    );
+}
+function kop_operator_page_url($id) {
+    return 'https://example.test/operator/' . ((int) $id === 77 ? 'universal-health-services' : 'acadia-healthcare') . '/';
 }
 function rest_ensure_response($data) { return $data; }
 function register_rest_route() {}
@@ -289,6 +305,32 @@ $found = kop_research_search_facilities(new KOP_Test_Request(array('q' => 'Provo
 check('the picker finds a facility', array_column($found['results'], 'id'), array(10371));
 check('a one-letter query is not a search', kop_research_search_facilities(new KOP_Test_Request(array('q' => 'P'))), array('results' => array()));
 
+echo "\n-- Parent company tags --\n";
+check('stored company ids come back', kop_research_operator_ids('att:501'), array(78, 999, 12));
+check('a duplicate record resolves to its company, unknown ids drop', kop_research_canonical_operator_ids(array(78, 999, 12, 77)), array(77, 12));
+$ops = kop_research_operator_chips(kop_research_operator_ids('att:501'));
+check('a chip per company, by name', array_column($ops, 'name'), array('Acadia Healthcare', 'Universal Health Services'));
+check('a company chip says what it is', array($ops[1]['type'], $ops[1]['place']), array('operator', 'Parent company'));
+check('and links to the company page', $ops[1]['url'], 'https://example.test/operator/universal-health-services/');
+check('facility chips say what they are', $chips[0]['type'], 'facility');
+check('the picker finds a company by its abbreviation', kop_research_search_operator_ids('uhs'), array(77));
+check('names starting with the phrase come first', kop_research_search_operator_ids('health'), array(12, 77));
+$mixed = kop_research_search_facilities(new KOP_Test_Request(array('q' => 'Acadia')));
+check('the picker returns companies with a type', array_column($mixed['results'], 'type'), array('operator'));
+$kop_test_meta_before = $GLOBALS['kop_test_meta'];   // the year checks below read 502 as it was
+$saved = kop_research_save_entry(new KOP_Test_Request(array(
+    'key' => 'att:502', 'title' => 'Some Old Study', 'year' => 0, 'description' => '',
+    'cover_id' => 0, 'relevance' => 0, 'relevance_note' => '', 'facilities' => array(), 'operators' => array(78, 999),
+)));
+check('saving stores the canonical company only', get_post_meta(502, KOP_RESEARCH_OPERATOR_META, false), array(77));
+check('and returns its chip', array_column($saved['operators'], 'id'), array(77));
+$saved = kop_research_save_entry(new KOP_Test_Request(array(
+    'key' => 'att:502', 'title' => 'Some Old Study', 'year' => 0, 'description' => '',
+    'cover_id' => 0, 'relevance' => 0, 'relevance_note' => '', 'facilities' => array(), 'operators' => array(),
+)));
+check('removing the chip removes the tag', get_post_meta(502, KOP_RESEARCH_OPERATOR_META, false), array());
+$GLOBALS['kop_test_meta'] = $kop_test_meta_before;
+
 echo "\n-- Items and markup --\n";
 $library = kop_research_library_items();
 check('every item carries a tier and a line', array_reduce($library, function ($carry, $row) {
@@ -318,6 +360,10 @@ contains('the dialog has the line field', $html, 'class="kop-rl-input-why"');
 lacks('an unrated card shows no badge', $html, 'kop-rl-tier kop-rl-tier-0');
 contains('the card lists the programs it names', $html, 'class="kop-rl-facilities-label">Programs named:</span>');
 contains('each program is a chip linking to its page', $html, 'class="kop-rl-chip" href="https://example.test/facility/provo-canyon-school-ut/"');
+contains('each company is a chip linking to its page', $html, 'class="kop-rl-chip kop-rl-chip-operator" href="https://example.test/operator/universal-health-services/"');
+contains('a company chip carries its type for the editor', $html, 'data-id="77" data-type="operator"');
+contains('a facility chip carries its type for the editor', $html, 'data-id="10371" data-type="facility"');
+check('companies come before programs on the card', strpos($html, 'data-type="operator"') < strpos($html, 'data-type="facility"'), true);
 contains('the chip carries its id for the editor', $html, 'data-id="10371"');
 contains('an untagged card hides the line', $html, 'class="kop-rl-facilities" hidden>');
 lacks('a facility that no longer exists is not linked', $html, 'data-id="404"');

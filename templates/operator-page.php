@@ -27,7 +27,8 @@ if ($page['parents'] || $page['subsidiaries']) $kop_op_sections['ownership'] = '
 if ($page['news']) $kop_op_sections['news'] = 'News coverage';
 if ($page['lawsuits']) $kop_op_sections['lawsuits'] = 'Lawsuits';
 if ($page['memorials']) $kop_op_sections['memorials'] = 'Deaths on record';
-if (!empty($page['documents']['html'])) $kop_op_sections['documents'] = 'Documents';
+$kop_op_has_research = !empty($page['research']);
+if (!empty($page['documents']['html']) || $kop_op_has_research) $kop_op_sections['documents'] = 'Documents';
 if ($page['notes']) $kop_op_sections['notes'] = 'Research notes';
 if ($page['websites']) $kop_op_sections['links'] = 'Websites';
 
@@ -216,10 +217,27 @@ get_header();
             </section>
             <?php endif; ?>
 
-            <?php if (!empty($page['documents']['html'])) : ?>
+            <?php if (!empty($page['documents']['html']) || $kop_op_has_research) : ?>
             <section class="kop-fp-section kop-fp-documents" id="documents">
                 <h2>Documents</h2>
-                <?php echo $page['documents']['html']; // FileBird shortcode output. ?>
+                <?php if (!empty($page['documents']['html'])) : ?>
+                    <?php echo $page['documents']['html']; // FileBird shortcode output. ?>
+                <?php endif; ?>
+                <?php if ($kop_op_has_research) : ?>
+                    <h3 class="kop-fp-subhead">Research that mentions this company</h3>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($page['research'] as $kop_op_doc) : ?>
+                            <li>
+                                <a href="<?php echo esc_url($kop_op_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_op_doc['title']); ?></a>
+                                <?php $kop_op_doc_meta = array_filter(array($kop_op_doc['byline'], $kop_op_doc['why']), 'strlen'); ?>
+                                <?php if ($kop_op_doc_meta) : ?>
+                                    <span class="meta"><?php echo esc_html(implode(' - ', $kop_op_doc_meta)); ?></span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">The whole research library</a></p>
+                <?php endif; ?>
             </section>
             <?php endif; ?>
 

@@ -1862,6 +1862,23 @@ if (!function_exists('kop_facility_pages_research')) {
         if ($facility_id <= 0 || !defined('KOP_RESEARCH_FACILITY_META')) {
             return array();
         }
+        return kop_facility_pages_research_tagged(KOP_RESEARCH_FACILITY_META, array($facility_id), $facility_id);
+    }
+}
+
+if (!function_exists('kop_facility_pages_research_tagged')) {
+    /**
+     * Research documents carrying any of $ids under the tag meta $meta_key
+     * (a facility's, or a parent company's: kop_operator_pages_research).
+     * $cite_id picks the "named on p. N" entry from the seeded page cites,
+     * which exist for facilities only; 0 skips them.
+     */
+    function kop_facility_pages_research_tagged($meta_key, array $ids, $cite_id = 0) {
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        if (!$ids) {
+            return array();
+        }
+        $facility_id = (int) $cite_id;
 
         $attachments = get_posts(array(
             'post_type'        => 'attachment',
@@ -1872,8 +1889,9 @@ if (!function_exists('kop_facility_pages_research')) {
             'suppress_filters' => false,
             'meta_query'       => array(
                 array(
-                    'key'   => KOP_RESEARCH_FACILITY_META,
-                    'value' => $facility_id,
+                    'key'     => $meta_key,
+                    'value'   => $ids,
+                    'compare' => 'IN',
                 ),
             ),
         ));

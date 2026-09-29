@@ -432,6 +432,21 @@ if (!function_exists('kop_operator_pages_network_url')) {
 // View model
 // ---------------------------------------------------------------------------
 
+if (!function_exists('kop_operator_pages_research')) {
+    /**
+     * Research & Reports documents tagged with this company. An editor sets
+     * the tag on the card at /researchreports/ (inc/research-library.php),
+     * which stores the canonical id; the duplicate records' ids are asked for
+     * too so a tag from before a merge still shows.
+     */
+    function kop_operator_pages_research(array $member_ids) {
+        if (!defined('KOP_RESEARCH_OPERATOR_META') || !function_exists('kop_facility_pages_research_tagged')) {
+            return array();
+        }
+        return kop_facility_pages_research_tagged(KOP_RESEARCH_OPERATOR_META, $member_ids);
+    }
+}
+
 if (!function_exists('kop_operator_pages_people')) {
     /** "Name, role" lines from a keyStaff list. */
     function kop_operator_pages_people($list) {
@@ -701,6 +716,7 @@ if (!function_exists('kop_operator_page_data')) {
             kop_facility_pages_text_items($op['fieldNotes'] ?? null)
         );
         $documents = kop_facility_pages_documents(array('documentFolderId' => $folder), $folder);
+        $research = kop_operator_pages_research($members);
 
         // ---- Summary ---------------------------------------------------------
         $n = count($facilities);
@@ -741,6 +757,7 @@ if (!function_exists('kop_operator_page_data')) {
             'websites'      => $websites,
             'notes'         => $notes,
             'documents'     => $documents,
+            'research'      => $research,
             'network_url'   => kop_operator_pages_network_url(array_merge(array($entry['name'], $name, $abbr), $aka)),
             'summary'       => $summary,
             'seo_title'     => $name . ' | Parent company profile | Kids Over Profits',

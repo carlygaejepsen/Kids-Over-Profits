@@ -111,13 +111,17 @@ function get_page_by_path($slug = '') {
 function get_permalink($post = null) { return is_object($post) && isset($post->post_name) ? home_url('/' . $post->post_name . '/') : ''; }
 function get_posts($args = array()) {
     global $wpdb;
-    // Research documents tagged with a facility (kop_facility_pages_research).
+    // Research documents tagged with a facility or a parent company
+    // (kop_facility_pages_research_tagged).
     $mq = $args['meta_query'][0] ?? null;
-    if (is_array($mq) && ($mq['key'] ?? '') === 'kop_research_facilities') {
+    if (is_array($mq) && in_array($mq['key'] ?? '', array('kop_research_facilities', 'kop_research_operators'), true)) {
+        $values = array_map('strval', (array) $mq['value']);
+        if (!$values) return array();
+        $in = implode(',', array_fill(0, count($values), '%s'));
         return $wpdb->get_results($wpdb->prepare(
             "SELECT DISTINCT p.ID, p.post_title, p.post_excerpt FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID
-              WHERE m.meta_key = 'kop_research_facilities' AND m.meta_value = %s AND p.post_type = 'attachment' ORDER BY p.post_date DESC",
-            (string) $mq['value']
+              WHERE m.meta_key = %s AND m.meta_value IN ($in) AND p.post_type = 'attachment' ORDER BY p.post_date DESC",
+            array_merge(array($mq['key']), $values)
         ));
     }
     if (($args['meta_key'] ?? '') !== '_wp_page_template') return array();

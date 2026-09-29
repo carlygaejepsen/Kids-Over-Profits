@@ -646,6 +646,12 @@
     text-decoration: underline;
 }
 
+/* A parent company rather than a single program */
+.kop-rl-chip-operator {
+    border-color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+}
+
 /* The picker in the editor dialog */
 
 .kop-rl-tags {
@@ -669,22 +675,38 @@
     padding: 0.1rem 0.25rem 0.1rem 0.5rem;
     border: 1px solid var(--kop-teal, #33a7b5);
     border-radius: 999px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #23263a);
     font-size: 0.8rem;
 }
 
+/*
+ * The remove and result buttons are <button>s, which the parent theme paints
+ * with its button colours (white text). Every state sets both colours here so
+ * none of that shows through.
+ */
 .kop-rl-tag-remove {
     padding: 0 0.25rem;
     border: 0;
-    background: none;
+    border-radius: 4px;
+    background: transparent;
     color: var(--kop-text-secondary, #4a4f6a);
     font-size: 1rem;
     line-height: 1;
+    box-shadow: none;
     cursor: pointer;
 }
 
 .kop-rl-tag-remove:hover,
+.kop-rl-tag-remove:focus,
 .kop-rl-tag-remove:focus-visible {
+    background: transparent;
     color: var(--kop-coral-pink-ink, #D9020F);
+}
+
+.kop-rl-tag-remove:focus-visible {
+    outline: 2px solid var(--kop-navy-blue, #000080);
+    outline-offset: 1px;
 }
 
 .kop-rl-tag-search {
@@ -701,10 +723,16 @@
     margin: 0.15rem 0 0;
     padding: 0;
     list-style: none;
-    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border: 1px solid var(--kop-text-secondary, #4a4f6a);
     border-radius: 4px;
-    background: #fff;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #23263a);
     box-shadow: 0 6px 18px rgba(0, 4, 53, 0.18);
+}
+
+.kop-rl-tag-results li {
+    margin: 0;
+    padding: 0;
 }
 
 .kop-rl-tag-results[hidden] {
@@ -714,17 +742,31 @@
 .kop-rl-tag-add {
     display: block;
     width: 100%;
-    padding: 0.3rem 0.5rem;
+    padding: 0.35rem 0.5rem;
     border: 0;
-    background: none;
+    border-radius: 0;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #23263a);
     text-align: left;
     font-size: 0.83rem;
+    font-weight: 400;
+    line-height: 1.35;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
     cursor: pointer;
 }
 
 .kop-rl-tag-add:hover,
+.kop-rl-tag-add:focus,
 .kop-rl-tag-add:focus-visible {
-    background: var(--kop-sand, #f2eedf);
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+}
+
+.kop-rl-tag-add:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: -2px;
 }
 
 .kop-rl-tag-none {
@@ -881,10 +923,31 @@
 .kop-rl-field textarea {
     width: 100%;
     padding: 0.45rem 0.6rem;
-    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border: 1px solid var(--kop-text-secondary, #4a4f6a);
     border-radius: 4px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #23263a);
     font: inherit;
     font-size: 0.9rem;
+}
+
+.kop-rl-field select option {
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #23263a);
+}
+
+.kop-rl-field input::placeholder,
+.kop-rl-field textarea::placeholder {
+    color: var(--kop-text-secondary, #4a4f6a);
+    opacity: 1;
+}
+
+.kop-rl-field input:focus-visible,
+.kop-rl-field select:focus-visible,
+.kop-rl-field textarea:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: 1px;
+    border-color: var(--kop-navy-blue, #000080);
 }
 
 .kop-rl-field textarea {

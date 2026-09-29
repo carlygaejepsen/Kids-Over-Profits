@@ -88,6 +88,16 @@ if (!defined('KOP_RESEARCH_FACILITY_META')) {
 }
 
 /**
+ * Parent companies a document is about, as {prefix}kop_operators ids (the
+ * canonical record of each company, see kop_operator_pages_index()). One meta
+ * row per company, for the same reason as the facility tags; the operator
+ * page reads it back (kop_operator_pages_research in inc/operator-pages.php).
+ */
+if (!defined('KOP_RESEARCH_OPERATOR_META')) {
+    define('KOP_RESEARCH_OPERATOR_META', 'kop_research_operators');
+}
+
+/**
  * Publication year set in the editor dialog. Beats the seed map and every
  * guess from the caption, title or filename; deleting it brings those back.
  */
@@ -106,14 +116,24 @@ function kop_research_clean_year($value) {
  * external overrides option for the entries that have no file.
  */
 function kop_research_facility_ids($key) {
+    return kop_research_tag_ids($key, KOP_RESEARCH_FACILITY_META, 'facilities');
+}
+
+/** The parent company ids a document is tagged with, stored like the facilities. */
+function kop_research_operator_ids($key) {
+    return kop_research_tag_ids($key, KOP_RESEARCH_OPERATOR_META, 'operators');
+}
+
+/** Shared by both tag kinds: $meta on an attachment, $field in the external option. */
+function kop_research_tag_ids($key, $meta, $field) {
     if (strpos($key, 'att:') === 0) {
-        $ids = get_post_meta((int) substr($key, 4), KOP_RESEARCH_FACILITY_META, false);
+        $ids = get_post_meta((int) substr($key, 4), $meta, false);
         return array_values(array_unique(array_map('intval', is_array($ids) ? $ids : array())));
     }
     if (strpos($key, 'ext:') === 0) {
         $edits = kop_research_external_edits();
         $id    = substr($key, 4);
-        $list  = isset($edits[$id]['facilities']) && is_array($edits[$id]['facilities']) ? $edits[$id]['facilities'] : array();
+        $list  = isset($edits[$id][$field]) && is_array($edits[$id][$field]) ? $edits[$id][$field] : array();
         return array_values(array_unique(array_map('intval', $list)));
     }
     return array();
@@ -145,7 +165,7 @@ function kop_research_facility_chips($ids) {
                 // No page of its own: the location index lists every facility.
                 $url = kop_facility_pages_location_search_url($row['name']);
             }
-            $cache[$id] = array('id' => $id, 'name' => (string) $row['name'], 'place' => $place, 'url' => $url);
+            $cache[$id] = array('id' => $id, 'type' => 'facility', 'name' => (string) $row['name'], 'place' => $place, 'url' => $url);
         }
         foreach ($missing as $id) {
             if (!isset($cache[$id])) {
@@ -164,6 +184,56 @@ function kop_research_facility_chips($ids) {
         return strcasecmp($a['name'], $b['name']);
     });
     return $out;
+}
+
+/**
+ * Operator ids as chips, from the operator page index (inc/operator-pages.php),
+ * which is cached, so no query per card. A duplicate record resolves to its
+ * company's canonical id, and ids the index does not know are dropped.
+ * Sorted by name, unless $keep_order (the picker's best-match order).
+ */
+function kop_research_operator_chips($ids, $keep_order = false) {
+    if (!function_exists('kop_operator_pages_index')) {
+        return array();
+    }
+    $index = kop_operator_pages_index();
+    $out   = array();
+    foreach (kop_research_canonical_operator_ids($ids) as $id) {
+        $entry = $index['ids'][$id];
+        $out[] = array(
+            'id'    => $id,
+            'type'  => 'operator',
+            'name'  => (string) $entry['display'],
+            'place' => 'Parent company',
+            'url'   => function_exists('kop_operator_page_url') ? kop_operator_page_url($id) : '',
+        );
+    }
+    if ($keep_order) {
+        return $out;
+    }
+    usort($out, function ($a, $b) {
+        return strcasecmp($a['name'], $b['name']);
+    });
+    return $out;
+}
+
+/** Whichever ids name a company in the operator index, as canonical ids. */
+function kop_research_canonical_operator_ids($ids) {
+    if (!function_exists('kop_operator_pages_index')) {
+        return array();
+    }
+    $index = kop_operator_pages_index();
+    $out   = array();
+    foreach ((array) $ids as $id) {
+        $id = (int) $id;
+        if (isset($index['alias_of'][$id])) {
+            $id = (int) $index['alias_of'][$id];
+        }
+        if ($id > 0 && isset($index['ids'][$id])) {
+            $out[$id] = $id;
+        }
+    }
+    return array_values($out);
 }
 
 /**
@@ -680,6 +750,7 @@ function kop_research_library_items() {
                 'relevance'      => $tier,
                 'relevance_note' => $why,
                 'facilities'     => kop_research_facility_chips(kop_research_facility_ids('att:' . $attachment->ID)),
+                'operators'      => kop_research_operator_chips(kop_research_operator_ids('att:' . $attachment->ID)),
             );
         }
     }
@@ -711,6 +782,7 @@ function kop_research_library_items() {
             'relevance'      => kop_research_clean_tier(isset($edit['relevance']) ? $edit['relevance'] : (isset($entry['relevance']) ? $entry['relevance'] : 0)),
             'relevance_note' => trim((string) (isset($edit['relevance_note']) ? $edit['relevance_note'] : (isset($entry['relevance_note']) ? $entry['relevance_note'] : ''))),
             'facilities'     => kop_research_facility_chips(kop_research_facility_ids('ext:' . $entry['id'])),
+            'operators'      => kop_research_operator_chips(kop_research_operator_ids('ext:' . $entry['id'])),
         );
     }
 
@@ -847,12 +919,17 @@ function kop_hub_module_research() {
                             <p class="kop-rl-byline"><?php echo esc_html($item['byline']); ?></p>
                         <?php endif; ?>
                         <p class="kop-rl-why"<?php echo $item['relevance_note'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['relevance_note']); ?></p>
-                        <?php // Programs this document is about; the facility page carries the same link back. ?>
-                        <p class="kop-rl-facilities"<?php echo $item['facilities'] ? '' : ' hidden'; ?>>
+                        <?php
+                        // Companies and programs this document is about; each
+                        // profile page carries the same link back. Companies
+                        // first: there are fewer, and a long list folds up.
+                        $kop_rl_tags = array_merge($item['operators'], $item['facilities']);
+                        ?>
+                        <p class="kop-rl-facilities"<?php echo $kop_rl_tags ? '' : ' hidden'; ?>>
                             <span class="kop-rl-facilities-label">Programs named:</span>
-                            <?php foreach ($item['facilities'] as $kop_rl_fac) : ?>
-                                <a class="kop-rl-chip" href="<?php echo esc_url($kop_rl_fac['url']); ?>"
-                                   data-id="<?php echo (int) $kop_rl_fac['id']; ?>"<?php
+                            <?php foreach ($kop_rl_tags as $kop_rl_fac) : ?>
+                                <a class="kop-rl-chip<?php echo $kop_rl_fac['type'] === 'operator' ? ' kop-rl-chip-operator' : ''; ?>" href="<?php echo esc_url($kop_rl_fac['url']); ?>"
+                                   data-id="<?php echo (int) $kop_rl_fac['id']; ?>" data-type="<?php echo esc_attr($kop_rl_fac['type']); ?>"<?php
                                     echo $kop_rl_fac['place'] !== '' ? ' title="' . esc_attr($kop_rl_fac['place']) . '"' : '';
                                 ?>><?php echo esc_html($kop_rl_fac['name']); ?></a>
                             <?php endforeach; ?>
@@ -934,14 +1011,14 @@ function kop_research_render_editor_dialog() {
             </label>
 
             <div class="kop-rl-field">
-                <span>Programs this document is about</span>
+                <span>Programs and parent companies this document is about</span>
                 <div class="kop-rl-tags" role="list"></div>
                 <div class="kop-rl-tag-search">
-                    <input type="search" class="kop-rl-tag-query" placeholder="Search facilities by name" autocomplete="off"
-                           aria-label="Search facilities to tag" aria-describedby="kop-rl-tag-help">
+                    <input type="search" class="kop-rl-tag-query" placeholder="Search programs and parent companies by name" autocomplete="off"
+                           aria-label="Search programs and parent companies to tag" aria-describedby="kop-rl-tag-help">
                     <ul class="kop-rl-tag-results" hidden></ul>
                 </div>
-                <p class="kop-rl-tag-help" id="kop-rl-tag-help">Tagging a program makes this document show on its profile page.</p>
+                <p class="kop-rl-tag-help" id="kop-rl-tag-help">Tagging a program or parent company makes this document show on its profile page.</p>
             </div>
 
             <div class="kop-rl-field">
@@ -1041,7 +1118,8 @@ add_action('wp_enqueue_scripts', 'kop_research_enqueue_editor');
  * POST kop/v1/research-entry
  *
  * Body: key ("att:<id>" or "ext:<slug>"), title, description, cover_id,
- * relevance (0 to 3), relevance_note and facilities (facilities_v2 ids).
+ * relevance (0 to 3), relevance_note, facilities (facilities_v2 ids) and
+ * operators (kop_operators ids).
  * cover_id 0 clears the override so the card falls back to the document's own
  * generated first page.
  */
@@ -1105,6 +1183,12 @@ function kop_research_register_rest() {
                     'default'  => array(),
                     'items'    => array('type' => 'integer'),
                 ),
+                'operators' => array(
+                    'required' => false,
+                    'type'     => 'array',
+                    'default'  => array(),
+                    'items'    => array('type' => 'integer'),
+                ),
             ),
         )
     );
@@ -1126,8 +1210,9 @@ function kop_research_valid_facility_ids($ids) {
 /**
  * GET kop/v1/research-facilities?q=<name>
  *
- * The facility picker in the editor dialog. Editors only, name matches only,
- * and at most twelve rows: it exists to find an id, not to browse.
+ * The tag picker in the editor dialog: parent companies, then facilities,
+ * each row carrying its type. Editors only, name matches only, and at most
+ * six companies and twelve facilities: it exists to find an id, not to browse.
  */
 function kop_research_register_facility_search() {
     register_rest_route(
@@ -1151,7 +1236,7 @@ function kop_research_register_facility_search() {
 }
 add_action('rest_api_init', 'kop_research_register_facility_search');
 
-/** Name search over facilities_v2 for the picker. */
+/** Name search over the operator index and facilities_v2 for the picker. */
 function kop_research_search_facilities($request) {
     global $wpdb;
 
@@ -1167,10 +1252,57 @@ function kop_research_search_facilities($request) {
         $wpdb->esc_like($phrase) . '%'
     ));
 
-    return rest_ensure_response(array('results' => kop_research_facility_chips($ids)));
+    return rest_ensure_response(array('results' => array_merge(
+        kop_research_operator_chips(kop_research_search_operator_ids($phrase), true),
+        kop_research_facility_chips($ids)
+    )));
 }
 
-/** Save one card's title, description, photo, relevance and facility tags. */
+/**
+ * Companies whose name, short name or other names contain the phrase, names
+ * starting with it first. Read from the cached operator index, so no query.
+ */
+function kop_research_search_operator_ids($phrase) {
+    if (!function_exists('kop_operator_pages_index')) {
+        return array();
+    }
+    $needle = strtolower(trim((string) $phrase));
+    if (strlen($needle) < 2) {
+        return array();
+    }
+    $index = kop_operator_pages_index();
+
+    // Every name the index knows for a company: its record name, the short
+    // display name, and the other names and abbreviation kept under 'names'.
+    $names = array();
+    foreach ($index['ids'] as $id => $entry) {
+        $names[(int) $id][] = strtolower((string) $entry['name']);
+        $names[(int) $id][] = strtolower((string) $entry['display']);
+    }
+    foreach ($index['names'] as $key => $id) {
+        $names[(int) $id][] = (string) $key;
+    }
+
+    $hits = array();
+    foreach ($names as $id => $list) {
+        foreach ($list as $name) {
+            $at = strpos($name, $needle);
+            if ($at === false) {
+                continue;
+            }
+            $rank = $at === 0 ? 0 : 1;
+            if (!isset($hits[$id]) || $rank < $hits[$id]) {
+                $hits[$id] = $rank;
+            }
+        }
+    }
+    uksort($hits, function ($a, $b) use ($hits, $index) {
+        return ($hits[$a] - $hits[$b]) ?: strcasecmp($index['ids'][$a]['display'], $index['ids'][$b]['display']);
+    });
+    return array_slice(array_keys($hits), 0, 6);
+}
+
+/** Save one card's title, description, photo, relevance and program tags. */
 function kop_research_save_entry($request) {
     $key         = (string) $request->get_param('key');
     $title       = trim((string) $request->get_param('title'));
@@ -1184,6 +1316,7 @@ function kop_research_save_entry($request) {
     // Only ids that are really in facilities_v2 are stored, so a stale chip
     // from an open tab cannot put a dead link on the card.
     $facilities = kop_research_valid_facility_ids($request->get_param('facilities'));
+    $operators  = kop_research_canonical_operator_ids($request->get_param('operators'));
 
     if ($title === '') {
         return new WP_Error('kop_research_title', 'A title is required.', array('status' => 400));
@@ -1236,6 +1369,10 @@ function kop_research_save_entry($request) {
         foreach ($facilities as $facility_id) {
             add_post_meta($id, KOP_RESEARCH_FACILITY_META, $facility_id);
         }
+        delete_post_meta($id, KOP_RESEARCH_OPERATOR_META);
+        foreach ($operators as $operator_id) {
+            add_post_meta($id, KOP_RESEARCH_OPERATOR_META, $operator_id);
+        }
         // Marks the attachment's own fields as authoritative from now on.
         update_post_meta($id, KOP_RESEARCH_EDITED_META, current_time('mysql'));
 
@@ -1264,6 +1401,7 @@ function kop_research_save_entry($request) {
             'relevance_note' => $why,
             'year'           => $year,
             'facilities'     => $facilities,
+            'operators'      => $operators,
         );
         update_option(KOP_RESEARCH_EXTERNAL_OPTION, $edits, false);
 
@@ -1301,6 +1439,7 @@ function kop_research_save_entry($request) {
         'year'           => $shown_year,
         'year_set'       => $year,
         'facilities'     => kop_research_facility_chips($facilities),
+        'operators'      => kop_research_operator_chips($operators),
     ));
 }
 

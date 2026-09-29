@@ -37,7 +37,8 @@
     var current = null;      // the card being edited
     var coverId = 0;         // chosen attachment id, 0 = fall back to the PDF
     var mediaFrame = null;
-    var tags = [];           // [{id, name, place}] for the card being edited
+    var tags = [];           // [{id, type, name, place}] for the card being edited;
+                             // type is 'facility' or 'operator' (a parent company)
     var searchTimer = null;
 
     /** Fall back to alert() where <dialog> is not supported. */
@@ -86,6 +87,7 @@
             remove.type = 'button';
             remove.className = 'kop-rl-tag-remove';
             remove.setAttribute('data-id', tag.id);
+            remove.setAttribute('data-type', tag.type);
             remove.innerHTML = '<span aria-hidden="true">&times;</span>';
             var sr = document.createElement('span');
             sr.className = 'screen-reader-text';
@@ -97,18 +99,29 @@
         });
     }
 
+    /** Facility and company ids are separate tables, so a tag is its type and id. */
+    function tagType(type) {
+        return type === 'operator' ? 'operator' : 'facility';
+    }
+
     function addTag(tag) {
         var id = parseInt(tag.id, 10) || 0;
-        if (!id || tags.some(function (t) { return t.id === id; })) {
+        var type = tagType(tag.type);
+        if (!id || tags.some(function (t) { return t.id === id && t.type === type; })) {
             return;
         }
-        tags.push({ id: id, name: tag.name, place: tag.place || '' });
+        tags.push({ id: id, type: type, name: tag.name, place: tag.place || '' });
         drawTags();
     }
 
-    function removeTag(id) {
-        tags = tags.filter(function (tag) { return tag.id !== id; });
+    function removeTag(id, type) {
+        tags = tags.filter(function (tag) { return !(tag.id === id && tag.type === type); });
         drawTags();
+    }
+
+    function tagIds(type) {
+        return tags.filter(function (tag) { return tag.type === type; })
+            .map(function (tag) { return tag.id; });
     }
 
     function clearResults() {
@@ -133,7 +146,7 @@
             if (!results.length) {
                 var empty = document.createElement('li');
                 empty.className = 'kop-rl-tag-none';
-                empty.textContent = 'No facility of that name.';
+                empty.textContent = 'No program or company of that name.';
                 tagResults.appendChild(empty);
             }
             results.forEach(function (row) {
@@ -142,6 +155,7 @@
                 button.type = 'button';
                 button.className = 'kop-rl-tag-add';
                 button.setAttribute('data-id', row.id);
+                button.setAttribute('data-type', tagType(row.type));
                 button.setAttribute('data-name', row.name);
                 button.setAttribute('data-place', row.place || '');
                 button.textContent = row.name + (row.place ? ' - ' + row.place : '');
@@ -190,6 +204,7 @@
             Array.prototype.forEach.call(fields.facilities.querySelectorAll('.kop-rl-chip'), function (chip) {
                 tags.push({
                     id: parseInt(chip.getAttribute('data-id'), 10) || 0,
+                    type: tagType(chip.getAttribute('data-type')),
                     name: chip.textContent.trim(),
                     place: chip.getAttribute('title') || ''
                 });
@@ -275,7 +290,8 @@
                 cover_id: coverId,
                 relevance: parseInt(tierInput.value, 10) || 0,
                 relevance_note: whyInput.value.trim(),
-                facilities: tags.map(function (tag) { return tag.id; })
+                facilities: tagIds('facility'),
+                operators: tagIds('operator')
             })
         }).then(function (response) {
             return response.json().then(function (body) {
@@ -336,7 +352,8 @@
         }
 
         if (fields.facilities) {
-            var chips = body.facilities || [];
+            // Companies first, as the page prints them.
+            var chips = (body.operators || []).concat(body.facilities || []);
             var label = fields.facilities.querySelector('.kop-rl-facilities-label');
             fields.facilities.innerHTML = '';
             if (label) {
@@ -344,9 +361,10 @@
             }
             chips.forEach(function (row) {
                 var link = document.createElement('a');
-                link.className = 'kop-rl-chip';
+                link.className = 'kop-rl-chip' + (row.type === 'operator' ? ' kop-rl-chip-operator' : '');
                 link.setAttribute('href', row.url || '#');
                 link.setAttribute('data-id', row.id);
+                link.setAttribute('data-type', tagType(row.type));
                 if (row.place) {
                     link.setAttribute('title', row.place);
                 }
@@ -425,7 +443,7 @@
             return;
         }
         event.preventDefault();
-        removeTag(parseInt(remove.getAttribute('data-id'), 10) || 0);
+        removeTag(parseInt(remove.getAttribute('data-id'), 10) || 0, tagType(remove.getAttribute('data-type')));
     });
 
     tagResults.addEventListener('click', function (event) {
@@ -436,6 +454,7 @@
         event.preventDefault();
         addTag({
             id: add.getAttribute('data-id'),
+            type: add.getAttribute('data-type'),
             name: add.getAttribute('data-name'),
             place: add.getAttribute('data-place')
         });
