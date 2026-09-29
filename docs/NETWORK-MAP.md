@@ -2883,9 +2883,19 @@ commit.
    generated pages?
 3. Re-import: wire GitHub Actions with a token in `config.local.php`, or
    stop at `--pull`, with the owner building on request?
+   *Answered 2026-09-29: stop at `--pull` for now (steps 1 to 3); the
+   workflow and button wait until an import has been seen working.*
 4. Timeline: names with unknown years stay as drawn (proposed), or fade
    with the rest?
+   *Answered 2026-09-29: neither. Names with no known years are left out
+   of the board while the timeline is on, and a note says how many. A
+   person follows their places: shown in a year when any of their places
+   on the board was operating, left out when none was or none is dated.
+   This replaces the "Three states" decision in 4.3.*
 5. Does `staff-movement.csv` join the upload screen, or stay a repository
    file like the overrides?
+   *Open 2026-09-29: the owner asked first whether the Miro board is still
+   edited at all; if not, 4.2 is not worth building and this and 3 fall
+   away.*
 6. History page: Miro goes entirely (proposed), or one sentence keeps
    "the original working board is on Miro" as a text link?

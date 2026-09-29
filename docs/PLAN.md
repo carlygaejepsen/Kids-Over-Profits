@@ -225,11 +225,14 @@ own.
    `scripts/test-network-embed.js`; decisions 1 and 2 as proposed); 4.4
    second step, the
    `[kop_network_preview]` shortcode making that still live; 4.3 the
-   timeline, a year slider that dims what was not operating; 4.2 board
+   timeline, a year slider (owner 2026-09-29: names with no known years
+   are left out while it is on, with a count; people follow their
+   places); 4.2 board
    re-import from a KOP Data Tools screen. Production has no Node and the
    build reads four production tables, so 4.2 keeps the one Node build,
    fed by a site-made data export, run by `--pull` locally first and by a
-   GitHub Actions workflow if the owner wants the button.
+   GitHub Actions workflow if the owner wants the button (2026-09-29:
+   `--pull` only for now; first, is the Miro board still edited at all?).
 2. Later, not to be started without a word from the owner: chain hulls and
    group-by-network (2d.4), "Suggest a correction" from the map (Phase 3).
 
