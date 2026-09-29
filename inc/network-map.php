@@ -22,6 +22,7 @@ if (!defined('ABSPATH')) {
 // Years reviewed in wp-admin and laid over graph.json's (KOP Data Tools >
 // Map Years); loaded here so everything that reads the map has them.
 require_once __DIR__ . '/network-years.php';
+require_once __DIR__ . '/network-renames.php';
 
 if (!function_exists('kop_network_map_file')) {
     /** Absolute path to one of the network data files. */
@@ -303,6 +304,8 @@ if (!function_exists('kop_network_map_config')) {
             'statusOverrides' => (object) kop_network_map_status_overrides(),
             // Map name id => years, accepted on the Map Years screen.
             'yearOverrides' => (object) kop_network_map_year_overrides(),
+            // "earlier>later" rename lines the owner swapped (Map Renames).
+            'renameFlips' => function_exists('kop_network_map_rename_flips') ? kop_network_map_rename_flips() : array(),
         );
     }
 }
@@ -689,7 +692,8 @@ if (!function_exists('kop_network_map_cached_slice')) {
         }
         $overrides = kop_network_map_status_overrides();
         $year_overrides = kop_network_map_year_overrides();
-        $cache_key .= ':' . substr(md5(wp_json_encode(array($overrides, $year_overrides))), 0, 8) . ':v2';
+        $flips = function_exists('kop_network_map_rename_flips') ? kop_network_map_rename_flips() : array();
+        $cache_key .= ':' . substr(md5(wp_json_encode(array($overrides, $year_overrides, $flips))), 0, 8) . ':v2';
         $transient = 'kop_nm_slice_' . md5($kind . ':' . $key);
         $cached = get_transient($transient);
         if (is_array($cached) && ($cached['_key'] ?? '') === $cache_key) {
@@ -705,6 +709,9 @@ if (!function_exists('kop_network_map_cached_slice')) {
         if ($slice) {
             $slice['nodes'] = kop_network_map_apply_status_overrides($slice['nodes'], $overrides);
             $slice['nodes'] = kop_network_map_apply_year_overrides($slice['nodes'], $year_overrides);
+            if ($flips && function_exists('kop_network_map_apply_rename_flips')) {
+                list($slice['nodes'], $slice['edges']) = kop_network_map_apply_rename_flips($slice['nodes'], $slice['edges'], $flips);
+            }
             $urls = function_exists('kop_network_map_facility_urls') ? kop_network_map_facility_urls() : array();
             $slice['urls'] = array();
             foreach ($slice['nodes'] as $node) {

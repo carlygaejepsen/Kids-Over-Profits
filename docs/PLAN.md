@@ -368,59 +368,70 @@ the text goes in the page body, never in post meta, ACF or a table (owner,
 
 ### 3.7 Name eras
 
-Owner's decisions, 2026-09-29:
-- **Each name is its own record.** Bethel Boys' Academy (#100180) and Eagle
-  Point Christian Academy (#13927) are two records joined by a rename, not
-  one record with an alias.
-- **A facility is listed under its current name**, unless the owner marks
-  another as the name it is best known by.
-- **Anything dated shows the name in use at its date.** That covers
-  articles, lawsuits, inspections and closures.
+Owner's rule, 2026-09-29. A name belongs to the years and operator it had.
+Copper Canyon Academy was the Aspen-era name, 1998 to 2014, and Sedona Sky
+Academy is the Family Help & Wellness name from 2014. Anything dated shows
+the name in use at its date: the map's timeline, an article, a lawsuit, an
+inspection, a closure. Each name is its own record and its own map name,
+joined by a rename. Bethel Boys' Academy (#100180) and Eagle Point
+Christian Academy (#13927) are two records, not duplicates. A facility is
+listed under its current name unless the owner marks another.
 
-What stands in the way today:
-- `identification.pastNames` and `otherNames` are undated strings, and a
-  record often lists other eras' names. #13927 lists Bethel Boys Academy,
-  Gulf Coast Academy and Bethel Baptist Children's Home, so articles about
-  those names link to the current era.
-- Some curated match aliases name another era. They were restored to v2 on
-  2026-09-29 by `api/restore-match-aliases.php`, the June curation as it
-  was, and need an owner pass:
-  - Bethel Boys Academy (#13927)
-  - Laurel Ridge Treatment Center (#10602)
-  - Agape Boarding School (#11361)
-  - Refuge of Grace (#11462)
-  - Change Academy at Lake of the Ozarks (#11355)
-  - Cleo Wallace Academy (#12621)
-- The map build turns listed names into rebrand edges and always reads them
-  as the earlier name, with no year. See the note in
-  `scripts/build-network-graph.js`.
-- New curated aliases have no v2 path: `api/apply-match-aliases.php` exits
-  on the frozen legacy tables.
+What stood in the way:
+- **Most renamed pairs carry the site's whole life on both names.** Of the
+  map's 94 rename lines, 27 give both names the same years and 11 overlap,
+  such as Copper Canyon 1998-2014 with Sedona Sky from 1998. So the timeline
+  showed both at once.
+- **48 lines have no years on one side.**
+- **A few lines are drawn backwards**, such as KHK a Pathway Family Center
+  (2006) to Kids Helping Kids (1982).
+- **Past and other names are undated strings on a record.** #13927 lists
+  Bethel Boys Academy, Gulf Coast Academy and Bethel Baptist Children's
+  Home, so articles using those names link to the current name.
 
-Already done: since 2026-09-29 the news scan (`inc/facility-discovery.php`)
-holds an earlier or later name as "Earlier or later name", noting the record
-it belongs to. It neither links it to that record nor creates one. Those
-names are listed on KOP Data Tools > Facilities from News.
+Done 2026-09-29:
+- **Map Renames** (KOP Data Tools > Map Renames, `inc/network-renames.php`,
+  `php scripts/test-network-renames.php`) lists every rename line with both
+  names' operators and years and what looks wrong. The owner gives the
+  rename year, and swaps a backwards line. A saved rename ends the earlier
+  name and starts the later one on the map at once. It is layered over Map
+  Years through the `kop_network_map_year_overrides` filter, and a swap
+  reverses the line (`renameFlips`).
+- **The news scan** (`inc/facility-discovery.php`) holds an earlier or
+  later name as "Earlier or later name" instead of linking it to the
+  current name's record.
 
-Steps:
-1. **Era links.** Add `identification.renamedFrom` and `renamedTo`, each a
-   list of `{facility_id, year}`, through the schema, normalize, validator
-   and data form. Seed them from the map's rebrand edges and from past names
-   that name an existing record, as an owner-reviewed list.
-2. **Matching by era.** A name that is another record's name, or an era
-   linked to it, never resolves through a different record's otherNames,
-   pastNames or match aliases. On "Earlier or later name", the scan offers
-   "Create era record", prefilled with the link.
-3. **Pages.**
-   - A facility page says "Later called X" and "Earlier called Y" with links.
-   - Hubs and search list every era under its own name.
-   - `identification.listAs` holds the owner's headline-name override.
-4. **Dated items.** Articles, lawsuits and inspections belong to the era
-   whose years cover their date. A report lists items linked outside those
-   years while a sibling era covers them.
-5. **Map.** Rebrand edges come from the era links, with direction and year,
-   instead of guessing from listed names.
-6. **Closures.** A closure report applies to the era in use at its date. A
-   place renamed and still operating is not closed.
+Next, in order:
+1. **Owner:** work through Map Renames. The screen suggests a year for 27
+   of the 94, from the earlier name's closing year.
+2. **Rename years into the records.** A saved rename sets the two facility
+   records' start and end years (facilities_v2, through the
+   to_legacy/normalize path) and records the link as
+   `identification.renamedFrom` / `renamedTo` (`{facility_id, year}`). The
+   map build then draws rename lines from those links instead of guessing
+   from listed names.
+3. **Dated items follow the years.** An article, lawsuit, inspection or
+   closure report links to the name whose years cover its date. A report
+   lists items linked outside those years while another name covers them.
+   A closure applies only to the name in use then: a renamed place that
+   kept operating is not closed.
+4. **Matching.** A name that belongs to another name's record never
+   resolves through a different record's otherNames, pastNames or match
+   aliases. On "Earlier or later name", Facilities from News offers
+   "Create this name's record", prefilled with the rename link.
+5. **Pages.** A facility page says "Earlier called Y (until 2014)" or
+   "Later called X (from 2014)" with links. `identification.listAs` holds
+   the owner's headline-name override.
+6. **Owner pass on curated aliases that name another era**, restored on
+   2026-09-29:
+   - Bethel Boys Academy (#13927)
+   - Laurel Ridge Treatment Center (#10602)
+   - Agape Boarding School (#11361)
+   - Refuge of Grace (#11462)
+   - Change Academy at Lake of the Ozarks (#11355)
+   - Cleo Wallace Academy (#12621)
+
+   New curated aliases have no v2 path yet, because
+   `api/apply-match-aliases.php` exits on the frozen legacy tables.
 
 ---

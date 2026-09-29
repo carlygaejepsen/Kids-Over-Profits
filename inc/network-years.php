@@ -73,6 +73,8 @@ if (!function_exists('kop_network_map_year_overrides')) {
                 $memo[(string) $id] = (string) $d['years'];
             }
         }
+        // Renames split a name's years at the rename (inc/network-renames.php).
+        $memo = (array) apply_filters('kop_network_map_year_overrides', $memo);
         return $memo;
     }
 }

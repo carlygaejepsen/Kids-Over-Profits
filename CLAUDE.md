@@ -41,6 +41,8 @@ node scripts/test-network-timeline.js           # the timeline (store years, tim
 # Researched map years reviewed at KOP Data Tools > Map Years (inc/network-years.php); accepted ones go on the map at once
 node scripts/build-years-candidates.js [tmp/years-research]   # results -> js/data/network/years-candidates.json
 php scripts/test-network-years.php && python scripts/check-network-years-page.py
+# Renamed programs reviewed at KOP Data Tools > Map Renames (inc/network-renames.php): the rename year splits the two names' years on the map at once
+php scripts/test-network-renames.php
 
 # After editing the reporting directory data in js/data/reporting/
 node scripts/build-reporting-directory.js

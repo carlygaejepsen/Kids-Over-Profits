@@ -72,6 +72,31 @@
         return graph;
     }
 
+    /* Rename lines the owner swapped on the Map Renames screen
+     * (inc/network-renames.php), as "source>target" keys
+     * (KOP_NETWORK_CONFIG.renameFlips): the line is reversed and the
+     * "rebranded" colour moves to the name that is now the earlier one.
+     * kop_network_map_apply_rename_flips() does the same for page slices. */
+    function applyRenameFlips(graph, flips) {
+        if (!graph || !flips || !flips.length) return graph;
+        var flip = toSet(flips);
+        var byId = Object.create(null);
+        (graph.nodes || []).forEach(function (n) { byId[n.id] = n; });
+        (graph.edges || []).forEach(function (e) {
+            if (!flip[e.source + '>' + e.target] || (e.roles || []).indexOf('rebrand') === -1) return;
+            var was = byId[e.source];
+            var now = byId[e.target];
+            var from = e.source;
+            e.source = e.target;
+            e.target = from;
+            if (was && now && was.status === 'rebranded') {
+                was.status = now.status === 'rebranded' ? '' : (now.status || '');
+                now.status = 'rebranded';
+            }
+        });
+        return graph;
+    }
+
     function toSet(list) {
         var set = Object.create(null);
         (list || []).forEach(function (v) { set[v] = true; });
@@ -121,7 +146,7 @@
                 fetchJson(config.graphUrl),
                 fetchJson(config.layoutUrl)
             ]).then(function (both) {
-                store.hydrate(applyYearOverrides(applyStatusOverrides(both[0], config.statusOverrides), config.yearOverrides), both[1]);
+                store.hydrate(applyRenameFlips(applyYearOverrides(applyStatusOverrides(both[0], config.statusOverrides), config.yearOverrides), config.renameFlips), both[1]);
                 return store;
             });
         };
@@ -775,7 +800,7 @@
         return store;
     }
 
-    var api = { create: create, statusBucket: statusBucket, applyStatusOverrides: applyStatusOverrides, DEFAULT_CATEGORIES: DEFAULT_CATEGORIES };
+    var api = { create: create, statusBucket: statusBucket, applyStatusOverrides: applyStatusOverrides, applyRenameFlips: applyRenameFlips, DEFAULT_CATEGORIES: DEFAULT_CATEGORIES };
 
     if (typeof module === 'object' && module.exports) module.exports = api;
     else root.KOPNetworkStore = api;
