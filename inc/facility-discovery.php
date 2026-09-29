@@ -231,10 +231,15 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
         $k = preg_replace('/\b(the|of|for|and|inc|llc|ltd|corp)\b/', ' ', $k);
         return trim(preg_replace('/\s+/', ' ', $k));
     };
-    $stop = kop_news_stopwords();
-    $words = static function ($k) use ($stop) {
-        return array_filter(explode(' ', $k), static function ($w) use ($stop) {
-            return strlen($w) >= 4 && !ctype_digit($w) && !isset($stop[$w]);
+    // Not kop_news_stopwords(): that list also drops place words ("maple",
+    // "lake"), which are exactly what tells two same-town programs apart.
+    // Only the words every facility name shares are left out here.
+    $generic = array_flip(array('academy', 'school', 'schools', 'center', 'centre', 'home', 'homes', 'house', 'program', 'programs',
+        'youth', 'girls', 'boys', 'treatment', 'residential', 'ranch', 'camp', 'lodge', 'facility', 'services', 'family',
+        'children', 'childrens', 'juvenile', 'detention', 'county', 'teen', 'teens', 'therapeutic', 'behavioral', 'health'));
+    $words = static function ($k) use ($generic) {
+        return array_filter(explode(' ', $k), static function ($w) use ($generic) {
+            return strlen($w) >= 4 && !ctype_digit($w) && !isset($generic[$w]);
         });
     };
     $key = $clean($name);

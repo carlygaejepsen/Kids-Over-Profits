@@ -71,6 +71,9 @@ $check('a program whose campuses are on record is held ("Maple Lake Academy")',
     in_array(kop_facdisc_near_duplicate($pdo, 'Maple Lake Academy', 'UT', 'Spanish Fork'), array(10475, 10476), true));
 $check('a same-city name sharing a distinctive word is held ("Three Points Ranch", Hurricane)',
     kop_facdisc_near_duplicate($pdo, 'Three Points Ranch', 'UT', 'Hurricane') === 10545);
+$check('a campus named differently in the same town is held ("Maple Lake Academy - Girls Program")',
+    in_array(kop_facdisc_near_duplicate($pdo, 'Maple Lake Academy – Girls Program', 'UT', 'Spanish Fork'), array(10475, 10476), true));
+$check('generic words alone do not make a duplicate', kop_facdisc_near_duplicate($pdo, 'Spanish Fork Girls Academy Treatment Program', 'UT', 'Provo') === null);
 $check('the same words in another city are not', kop_facdisc_near_duplicate($pdo, 'Three Points Ranch', 'UT', 'Provo') === null);
 $check('new programs from the dry run stay new', kop_facdisc_near_duplicate($pdo, 'Zion Hills Academy', 'UT', '') === null
     && kop_facdisc_near_duplicate($pdo, "Walker's Point Youth and Family Center", 'WI', 'Milwaukee') === null);
