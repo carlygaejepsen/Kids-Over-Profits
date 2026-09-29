@@ -55,7 +55,7 @@
             if (!ids.length) {
                 ids = store.seeds().map(function (node) { return node.id; });
                 var viewRoot = store.viewRoot();
-                if (viewRoot) ids.push(viewRoot);
+                if (viewRoot && ids.indexOf(viewRoot) === -1) ids.push(viewRoot);
             }
             return ids;
         };

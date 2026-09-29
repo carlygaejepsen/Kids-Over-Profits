@@ -151,6 +151,8 @@ function run() {
     check(store.year === range.max && refreshes === 1, 'the timeline did not open on this year with one refresh');
     check(/Kept as opened, years unknown: Universal Health Services/.test(els.note.textContent),
         'the note does not say Universal Health Services is kept though undated: ' + els.note.textContent);
+    check(!/Universal Health Services, Universal Health Services/.test(els.note.textContent),
+        'the note names Universal Health Services twice (the view names it and roots on it)');
     els.range.value = '1985';
     els.range.fire('input');
     check(store.year === 1985 && els.output.textContent === '1985', 'the slider did not set the year');
