@@ -248,6 +248,17 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
     }
     $mine = $words($key);
     $city_key = kop_normalize_name_key((string) $city);
+    // Capitalised short words may be an acronym of a record's name: "Camp
+    // SAYLA" is Southeast Alabama Youth Leadership Academy.
+    preg_match_all('/\b[A-Z]{3,6}\b/', (string) $name, $m);
+    $acronyms = array_flip($m[0]);
+    $initials = static function ($n) {
+        $out = '';
+        foreach (preg_split('/[^A-Za-z]+/', preg_replace('/\s*\([^)]*\)\s*$/', '', (string) $n), -1, PREG_SPLIT_NO_EMPTY) as $w) {
+            if (!in_array(strtolower($w), array('of', 'the', 'and', 'for', 'inc', 'llc'), true)) $out .= strtoupper($w[0]);
+        }
+        return $out;
+    };
     $stmt = $state !== ''
         ? $pdo->prepare('SELECT id, unique_name, city FROM facilities_v2 WHERE state = ?')
         : $pdo->prepare('SELECT id, unique_name, city FROM facilities_v2');
@@ -263,6 +274,9 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
         }
         if ($state !== '' && strlen($other) >= 6
             && (strpos(' ' . $other . ' ', ' ' . $key . ' ') !== false || strpos(' ' . $key . ' ', ' ' . $other . ' ') !== false)) {
+            return (int) $r['id'];
+        }
+        if ($state !== '' && $acronyms && isset($acronyms[$initials($r['unique_name'])])) {
             return (int) $r['id'];
         }
         if ($state !== '' && $city_key !== '' && kop_normalize_name_key((string) $r['city']) === $city_key
