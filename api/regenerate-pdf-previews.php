@@ -17,7 +17,7 @@
  * changes the PDF itself.
  *
  * GET                     - dry run: count and list what qualifies
- * GET ?apply=1            - regenerate one batch (default 10), report the rest
+ * GET ?apply=1            - regenerate one batch (default 5), report the rest
  * GET ?apply=1&limit=25   - batch size, 1 to 50
  *
  * Re-run ?apply=1 until "remaining" reaches 0. A PDF Imagick cannot read is
@@ -65,7 +65,7 @@ function kop_rpp_has_preview($attachment_id, $pdf_path) {
 }
 
 $apply = isset($_GET['apply']) && $_GET['apply'] === '1';
-$limit = isset($_GET['limit']) ? max(1, min(50, (int) $_GET['limit'])) : 10;
+$limit = isset($_GET['limit']) ? max(1, min(50, (int) $_GET['limit'])) : 5;
 
 if (isset($_GET['retry']) && $_GET['retry'] === '1') {
     delete_post_meta_by_key(KOP_PDF_PREVIEW_FAILED_META);
@@ -123,8 +123,13 @@ require_once ABSPATH . 'wp-admin/includes/image.php';
 $done = [];
 $failed = [];
 foreach (array_slice($queue, 0, $limit) as $row) {
+    // Marked before rendering: a PDF heavy enough for the host to kill the
+    // process (the browser sees a 503) would otherwise head the queue on
+    // every run. The next run skips it; ?retry=1 tries it again.
+    update_post_meta($row['id'], KOP_PDF_PREVIEW_FAILED_META, 'killed ' . gmdate('c'));
     $meta = wp_generate_attachment_metadata($row['id'], $row['path']);
     if (is_array($meta) && !empty($meta['sizes'])) {
+        delete_post_meta($row['id'], KOP_PDF_PREVIEW_FAILED_META);
         wp_update_attachment_metadata($row['id'], $meta);
         $done[] = ['id' => $row['id'], 'file' => basename($row['path']), 'sizes' => array_keys($meta['sizes'])];
     } else {

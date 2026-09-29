@@ -278,6 +278,24 @@ function kop_wb_file(array $r, $fid, $reviewer) {
     if (!$fac) {
         throw new RuntimeException('Facility #' . $fid . ' not found.');
     }
+    // A request the host answers with a 503 keeps running and files the
+    // candidate anyway, so the page can send the same one again while the
+    // first is still at work. One request per candidate at a time; MySQL
+    // drops the lock itself if the process is killed.
+    $lock = 'kop_wb_' . $r['ckey'];
+    if (!(int) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 0)', $lock))) {
+        throw new RuntimeException('Another request is filing this one. Reload the page in a minute.');
+    }
+    try {
+        return kop_wb_file_locked(kop_wb_get($r['ckey']) ?: $r, $fac, $reviewer);
+    } finally {
+        $wpdb->query($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
+    }
+}
+
+function kop_wb_file_locked(array $r, array $fac, $reviewer) {
+    global $wpdb;
+    $fid = (int) $fac['id'];
     if ($r['status'] === 'filed' && $r['attachment_id']) {
         throw new RuntimeException('Already filed.');
     }
@@ -295,29 +313,46 @@ function kop_wb_file(array $r, $fid, $reviewer) {
 
     $title = kop_wb_title($r, $fac['name']);
     $issue_url = $r['issue_id'] ? (string) wp_get_attachment_url((int) $r['issue_id']) : '';
-    $upload = wp_upload_bits(basename($r['file']), null, (string) file_get_contents($path));
-    if (!empty($upload['error'])) {
-        throw new RuntimeException('Upload failed: ' . $upload['error']);
+
+    // A run the host cut off may have imported the PDF without marking the
+    // candidate filed: finish with that copy instead of importing another.
+    $att = (int) $wpdb->get_var($wpdb->prepare(
+        "SELECT pm.post_id FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+         WHERE pm.meta_key = '_kop_woodbury_key' AND pm.meta_value = %s AND p.post_type = 'attachment'
+         ORDER BY pm.post_id LIMIT 1",
+        $r['ckey']
+    ));
+    if (!$att) {
+        $upload = wp_upload_bits(basename($r['file']), null, (string) file_get_contents($path));
+        if (!empty($upload['error'])) {
+            throw new RuntimeException('Upload failed: ' . $upload['error']);
+        }
+        $att = wp_insert_attachment(array(
+            'post_mime_type' => 'application/pdf',
+            'post_title'     => $title,
+            'post_content'   => 'Pages ' . str_replace(',', ', ', $r['pages']) . ' of Woodbury Reports, ' . $r['issue_label']
+                                . ($issue_url !== '' ? '. Full issue: ' . $issue_url : '.'),
+            'post_status'    => 'inherit',
+        ), $upload['file']);
+        if (is_wp_error($att) || !$att) {
+            @unlink($upload['file']);
+            throw new RuntimeException('Could not register the attachment.');
+        }
+        // Tagged before the slow cover render, so a killed run is found above.
+        update_post_meta($att, '_kop_woodbury_key', $r['ckey']);
     }
-    $att = wp_insert_attachment(array(
-        'post_mime_type' => 'application/pdf',
-        'post_title'     => $title,
-        'post_content'   => 'Pages ' . str_replace(',', ', ', $r['pages']) . ' of Woodbury Reports, ' . $r['issue_label']
-                            . ($issue_url !== '' ? '. Full issue: ' . $issue_url : '.'),
-        'post_status'    => 'inherit',
-    ), $upload['file']);
-    if (is_wp_error($att) || !$att) {
-        @unlink($upload['file']);
-        throw new RuntimeException('Could not register the attachment.');
+    if (!wp_get_attachment_metadata($att)) {
+        wp_update_attachment_metadata($att, wp_generate_attachment_metadata($att, get_attached_file($att)));
     }
-    wp_update_attachment_metadata($att, wp_generate_attachment_metadata($att, $upload['file']));
     update_post_meta($att, '_kop_import_md5', md5_file($path));
-    update_post_meta($att, '_kop_woodbury_key', $r['ckey']);
     update_post_meta($att, '_kop_woodbury_issue', (int) $r['issue_id']);
     update_post_meta($att, '_kop_woodbury_pages', $r['pages']);
     if ($issue_url !== '') {
         update_post_meta($att, '_kop_source_url', esc_url_raw($issue_url));
     }
+    $wpdb->query($wpdb->prepare(
+        'DELETE FROM ' . $wpdb->prefix . 'fbv_attachment_folder WHERE attachment_id = %d AND folder_id = %d', $att, $folder
+    ));
     $wpdb->insert($wpdb->prefix . 'fbv_attachment_folder', array('folder_id' => $folder, 'attachment_id' => $att), array('%d', '%d'));
 
     $wpdb->update(kop_wb_table(), array(
@@ -665,7 +700,11 @@ function kop_wb_render_assets() {
                 body.append('items[' + i + '][fid]', it.fid);
             });
             return fetch(ajax, { method: 'POST', body: body, credentials: 'same-origin' })
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    // The host's 503 page is not JSON, and the server may still be finishing the batch.
+                    if (!r.ok) throw new Error('the server answered ' + r.status + '; it may still be finishing. Reload the page before trying these again');
+                    return r.json();
+                })
                 .then(function (j) {
                     if (!j || !j.success) throw new Error((j && j.data) || 'Request failed');
                     j.data.forEach(function (res) {
@@ -693,14 +732,17 @@ function kop_wb_render_assets() {
                 });
         }
 
+        var running = false;
         function run(act, rows) {
+            if (running) { progress.textContent = 'Still working on the last request; wait for it to finish.'; return; }
+            running = true;
             var queue = rows.slice(), done = 0, total = rows.length, size = act === 'file' ? 3 : 10;
             function next() {
-                if (!queue.length) { progress.textContent = labels[act] + ' ' + done + ' of ' + total + '.'; return; }
+                if (!queue.length) { running = false; progress.textContent = labels[act] + ' ' + done + ' of ' + total + '.'; return; }
                 var batch = queue.splice(0, size);
                 progress.textContent = 'Working... ' + done + ' of ' + total;
                 return send(act, batch).then(function () { done += batch.length; return next(); })
-                    .catch(function (e) { progress.textContent = 'Stopped after ' + done + ' of ' + total + ': ' + e.message; });
+                    .catch(function (e) { running = false; progress.textContent = 'Stopped after ' + done + ' of ' + total + ': ' + e.message; });
             }
             return next();
         }
