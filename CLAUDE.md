@@ -78,6 +78,9 @@ php scripts/build-open-data.php                   # on the server (ea-php82), re
 php scripts/test-icons.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
+# Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,
+# linked as "Archived copy" on the state report pages (server CLI + nightly cron; no apply = dry run)
+php api/sync-inspection-archive.php apply --limit=2000 --minutes=25
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 ```
