@@ -378,6 +378,9 @@ foreach ($rendered as $slug => $html) {
         $notes    = $config['reading_notes'] ?? array();
         $bare     = array_filter($children, function ($c) use ($notes) { return !has_excerpt(kop_test_page($c)) && empty($notes[$c]); });
         check("$slug reading has a line for every article", !$bare, implode(', ', $bare));
+        $with_image = array_filter($children, function ($c) { return get_the_post_thumbnail(kop_test_page($c)) !== ''; });
+        check("$slug reading shows every article's featured image",
+            substr_count($html, 'class="kop-hub-reading-thumb"') === count($with_image), count($with_image) . ' with an image');
     }
 }
 

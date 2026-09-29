@@ -312,6 +312,9 @@ function kop_hub_reading($slug) {
             'title' => $page['title'],
             'url'   => $page['url'],
             'note'  => $excerpt !== '' ? $excerpt : (isset($notes[$child]) ? $notes[$child] : ''),
+            // The article's featured image, drawn beside its link; an
+            // article without one keeps the plain text row.
+            'thumb' => $post ? get_the_post_thumbnail($post, 'medium_large', array('loading' => 'lazy', 'alt' => '')) : '',
         );
     }
     if (!$items) {
@@ -323,10 +326,17 @@ function kop_hub_reading($slug) {
         <ul class="kop-hub-reading-list">
             <?php foreach ($items as $item) : ?>
                 <li>
-                    <a href="<?php echo esc_url($item['url']); ?>"><?php echo esc_html($item['title']); ?></a>
-                    <?php if ($item['note'] !== '') : ?>
-                        <p><?php echo esc_html($item['note']); ?></p>
-                    <?php endif; ?>
+                    <div class="kop-hub-reading-item<?php echo $item['thumb'] ? ' has-thumb' : ''; ?>">
+                        <?php if ($item['thumb']) : ?>
+                            <a class="kop-hub-reading-thumb" href="<?php echo esc_url($item['url']); ?>" tabindex="-1" aria-hidden="true"><?php echo $item['thumb']; // phpcs:ignore WordPress.Security.EscapeOutput -- core markup ?></a>
+                        <?php endif; ?>
+                        <div class="kop-hub-reading-body">
+                            <a href="<?php echo esc_url($item['url']); ?>"><?php echo esc_html($item['title']); ?></a>
+                            <?php if ($item['note'] !== '') : ?>
+                                <p><?php echo esc_html($item['note']); ?></p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </li>
             <?php endforeach; ?>
         </ul>

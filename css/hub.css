@@ -304,6 +304,35 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+/* An article with a featured image shows it beside its link. The column is
+   half the page from 760px, so the image stays small enough to leave the
+   note a readable measure. */
+.kop-hub-reading-item.has-thumb {
+    display: grid;
+    grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr);
+    gap: 0.9rem;
+    align-items: start;
+}
+
+.kop-hub-reading-thumb {
+    display: block;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--kop-sand, #f2eedf);
+    aspect-ratio: 4 / 3;
+}
+
+.kop-hub-reading-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kop-hub-reading-body {
+    min-width: 0;
+}
+
 /* ---- Contribute -------------------------------------------------------- */
 
 .kop-hub-contribute {
