@@ -1598,17 +1598,13 @@ function enqueue_tti_processor_scripts() {
 
     // The "By location" tab (was the separate /location-index/ page). Its
     // config (locationConfig, locationIndexConfig) is inline in the template.
-    wp_enqueue_script(
-        'kop-document-library-script',
-        $theme_uri . '/js/document-library.js',
-        array('jquery'),
-        file_exists($theme_dir . '/js/document-library.js') ? filemtime($theme_dir . '/js/document-library.js') : time(),
-        true
-    );
+    // It shares the parent company tab's data load (window.kopDirectoryData)
+    // and document modal, so js/document-library.js is not loaded here: its
+    // click handler opened a second modal over the index's own.
     wp_enqueue_script(
         'kop-location-index',
         $theme_uri . '/js/location-index.js',
-        array('kop-document-library-script', 'kop-facility-merge', 'kop-submit-info', 'kop-facility-resources', 'kop-program-links', 'tti-program-index-script'),
+        array('kop-facility-merge', 'kop-submit-info', 'kop-facility-resources', 'kop-program-links', 'tti-program-index-script'),
         file_exists($theme_dir . '/js/location-index.js') ? filemtime($theme_dir . '/js/location-index.js') : time(),
         true
     );

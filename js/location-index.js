@@ -46,6 +46,54 @@ const toTitleCase = value => {
     }).join(' ');
 };
 
+// The FileBird folder list normalized once (the loose matching below used to
+// re-run its regexes over every folder for every facility, tens of seconds
+// on the full directory), with each looked-up name's result cached. Keyed on
+// the array, so a reloaded folder list builds a fresh index.
+const folderMatchIndexes = new WeakMap();
+const getFolderMatchIndex = (folders, isPlace) => {
+    let index = folderMatchIndexes.get(folders);
+    if (index) return index;
+    const normalize = s => s.replace(/[^\w\s]/g, '').trim();
+    const byId = {};
+    folders.forEach(f => { if (f) byId[String(f.id)] = f; });
+    const entries = folders.filter(f => f && f.name).map(f => {
+        const lower = String(f.name).toLowerCase();
+        return { folder: f, lower: lower.trim(), norm: normalize(lower), place: isPlace(f.name), parentId: String(f.parent || '0') };
+    });
+    const normById = {};
+    entries.forEach(e => { normById[String(e.folder.id)] = e.norm; });
+    entries.forEach(e => {
+        e.pathWords = null;
+        if (e.place || e.parentId === '0') return;
+        const parent = byId[e.parentId];
+        if (!parent || !parent.name) return;
+        const parentNorm = normById[e.parentId] !== undefined ? normById[e.parentId] : normalize(String(parent.name).toLowerCase());
+        const words = (parentNorm + ' ' + e.norm).split(/\s+/).filter(w => w.length > 2);
+        if (words.length >= 2) e.pathWords = words;
+    });
+    index = { entries, results: new Map() };
+    folderMatchIndexes.set(folders, index);
+    return index;
+};
+
+// Same order as before: exact name, normalized name, folder contains name,
+// name contains folder, then parent + child path words.
+const matchFolderByName = (folders, name, isPlace) => {
+    const index = getFolderMatchIndex(folders, isPlace);
+    if (index.results.has(name)) return index.results.get(name);
+    const normName = name.replace(/[^\w\s]/g, '').trim();
+    const entries = index.entries;
+    let hit = entries.find(e => e.lower === name)
+        || entries.find(e => e.norm === normName)
+        || (normName.length > 6 ? entries.find(e => !e.place && e.norm.includes(normName)) : null)
+        || entries.find(e => !e.place && e.norm.length > 6 && normName.includes(e.norm))
+        || entries.find(e => e.pathWords && e.pathWords.every(word => normName.includes(word)));
+    const match = hit ? hit.folder : null;
+    index.results.set(name, match);
+    return match;
+};
+
 function attachDocumentButtons(scope) {
     const root = scope && scope.querySelectorAll ? scope : document;
     const buttons = root.querySelectorAll('.doc-library-button');
@@ -56,11 +104,7 @@ function attachDocumentButtons(scope) {
             event.preventDefault();
             const folderId = button.dataset ? button.dataset.folderId : '';
             const container = button.closest('.field-row');
-            if (typeof window.loadFacilityDocuments === 'function') {
-                window.loadFacilityDocuments(folderId, container);
-            } else {
-                console.warn('Location index: loadFacilityDocuments is not available');
-            }
+            loadLocationDocuments(folderId, container);
         });
     });
 }
@@ -121,7 +165,9 @@ async function loadFacilityDocumentsFallback(folderId, container) {
     }
 }
 
-window.loadFacilityDocuments = async function(folderId, containerOrId) {
+// Kept to this tab: assigning window.loadFacilityDocuments replaced the
+// parent company tab's loader on the shared directory page.
+async function loadLocationDocuments(folderId, containerOrId) {
     const container = (containerOrId instanceof Element)
         ? containerOrId
         : document.getElementById(containerOrId);
@@ -152,7 +198,7 @@ window.loadFacilityDocuments = async function(folderId, containerOrId) {
         console.warn('Location index: shortcode render failed, trying fallback list...', e);
         await loadFacilityDocumentsFallback(parsedId, container);
     }
-};
+}
 
 // The "By location" tab of the facility directory (page-tti-program-index.php).
 // Its controls carry a loc- prefix so they do not collide with the parent
@@ -198,61 +244,14 @@ function initLocationIndex() {
 
     const findMatchingFilebirdFolder = facilityName => {
         if (!window.filebirdFolders || !Array.isArray(window.filebirdFolders)) return null;
-
-        if (!window.filebirdFolderMap) {
-            window.filebirdFolderMap = {};
-            window.filebirdFolders.forEach(folder => {
-                window.filebirdFolderMap[String(folder.id)] = folder;
-            });
-        }
-
         const rawFacilityName = cleanText(facilityName).toLowerCase().trim();
-        const normalizedFacilityName = normalizeFolderMatchText(rawFacilityName);
-        if (!rawFacilityName || !normalizedFacilityName) return null;
-
-        let matchingFolder = null;
+        if (!rawFacilityName || !normalizeFolderMatchText(rawFacilityName)) return null;
         try {
-            matchingFolder = window.filebirdFolders.find(folder => folder.name && folder.name.toLowerCase().trim() === rawFacilityName);
-
-            if (!matchingFolder) {
-                matchingFolder = window.filebirdFolders.find(folder => folder.name && normalizeFolderMatchText(folder.name.toLowerCase()) === normalizedFacilityName);
-            }
-
-            if (!matchingFolder && normalizedFacilityName.length > 6) {
-                matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
-                    const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
-                    return normalizedFolderName.includes(normalizedFacilityName);
-                });
-            }
-
-            if (!matchingFolder) {
-                matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
-                    const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
-                    return normalizedFolderName.length > 6 && normalizedFacilityName.includes(normalizedFolderName);
-                });
-            }
-
-            if (!matchingFolder && window.filebirdFolderMap) {
-                matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
-                    const parentId = String(folder.parent || '0');
-                    if (parentId === '0') return false;
-                    const parentFolder = window.filebirdFolderMap[parentId];
-                    if (!parentFolder || !parentFolder.name) return false;
-                    const pathWords = (normalizeFolderMatchText(parentFolder.name.toLowerCase()) + ' ' + normalizeFolderMatchText(folder.name.toLowerCase()))
-                        .split(/\s+/)
-                        .filter(word => word.length > 2);
-                    if (pathWords.length < 2) return false;
-                    return pathWords.every(word => normalizedFacilityName.includes(word));
-                });
-            }
+            return matchFolderByName(window.filebirdFolders, rawFacilityName, isPlaceFolderName);
         } catch (error) {
             console.warn('[KOP] Folder matching error for facility "' + rawFacilityName + '":', error);
+            return null;
         }
-
-        return matchingFolder;
     };
 
     // --- Shared utility helpers for rendering ---
@@ -529,6 +528,21 @@ function initLocationIndex() {
     };
 
     async function fetchData() {
+        // On the directory page the parent company tab owns the one download
+        // of the feed and the folders (window.kopDirectoryData); reuse it.
+        if (typeof window.kopDirectoryData === 'function') {
+            let shared = null;
+            try {
+                shared = extractProjects(await window.kopDirectoryData());
+            } catch (err) {
+                console.warn('Location index: shared data load failed', err);
+            }
+            if (shared) {
+                processData(shared);
+                return;
+            }
+        }
+
         const config = window.locationConfig || {};
         const urls = (Array.isArray(config.jsonFileUrls) && config.jsonFileUrls.length)
             ? config.jsonFileUrls
@@ -612,22 +626,21 @@ function initLocationIndex() {
         filterAndRender();
     }
 
+    // Same buttons as the parent company tab's #alphabet-filter (both ids share
+    // its CSS), with a delegated click instead of a global onclick.
     function renderAlphabetFilter() {
         if (!alphabetFilter) return;
-        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-        let html = '';
-        alphabet.forEach(char => {
-            html += `<button class="alpha-btn" onclick="filterByChar('${char}')">${char}</button>`;
-        });
-        html += `<button class="alpha-btn" onclick="filterByChar('')">All</button>`;
-        alphabetFilter.innerHTML = html;
-        
-        window.filterByChar = (char) => {
-            alphabetFilter.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            currentAlphaFilter = char;
+        const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alphabetFilter.innerHTML = letters.map(letter =>
+            `<button type="button" data-letter="${letter}">${letter}</button>`
+        ).join('') + '<button type="button" data-letter="">All</button>';
+        alphabetFilter.addEventListener('click', event => {
+            const button = event.target.closest('button[data-letter]');
+            if (!button) return;
+            alphabetFilter.querySelectorAll('button').forEach(btn => btn.classList.toggle('active', btn === button));
+            currentAlphaFilter = button.dataset.letter;
             filterAndRender();
-        };
+        });
     }
 
     let currentAlphaFilter = '';
@@ -1314,7 +1327,11 @@ function initLocationIndex() {
     }
 
     // Events
-    searchInput.addEventListener('input', filterAndRender);
+    let searchDebounce = null;
+    searchInput.addEventListener('input', () => {
+        clearTimeout(searchDebounce);
+        searchDebounce = setTimeout(filterAndRender, 150);
+    });
     typeFilter.addEventListener('change', filterAndRender);
     sortBy.addEventListener('change', filterAndRender);
     clearSearchBtn.addEventListener('click', function() {

@@ -66,7 +66,8 @@
 }
 
 /* --- Alphabet Filter (Navy Blue Theme) --- */
-#alphabet-filter {
+#alphabet-filter,
+#loc-alphabet-filter {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -76,7 +77,8 @@
     border-bottom: 1px solid #dddddd;
 }
 
-#alphabet-filter button {
+#alphabet-filter button,
+#loc-alphabet-filter button {
     padding: 8px 15px;
     text-decoration: none;
     background-color: #00004d;
@@ -88,7 +90,8 @@
     cursor: pointer;
 }
 
-#alphabet-filter button.active {
+#alphabet-filter button.active,
+#loc-alphabet-filter button.active {
     background-color: #00004d;
     color: #ffffff;
     border-color: #dddddd;
@@ -981,13 +984,15 @@ RESPONSIVE
         font-size: 0.8em;
     }
 
-    #alphabet-filter {
+    #alphabet-filter,
+    #loc-alphabet-filter {
         gap: 3px;
         padding-bottom: 1em;
         flex-wrap: wrap;
     }
 
-    #alphabet-filter button {
+    #alphabet-filter button,
+    #loc-alphabet-filter button {
         padding: 5px 8px;
         font-size: 0.8em;
     }
@@ -1031,7 +1036,8 @@ RESPONSIVE
         white-space: normal;
     }
 
-    #alphabet-filter button {
+    #alphabet-filter button,
+    #loc-alphabet-filter button {
         padding: 4px 6px;
         font-size: 0.75em;
     }

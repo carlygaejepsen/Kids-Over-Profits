@@ -11,6 +11,54 @@ const getRestBase = () => {
     return '/wp-json/kop/v1/';
 };
 
+// The FileBird folder list normalized once (the loose matching below used to
+// re-run its regexes over every folder for every facility, tens of seconds
+// on the full directory), with each looked-up name's result cached. Keyed on
+// the array, so a reloaded folder list builds a fresh index.
+const folderMatchIndexes = new WeakMap();
+const getFolderMatchIndex = (folders, isPlace) => {
+    let index = folderMatchIndexes.get(folders);
+    if (index) return index;
+    const normalize = s => s.replace(/[^\w\s]/g, '').trim();
+    const byId = {};
+    folders.forEach(f => { if (f) byId[String(f.id)] = f; });
+    const entries = folders.filter(f => f && f.name).map(f => {
+        const lower = String(f.name).toLowerCase();
+        return { folder: f, lower: lower.trim(), norm: normalize(lower), place: isPlace(f.name), parentId: String(f.parent || '0') };
+    });
+    const normById = {};
+    entries.forEach(e => { normById[String(e.folder.id)] = e.norm; });
+    entries.forEach(e => {
+        e.pathWords = null;
+        if (e.place || e.parentId === '0') return;
+        const parent = byId[e.parentId];
+        if (!parent || !parent.name) return;
+        const parentNorm = normById[e.parentId] !== undefined ? normById[e.parentId] : normalize(String(parent.name).toLowerCase());
+        const words = (parentNorm + ' ' + e.norm).split(/\s+/).filter(w => w.length > 2);
+        if (words.length >= 2) e.pathWords = words;
+    });
+    index = { entries, results: new Map() };
+    folderMatchIndexes.set(folders, index);
+    return index;
+};
+
+// Same order as before: exact name, normalized name, folder contains name,
+// name contains folder, then parent + child path words.
+const matchFolderByName = (folders, name, isPlace) => {
+    const index = getFolderMatchIndex(folders, isPlace);
+    if (index.results.has(name)) return index.results.get(name);
+    const normName = name.replace(/[^\w\s]/g, '').trim();
+    const entries = index.entries;
+    let hit = entries.find(e => e.lower === name)
+        || entries.find(e => e.norm === normName)
+        || (normName.length > 6 ? entries.find(e => !e.place && e.norm.includes(normName)) : null)
+        || entries.find(e => !e.place && e.norm.length > 6 && normName.includes(e.norm))
+        || entries.find(e => e.pathWords && e.pathWords.every(word => normName.includes(word)));
+    const match = hit ? hit.folder : null;
+    index.results.set(name, match);
+    return match;
+};
+
 // Drop folders that hold no live documents anywhere in their subtree, so a
 // name match never produces a button that opens onto an empty library. The
 // kop/v1/folders endpoint attaches the `files` count; a list without it
@@ -579,51 +627,8 @@ function displayFacilities(facilitiesData, containerId) {
         if (!window.filebirdFolders || !Array.isArray(window.filebirdFolders)) return null;
         const name = cleanText(rawName).toLowerCase().trim();
         if (!name) return null;
-
-        // Build parent lookup map lazily (once across all cards)
-        if (!window.filebirdFolderMap) {
-            window.filebirdFolderMap = {};
-            window.filebirdFolders.forEach(f => { window.filebirdFolderMap[String(f.id)] = f; });
-        }
-
-        const normalize = s => s.replace(/[^\w\s]/g, '').trim();
-        const normName = normalize(name);
-
         try {
-            // 1. Exact match
-            let match = window.filebirdFolders.find(f => f.name && f.name.toLowerCase().trim() === name);
-            // 2. Normalized match
-            if (!match) {
-                match = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()) === normName);
-            }
-            // 3. Folder name contains target name
-            if (!match && normName.length > 6) {
-                match = window.filebirdFolders.find(f => f.name && !isPlaceFolderName(f.name) && normalize(f.name.toLowerCase()).includes(normName));
-            }
-            // 4. Target name contains folder name
-            if (!match) {
-                match = window.filebirdFolders.find(f => {
-                    if (!f.name || isPlaceFolderName(f.name)) return false;
-                    const nf = normalize(f.name.toLowerCase());
-                    return nf.length > 6 && normName.includes(nf);
-                });
-            }
-            // 5. Parent + child path match (subfolders organized under an operator)
-            if (!match && window.filebirdFolderMap) {
-                match = window.filebirdFolders.find(f => {
-                    if (!f.name || isPlaceFolderName(f.name)) return false;
-                    const parentId = String(f.parent || '0');
-                    if (parentId === '0') return false;
-                    const parent = window.filebirdFolderMap[parentId];
-                    if (!parent || !parent.name) return false;
-                    const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
-                        .split(/\s+/)
-                        .filter(w => w.length > 2);
-                    if (pathWords.length < 2) return false;
-                    return pathWords.every(word => normName.includes(word));
-                });
-            }
-            return match || null;
+            return matchFolderByName(window.filebirdFolders, name, isPlaceFolderName);
         } catch (e) {
             console.warn('[KOP] Folder matching error for "' + name + '":', e);
             return null;
@@ -2610,17 +2615,25 @@ function filterByLetter(letter) {
 // Expose to global scope for inline onclick handlers
 window.filterByLetter = filterByLetter;
 
+// Bound once: it runs before and after the data loads, and a second
+// anonymous keyup handler filtered every company twice per keystroke.
+let controlListenersBound = false;
+let searchDebounce = null;
 function setupEventListeners() {
     attachDocumentModalHandlers();
+    if (controlListenersBound) return;
+    controlListenersBound = true;
+
     // Setup search input
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('keyup', function() {     
+        searchInput.addEventListener('input', function() {
             const clearBtn = document.getElementById('clearSearch');
             if (clearBtn) {
                 clearBtn.style.display = this.value ? 'inline-block' : 'none';
             }
-            filterFacilities();
+            clearTimeout(searchDebounce);
+            searchDebounce = setTimeout(filterFacilities, 150);
         });
     }
 
@@ -2692,20 +2705,15 @@ function toggleAllFacilityDetails(button) {
     button.textContent = isExpanding ? 'Collapse All Facility Details' : 'Expand All Facility Details';
 }
 
-// Add this to the end of your facilities-display.js file      
-document.addEventListener('DOMContentLoaded', function() {     
+// One load of the facility feed and the FileBird folders for the whole
+// directory page. The location tab (js/location-index.js) reads the same
+// promise, so the ~1 MB feed is fetched and parsed once however many tabs
+// are opened.
+let directoryDataPromise = null;
+window.kopDirectoryData = function() {
+    if (directoryDataPromise) return directoryDataPromise;
 
-    const facilitiesContainer = document.getElementById('facilities-container');
-    if (!facilitiesContainer) {
-        console.info('Facilities script: no facilities-container element present, skipping data fetch.');
-        return;
-    }
-
-    // Setup your template features when the container exists  
-    setupAlphabetFilter();
-    setupEventListeners();
-
-    const facilitiesConfig = window.facilitiesConfig || {};    
+    const facilitiesConfig = window.facilitiesConfig || {};
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
     // The REST feed, then api/get-master-data.php (inc/enqueue.php). There is
     // no static copy: js/data/facilities_master.json never existed, so a
@@ -2715,80 +2723,103 @@ document.addEventListener('DOMContentLoaded', function() {
         ...configUrls
     ].filter(url => typeof url === 'string' && url.trim().length > 0)));
 
-    if (!datasetCandidates.length) {
-        console.error('Facilities script: no dataset URLs are configured.');
-        facilitiesContainer.innerHTML = '<p>Error loading facilities data: no dataset URL is configured.</p>';
-        return;
-    }
+    const loadFolders = fetch(`${getRestBase()}folders`, { credentials: 'same-origin' })
+        .then(response => response.ok ? response.json() : null)
+        .then(folders => {
+            if (folders) {
+                window.filebirdFolders = dropEmptyFolders(folders);
+                window.filebirdFolderMap = null;
+            }
+        })
+        .catch(e => console.warn('Facilities script: failed to load FileBird folders', e));
 
-    const decodeResponseAsJson = async (response) => {
-        const text = await response.text();
-
-        try {
-            return JSON.parse(text);
-        } catch (parseError) {
-            throw new Error('Invalid JSON (' + parseError.message + ')');
+    const loadDataset = (async () => {
+        if (!datasetCandidates.length) {
+            throw new Error('no dataset URL is configured.');
         }
-    };
-
-    (async () => {
         const failureSummaries = [];
-
-        for (const candidateUrl of datasetCandidates) {        
+        for (const candidateUrl of datasetCandidates) {
             try {
                 const response = await fetch(candidateUrl, { credentials: 'same-origin' });
-
                 if (!response.ok) {
                     throw new Error('HTTP ' + response.status + ' ' + response.statusText);
                 }
-
-                const data = await decodeResponseAsJson(response);
-                const facilityCount = data && data.projects ? Object.keys(data.projects).length : '?';
-
-                // NEW: Load FileBird folders for document matching
+                const text = await response.text();
+                let data;
                 try {
-                    const restBase = getRestBase();
-                    const foldersResponse = await fetch(`${restBase}folders`);
-                    if (foldersResponse.ok) {
-                        window.filebirdFolders = dropEmptyFolders(await foldersResponse.json());
-                        window.filebirdFolderMap = null;
-                    }
-                } catch (e) {
-                    console.warn('Facilities script: failed to load FileBird folders', e);
+                    data = JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error('Invalid JSON (' + parseError.message + ')');
                 }
-
-                displayFacilities(data, 'facilities-container');
-
-                // Re-setup event listeners after data is loaded to ensure they work
-                setupEventListeners();
-
-                // Deep link: ?search= (used by the site search results page)
-                // pre-fills the filter once the facilities are rendered.
-                const initialSearch = new URLSearchParams(window.location.search).get('search');
-                if (initialSearch) {
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) {
-                        searchInput.value = initialSearch;
-                        const clearBtn = document.getElementById('clearSearch');
-                        if (clearBtn) clearBtn.style.display = 'inline-block';
-                        filterFacilities();
-                    }
-                }
-
-                return;
+                if (!data || !data.projects) throw new Error('No projects in response');
+                return data;
             } catch (candidateError) {
                 console.warn('Facilities script: failed to load dataset from', candidateUrl, candidateError);
                 failureSummaries.push(candidateUrl + ' → ' + candidateError.message);
             }
         }
-
-        const summaryMessage = failureSummaries.length
-            ? 'Tried ' + failureSummaries.length + ' URL(s): ' + failureSummaries.join('; ')
-            : 'No dataset URLs were available.';
-
-        console.error('Facilities script: unable to load facilities data. ' + summaryMessage);
-        facilitiesContainer.innerHTML = '<p>Error loading facilities data. ' + summaryMessage + '</p>';
+        throw new Error('Tried ' + failureSummaries.length + ' URL(s): ' + failureSummaries.join('; '));
     })();
+
+    // Folders and the feed download side by side; cards need both.
+    directoryDataPromise = Promise.all([loadDataset, loadFolders]).then(([data]) => data);
+    directoryDataPromise.catch(() => { directoryDataPromise = null; });
+    return directoryDataPromise;
+};
+
+// The parent company tab renders the first time it is shown: on load when it
+// is the open tab, otherwise on kop:company-tab-shown from the tab switcher.
+let companyTabStarted = false;
+function startCompanyTab() {
+    if (companyTabStarted) return;
+    const facilitiesContainer = document.getElementById('facilities-container');
+    if (!facilitiesContainer) return;
+    companyTabStarted = true;
+
+    window.kopDirectoryData().then(data => {
+        displayFacilities(data, 'facilities-container');
+
+        // Re-setup event listeners after data is loaded to ensure they work
+        setupEventListeners();
+
+        // Deep link: ?search= (used by the site search results page)
+        // pre-fills the filter once the facilities are rendered.
+        const initialSearch = new URLSearchParams(window.location.search).get('search');
+        const panel = document.getElementById('kop-dir-panel-company');
+        const onLocationTab = new URLSearchParams(window.location.search).get('view') === 'location';
+        if (initialSearch && !onLocationTab && (!panel || !panel.hidden)) {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = initialSearch;
+                const clearBtn = document.getElementById('clearSearch');
+                if (clearBtn) clearBtn.style.display = 'inline-block';
+                filterFacilities();
+            }
+        }
+    }).catch(error => {
+        companyTabStarted = false;
+        console.error('Facilities script: unable to load facilities data. ' + error.message);
+        facilitiesContainer.innerHTML = '<p>Error loading facilities data. ' + escapeHtmlValue(error.message) + '</p>';
+    });
+}
+
+document.addEventListener('kop:company-tab-shown', startCompanyTab);
+document.addEventListener('DOMContentLoaded', function() {
+    const facilitiesContainer = document.getElementById('facilities-container');
+    if (!facilitiesContainer) {
+        console.info('Facilities script: no facilities-container element present, skipping data fetch.');
+        return;
+    }
+
+    // Setup your template features when the container exists
+    setupAlphabetFilter();
+    setupEventListeners();
+
+    // Start the download at once whichever tab is open.
+    window.kopDirectoryData().catch(() => {});
+
+    const panel = document.getElementById('kop-dir-panel-company');
+    if (!panel || !panel.hidden) startCompanyTab();
 });
 
 })();

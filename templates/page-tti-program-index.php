@@ -146,7 +146,7 @@ window.locationIndexConfig = {
             else url.searchParams.delete('view');
             window.history.replaceState(null, '', url.toString());
         } catch (e) {}
-        if (view === 'location') document.dispatchEvent(new Event('kop:location-tab-shown'));
+        document.dispatchEvent(new Event(view === 'location' ? 'kop:location-tab-shown' : 'kop:company-tab-shown'));
     }
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () { show(tab.getAttribute('data-view')); });
