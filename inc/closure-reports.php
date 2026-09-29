@@ -331,9 +331,11 @@ function kop_closure_article_text($url, $max = 9000) {
 }
 
 /**
- * Ask Groq, falling back to the smaller model on a rate limit: token limits
- * are per model, so it usually still has room (as in process-news-ai.php).
- * Throws the last error, whose message says "rate limit" when both were out.
+ * Ask Groq, falling back to the smaller model on a rate limit (token limits
+ * are per model, so it usually still has room, as in process-news-ai.php) or
+ * when Groq could not produce valid JSON (HTTP 400 "Failed to validate
+ * JSON", which a second model usually gets past). Throws the last error,
+ * whose message says "rate limit" when every model was out.
  */
 function kop_closure_groq($prompt, $max_tokens = 2048) {
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
@@ -342,7 +344,8 @@ function kop_closure_groq($prompt, $max_tokens = 2048) {
         try {
             return kop_ai_generate('groq', kop_ai_api_keys(), $prompt, array('maxTokens' => $max_tokens, 'groqModel' => $model));
         } catch (Throwable $e) {
-            if ($i === count($models) - 1 || stripos($e->getMessage(), 'rate limit') === false) {
+            $retry = stripos($e->getMessage(), 'rate limit') !== false || stripos($e->getMessage(), 'validate JSON') !== false;
+            if ($i === count($models) - 1 || !$retry) {
                 throw $e;
             }
         }

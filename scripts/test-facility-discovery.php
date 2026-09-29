@@ -90,6 +90,8 @@ $check('fields cleaned: state upper-cased, status and years typed, type from the
     $s['state'] === 'MD' && $s['status'] === 'Closed' && $s['endYear'] === 2026 && $s['type'] === 'Juvenile Justice RTC' && $s['gender'] === 'Male');
 $check('a same-as id from the name\'s own list is kept', $e['Ashville Academy for Girls']['sameAs'] === 11656);
 $check('a same-as id from another name\'s list is dropped', $e['Maryland Department of Juvenile Services']['sameAs'] === null);
+$e3 = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'Walker Point', 'kind' => 'facility', 'status' => 'suspended')))), array('Walker Point'), array());
+$check('a temporary closure is kept as Suspended', $e3['Walker Point']['status'] === 'Suspended');
 $check('kinds kept', $e['Hope unit']['kind'] === 'vague' && $e['Sheppard Pratt']['kind'] === 'provider');
 $check('no names array is unreadable', kop_facdisc_parse_reply('{"closures":[]}', $asked, array()) === null);
 $e2 = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'SILVER OAK ACADEMY (Maryland)', 'kind' => 'facility', 'type' => 'Prison')))), array('Silver Oak Academy'), array());

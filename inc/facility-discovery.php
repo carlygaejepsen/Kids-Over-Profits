@@ -329,14 +329,14 @@ function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, 
         }
     }
     $p .= "\nReturn ONLY a JSON object with one entry per name, in the same order:\n";
-    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|provider|organization|vague","sameAs":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
+    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|provider|organization|vague","sameAs":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Suspended|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
     $p .= "kind:\n";
     $p .= "- facility: one specific youth residential program or site, named well enough to identify (a detention center, an academy, a ranch, a group home).\n";
     $p .= "- provider: a psychiatric hospital or ward, outpatient clinic, day school, day treatment or partial hospitalization program.\n";
     $p .= "- organization: an agency, department, court, police force, law firm, company, charity, church, school district, or anything that is not one residential site. A company that runs programs is an organization; its programs are facilities.\n";
     $p .= "- vague: a description rather than a name (\"the facility\", \"an unnamed children's home\", \"Hope unit\", \"Safe\"), or a name too generic to identify one place.\n";
     $p .= "sameAs: the id of a listed record that is the same place (a misspelling, a former or later name, the same site under an operator's name). Only an id from that name's list; null when none is the same place. Two different sites with similar names are not the same.\n";
-    $p .= "For a facility, fill the rest only from the article: officialName (its correct full name), otherNames (other names the article gives it), city, state or country, type (one of: " . implode(', ', kop_facdisc_types()) . '; empty if unclear), status (Closed only if the article says it closed), startYear and endYear (only years the article gives), operator (the company or agency running it), gender. Leave a field empty rather than guess.' . "\n";
+    $p .= "For a facility, fill the rest only from the article: officialName (its correct full name), otherNames (other names the article gives it), city, state or country, type (one of: " . implode(', ', kop_facdisc_types()) . '; empty if unclear), status (Closed only if the article says it closed for good; Suspended if it is temporarily closed, its license or admissions suspended), startYear and endYear (only years the article gives), operator (the company or agency running it), gender. Leave a field empty rather than guess.' . "\n";
     return $p;
 }
 
@@ -400,7 +400,7 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
             'state'        => preg_match('/^[A-Z]{2}$/', $state) ? $state : '',
             'country'      => $str($e['country'] ?? '', 100),
             'type'         => isset($types[$str($e['type'] ?? '')]) ? $str($e['type']) : '',
-            'status'       => in_array($status, array('Open', 'Closed'), true) ? $status : 'Unknown',
+            'status'       => in_array($status, array('Open', 'Closed', 'Suspended'), true) ? $status : 'Unknown',
             'startYear'    => $year($e['startYear'] ?? null),
             'endYear'      => $year($e['endYear'] ?? null),
             'operator'     => $str($e['operator'] ?? ''),
