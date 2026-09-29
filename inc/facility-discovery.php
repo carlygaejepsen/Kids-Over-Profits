@@ -763,6 +763,7 @@ function kop_facdisc_remove(PDO $pdo, $candidate_id, $reviewer) {
     if (!$c || $c['decision'] !== 'created' || !$c['facility_id']) {
         throw new RuntimeException('Only a record the scan created can be removed here.');
     }
+    require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';   // kop_migration_tables(), the write lock
     $detail = json_decode((string) $c['detail'], true) ?: array();
     $fid = (int) $c['facility_id'];
     $opts = array('pdo' => $pdo, 'prefix' => $wpdb->prefix);
