@@ -5550,6 +5550,18 @@ function kop_state_collect_news($state_name) {
     }, $rows);
 }
 
+/**
+ * Drop the review-workflow columns (who submitted, reviewer notes) from a
+ * record row before it goes out in a public feed. Collectors that SELECT *
+ * run every row through this; add any new private column here.
+ */
+function kop_public_record_row($row) {
+    foreach (array('submitted_by', 'submitter_ip', 'submission_notes', 'reviewer_notes', 'reviewed_by') as $private) {
+        unset($row[$private]);
+    }
+    return $row;
+}
+
 function kop_state_collect_lawsuits($state_name) {
     global $wpdb;
     $table = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", 'lawsuits'));
@@ -5568,7 +5580,7 @@ function kop_state_collect_lawsuits($state_name) {
         foreach ($json_fields as $f) {
             $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
         }
-        return $row;
+        return kop_public_record_row($row);
     }, $rows);
 }
 
@@ -5590,7 +5602,7 @@ function kop_state_collect_legislation($state_name) {
         foreach ($json_fields as $f) {
             $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
         }
-        return $row;
+        return kop_public_record_row($row);
     }, $rows);
 }
 

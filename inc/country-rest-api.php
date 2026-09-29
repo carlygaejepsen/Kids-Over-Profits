@@ -249,7 +249,7 @@ function kop_country_collect_lawsuits($country_name) {
         foreach ($json_fields as $f) {
             $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
         }
-        return $row;
+        return kop_public_record_row($row);
     }, $rows);
 }
 
@@ -271,7 +271,7 @@ function kop_country_collect_legislation($country_name) {
         foreach ($json_fields as $f) {
             $row[$f] = json_decode($row[$f] ?? '[]', true) ?: array();
         }
-        return $row;
+        return kop_public_record_row($row);
     }, $rows);
 }
 

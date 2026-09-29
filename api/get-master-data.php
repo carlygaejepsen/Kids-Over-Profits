@@ -213,6 +213,27 @@ try {
     require_once dirname(__DIR__) . '/inc/facility-store.php';
     if (!kop_facility_testimony_viewer_is_admin()) {
         $projects = kop_facility_testimony_redact($projects);
+
+        // Same rule as api/get-referrers-only.php: referrer contact details
+        // stay in the admin form, the public side is not a listing service.
+        $strip_contact = function ($value) use (&$strip_contact) {
+            if (!is_array($value)) {
+                return $value;
+            }
+            foreach ($value as $k => $v) {
+                if (is_string($k) && in_array($k, ['phone', 'email', 'phoneNumber', 'emailAddress', 'fax'], true)) {
+                    unset($value[$k]);
+                    continue;
+                }
+                $value[$k] = $strip_contact($v);
+            }
+            return $value;
+        };
+        foreach ($projects as $key => $project) {
+            if (($project['_sourceTable'] ?? '') === 'referrers') {
+                $projects[$key] = $strip_contact($project);
+            }
+        }
     }
 
     echo json_encode([

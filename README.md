@@ -2,6 +2,14 @@
 
 This repository is the source for the Kids Over Profits WordPress child theme. Treat it as the theme codebase itself, not as a full local WordPress checkout.
 
+## Open Source, Open Data
+
+Kids Over Profits is open source. Advocates, researchers, journalists and survivors are welcome to reuse it.
+
+- **Code**: GNU General Public License v2 or later, see [LICENSE](LICENSE).
+- **Data and writing**: Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0), see [DATA-LICENSE.md](DATA-LICENSE.md). Credit "Kids Over Profits (https://kidsoverprofits.org)" and share what you build from it under the same license.
+- **Source**: https://github.com/carlygaejepsen/Kids-Over-Profits
+
 ## Repo Assumptions
 
 - The repo can be mounted into any compatible WordPress install.
