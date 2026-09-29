@@ -76,6 +76,15 @@ $check('new programs from the dry run stay new', kop_facdisc_near_duplicate($pdo
     && kop_facdisc_near_duplicate($pdo, "Walker's Point Youth and Family Center", 'WI', 'Milwaukee') === null);
 $check('a name of stopwords only has no look-alikes', kop_facdisc_lookalikes($pdo, 'Youth Academy Center', $index) === array());
 
+$check('agencies, police, courts, colleges and jails are decided without Groq',
+    kop_facdisc_obvious_kind('Oregon State Police') === 'organization' && kop_facdisc_obvious_kind('Pinellas Technical College') === 'organization'
+    && kop_facdisc_obvious_kind('Tillamook County Jail') === 'organization' && kop_facdisc_obvious_kind("Tillamook County Sheriff's Office") === 'organization'
+    && kop_facdisc_obvious_kind('Sheppard Pratt Hospital') === 'provider');
+$check('programs still go to the model', kop_facdisc_obvious_kind('Silver Oak Academy') === null
+    && kop_facdisc_obvious_kind('Knox County Juvenile Detention Center') === null && kop_facdisc_obvious_kind('Hillsborough Residential Hospital for Youth') === null);
+$news['known'] = array(kop_normalize_name_key('Silver Oak Academy') => array('decision' => 'needs_place', 'facility_id' => null));
+$check('a name held for want of a place is asked again', in_array('Silver Oak Academy', kop_facdisc_unresolved($pdo, $news, $index), true));
+
 // ---------------------------------------------------------------------------
 echo "-- Reading the model's reply --\n";
 $asked = array('Silver Oak Academy', 'Hope unit', 'Ashville Academy for Girls', 'Maryland Department of Juvenile Services', 'Sheppard Pratt');

@@ -133,7 +133,9 @@ function kop_facdisc_unresolved(PDO $pdo, array $news, array $index, array &$dec
         if (kop_resolve_mention_to_facility($name, $index) !== null) {
             continue;
         }
-        if (isset($news['known'][$key])) {
+        // A name held for want of a place is asked again: another article,
+        // or a better prompt, may place it.
+        if (isset($news['known'][$key]) && $news['known'][$key]['decision'] !== 'needs_place') {
             $decided[$key] = $news['known'][$key];
             continue;
         }
@@ -266,11 +268,27 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
     return null;
 }
 
+/**
+ * Names that are plainly not a youth residential site - a department, a
+ * police force, a court, a college, a law firm, an adult jail - decided
+ * without spending a Groq call on them. Returns 'organization', 'provider'
+ * or null when the model has to look.
+ */
+function kop_facdisc_obvious_kind($name) {
+    if (preg_match('/\b(department|dept|police|sheriff|sheriff\'s|court|courts|university|college|attorney|attorneys|llp|pllc|commission|agency|authority|ministry|bureau|division|office|council|legislature|senate|museum|newspaper|jail|prison|penitentiary|diocese)\b/i', $name)) {
+        return 'organization';
+    }
+    if (preg_match('/\b(hospital|clinic)\b/i', $name) && !preg_match('/\b(residential|youth|academy|ranch|school)\b/i', $name)) {
+        return 'provider';
+    }
+    return null;
+}
+
 /** Changes when the article's names, or its unmatched closure programs, do. */
 function kop_facdisc_news_hash(array $news) {
     return md5(implode("\x1f", array(
         (string) ($news['facilities_mentioned'] ?? ''), implode('|', $news['closure_programs'] ?? array()),
-        $news['article_title'] ?? '', 'v1',
+        $news['article_title'] ?? '', 'v2',
     )));
 }
 
@@ -318,10 +336,19 @@ function kop_facdisc_articles(PDO $pdo, $limit, array $only_ids = array()) {
         }
         $row['hash'] = $hash;
         $out[] = $row;
-        if (count($out) >= $limit) {
-            break;
-        }
     }
+    // Groq allows a handful of articles a run, so spend them where a program
+    // is likeliest: names that read like one, reviewed articles, closures.
+    $score = static function ($row) {
+        $names = (string) $row['facilities_mentioned'] . ' ' . implode(' ', $row['closure_programs']);
+        return (preg_match('/\b(academy|ranch|school|treatment|residential|wilderness|lodge|camp|home|house|village|farm|institute|center|centre)\b/i', $names) ? 4 : 0)
+            + ($row['closure_programs'] ? 2 : 0)
+            + (in_array($row['status'], array('approved', 'published'), true) ? 1 : 0);
+    };
+    usort($out, static function ($a, $b) use ($score) {
+        return array($score($b), (int) $b['id']) <=> array($score($a), (int) $a['id']);
+    });
+    $out = array_slice($out, 0, $limit);
     return $out;
 }
 
@@ -360,8 +387,8 @@ function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, 
     $p .= "- provider: a psychiatric hospital or ward, outpatient clinic, day school, day treatment or partial hospitalization program.\n";
     $p .= "- organization: an agency, department, court, police force, law firm, company, charity, church, school district, or anything that is not one residential site. A company that runs programs is an organization; its programs are facilities.\n";
     $p .= "- vague: a description rather than a name (\"the facility\", \"an unnamed children's home\", \"Hope unit\", \"Safe\"), or a name too generic to identify one place.\n";
-    $p .= "sameAs: the id of a listed record that is the same place (a misspelling, a former or later name, the same site under an operator's name). Only an id from that name's list; null when none is the same place. Two different sites with similar names are not the same.\n";
-    $p .= "For a facility, fill the rest only from the article: officialName (its correct full name), otherNames (other names the article gives it), city, state or country, type (one of: " . implode(', ', kop_facdisc_types()) . '; empty if unclear), status (Closed only if the article says it closed for good; Suspended if it is temporarily closed, its license or admissions suspended), startYear and endYear (only years the article gives), operator (the company or agency running it), gender. Leave a field empty rather than guess.' . "\n";
+    $p .= "sameAs: the id of a listed record that is the same residential site (a misspelling, a former or later name, the same site under an operator's name). Only an id from that name's list; null when none is the same place. Two different sites with similar names are not the same, and a college, school district, company or agency that shares a word with a listed program is not that program.\n";
+    $p .= "For a facility, fill the rest only from the article. The state or country may come from anything the article says about where it is: a city, a county (\"Knox County\" in a Tennessee paper), the dateline, the outlet's own state, or the state agency involved. officialName (its correct full name), otherNames (other names the article gives it), city, state or country, type (one of: " . implode(', ', kop_facdisc_types()) . '; empty if unclear), status (Closed only if the article says it closed for good; Suspended if it is temporarily closed, its license or admissions suspended), startYear and endYear (only years the article gives), operator (the company or agency running it), gender. Leave a field empty rather than guess.' . "\n";
     return $p;
 }
 
@@ -593,7 +620,27 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
         }
         return array('none', array(), '');
     }
-    $names = array_slice($names, 0, 12);
+    $out = array();
+    $asked = array();
+    foreach ($names as $name) {
+        $kind = kop_facdisc_obvious_kind($name);
+        if ($kind === null) {
+            $asked[] = $name;
+            continue;
+        }
+        $decision = $kind === 'provider' ? 'provider' : 'not_facility';
+        if ($write) {
+            kop_facdisc_record($pdo, $name, $news, $decision, null, array('entry' => array('name' => $name, 'kind' => $kind, 'officialName' => $name, 'by' => 'name')));
+        }
+        $out[$name] = array($decision, null, array('name' => $name, 'kind' => $kind, 'officialName' => $name, 'city' => '', 'state' => '', 'country' => '', 'type' => '', 'status' => 'Unknown'));
+    }
+    if (!$asked) {
+        if ($write) {
+            kop_facdisc_record_scan($pdo, $news['id'], $news['hash'], 'none', 'names only');
+        }
+        return array('none', $out, '');
+    }
+    $names = array_slice($asked, 0, 12);
     $lookalikes = array();
     foreach ($names as $name) {
         $lookalikes[$name] = kop_facdisc_lookalikes($pdo, $name, $index);
@@ -614,7 +661,6 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
         }
         return array('error', array(), 'Unreadable reply');
     }
-    $out = array();
     $created = false;
     foreach ($entries as $name => $entry) {
         try {
@@ -887,9 +933,22 @@ function kop_render_facilities_from_news_page() {
                     break;
                 case 'scan':
                     $ids = array_filter(array_map('intval', preg_split('/[\s,]+/', (string) ($_POST['kop_fd_news'] ?? ''))));
-                    $r = kop_facdisc_scan_batch($pdo, $ids ? count($ids) : 10, 90, true, $ids);
-                    $msg = sprintf('Scanned %d articles: %d new facilities, %d closure reports matched, %d failed.',
-                        $r['counts']['scanned'], $r['counts']['created'], $r['counts']['rematched'] ?? 0, $r['counts']['error']);
+                    $lines = array();
+                    $log = static function ($news, $outcome, $decided, $detail) use (&$lines, $decisions) {
+                        if ($outcome === 'error') {
+                            $lines[] = '#' . $news['id'] . ': failed (' . $detail . ')';
+                        }
+                        foreach ($decided as $name => $d) {
+                            $lines[] = '#' . $news['id'] . ': ' . $name . ' - ' . ($decisions[$d[0]] ?? $d[0]) . ($d[1] ? ' #' . $d[1] : '');
+                        }
+                    };
+                    $r = kop_facdisc_scan_batch($pdo, $ids ? count($ids) : 15, 110, true, $ids, $log);
+                    $msg = sprintf('Scanned %d articles: %d new facilities, %d closure reports matched, %d failed%s.',
+                        $r['counts']['scanned'], $r['counts']['created'], $r['counts']['rematched'] ?? 0, $r['counts']['error'],
+                        $r['counts']['error'] ? ' (Groq allows a few articles a minute; the hourly run carries on)' : '');
+                    if ($lines) {
+                        echo '<div class="notice notice-info"><p>' . implode('<br>', array_map('esc_html', $lines)) . '</p></div>';
+                    }
                     break;
                 default:
                     $msg = '';
@@ -902,10 +961,12 @@ function kop_render_facilities_from_news_page() {
         }
     }
 
-    $filter = isset($_GET['fd']) ? sanitize_key($_GET['fd']) : 'created';
-    if (!isset($decisions[$filter])) {
-        $filter = 'created';
+    $filter = isset($_GET['fd']) ? sanitize_key($_GET['fd']) : 'recent';
+    if ($filter !== 'recent' && !isset($decisions[$filter])) {
+        $filter = 'recent';
     }
+    $waiting = (int) $pdo->query("SELECT COUNT(*) FROM news_submissions n LEFT JOIN news_facility_scans s ON s.news_id = n.id
+                                   WHERE s.news_id IS NULL AND n.status NOT IN ('rejected','deleted','promotional')")->fetchColumn();
     $counts = array();
     foreach ($pdo->query('SELECT decision, COUNT(*) AS n FROM news_facility_candidates GROUP BY decision') as $row) {
         $counts[$row['decision']] = (int) $row['n'];
@@ -913,7 +974,10 @@ function kop_render_facilities_from_news_page() {
     echo '<p>Facilities the hourly news scan found that were not in the database. A specific youth residential program with a known state or country '
         . 'is added as a new record from what the article says, cited in its notes, placed on its state hub and linked to the article. '
         . 'One already in the database under another spelling is linked to that record. Remove takes out a record the scan created while nobody has edited it.</p>';
-    echo '<ul class="subsubsub">';
+    echo '<p style="color:#666">' . $waiting . ' saved articles not scanned yet. The hourly run gets through a handful at a time (Groq\'s limit), '
+        . 'likeliest programs first.</p>';
+    echo '<ul class="subsubsub"><li><a href="' . esc_url(add_query_arg('fd', 'recent', $base)) . '"' . ($filter === 'recent' ? ' class="current"' : '') . '>'
+        . 'All recent (' . (int) array_sum($counts) . ')</a> | </li>';
     $i = 0;
     foreach ($decisions as $key => $label) {
         echo '<li><a href="' . esc_url(add_query_arg('fd', $key, $base)) . '"' . ($filter === $key ? ' class="current"' : '') . '>'
@@ -928,8 +992,8 @@ function kop_render_facilities_from_news_page() {
 
     $stmt = $pdo->prepare('SELECT c.*, n.article_title, n.publication_name, n.publication_date, n.article_url
                              FROM news_facility_candidates c LEFT JOIN news_submissions n ON n.id = c.news_id
-                            WHERE c.decision = ? ORDER BY c.updated_at DESC LIMIT 300');
-    $stmt->execute(array($filter));
+                            WHERE (? = \'recent\' OR c.decision = ?) ORDER BY c.updated_at DESC, c.id DESC LIMIT 300');
+    $stmt->execute(array($filter, $filter));
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if (!$rows) {
         echo '<p>Nothing here.</p></div>';
@@ -940,7 +1004,8 @@ function kop_render_facilities_from_news_page() {
     foreach ($rows as $r) {
         $detail = json_decode((string) $r['detail'], true) ?: array();
         $e = $detail['entry'] ?? array();
-        echo '<tr><td>' . (int) $r['id'] . '</td><td><strong>' . esc_html($r['mention']) . '</strong><br><a href="' . esc_url($r['article_url']) . '" target="_blank" rel="noopener">'
+        echo '<tr><td>' . (int) $r['id'] . '</td><td><strong>' . esc_html($r['mention']) . '</strong>'
+            . ($filter === 'recent' ? ' <span style="color:#666">(' . esc_html($decisions[$r['decision']] ?? $r['decision']) . ')</span>' : '') . '<br><a href="' . esc_url($r['article_url']) . '" target="_blank" rel="noopener">'
             . esc_html($r['article_title'] ?: 'article #' . (int) $r['news_id']) . '</a><br><span style="color:#666">' . esc_html(trim($r['publication_name'] . ' ' . $r['publication_date'])) . '</span></td><td>';
         if ($r['facility_id']) {
             echo kop_closure_facility_cell($pdo, (int) $r['facility_id']) . '<br>';
