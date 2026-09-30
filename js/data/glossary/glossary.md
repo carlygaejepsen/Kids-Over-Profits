@@ -1,6 +1,6 @@
 # TTI Glossary
 
-updated: 2026-09-23
+updated: 2026-09-28
 
 The Troubled Teen Industry has its own language. Programs rename punishment, isolation, and control as "consequences," "reflection," and "support," and families often learn what the words meant only years later. This glossary collects that language from program handbooks, staff manuals, state records, and survivor accounts.
 
@@ -92,7 +92,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Deal under the table**: any agreement a parent made with their child outside the treatment team, like promising a visit or discharge date. Programs threatened to expel families who did it. Used at: *Island View, Trinity Teen Solutions*
 
-**Drop**: being demoted to a lower level or phase. Reportedly used at: *Spring Ridge Academy*
+**Drop**: being demoted to a lower level or phase. Reportedly used at: *Spring Ridge Academy, Skyland Trail Adolescent RTC*
 
 **Escort**: a restriction where an older student accompanies another student at all times. Compare **Buddy System**, **Beltlooping**. Used at: *CEDU*
 
@@ -132,6 +132,8 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Impact letter**: a letter from parents listing ways the child's behavior hurt the family, which the child was usually made to read or hear in group or therapy. Each family member might write their own. Used at: *Solstice East, Re-Creation Retreat*; reportedly used at: *Second Nature*
 
+**Intake period**: no family phone contact so the teen could reflect "without any outside influence." Used at: *Ironwood*; reportedly used at: *Mountain Valley Treatment Center*
+
 **Iso**: isolation, confinement alone in a room as punishment. Programs had many names for it. Compare **Observation Placement**, **Quiet room**, **Seclusion Room**, **Time Out**, **MPR**. Reportedly used at: *Spring Ridge Academy*
 
 **Junior Staff** *(aka Staff Assistant, Jr. Staff)*: upper-level students given staff duties, expected to "stand up to and confront their peers." At Thayer, students had to apply with a résumé, cover letter, and staff recommendations. See **Retroflexive Reformation**. Used at: *Spring Creek Lodge, Tranquility Bay, Academy at Ivy Ridge (Service status), Thayer Learning Center*
@@ -154,7 +156,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Motivating**: frantic arm-waving and bouncing in group to be called on to speak; students who didn't show enough enthusiasm were seen as resisting. Reportedly used at: *The Seed*
 
-**Move up**: to advance to a higher level or phase. Reportedly used at: *Spring Ridge Academy*
+**Move up**: to advance to a higher level or phase. Reportedly used at: *Spring Ridge Academy, Skyland Trail Adolescent RTC*
 
 **No talk**: a rule banning conversation, such as in the van whenever music was playing. Compare **Code Silence**. Used at: *Moonridge Academy*
 
@@ -268,7 +270,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Religious exemption** *(as a strategy)*: faith-based programs arguing they are ministries, not treatment programs, and so shouldn't be licensed as treatment. Teen Challenge's 1993 position paper complains that states "demand" drug and alcohol licensing, forcing centers "to stray from their mission statement." See **Discipleship program**. Used at: *Teen Challenge*
 
-**Residential Treatment Center (RTC)** *(aka Residential Treatment Facility, RTF)*: a licensed 24-hour facility that houses youth and provides clinical and psychiatric care.
+**Residential Treatment Center (RTC)** *(aka Residential Treatment Facility, RTF, Residential)*: a licensed 24-hour facility that houses youth and provides clinical and psychiatric care.
 
 **Restraint**: physically, mechanically, or chemically restricting a person's movement. The TTI has a long record of restraint-related injuries and deaths. Several programs expelled or transferred any student who needed restraint (see **Zero Tolerance Policy**), and Aurora docked a student's advancement points for being restrained. See **Booty Juice**.
 
@@ -1053,8 +1055,6 @@ See **Broken record**, **Guilt loading**. A child saying they weren't getting en
 #### Ironwood
 
 *Source: FAQ. Maine.*
-
-**Intake period**: no family phone contact so the teen could reflect "without any outside influence." Used at: *Ironwood*
 
 **Intervention / Rehabilitation and Transition**: Ironwood's restrictive and less restrictive tracks. Used at: *Ironwood*
 
