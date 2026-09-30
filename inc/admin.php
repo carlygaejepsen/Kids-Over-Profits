@@ -480,6 +480,10 @@ function kop_tool_page_specs() {
         // Frequently asked questions; text in js/data/pages/faq.json (Page Text editor).
         // A draft so the owner reads every answer before publishing by hand.
         array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'draft'),
+        // State trackers share one template, so 'shared' creates the page by slug
+        // even though other pages use the template. Oklahoma (owner, 2026-09-30).
+        array('template' => 'page-state-reports.php', 'title' => 'Oklahoma Inspection Reports', 'slug' => 'ok-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Oklahoma Department of Human Services, Child Care Services, which licenses residential programs and shelters for children and posts every monitoring visit and substantiated complaint at <a href="http://www.publicview.okdhs.org/ResidentialLocator/Default.aspx">its residential locator</a>. Oklahoma shows only the last 36 months at a time; visits that age out of the state&#8217;s window stay here. The state publishes only substantiated complaints, and complaints that rise to the level of abuse or neglect go to Child Welfare Services and are not published, so a program with no complaints listed may still have had them.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -622,8 +626,9 @@ function kop_ensure_tool_pages() {
     foreach (kop_tool_page_specs() as $spec) {
         $template_value = 'templates/' . $spec['template'];
 
-        // 1. A page already uses this template anywhere — nothing to do.
-        if (kop_find_template_page_url($spec['template'])) {
+        // 1. A page already uses this template anywhere — nothing to do
+        //    (a shared template, such as the state trackers', goes by slug).
+        if (empty($spec['shared']) && kop_find_template_page_url($spec['template'])) {
             continue;
         }
 
@@ -640,7 +645,7 @@ function kop_ensure_tool_pages() {
             'post_name'    => $spec['slug'],
             'post_status'  => $spec['status'],
             'post_type'    => 'page',
-            'post_content' => '',
+            'post_content' => $spec['content'] ?? '',
         ));
         if ($page_id && !is_wp_error($page_id)) {
             update_post_meta($page_id, '_wp_page_template', $template_value);
@@ -660,7 +665,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '14';
+    $version = '15';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
