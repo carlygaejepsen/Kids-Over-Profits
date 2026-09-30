@@ -156,18 +156,11 @@ The date is when each was last confirmed open.
    the program's doc library. Start with Articles (exact matches are
    pre-ticked), then News items. "No record yet" holds ~230 program articles
    with no facility record, a lead list for new records.
-10. **Unsilenced archive md5 list** (2026-09-29). Over SSH, from
-    `~/public_html/wp-content/themes/child`, run
-    `/opt/cpanel/ea-php82/root/usr/bin/php api/list-unsilenced-files.php probe`,
-    then the same without `probe` (add `--minutes=25`) until it says "Done".
-    Read-only (Drive API reads through FileBird Cloud's connection, no
-    charge). Then `scp` `~/kop-import/unsilenced/files.jsonl` to
-    `tmp/unsilenced/` and run `python scripts/build-unsilenced-links.py`
-    (after `scripts/sync-prod-sqlite.py`); commit `js/data/unsilenced/`. The
-    facility and operator pages then list the Unsilenced documents KOP has
-    no copy of. 684 facilities get a page on this alone; about 5,900
-    Unsilenced folders stay unmatched (adult care, and programs KOP names
-    differently), listed in `tmp/unsilenced/build-report.md`.
+10. (Done 2026-09-30: the Unsilenced md5 list ran; 148,269 files. Rebuild
+    with `api/list-unsilenced-files.php restart` then the build when
+    Unsilenced adds documents. About 5,900 of their folders stay unmatched,
+    listed in `tmp/unsilenced/build-report.md`; a past or other name on a
+    facility record ties one in.)
 
 ### Hosting
 

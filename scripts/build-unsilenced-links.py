@@ -8,6 +8,9 @@ Unsilenced's Drive. A document counts as held when
 
   - its Drive md5 equals the md5 of a file in KOP's media library
     (mdd_hash / _kop_import_md5), wherever in the library it is filed, or
+  - a media library file has the same distinctive name (KOP's copies of
+    Unsilenced documents are often re-saved, so the bytes differ; names that
+    recur, like "DocumentInquiry" or "Parent Manual", never count), or
   - it is a state inspection report KOP's scrapers already hold for that
     facility (Arizona INSP- numbers, North Carolina report numbers, California
     printouts of a visit date KOP has).
@@ -157,6 +160,16 @@ def load_kop(db):
                     operators[v].add(int(oid))
                     operators[re.sub(r's$', '', v)].add(int(oid))
 
+    # File names and titles in the media library, for copies whose bytes
+    # differ from Unsilenced's.
+    names = collections.Counter()
+    for title, path in db.execute(
+            "SELECT p.post_title, m.meta_value FROM wpdl_posts p JOIN wpdl_postmeta m "
+            "ON m.post_id = p.ID AND m.meta_key = '_wp_attached_file' WHERE p.post_type = 'attachment'"):
+        for k in {file_key(os.path.basename(path or '')), file_key(title or '')}:
+            if k:
+                names[k] += 1
+
     md5s = set()
     for (h,) in db.execute("SELECT meta_value FROM wpdl_postmeta WHERE meta_key IN ('mdd_hash', '_kop_import_md5')"):
         if h and re.fullmatch(r'[0-9a-fA-F]{32}', h.strip()):
@@ -171,7 +184,19 @@ def load_kop(db):
         d = iso_date(rdate)
         if d:
             report_dates[((state or '').upper(), norm(fname))].add(d)
-    return facilities, by_words, operators, md5s, report_ids, report_dates
+    return facilities, by_words, operators, md5s, names, report_ids, report_dates
+
+
+def file_key(name):
+    """A file name reduced for comparison: no extension, no copy markers
+    ("(1)", "Copy of", WordPress's "-pdf.jpg" preview suffix), letters and
+    digits only. A trailing number stays: DocumentInquiry-3 is not -26."""
+    n = unicodedata.normalize('NFKD', name or '').encode('ascii', 'ignore').decode().lower().strip()
+    n = re.sub(r'-pdf\.jpe?g$', '', n)
+    n = re.sub(r'\.(pdf|jpe?g|png|gif|webp|docx?|tiff?|rtf|txt|xlsx?|mp4|html?)$', '', n)
+    n = re.sub(r'\s*\(\d+\)$', '', n)
+    n = re.sub(r'^copy of ', '', n)
+    return re.sub(r'[^a-z0-9]', '', n)
 
 
 def match_program(folder, state, facilities, by_words, operators):
@@ -242,7 +267,13 @@ def main():
     no_md5 = sum(1 for r in rows if not r.get('md5'))
 
     db = sqlite3.connect(args.db)
-    facilities, by_words, operators, md5s, report_ids, report_dates = load_kop(db)
+    facilities, by_words, operators, md5s, kop_names, report_ids, report_dates = load_kop(db)
+    # A name only identifies a document when it is long enough and neither
+    # side uses it for several different files.
+    un_names = collections.Counter(file_key(r['name']) for r in rows)
+    def same_name_held(name):
+        k = file_key(name)
+        return len(k) >= 12 and kop_names.get(k, 0) >= 1 and un_names[k] <= 2
 
     # Program folder (state slug, folder name) -> ('f' or 'o', ids, how).
     programs = {}
@@ -271,6 +302,9 @@ def main():
         md5 = (r.get('md5') or '').lower()
         if md5 and md5 in md5s:
             stats['KOP has the same file'] += 1
+            continue
+        if same_name_held(r['name']):
+            stats['KOP has a copy under the same name'] += 1
             continue
         if held_as_inspection(r['name'], STATES.get(key[0], ''), name_variants(key[1]), report_ids, report_dates):
             stats['KOP has the inspection report'] += 1
@@ -306,7 +340,8 @@ def main():
                 json.dump(shard, fh, ensure_ascii=False, separators=(',', ':'))
             index[kind][str(i)] = len(files)
     with open(os.path.join(OUT, 'index.json'), 'w', encoding='utf8', newline='\n') as fh:
-        json.dump({'built': datetime.date.today().isoformat(), 'md5_checked': not no_md5,
+        # Google Docs have no md5; everything else must have one.
+        json.dump({'built': datetime.date.today().isoformat(), 'md5_checked': no_md5 <= len(rows) // 1000,
                    'facilities': index['f'], 'operators': index['o']}, fh, separators=(',', ':'))
 
     how = collections.Counter(m[2] for m in programs.values() if m)
