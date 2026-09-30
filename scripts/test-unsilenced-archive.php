@@ -81,6 +81,33 @@ $check('short top-level lists print open', strpos($html, '</p><ul class="kop-fp-
 $o = kop_unsilenced_archive('o', array(3, 4));
 $check('an operator merges its duplicate ids, each file once', $o && $o['count'] === 3, $o ? $o['count'] . ' files' : 'null');
 
+// ---- The monthly check (api/lib-unsilenced-check.php) -------------------------
+require dirname(__DIR__) . '/api/lib-unsilenced-check.php';
+$list = $fixture . '/files.jsonl';
+$row = function ($id, $name, $created, $program, $path) {
+    return json_encode(array('id' => $id, 'name' => $name, 'created' => $created, 'program' => $program, 'path' => $path)) . "\n";
+};
+file_put_contents($list,
+    $row('a', 'old.pdf', '2026-05-14T10:00:00.000Z', '1AbcdefghijKLMNOP', array('utah', 'Camp X'))
+    . $row('b', 'same-day.pdf', '2026-09-29T23:00:00.000Z', '1AbcdefghijKLMNOP', array('utah', 'Camp X'))
+    . $row('c', 'new.pdf', '2026-10-03T08:00:00.000Z', '1AbcdefghijKLMNOP', array('utah', 'Camp X', 'News'))
+    . $row('d', 'desktop.ini', '2026-10-03T08:00:00.000Z', '1AbcdefghijKLMNOP', array('utah', 'Camp X'))
+    . $row('e', 'other.pdf', '2026-10-04T08:00:00.000Z', '1Unmatched0000000', array('texas', 'Somewhere New'))
+    . $row('f', 'other2.pdf', '2026-10-05T08:00:00.000Z', '1Unmatched0000000', array('texas', 'Somewhere New')));
+$sum = kop_unsilenced_check_summary($list, $fixture);
+$check('check: counts files made after the build date only', $sum['complete'] && $sum['new'] === 3, json_encode(array($sum['files'], $sum['new'], $sum['new_listed'])));
+$check('check: skips non-documents', $sum['files'] === 5);
+$check('check: splits listed programs from the rest', $sum['new_listed'] === 1);
+$check('check: busiest folder first', $sum['top'][0]['folder'] === 'texas / Somewhere New' && !$sum['top'][0]['listed']);
+$check('check: quiet month sends nothing', !kop_unsilenced_check_should_mail($sum, 10));
+$check('check: enough new in listed programs mails', kop_unsilenced_check_should_mail($sum, 1));
+$check('check: a run that did not finish mails', kop_unsilenced_check_should_mail(array('complete' => false, 'folders_left' => 12)));
+$check('check: text names the build and marks unlisted folders',
+    strpos(kop_unsilenced_check_text($sum), 'since the build of 2026-09-29') !== false
+    && strpos(kop_unsilenced_check_text($sum), 'Somewhere New (not listed on KOP yet)') !== false);
+$check('check: a missing list is reported, not fatal', empty(kop_unsilenced_check_summary($fixture . '/nope.jsonl', $fixture)['complete']));
+@unlink($list);
+
 // ---- The real build, when present --------------------------------------------
 $real = dirname(__DIR__) . '/js/data/unsilenced';
 if (is_readable($real . '/index.json')) {

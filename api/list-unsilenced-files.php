@@ -10,15 +10,26 @@
  * one sync-drive-documents.php uses; Drive API reads are free.
  *
  *   Writes    ~/kop-import/unsilenced/files.jsonl   one line per file:
- *             {id, name, mime, md5, size, parent, path}
+ *             {id, name, mime, md5, size, created, parent, program, path}
  *             ~/kop-import/unsilenced/queue.json    folders still to list
  *   Resumes   each run lists folders for --minutes, then stops; the next run
  *             carries on from queue.json. "restart" starts over.
+ *
+ * Monthly check (cron, see docs/PLAN.md): "--check" lists into
+ * ~/kop-import/unsilenced/check/ instead, and once the list is complete
+ * counts the files Unsilenced added after the build in
+ * js/data/unsilenced/index.json, split into those in a program folder the
+ * pages already list and the rest. It mails the site's notification list
+ * (inc/submission-notify.php) when at least --min new files sit in listed
+ * programs or 100 anywhere, or when the run could not finish. The fresh list
+ * it leaves is what the next build reads.
  *
  * CLI only:
  *   php api/list-unsilenced-files.php probe              check the connection can read the archive
  *   php api/list-unsilenced-files.php --minutes=25
  *   php api/list-unsilenced-files.php restart --minutes=25
+ *   php api/list-unsilenced-files.php restart --check --minutes=120 [--min=10] [--dry]
+ *                                                        --dry prints the summary without mailing
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -26,12 +37,14 @@ if (php_sapi_name() !== 'cli') {
     exit('CLI only.');
 }
 
-$opts = array('minutes' => 25);
+$opts = array('minutes' => 25, 'min' => 10);
 foreach (array_slice($argv, 1) as $arg) {
-    if (preg_match('/^--minutes=(\d+)$/', $arg, $m)) $opts['minutes'] = max(1, (int)$m[1]);
+    if (preg_match('/^--(minutes|min)=(\d+)$/', $arg, $m)) $opts[$m[1]] = max(1, (int)$m[2]);
 }
 $probe   = in_array('probe', $argv, true);
 $restart = in_array('restart', $argv, true);
+$check   = in_array('--check', $argv, true);
+$dry     = in_array('--dry', $argv, true);
 set_time_limit(0);
 
 $lock = fopen(sys_get_temp_dir() . '/kop-list-unsilenced-files.lock', 'c');
@@ -57,6 +70,7 @@ if (!function_exists('njfb_cloud_get_settings_by_key') || !class_exists('NjFbClo
     exit(2);
 }
 require_once __DIR__ . '/lib-filebird-drive.php';
+require_once __DIR__ . '/lib-unsilenced-check.php';
 
 $roots_file = dirname(__DIR__) . '/js/data/unsilenced/roots.json';
 $roots = json_decode((string)@file_get_contents($roots_file), true);
@@ -65,7 +79,7 @@ if (!is_array($roots) || empty($roots['roots'])) {
     exit(2);
 }
 
-$out_dir = rtrim(getenv('HOME') ?: dirname(ABSPATH), '/') . '/kop-import/unsilenced';
+$out_dir = rtrim(getenv('HOME') ?: dirname(ABSPATH), '/') . '/kop-import/unsilenced' . ($check ? '/check' : '');
 if (!is_dir($out_dir) && !mkdir($out_dir, 0755, true)) {
     fwrite(STDERR, "Can't create {$out_dir}\n");
     exit(2);
@@ -79,7 +93,7 @@ function kop_lu_children($folder_id) {
     do {
         $query = array(
             'q'                         => "'" . $folder_id . "' in parents and trashed = false",
-            'fields'                    => 'nextPageToken, files(id, name, mimeType, md5Checksum, size)',
+            'fields'                    => 'nextPageToken, files(id, name, mimeType, md5Checksum, size, createdTime)',
             'pageSize'                  => '1000',
             'supportsAllDrives'         => 'true',
             'includeItemsFromAllDrives' => 'true',
@@ -107,7 +121,7 @@ if ($probe) {
 
 if ($restart || !file_exists($queue_file)) {
     $queue = array();
-    foreach ($roots['roots'] as $state => $id) $queue[] = array('id' => $id, 'path' => array($state));
+    foreach ($roots['roots'] as $state => $id) $queue[] = array('id' => $id, 'path' => array($state), 'program' => '');
     @unlink($files_file);
 } else {
     $queue = json_decode((string)file_get_contents($queue_file), true);
@@ -135,19 +149,24 @@ while ($queue && time() - $started < $opts['minutes'] * 60) {
     }
     array_shift($queue);
     if ($kids === null) continue;
+    // A folder right under a state folder is one program's; everything below
+    // it belongs to that program.
+    $program = count($folder['path']) === 2 ? $folder['id'] : ($folder['program'] ?? '');
     foreach ($kids as $f) {
         if ($f['mimeType'] === 'application/vnd.google-apps.folder') {
-            $queue[] = array('id' => $f['id'], 'path' => array_merge($folder['path'], array($f['name'])));
+            $queue[] = array('id' => $f['id'], 'path' => array_merge($folder['path'], array($f['name'])), 'program' => $program);
             continue;
         }
         fwrite($fh, json_encode(array(
-            'id'     => $f['id'],
-            'name'   => $f['name'],
-            'mime'   => $f['mimeType'],
-            'md5'    => $f['md5Checksum'] ?? '',
-            'size'   => isset($f['size']) ? (int)$f['size'] : 0,
-            'parent' => $folder['id'],
-            'path'   => $folder['path'],
+            'id'      => $f['id'],
+            'name'    => $f['name'],
+            'mime'    => $f['mimeType'],
+            'md5'     => $f['md5Checksum'] ?? '',
+            'size'    => isset($f['size']) ? (int)$f['size'] : 0,
+            'created' => $f['createdTime'] ?? '',
+            'parent'  => $folder['id'],
+            'program' => $program,
+            'path'    => $folder['path'],
         ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
         $written++;
     }
@@ -159,3 +178,19 @@ fclose($fh);
 file_put_contents($queue_file, json_encode($queue));
 echo "Listed {$listed} folders, {$written} files this run; " . count($queue) . " folders left.\n";
 echo $queue ? "Run again to carry on.\n" : "Done: {$files_file}\n";
+
+if ($check) {
+    $summary = $queue
+        ? array('complete' => false, 'folders_left' => count($queue))
+        : kop_unsilenced_check_summary($files_file, dirname(__DIR__) . '/js/data/unsilenced');
+    $summary['checked'] = gmdate('Y-m-d H:i') . ' UTC';
+    file_put_contents($out_dir . '/summary.json', json_encode($summary, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    echo kop_unsilenced_check_text($summary);
+    if (kop_unsilenced_check_should_mail($summary, $opts['min'])) {
+        if ($dry) {
+            echo "(--dry: would mail the notification list)\n";
+        } else {
+            echo kop_unsilenced_check_mail($summary, $files_file) ? "Mailed the notification list.\n" : "Mail failed.\n";
+        }
+    }
+}

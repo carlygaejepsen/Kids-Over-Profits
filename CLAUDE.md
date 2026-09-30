@@ -105,6 +105,7 @@ python scripts/woodbury-scan.py [--no-cut]
 # Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
 # then the build compares with the media library md5s and inspection scrapers -> js/data/unsilenced/
 php api/list-unsilenced-files.php [probe] [--minutes=25]   # on the server (ea-php82), resumable
+php api/list-unsilenced-files.php restart --check          # monthly cron: lists into ~/kop-import/unsilenced/check/, mails when Unsilenced added enough
 python scripts/build-unsilenced-links.py                   # report in tmp/unsilenced/build-report.md
 php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
 # Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,

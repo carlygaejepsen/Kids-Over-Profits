@@ -156,11 +156,17 @@ The date is when each was last confirmed open.
    the program's doc library. Start with Articles (exact matches are
    pre-ticked), then News items. "No record yet" holds ~230 program articles
    with no facility record, a lead list for new records.
-10. (Done 2026-09-30: the Unsilenced md5 list ran; 148,269 files. Rebuild
-    with `api/list-unsilenced-files.php restart` then the build when
-    Unsilenced adds documents. About 5,900 of their folders stay unmatched,
-    listed in `tmp/unsilenced/build-report.md`; a past or other name on a
-    facility record ties one in.)
+10. **Monthly Unsilenced check** (2026-09-30). Add in cPanel > Cron Jobs
+    (Once Per Month, or this line as is):
+    `0 4 1 * * cd /home/kidsover/public_html/wp-content/themes/child && /opt/cpanel/ea-php82/root/usr/bin/php api/list-unsilenced-files.php restart --check --minutes=120 >> /home/kidsover/logs/unsilenced-check.log 2>&1`
+    It lists Unsilenced's archive (read-only, about 20 minutes) and mails the
+    submission notification list only when 10+ new documents sit in programs
+    the pages list, 100+ anywhere, or the run failed. On such a mail, ask for
+    a rebuild: copy `~/kop-import/unsilenced/check/files.jsonl` to
+    `tmp/unsilenced/files.jsonl`, sync the mirror, run the build, commit. The
+    first full list ran 2026-09-30 (148,269 files); about 5,900 of their
+    folders stay unmatched (`tmp/unsilenced/build-report.md`); a past or
+    other name on a facility record ties one in.
 
 ### Hosting
 
