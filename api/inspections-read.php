@@ -11,7 +11,8 @@
  * (kop_its_states()), text_signals: what the page would have read from it
  * (api/lib-inspection-text-signals.php). The FL and NC lists drop from about
  * 100 MB to about 1 MB. The lite response is cached on disk until the
- * state's reports change.
+ * state's reports change; after a change the previous copy is still sent
+ * while the new one is built behind it.
  * ?state=FL&text=<row_id> returns one report's raw_content, for a report
  * opened on a lite page.
  */
@@ -55,6 +56,7 @@ if ($textId > 0) {
 }
 
 $liteCacheFile = '';
+$liteInBackground = false;
 if ($lite) {
     require_once __DIR__ . '/lib-inspection-text-signals.php';
     try {
@@ -76,6 +78,29 @@ if ($lite) {
                 header('Cache-Control: public, max-age=600');
                 readfile($liteCacheFile);
                 exit;
+            }
+            // Stale: the state changed since the last build, which takes 6 to
+            // 12 s for NC and FL. Send the previous build now and make the new
+            // one after the response has gone, so no reader waits for it; one
+            // request builds while the others keep getting the previous copy.
+            $stale = '';
+            foreach (glob($cacheDir . '/inspections-' . $state . '-lite-*.json') ?: [] as $old) {
+                if ($stale === '' || filemtime($old) > filemtime($stale)) $stale = $old;
+            }
+            $canFinish = function_exists('litespeed_finish_request') || function_exists('fastcgi_finish_request');
+            if ($stale !== '' && $canFinish && is_readable($stale)) {
+                $lock = @fopen($cacheDir . '/inspections-' . $state . '-lite.lock', 'c');
+                $mayBuild = $lock && flock($lock, LOCK_EX | LOCK_NB);
+                header('Cache-Control: public, max-age=60');
+                readfile($stale);
+                if (!$mayBuild) {
+                    exit;
+                }
+                if (function_exists('litespeed_finish_request')) litespeed_finish_request();
+                else fastcgi_finish_request();
+                ignore_user_abort(true);
+                @set_time_limit(300);
+                $liteInBackground = true;
             }
         }
     } catch (Exception $e) {
@@ -238,6 +263,10 @@ try {
         } else {
             @unlink($tmp);
         }
+    }
+    // A build after a stale copy was sent has no reader left to answer.
+    if ($liteInBackground) {
+        exit;
     }
     if ($lite) {
         header('Cache-Control: public, max-age=600');

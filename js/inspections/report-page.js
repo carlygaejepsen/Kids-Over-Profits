@@ -280,6 +280,7 @@
 
         var allFacilitiesData = {};
         var lazyBodies        = [];
+        var lazyFacilities    = [];
         var filterValues      = {};
         var currentLetter     = null;
         var isSearching       = false;
@@ -525,7 +526,16 @@
                 return '<span class="kop-rp-stat' + toneClass(s.tone) + '">' + escapeHtml(s.text) + '</span>';
             }).join('');
 
-            return '<article class="kop-rp-facility' + toneClass(tone) + '">'
+            // The report rows are built when the facility is first opened
+            // (fillFacilityReports): all of them at once is 4,783 rows and
+            // 67,000 elements for North Carolina, seconds on a phone.
+            var lazyAttr = '';
+            if (reports.length) {
+                lazyAttr = ' data-kop-rp-reports="' + lazyFacilities.length + '"';
+                lazyFacilities.push(reports);
+            }
+
+            return '<article class="kop-rp-facility' + toneClass(tone) + '"' + lazyAttr + '>'
                 + '<details>'
                 + '<summary class="kop-rp-facility-summary">'
                 + '<span class="kop-rp-facility-head">'
@@ -537,9 +547,7 @@
                 + (stats ? '<span class="kop-rp-stats">' + stats + '</span>' : '')
                 + '</summary>'
                 + '<div class="kop-rp-reports">'
-                + (reports.length
-                    ? reports.map(renderReport).join('')
-                    : '<p class="kop-rp-note">No reports on file.</p>')
+                + (reports.length ? '' : '<p class="kop-rp-note">No reports on file.</p>')
                 + '</div>'
                 + '</details>'
                 + '</article>';
@@ -601,19 +609,61 @@
             }
         }
 
-        // Build a lazy body just before a report opens (click on its summary),
-        // and on toggle for opens that do not come from a click.
+        function pendingReports(facility) {
+            if (!facility || !facility.hasAttribute('data-kop-rp-reports')) return null;
+            return lazyFacilities[parseInt(facility.getAttribute('data-kop-rp-reports'), 10)] || null;
+        }
+
+        function fillFacilityReports(facility) {
+            var reports = pendingReports(facility);
+            if (!reports) return;
+            facility.removeAttribute('data-kop-rp-reports');
+            var slot = facility.querySelector('.kop-rp-reports');
+            if (slot) slot.innerHTML = reports.map(renderReport).join('');
+        }
+
+        // Build a facility's rows, or a report's lazy body, just before it
+        // opens (click on its summary), and on toggle for opens that do not
+        // come from a click.
         reportContainer.addEventListener('click', function (e) {
-            var summary = e.target.closest && e.target.closest('.kop-rp-report-summary');
+            if (!e.target.closest) return;
+            var summary = e.target.closest('.kop-rp-report-summary');
             if (summary) fillLazyBody(summary.parentNode);
+            var facilitySummary = e.target.closest('.kop-rp-facility-summary');
+            if (facilitySummary) fillFacilityReports(facilitySummary.closest('.kop-rp-facility'));
         });
         reportContainer.addEventListener('toggle', function (e) {
-            if (e.target.open && e.target.classList && e.target.classList.contains('kop-rp-report')) fillLazyBody(e.target);
+            var target = e.target;
+            if (!target.open || !target.classList) return;
+            if (target.classList.contains('kop-rp-report')) fillLazyBody(target);
+            else if (target.parentNode && target.parentNode.classList && target.parentNode.classList.contains('kop-rp-facility')) {
+                fillFacilityReports(target.parentNode);
+            }
         }, true);
+
+        // For js/inspections/severe-flags.js, which marks findings on the
+        // rendered rows: "kop-rp-render" on a facility builds its rows now;
+        // "kop-rp-links" puts its reports' official links in event.detail.links
+        // without building them, so a facility that cannot hold a finding stays
+        // unbuilt.
+        reportContainer.addEventListener('kop-rp-render', function (e) {
+            fillFacilityReports(e.target.closest && e.target.closest('.kop-rp-facility'));
+        });
+        reportContainer.addEventListener('kop-rp-links', function (e) {
+            var reports = pendingReports(e.target.closest && e.target.closest('.kop-rp-facility'));
+            if (!reports || !e.detail || !Array.isArray(e.detail.links)) return;
+            reports.forEach(function (r) {
+                var view = adapter.report(r, ctx) || {};
+                [view.link].concat(view.links || []).forEach(function (link) {
+                    if (link && safeString(link.href)) e.detail.links.push(safeString(link.href));
+                });
+            });
+        });
 
         function renderFilteredFacilities(facilities, context) {
             reportContainer.innerHTML = '';
             lazyBodies = [];
+            lazyFacilities = [];
             if (!facilities || !facilities.length) {
                 var sortBy = sortSelect ? sortSelect.value : '';
                 var violationSort = sortBy === 'violations-only' || sortBy === 'violations-desc';

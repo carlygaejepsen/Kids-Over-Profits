@@ -21,7 +21,9 @@
  * legacy viewers (Texas, California) and the shared report-page.js engine use
  * the two markups named in SELECTORS. A facility's text is checked once, whole,
  * and only a hit opens its reports; a report the engine renders lazily sends
- * its facility round again when it is opened.
+ * its facility round again when it is opened. The engine also leaves a
+ * facility's rows unbuilt until it opens; buildIfNeeded() has it build them
+ * for a facility that could hold a finding.
  *
  * Classic script; attaches to window.KOP. Config: window.KOP_SEVERE_FLAGS =
  * { url, pageUrl }.
@@ -157,9 +159,29 @@
         return true;
     }
 
+    /**
+     * The report-page.js engine builds a facility's report rows when it is
+     * first opened. Build them now if a finding could be among them: one
+     * matched by its text (the text is in the rows), or one whose document is
+     * one of the facility's reports, which the engine names without building.
+     */
+    function buildIfNeeded(facility, name) {
+        if (!facility.hasAttribute('data-kop-rp-reports')) return;
+        var key = nameKey(name);
+        var candidates = candidatesFor(name);
+        var needed = candidates.some(function (f) { return !f.url || nameKey(f.facility) === key; });
+        if (!needed && candidates.length) {
+            var ask = new global.CustomEvent('kop-rp-links', { bubbles: true, detail: { links: [] } });
+            facility.dispatchEvent(ask);
+            needed = candidates.some(function (f) { return linked(f, ask.detail.links); });
+        }
+        if (needed) facility.dispatchEvent(new global.CustomEvent('kop-rp-render', { bubbles: true }));
+    }
+
     function markFacility(facility) {
         var nameNode = facility.querySelector(SELECTORS.facilityName);
         var name = nameNode ? nameNode.textContent : '';
+        buildIfNeeded(facility, name);
         var hay = squash(facility.textContent);
         var links = linksIn(facility);
         var candidates = candidatesFor(name).filter(function (f) {

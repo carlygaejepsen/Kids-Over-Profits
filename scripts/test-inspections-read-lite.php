@@ -9,7 +9,8 @@
  * For each state: the lite response carries every report of the full one with
  * the same fields except raw_content, plus row_id / has_text / text_signals;
  * ?text=<row_id> returns the full response's raw_content exactly; the second
- * lite request is served from the cache file and is byte-identical.
+ * lite request is served from the cache file and is byte-identical; a stale
+ * cache file is sent as is while the new build is written after the response.
  */
 
 if (PHP_SAPI !== 'cli') exit("CLI only.\n");
@@ -114,6 +115,36 @@ foreach ($states as $state) {
     $again = kop_call_endpoint($source, $db, array('state' => $state, 'lite' => '1'));
     printf("  cached lite served in %d ms\n", (int) ((microtime(true) - $t) * 1000));
     check($again === $liteBody, 'cached response is byte-identical');
+
+    // Stale: the state changed since the build (here: the file carries another
+    // stamp). The previous build goes out at once, the new one is made after
+    // the response is finished. The CLI has no finish function, so stand one in.
+    if (!function_exists('fastcgi_finish_request')) {
+        function fastcgi_finish_request() {
+            $GLOBALS['kop_finished_at'] = ob_get_length();
+            return true;
+        }
+    }
+    $current = $cached[0];
+    $stale = $cacheDir . '/inspections-' . $state . '-lite-' . str_repeat('0', 32) . '.json';
+    rename($current, $stale);
+    file_put_contents($stale, '{"stale":true}');
+    $GLOBALS['kop_finished_at'] = null;
+    $body = kop_call_endpoint($source, $db, array('state' => $state, 'lite' => '1'));
+    check($body === '{"stale":true}', 'stale: the previous build is sent');
+    check($GLOBALS['kop_finished_at'] === strlen('{"stale":true}'), 'stale: the response is finished before the build');
+    check(is_file($current) && file_get_contents($current) === $liteBody, 'stale: the new build is written after it');
+    check(!is_file($stale), 'stale: the previous build is removed');
+
+    // A second request while one is building gets the previous copy and builds nothing.
+    rename($current, $stale);
+    $lock = fopen($cacheDir . '/inspections-' . $state . '-lite.lock', 'c');
+    flock($lock, LOCK_EX);
+    $GLOBALS['kop_finished_at'] = null;
+    $body = kop_call_endpoint($source, $db, array('state' => $state, 'lite' => '1'));
+    check($body === $liteBody && $GLOBALS['kop_finished_at'] === null && !is_file($current), 'stale while building: previous copy, no second build');
+    flock($lock, LOCK_UN);
+    fclose($lock);
 }
 
 foreach (glob($cacheDir . '/*') ?: array() as $f) unlink($f);
