@@ -4,10 +4,11 @@
  * Each facility (or provider site) carries facility.survivorTestimony, a list
  * of { id, text, source, date, movedFrom, publish }. The section lists the
  * entries for editing and, below them, every note on the facility that could
- * be testimony (general notes, field notes and the custom treatment /
- * philosophy / incident entries, plus a provider's other TTI practices), each
- * with a "Move to testimony" button that takes the text out of the note and
- * into a new entry.
+ * be testimony (general notes, field notes, operating period and resources
+ * notes, the parent company notes, the custom treatment / philosophy /
+ * incident entries, a provider's other TTI practices and referral notes, and
+ * an open submission's reason), each with a "Move to testimony" button that
+ * takes the text out of the note and into a new entry.
  *
  * Nothing is public by default: publish stays false until the "OK to publish"
  * box is ticked, and only then does /facility/<slug>/ show the entry
@@ -24,7 +25,14 @@
         { path: ['treatmentTypes', 'custom'], label: 'Custom treatment type' },
         { path: ['philosophy', 'custom'], label: 'Custom philosophy' },
         { path: ['criticalIncidents', 'custom'], label: 'Custom incident' },
-        { path: ['providerDetails', 'otherTtiPractices'], label: 'Other TTI practice' }
+        { path: ['providerDetails', 'otherTtiPractices'], label: 'Other TTI practice' },
+        { path: ['operatingPeriod', 'notes'], label: 'Operating period note' },
+        { path: ['resources', 'notes'], label: 'Resources note' }
+    ];
+
+    // Single free-text boxes on the facility that can hold an account.
+    const MOVABLE_FIELDS = [
+        { path: ['providerDetails', 'referralNotes'], label: 'Referral notes' }
     ];
 
     function currentFacility() {
@@ -130,7 +138,35 @@
             });
         });
 
-        return items;
+        MOVABLE_FIELDS.forEach(({ path, label }) => {
+            const parent = getPath(facility, path.slice(0, -1));
+            const key = path[path.length - 1];
+            const value = parent && typeof parent === 'object' ? parent[key] : undefined;
+            if (typeof value !== 'string' || !value.trim()) return;
+            items.push({ label, text: value.trim(), remove: () => { parent[key] = ''; } });
+        });
+
+        // The project-level parent company notes box.
+        const operator = window.formData && window.formData.operator;
+        if (operator && typeof operator.notes === 'string' && operator.notes.trim()) {
+            items.push({
+                label: 'Parent company notes',
+                text: operator.notes.trim(),
+                remove: () => { operator.notes = ''; }
+            });
+        }
+
+        // The submitter's reason on an open submission is not part of the
+        // record, so moving it copies the text and leaves the reason alone.
+        const session = window.KOP_SubmissionEditor && window.KOP_SubmissionEditor.session;
+        const reason = session && session.active && session.submission ? String(session.submission.reason || '').trim() : '';
+        if (reason) {
+            items.push({ label: "Submitter's reason", text: reason, remove: () => {} });
+        }
+
+        // Anything already moved (or copied) is not offered again.
+        const moved = new Set(testimonyList(facility).map(entry => String(entry.text || '').trim()));
+        return items.filter(item => !moved.has(item.text));
     }
 
     function removeFieldNote(facility, key, note) {
