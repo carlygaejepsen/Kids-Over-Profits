@@ -2523,6 +2523,7 @@ function kop_state_inspection_page_map() {
     // once that page is published, so no list points at a missing page.
     $pending = array(
         'Michigan' => 'mi-reports',
+        'Oklahoma' => 'ok-reports',
     );
     foreach ($pending as $state => $slug) {
         $page = function_exists('get_page_by_path') ? get_page_by_path($slug) : null;

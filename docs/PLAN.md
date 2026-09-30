@@ -364,6 +364,24 @@ updated.
    --migrate` in the Tools repo (the first run's 1,890 PDFs landed in the
    local `mi_pdfs/` fallback while Drive was not mounted). Then the severe
    finding extractor (plan step 10).
+   **Oklahoma built 2026-09-30, not yet posted:** `ok_scraper.py` (Tools
+   repo) and `js/inspections/states/ok.js`. A full `--no-post` run: 93
+   programs (72 residential, 21 shelters), 994 reports: 844 monitoring
+   visits (561 with non-compliances, 1,553 items, 38 marked numerous,
+   repeated or serious) and 150 substantiated complaints; 711 flagged;
+   2023-10-03 to 2026-09-30; no unparsed blocks. Every page is kept gzipped
+   in the Drive folder `ok_html/` (the state shows only 36 months), and
+   `--from-saved` rebuilds the same payload from those copies. 50 of the 93
+   names reach a `facilities_v2` record (most unmatched are shelters KOP
+   does not track); near misses left as they are: "Positive Outcome/St.
+   Anthony" / "Positive Outcome - St. Anthony" and "Cookson Hills" /
+   "Cookson Hills Christian Ministries". Owner: create `/ok-reports/`
+   (State Reports template; suggested intro: the state shows 36 months at a
+   time and publishes only substantiated complaints that did not rise to
+   abuse or neglect), approve the first post, then run the scraper **at
+   least monthly** (Oklahoma in `scraper_launcher.py`), or say whether a
+   scheduled task on this machine is wanted. Then the severe finding
+   extractor (plan step 11: substantiated complaints and NRS items).
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
