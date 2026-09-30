@@ -423,9 +423,9 @@ function createNewProjectData() {
     return { operator: {}, facilities: [{}], referrer: [], referrerAgency: {}, referrerConsultants: [{}], fieldNotes: {} };
 }
 
-function loadProject(projectName) {
+function loadProject(projectName, override = null) {
     if (window.KOP_Project && typeof window.KOP_Project.loadProject === 'function') {
-        return window.KOP_Project.loadProject(projectName);
+        return window.KOP_Project.loadProject(projectName, override);
     }
     console.error('[Data Form] Project module not found.');
     return Promise.reject(new Error('Project module not found.'));
