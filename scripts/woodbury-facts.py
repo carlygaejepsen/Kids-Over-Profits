@@ -76,6 +76,44 @@ TYPES = [
 ]
 
 
+HARM = re.compile(r'\b(abus|assault|death|died|dies|killed|suicid|injur|hospital|arrest|charg|convict|guilty|plead|pled|'
+                  r'lawsuit|sued|sues|suit\b|settle|investigat|allegation|alleg|runaway|ran away|missing|escap|riot|restrain|'
+                  r'neglect|violation|cited|citation|fine[ds]?\b|license|revok|suspend|shut|clos|police|sheriff|molest|rape|'
+                  r'sexual|beat|attack|complaint|grand jury|indict|prosecut)', re.I)
+CHILD = re.compile(r'\b(student|child|children|boy|girl|teen|youth|client|resident|camper|participant|minor|son|daughter|'
+                   r'\d{1,2}-year-old)\b', re.I)
+
+
+def clean_name(s):
+    """A program name out of a rename phrase: "known as the X program" -> "X"."""
+    s = re.sub(r'\s+', ' ', s or '').strip(' .,;:"\'()')
+    s = re.sub(r'^(?:was\s+)?(?:known|called|named)\s+(?:as\s+)?', '', s, flags=re.I)
+    s = re.sub(r'^(?:the)\s+', '', s, flags=re.I)
+    s = re.sub(r'\s*\((?:in\s+)?\d{4}\).*$|;.*$|,\s*(?:in|since)\s+\d{4}.*$|\s+in\s+\d{4}.*$', '', s)
+    s = re.sub(r',?\s+(?:and\s+)?(?:renamed|rebranded)\b.*$', '', s, flags=re.I)
+    s = re.sub(r'\s+program$', '', s, flags=re.I)
+    return s.strip(' .,;:"\'')
+
+
+def clean_company(value):
+    """A company name out of "an Aspen Education Group program", "parent company: UHS (Universal Health Services)"."""
+    s = re.sub(r'\s+', ' ', value or '').strip(' .')
+    s = re.sub(r'^(?:(?:was|is|now|recently|formerly)\s+)?(?:acquired|bought|purchased|owned|operated|run|managed|sold)'
+               r'(?:\s+(?:by|to))?\s+', '', s, flags=re.I)
+    s = re.sub(r'^(?:parent company|parent|owner|operator|company)\s*:\s*', '', s, flags=re.I)
+    s = re.sub(r'^(?:a\s+|an\s+|the\s+)?(?:division|subsidiary|member|affiliate|part|program)\s+of\s+', '', s, flags=re.I)
+    s = re.sub(r'^(?:a|an|the)\s+', '', s, flags=re.I)
+    s = re.sub(r'\s+(?:program|programs|company|family of programs|family)$', '', s, flags=re.I)
+    s = re.sub(r'^(?:parent company|parent)\s+', '', s, flags=re.I)
+    s = re.split(r';|\s+/\s+|,\s*(?:which|who|that|part|a division|a subsidiary|a member|member)\b', s, flags=re.I)[0].strip()
+    s = re.sub(r'\s+(?:family of\b.*|program|programs)$', '', s, flags=re.I)
+    m = re.match(r'^([A-Z]{2,6})\s*\(([^)]{6,})\)$', s)
+    if m:
+        s = m.group(2)
+    s = re.sub(r',?\s+(?:Inc|LLC|L\.L\.C|Ltd|Corp)\.?$', '', s, flags=re.I)
+    return s.strip(' .,;:"\'')
+
+
 def flat(s):
     s = unicodedata.normalize('NFKC', ws.clean(s or ''))
     s = s.replace('\u2013', '-').replace('\u2014', '-').replace('\u00a0', ' ')
@@ -244,6 +282,9 @@ def main():
         state = ws.place_state(place or '') if place else ''
         k = (ws.key(program), state)
         if k not in match_cache:
+            if ws.key(program) in ws.GENERIC_NAMES or len(ws.key(program)) < 5:
+                match_cache[k] = (None, [], 'none', '')
+                return match_cache[k]
             f, alts, kind, note = ws.match_header(program, state, names, past)
             if f and kind == 'section' and 'past name' in note:
                 kind = 'past_name'
@@ -412,6 +453,14 @@ def main():
         summary = re.sub(r'\s+', ' ', (it.get('summary') or '').strip())
         if not summary:
             continue
+        # The newsletter files good news too (a hike, a board seat, a staff member's
+        # death from illness): only harm, legal and regulatory events are incidents.
+        if cat == 'other' and not HARM.search(summary):
+            stats['incident_not_harm'] += 1
+            continue
+        if cat == 'death' and not CHILD.search(summary):
+            stats['incident_staff_death'] += 1
+            continue
         when = it.get('date') or ''
         line = '%s: %s: %s (%s, p. %d)' % (when or 'Reported %s' % issues[it['issue']]['label'],
                                            INCIDENT_LABELS.get(cat, 'Incident'), summary.rstrip('.') + '.',
@@ -468,8 +517,33 @@ def main():
                     'closed|%s' % y, current='Status now: %s' % (rec['status'] if rec else '?'))
             continue
         if field == 'renamed':
-            m = re.search(r'\b(?:from|formerly|previously(?: known as| called)?)\s+(.+)$', value, re.I)
-            old = m.group(1).strip(' ."\'') if m else ''
+            # "renamed from X", "X to Y", "formerly known as X", "now called Y".
+            old = new = ''
+            v = re.sub(r'^(?:was\s+|has\s+been\s+)?(?:renamed|rebranded|changed (?:its|the) name)\s*', '', value, flags=re.I)
+            m = re.search(r'\bfrom\s+(.+?)(?:\s+to\s+(.+))?$', v, re.I)
+            m2 = re.match(r'^(?:to|as|now called|now known as|became)\s+(.+)$', v, re.I)
+            if m2:
+                # "renamed to Y": the program as the item names it is the old name.
+                old, new = it['program'], m2.group(1)
+            elif m:
+                old, new = m.group(1), m.group(2) or ''
+            else:
+                m = re.search(r'^(.+?)\s+to\s+(.+)$', v)
+                if m:
+                    old, new = m.group(1), m.group(2)
+                else:
+                    m = re.search(r'\bunder the name\s+(.+)$', value, re.I) or \
+                        re.search(r'\b(?:formerly|previously|originally|once)\b\s*(.+)$', value, re.I)
+                    old = m.group(1) if m else ''
+            old, new = clean_name(old), clean_name(new)
+            if old and not old[:1].isupper():
+                note(it, field, value)
+                continue
+            if rec and old and (m2 or ws.key(old) == ws.key(rec['name'])
+                                or (ws.core(ws.key(old)) and ws.core(ws.key(old)) == ws.core(ws.key(rec['name'])))):
+                # This record is the old name: the new one is another era's record (name-eras rule), so only a note.
+                note(it, field, value)
+                continue
             if old and rec and ws.key(old) != ws.key(rec['name']):
                 if ws.key(old) in [ws.key(n) for n in (ident.get('pastNames') or []) + (ident.get('otherNames') or []) if isinstance(n, str)]:
                     stats['already'] += 1
@@ -479,8 +553,10 @@ def main():
             note(it, field, value)
             continue
         if field in ('acquired', 'owner', 'operator'):
-            company = re.sub(r'^(acquired|bought|purchased|owned|operated|run|managed)\s+by\s+', '', value, flags=re.I).strip(' .')
-            if COMPANY_WORDS.search(company) and len(company) < 80 and rec:
+            company = clean_company(value)
+            # A name, not a sentence: capitalized, no digits or percent, short.
+            if (COMPANY_WORDS.search(company) and len(company) < 60 and rec and company[:1].isupper()
+                    and not re.search(r'[\d%]', company) and len(company.split()) <= 7):
                 known = [ws.key(x) for x in [ident.get('currentOperator') or ''] + (ident.get('currentOwners') or [])
                          + (ident.get('pastOperators') or []) + (ident.get('otherOperators') or []) if isinstance(x, str)]
                 if ws.key(company) in known:
@@ -551,6 +627,22 @@ def main():
             continue
         note(it, field, value)
 
+    # One value per slot: where issues disagree (a start year of 2006 and of
+    # 2009), the best-supported one is proposed and the others become notes.
+    slots = collections.defaultdict(list)
+    for p in proposals.values():
+        if p['op'] == 'set_if_empty':
+            slots[(p['facility_id'] or p['program'], p['path'])].append(p)
+    for group in slots.values():
+        if len(group) < 2:
+            continue
+        group.sort(key=lambda p: (-len(p['evidence']), json.dumps(p['value'])))
+        keep = group[0]
+        for p in group[1:]:
+            p['op'], p['path'] = 'add_list', 'notes'
+            p['conflict'] = 'Another issue gives %s; this one is kept as a note' % json.dumps(keep['value'])
+            e = p['evidence'][0]
+            p['value'] = '%s (Woodbury Reports, %s, p. %d)' % (p['label'], e['label'], e['page'])
     out = sorted(proposals.values(), key=lambda p: (p['facility_id'] == 0, p['program'].lower(), p['group'], p['label']))
     for p in out:
         p['evidence'].sort(key=lambda e: (e['issue'], e['page']))
