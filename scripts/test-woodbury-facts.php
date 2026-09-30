@@ -344,6 +344,12 @@ $check('the create starts from the name as Woodbury wrote it', strpos($html, 'va
 $check('the create starts from the place', strpos($html, 'value="Loa"') !== false && strpos($html, 'value="Utah"') !== false);
 $check('the current match is not offered as "another record"', strpos($html, 'Matched') === false && strpos($html, 'Other One') !== false);
 $check('it has the facility finder', strpos($html, 'data-kop-facility-finder') !== false);
+foreach (array('facility', 'consultant', 'person', 'provider') as $k) {
+    $check("it can create a record of kind $k", strpos($html, '<option value="' . $k . '">') !== false);
+}
+$filed = array('applied' => json_encode(array('filed' => 'consultant', 'who' => 'firm', 'id' => 12, 'name' => 'Aldrich & Co')));
+$check('an item filed on a consultant says where it went', kop_wbf_filed_on($filed) === 'the educational consultant record "Aldrich & Co" (#12)');
+$check('an item added to a facility is not "filed"', kop_wbf_filed_on(array('applied' => json_encode(array('op' => 'add_staff')))) === '');
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed.\n";
 exit($failures ? 1 : 0);

@@ -106,6 +106,14 @@ function kop_wbc_source_note(array $r) {
         . ', ' . kop_wb_page_label($r['pages']) . ($issue_url !== '' ? ': ' . $issue_url : '');
 }
 
+/**
+ * Lines a caller adds to the new record's notes after the source line, as
+ * Woodbury Facts does with the items it files there (kop_wbf_file_items).
+ */
+function kop_wbc_extra_notes(array $f) {
+    return array_values(array_filter(array_map('trim', (array) ($f['notes'] ?? array())), 'strlen'));
+}
+
 /** A folder of this name under $parent, reusing one that exists. */
 function kop_wbc_folder($name, $parent) {
     return kop_wb_find_folder($name, $parent) ?: kop_wb_create_folder($name, $parent);
@@ -264,7 +272,8 @@ function kop_wbc_create_consultant(array $r, array $f, PDO $pdo) {
             . 'Find it in "Or a consultant, company, provider or transporter" above and file it there.');
     }
     $person = ($f['who'] ?? '') === 'person';
-    $note = kop_wbc_source_note($r);
+    $note = implode("
+", array_merge(array(kop_wbc_source_note($r)), kop_wbc_extra_notes($f)));
     $parent = kop_wbc_folder('Educational Consultants', 0);
     $folder = kop_wbc_folder($f['name'], $parent);
     $agency = array('name' => $person ? '' : $f['name'], 'city' => $person ? '' : $f['city'], 'state' => $person ? '' : $f['state'],
@@ -362,7 +371,7 @@ function kop_wbc_create_provider(array $r, array $f, PDO $pdo) {
             'providerDetails' => array('careTypes' => new stdClass(), 'otherCareTypes' => array(), 'ttiPractices' => new stdClass(),
                 'otherTtiPractices' => array(), 'ttiReferrals' => array(), 'transportersUsed' => array(),
                 'ttiAffiliations' => array(), 'referralNotes' => ''),
-            'notes'           => array(kop_wbc_source_note($r)),
+            'notes'           => array_merge(array(kop_wbc_source_note($r)), kop_wbc_extra_notes($f)),
         )),
         'documentFolderId' => $folder,
     );

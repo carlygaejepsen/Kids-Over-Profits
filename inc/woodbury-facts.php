@@ -490,6 +490,60 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
     return $results;
 }
 
+/** The kinds of record a card can create: a program, or what Woodbury wrote about that is not one. */
+function kop_wbf_create_kinds() {
+    return array(
+        'facility'   => 'Program (TTI facility)',
+        'consultant' => 'Educational consultant: a firm',
+        'person'     => 'Educational consultant: one person',
+        'provider'   => 'Mental health provider',
+    );
+}
+
+/**
+ * Create an educational consultant or mental health provider record
+ * (inc/woodbury-create.php) for a card that is about one, and file the
+ * checked items in its notes, each with its issue page. Undo puts the items
+ * back to review; the record stays, as it does for a filed mention.
+ */
+function kop_wbf_file_items(array $rows, $kind, array $f, $reviewer) {
+    global $wpdb;
+    if (!function_exists('kop_wbc_create')) {
+        throw new RuntimeException('Record creation is not available.');
+    }
+    $rows = array_values(array_filter($rows, function ($r) { return $r['status'] === 'pending' && $r['grp'] !== 'consultant'; }));
+    if (!$rows) {
+        throw new RuntimeException('Tick at least one waiting item.');
+    }
+    $e = kop_wbf_evidence($rows[0]);
+    $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
+    $source = array('issue_id' => (int) $first['issue_id'], 'issue_label' => (string) $first['label'],
+        'issue_number' => (string) $first['number'], 'pages' => (string) (int) $first['page']);
+    $f['kind'] = $kind === 'person' ? 'consultant' : $kind;
+    $f['who'] = $kind === 'person' ? 'person' : 'firm';
+    $f['notes'] = array_map('kop_wbf_source_line', $rows);
+    $target = kop_wbc_create($source, $f);
+    $now = current_time('mysql', true);
+    $results = array();
+    foreach ($rows as $r) {
+        $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied_fid' => 0, 'reviewed_by' => $reviewer, 'reviewed_at' => $now,
+            'applied' => wp_json_encode(array('filed' => $target['kind'], 'who' => $f['who'], 'id' => (int) $target['id'], 'name' => $target['name']))),
+            array('pkey' => $r['pkey']));
+        $results[$r['pkey']] = array('ok' => true);
+    }
+    return array('results' => $results, 'target' => $target);
+}
+
+/** "the educational consultant record Jane Doe": where a filed item went, or ''. */
+function kop_wbf_filed_on(array $r) {
+    $done = json_decode((string) $r['applied'], true);
+    if (!is_array($done) || empty($done['filed'])) {
+        return '';
+    }
+    $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider');
+    return 'the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
+}
+
 function kop_wbf_undo(array $rows, $reviewer) {
     global $wpdb;
     $opts = kop_wbf_opts();
@@ -497,7 +551,11 @@ function kop_wbf_undo(array $rows, $reviewer) {
     foreach ($rows as $r) {
         // Something taken back by hand is never added automatically again.
         $wpdb->update(kop_wbf_table(), array('auto' => 0), array('pkey' => $r['pkey']));
-        if ($r['status'] === 'applied' && $r['grp'] === 'consultant') {
+        if ($r['status'] === 'applied' && kop_wbf_filed_on($r) !== '') {
+            // Filed in a consultant or provider record's notes: back to review, the record and its notes stay.
+            $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
+                'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
+        } elseif ($r['status'] === 'applied' && $r['grp'] === 'consultant') {
             kop_wbf_consultant_undo($r);
             $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
                 'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
@@ -1201,6 +1259,20 @@ add_action('wp_ajax_kop_wbf_act', function () {
         if (!$rows) {
             throw new RuntimeException('Nothing selected.');
         }
+        $kind = sanitize_key($_POST['kind'] ?? 'facility');
+        if ($act === 'create' && $kind !== 'facility') {
+            if (!isset(kop_wbf_create_kinds()[$kind])) {
+                throw new RuntimeException('Choose what kind of record to create.');
+            }
+            $f = array();
+            foreach (array('name', 'city', 'state', 'country') as $k) {
+                $f[$k] = sanitize_text_field(wp_unslash($_POST[$k] ?? ''));
+            }
+            $filed = kop_wbf_file_items($rows, $kind, $f, $user);
+            $t = $filed['target'];
+            wp_send_json_success(array('results' => $filed['results'], 'url' => '',
+                'label' => 'the new ' . strtolower(kop_wbf_create_kinds()[$kind]) . ' record "' . $t['name'] . '" (#' . (int) $t['id'] . '), in its notes'));
+        }
         if ($act === 'apply' || $act === 'create') {
             $fid = (int) ($_POST['fid'] ?? 0);
             if ($act === 'create') {
@@ -1354,7 +1426,8 @@ function kop_render_woodbury_facts_page() {
         . '<li><strong>The words name someone the item missed?</strong> Click <em>Another person in these words</em> under it, '
         . 'give the name and role, and they join the card as a ticked item citing the same page.</li>'
         . '<li><strong>Wrong program, or one with no record?</strong> Open <em>Wrong program?</em> under the card to put the checked items on another record, '
-        . 'or create a new program record from the name and place Woodbury gives.</li>'
+        . 'or create a new record from the name and place Woodbury gives: a program, an educational consultant (firm or person) or a mental health provider. '
+        . 'A consultant or provider record gets the checked items in its notes.</li>'
         . '<li><strong>Click <em>Add checked to record</em></strong> on the card, or <em>Add everything ticked on this page</em> at the top. '
         . 'The facility page shows the additions at once, each citing the issue; new staff, past operators and past names reach the network map on its next build.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo, which takes back exactly what was added.</li></ol>';
@@ -1394,7 +1467,9 @@ function kop_render_woodbury_facts_page() {
     echo '</select> <button class="button">Show</button>'
         . ($q !== '' || $grp !== '' ? ' <a href="' . esc_url(add_query_arg('wbf_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
 
-    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program' : (in_array($tab, array('applied', 'auto'), true) ? 'applied_fid' : 'facility_id');
+    // Items filed on a consultant or provider record have no facility: one card per program.
+    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program'
+        : (in_array($tab, array('applied', 'auto'), true) ? "IF(applied_fid > 0, CAST(applied_fid AS CHAR), CONCAT('p:', program))" : 'facility_id');
     $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card_col}) FROM {$table} WHERE {$where}");
     $order = $tab === 'norecord' ? 'COUNT(*) DESC, program' : 'MIN(program)';
     $cards = $wpdb->get_col("SELECT {$card_col} FROM {$table} WHERE {$where} GROUP BY {$card_col} ORDER BY {$order} LIMIT "
@@ -1404,11 +1479,11 @@ function kop_render_woodbury_facts_page() {
         return;
     }
     $in = implode(',', array_fill(0, count($cards), '%s'));
-    $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$table} WHERE {$where} AND {$card_col} IN ({$in}) "
+    $rows = $wpdb->get_results($wpdb->prepare("SELECT *, {$card_col} AS ck FROM {$table} WHERE {$where} AND {$card_col} IN ({$in}) "
         . "ORDER BY FIELD(grp,'staff','incident','history','details'), issue_date, label", $cards), ARRAY_A);
     $by = array();
     foreach ($rows as $r) {
-        $by[(string) $r[$card_col]][] = $r;
+        $by[(string) $r['ck']][] = $r;
     }
 
     $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
@@ -1466,14 +1541,21 @@ function kop_wbf_other_record(array $first, $no_record) {
     foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) {
         $types .= '<option value="' . esc_attr($t) . '">' . esc_html($t) . '</option>';
     }
-    return $html . '<div class="kop-wbf-create"><strong>No record yet? Create a program record:</strong><br>'
+    $kinds = '';
+    foreach (kop_wbf_create_kinds() as $k => $label) {
+        $kinds .= '<option value="' . esc_attr($k) . '">' . esc_html($label) . '</option>';
+    }
+    return $html . '<div class="kop-wbf-create"><strong>No record yet? Create one:</strong><br>'
+        . '<label>What is it? <select class="kop-wbf-ckind">' . $kinds . '</select></label> '
         . '<label>Name <input type="text" class="kop-wbf-cname" value="' . esc_attr($name) . '" style="width:260px"></label> '
         . '<label>City <input type="text" class="kop-wbf-ccity" value="' . esc_attr($city) . '" style="width:140px"></label> '
         . '<label>State <input type="text" class="kop-wbf-cstate" value="' . esc_attr($state) . '" style="width:90px"></label> '
         . '<label>or country <input type="text" class="kop-wbf-ccountry" style="width:110px"></label> '
-        . '<select class="kop-wbf-ctype" aria-label="Type">' . $types . '</select> '
-        . '<label><input type="checkbox" class="kop-wbf-cforce"> It is a different place from a close match</label> '
-        . '<button type="button" class="button" data-act="create">Create the record and add checked</button></div>';
+        . '<span class="kop-wbf-conly"><select class="kop-wbf-ctype" aria-label="Type">' . $types . '</select> '
+        . '<label><input type="checkbox" class="kop-wbf-cforce"> It is a different place from a close match</label></span> '
+        . '<button type="button" class="button" data-act="create">Create the record and add checked</button>'
+        . '<div class="kop-wbf-muted kop-wbf-cnote" hidden>A consultant or provider record gets the checked items in its notes, each citing its issue page. '
+        . 'Its Woodbury pages can be filed under it at KOP Tools &gt; Woodbury Reports.</div></div>';
 }
 
 function kop_wbf_render_card(array $rows, $tab) {
@@ -1512,7 +1594,8 @@ function kop_wbf_render_card(array $rows, $tab) {
     if ($tab === 'records') {
         echo '<button type="button" class="button button-primary" data-act="apply">Add checked to record</button> '
             . '<button type="button" class="button" data-act="reject">Reject checked</button>'
-            . '<details class="kop-wbf-other"><summary>Wrong program? Put the checked items on another record, or create a new program record</summary>'
+            . '<details class="kop-wbf-other"><summary>Wrong program? Put the checked items on another record, or create a new program, '
+            . 'educational consultant or mental health provider record</summary>'
             . kop_wbf_other_record($first, false) . '</details>';
     } elseif ($tab === 'consultants') {
         $v = kop_wbf_row_value($first);
@@ -1543,6 +1626,9 @@ function kop_wbf_render_row(array $r, $tab) {
         . '<div class="kop-wbf-muted">Goes to: <span class="kop-wbf-goes">' . esc_html(kop_wbf_where_it_goes($r)) . '</span></div>';
     if ($r['status'] === 'pending') {
         echo kop_wbf_edit_form($r) . kop_wbf_person_form($r);
+    }
+    if ($r['status'] === 'applied' && kop_wbf_filed_on($r) !== '') {
+        echo '<div class="kop-wbf-muted">Filed in the notes of ' . esc_html(kop_wbf_filed_on($r)) . '</div>';
     }
     if (!empty($extra['manual'])) {
         echo '<div class="kop-wbf-muted">Added by hand by ' . esc_html($extra['edited_by'] ?? '') . '</div>';
@@ -1661,6 +1747,7 @@ function kop_wbf_render_assets() {
                 data.state = card.querySelector('.kop-wbf-cstate').value;
                 data.country = card.querySelector('.kop-wbf-ccountry').value;
                 data.type = card.querySelector('.kop-wbf-ctype').value;
+                data.kind = card.querySelector('.kop-wbf-ckind').value;
                 data.force = card.querySelector('.kop-wbf-cforce').checked ? 1 : '';
             }
             out.className = 'kop-wbf-result'; out.textContent = 'Working...';
@@ -1735,6 +1822,15 @@ function kop_wbf_render_assets() {
                 msg.className = 'kop-wbf-edit-msg ok'; msg.textContent = 'Added below, ticked. Another?';
             }).catch(function () { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = 'Network error; try again.'; });
         }
+
+        // Type and "a different place" are for programs only.
+        document.addEventListener('change', function (e) {
+            if (!e.target.classList.contains('kop-wbf-ckind')) return;
+            var box = e.target.closest('.kop-wbf-create');
+            var program = e.target.value === 'facility';
+            box.querySelector('.kop-wbf-conly').hidden = !program;
+            box.querySelector('.kop-wbf-cnote').hidden = program;
+        });
 
         document.addEventListener('click', function (e) {
             var save = e.target.closest('.kop-wbf-save, .kop-wbf-reset');
