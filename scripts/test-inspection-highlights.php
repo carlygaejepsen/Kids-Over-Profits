@@ -97,6 +97,18 @@ $sentence_cases = array(
     array('The assessment listed Homicide risk: low and suicidal ideations: passive.', array()),
     array('The administrator failed to provide written notification to the Department of a resident\'s death within one working day.', array('death')),
     array('The complaint alleged a resident had an unauthorized absence and later passed away.', array('death', 'missing')),
+    // Training and screenings are not deaths; self-harm is not a suicide attempt (owner, 2026-09-30).
+    array('One out of three child records reviewed did not have a completed suicide screening completed within 90 days of the last completed suicide screening.', array()),
+    array('Documetnation of a completed suicide screening at admission could not be found in the child\'s file.', array()),
+    array('A child in care died by suicide in the facility bathroom.', array('death')),
+    array('The youth committed suicide while on the unit.', array('death')),
+    array('A child in care cut herself with a razor.', array('self_harm')),
+    array('Client scratched herself while trying to attack staff.', array()),
+    array('A child was able to self-harm with razors.', array('self_harm')),
+    array('Subsequently, a child in care used the ribbon to attempt to hang themselves.', array('suicide_attempt')),
+    array('A child who attempted suicide was not closely supervised before a suicide assessment was completed.', array('suicide_attempt')),
+    array('Specific actions required in the event that there is a suicide attempt are not documented on the suicide policy.', array()),
+    array('The child swallowed a zipper and was taken to the emergency room for X-rays.', array('self_harm', 'hospitalization')),
 );
 // Whole sentences the scorer sets aside: quoted policies, instructions, training lists.
 $noise_cases = array(
@@ -117,6 +129,14 @@ $noise_cases = array_merge($noise_cases, array(
     'One staff was missing Human Trafficking, Prison Rape Elimination Act (PREA), and Sexual Harassment training.',
     'The program conducted thirty mock mental health drills in response to a suicide attempt.',
     '“Medication error” means: a. The failure to administer an ordered medication.',
+    // Training and plans the scanner once read as a death or a suicide attempt (2026-09-30).
+    'All reviewed staff records documented staff completed suicide awareness and prevention training, with the exception of one staff who was missing two hours of suicide training.',
+    'All seven reviewed pre-service staff records documented staff completed suicide awareness and prevention training.',
+    'The center has a Suicide Prevention Plan which includes an established review process for incidents of serious suicide attempts or self-inflicted injuries.',
+    'Twelve out of twelve staff interviewed state that they do get continuous training\'s to help clients who engage in self injurious behaviors.',
+    'Staff reviewed the self-harm training materials during orientation.',
+    'The Penal Code Section 11165.6 defines child abuse or neglect as a physical injury or death inflicted by other than accidental means upon a child by another person.',
+    '"As a reminder, Serious Occurrences are any event that result in Restraint or Seclusion, Resident\'s Death, Any Serious Injury to a Resident, and a Resident\'s Suicide Attempt.',
 ));
 foreach ($noise_cases as $s) check((bool) preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is set aside');
 foreach (array('The incident report stated E1 punched R1 in the face.', 'Staff failed to follow the treatment plan and the child was hospitalized.', 'The child was found unresponsive when the door was opened.') as $s) {

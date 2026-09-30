@@ -44,7 +44,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Bump when the rules change; the scanner then looks at every report again. */
     function kop_ih_scanner_version() {
-        return 4;
+        return 5;
     }
 
     /** Candidates scoring below this are not queued. */
@@ -96,9 +96,10 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'label'    => 'Death',
                 'weight'   => 100,
                 // Form names, risk ratings, animals, and deaths outside the facility's care.
-                'exclude'  => '\b(?:Accident,? or Death|Death Report|Death Certificate|(?:homicid|suicid)\w+ (?:risk|ideations?|thoughts?|plans?)|risk (?:of|for) (?:homicide|suicide|death)|(?:dead|deceased) (?:bird|animal|rodent|mouse|mice|rat|insect|bug|fish|cat|dog)s?|death of (?:a |the |their |his |her )?(?:parent|mother|father|family member|grandparent|grandmother|grandfather|relative|sibling|brother|sister|pet|friend)|(?:parent|mother|father|mom|dad|grandparent|grandmother|grandfather|relative|sibling|brother|sister|aunt|uncle|cousin|friend)s?\b[^.]{0,20}\b(?:died|passed away|deceased|death|committed suicide))\b',
+                'exclude'  => '\b(?:Accident,? or Death|Death Report|Death Certificate|Civil Penalty Assessment\W+Death|(?:homicid|suicid)\w+ (?:risk|ideations?|thoughts?|plans?)|risk (?:of|for) (?:homicide|suicide|death)|(?:dead|deceased) (?:bird|animal|rodent|mouse|mice|rat|insect|bug|fish|cat|dog)s?|death of (?:a |the |their |his |her )?(?:parent|mother|father|family member|grandparent|grandmother|grandfather|relative|sibling|brother|sister|pet|friend)|(?:parent|mother|father|mom|dad|grandparent|grandmother|grandfather|relative|sibling|brother|sister|aunt|uncle|cousin|friend)s?\b[^.]{0,20}\b(?:died|passed away|deceased|death|committed suicide))\b',
                 'patterns' => array(
-                    '\b(?:died|dies|death|deceased|fatal(?:ly|ity|ities)?|passed away|homicide|killed|found (?:dead|deceased|unresponsive)|(?:completed|died by|committed) suicide)\b',
+                    // Not "staff completed suicide awareness training", "a completed suicide screening".
+                    '\b(?:died|dies|death|deceased|fatal(?:ly|ity|ities)?|passed away|homicide|killed|found (?:dead|deceased|unresponsive)|(?:completed|died by|committed) suicide(?! (?:awareness|prevention|screening|assessment|risk|training|evaluation|precaution|watch|protocol|polic|plan|check|form|education)))\b',
                 ),
             ),
             'sexual_abuse' => array(
@@ -146,14 +147,24 @@ if (!function_exists('kop_ih_scanner_version')) {
                 ),
                 'requires' => '\b(?:injur\w+|bruis\w+|fractur\w+|broken?|bleed\w*|blood\w*|concussion|abrasions?|rug burns?|carpet burns?|swollen|swelling|lacerat\w+|unconscious|(?:could not|couldn\'t|unable to) breathe|dislocat\w+|sprain\w*|scratch\w*|marks?)\b',
             ),
-            'self_harm' => array(
-                'label'    => 'Suicide attempt or self-harm',
-                'weight'   => 65,
+            // A suicide attempt and self-harm are told apart (owner, 2026-09-30):
+            // cutting or swallowing an object is not labelled a suicide attempt.
+            'suicide_attempt' => array(
+                'label'    => 'Suicide attempt',
+                'weight'   => 70,
                 // A ligature hazard in the building is a physical plant finding, not an event.
                 'exclude'  => '\banti-?ligature\b|\bligature[- ](?:risk|point|hazard|resistant|free)s?\b',
                 'patterns' => array(
-                    '\b(?:suicide attempts?|attempt\w* (?:to commit )?suicide|suicidal (?:gesture|attempt)s?|self[- ]harm\w*|self[- ]injur\w+|ligatures?)\b',
-                    '\b(?:cut|cutting|hang(?:ed|ing)?|strangl\w+) (?:him|her|them)sel(?:f|ves)\b',
+                    '\b(?:suicide attempts?|attempt\w* (?:to commit |to die by )?suicide|attempted to (?:kill|end the life of) (?:him|her|them)sel(?:f|ves)|suicidal (?:gesture|attempt)s?|ligatures?)\b',
+                    '\b(?:hang(?:ed|ing)?|strangl\w+) (?:him|her|them)sel(?:f|ves)\b|\battempt\w* to hang\b',
+                ),
+            ),
+            'self_harm' => array(
+                'label'    => 'Self-harm',
+                'weight'   => 65,
+                'patterns' => array(
+                    '\b(?:self[- ]harm\w*|self[- ]injur\w+|self[- ]inflict\w*)\b',
+                    '\b(?:cut|cutting|burn(?:ed|ing|t)?) (?:him|her|them)sel(?:f|ves)\b',
                     '\b(?:ingest\w+|swallow\w+|overdos\w+)\b',
                 ),
             ),
@@ -274,7 +285,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Words that mean the sentence talks about a possibility, a rule or a plan, not an event. */
     function kop_ih_hypothetical_pattern() {
-        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|lead(?:s|ing)? to|in (?:the )?(?:case|event) of|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|jok\w+|histor(?:y|ies) of)\b';
+        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|lead(?:s|ing)? to|in (?:the )?(?:case|event) (?:of|that)|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|jok\w+|histor(?:y|ies) of)\b';
     }
 
     /**
@@ -288,6 +299,14 @@ if (!function_exists('kop_ih_scanner_version')) {
             // An instruction or a consequence, allowing for a list marker such as "a)" or "3." in front.
             . '|^(?:\W*[a-z0-9]{1,2}[).]\s*)?\W*(?:in the event|if|when|should|unless|staff (?:are|is|will|shall|must) (?:to )?|the (?:facility|provider|program|operation|agency|licensee) (?:will|shall|must)|submit (?:a|an|the)|please|(?:the |this )?deficient practice)\b'
             . '|\b(?:trainings?|certificat\w+|curricul\w+|courses?)\b[^.]{0,100}\b(?:Reporting|Prevention|Recogni\w+|Awareness|Intervention|[Ii]dentification|Harassment|Trafficking|Elimination)\b'
+            // The topic before the word: "completed suicide awareness and prevention training".
+            . '|\b(?:awareness|prevention|intervention|recognition|screening|de-?escalation|first aid|CPR)\b[^.]{0,40}\b(?:trainings?|courses?|curricul\w+|classes|modules?|certificat\w+|materials?)\b'
+            // What staff are trained to do: "training's to help clients who engage in self injurious behaviors".
+            . '|\btrain\w*\b[^.]{0,20}\bto (?:help|handle|manage|respond to|recogni[sz]e|support|work with|deal with|de-?escalate|identify|prevent)\b'
+            . '|\b(?:training|educational|teaching|lesson) (?:materials?|videos?|modules?|plans?|content|slides|binders?|handouts?)\b'
+            // A prevention plan and what it covers; a definition of a reportable event.
+            . '|\b(?:suicide|self[- ]harm|crisis|safety) (?:prevention|response) (?:plan|program|polic\w+|protocol)s?\b'
+            . '|\bdefine[sd]?\b[^.]{0,80}\bas\b|\bis defined as\b|\bare any (?:event|incident|occurrence)s?\b'
             // A drill, and the federal Prison Rape Elimination Act (PREA) named as a program.
             . '|\b(?:mock|drills?)\b|\bPrison Rape Elimination\b|\bPREA\b'
             // A definition being quoted: "Medication error" means ...
@@ -1184,9 +1203,9 @@ if (!function_exists('kop_ih_scanner_version')) {
      * removed. Returns counts: added, refreshed, kept, dropped.
      */
     function kop_ih_store(PDO $pdo, $state, array $row, array $candidates) {
-        $counts = array('added' => 0, 'refreshed' => 0, 'kept' => 0, 'dropped' => 0, 'duplicate' => 0);
+        $counts = array('added' => 0, 'refreshed' => 0, 'kept' => 0, 'dropped' => 0, 'duplicate' => 0, 'relabelled' => 0);
         $report_id = (int) $row['id'];
-        $stmt = $pdo->prepare('SELECT id, finding_key, status FROM inspection_highlights WHERE report_id = ?');
+        $stmt = $pdo->prepare('SELECT id, finding_key, status, category, categories FROM inspection_highlights WHERE report_id = ?');
         $stmt->execute(array($report_id));
         $existing = array();
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $e) $existing[$e['finding_key']] = $e;
@@ -1219,6 +1238,16 @@ if (!function_exists('kop_ih_scanner_version')) {
                     ->execute(array_merge($values, array((int) $existing[$c['finding_key']]['id'])));
                 $counts['refreshed']++;
             } else {
+                // A reviewed finding keeps its status and text. Only the split of
+                // self-harm from suicide attempts (scanner 5) may move its label.
+                $e = $existing[$c['finding_key']];
+                $split = array('self_harm', 'suicide_attempt');
+                if (in_array($e['category'], $split, true) && in_array($c['category'], $split, true)
+                    && ($e['category'] !== $c['category'] || $e['categories'] !== $values[1])) {
+                    $pdo->prepare('UPDATE inspection_highlights SET category=?, categories=? WHERE id=?')
+                        ->execute(array($c['category'], $values[1], (int) $e['id']));
+                    $counts['relabelled']++;
+                }
                 $counts['kept']++;
             }
             unset($existing[$c['finding_key']]);
@@ -1477,7 +1506,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      */
     function kop_ih_scan(PDO $pdo, $limit = 2000, $apply = false, array $states = array(), $rescan_all = false) {
         $states = $states ? array_values(array_intersect(array_map('strtoupper', $states), kop_ih_supported_states())) : kop_ih_supported_states();
-        $result = array('scanned' => 0, 'remaining' => 0, 'added' => 0, 'refreshed' => 0, 'kept' => 0, 'dropped' => 0, 'duplicate' => 0, 'candidates' => array());
+        $result = array('scanned' => 0, 'remaining' => 0, 'added' => 0, 'refreshed' => 0, 'kept' => 0, 'dropped' => 0, 'duplicate' => 0, 'relabelled' => 0, 'candidates' => array());
         $seen = array();
         if (!$states) return $result;
         if ($apply) kop_ih_ensure_tables($pdo);
