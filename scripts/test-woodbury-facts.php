@@ -221,5 +221,92 @@ $check('every consultant gets their jobs and the former-staff flag', $bad_flag =
 $check('undo gives back the consultant record exactly', $bad_undo === 0, "$bad_undo differ");
 foreach (array_slice($cex, 0, 8) as $e) echo "    $e\n";
 
+echo "-- Edit before adding --\n";
+// Every item sent back through its own Edit form unchanged gives the same value and label.
+$no_form = $value_diff = $label_diff = 0;
+$ex = array();
+foreach ($data['proposals'] as $p) {
+    $r = array('pkey' => $p['key'], 'op' => $p['op'], 'path' => $p['path'], 'value' => json_encode($p['value']), 'label' => $p['label'],
+        'extra' => '{}', 'status' => 'pending');
+    $fields = kop_wbf_edit_fields($r);
+    if (!$fields) {
+        $no_form++;
+        if (count($ex) < 10) $ex[] = "no form: {$p['op']} {$p['path']}";
+        continue;
+    }
+    $f = array();
+    foreach ($fields as $fd) $f[$fd[0]] = $fd[3];
+    try {
+        list($v, $path) = kop_wbf_edited_value($r, $f);
+    } catch (RuntimeException $e) {
+        $value_diff++;
+        if (count($ex) < 10) $ex[] = "refused as read: {$p['path']} " . $e->getMessage() . ' ' . substr(json_encode($p['value']), 0, 80);
+        continue;
+    }
+    if (json_encode($v) !== json_encode($p['value']) || $path !== $p['path']) {
+        $value_diff++;
+        if (count($ex) < 10) $ex[] = "value changed: {$p['path']} " . substr(json_encode($p['value']), 0, 90) . ' -> ' . substr(json_encode($v), 0, 90);
+    }
+    if (kop_wbf_label_for($r, $v) !== $p['label']) {
+        $label_diff++;
+        if (count($ex) < 10) $ex[] = "label: \"{$p['label']}\" -> \"" . kop_wbf_label_for($r, $v) . '"';
+    }
+}
+$check('every item has an Edit form', $no_form === 0, "$no_form without");
+$check('saving an item unchanged keeps its value', $value_diff === 0, "$value_diff differ");
+$check('saving an item unchanged keeps its label', $label_diff === 0, "$label_diff differ");
+foreach ($ex as $e) echo "    $e\n";
+
+// Bad input is refused with a reason.
+$refuse = function ($op, $path, $value, $f) {
+    try {
+        kop_wbf_edited_value(array('op' => $op, 'path' => $path, 'value' => json_encode($value), 'label' => ''), $f);
+        return false;
+    } catch (RuntimeException $e) {
+        return $e->getMessage() !== '';
+    }
+};
+$check('a year that is not a year is refused', $refuse('set_if_empty', 'operatingPeriod.startYear', 2006, array('year' => '206')));
+$check('ages the wrong way round are refused', $refuse('set_if_empty', 'facilityDetails.ageRange', array('min' => 13, 'max' => 18), array('min' => '18', 'max' => '12')));
+$check('a gender outside the three is refused', $refuse('set_if_empty', 'facilityDetails.gender', 'Male', array('gender' => 'Boys')));
+$check('a staff member needs a name', $refuse('add_staff', 'staff.notableStaff', array('name' => 'A B', 'role' => '', 'pastJobs' => ''), array('name' => ' ')));
+$check('an empty note is refused', $refuse('add_list', 'notes', 'Owner: X', array('text' => '')));
+$check('a job line needs a program', $refuse('consultant_jobs', 'referrer', array('name' => 'A B', 'jobs' => array()), array('name' => 'A B', 'jobs' => 'Director |  | 2001')));
+
+// A corrected staff member, moved to the other list, applies and passes the validator.
+$staff = null;
+foreach ($by as $fid => $rows) {
+    foreach ($rows as $row) {
+        if ($row['op'] === 'add_staff' && $row['path'] === 'staff.notableStaff') {
+            $staff = array($fid, $row);
+            break 2;
+        }
+    }
+}
+if ($staff) {
+    list($fid, $row) = $staff;
+    list($v, $path) = kop_wbf_edited_value($row, array('name' => 'Corrected Person-Name', 'role' => 'Clinical Director (2009, Woodbury Reports)',
+        'pastJobs' => '', 'where' => 'staff.administrator'));
+    $as_read = $row;
+    $row['value'] = json_encode($v);
+    $row['path'] = $path;
+    $stmt->execute(array($fid));
+    $doc = $normalize(json_decode((string) $stmt->fetchColumn(), true));
+    kop_wbf_doc_apply($doc, $row);
+    $saved = $normalize($doc);
+    $errors = array_filter(kop_facility_validate($saved), function ($v) { return $v['severity'] === 'error'; });
+    $names = array_map(function ($s) { return is_array($s) ? ($s['name'] ?? '') : $s; }, (array) ($saved['staff']['administrator'] ?? array()));
+    $check('a corrected, moved staff member lands on the chosen list', in_array('Corrected Person-Name', $names, true) && !$errors, "facility #$fid");
+    $check('the label follows the correction', preg_replace('/ \(died [^()]*\)$/', '', kop_wbf_label_for($as_read, $v)) === 'Corrected Person-Name, Clinical Director (2009, Woodbury Reports)');
+}
+$died = array('op' => 'add_staff', 'path' => 'staff.administrator', 'label' => 'Jack Eckerd, Founder (2004, Woodbury Reports) (died 2004-05-19)',
+    'value' => json_encode(array('name' => 'Jack Eckerd', 'role' => 'Founder (2004, Woodbury Reports)', 'pastJobs' => '')));
+$check('a corrected role keeps "died"', kop_wbf_label_for($died, array('name' => 'Jack Eckerd', 'role' => 'Owner', 'pastJobs' => ''))
+    === 'Jack Eckerd, Owner (died 2004-05-19)');
+$owner = array('op' => 'add_list', 'path' => 'identification.pastOperators', 'label' => 'Operator/owner: UHS (2005-12-20)', 'value' => json_encode('UHS'));
+$check('a corrected owner keeps its date', kop_wbf_label_for($owner, 'Universal Health Services') === 'Operator/owner: Universal Health Services (2005-12-20)');
+$check('plain text drops the date and citation',
+    kop_wbf_plain_text('2006-09-12: Injury: A boy was hurt. (Woodbury Reports, October 2006, p. 29)') === 'Injury: A boy was hurt.');
+
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed.\n";
 exit($failures ? 1 : 0);

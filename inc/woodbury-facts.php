@@ -103,8 +103,12 @@ function kop_wbf_sync($force = false) {
     global $wpdb;
     $table = kop_wbf_table();
     $existing = array();
-    foreach ((array) $wpdb->get_results("SELECT pkey, status FROM {$table}", ARRAY_A) as $r) {
+    $edited = array();
+    foreach ((array) $wpdb->get_results("SELECT pkey, status, extra FROM {$table}", ARRAY_A) as $r) {
         $existing[$r['pkey']] = $r['status'];
+        if (strpos((string) $r['extra'], '"edited_by"') !== false) {
+            $edited[$r['pkey']] = true;
+        }
     }
     $now = current_time('mysql', true);
     $seen = array();
@@ -150,6 +154,9 @@ function kop_wbf_sync($force = false) {
             if ($wpdb->insert($table, $row) !== false) {
                 $added++;
             }
+        } elseif (isset($edited[$pkey])) {
+            // Corrected by hand: the rebuild's reading does not replace it.
+            continue;
         } elseif (in_array($existing[$pkey], array('pending', 'gone'), true)) {
             $row['status'] = 'pending';
             $wpdb->update($table, $row, array('pkey' => $pkey));
@@ -745,6 +752,331 @@ function kop_wbf_consultant_undo(array $r) {
 
 /* ---- AJAX --------------------------------------------------------------- */
 
+/* ---- Correcting an item before it is added ----------------------------- */
+
+/** "Owner: ... (Woodbury Reports, May 2007, p. 20)" -> "Owner: ...": the words a list item shows, without its date and citation. */
+function kop_wbf_plain_text($text) {
+    $text = preg_replace('/\s*\(Woodbury Reports[^()]*\)\s*$/', '', trim((string) $text));
+    return trim(preg_replace('/^(\d{4}(-\d\d){0,2}|Reported [A-Z][a-z]+ \d{4}):\s*/', '', $text));
+}
+
+/** The label an item shows, rebuilt from a corrected value in the build's words. */
+function kop_wbf_label_for(array $r, $v) {
+    $old = (string) $r['label'];
+    // Unchanged: the build's label, which can say more ("the record says 2001").
+    if (json_encode(kop_wbf_row_value($r)) === json_encode($v)) {
+        return $old;
+    }
+    switch ($r['op'] . ' ' . $r['path']) {
+        case 'set_if_empty operatingPeriod.startYear':
+            return 'Start year: ' . $v;
+        case 'set_if_empty facilityDetails.capacity':
+            return 'Capacity: ' . $v . (preg_match('/ \(as of \d{4}\)$/', $old, $m) ? $m[0] : '');
+        case 'set_if_empty facilityDetails.ageRange':
+            return 'Ages ' . $v['min'] . '-' . $v['max'];
+        case 'set_if_empty facilityDetails.gender':
+            return 'Serves: ' . $v;
+        case 'set_if_empty facilityDetails.type':
+            return 'Type: ' . $v;
+        case 'set_closed operatingPeriod':
+            return !empty($v['endYear']) ? 'Closed in ' . $v['endYear'] . ' (sets status Closed, end year ' . $v['endYear'] . ')' : 'Closed (sets status Closed)';
+        case 'add_list identification.pastNames':
+            return 'Past name: ' . $v;
+        case 'add_list identification.pastOperators':
+            return 'Operator/owner: ' . $v . (preg_match('/ \([^()]*\d{4}[^()]*\)$/', $old, $m) ? $m[0] : '');
+        case 'add_list location.formerLocations':
+            return 'Former location: ' . $v['raw'];
+    }
+    if ($r['op'] === 'add_staff') {
+        return $v['name'] . ($v['role'] !== '' ? ', ' . $v['role'] : '') . (preg_match('/ \(died [^()]*\)$/', $old, $m) ? $m[0] : '');
+    }
+    if ($r['op'] === 'consultant_jobs') {
+        $jobs = array();
+        foreach ($v['jobs'] as $j) {
+            $jobs[] = $j['role'] . ' at ' . $j['organization'] . ($j['when'] !== '' ? ' (' . $j['when'] . ')' : '');
+        }
+        return $v['name'] . ', educational consultant' . ($v['practice'] !== '' ? ' (' . $v['practice'] . ')' : '') . ': ' . implode('; ', $jobs);
+    }
+    return kop_wbf_plain_text(is_string($v) ? $v : $old);
+}
+
+/** One field of the edit form: [key, label, kind (text|area|num|select), value, options]. */
+function kop_wbf_edit_fields(array $r) {
+    $v = kop_wbf_row_value($r);
+    $years = function ($y) { return $y === null || $y === '' ? '' : (string) (int) $y; };
+    switch ($r['op'] . ' ' . $r['path']) {
+        case 'set_if_empty operatingPeriod.startYear':
+            return array(array('year', 'Start year', 'num', $years($v)));
+        case 'set_if_empty facilityDetails.capacity':
+            return array(array('capacity', 'Capacity', 'num', (string) (int) $v));
+        case 'set_if_empty facilityDetails.ageRange':
+            return array(array('min', 'Youngest age', 'num', (string) ($v['min'] ?? '')), array('max', 'Oldest age', 'num', (string) ($v['max'] ?? '')));
+        case 'set_if_empty facilityDetails.gender':
+            return array(array('gender', 'Serves', 'select', (string) $v, array('Male', 'Female', 'Co-ed')));
+        case 'set_if_empty facilityDetails.type':
+            return array(array('type', 'Type', 'select', (string) $v, function_exists('kop_facdisc_types') ? kop_facdisc_types() : array((string) $v)));
+        case 'set_closed operatingPeriod':
+            return array(array('endYear', 'Closed in (year, may be empty)', 'num', $years($v['endYear'] ?? '')));
+        case 'add_list location.formerLocations':
+            return array(array('raw', 'Place as written', 'text', (string) ($v['raw'] ?? '')),
+                array('city', 'City', 'text', (string) ($v['city'] ?? '')), array('state', 'State', 'text', (string) ($v['state'] ?? '')),
+                array('country', 'Country, outside the US', 'text', (string) ($v['country'] ?? '')),
+                array('fromYear', 'From (year)', 'num', $years($v['fromYear'] ?? '')), array('toYear', 'To (year)', 'num', $years($v['toYear'] ?? '')));
+    }
+    if ($r['op'] === 'add_staff') {
+        return array(
+            array('name', 'Name', 'text', (string) ($v['name'] ?? '')),
+            array('role', 'Role', 'text', (string) ($v['role'] ?? '')),
+            array('pastJobs', 'Past jobs', 'area', (string) ($v['pastJobs'] ?? '')),
+            array('where', 'List', 'select', $r['path'], array('staff.administrator' => 'Administrators', 'staff.notableStaff' => 'Notable staff')),
+        );
+    }
+    if ($r['op'] === 'consultant_jobs') {
+        $lines = array();
+        foreach ((array) ($v['jobs'] ?? array()) as $j) {
+            $lines[] = trim($j['role'] ?? '') . ' | ' . trim($j['organization'] ?? '') . ' | ' . trim($j['when'] ?? '');
+        }
+        return array(
+            array('name', 'Name', 'text', (string) ($v['name'] ?? '')),
+            array('credentials', 'Credentials', 'text', (string) ($v['credentials'] ?? '')),
+            array('practice', 'Consulting practice', 'text', (string) ($v['practice'] ?? '')),
+            array('city', 'City', 'text', (string) ($v['city'] ?? '')),
+            array('state', 'State', 'text', (string) ($v['state'] ?? '')),
+            array('jobs', 'Industry jobs, one a line: Role | Program | Year', 'area', implode("\n", $lines)),
+        );
+    }
+    if ($r['op'] === 'add_list' && is_string($v)) {
+        return array(array('text', 'Text', in_array($r['path'], array('identification.pastNames', 'identification.pastOperators'), true) ? 'text' : 'area', $v));
+    }
+    return array();
+}
+
+/**
+ * The corrected value from the edit form's fields, checked as the record
+ * would check it. Returns [value, path].
+ */
+function kop_wbf_edited_value(array $r, array $f) {
+    $old = kop_wbf_row_value($r);
+    $t = function ($k) use ($f) { return trim(preg_replace('/[ \t]+/', ' ', (string) ($f[$k] ?? ''))); };
+    $year = function ($k, $blank_ok) use ($t) {
+        $s = $t($k);
+        if ($s === '' && $blank_ok) {
+            return null;
+        }
+        if (!preg_match('/^\d{4}$/', $s) || (int) $s < 1850 || (int) $s > (int) gmdate('Y') + 1) {
+            throw new RuntimeException('"' . $s . '" is not a year.');
+        }
+        return (int) $s;
+    };
+    $path = $r['path'];
+    switch ($r['op'] . ' ' . $r['path']) {
+        case 'set_if_empty operatingPeriod.startYear':
+            return array($year('year', false), $path);
+        case 'set_if_empty facilityDetails.capacity':
+            $n = $t('capacity');
+            if (!preg_match('/^\d+$/', $n) || (int) $n < 1 || (int) $n > 5000) {
+                throw new RuntimeException('Capacity must be a number of beds or students.');
+            }
+            return array((int) $n, $path);
+        case 'set_if_empty facilityDetails.ageRange':
+            $min = $t('min');
+            $max = $t('max');
+            if (!preg_match('/^\d+$/', $min) || !preg_match('/^\d+$/', $max) || (int) $min > (int) $max || (int) $max > 30) {
+                throw new RuntimeException('Ages must be two numbers, youngest first.');
+            }
+            return array(array('min' => (int) $min, 'max' => (int) $max), $path);
+        case 'set_if_empty facilityDetails.gender':
+            if (!in_array($t('gender'), array('Male', 'Female', 'Co-ed'), true)) {
+                throw new RuntimeException('Choose Male, Female or Co-ed.');
+            }
+            return array($t('gender'), $path);
+        case 'set_if_empty facilityDetails.type':
+            if (function_exists('kop_facdisc_types') && !in_array($t('type'), kop_facdisc_types(), true)) {
+                throw new RuntimeException('Choose one of the agreed facility types.');
+            }
+            return array($t('type'), $path);
+        case 'set_closed operatingPeriod':
+            return array(array('endYear' => $year('endYear', true)), $path);
+        case 'add_list location.formerLocations':
+            $state = $t('state');
+            if ($state !== '') {
+                $code = function_exists('kop_facility_state_code') ? (string) kop_facility_state_code($state) : strtoupper($state);
+                if ($code === '') {
+                    throw new RuntimeException('"' . $state . '" is not a US state. Leave it empty and give the country instead.');
+                }
+                $state = $code;
+            }
+            $raw = $t('raw') !== '' ? $t('raw') : implode(', ', array_filter(array($t('city'), $state !== '' ? $state : $t('country'))));
+            $v = array('raw' => $raw, 'city' => $t('city'),
+                'state' => $state, 'country' => $t('country') !== '' ? $t('country') : null,
+                'fromYear' => $year('fromYear', true), 'toYear' => $year('toYear', true));
+            if ($v['raw'] === '') {
+                throw new RuntimeException('Give a city, a state or a country.');
+            }
+            return array($v, $path);
+    }
+    if ($r['op'] === 'add_staff') {
+        if ($t('name') === '') {
+            throw new RuntimeException('A name is needed.');
+        }
+        $where = in_array($f['where'] ?? '', array('staff.administrator', 'staff.notableStaff'), true) ? $f['where'] : $path;
+        return array(array('name' => $t('name'), 'role' => $t('role'), 'pastJobs' => $t('pastJobs')), $where);
+    }
+    if ($r['op'] === 'consultant_jobs') {
+        if ($t('name') === '') {
+            throw new RuntimeException('A name is needed.');
+        }
+        $known = array();
+        foreach ((array) ($old['jobs'] ?? array()) as $j) {
+            $known[strtolower(trim($j['organization'] ?? ''))] = (int) ($j['facility_id'] ?? 0);
+        }
+        $jobs = array();
+        foreach (preg_split('/\R/', (string) ($f['jobs'] ?? '')) as $line) {
+            if (trim($line) === '') {
+                continue;
+            }
+            $bits = array_map('trim', explode('|', $line));
+            if (count($bits) < 2 || $bits[1] === '') {
+                throw new RuntimeException('Each job line needs Role | Program | Year: "' . trim($line) . '"');
+            }
+            $jobs[] = array('role' => $bits[0], 'organization' => $bits[1], 'when' => $bits[2] ?? '',
+                'facility_id' => $known[strtolower($bits[1])] ?? 0);
+        }
+        if (!$jobs) {
+            throw new RuntimeException('Give at least one job.');
+        }
+        $v = is_array($old) ? $old : array();
+        foreach (array('name', 'credentials', 'practice', 'city', 'state') as $k) {
+            $v[$k] = $t($k);
+        }
+        $v['jobs'] = $jobs;
+        return array($v, $path);
+    }
+    if ($r['op'] === 'add_list' && is_string($old)) {
+        $text = trim((string) ($f['text'] ?? ''));
+        if ($text === '') {
+            throw new RuntimeException('The text is empty. Reject the item instead.');
+        }
+        return array($text, $path);
+    }
+    throw new RuntimeException('This item cannot be edited.');
+}
+
+/**
+ * Save a correction on a waiting item: its value, where it goes and its
+ * label. The build's own version is kept in extra.original (Reset puts it
+ * back), a corrected item is never added automatically, and a rebuild leaves
+ * it alone.
+ */
+function kop_wbf_edit(array $r, array $f, $reviewer) {
+    global $wpdb;
+    if ($r['status'] !== 'pending') {
+        throw new RuntimeException('Only waiting items can be edited. Undo it first.');
+    }
+    $extra = json_decode((string) $r['extra'], true) ?: array();
+    list($value, $path) = kop_wbf_edited_value($r, $f);
+    $old_value = kop_wbf_row_value($r);
+    if (!isset($extra['original'])) {
+        $extra['original'] = array('value' => $old_value, 'label' => $r['label'], 'path' => $r['path']);
+    }
+    // A rename, owner or move also leaves a line in the notes: keep it naming the corrected value.
+    if (!empty($extra['note_line']) && is_string($old_value) && is_string($value) && $old_value !== '') {
+        $extra['note_line'] = str_replace($old_value, $value, $extra['note_line']);
+    }
+    $extra['edited_by'] = $reviewer;
+    $extra['edited_at'] = current_time('mysql', true);
+    $r['path'] = $path;
+    $label = kop_wbf_label_for($r, $value);
+    $wpdb->update(kop_wbf_table(), array('value' => wp_json_encode($value), 'path' => $path, 'label' => $label,
+        'extra' => wp_json_encode($extra), 'auto' => 0), array('pkey' => $r['pkey']));
+    $r['value'] = wp_json_encode($value);
+    $r['label'] = $label;
+    $r['extra'] = wp_json_encode($extra);
+    return $r;
+}
+
+/** Put a corrected item back as the build read it. */
+function kop_wbf_edit_reset(array $r) {
+    global $wpdb;
+    $extra = json_decode((string) $r['extra'], true) ?: array();
+    if ($r['status'] !== 'pending' || !isset($extra['original'])) {
+        throw new RuntimeException('Nothing to reset.');
+    }
+    $o = $extra['original'];
+    if (!empty($extra['note_line']) && is_string($o['value']) && is_string(kop_wbf_row_value($r))) {
+        $extra['note_line'] = str_replace(kop_wbf_row_value($r), $o['value'], $extra['note_line']);
+    }
+    unset($extra['original'], $extra['edited_by'], $extra['edited_at']);
+    $wpdb->update(kop_wbf_table(), array('value' => wp_json_encode($o['value']), 'path' => $o['path'], 'label' => $o['label'],
+        'extra' => wp_json_encode($extra)), array('pkey' => $r['pkey']));
+    $r['value'] = wp_json_encode($o['value']);
+    $r['path'] = $o['path'];
+    $r['label'] = $o['label'];
+    $r['extra'] = wp_json_encode($extra);
+    return $r;
+}
+
+/** The Edit box under a waiting item. */
+function kop_wbf_edit_form(array $r) {
+    $fields = kop_wbf_edit_fields($r);
+    if (!$fields) {
+        return '';
+    }
+    $extra = json_decode((string) $r['extra'], true) ?: array();
+    $html = '<details class="kop-wbf-edit"><summary>Edit' . (isset($extra['original']) ? ' (corrected)' : '') . '</summary><div class="kop-wbf-edit-box">';
+    foreach ($fields as $fd) {
+        list($key, $label, $kind, $value) = $fd;
+        $html .= '<label>' . esc_html($label) . ' ';
+        if ($kind === 'area') {
+            $html .= '<textarea data-f="' . esc_attr($key) . '" rows="' . ($key === 'text' ? 4 : 3) . '">' . esc_textarea($value) . '</textarea>';
+        } elseif ($kind === 'select') {
+            $html .= '<select data-f="' . esc_attr($key) . '">';
+            $opts = $fd[4];
+            if (!in_array($value, array_keys($opts), true) && !in_array($value, $opts, true)) {
+                $html .= '<option value="' . esc_attr($value) . '" selected>' . esc_html($value) . '</option>';
+            }
+            foreach ($opts as $ok => $ol) {
+                $ov = is_int($ok) ? $ol : $ok;
+                $html .= '<option value="' . esc_attr($ov) . '"' . ((string) $ov === (string) $value ? ' selected' : '') . '>' . esc_html($ol) . '</option>';
+            }
+            $html .= '</select>';
+        } else {
+            $html .= '<input type="' . ($kind === 'num' ? 'number' : 'text') . '" data-f="' . esc_attr($key) . '" value="' . esc_attr($value) . '">';
+        }
+        $html .= '</label>';
+    }
+    $html .= '<button type="button" class="button button-small kop-wbf-save">Save correction</button> ';
+    if (isset($extra['original'])) {
+        $html .= '<button type="button" class="button-link kop-wbf-reset">Back to what Woodbury said</button> ';
+    }
+    return $html . '<span class="kop-wbf-edit-msg" aria-live="polite"></span></div></details>';
+}
+
+add_action('wp_ajax_kop_wbf_edit', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Not allowed.', 403);
+    }
+    check_ajax_referer('kop_woodbury_facts', 'nonce');
+    $rows = kop_wbf_rows(array((string) ($_POST['key'] ?? '')));
+    try {
+        if (!$rows) {
+            throw new RuntimeException('Not found.');
+        }
+        if (!empty($_POST['reset'])) {
+            $r = kop_wbf_edit_reset($rows[0]);
+        } else {
+            $f = array();
+            foreach ((array) ($_POST['f'] ?? array()) as $k => $v) {
+                $f[sanitize_key($k)] = sanitize_textarea_field(wp_unslash((string) $v));
+            }
+            $r = kop_wbf_edit($rows[0], $f, wp_get_current_user()->user_login);
+        }
+        wp_send_json_success(array('label' => $r['label'], 'goes' => kop_wbf_where_it_goes($r), 'form' => kop_wbf_edit_form($r)));
+    } catch (Throwable $e) {
+        wp_send_json_error($e->getMessage());
+    }
+});
+
 add_action('wp_ajax_kop_wbf_act', function () {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Not allowed.', 403);
@@ -904,6 +1236,9 @@ function kop_render_woodbury_facts_page() {
         . 'Each item shows the words it comes from and links to the page of the issue.</p>'
         . '<ol class="kop-wbf-how"><li><strong>Read down a card.</strong> Items with a checked quote and a sure match start ticked. '
         . 'Untick anything wrong.</li>'
+        . '<li><strong>Read wrong?</strong> Click <em>Edit</em> under the item to fix the name, role, year or text (or move a person between administrators and notable staff), '
+        . 'then <em>Save correction</em> and add it as usual. A corrected item is never added automatically, and a new scan does not overwrite it. '
+        . 'Something already added automatically: Undo it on the <em>Added automatically</em> tab, then edit it here.</li>'
         . '<li><strong>Click <em>Add checked to record</em></strong> on the card, or <em>Add everything ticked on this page</em> at the top. '
         . 'The facility page shows the additions at once, each citing the issue; new staff, past operators and past names reach the network map on its next build.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo, which takes back exactly what was added.</li></ol>';
@@ -1067,8 +1402,11 @@ function kop_wbf_render_row(array $r, $tab) {
     $extra = json_decode((string) $r['extra'], true) ?: array();
     echo '<tr data-key="' . esc_attr($r['pkey']) . '">';
     echo '<td class="kop-wbf-check"><input type="checkbox" class="kop-wbf-pick"' . ($checked ? ' checked' : '') . ' aria-label="Select"></td>';
-    echo '<td class="kop-wbf-what"><strong>' . esc_html($r['label']) . '</strong>'
-        . '<div class="kop-wbf-muted">Goes to: ' . esc_html(kop_wbf_where_it_goes($r)) . '</div>';
+    echo '<td class="kop-wbf-what"><strong class="kop-wbf-label">' . esc_html($r['label']) . '</strong>'
+        . '<div class="kop-wbf-muted">Goes to: <span class="kop-wbf-goes">' . esc_html(kop_wbf_where_it_goes($r)) . '</span></div>';
+    if ($r['status'] === 'pending') {
+        echo kop_wbf_edit_form($r);
+    }
     if ($r['conflict'] !== '') {
         echo '<div class="kop-wbf-warn">' . esc_html($r['conflict']) . '</div>';
     }
@@ -1136,6 +1474,14 @@ function kop_wbf_render_assets() {
         .kop-wbf-result.ok { color: #007017; }
         .kop-wbf-result.err { color: #d63638; }
         tr.kop-wbf-gone td { opacity: .45; }
+        .kop-wbf-edit { margin-top: 4px; }
+        .kop-wbf-edit summary { cursor: pointer; color: #2271b1; font-size: 12px; }
+        .kop-wbf-edit-box { margin-top: 4px; padding: 8px; background: #f6f7f7; border: 1px solid #dcdcde; }
+        .kop-wbf-edit-box label { display: block; margin: 0 0 6px; font-size: 12px; color: #50575e; }
+        .kop-wbf-edit-box input, .kop-wbf-edit-box textarea, .kop-wbf-edit-box select { display: block; width: 100%; max-width: 100%; }
+        .kop-wbf-edit-msg { font-size: 12px; margin-left: 6px; }
+        .kop-wbf-edit-msg.ok { color: #007017; }
+        .kop-wbf-edit-msg.err { color: #d63638; }
     </style>
     <script>
     (function () {
@@ -1193,7 +1539,37 @@ function kop_wbf_render_assets() {
             }).catch(function () { out.className = 'kop-wbf-result err'; out.textContent = 'Network error; try again.'; });
         }
 
+        // Edit: correct what the build read before adding it.
+        function saveEdit(box, reset) {
+            var tr = box.closest('tr[data-key]');
+            var msg = box.querySelector('.kop-wbf-edit-msg');
+            var body = new URLSearchParams();
+            body.append('action', 'kop_wbf_edit');
+            body.append('nonce', nonce);
+            body.append('key', tr.dataset.key);
+            if (reset) body.append('reset', '1');
+            else box.querySelectorAll('[data-f]').forEach(function (f) { body.append('f[' + f.dataset.f + ']', f.value); });
+            msg.className = 'kop-wbf-edit-msg'; msg.textContent = 'Saving...';
+            fetch(ajax, { method: 'POST', credentials: 'same-origin', body: body }).then(function (r) { return r.json(); }).then(function (res) {
+                if (!res.success) { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = res.data || 'Failed.'; return; }
+                tr.querySelector('.kop-wbf-label').textContent = res.data.label;
+                tr.querySelector('.kop-wbf-goes').textContent = res.data.goes;
+                var wrap = document.createElement('div');
+                wrap.innerHTML = res.data.form;
+                var fresh = wrap.firstElementChild;
+                fresh.open = !reset;
+                box.closest('.kop-wbf-edit').replaceWith(fresh);
+                var m = fresh.querySelector('.kop-wbf-edit-msg');
+                m.className = 'kop-wbf-edit-msg ok';
+                m.textContent = reset ? '' : 'Saved. Tick it and add it as usual.';
+                var pick = tr.querySelector('.kop-wbf-pick');
+                if (pick && !reset) pick.checked = true;
+            }).catch(function () { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = 'Network error; try again.'; });
+        }
+
         document.addEventListener('click', function (e) {
+            var save = e.target.closest('.kop-wbf-save, .kop-wbf-reset');
+            if (save) { saveEdit(save.closest('.kop-wbf-edit-box'), save.classList.contains('kop-wbf-reset')); return; }
             var btn = e.target.closest('.kop-wbf-card [data-act]');
             if (btn) { run(btn.closest('.kop-wbf-card'), btn.dataset.act); return; }
             var alt = e.target.closest('.kop-wbf-alt');
