@@ -428,6 +428,80 @@ add_action('kop_wb_render_covers', function () {
     }
 });
 
+/* ---- Extra copies left by retried filings ----------------------------- */
+
+/** Every file an attachment owns on disk: the PDF and its preview images. */
+function kop_wb_attachment_files($id) {
+    $file = get_attached_file($id);
+    if (!$file) {
+        return array();
+    }
+    $out = array(wp_normalize_path($file));
+    $meta = wp_get_attachment_metadata($id);
+    $dir = trailingslashit(dirname($file));
+    foreach ((is_array($meta) && !empty($meta['sizes']) ? $meta['sizes'] : array()) as $size) {
+        if (!empty($size['file'])) {
+            $out[] = wp_normalize_path($dir . $size['file']);
+        }
+    }
+    return $out;
+}
+
+/**
+ * Candidates imported more than once (a 503'd batch sent again while the
+ * first was still running). Keeps the copy the candidate row points at, or
+ * the oldest; an extra that shares a file with the kept copy is left alone.
+ *
+ * @return array<int, array{ckey:string, keep:int, extras:int[], title:string}>
+ */
+function kop_wb_duplicate_copies() {
+    global $wpdb;
+    $rows = $wpdb->get_results(
+        "SELECT pm.meta_value AS ckey, GROUP_CONCAT(pm.post_id ORDER BY pm.post_id) AS ids
+         FROM {$wpdb->postmeta} pm JOIN {$wpdb->posts} p ON p.ID = pm.post_id AND p.post_type = 'attachment'
+         WHERE pm.meta_key = '_kop_woodbury_key'
+         GROUP BY pm.meta_value HAVING COUNT(*) > 1",
+        ARRAY_A
+    );
+    $out = array();
+    foreach ((array) $rows as $row) {
+        $ids = array_map('intval', explode(',', $row['ids']));
+        $cand = kop_wb_get($row['ckey']);
+        $keep = $cand && in_array((int) $cand['attachment_id'], $ids, true) ? (int) $cand['attachment_id'] : $ids[0];
+        $kept_files = kop_wb_attachment_files($keep);
+        $extras = array();
+        foreach ($ids as $id) {
+            if ($id !== $keep && !array_intersect(kop_wb_attachment_files($id), $kept_files)) {
+                $extras[] = $id;
+            }
+        }
+        if ($extras) {
+            $out[] = array('ckey' => $row['ckey'], 'keep' => $keep, 'extras' => $extras, 'title' => get_the_title($keep));
+        }
+    }
+    return $out;
+}
+
+add_action('admin_post_kop_wb_dedupe', function () {
+    if (!current_user_can('manage_options')) {
+        wp_die('Not allowed.', 403);
+    }
+    check_admin_referer('kop_wb_dedupe');
+    global $wpdb;
+    $removed = 0;
+    foreach (kop_wb_duplicate_copies() as $dup) {
+        foreach ($dup['extras'] as $id) {
+            $wpdb->delete($wpdb->prefix . 'fbv_attachment_folder', array('attachment_id' => $id), array('%d'));
+            if (wp_delete_attachment($id, true)) {
+                $removed++;
+            }
+        }
+    }
+    delete_transient('kop_hidden_preview_ids');
+    wp_safe_redirect(add_query_arg('wb_deduped', $removed, wp_get_referer() ?: admin_url('admin.php?page=kop-woodbury-reports')));
+    exit;
+});
+
 /** Delete the copy this tool imported and put the candidate back in the queue. */
 function kop_wb_undo(array $r, $reviewer) {
     global $wpdb;
@@ -559,6 +633,23 @@ function kop_render_woodbury_page() {
     if ($sync) {
         echo '<div class="notice notice-info"><p>Loaded a new scan: ' . (int) $sync['added'] . ' new, '
             . (int) $sync['updated'] . ' updated, ' . (int) $sync['gone'] . ' no longer found.</p></div>';
+    }
+    if (isset($_GET['wb_deduped'])) {
+        echo '<div class="notice notice-success"><p>Removed ' . (int) $_GET['wb_deduped'] . ' extra ' . ((int) $_GET['wb_deduped'] === 1 ? 'copy' : 'copies') . '.</p></div>';
+    }
+    $dups = kop_wb_duplicate_copies();
+    if ($dups) {
+        $n = array_sum(array_map(function ($d) { return count($d['extras']); }, $dups));
+        echo '<div class="notice notice-warning"><p><strong>' . count($dups) . ' ' . (count($dups) === 1 ? 'report was' : 'reports were')
+            . ' imported more than once</strong> (a filing retried while the first try was still running). '
+            . 'Removing the extras keeps one copy of each, the one filed in the program folder.</p><ul style="list-style:disc;margin-left:20px">';
+        foreach ($dups as $d) {
+            echo '<li><a href="' . esc_url(get_edit_post_link($d['keep'])) . '">' . esc_html($d['title'] !== '' ? $d['title'] : '#' . $d['keep']) . '</a>: '
+                . count($d['extras']) . ' extra</li>';
+        }
+        echo '</ul><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="margin-bottom:10px">'
+            . '<input type="hidden" name="action" value="kop_wb_dedupe">' . wp_nonce_field('kop_wb_dedupe', '_wpnonce', true, false)
+            . '<button class="button button-primary">Remove the ' . (int) $n . ' extra ' . ($n === 1 ? 'copy' : 'copies') . '</button></form></div>';
     }
     if (!is_readable(kop_wb_pending_dir() . '/candidates.json')) {
         echo '<div class="notice notice-warning"><p>No scan uploaded yet. Run <code>python scripts/woodbury-scan.py</code> and copy its '
