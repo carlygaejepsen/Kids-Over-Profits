@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const agencyName = clean(agency.name);
             const consultantName = profiles[0].resolvedName;
             
-            if (explicitIndy || (profiles.length === 1 && (agencyName === consultantName || p.db_name.toLowerCase() === consultantName.toLowerCase()))) {
+            if (explicitIndy || (profileMap.size === 1 && (agencyName === consultantName || p.db_name.toLowerCase() === consultantName.toLowerCase()))) {
                 label = 'Independent Consultant';
             }
 
@@ -342,6 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
             });
 
+            if (window.kopDirectoryDocs) html += window.kopDirectoryDocs.slot(p.payload);
             html += `
                 <div class="kop-submit-info-row">
                     <button type="button" class="kop-submit-info-btn" data-kop-submit-type="referrer" data-kop-submit-name="${esc(p.db_name)}">Submit info about this referrer</button>
@@ -349,6 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>`;
             card.innerHTML = html;
             grid.appendChild(card);
+            if (window.kopDirectoryDocs) window.kopDirectoryDocs.attach(card);
         });
         container.appendChild(grid);
     }

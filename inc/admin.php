@@ -468,6 +468,9 @@ function kop_tool_page_specs() {
         array('template' => 'page-glossary.php',           'title' => 'TTI Glossary',        'slug' => 'glossary',           'status' => 'publish'),
         // Bulk downloads of every public dataset, built daily by inc/open-data.php.
         array('template' => 'page-open-data.php',          'title' => 'Open Data',           'slug' => 'open-data',          'status' => 'publish'),
+        // Youth transport companies, from transporters_master (records made in the data
+        // form or from a Woodbury report), with each one's documents on file.
+        array('template' => 'page-transporter-index.php',  'title' => 'Youth Transport Companies', 'slug' => 'youth-transport-companies', 'status' => 'publish'),
     );
 }
 
@@ -516,6 +519,11 @@ function kop_nav_item_specs() {
             'slug'   => 'severe-reports',
             'parent' => 'Monitor',
             'title'  => 'Severe Reports',
+        ),
+        array(
+            'slug'   => 'youth-transport-companies',
+            'parent' => 'Monitor',
+            'title'  => 'Youth Transport Companies',
         ),
     );
 }
@@ -638,7 +646,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '10';
+    $version = '11';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -2015,7 +2023,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '58';
+    $version = '59';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

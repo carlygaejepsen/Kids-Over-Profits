@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const companyName = clean(company.name);
             const transporterName = profiles[0].resolvedName;
 
-            if (explicitIndy || (profiles.length === 1 && (companyName === transporterName || p.db_name.toLowerCase() === transporterName.toLowerCase()))) {
+            if (explicitIndy || (profileMap.size === 1 && (companyName === transporterName || p.db_name.toLowerCase() === transporterName.toLowerCase()))) {
                 label = 'Independent Transporter';
             }
 
@@ -334,6 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>`;
             });
 
+            if (window.kopDirectoryDocs) html += window.kopDirectoryDocs.slot(p.payload);
             html += `
                 <div class="kop-submit-info-row">
                     <button type="button" class="kop-submit-info-btn" data-kop-submit-type="transporter" data-kop-submit-name="${esc(p.db_name)}">Submit info about this transporter</button>
@@ -341,6 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>`;
             card.innerHTML = html;
             grid.appendChild(card);
+            if (window.kopDirectoryDocs) window.kopDirectoryDocs.attach(card);
         });
 
         if (!list.length) {

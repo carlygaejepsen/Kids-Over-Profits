@@ -2149,15 +2149,19 @@ function kop_enqueue_template_assets() {
 
     if (kop_page_uses_template('page-referrer-index.php')) {
         $style('kop-referrer-index', '/css/referrer-index.css');
+        $style('kop-directory-documents', '/css/directory-documents.css', array('kop-colors'));
+        $script('kop-directory-documents', '/js/directory-documents.js');
         $script('kop-submit-info', '/js/submit-info.js');
-        $script('kop-referrer-index', '/js/referrer-index-v2.js', array('kop-submit-info', 'kop-program-links'));
+        $script('kop-referrer-index', '/js/referrer-index-v2.js', array('kop-submit-info', 'kop-program-links', 'kop-directory-documents'));
         return;
     }
 
     if (kop_page_uses_template('page-transporter-index.php')) {
         $style('kop-transporter-index', '/css/transporter-index.css');
+        $style('kop-directory-documents', '/css/directory-documents.css', array('kop-colors'));
+        $script('kop-directory-documents', '/js/directory-documents.js');
         $script('kop-submit-info', '/js/submit-info.js');
-        $script('kop-transporter-index', '/js/transporter-index-v2.js', array('kop-submit-info', 'kop-program-links'));
+        $script('kop-transporter-index', '/js/transporter-index-v2.js', array('kop-submit-info', 'kop-program-links', 'kop-directory-documents'));
         return;
     }
 
