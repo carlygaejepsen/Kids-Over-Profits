@@ -497,7 +497,7 @@ function kop_wbc_record_place($kind, array $payload) {
  *
  * @return array<int, array{kind:string, id:int, name:string, label:string, detail:string}>
  */
-function kop_wbc_find_records(PDO $pdo, $q, $limit = 15) {
+function kop_wbc_find_records(PDO $pdo, $q, $limit = 15, $only = '') {
     global $wpdb;
     $q = trim(preg_replace('/\s+/', ' ', (string) $q));
     if (mb_strlen($q) < 2) {
@@ -507,12 +507,50 @@ function kop_wbc_find_records(PDO $pdo, $q, $limit = 15) {
     $kinds = kop_wbc_kinds();
     $out = array();
 
+    // Companies: one hit per /operator/ page (duplicate records share one),
+    // found by their name or any other name the page answers to.
+    $index = function_exists('kop_operator_pages_index') ? kop_operator_pages_index() : array('ids' => array(), 'alias_of' => array(), 'names' => array());
+    $companies = array();
     $ops = $wpdb->prefix . 'kop_operators';
     $stmt = $pdo->prepare("SELECT id, name, unique_name FROM `{$ops}` WHERE name LIKE ? OR unique_name LIKE ? ORDER BY name LIMIT 20");
     $stmt->execute(array($like, $like));
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-        $name = $row['name'] !== '' && $row['name'] !== null ? $row['name'] : $row['unique_name'];
-        $out[] = array('kind' => 'company', 'id' => (int) $row['id'], 'name' => $name, 'label' => $kinds['company'], 'detail' => '');
+        $id = (int) ($index['alias_of'][(int) $row['id']] ?? $row['id']);
+        $companies[$id] = $companies[$id] ?? '';
+    }
+    $qkey = function_exists('kop_facility_pages_name_key') ? kop_facility_pages_name_key($q) : '';
+    if ($qkey !== '') {
+        foreach ((array) $index['names'] as $nk => $id) {
+            if (strpos((string) $nk, $qkey) !== false && !isset($companies[(int) $id]) && count($companies) < 30) {
+                $companies[(int) $id] = 'goes by that name too';
+            }
+        }
+    }
+    foreach ($companies as $id => $how) {
+        if (isset($index['ids'][$id])) {
+            $e = $index['ids'][$id];
+            $name = $e['display'] !== '' ? $e['display'] : $e['name'];
+        } else {
+            $n = $pdo->prepare("SELECT COALESCE(NULLIF(name, ''), unique_name) FROM `{$ops}` WHERE id = ?");
+            $n->execute(array($id));
+            $name = (string) $n->fetchColumn();
+        }
+        if ($name === '') {
+            continue;
+        }
+        if ($how !== '' && mb_stripos($name, $q) !== false) {
+            $how = '';
+        }
+        $out[] = array('kind' => 'company', 'id' => $id, 'name' => $name, 'label' => $kinds['company'],
+            'detail' => $how, 'url' => function_exists('kop_operator_page_url') ? (string) kop_operator_page_url($id) : '');
+    }
+    if ($only === 'company') {
+        usort($out, function ($a, $b) use ($q) {
+            $sa = mb_stripos($a['name'], $q) === 0 ? 0 : 1;
+            $sb = mb_stripos($b['name'], $q) === 0 ? 0 : 1;
+            return $sa !== $sb ? $sa - $sb : strcasecmp($a['name'], $b['name']);
+        });
+        return array_slice($out, 0, $limit);
     }
 
     foreach (kop_wbc_record_tables() as $kind => $spec) {
@@ -620,7 +658,8 @@ add_action('wp_ajax_kop_wb_find_record', function () {
     }
     check_ajax_referer('kop_woodbury', 'nonce');
     try {
-        wp_send_json_success(kop_wbc_find_records(kop_wbc_pdo(), sanitize_text_field(wp_unslash((string) ($_GET['q'] ?? '')))));
+        wp_send_json_success(kop_wbc_find_records(kop_wbc_pdo(), sanitize_text_field(wp_unslash((string) ($_GET['q'] ?? ''))), 15,
+            sanitize_key($_GET['only'] ?? '')));
     } catch (Throwable $e) {
         wp_send_json_error($e->getMessage());
     }
@@ -653,17 +692,18 @@ add_action('wp_ajax_kop_wb_file_record', function () {
 });
 
 /**
- * File the pages under $target, then tag them into every facility ticked
- * under "File under" on the row ($_POST fids[]), as File it does.
+ * File the pages under $target, then tag them into every facility and
+ * company ticked under "File under" on the row ($_POST fids[]: "123",
+ * "c45"), as File it does.
  */
 function kop_wbc_file_with_ticked(array $r, array $target) {
     $filed = kop_wb_file_target($r, $target, wp_get_current_user()->user_login);
-    $fids = array_filter(array_map('intval', isset($_POST['fids']) && is_array($_POST['fids']) ? $_POST['fids'] : array()));
+    $fids = array_filter(array_map('kop_wb_clean_token', isset($_POST['fids']) && is_array($_POST['fids']) ? $_POST['fids'] : array()));
     if ($fids) {
         try {
             $filed['places'] = array_merge($filed['places'], kop_wb_add_facilities(kop_wb_get($r['ckey']), $fids));
         } catch (Throwable $e) {
-            $filed['warning'] = 'Filed under ' . $target['name'] . ', but not under the ticked facilities: ' . $e->getMessage();
+            $filed['warning'] = 'Filed under ' . $target['name'] . ', but not under the ticked facilities and companies: ' . $e->getMessage();
         }
     }
     return $filed;

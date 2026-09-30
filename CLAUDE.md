@@ -114,6 +114,7 @@ python scripts/test-colour-contrast.py          # static: inks, fills, no accent
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
 python scripts/woodbury-scan.py [--no-cut]
+php scripts/test-woodbury-mentions.php            # "File under" facilities and parent companies (c<id>), company search, rows
 # Woodbury Reports facts (inc/woodbury-facts.php): staff and careers, incidents, openings/closings, names,
 # owners, moves read from every issue into tmp/woodbury-extract/facts/ (readers follow INSTRUCTIONS.md there);
 # the build checks each quote, matches records, drops what they hold -> C:/tmp/kop-woodbury/pending/facts.json,

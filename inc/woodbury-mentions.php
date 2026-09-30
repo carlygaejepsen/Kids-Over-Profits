@@ -408,7 +408,7 @@ function kop_wb_file_locked(array $r, array $target, $reviewer) {
     ), array('ckey' => $r['ckey']));
     delete_transient('kop_hidden_preview_ids');
     return array('attachment_id' => (int) $att, 'folder_id' => $folder, 'url' => (string) wp_get_attachment_url($att), 'facility' => $fac['name'],
-        'places' => array(kop_wb_place($fid, $fac['name'], $folder, true)));
+        'places' => array(kop_wb_place($kind === 'facility' ? $fid : ($kind === 'company' ? (int) $target['id'] : 0), $fac['name'], $folder, true, $kind)));
 }
 
 /** "Utah › Wellspring Academies › Woodbury Reports Mentions": the folder's path in the media library. */
@@ -427,34 +427,145 @@ function kop_wb_folder_path($folder_id) {
     return implode(' › ', $names);
 }
 
-/** One place a filed excerpt shows: the facility (0 for a non-facility record), its folder path and public page. */
-function kop_wb_place($fid, $name, $folder, $primary) {
+/**
+ * A "File under" choice as the page sends it: "123" is facility 123, "c45" is
+ * company (operator) 45. Returns [kind, id], or null.
+ */
+function kop_wb_parse_target($token) {
+    if (preg_match('/^(c?)(\d+)$/', strtolower(trim((string) $token)), $m) && (int) $m[2] > 0) {
+        return array($m[1] === 'c' ? 'company' : 'facility', (int) $m[2]);
+    }
+    return null;
+}
+
+/** A "File under" token from the page, "123" or "c45", anything else ''. */
+function kop_wb_clean_token($t) {
+    return kop_wb_parse_target($t) ? strtolower(trim((string) $t)) : '';
+}
+
+/** The page's token for a record: "123" for a facility, "c45" for a company, '' for anything else. */
+function kop_wb_target_token($kind, $id) {
+    $id = (int) $id;
+    if ($id <= 0) {
+        return '';
+    }
+    return $kind === 'company' ? 'c' . $id : ($kind === 'facility' ? (string) $id : '');
+}
+
+/** A company's lead record: duplicates of one company share one /operator/ page. */
+function kop_wb_company_lead($id) {
+    $index = function_exists('kop_operator_pages_index') ? kop_operator_pages_index() : array();
+    return (int) ($index['alias_of'][(int) $id] ?? $id);
+}
+
+/**
+ * One place a filed excerpt shows: the record (id 0 for a consultant, provider
+ * or transporter), its folder path and public page.
+ */
+function kop_wb_place($fid, $name, $folder, $primary, $kind = 'facility') {
+    $page = '';
+    if ($kind === 'company') {
+        $page = $fid && function_exists('kop_operator_page_url') ? (string) kop_operator_page_url((int) $fid) : '';
+    } elseif ($fid && function_exists('kop_facility_page_url')) {
+        $page = (string) kop_facility_page_url((int) $fid);
+    }
     return array(
         'id'      => (int) $fid,
+        'key'     => kop_wb_target_token($kind, $fid),
+        'kind'    => $kind,
         'name'    => (string) $name,
         'folder'  => (int) $folder,
         'where'   => kop_wb_folder_path($folder),
-        'page'    => $fid && function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $fid) : '',
+        'page'    => $page,
         'primary' => (bool) $primary,
     );
 }
 
-/** The extra facilities a filed excerpt is tagged under: [{id, name, folder}]. */
+/** The extra facilities and companies a filed excerpt is tagged under: [{id, kind, name, folder}]. */
 function kop_wb_also(array $r) {
     $also = json_decode((string) ($r['also_facilities'] ?? ''), true);
-    return is_array($also) ? array_values($also) : array();
+    $also = is_array($also) ? array_values($also) : array();
+    foreach ($also as &$a) {
+        $a['kind'] = ($a['kind'] ?? '') === 'company' ? 'company' : 'facility';
+    }
+    unset($a);
+    return $also;
 }
 
-/** Every place a filed excerpt shows, the facility holding the PDF first. */
+/** Every place a filed excerpt shows, the record holding the PDF first. */
 function kop_wb_places(array $r) {
     $places = array();
     if ($r['status'] === 'filed') {
-        $places[] = kop_wb_place($r['target_kind'] === 'facility' ? (int) $r['facility_id'] : 0, $r['facility_name'], (int) $r['folder_id'], true);
+        $kind = $r['target_kind'];
+        $id = $kind === 'facility' ? (int) $r['facility_id'] : ($kind === 'company' ? (int) $r['target_id'] : 0);
+        $places[] = kop_wb_place($id, $r['facility_name'], (int) $r['folder_id'], true, $kind);
         foreach (kop_wb_also($r) as $a) {
-            $places[] = kop_wb_place((int) $a['id'], $a['name'], (int) $a['folder'], false);
+            $places[] = kop_wb_place((int) $a['id'], $a['name'], (int) $a['folder'], false, $a['kind']);
         }
     }
     return $places;
+}
+
+/**
+ * The companies that run or ran these facilities, offered under "File under":
+ * the operator links behind the /operator/ pages, then the past operators
+ * named on each record. [{id, name, of}], each company once.
+ */
+function kop_wb_parent_companies(array $fids) {
+    global $wpdb;
+    $fids = array_values(array_unique(array_filter(array_map('intval', $fids))));
+    if (!$fids || !function_exists('kop_operator_pages_index')) {
+        return array();
+    }
+    $index = kop_operator_pages_index();
+    $in = implode(',', $fids);
+    $facs = array();
+    foreach ((array) $wpdb->get_results("SELECT id, name, json_data FROM facilities_v2 WHERE id IN ({$in})", ARRAY_A) as $f) {
+        $facs[(int) $f['id']] = array('name' => $f['name'], 'doc' => json_decode((string) $f['json_data'], true));
+    }
+    $out = array();
+    $add = function ($op, $fid, $how) use (&$out, $index, $facs) {
+        $op = (int) ($index['alias_of'][(int) $op] ?? $op);
+        if ($op <= 0 || isset($out[$op]) || !isset($index['ids'][$op])) {
+            return;
+        }
+        $e = $index['ids'][$op];
+        $out[$op] = array('id' => $op, 'name' => $e['display'] !== '' ? $e['display'] : $e['name'],
+            'of' => $how . ' ' . ($facs[$fid]['name'] ?? '#' . $fid));
+    };
+    $ofc = $wpdb->prefix . 'kop_operator_facilities';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $ofc)) === $ofc) {
+        foreach ((array) $wpdb->get_results("SELECT operator_id, facility_id, relationship FROM `{$ofc}` WHERE facility_id IN ({$in}) ORDER BY sort_order", ARRAY_A) as $l) {
+            $add($l['operator_id'], (int) $l['facility_id'], in_array($l['relationship'], array('current', ''), true) ? 'parent company of' : 'past owner of');
+        }
+    }
+    foreach ($fids as $fid) {
+        $doc = $facs[$fid]['doc'] ?? null;
+        foreach (is_array($doc) ? (array) ($doc['identification']['pastOperators'] ?? array()) : array() as $n) {
+            $n = is_array($n) ? (string) ($n['name'] ?? '') : (string) $n;
+            $key = function_exists('kop_facility_pages_name_key') ? kop_facility_pages_name_key($n) : '';
+            if ($key !== '' && isset($index['names'][$key])) {
+                $add($index['names'][$key], $fid, 'past owner of');
+            }
+        }
+    }
+    return array_values($out);
+}
+
+/** The record a token names, as a filing target: kind, id, name and, for a company, its document folder. */
+function kop_wb_target_for($kind, $id) {
+    global $wpdb;
+    if ($kind === 'company') {
+        if (!function_exists('kop_wbc_existing_target')) {
+            throw new RuntimeException('Filing under a company is not available.');
+        }
+        return kop_wbc_existing_target('company', kop_wb_company_lead($id));
+    }
+    $fac = $wpdb->get_row($wpdb->prepare('SELECT id, name FROM facilities_v2 WHERE id = %d', (int) $id), ARRAY_A);
+    if (!$fac) {
+        throw new RuntimeException('Facility #' . (int) $id . ' not found.');
+    }
+    return array('kind' => 'facility', 'id' => (int) $fac['id'], 'name' => $fac['name']);
 }
 
 /** Title the filed PDF after every facility it is filed under. */
@@ -467,49 +578,75 @@ function kop_wb_retitle(array $r) {
 }
 
 /**
- * File the excerpt under several facilities: the PDF goes in the first one's
- * folder, the others get it as a tag in their own Woodbury subfolder.
+ * File the excerpt under several facilities and companies ("123", "c45"): the
+ * PDF goes in the first facility's folder (the first company's when only
+ * companies are ticked), the others get it as a tag in their own Woodbury
+ * subfolder.
  */
-function kop_wb_file_many(array $r, array $fids, $reviewer) {
-    $fids = array_values(array_unique(array_filter(array_map('intval', $fids))));
-    if (!$fids) {
-        throw new RuntimeException('Tick at least one facility to file it under.');
+function kop_wb_file_many(array $r, array $tokens, $reviewer) {
+    $facilities = $companies = array();
+    foreach ($tokens as $t) {
+        $p = kop_wb_parse_target($t);
+        if ($p && $p[0] === 'facility') {
+            $facilities[$p[1]] = kop_wb_target_token('facility', $p[1]);
+        } elseif ($p) {
+            $companies[$p[1]] = kop_wb_target_token('company', $p[1]);
+        }
     }
-    $res = kop_wb_file($r, array_shift($fids), $reviewer);
-    if ($fids) {
-        $added = kop_wb_add_facilities(kop_wb_get($r['ckey']), $fids);
+    $tokens = array_merge(array_values($facilities), array_values($companies));
+    if (!$tokens) {
+        throw new RuntimeException('Tick at least one facility or company to file it under.');
+    }
+    $first = kop_wb_parse_target(array_shift($tokens));
+    $res = kop_wb_file_target($r, kop_wb_target_for($first[0], $first[1]), $reviewer);
+    if ($tokens) {
+        $added = kop_wb_add_facilities(kop_wb_get($r['ckey']), $tokens);
         $res['places'] = array_merge($res['places'], $added);
     }
     return $res;
 }
 
-/** Tag an already filed excerpt into more facilities' folders. Returns the new places. */
-function kop_wb_add_facilities(array $r, array $fids) {
+/**
+ * Tag an already filed excerpt into more facilities' and companies' folders
+ * (tokens "123", "c45"). Returns the new places.
+ */
+function kop_wb_add_facilities(array $r, array $tokens) {
     global $wpdb;
     if ($r['status'] !== 'filed' || !$r['attachment_id']) {
         throw new RuntimeException('File it first.');
     }
     $also = kop_wb_also($r);
-    $have = array_map('intval', array_column($also, 'id'));
-    if ($r['target_kind'] === 'facility') {
-        $have[] = (int) $r['facility_id'];
+    $have = array();
+    foreach ($also as $a) {
+        $have[] = kop_wb_target_token($a['kind'], $a['id']);
     }
+    $have[] = $r['target_kind'] === 'facility' ? kop_wb_target_token('facility', $r['facility_id'])
+        : kop_wb_target_token($r['target_kind'], $r['target_id']);
     $places = array();
-    foreach (array_unique(array_map('intval', $fids)) as $fid) {
-        if ($fid <= 0 || in_array($fid, $have, true)) {
+    foreach (array_unique(array_map('strval', $tokens)) as $token) {
+        $p = kop_wb_parse_target($token);
+        if (!$p) {
             continue;
         }
-        $fac = $wpdb->get_row($wpdb->prepare('SELECT id, name FROM facilities_v2 WHERE id = %d', $fid), ARRAY_A);
-        if (!$fac) {
-            throw new RuntimeException('Facility #' . $fid . ' not found.');
+        list($kind, $id) = $p;
+        if ($kind === 'company') {
+            $id = kop_wb_company_lead($id);
         }
-        $parent = kop_wb_facility_folder($fid);
+        if (in_array(kop_wb_target_token($kind, $id), $have, true)) {
+            continue;
+        }
+        $target = kop_wb_target_for($kind, $id);
+        $id = (int) $target['id'];
+        $parent = $kind === 'company' ? (int) $target['folder'] : kop_wb_facility_folder($id);
+        if ($parent <= 0) {
+            throw new RuntimeException('No document folder for ' . $target['name'] . '.');
+        }
         $folder = kop_wb_find_folder(KOP_WOODBURY_SUBFOLDER, $parent) ?: kop_wb_create_folder(KOP_WOODBURY_SUBFOLDER, $parent);
         $wpdb->query($wpdb->prepare('INSERT IGNORE INTO ' . kop_wb_tags_table() . ' (folder_id, attachment_id) VALUES (%d, %d)',
             $folder, (int) $r['attachment_id']));
-        $also[] = array('id' => $fid, 'name' => $fac['name'], 'folder' => $folder);
-        $have[] = $fid;
-        $places[] = kop_wb_place($fid, $fac['name'], $folder, false);
+        $also[] = array('id' => $id, 'kind' => $kind, 'name' => $target['name'], 'folder' => $folder);
+        $have[] = kop_wb_target_token($kind, $id);
+        $places[] = kop_wb_place($id, $target['name'], $folder, false, $kind);
     }
     if ($places) {
         $wpdb->update(kop_wb_table(), array('also_facilities' => wp_json_encode($also)), array('ckey' => $r['ckey']));
@@ -520,20 +657,20 @@ function kop_wb_add_facilities(array $r, array $fids) {
     return $places;
 }
 
-/** Take one extra facility off a filed excerpt (the PDF stays with the others). */
-function kop_wb_remove_facility(array $r, $fid) {
+/** Take one extra facility or company ("123", "c45") off a filed excerpt (the PDF stays with the others). */
+function kop_wb_remove_facility(array $r, $token) {
     global $wpdb;
     $keep = array();
     $removed = null;
     foreach (kop_wb_also($r) as $a) {
-        if ((int) $a['id'] === (int) $fid && $removed === null) {
+        if (kop_wb_target_token($a['kind'], $a['id']) === (string) $token && $removed === null) {
             $removed = $a;
         } else {
             $keep[] = $a;
         }
     }
     if (!$removed) {
-        throw new RuntimeException('That facility is not an extra one on this excerpt. Use Undo to take the whole filing back.');
+        throw new RuntimeException('That record is not an extra one on this excerpt. Use Undo to take the whole filing back.');
     }
     $wpdb->delete(kop_wb_tags_table(), array('folder_id' => (int) $removed['folder'], 'attachment_id' => (int) $r['attachment_id']), array('%d', '%d'));
     $wpdb->update(kop_wb_table(), array('also_facilities' => $keep ? wp_json_encode($keep) : null), array('ckey' => $r['ckey']));
@@ -699,6 +836,20 @@ function kop_wb_set_status(array $r, $status, $reviewer) {
 
 /* ---- AJAX: file / skip / undo / reopen, and viewing an extract -------- */
 
+/** The parent companies of a facility picked on the page, offered beside it. */
+add_action('wp_ajax_kop_wb_parents', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Not allowed.', 403);
+    }
+    check_ajax_referer('kop_woodbury', 'nonce');
+    $out = array();
+    foreach (kop_wb_parent_companies(array((int) ($_GET['fid'] ?? 0))) as $c) {
+        $c['url'] = function_exists('kop_operator_page_url') ? (string) kop_operator_page_url($c['id']) : '';
+        $out[] = $c;
+    }
+    wp_send_json_success($out);
+});
+
 add_action('wp_ajax_kop_wb_act', function () {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Not allowed.', 403);
@@ -716,16 +867,17 @@ add_action('wp_ajax_kop_wb_act', function () {
             if (!$r) {
                 throw new RuntimeException('Not found.');
             }
-            $fids = isset($item['fids']) && is_array($item['fids']) ? array_map('intval', $item['fids']) : array();
+            $fids = isset($item['fids']) && is_array($item['fids']) ? array_filter(array_map('kop_wb_clean_token', $item['fids'])) : array();
             if ($act === 'file') {
                 $res += kop_wb_file_many($r, $fids, $user);
             } elseif ($act === 'add') {
                 $res['places'] = kop_wb_add_facilities($r, $fids);
                 if (!$res['places']) {
-                    throw new RuntimeException('Already filed under that facility.');
+                    throw new RuntimeException('Already filed there.');
                 }
             } elseif ($act === 'untag') {
-                $res['removed'] = kop_wb_remove_facility($r, (int) ($item['fid'] ?? 0));
+                $res['removed'] = kop_wb_remove_facility($r, kop_wb_clean_token($item['fid'] ?? ''));
+                $res['removed']['key'] = kop_wb_target_token($res['removed']['kind'], $res['removed']['id']);
             } elseif ($act === 'skip') {
                 kop_wb_set_status($r, 'skipped', $user);
             } elseif ($act === 'undo') {
@@ -843,6 +995,9 @@ function kop_render_woodbury_page() {
         . '<li><strong>Check who it is about.</strong> Under <em>File under</em>, tick every facility the pages discuss (one excerpt can go to several). '
         . 'The scanner\'s best match is ticked for you; untick it if it is wrong. <em>Add a facility</em> finds any other by name. '
         . '<strong>View pages</strong> opens the excerpt.</li>'
+        . '<li><strong>Link the parent company.</strong> The best match\'s parent company (and past owners) are listed under it with a <em>company</em> tag: '
+        . 'tick them to file the pages on the company\'s page too. <em>Add a parent company</em> finds any other company by name. '
+        . 'On the Filed tab, <em>Also file under its parent company</em> adds it to pages already filed.</li>'
         . '<li><strong>File it.</strong> Click <em>File it</em> on the row, or tick <em>Select</em> on several rows and use <em>File selected</em> at the top. '
         . 'Each row then lists the folders it went into, and a summary of everything filed builds up at the top of the page.</li>'
         . '<li><strong>About an educational consultant, company, provider or transporter?</strong> Search for it under '
@@ -928,14 +1083,17 @@ function kop_wb_facility_link($fid, $name, $state = '') {
     return $url ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener">' . $label . '</a>' : $label;
 }
 
-/** One "Filed under" line: the record, the folder it is in, and Remove for an extra facility. */
+/** One "Filed under" line: the record, the folder it is in, and Remove for an extra facility or company. */
 function kop_wb_place_html(array $p) {
     $name = $p['page'] !== ''
         ? '<a href="' . esc_url($p['page']) . '" target="_blank" rel="noopener"><strong>' . esc_html($p['name']) . '</strong></a>'
         : '<strong>' . esc_html($p['name']) . '</strong>' . ($p['id'] ? ' <span class="kop-wb-muted">(no public page yet)</span>' : '');
-    return '<li data-fid="' . (int) $p['id'] . '">' . $name
+    if ($p['kind'] === 'company') {
+        $name .= ' <span class="kop-wb-muted">company</span>';
+    }
+    return '<li data-fid="' . esc_attr($p['key']) . '">' . $name
         . ($p['where'] !== '' ? '<span class="kop-wb-where">Folder: ' . esc_html($p['where']) . '</span>' : '')
-        . (!$p['primary'] ? ' <button type="button" class="button-link kop-wb-untag" data-fid="' . (int) $p['id'] . '">Remove</button>' : '')
+        . (!$p['primary'] && $p['key'] !== '' ? ' <button type="button" class="button-link kop-wb-untag" data-fid="' . esc_attr($p['key']) . '">Remove</button>' : '')
         . '</li>';
 }
 
@@ -943,6 +1101,22 @@ function kop_wb_place_html(array $p) {
 function kop_wb_fac_box($fid, $name, $state, $checked, $note = '') {
     return '<label class="kop-wb-fac-row"><input type="checkbox" class="kop-wb-fac" value="' . (int) $fid . '"' . ($checked ? ' checked' : '') . '> '
         . kop_wb_facility_link($fid, $name, $state) . ($note !== '' ? ' <span class="kop-wb-muted">' . esc_html($note) . '</span>' : '') . '</label>';
+}
+
+/** A "File under" checkbox for one company (value "c<id>"), linked to its /operator/ page. */
+function kop_wb_company_box($id, $name, $checked, $note = '') {
+    $url = function_exists('kop_operator_page_url') ? (string) kop_operator_page_url((int) $id) : '';
+    $label = esc_html($name);
+    $label = $url !== '' ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener">' . $label . '</a>' : $label;
+    return '<label class="kop-wb-fac-row kop-wb-co-row"><input type="checkbox" class="kop-wb-fac" value="c' . (int) $id . '"' . ($checked ? ' checked' : '') . '> '
+        . $label . ' <span class="kop-wb-muted">company' . ($note !== '' ? ', ' . esc_html($note) : '') . '</span></label>';
+}
+
+/** The search box for adding a company to "File under" (or, on a filed row, filing under it at once). */
+function kop_wb_company_finder($label) {
+    return '<div class="kop-wb-add kop-wbco">' . esc_html($label) . ' '
+        . '<input type="search" class="kop-wbco-q" placeholder="Company name" autocomplete="off">'
+        . '<ul class="kop-wbco-hits" hidden></ul></div>';
 }
 
 function kop_wb_render_row(array $r, $tab) {
@@ -974,11 +1148,16 @@ function kop_wb_render_row(array $r, $tab) {
                 $shown[(int) $a['id']] = true;
             }
         }
+        // The best match's parent companies, one tick away.
+        foreach ($r['facility_id'] ? kop_wb_parent_companies(array((int) $r['facility_id'])) : array() as $c) {
+            echo kop_wb_company_box($c['id'], $c['name'], false, $c['of']);
+        }
         echo '</div>';
         if (!$shown) {
             echo '<p class="kop-wb-none">No facility matched this name. Add one below, or create a record.</p>';
         }
         echo '<div class="kop-wb-add">Add a facility: ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"', true) . '</div>';
+        echo kop_wb_company_finder('Add a parent company:');
         if (function_exists('kop_wbc_render_finder')) {
             kop_wbc_render_finder();
         }
@@ -988,7 +1167,27 @@ function kop_wb_render_row(array $r, $tab) {
             echo kop_wb_place_html($p);
         }
         echo '</ul>';
+        // Parent companies of the facilities it is filed under that do not have it yet.
+        $places = kop_wb_places($r);
+        $have = array_column($places, 'key');
+        $fac_ids = array();
+        foreach ($places as $p) {
+            if ($p['kind'] === 'facility' && $p['id']) {
+                $fac_ids[] = $p['id'];
+            }
+        }
+        $suggest = '';
+        foreach (kop_wb_parent_companies($fac_ids) as $c) {
+            if (!in_array('c' . $c['id'], $have, true)) {
+                $suggest .= ' <button type="button" class="button button-small kop-wb-addco" data-co="c' . (int) $c['id'] . '" title="'
+                    . esc_attr(ucfirst($c['of'])) . '">' . esc_html($c['name']) . '</button>';
+            }
+        }
+        if ($suggest !== '') {
+            echo '<div class="kop-wb-add">Also file under its parent company:' . $suggest . '</div>';
+        }
         echo '<div class="kop-wb-add">Also file under: ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"', true) . '</div>';
+        echo kop_wb_company_finder('Also file under a company:');
     } elseif ($r['facility_name'] !== '') {
         echo '<strong>' . esc_html($r['facility_name']) . '</strong>';
     }
@@ -1073,6 +1272,12 @@ function kop_wb_render_assets() {
         tr.kop-wb-done td:not(.kop-wb-actions) { opacity: .6; }
         .kop-wb-log ul { margin: 0 0 8px 18px; list-style: disc; }
         .kop-wb-log li span { color: #50575e; }
+        .kop-wbco-q { display: block; width: 100%; max-width: 360px; margin-top: 2px; }
+        .kop-wbco-hits { margin: 4px 0 0; padding: 0; list-style: none; max-width: 480px; border: 1px solid #dcdcde; background: #fff; }
+        .kop-wbco-hits li { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 4px 6px; border-top: 1px solid #f0f0f1; color: #1d2327; }
+        .kop-wbco-hits li:first-child { border-top: 0; }
+        .kop-wbco-hits .kop-wbr-sub { display: block; color: #50575e; font-size: 11px; }
+        .kop-wb-addco { margin: 2px 0 0 4px !important; }
     </style>
     <script>
     (function () {
@@ -1182,16 +1387,16 @@ function kop_wb_render_assets() {
                             var list = tr.querySelector('.kop-wb-places');
                             res.places.forEach(function (p) {
                                 var li = placeLine(p);
-                                li.setAttribute('data-fid', p.id);
+                                li.setAttribute('data-fid', p.key);
                                 li.appendChild(document.createTextNode(' '));
-                                li.appendChild(untagButton(p.id));
+                                li.appendChild(untagButton(p.key));
                                 list.appendChild(li);
                             });
                             out.className = 'kop-wb-result ok';
                             out.textContent = 'Also filed under ' + res.places.map(function (p) { return p.name; }).join(', ') + '.';
                             addToLog(tr, 'also filed under', res.places, '');
                         } else if (act === 'untag') {
-                            var gone = tr.querySelector('.kop-wb-places li[data-fid="' + res.removed.id + '"]');
+                            var gone = tr.querySelector('.kop-wb-places li[data-fid="' + res.removed.key + '"]');
                             if (gone) gone.remove();
                             out.className = 'kop-wb-result ok';
                             out.textContent = 'Removed from ' + res.removed.name + '.';
@@ -1261,12 +1466,105 @@ function kop_wb_render_assets() {
                 lab.appendChild(f.url ? link(f.url, f.name) : el('strong', '', f.name));
                 var place = [f.city, f.state || f.country].filter(Boolean).join(', ');
                 if (place) lab.appendChild(el('span', 'kop-wb-muted', ' ' + place));
-                facs.appendChild(lab);
+                facs.insertBefore(lab, facs.querySelector('.kop-wb-co-row'));
+                // Offer its parent companies too.
+                fetch(ajax + '?action=kop_wb_parents&nonce=' + encodeURIComponent(nonce) + '&fid=' + encodeURIComponent(f.id), { credentials: 'same-origin' })
+                    .then(function (r) { return r.json(); })
+                    .then(function (j) {
+                        (j && j.success ? j.data : []).forEach(function (c) { companyBox(tr, c, false, c.of); });
+                    })
+                    .catch(function () {});
             }
             box.checked = true;
             var none = tr.querySelector('.kop-wb-none');
             if (none) none.hidden = true;
             select(tr, true);
+        });
+
+        // A company box under "File under" (value "c<id>"), added once.
+        function companyBox(tr, c, checked, note) {
+            var facs = tr.querySelector('.kop-wb-facs');
+            var box = facs.querySelector('.kop-wb-fac[value="c' + c.id + '"]');
+            if (!box) {
+                var lab = el('label', 'kop-wb-fac-row kop-wb-co-row');
+                box = el('input', 'kop-wb-fac');
+                box.type = 'checkbox';
+                box.value = 'c' + c.id;
+                lab.appendChild(box);
+                lab.appendChild(document.createTextNode(' '));
+                lab.appendChild(c.url ? link(c.url, c.name) : el('strong', '', c.name));
+                lab.appendChild(el('span', 'kop-wb-muted', ' company' + (note ? ', ' + note : '')));
+                facs.appendChild(lab);
+            }
+            if (checked) {
+                box.checked = true;
+                select(tr, true);
+            }
+            return box;
+        }
+
+        // Parent company suggestions on a filed row: file under it at once.
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('.kop-wb-addco');
+            if (!b) return;
+            b.disabled = true;
+            var tr = b.closest('tr');
+            tr._kopAdd = [b.getAttribute('data-co')];
+            run('add', [tr]);
+        });
+
+        // "Add a parent company": search companies by any of their names.
+        document.querySelectorAll('.kop-wbco').forEach(function (box) {
+            var input = box.querySelector('.kop-wbco-q'), hits = box.querySelector('.kop-wbco-hits');
+            var timer = null, seq = 0;
+            function pick(c) {
+                var tr = box.closest('tr');
+                hits.hidden = true;
+                input.value = '';
+                if (tr.querySelector('.kop-wb-facs')) {
+                    companyBox(tr, c, true, '');
+                } else {
+                    tr._kopAdd = ['c' + c.id];
+                    run('add', [tr]);
+                }
+            }
+            function render(list) {
+                hits.innerHTML = '';
+                if (!list.length) hits.appendChild(el('li', 'kop-wbr-none', 'No company by that name. Create one under "Create a record".'));
+                list.forEach(function (c) {
+                    var li = el('li'), who = el('span');
+                    who.appendChild(c.url ? link(c.url, c.name) : el('strong', '', c.name));
+                    if (c.detail) who.appendChild(el('span', 'kop-wbr-sub', c.detail));
+                    var btn = el('button', 'button button-small', box.closest('tr').querySelector('.kop-wb-facs') ? 'Add' : 'File here too');
+                    btn.type = 'button';
+                    btn.addEventListener('click', function () { pick(c); });
+                    li.appendChild(who);
+                    li.appendChild(btn);
+                    hits.appendChild(li);
+                });
+                hits.hidden = false;
+            }
+            input.addEventListener('input', function () {
+                clearTimeout(timer);
+                var q = input.value.trim();
+                if (q.length < 2) { hits.hidden = true; return; }
+                timer = setTimeout(function () {
+                    var mine = ++seq;
+                    fetch(ajax + '?action=kop_wb_find_record&only=company&nonce=' + encodeURIComponent(nonce) + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (j) {
+                            if (mine !== seq) return;
+                            if (!j || !j.success) throw new Error((j && j.data) || 'Search failed');
+                            render(j.data);
+                        })
+                        .catch(function (err) {
+                            if (mine !== seq) return;
+                            hits.innerHTML = '';
+                            hits.appendChild(el('li', 'kop-wbr-none', err.message));
+                            hits.hidden = false;
+                        });
+                }, 250);
+            });
         });
 
         function select(tr, on) {
@@ -1294,7 +1592,7 @@ function kop_wb_render_assets() {
                 if (act === 'file' && !tr.querySelector('.kop-wb-fac:checked')) {
                     var out = tr.querySelector('.kop-wb-result');
                     out.className = 'kop-wb-result err';
-                    out.textContent = 'Tick at least one facility under File under first.';
+                    out.textContent = 'Tick at least one facility or company under File under first.';
                     return;
                 }
                 run(act, [tr]);
