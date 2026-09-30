@@ -540,6 +540,26 @@ check(kop_ih_same_day_covers($day, 1, '2024-01-05', 'A child in care self-harmed
     && !kop_ih_same_day_covers($day, 1, '2024-01-05', 'Something new happened.')
     && !kop_ih_same_day_covers($day, 1, null, 'Staff punched a child.'), 'merge: a rescan does not queue a finding already folded in');
 
+// Oklahoma (ok_scraper.py): structured items, no document text.
+$ok_row = function (array $cats) { return array('categories_json' => json_encode($cats), 'raw_content' => '', 'report_date' => '2025-06-09'); };
+$c = kop_ih_candidates('OK', $ok_row(array('kind' => 'complaint', 'visit_type' => '', 'purpose' => '', 'items' => array(
+    array('requirement' => '340:110-3-154.2(b)(1)', 'description' => 'behaviors that could cause physical pain, such as shaking, striking ...', 'observed' => 'Behavior Management: Staff member punched a resident in the nose, causing injury.', 'plan' => '', 'finding' => 'Substantiated'),
+    array('requirement' => '340:110-3-153.1(b)(2)', 'description' => 'Program director.', 'observed' => 'Additional Non-Compliance Found During Investigation: Personnel: Program director failed to file a report.', 'plan' => '', 'finding' => 'Determined During Course of Investigation'),
+))));
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && $c[0]['score'] === 80 && $c[0]['kind'] === 'complaint', 'OK: a substantiated complaint keeps the full score');
+check($c && $c[0]['state_label'] === 'Substantiated complaint' && strpos($c[0]['standard'], '340:110-3-154.2(b)(1)') === 0, 'OK: label and requirement');
+$visit = array('kind' => 'visit', 'visit_type' => 'Full', 'purpose' => 'Periodic', 'items' => array(
+    array('requirement' => '340:110-3-152(f)', 'description' => 'Notifications.', 'observed' => 'Program failed to notify licensing of a resident taken to the emergency room on 3-16-24.', 'nrs' => false),
+));
+$c = kop_ih_candidates('OK', $ok_row($visit));
+check(count($c) === 1 && $c[0]['score'] === 47 && $c[0]['state_label'] === 'Non-compliance cited at a monitoring visit', 'OK: an ordinary visit item scores as a citation');
+$visit['items'][0]['nrs'] = true;
+$c = kop_ih_candidates('OK', $ok_row($visit));
+check(count($c) === 1 && $c[0]['score'] === 55 && strpos($c[0]['state_label'], 'numerous, repeated or serious') !== false, 'OK: an NRS item keeps the full score');
+check(kop_ih_candidates('OK', $ok_row(array('kind' => 'visit', 'items' => array()))) === array(), 'OK: a visit with nothing found has no candidate');
+check(kop_ih_document_url('http://residentialchildplacingview.okdhs.org/ResidentialView/ResidentialView.aspx?CaseNumber=K850052676', '{}') === ''
+    && kop_ih_document_url('https://example.org/report.pdf', '{}') === 'https://example.org/report.pdf', 'a facility page is not a report\'s own document');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------

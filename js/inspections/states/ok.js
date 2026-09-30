@@ -312,7 +312,9 @@
                 facts: facts,
                 link: { href: report.report_url, text: 'State monitoring page' },
                 preview: first ? first.observed : '',
-                body: function () { return reportBody(report, ctx); }
+                // Built up front, not on open: the bodies are small, and
+                // severe-flags.js finds a severe finding by the text on the page.
+                body: reportBody(report, ctx)
             };
         }
     });

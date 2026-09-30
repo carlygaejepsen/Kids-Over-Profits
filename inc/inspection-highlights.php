@@ -44,7 +44,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Bump when the rules change; the scanner then looks at every report again. */
     function kop_ih_scanner_version() {
-        return 5;
+        return 6;
     }
 
     /** Candidates scoring below this are not queued. */
@@ -489,7 +489,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      * queued 90, nearly every one a quoted rule), so it is left out.
      */
     function kop_ih_supported_states() {
-        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL');
+        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK');
     }
 
     /**
@@ -527,6 +527,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             case 'MN': return kop_ih_extract_mn($data, (string) ($row['raw_content'] ?? ''));
             case 'AR': return kop_ih_extract_ar($data, (string) ($row['raw_content'] ?? ''));
             case 'FL': return kop_ih_extract_fl($data, (string) ($row['raw_content'] ?? ''));
+            case 'OK': return kop_ih_extract_ok($data);
         }
         return array();
     }
@@ -804,6 +805,41 @@ if (!function_exists('kop_ih_scanner_version')) {
      * JSON for these reports is unreliable (it split ratios like 3:12 as
      * fields), so the text is read from the report itself.
      */
+    /**
+     * Oklahoma (ok_scraper.py): one report per OKDHS monitoring visit or
+     * substantiated complaint, its items already structured in categories.
+     * A complaint item is the state's own confirmed finding ("Substantiated",
+     * or "Determined During Course of Investigation"); the text is the
+     * allegation. A visit item is a non-compliance the licensing specialist
+     * observed; one the state marks NRS (numerous, repeated and/or serious)
+     * keeps the full score, the rest score as ordinary citations, and a visit
+     * made because of a complaint counts as an investigation.
+     */
+    function kop_ih_extract_ok(array $data) {
+        $items = is_array($data['items'] ?? null) ? $data['items'] : array();
+        $complaint = ($data['kind'] ?? '') === 'complaint';
+        $investigation = $complaint || preg_match('/complaint/i', (string) ($data['purpose'] ?? ''));
+        $out = array();
+        foreach ($items as $item) {
+            $text = kop_ih_clean_text($item['observed'] ?? '');
+            if (mb_strlen($text) < 20) continue;
+            $standard = trim((string) ($item['requirement'] ?? '') . ' ' . kop_ih_short_standard((string) ($item['description'] ?? ''), 120));
+            $nrs = !empty($item['nrs']);
+            if ($complaint) {
+                $label = preg_match('/course of investigation/i', (string) ($item['finding'] ?? ''))
+                    ? 'Found during a substantiated complaint investigation' : 'Substantiated complaint';
+            } else {
+                $label = $nrs ? 'Non-compliance, numerous, repeated or serious' : 'Non-compliance cited at a monitoring visit';
+            }
+            $out[] = array(
+                'text' => $text, 'standard' => $standard, 'state_label' => $label,
+                'factor' => ($complaint || $nrs) ? 1.0 : kop_ih_citation_factor($investigation),
+                'corrected_on_site' => null, 'kind' => $complaint ? 'complaint' : 'citation',
+            );
+        }
+        return $out;
+    }
+
     function kop_ih_extract_ct(array $data, $raw) {
         $raw = (string) $raw;
         if ($raw === '' && !empty($data['full_report_content'])) $raw = (string) $data['full_report_content'];
@@ -1581,6 +1617,9 @@ if (!function_exists('kop_ih_scanner_version')) {
             if (is_array($data) && is_string($data[$key] ?? null) && trim($data[$key]) !== '') return trim($data[$key]);
         }
         $url = trim((string) $report_url);
+        // A facility's page on the state site (Oklahoma, Michigan) is the link of
+        // every report it holds, so it cannot tell one report from another.
+        if (preg_match('#ResidentialView\.aspx\?CaseNumber=|/agency-detail-page\?#i', $url)) return '';
         return preg_match('#^https?://#i', $url) ? $url : '';
     }
 

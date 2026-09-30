@@ -339,6 +339,13 @@ updated.
    assault; single medication errors never, a pattern of them yes;
    elopement only with death or injury. Flags on the trackers match NC,
    GA, MN, AR and FL reports by their document link (08172021).
+   Scanner version 5 (2026-09-30): "Suicide attempt" and "Self-harm" are
+   separate categories, and training, screenings, prevention plans and
+   definitions no longer read as deaths or attempts. Version 6
+   (2026-09-30) adds OK: substantiated complaint items at full score, NRS
+   visit items at full score, other visit items as citations (17 candidates
+   from 994 reports, 6 severe). A facility page used as every report's link
+   (OK, MI) is never matched as a document; OK flags match by text.
 4. **"What inspectors found" on facility pages** (the rest of fix-plan step
    14.5): approved highlights on `/facility/<slug>/`.
 5. **Next state scrapers: Oklahoma, Michigan, Pennsylvania** (researched
@@ -349,7 +356,8 @@ updated.
    reports removed after two years, so both lose data while they wait. Owner
    items per state: create the `/xx-reports/` page and approve the first
    production post.
-   **Michigan built 2026-09-30, not yet posted:** `mi_scraper.py` (Tools
+   **Michigan live 2026-09-30:** posted (110 facilities, 1,891 reports),
+   `/mi-reports/` published. `mi_scraper.py` (Tools
    repo) and `js/inspections/states/mi.js`. A full `--no-post` run: 110
    facilities, 1,891 reports (1,300 special investigations, 281 renewal,
    229 interim, 81 original), 997 flagged, 2003-01-06 to 2026-09-30; every
@@ -360,7 +368,7 @@ updated.
    --state=MI --file=<out.json>`; near misses such as "Calumet Center" /
    "Calumet RTC" are left for other names on the records). Owner: create
    `/mi-reports/` (State Reports template; the tracker lists pick it up once
-   published) and approve the first post. (The 1,890 PDFs that landed in the
+   published) and approve the first post (both done). (The 1,890 PDFs that landed in the
    local `mi_pdfs/` fallback were moved to Drive on 2026-09-30.) Then the severe
    finding extractor (plan step 10).
    **Oklahoma live 2026-09-30:** posted (93 facilities, 994 reports) and
@@ -376,9 +384,8 @@ updated.
    does not track); near misses left as they are: "Positive Outcome/St.
    Anthony" / "Positive Outcome - St. Anthony" and "Cookson Hills" /
    "Cookson Hills Christian Ministries". Owner: run the scraper **at
-   least monthly** (Oklahoma in `scraper_launcher.py`), or say whether a
-   scheduled task on this machine is wanted. Then the severe finding
-   extractor (plan step 11: substantiated complaints and NRS items).
+   least monthly** (Oklahoma in `scraper_launcher.py`; owner runs it by
+   hand). Severe findings: scanner version 6, see item 3.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
