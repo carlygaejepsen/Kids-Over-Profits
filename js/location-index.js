@@ -712,9 +712,28 @@ function initLocationIndex() {
                 </summary>
             `;
 
-            // -- Location Content (Facilities) --
+            details.innerHTML = headerHtml;
+            grid.appendChild(details);
+
+            // The facility cards are drawn the first time a place is opened.
+            // Drawing all of them up front built ~16 MB of HTML (150,000
+            // elements) and crashed the tab with "out of memory".
+            const fill = () => {
+                if (details.dataset.filled === 'true') return;
+                details.dataset.filled = 'true';
+                details.insertAdjacentHTML('beforeend', renderLocationContent(loc));
+                attachDocumentButtons(details);
+            };
+            if (details.open) fill();
+            else details.addEventListener('toggle', () => { if (details.open) fill(); });
+        });
+
+        container.appendChild(grid);
+    }
+
+    function renderLocationContent(loc) {
             let contentHtml = `<div class="operator-content-scrollable">`;
-            
+
             loc.facilities.forEach(facility => {
                 // Facility card rendering mirrors js/tti-program-index.js so both
                 // directories present the same structured layout.
@@ -1317,13 +1336,7 @@ function initLocationIndex() {
                 `;
             });
             contentHtml += `</div>`;
-
-            details.innerHTML = headerHtml + contentHtml;
-            grid.appendChild(details);
-        });
-
-        container.appendChild(grid);
-        attachDocumentButtons(container);
+            return contentHtml;
     }
 
     // Events
