@@ -787,8 +787,8 @@ get_header();
             </div>
         </div>
         
-        <!-- Private Ownership Toggle (locations view only) -->
-        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations" style="margin-bottom: 18px;">
+        <!-- Private Ownership Toggle (locations and providers views) -->
+        <div id="private-ownership-toggle-section" class="location-card" data-section-views="locations,providers" style="margin-bottom: 18px;">
             <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                 <span>Ownership Type:</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
@@ -797,7 +797,7 @@ get_header();
                 </div>
             </div>
             <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                Set this first for location projects. It switches the fields below between parent company and owner information.
+                Set this first for location and provider projects. It switches the fields below between parent company and owner information.
             </p>
         </div>
 

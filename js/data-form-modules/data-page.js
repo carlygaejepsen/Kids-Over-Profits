@@ -548,9 +548,9 @@
 
             const submissionTab = document.querySelector('.category-tab.active');
             const submissionCategory = submissionTab ? submissionTab.dataset.category : 'companies';
-            const isLocationSubmission = submissionCategory === 'locations' || submissionCategory === 'states';
+            const isOwnershipSubmission = submissionCategory === 'locations' || submissionCategory === 'states' || submissionCategory === 'providers';
 
-            if (isLocationSubmission && Array.isArray(dataToSubmit.facilities)) {
+            if (isOwnershipSubmission && Array.isArray(dataToSubmit.facilities)) {
                 // Facilities default to privately owned. Clear operator data only on
                 // facilities that resolve private, and clear the project-level
                 // operator only when no facility in the project belongs to a chain.
@@ -1086,10 +1086,12 @@
             return !facilityHasOperatorData(facility);
         }
 
-        function isLocationsViewActive() {
+        // The ownership toggle shapes the form on the locations and providers
+        // tabs (mental health providers are often independent practices).
+        function isOwnershipViewActive() {
             const activeTab = document.querySelector('.category-tab.active');
             const category = activeTab ? activeTab.dataset.category : 'companies';
-            return category === 'locations' || category === 'states';
+            return category === 'locations' || category === 'states' || category === 'providers';
         }
 
         function updatePrivateOwnershipSliderAppearance() {
@@ -1100,9 +1102,9 @@
             privateOwnershipToggle.checked = resolvePrivateOwnership(currentFacility);
 
             const isPrivate = !!privateOwnershipToggle.checked;
-            // Ownership only shapes the form in the locations view; company
-            // projects always show the parent company section.
-            const hideOperator = isPrivate && isLocationsViewActive();
+            // Ownership only shapes the form in the locations and providers
+            // views; company projects always show the parent company section.
+            const hideOperator = isPrivate && isOwnershipViewActive();
 
             if (privateOwnershipStatus) {
                 privateOwnershipStatus.textContent = isPrivate ? 'Privately owned' : 'Part of a chain/corporate';
