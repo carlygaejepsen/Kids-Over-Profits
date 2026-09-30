@@ -645,12 +645,29 @@ add_action('wp_ajax_kop_wb_file_record', function () {
     }
     try {
         $target = kop_wbc_existing_target($kind, (int) ($_POST['id'] ?? 0));
-        $filed = kop_wb_file_target($r, $target, wp_get_current_user()->user_login);
+        $filed = kop_wbc_file_with_ticked($r, $target);
     } catch (Throwable $e) {
         wp_send_json_error($e->getMessage());
     }
     wp_send_json_success(array('record' => $target, 'label' => kop_wbc_kinds()[$kind], 'filed' => $filed));
 });
+
+/**
+ * File the pages under $target, then tag them into every facility ticked
+ * under "File under" on the row ($_POST fids[]), as File it does.
+ */
+function kop_wbc_file_with_ticked(array $r, array $target) {
+    $filed = kop_wb_file_target($r, $target, wp_get_current_user()->user_login);
+    $fids = array_filter(array_map('intval', isset($_POST['fids']) && is_array($_POST['fids']) ? $_POST['fids'] : array()));
+    if ($fids) {
+        try {
+            $filed['places'] = array_merge($filed['places'], kop_wb_add_facilities(kop_wb_get($r['ckey']), $fids));
+        } catch (Throwable $e) {
+            $filed['warning'] = 'Filed under ' . $target['name'] . ', but not under the ticked facilities: ' . $e->getMessage();
+        }
+    }
+    return $filed;
+}
 
 /** The search box for filing a pending row under an existing non-facility record. */
 function kop_wbc_render_finder() {
@@ -693,7 +710,7 @@ add_action('wp_ajax_kop_wb_create', function () {
     $wpdb->query($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
     $label = kop_wbc_kinds()[$target['kind']];
     try {
-        $filed = kop_wb_file_target($r, $target, wp_get_current_user()->user_login);
+        $filed = kop_wbc_file_with_ticked($r, $target);
     } catch (Throwable $e) {
         wp_send_json_error('Created the ' . strtolower($label) . ' record "' . $target['name'] . '" (#' . $target['id']
             . '), but filing the pages failed: ' . $e->getMessage());
@@ -755,6 +772,22 @@ function kop_wbc_render_assets() {
     (function () {
         var ajax = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
         var nonce = <?php echo wp_json_encode(wp_create_nonce('kop_woodbury')); ?>;
+        // The facilities ticked under "File under" go along with the record.
+        function appendTicked(body, tr) {
+            tr.querySelectorAll('.kop-wb-fac:checked').forEach(function (c) { body.append('fids[]', c.value); });
+        }
+        function showWarning(tr, filed) {
+            if (!filed.warning) return;
+            var w = document.createElement('div');
+            w.className = 'kop-wb-result err';
+            w.textContent = filed.warning;
+            tr.querySelector('.kop-wb-result').after(w);
+        }
+        // The first place is the record itself; the rest are the ticked facilities.
+        function namePrimary(filed, rec) {
+            var p = (filed.places || [])[0];
+            if (p) { p.name = rec.name; p.page = p.page || rec.url || ''; }
+        }
         function show(form) {
             var kind = form.querySelector('.kop-wbc-kind').value;
             form.querySelectorAll('.kop-wbc-only').forEach(function (el) {
@@ -782,6 +815,7 @@ function kop_wbc_render_assets() {
                 body.append('country', form.querySelector('.kop-wbc-country').value);
                 body.append('type', k === 'provider' ? form.querySelector('.kop-wbc-ptype').value : form.querySelector('.kop-wbc-type').value);
                 body.append('force', form.querySelector('.kop-wbc-force').checked ? '1' : '');
+                appendTicked(body, tr);
                 go.disabled = true;
                 msg.className = 'kop-wbc-msg';
                 msg.textContent = 'Creating...';
@@ -801,8 +835,8 @@ function kop_wbc_render_assets() {
                             msg.appendChild(a);
                         }
                         var filed = j.data.filed || {};
-                        (filed.places || []).forEach(function (p) { p.name = rec.name; p.page = p.page || rec.url || ''; });
-                        window.kopWbFiled(tr, filed, 'Created and filed');
+                        namePrimary(filed, rec);
+                        window.kopWbFiled(tr, filed, 'Created and filed'); showWarning(tr, filed);
                     })
                     .catch(function (e) {
                         go.disabled = false;
@@ -827,6 +861,7 @@ function kop_wbc_render_assets() {
             body.append('key', tr.getAttribute('data-key'));
             body.append('kind', hit.kind);
             body.append('id', hit.id);
+            appendTicked(body, tr);
             btn.disabled = true;
             out.className = 'kop-wb-result';
             out.textContent = 'Filing under ' + hit.name + '...';
@@ -838,9 +873,9 @@ function kop_wbc_render_assets() {
                 .then(function (j) {
                     if (!j || !j.success) throw new Error((j && j.data) || 'Request failed');
                     var rec = j.data.record, filed = j.data.filed || {};
-                    (filed.places || []).forEach(function (p) { p.name = rec.name; p.page = p.page || rec.url || ''; });
+                    namePrimary(filed, rec);
                     hits.hidden = true;
-                    window.kopWbFiled(tr, filed, 'Filed');
+                    window.kopWbFiled(tr, filed, 'Filed'); showWarning(tr, filed);
                 })
                 .catch(function (e) {
                     btn.disabled = false;
