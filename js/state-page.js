@@ -1643,7 +1643,9 @@
         if (facility.latest_inspection_date) {
             statChips.push(`<span class="stat">Latest inspection: ${escapeHtml(facility.latest_inspection_date)}</span>`);
         }
-        if (facility.record_updated_at) {
+        // The update date alone is not worth a "Show details" panel: show it only
+        // beside real details or inspection numbers.
+        if (facility.record_updated_at && (statChips.length || detailRows.some(Boolean))) {
             statChips.push(`<span class="stat">Record updated: ${escapeHtml(formatDate(String(facility.record_updated_at).slice(0, 10)))}</span>`);
         }
         if (statChips.length) {
