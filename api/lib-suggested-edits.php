@@ -137,11 +137,48 @@ if (!function_exists('kop_is_placeholder_project_name')) {
     }
 }
 
+if (!function_exists('kop_is_location_project_name')) {
+    /**
+     * True for a bare US state or country name, the names the data form
+     * treats as location projects (it opens and saves them as locations
+     * whatever tab is active).
+     */
+    function kop_is_location_project_name($name) {
+        static $names = [
+            'ALABAMA', 'ALASKA', 'ARIZONA', 'ARKANSAS', 'CALIFORNIA', 'COLORADO', 'CONNECTICUT',
+            'DELAWARE', 'FLORIDA', 'GEORGIA', 'HAWAII', 'IDAHO', 'ILLINOIS', 'INDIANA', 'IOWA',
+            'KANSAS', 'KENTUCKY', 'LOUISIANA', 'MAINE', 'MARYLAND', 'MASSACHUSETTS', 'MICHIGAN',
+            'MINNESOTA', 'MISSISSIPPI', 'MISSOURI', 'MONTANA', 'NEBRASKA', 'NEVADA', 'NEW HAMPSHIRE',
+            'NEW JERSEY', 'NEW MEXICO', 'NEW YORK', 'NORTH CAROLINA', 'NORTH DAKOTA', 'OHIO',
+            'OKLAHOMA', 'OREGON', 'PENNSYLVANIA', 'RHODE ISLAND', 'SOUTH CAROLINA', 'SOUTH DAKOTA',
+            'TENNESSEE', 'TEXAS', 'UTAH', 'VERMONT', 'VIRGINIA', 'WASHINGTON', 'WEST VIRGINIA',
+            'WISCONSIN', 'WYOMING', 'DISTRICT OF COLUMBIA',
+            'CANADA', 'MEXICO', 'UNITED KINGDOM', 'AUSTRALIA', 'JAMAICA', 'SAMOA', 'COSTA RICA',
+            'BELIZE', 'BAHAMAS', 'DOMINICAN REPUBLIC', 'PUERTO RICO', 'FRANCE', 'GERMANY', 'ITALY',
+            'SPAIN', 'NETHERLANDS', 'SWITZERLAND', 'SWEDEN', 'NORWAY', 'DENMARK', 'IRELAND',
+            'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN', 'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
+        ];
+        return in_array(strtoupper(trim((string) $name)), $names, true);
+    }
+}
+
+if (!function_exists('kop_provider_location_project_name')) {
+    /**
+     * The provider project for a state or country: "MONTANA PROVIDERS", never
+     * the bare "MONTANA", which the data form would open and save as the
+     * Montana location project.
+     */
+    function kop_provider_location_project_name($location) {
+        $location = strtoupper(trim((string) $location));
+        return $location === '' ? '' : $location . ' PROVIDERS';
+    }
+}
+
 if (!function_exists('kop_provider_project_name')) {
     /**
      * Project name for a mental health provider submission that arrived
-     * without one: its state (or country), uppercase, like the location
-     * projects. The operator block is usually the provider's own hospital or
+     * without one: its state (or country), uppercase, plus " PROVIDERS"
+     * (kop_provider_location_project_name). The operator block is usually the provider's own hospital or
      * health system, not a parent company, so it never names the project on
      * its own; parent-company projects are named by an admin in the form. The
      * operator or facility name is used only when no location is given.
@@ -171,14 +208,14 @@ if (!function_exists('kop_provider_project_name')) {
             }
             $state = strtoupper(trim((string) ($facility['locationDetails']['state'] ?? $facility['addressParts']['state'] ?? '')));
             if (isset($states[$state])) {
-                return $states[$state];
+                return kop_provider_location_project_name($states[$state]);
             }
             if (in_array($state, $states, true)) {
-                return $state;
+                return kop_provider_location_project_name($state);
             }
             $country = strtoupper(trim((string) ($facility['locationDetails']['country'] ?? '')));
             if ($country !== '' && !in_array($country, ['US', 'USA', 'UNITED STATES', 'UNITED STATES OF AMERICA'], true)) {
-                return $country;
+                return kop_provider_location_project_name($country);
             }
         }
 
@@ -195,12 +232,14 @@ if (!function_exists('kop_provider_project_name')) {
 if (!function_exists('kop_rename_placeholder_provider_suggestion')) {
     /**
      * A pending provider suggestion saved as "Unknown Project" (before
-     * save-suggestion.php named providers) is renamed in place to the project
-     * approval would file it under, so the admin list shows where it goes.
-     * Returns the new name, or '' when the row is left as it is.
+     * save-suggestion.php named providers) or as a bare state name is renamed
+     * in place to the project approval would file it under, so the admin
+     * list shows where it goes. Returns the new name, or '' when the row is
+     * left as it is.
      */
     function kop_rename_placeholder_provider_suggestion(PDO $pdo, $table, $id, $master_id, $decoded_data) {
-        if (!kop_is_placeholder_project_name($master_id) || !is_array($decoded_data)) {
+        $placeholder = kop_is_placeholder_project_name($master_id);
+        if ((!$placeholder && !kop_is_location_project_name($master_id)) || !is_array($decoded_data)) {
             return '';
         }
         $project_data = kop_extract_project_data($decoded_data);
@@ -208,7 +247,9 @@ if (!function_exists('kop_rename_placeholder_provider_suggestion')) {
         if (strtolower(trim((string) $category)) !== 'providers') {
             return '';
         }
-        $name = kop_sanitize_project_identifier(kop_provider_project_name($project_data));
+        $name = kop_sanitize_project_identifier($placeholder
+            ? kop_provider_project_name($project_data)
+            : kop_provider_location_project_name($master_id));
         if ($name === '') {
             return '';
         }
@@ -528,6 +569,17 @@ if (!function_exists('kop_apply_suggested_edit')) {
             // Mental health providers (js/data-form/provider-form.js) are tagged
             // on the data; they are facility-shaped but are not TTI facilities.
             $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
+
+            // A provider named after a bare state or country would land in
+            // the form's location project of that name; file it as
+            // "<STATE> PROVIDERS" instead.
+            if ($isProvider && kop_is_location_project_name($resolved_master_id)) {
+                $resolved_master_id = kop_provider_location_project_name($resolved_master_id);
+                if (is_array($decoded_data)) {
+                    $decoded_data['name'] = $resolved_master_id;
+                    $decoded_data['projectName'] = $resolved_master_id;
+                }
+            }
 
             // A provider sent without a project name is filed under its state
             // instead of "Unknown Project".
