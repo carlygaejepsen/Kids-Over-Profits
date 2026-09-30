@@ -95,6 +95,11 @@ require_once get_stylesheet_directory() . '/inc/glossary-editor.php';
 require_once get_stylesheet_directory() . '/inc/page-text.php';
 require_once get_stylesheet_directory() . '/inc/page-text-editor.php';
 
+// Indigenous residential schools: their own records, never TTI facilities
+// (listed on /indian-boarding-schools/, KOP Data Tools > Indigenous Schools)
+require_once get_stylesheet_directory() . '/inc/indigenous-schools.php';
+require_once get_stylesheet_directory() . '/inc/indigenous-schools-admin.php';
+
 // Open data: daily bulk downloads of every public dataset (/open-data/)
 require_once get_stylesheet_directory() . '/inc/open-data.php';
 

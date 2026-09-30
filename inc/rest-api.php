@@ -4302,27 +4302,37 @@ function kop_state_collect_inspection_summaries($state_name) {
                     ? 'https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/' . $ccl_fac_num
                     : '';
 
+                $deficiencies = isset($report['deficiencies']) && is_array($report['deficiencies']) ? array_values($report['deficiencies']) : array();
+                if ($finding_count === 0 && $deficiencies) {
+                    $finding_count = count($deficiencies);
+                }
+
                 $grouped[$key]['inspections'][] = array(
                     'inspection_date' => $date_str,
                     'inspection_type' => $report_type,
                     'inspection_findings' => $findings_arr,
                     'checklist_urls' => array_filter(array($ccl_detail_url)),
-                    // Embed remaining CCL fields in 'categories' so the state-page UI
-                    // can render administrator/capacity/census/met_with/narrative
-                    // when the toggle expands.
+                    // The report's own text, shown under the inspection when
+                    // its toggle expands (the page used to download every CCL
+                    // batch to add these itself).
+                    'narrative'              => trim((string)($report['narrative'] ?? '')),
+                    'investigation_findings' => $findings_text,
+                    'deficiencies'           => $deficiencies,
+                    // Remaining CCL fields for the details block.
                     'categories' => array(
                         'report_type'      => $report_type,
                         'pdf_url'          => '',
                         'report_url'       => $ccl_detail_url,
                         'licensee'         => (string)($report['administrator'] ?? ''),
                         'visit_date'       => (string)($report['visit_date'] ?? ''),
+                        'form_number'      => (string)($report['form_number'] ?? ''),
+                        'census'           => isset($report['census']) ? (string)$report['census'] : '',
+                        'complaint_status' => (string)($report['complaint_status'] ?? ''),
+                        'met_with'         => (string)($report['met_with'] ?? ''),
                         'capacity_age_range' => isset($report['capacity']) ? 'Capacity: ' . $report['capacity'] : '',
                         'average_daily_population_served' => isset($report['census']) ? (string)$report['census'] : '',
                         'corrective_actions' => (string)($report['complaint_status'] ?? ''),
-                        'observations'     => (string)($report['investigation_findings'] ?? ''),
                         'finding_count'    => $finding_count,
-                        'findings'         => $findings_arr,
-                        'narrative'        => (string)($report['investigation_findings'] ?? ''),
                     ),
                 );
             }
@@ -4398,7 +4408,7 @@ function kop_state_collect_inspection_summaries($state_name) {
                     }
                     $checklist_urls = isset($insp['checklist_urls']) && is_array($insp['checklist_urls']) ? $insp['checklist_urls'] : array();
                     $passthrough_categories = isset($insp['categories']) && is_array($insp['categories']) ? $insp['categories'] : null;
-                    $insp_records[] = array(
+                    $record = array(
                         'date'          => (string)$date_str,
                         'type'          => (string)($insp['inspection_type'] ?? $insp['inspection_types'] ?? ''),
                         'finding_count' => $passthrough_categories['finding_count'] ?? count($findings_raw),
@@ -4408,6 +4418,11 @@ function kop_state_collect_inspection_summaries($state_name) {
                         'summary'       => '',
                         'categories'    => $passthrough_categories ?: array(),
                     );
+                    // CCL report text (see the flat-report grouping above).
+                    foreach (array('narrative', 'investigation_findings', 'deficiencies') as $text_key) {
+                        if (!empty($insp[$text_key])) $record[$text_key] = $insp[$text_key];
+                    }
+                    $insp_records[] = $record;
                 }
             }
 
@@ -5614,9 +5629,176 @@ function kop_state_collect_legislation($state_name) {
 }
 
 /**
- * Register the state aggregation REST route.
+ * The whole state feed, built from scratch: facilities (with every inspection
+ * record), news, lawsuits and legislation. Slow (seconds on the big states);
+ * the route reads it through kop_state_feed_cached().
+ */
+function kop_state_feed_build($state_name) {
+    $inspection_pages = kop_state_inspection_page_map();
+    $inspection_slug = isset($inspection_pages[$state_name]) ? $inspection_pages[$state_name] : null;
+    $inspection_url = $inspection_slug ? home_url('/' . $inspection_slug . '/') : null;
+
+    $facilities = kop_state_collect_facilities($state_name);
+    $news = kop_state_collect_news($state_name);
+    $lawsuits = kop_state_collect_lawsuits($state_name);
+    $legislation = kop_state_collect_legislation($state_name);
+
+    return array(
+        'state' => array(
+            'name' => $state_name,
+            'slug' => kop_state_slug($state_name),
+        ),
+        'inspections' => array(
+            'has_reports' => $inspection_slug !== null,
+            'page_url' => $inspection_url,
+        ),
+        'facilities' => $facilities,
+        'news' => $news,
+        'lawsuits' => $lawsuits,
+        'legislation' => $legislation,
+        'counts' => array(
+            'facilities_active' => count($facilities['active']),
+            'facilities_closed' => count($facilities['closed']),
+            'facilities_total'  => $facilities['total'],
+            'news' => count($news),
+            'lawsuits' => count($lawsuits),
+            'legislation' => count($legislation),
+        ),
+    );
+}
+
+/**
+ * Changes whenever anything the state feed reads changes: the facility-page
+ * fingerprint (facilities, links, lawsuits, inspections, folders, memorials),
+ * the news and legislation tables, the theme code and the bundled datasets.
+ */
+function kop_state_feed_fingerprint() {
+    static $key = null;
+    if ($key !== null) return $key;
+    global $wpdb;
+    $parts = array(function_exists('kop_facility_pages_fingerprint') ? kop_facility_pages_fingerprint() : '-');
+    foreach (array('news_submissions', 'legislation') as $table) {
+        $row = $wpdb->get_row("SELECT COUNT(*), MAX(updated_at) FROM `{$table}`", ARRAY_N);
+        $parts[] = $table . ':' . (is_array($row) ? implode('|', array_map('strval', $row)) : '-');
+    }
+    $parts[] = 'writes:' . (function_exists('kop_v2_writes_on') && kop_v2_writes_on() ? 'v2' : 'legacy');
+    $dir = get_stylesheet_directory();
+    $newest = 0;
+    foreach (array('/inc/*.php', '/api/lib-*.php', '/js/data/*.json', '/js/data/*/*.json') as $pattern) {
+        foreach ((array) glob($dir . $pattern) as $file) {
+            $mtime = (int) @filemtime($file);
+            if ($mtime > $newest) $newest = $mtime;
+        }
+    }
+    $parts[] = 'files:' . $newest;
+    $parts[] = 'v:1';
+    return $key = substr(md5(implode(';', $parts)), 0, 16);
+}
+
+/** Where built state feeds are kept: uploads/kop-cache/state-feed/. */
+function kop_state_feed_cache_dir() {
+    $uploads = function_exists('wp_upload_dir') ? wp_upload_dir(null, false) : array();
+    $base = !empty($uploads['basedir']) ? $uploads['basedir'] : (WP_CONTENT_DIR . '/uploads');
+    return rtrim($base, '/\\') . '/kop-cache/state-feed';
+}
+
+/**
+ * Split a built feed into the page payload and its inspection records. Each
+ * tile keeps a light stub per inspection (date, type, counts, licensee: what
+ * the page needs to name, merge and count tiles) tagged with a ref
+ * "<tile>.<inspection>"; the full records go in the second array, keyed by
+ * that ref, and are fetched when a visitor opens a tile's inspections.
+ *
+ * @return array [slim payload, ref => full inspection record]
+ */
+function kop_state_feed_split(array $feed) {
+    $records = array();
+    $tile = 0;
+    foreach (array('active', 'closed') as $group) {
+        if (empty($feed['facilities'][$group]) || !is_array($feed['facilities'][$group])) continue;
+        foreach ($feed['facilities'][$group] as &$facility) {
+            if (!empty($facility['inspections']) && is_array($facility['inspections'])) {
+                foreach ($facility['inspections'] as $i => &$insp) {
+                    if (!is_array($insp)) continue;
+                    $ref = $tile . '.' . $i;
+                    $records[$ref] = $insp;
+                    $cats = isset($insp['categories']) && is_array($insp['categories']) ? $insp['categories'] : array();
+                    $stub = array('ref' => $ref);
+                    foreach (array('date', 'type', 'finding_count', 'pdf_url', 'inspected_by') as $k) {
+                        if (isset($insp[$k]) && $insp[$k] !== '' && $insp[$k] !== null) $stub[$k] = $insp[$k];
+                    }
+                    if (!empty($cats['licensee'])) $stub['categories'] = array('licensee' => $cats['licensee']);
+                    $insp = $stub;
+                }
+                unset($insp);
+            }
+            $tile++;
+        }
+        unset($facility);
+    }
+    return array($feed, $records);
+}
+
+/** ?model=v2 builds from the other data model: never read or write the cache. */
+function kop_state_feed_requested_fresh() {
+    return function_exists('kop_v2_model_requested') && kop_v2_model_requested()
+        && !(function_exists('kop_v2_writes_on') && kop_v2_writes_on());
+}
+
+/**
+ * The state feed from the file cache, rebuilt when kop_state_feed_fingerprint()
+ * moves. $part is 'page' (the slim payload) or 'inspections' (ref => record).
+ * $version asks for an earlier build a page was loaded from, so its refs still
+ * resolve after a rebuild; old builds are kept for a day.
+ *
+ * @return array [version, data]
+ */
+function kop_state_feed_cached($state_name, $part = 'page', $version = '') {
+    $slug = kop_state_slug($state_name);
+    $dir = kop_state_feed_cache_dir();
+    $fresh = kop_state_feed_requested_fresh();
+    $current = kop_state_feed_fingerprint();
+    $key = ($version !== '' && preg_match('/^[a-f0-9]{16}$/', $version)) ? $version : $current;
+    $file = $dir . '/' . $slug . '-' . $key . '-' . $part . '.json';
+
+    if (!$fresh && is_readable($file)) {
+        $data = json_decode((string) file_get_contents($file), true);
+        if (is_array($data)) return array($key, $data);
+    }
+
+    list($page, $records) = kop_state_feed_split(kop_state_feed_build($state_name));
+    $key = $current;
+    if (!$fresh && (is_dir($dir) || wp_mkdir_p($dir))) {
+        foreach (array('page' => $page, 'inspections' => $records) as $name => $data) {
+            $target = $dir . '/' . $slug . '-' . $key . '-' . $name . '.json';
+            $tmp = $target . '.' . getmypid() . '.tmp';
+            if (@file_put_contents($tmp, wp_json_encode($data)) !== false) {
+                @rename($tmp, $target);
+            } else {
+                @unlink($tmp);
+            }
+        }
+        // Earlier builds of this state: kept a day for pages still open on them.
+        foreach ((array) glob($dir . '/' . $slug . '-*.json') as $old) {
+            if (strpos(basename($old), $slug . '-' . $key . '-') === 0) continue;
+            if ((int) @filemtime($old) < time() - DAY_IN_SECONDS) @unlink($old);
+        }
+    }
+    return array($key, $part === 'inspections' ? $records : $page);
+}
+
+/**
+ * Register the state aggregation REST routes: the page payload, and the full
+ * inspection records its tiles open on demand.
  */
 function kop_register_state_rest_routes() {
+    $slug_arg = array(
+        'slug' => array(
+            'required' => true,
+            'type' => 'string',
+            'sanitize_callback' => 'sanitize_title',
+        ),
+    );
     register_rest_route(
         'kop/v1',
         '/state/(?P<slug>[a-z0-9-]+)',
@@ -5629,48 +5811,33 @@ function kop_register_state_rest_routes() {
                 if (!$state_name) {
                     return new WP_Error('unknown_state', 'Unknown state slug', array('status' => 404));
                 }
-
-                $inspection_pages = kop_state_inspection_page_map();
-                $inspection_slug = isset($inspection_pages[$state_name]) ? $inspection_pages[$state_name] : null;
-                $inspection_url = $inspection_slug ? home_url('/' . $inspection_slug . '/') : null;
-                $inspection_datasets = kop_state_inspection_dataset_urls($state_name);
-
-                $facilities = kop_state_collect_facilities($state_name);
-                $news = kop_state_collect_news($state_name);
-                $lawsuits = kop_state_collect_lawsuits($state_name);
-                $legislation = kop_state_collect_legislation($state_name);
-
-                return rest_ensure_response(array(
-                    'state' => array(
-                        'name' => $state_name,
-                        'slug' => kop_state_slug($state_name),
-                    ),
-                    'inspections' => array(
-                        'has_reports' => $inspection_slug !== null,
-                        'page_url' => $inspection_url,
-                        'dataset_urls' => $inspection_datasets,
-                    ),
-                    'facilities' => $facilities,
-                    'news' => $news,
-                    'lawsuits' => $lawsuits,
-                    'legislation' => $legislation,
-                    'counts' => array(
-                        'facilities_active' => count($facilities['active']),
-                        'facilities_closed' => count($facilities['closed']),
-                        'facilities_total'  => $facilities['total'],
-                        'news' => count($news),
-                        'lawsuits' => count($lawsuits),
-                        'legislation' => count($legislation),
-                    ),
-                ));
+                list($version, $page) = kop_state_feed_cached($state_name, 'page');
+                $page['inspections']['records_url'] = add_query_arg('v', $version, rest_url('kop/v1/state/' . $slug . '/inspections'));
+                return rest_ensure_response($page);
             },
-            'args' => array(
-                'slug' => array(
-                    'required' => true,
-                    'type' => 'string',
-                    'sanitize_callback' => 'sanitize_title',
-                ),
-            ),
+            'args' => $slug_arg,
+        )
+    );
+    register_rest_route(
+        'kop/v1',
+        '/state/(?P<slug>[a-z0-9-]+)/inspections',
+        array(
+            'methods' => WP_REST_Server::READABLE,
+            'permission_callback' => '__return_true',
+            'callback' => function ($request) {
+                $state_name = kop_state_slug_to_name(strtolower($request['slug']));
+                if (!$state_name) {
+                    return new WP_Error('unknown_state', 'Unknown state slug', array('status' => 404));
+                }
+                $refs = array_slice(array_filter(array_map('trim', explode(',', (string) $request->get_param('refs')))), 0, 500);
+                list($version, $records) = kop_state_feed_cached($state_name, 'inspections', (string) $request->get_param('v'));
+                $out = array();
+                foreach ($refs as $ref) {
+                    if (isset($records[$ref])) $out[$ref] = $records[$ref];
+                }
+                return rest_ensure_response(array('version' => $version, 'inspections' => (object) $out));
+            },
+            'args' => $slug_arg,
         )
     );
 }

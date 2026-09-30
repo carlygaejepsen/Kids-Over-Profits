@@ -56,42 +56,6 @@
         return '';
     };
 
-    const normalizeFacilityLookupKey = value => {
-        let text = normalizeText(value).toLowerCase();
-        if (!text) return '';
-        const colonPos = text.indexOf(':');
-        if (colonPos !== -1) text = text.slice(0, colonPos);
-        text = text
-            .replace(/\s*[-,;]\s*/g, ' ')
-            .replace(/\s*&\s*/g, ' and ')
-            .replace(/[^a-z0-9\s]/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim();
-        return text;
-    };
-
-    const normalizeDateKey = value => {
-        const text = normalizeText(value);
-        if (!text) return '';
-        const direct = Date.parse(text);
-        if (!Number.isNaN(direct)) return new Date(direct).toISOString().slice(0, 10);
-
-        const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
-        if (!match) return '';
-        const month = match[1].padStart(2, '0');
-        const day = match[2].padStart(2, '0');
-        const year = match[3].length === 2 ? `20${match[3]}` : match[3];
-        return `${year}-${month}-${day}`;
-    };
-
-    const chooseRicherText = (left, right) => {
-        const a = normalizeText(left);
-        const b = normalizeText(right);
-        if (!a) return b;
-        if (!b) return a;
-        return b.length > a.length ? b : a;
-    };
-
     const getFacilityLocationSuffix = facility => {
         const city = normalizeText(facility && facility.city);
         const stateCode = normalizeText(facility && facility.state);
@@ -142,173 +106,6 @@
         }
         // No salvageable label anywhere — would render as "Facility (…)" placeholder.
         return hasJunkPlaceholderName(facility);
-    };
-
-    // CCL batch rows carry source_url pointing at the CA transparency API,
-    // which returns raw JSON if opened in a browser. Rewrite those to the
-    // human-readable facility-detail page; leave any other URL untouched.
-    const toCaFacilityDetailUrl = (sourceUrl, facilityNumber) => {
-        const url = normalizeText(sourceUrl);
-        if (!/transparencyapi/i.test(url)) return url;
-        const num = normalizeText(facilityNumber).replace(/\D+/g, '')
-            || (url.match(/(\d{6,})/) || [])[1] || '';
-        return num ? `https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${num}` : '';
-    };
-
-    const normalizeCaliforniaDetailedReport = raw => {
-        if (!raw || typeof raw !== 'object') return null;
-
-        const categories = (raw.categories && typeof raw.categories === 'object') ? raw.categories : raw;
-        const rawDate = normalizeText(raw.report_date || categories.report_date || categories.visit_date || raw.visit_date);
-
-        const deficiencies = Array.isArray(categories.deficiencies)
-            ? categories.deficiencies
-            : (Array.isArray(raw.deficiencies) ? raw.deficiencies : []);
-
-        return {
-            facility_name: normalizeText(raw.facility_name || raw.program_name || categories.facility_name || categories.program_name),
-            facility_number: normalizeText(raw.facility_number || categories.facility_number),
-            report_type: normalizeText(raw.report_type || categories.report_type),
-            visit_date: normalizeText(raw.visit_date || categories.visit_date || rawDate),
-            report_date: rawDate,
-            form_number: normalizeText(raw.form_number || categories.form_number),
-            census: normalizeText(raw.census || categories.census),
-            complaint_status: normalizeText(raw.complaint_status || categories.complaint_status),
-            met_with: normalizeText(raw.met_with || categories.met_with),
-            narrative: normalizeText(raw.narrative || categories.narrative || raw.raw_content),
-            investigation_findings: normalizeText(raw.investigation_findings || categories.investigation_findings),
-            deficiencies,
-            source_url: toCaFacilityDetailUrl(
-                raw.source_url || categories.source_url || raw.report_url,
-                raw.facility_number || categories.facility_number
-            ),
-        };
-    };
-
-    const buildCaliforniaDetailIndex = payloads => {
-        const byFacilityAndDate = new Map();
-
-        const storeReport = report => {
-            const normalized = normalizeCaliforniaDetailedReport(report);
-            if (!normalized) return;
-
-            const facilityKey = normalizeFacilityLookupKey(normalized.facility_name);
-            const dateKey = normalizeDateKey(normalized.visit_date || normalized.report_date);
-            if (!facilityKey || !dateKey) return;
-
-            const mapKey = `${facilityKey}||${dateKey}`;
-            const existing = byFacilityAndDate.get(mapKey);
-            if (!existing) {
-                byFacilityAndDate.set(mapKey, normalized);
-                return;
-            }
-
-            const existingScore = (existing.narrative ? 1 : 0) + (existing.investigation_findings ? 1 : 0) + ((existing.deficiencies || []).length ? 1 : 0);
-            const incomingScore = (normalized.narrative ? 1 : 0) + (normalized.investigation_findings ? 1 : 0) + ((normalized.deficiencies || []).length ? 1 : 0);
-            if (incomingScore > existingScore) {
-                byFacilityAndDate.set(mapKey, normalized);
-            }
-        };
-
-        payloads.forEach(payload => {
-            if (!Array.isArray(payload)) return;
-            payload.forEach(storeReport);
-        });
-
-        return byFacilityAndDate;
-    };
-
-    const buildFacilityLookupCandidates = facility => {
-        const candidates = [facility && facility.name, facility && facility.project_name, facility && facility.operator_name];
-        if (Array.isArray(facility && facility.inspections)) {
-            facility.inspections.forEach(insp => {
-                if (insp && insp.categories && insp.categories.licensee) {
-                    candidates.push(insp.categories.licensee);
-                }
-            });
-        }
-        return Array.from(new Set(candidates.map(normalizeFacilityLookupKey).filter(Boolean)));
-    };
-
-    const enrichFacilityWithCaliforniaDetails = (facility, detailIndex) => {
-        if (!facility || !Array.isArray(facility.inspections) || !facility.inspections.length) return facility;
-        const facilityKeys = buildFacilityLookupCandidates(facility);
-        if (!facilityKeys.length) return facility;
-
-        let violationCount = 0;
-        const inspections = facility.inspections.map(insp => {
-            const dateKeys = [
-                normalizeDateKey(insp && insp.date),
-                normalizeDateKey(insp && insp.categories && insp.categories.visit_date),
-            ].filter(Boolean);
-
-            let detail = null;
-            for (const facilityKey of facilityKeys) {
-                for (const dateKey of dateKeys) {
-                    detail = detailIndex.get(`${facilityKey}||${dateKey}`);
-                    if (detail) break;
-                }
-                if (detail) break;
-            }
-
-            const merged = {
-                ...insp,
-                report_url: normalizeText(insp && insp.report_url) || (detail && detail.source_url) || '',
-                summary: chooseRicherText(insp && insp.summary, detail && detail.report_type),
-                narrative: chooseRicherText(insp && insp.narrative, detail && detail.narrative),
-                investigation_findings: chooseRicherText(insp && insp.investigation_findings, detail && detail.investigation_findings),
-                deficiencies: Array.isArray(insp && insp.deficiencies) && insp.deficiencies.length
-                    ? insp.deficiencies
-                    : ((detail && Array.isArray(detail.deficiencies)) ? detail.deficiencies : []),
-                finding_count: Number(insp && insp.finding_count) || ((detail && Array.isArray(detail.deficiencies)) ? detail.deficiencies.length : 0),
-                categories: {
-                    ...((insp && insp.categories && typeof insp.categories === 'object') ? insp.categories : {}),
-                    ...(detail && detail.visit_date ? { visit_date: detail.visit_date } : {}),
-                    ...(detail && detail.form_number ? { form_number: detail.form_number } : {}),
-                    ...(detail && detail.census ? { census: detail.census } : {}),
-                    ...(detail && detail.complaint_status ? { complaint_status: detail.complaint_status } : {}),
-                    ...(detail && detail.met_with ? { met_with: detail.met_with } : {}),
-                }
-            };
-
-            violationCount += merged.finding_count || 0;
-            return merged;
-        });
-
-        return {
-            ...facility,
-            inspections,
-            violation_count: facility.violation_count || violationCount,
-        };
-    };
-
-    const enrichCaliforniaFacilities = async stateData => {
-        const datasetUrls = Array.isArray(stateData?.inspections?.dataset_urls) ? stateData.inspections.dataset_urls : [];
-        if (stateData?.state?.slug !== 'california' || !datasetUrls.length) return stateData;
-
-        const payloads = await Promise.all(datasetUrls.map(async url => {
-            try {
-                const response = await fetch(url, { credentials: 'same-origin' });
-                if (!response.ok) return [];
-                return await response.json();
-            } catch (error) {
-                console.warn('California detail dataset load failed', error);
-                return [];
-            }
-        }));
-
-        const detailIndex = buildCaliforniaDetailIndex(payloads);
-        if (!detailIndex.size) return stateData;
-
-        const enrichList = list => Array.isArray(list) ? list.map(facility => enrichFacilityWithCaliforniaDetails(facility, detailIndex)) : [];
-        return {
-            ...stateData,
-            facilities: {
-                ...stateData.facilities,
-                active: enrichList(stateData.facilities && stateData.facilities.active),
-                closed: enrichList(stateData.facilities && stateData.facilities.closed),
-            }
-        };
     };
 
     const normalizeAddressForMatch = value => {
@@ -742,7 +539,7 @@
                 fetch(config.apiUrl, { credentials: 'same-origin' }).then(r => r.json()),
                 ensureFoldersLoaded(),
             ]);
-            state.data = await enrichCaliforniaFacilities(stateRes);
+            state.data = stateRes;
             updateCounts();
             renderFacilities();
             renderNews();
@@ -1719,7 +1516,7 @@
                 ${toggleButtons.length ? `
                     <div class="facility-card-panels">
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
-                        ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}
+                        ${hasInspections ? renderInspectionPanel(facility.inspections) : ''}
                         ${hasNews ? `<div class="facility-panel" data-panel="news" hidden>${renderFacilityNewsList(newsItems)}</div>` : ''}
                         ${lawsuitItems.length ? `<div class="facility-panel" data-panel="lawsuits" hidden>${renderFacilityLawsuitList(lawsuitItems)}</div>` : ''}
                         ${memorialItems.length ? `<div class="facility-panel" data-panel="memorials" hidden>${renderFacilityMemorialList(memorialItems)}</div>` : ''}
@@ -1728,6 +1525,41 @@
                 ` : ''}
             </li>
         `;
+    };
+
+    // The state feed sends each inspection as a stub with a ref; the full
+    // records come from its records_url when a tile's panel is first opened.
+    // Records that arrive whole (no ref) render at once, as before.
+    const renderInspectionPanel = inspections => {
+        const refs = inspections.map(insp => insp && insp.ref).filter(Boolean);
+        if (!refs.length || refs.length !== inspections.length) {
+            return `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(inspections)}</div>`;
+        }
+        return `<div class="facility-panel" data-panel="inspections" data-refs="${escapeHtml(refs.join(','))}" hidden><p class="loading">Loading inspections…</p></div>`;
+    };
+
+    const fetchInspectionRecords = async refs => {
+        const url = state.data && state.data.inspections && state.data.inspections.records_url;
+        if (!url) return {};
+        const sep = url.includes('?') ? '&' : '?';
+        const res = await fetch(`${url}${sep}refs=${encodeURIComponent(refs.join(','))}`, { credentials: 'same-origin' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return (data && data.inspections) || {};
+    };
+
+    const loadInspectionPanel = async panel => {
+        const refs = String(panel.dataset.refs || '').split(',').filter(Boolean);
+        try {
+            const records = await fetchInspectionRecords(refs);
+            const list = refs.map(ref => records[ref]).filter(Boolean);
+            if (!list.length) throw new Error('no records');
+            panel.innerHTML = renderInspectionRecords(list);
+            panel.dataset.loaded = '1';
+        } catch (err) {
+            console.warn('Failed to load inspection records', err);
+            panel.innerHTML = '<p class="error">Could not load these inspections. Reload the page and try again.</p>';
+        }
     };
 
     const PANEL_LABELS = {
@@ -1758,6 +1590,12 @@
                     panel.hidden = true;
                     btn.textContent = labels.show + count;
                     return;
+                }
+
+                if (panelKind === 'inspections' && panel.dataset.refs && panel.dataset.loaded !== '1') {
+                    btn.disabled = true;
+                    await loadInspectionPanel(panel);
+                    btn.disabled = false;
                 }
 
                 if (panelKind === 'docs' && panel.dataset.loaded !== '1') {

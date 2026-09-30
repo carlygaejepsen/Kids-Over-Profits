@@ -99,12 +99,16 @@ check($blocks === "<h3>Sub</h3>\n<p>One line two</p>\n<ul><li>a continued</li><l
 
 echo "Page\n";
 $defaults = kop_page_text_defaults('indian-boarding-schools');
-check(count($defaults) === 8, '8 sections in the page file');
+check(count($defaults) === 9, '9 sections in the page file');
+$by_key = array();
+foreach ($defaults as $d) {
+    $by_key[$d['key']] = $d;
+}
 $html = render_page();
 if (getenv('KOP_DUMP')) {
     file_put_contents(getenv('KOP_DUMP'), $html);
 }
-foreach (array('note', 'not-ours', 'learn', 'support', 'genocide', 'touch', 'wrong', 'updated') as $k) {
+foreach (array('note', 'not-ours', 'learn', 'support', 'genocide', 'touch', 'records', 'wrong', 'updated') as $k) {
     check(strpos($html, 'id="kop-ibs-' . $k . '"') !== false, "section $k is on the page");
 }
 check(strpos($html, 'href="#kop-ibs-support"') !== false && strpos($html, '<section class="kop-ibs-support" id="kop-ibs-support"') !== false, 'the content note links to the support lines');
@@ -116,7 +120,7 @@ check(strpos($html, 'href="https://kidsoverprofits.org/glossary/"') !== false &&
 check(strpos($html, '<em>Haaland v. Brackeen</em>') !== false, 'italic case name');
 check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), 'no format syntax left over');
 preg_match_all('/href="([^"]+)"/', $html, $m);
-check(count($m[1]) === 35, '35 links (' . count($m[1]) . ')');
+check(count($m[1]) === 37, '37 links (' . count($m[1]) . ')');
 $bad = array_filter($m[1], function ($u) { return !preg_match('#^(https://|tel:|\#kop-ibs-)#', $u); });
 check(!$bad, 'every link is https, tel or an in-page anchor');
 libxml_use_internal_errors(true);
@@ -141,10 +145,10 @@ $_POST = array('kop_pt_reset' => 'wrong', 'sections' => array('touch' => array('
 $n = kop_page_text_editor_handle_post('indian-boarding-schools');
 $e = kop_page_text_edits();
 check(!isset($e['indian-boarding-schools']['wrong']) && isset($e['indian-boarding-schools']['touch']), 'reset drops that section and still saves the others');
-$_POST = array('sections' => array('touch' => array('heading' => $defaults[5]['heading'], 'body' => $defaults[5]['body'])));
+$_POST = array('sections' => array('touch' => array('heading' => $by_key['touch']['heading'], 'body' => $by_key['touch']['body'])));
 kop_page_text_editor_handle_post('indian-boarding-schools');
 check(kop_page_text_edits() === array(), 'typing the original text back removes the edit');
-update_option('kop_page_text_edits', array('indian-boarding-schools' => array('wrong' => array('heading' => $defaults[6]['heading'], 'body' => $defaults[6]['body'], 'user' => 'x', 'time' => 1))));
+update_option('kop_page_text_edits', array('indian-boarding-schools' => array('wrong' => array('heading' => $by_key['wrong']['heading'], 'body' => $by_key['wrong']['body'], 'user' => 'x', 'time' => 1))));
 check(kop_page_text_clear_matching('indian-boarding-schools') === 1 && kop_page_text_edits() === array(), 'an edit the repo has caught up with clears itself');
 
 echo "FAQ
@@ -198,8 +202,8 @@ $screen = ob_get_clean();
 if (getenv('KOP_DUMP_SCREEN')) {
     file_put_contents(getenv('KOP_DUMP_SCREEN'), $screen);
 }
-check(substr_count($screen, 'class="kop-pt-section"') === 8, 'the editor shows all 8 sections');
-check(substr_count($screen, 'class="kop-pt-body"') === 8 && substr_count($screen, 'data-do="link"') === 8, 'each section has a text box and the formatting buttons');
+check(substr_count($screen, 'class="kop-pt-section"') === 9, 'the editor shows all 9 sections');
+check(substr_count($screen, 'class="kop-pt-body"') === 9 && substr_count($screen, 'data-do="link"') === 9, 'each section has a text box and the formatting buttons');
 check(strpos($screen, 'Edited by Tester') !== false && substr_count($screen, 'name="kop_pt_reset"') === 1, 'only the edited section offers "Put back the original"');
 check(strpos($screen, 'kop-ibs-page kop-pt-preview') !== false && strpos($screen, '<h2 id="kop-ibs-wrong-title">Tell us</h2>') !== false, 'previews use the page styles and show the edit');
 check(strpos($screen, 'The page itself has not been created yet.') !== false, 'says when the page does not exist');

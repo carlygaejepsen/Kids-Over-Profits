@@ -23,6 +23,7 @@ if (!file_exists($db_path)) {
 require __DIR__ . '/kop-test-harness.php';
 require_once dirname(__DIR__) . '/inc/closure-reports.php';
 require_once dirname(__DIR__) . '/inc/facility-discovery.php';
+require_once dirname(__DIR__) . '/inc/indigenous-schools.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -162,6 +163,23 @@ $prompt = kop_facdisc_build_prompt($article + array('summary' => 'S'), $asked, $
 $check('lists each name with its look-alikes', strpos($prompt, '11656 | Asheville Academy for Girls | Black Mountain, NC | Closed') !== false
     && strpos($prompt, '5. "Sheppard Pratt"') !== false);
 $check('names the type vocabulary and the kinds', strpos($prompt, 'Juvenile Justice RTC') !== false && strpos($prompt, '- vague:') !== false);
+
+// ---------------------------------------------------------------------------
+echo "-- Indigenous residential schools (filed at Indigenous Schools, never as facilities) --\n";
+$check('the prompt names the kind', strpos($prompt, '- indigenous_school:') !== false && strpos($prompt, 'facility|indigenous_school|provider') !== false);
+$check('a school name is never pre-sorted as an organization', kop_facdisc_obvious_kind('Chilocco Indian Agricultural School') === null
+    && kop_facdisc_obvious_kind('Indian Agency Boarding School') === null && kop_facdisc_obvious_kind('Bureau of Indian Affairs') === 'organization');
+$check('the name test reads Indian boarding and mission schools, not TTI programs or Indiana',
+    kop_facdisc_looks_indigenous_school("St. Paul's Indian Mission School") && kop_facdisc_looks_indigenous_school('Shawnee Indian Manual Labor School')
+    && !kop_facdisc_looks_indigenous_school('New Beginnings Residential School') && !kop_facdisc_looks_indigenous_school('Indiana Boarding School for Boys'));
+$es = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'Shawnee Indian Mission', 'kind' => 'indigenous_school',
+    'officialName' => 'Shawnee Indian Manual Labor School', 'state' => 'KS', 'city' => 'Fairway', 'startYear' => 1839, 'endYear' => 1862)))), array('Shawnee Indian Mission'), array());
+$check('the reply keeps the kind and years before 1900', ($es['Shawnee Indian Mission']['kind'] ?? '') === 'indigenous_school'
+    && $es['Shawnee Indian Mission']['startYear'] === 1839 && $es['Shawnee Indian Mission']['endYear'] === 1862);
+$ef = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'Old Ranch', 'kind' => 'facility', 'startYear' => 1839)))), array('Old Ranch'), array());
+$check('a facility still gets no year before 1900', $ef['Old Ranch']['startYear'] === null);
+$check('the dry run files it as a school, not a new facility',
+    kop_facdisc_apply_entry($pdo, $es['Shawnee Indian Mission'], array('id' => 519), false) === array('indigenous_school', null));
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);
