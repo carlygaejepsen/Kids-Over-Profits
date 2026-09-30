@@ -845,6 +845,8 @@ function kop_render_woodbury_page() {
         . '<strong>View pages</strong> opens the excerpt.</li>'
         . '<li><strong>File it.</strong> Click <em>File it</em> on the row, or tick <em>Select</em> on several rows and use <em>File selected</em> at the top. '
         . 'Each row then lists the folders it went into, and a summary of everything filed builds up at the top of the page.</li>'
+        . '<li><strong>About an educational consultant, company, provider or transporter?</strong> Search for it under '
+        . '<em>Or a consultant, company, provider or transporter</em> and click <em>File here</em>.</li>'
         . '<li><strong>Not useful?</strong> <em>Skip</em> it. About something with no record yet (a program, company, educational consultant or provider)? '
         . 'Open <em>Create a record</em> under it to make the record and file the pages in one click.</li></ol>';
 
@@ -977,6 +979,9 @@ function kop_wb_render_row(array $r, $tab) {
             echo '<p class="kop-wb-none">No facility matched this name. Add one below, or create a record.</p>';
         }
         echo '<div class="kop-wb-add">Add a facility: ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"', true) . '</div>';
+        if (function_exists('kop_wbc_render_finder')) {
+            kop_wbc_render_finder();
+        }
     } elseif ($filed) {
         echo '<ul class="kop-wb-places">';
         foreach (kop_wb_places($r) as $p) {

@@ -27,6 +27,12 @@
  * Health Providers", transporters under "Transporters") and the Woodbury
  * pages go in a subfolder of it. Only the
  * company folder shows on a public page today.
+ *
+ * A report about a company, consultant, provider or transporter that already
+ * has a record is filed from the row's search box instead
+ * (kop_wbc_find_records, kop_wbc_existing_target): a consultant firm is also
+ * found by the name of anyone in it, and a record with no document folder
+ * gets one where the create would have made it.
  */
 
 if (!defined('ABSPATH')) {
@@ -254,7 +260,8 @@ function kop_wbc_create_consultant(array $r, array $f, PDO $pdo) {
     $taken = $pdo->prepare("SELECT unique_name FROM `{$table}` WHERE LOWER(unique_name) = LOWER(?) OR json_data LIKE ? LIMIT 1");
     $taken->execute(array($f['name'], '%"' . str_replace(array('%', '_'), array('\%', '\_'), $f['name']) . '"%'));
     if ($hit = $taken->fetchColumn()) {
-        throw new RuntimeException('A consultant record already names "' . $f['name'] . '" (' . $hit . ').');
+        throw new RuntimeException('A consultant record already names "' . $f['name'] . '" (' . $hit . '). '
+            . 'Find it in "Or a consultant, company, provider or transporter" above and file it there.');
     }
     $person = ($f['who'] ?? '') === 'person';
     $note = kop_wbc_source_note($r);
@@ -401,6 +408,257 @@ function kop_wbc_create_transporter(array $r, array $f, PDO $pdo) {
     return array('kind' => 'transporter', 'id' => (int) $pdo->lastInsertId(), 'name' => $f['name'], 'folder' => $folder, 'url' => '');
 }
 
+/* ---- Existing company, consultant, provider or transporter ----------- */
+
+/** The tables behind the non-facility kinds, and the folder their own folders go under. */
+function kop_wbc_record_tables() {
+    return array(
+        'consultant'  => array('table' => 'referrers_master', 'parent' => 'Educational Consultants'),
+        'provider'    => array('table' => 'providers_master', 'parent' => 'Mental Health Providers'),
+        'transporter' => array('table' => 'transporters_master', 'parent' => 'Transporters'),
+    );
+}
+
+/** A master table's name on this site, or '' when it does not exist yet. */
+function kop_wbc_table_if_there(PDO $pdo, $base) {
+    global $wpdb;
+    require_once get_stylesheet_directory() . '/api/lib-suggested-edits.php';
+    $table = kop_resolve_table_name($pdo, $base, $wpdb->prefix);
+    try {
+        $pdo->query("SELECT 1 FROM `{$table}` LIMIT 1");
+    } catch (Throwable $e) {
+        return '';
+    }
+    return $table;
+}
+
+/** A master row's project data: the "data" of the {name, data} wrapper, or the row itself (older provider rows). */
+function kop_wbc_row_data(array $payload) {
+    return isset($payload['data']) && is_array($payload['data']) ? $payload['data'] : $payload;
+}
+
+/**
+ * The names a record is known by, for matching a search: [name => detail].
+ * A consultant firm also answers to the people in it ("Amy Aldrich" finds Aldrich).
+ */
+function kop_wbc_record_names($kind, $unique_name, array $payload) {
+    $d = kop_wbc_row_data($payload);
+    $names = array($unique_name => '');
+    if ($kind === 'consultant') {
+        $agency = trim((string) ($d['referrerAgency']['name'] ?? ''));
+        if ($agency !== '') {
+            $names[$agency] = '';
+        }
+        foreach ((array) ($d['referrerConsultants'] ?? array()) as $c) {
+            $full = is_array($c) ? trim((string) ($c['fullName'] ?? '') ?: trim(($c['firstName'] ?? '') . ' ' . ($c['lastName'] ?? ''))) : '';
+            if ($full !== '' && !isset($names[$full])) {
+                $names[$full] = strcasecmp($full, $unique_name) ? 'consultant at ' . $unique_name : '';
+            }
+        }
+    } elseif ($kind === 'provider') {
+        foreach ((array) ($d['facilities'] ?? array()) as $f) {
+            $n = is_array($f) ? trim((string) ($f['identification']['name'] ?? '')) : '';
+            if ($n !== '' && !isset($names[$n])) {
+                $names[$n] = '';
+            }
+        }
+    } elseif ($kind === 'transporter') {
+        $co = (array) ($d['transporterCompany'] ?? array());
+        foreach (array_merge(array($co['name'] ?? ''), (array) ($co['otherNames'] ?? array())) as $n) {
+            $n = is_string($n) ? trim($n) : '';
+            if ($n !== '' && !isset($names[$n])) {
+                $names[$n] = '';
+            }
+        }
+    }
+    return $names;
+}
+
+/** "Orem, UT" for a record, from whichever place field its kind keeps. */
+function kop_wbc_record_place($kind, array $payload) {
+    $d = kop_wbc_row_data($payload);
+    if ($kind === 'consultant') {
+        $p = (array) ($d['referrerAgency'] ?? array());
+        if (empty($p['state']) && !empty($d['referrerConsultants'][0]) && is_array($d['referrerConsultants'][0])) {
+            $p = $d['referrerConsultants'][0];
+        }
+    } elseif ($kind === 'provider') {
+        $p = (array) ($d['facilities'][0]['locationDetails'] ?? array());
+    } else {
+        $p = (array) ($d['transporterCompany'] ?? array());
+    }
+    return implode(', ', array_filter(array(trim((string) ($p['city'] ?? '')), trim((string) ($p['state'] ?? '')))));
+}
+
+/**
+ * Companies, consultants, providers and transporters whose name (or, for a
+ * consultant firm, one of its people) contains $q. Facilities have their own
+ * finder (kop_facility_finder_field).
+ *
+ * @return array<int, array{kind:string, id:int, name:string, label:string, detail:string}>
+ */
+function kop_wbc_find_records(PDO $pdo, $q, $limit = 15) {
+    global $wpdb;
+    $q = trim(preg_replace('/\s+/', ' ', (string) $q));
+    if (mb_strlen($q) < 2) {
+        return array();
+    }
+    $like = '%' . str_replace(array('\\', '%', '_'), array('\\\\', '\%', '\_'), $q) . '%';
+    $kinds = kop_wbc_kinds();
+    $out = array();
+
+    $ops = $wpdb->prefix . 'kop_operators';
+    $stmt = $pdo->prepare("SELECT id, name, unique_name FROM `{$ops}` WHERE name LIKE ? OR unique_name LIKE ? ORDER BY name LIMIT 20");
+    $stmt->execute(array($like, $like));
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $name = $row['name'] !== '' && $row['name'] !== null ? $row['name'] : $row['unique_name'];
+        $out[] = array('kind' => 'company', 'id' => (int) $row['id'], 'name' => $name, 'label' => $kinds['company'], 'detail' => '');
+    }
+
+    foreach (kop_wbc_record_tables() as $kind => $spec) {
+        $table = kop_wbc_table_if_there($pdo, $spec['table']);
+        if ($table === '') {
+            continue;
+        }
+        $stmt = $pdo->prepare("SELECT id, unique_name, json_data FROM `{$table}` WHERE unique_name LIKE ? OR json_data LIKE ? ORDER BY unique_name LIMIT 40");
+        $stmt->execute(array($like, $like));
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $payload = json_decode((string) $row['json_data'], true);
+            $payload = is_array($payload) ? $payload : array();
+            $hit = null;
+            foreach (kop_wbc_record_names($kind, $row['unique_name'], $payload) as $n => $how) {
+                if (mb_stripos($n, $q) !== false) {
+                    $hit = !strcasecmp($n, $row['unique_name']) ? '' : ($how === '' ? $n : $n . ', ' . $how);
+                    break;
+                }
+            }
+            if ($hit === null) {
+                continue; // The text was somewhere else in the record (a note, a referral).
+            }
+            $place = kop_wbc_record_place($kind, $payload);
+            $out[] = array('kind' => $kind, 'id' => (int) $row['id'], 'name' => $row['unique_name'], 'label' => $kinds[$kind],
+                'detail' => implode(' · ', array_filter(array($hit, $place))));
+        }
+    }
+    // Names that start with the search first.
+    usort($out, function ($a, $b) use ($q) {
+        $sa = mb_stripos($a['name'], $q) === 0 ? 0 : 1;
+        $sb = mb_stripos($b['name'], $q) === 0 ? 0 : 1;
+        return $sa !== $sb ? $sa - $sb : strcasecmp($a['name'], $b['name']);
+    });
+    return array_slice($out, 0, $limit);
+}
+
+/** A FileBird folder id that still exists, else 0. */
+function kop_wbc_live_folder($id) {
+    global $wpdb;
+    $id = (int) $id;
+    return $id > 0 && $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . $wpdb->prefix . 'fbv WHERE id = %d', $id)) ? $id : 0;
+}
+
+/**
+ * The filing target for an existing non-facility record: its own document
+ * folder, made (and saved on the record) when it has none yet, where the
+ * create for that kind would have put it.
+ */
+function kop_wbc_existing_target($kind, $id) {
+    global $wpdb;
+    $pdo = kop_wbc_pdo();
+    $id = (int) $id;
+    if ($kind === 'company') {
+        $ops = $wpdb->prefix . 'kop_operators';
+        $stmt = $pdo->prepare("SELECT id, name, unique_name, json_data, document_folder_id FROM `{$ops}` WHERE id = ?");
+        $stmt->execute(array($id));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) {
+            throw new RuntimeException('Company #' . $id . ' not found.');
+        }
+        $name = $row['name'] !== '' && $row['name'] !== null ? $row['name'] : $row['unique_name'];
+        $json = json_decode((string) $row['json_data'], true);
+        // The operator page reads the record's documentFolderId before the column.
+        $folder = kop_wbc_live_folder(is_array($json) ? ($json['documentFolderId'] ?? 0) : 0) ?: kop_wbc_live_folder($row['document_folder_id']);
+        if (!$folder) {
+            $folder = kop_wbc_folder($name, 0);
+            $pdo->prepare("UPDATE `{$ops}` SET document_folder_id = ? WHERE id = ?")->execute(array($folder, $id));
+        }
+        $url = function_exists('kop_operator_page_url') ? (string) kop_operator_page_url($id) : '';
+        return array('kind' => 'company', 'id' => $id, 'name' => $name, 'folder' => $folder, 'url' => $url);
+    }
+    $spec = kop_wbc_record_tables()[$kind] ?? null;
+    if (!$spec) {
+        throw new RuntimeException('Unknown kind of record.');
+    }
+    $table = kop_wbc_table_if_there($pdo, $spec['table']);
+    $row = null;
+    if ($table !== '') {
+        $stmt = $pdo->prepare("SELECT id, unique_name, json_data FROM `{$table}` WHERE id = ?");
+        $stmt->execute(array($id));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+    if (!$row) {
+        throw new RuntimeException(kop_wbc_kinds()[$kind] . ' #' . $id . ' not found.');
+    }
+    $payload = json_decode((string) $row['json_data'], true);
+    $payload = is_array($payload) ? $payload : array();
+    $wrapped = isset($payload['data']) && is_array($payload['data']);
+    $folder = kop_wbc_live_folder($payload['documentFolderId'] ?? 0)
+        ?: kop_wbc_live_folder($wrapped ? ($payload['data']['documentFolderId'] ?? 0) : 0);
+    if (!$folder) {
+        $folder = kop_wbc_folder($row['unique_name'], kop_wbc_folder($spec['parent'], 0));
+        $payload['documentFolderId'] = $folder;
+        if ($wrapped) {
+            $payload['data']['documentFolderId'] = $folder;
+        }
+        $pdo->prepare("UPDATE `{$table}` SET json_data = ?, updated_at = NOW() WHERE id = ?")->execute(array(wp_json_encode($payload), $id));
+    }
+    return array('kind' => $kind, 'id' => $id, 'name' => $row['unique_name'], 'folder' => $folder, 'url' => '');
+}
+
+add_action('wp_ajax_kop_wb_find_record', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Not allowed.', 403);
+    }
+    check_ajax_referer('kop_woodbury', 'nonce');
+    try {
+        wp_send_json_success(kop_wbc_find_records(kop_wbc_pdo(), sanitize_text_field(wp_unslash((string) ($_GET['q'] ?? '')))));
+    } catch (Throwable $e) {
+        wp_send_json_error($e->getMessage());
+    }
+});
+
+add_action('wp_ajax_kop_wb_file_record', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Not allowed.', 403);
+    }
+    check_ajax_referer('kop_woodbury', 'nonce');
+    $ckey = preg_replace('/[^a-f0-9]/', '', (string) ($_POST['key'] ?? ''));
+    $r = $ckey !== '' ? kop_wb_get($ckey) : null;
+    if (!$r) {
+        wp_send_json_error('Not found.');
+    }
+    if ($r['status'] === 'filed') {
+        wp_send_json_error('Already filed.');
+    }
+    $kind = sanitize_key($_POST['kind'] ?? '');
+    if ($kind === 'facility' || !isset(kop_wbc_kinds()[$kind])) {
+        wp_send_json_error('Choose a company, consultant, provider or transporter.');
+    }
+    try {
+        $target = kop_wbc_existing_target($kind, (int) ($_POST['id'] ?? 0));
+        $filed = kop_wb_file_target($r, $target, wp_get_current_user()->user_login);
+    } catch (Throwable $e) {
+        wp_send_json_error($e->getMessage());
+    }
+    wp_send_json_success(array('record' => $target, 'label' => kop_wbc_kinds()[$kind], 'filed' => $filed));
+});
+
+/** The search box for filing a pending row under an existing non-facility record. */
+function kop_wbc_render_finder() {
+    echo '<div class="kop-wb-add kop-wbr">Or a consultant, company, provider or transporter: '
+        . '<input type="search" class="kop-wbr-q" placeholder="Name of the firm or person" autocomplete="off">'
+        . '<ul class="kop-wbr-hits" hidden></ul></div>';
+}
+
 /* ---- AJAX: create and file in one click ------------------------------- */
 
 add_action('wp_ajax_kop_wb_create', function () {
@@ -486,6 +744,12 @@ function kop_wbc_render_assets() {
         .kop-wbc-msg { font-size: 12px; margin-top: 6px; }
         .kop-wbc-msg.ok { color: #1a7f37; }
         .kop-wbc-msg.err { color: #d63638; }
+        .kop-wbr-q { display: block; width: 100%; max-width: 360px; margin-top: 2px; }
+        .kop-wbr-hits { margin: 4px 0 0; padding: 0; list-style: none; max-width: 480px; border: 1px solid #dcdcde; background: #fff; }
+        .kop-wbr-hits li { display: flex; gap: 8px; align-items: center; justify-content: space-between; padding: 4px 6px; border-top: 1px solid #f0f0f1; color: #1d2327; }
+        .kop-wbr-hits li:first-child { border-top: 0; }
+        .kop-wbr-hits .kop-wbr-sub { display: block; color: #50575e; font-size: 11px; }
+        .kop-wbr-hits .kop-wbr-none { color: #50575e; font-style: italic; }
     </style>
     <script>
     (function () {
@@ -545,6 +809,86 @@ function kop_wbc_render_assets() {
                         msg.className = 'kop-wbc-msg err';
                         msg.textContent = e.message;
                     });
+            });
+        });
+
+        // "Or a consultant, company, provider or transporter": search, then File here.
+        function el(tag, cls, text) {
+            var e = document.createElement(tag);
+            if (cls) e.className = cls;
+            if (text) e.textContent = text;
+            return e;
+        }
+        function fileUnder(tr, hit, btn, hits) {
+            var out = tr.querySelector('.kop-wb-result');
+            var body = new FormData();
+            body.append('action', 'kop_wb_file_record');
+            body.append('nonce', nonce);
+            body.append('key', tr.getAttribute('data-key'));
+            body.append('kind', hit.kind);
+            body.append('id', hit.id);
+            btn.disabled = true;
+            out.className = 'kop-wb-result';
+            out.textContent = 'Filing under ' + hit.name + '...';
+            fetch(ajax, { method: 'POST', body: body, credentials: 'same-origin' })
+                .then(function (r) {
+                    if (!r.ok) throw new Error('the server answered ' + r.status + '; it may still be finishing. Reload the page and check the Filed tab before trying again');
+                    return r.json();
+                })
+                .then(function (j) {
+                    if (!j || !j.success) throw new Error((j && j.data) || 'Request failed');
+                    var rec = j.data.record, filed = j.data.filed || {};
+                    (filed.places || []).forEach(function (p) { p.name = rec.name; p.page = p.page || rec.url || ''; });
+                    hits.hidden = true;
+                    window.kopWbFiled(tr, filed, 'Filed');
+                })
+                .catch(function (e) {
+                    btn.disabled = false;
+                    out.className = 'kop-wb-result err';
+                    out.textContent = e.message;
+                });
+        }
+        document.querySelectorAll('.kop-wbr').forEach(function (box) {
+            var input = box.querySelector('.kop-wbr-q'), hits = box.querySelector('.kop-wbr-hits');
+            var timer = null, seq = 0;
+            function render(list) {
+                hits.innerHTML = '';
+                if (!list.length) {
+                    hits.appendChild(el('li', 'kop-wbr-none', 'No consultant, company, provider or transporter by that name. Create one under "Not in the database?"'));
+                }
+                list.forEach(function (hit) {
+                    var li = el('li'), who = el('span');
+                    who.appendChild(el('strong', '', hit.name));
+                    who.appendChild(el('span', 'kop-wbr-sub', [hit.label, hit.detail].filter(Boolean).join(' · ')));
+                    var btn = el('button', 'button button-small', 'File here');
+                    btn.type = 'button';
+                    btn.addEventListener('click', function () { fileUnder(box.closest('tr'), hit, btn, hits); });
+                    li.appendChild(who);
+                    li.appendChild(btn);
+                    hits.appendChild(li);
+                });
+                hits.hidden = false;
+            }
+            input.addEventListener('input', function () {
+                clearTimeout(timer);
+                var q = input.value.trim();
+                if (q.length < 2) { hits.hidden = true; return; }
+                timer = setTimeout(function () {
+                    var mine = ++seq;
+                    fetch(ajax + '?action=kop_wb_find_record&nonce=' + encodeURIComponent(nonce) + '&q=' + encodeURIComponent(q), { credentials: 'same-origin' })
+                        .then(function (r) { return r.json(); })
+                        .then(function (j) {
+                            if (mine !== seq) return;
+                            if (!j || !j.success) throw new Error((j && j.data) || 'Search failed');
+                            render(j.data);
+                        })
+                        .catch(function (e) {
+                            if (mine !== seq) return;
+                            hits.innerHTML = '';
+                            hits.appendChild(el('li', 'kop-wbr-none', e.message));
+                            hits.hidden = false;
+                        });
+                }, 250);
             });
         });
     })();
