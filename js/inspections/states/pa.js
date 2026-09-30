@@ -92,7 +92,7 @@
                     has_text:      report.has_text !== undefined ? !!report.has_text : !!report.raw_content,
                     row_id:        report.row_id || null,
                     kind:          KIND_LABELS[cats.kind] ? cats.kind : 'other',
-                    form:          safeString(cats.form),
+                    form:          safeString(cats.form) || 'summary',
                     ocr:           !!cats.ocr,
                     counted:       !!cats.counts_as_violation,
                     followupOf:    safeString(cats.followup_of),
@@ -103,8 +103,12 @@
                     inspectionStart: safeString(cats.inspection_start),
                     inspectionEnd: safeString(cats.inspection_end),
                     notice:        safeString(cats.notice),
-                    narrative:     safeString(cats.narrative),
-                    fileName:      safeString(cats.file_name),
+                    // Long text (narrative; per citation the full violation,
+                    // requirement, plan and verification): in the full
+                    // response here, on a lite list fetched on open by withText().
+                    detail:        cats.detail || null,
+                    // The state's file name is the report id: 20250328_44809.pdf.
+                    fileName:      safeString(cats.file_name) || safeString(report.report_id) + '.pdf',
                     fileDate:      safeString(cats.file_date),
                     dateCorrected: !!cats.date_corrected,
                     legalEntity:   safeString(cats.legal_entity),
@@ -113,7 +117,9 @@
                 };
             }).sort(function (a, b) { return parseDate(b.report_date) - parseDate(a.report_date); });
 
-            var first = reports[0] || {};
+            // The scraper sends the unit's entity, region and county on its
+            // newest report only.
+            var first = reports.filter(function (r) { return r.legalEntity || r.region; })[0] || {};
             return {
                 name:        safeString(info.facility_name),
                 license:     safeString(info.program_name),
@@ -197,12 +203,25 @@
         });
     }
 
+    // A citation with its detail (same order) laid over the list's short form.
+    function fullCitations(report) {
+        var more = (report.detail && Array.isArray(report.detail.citations)) ? report.detail.citations : [];
+        return report.citations.map(function (c, i) {
+            var out = {};
+            Object.keys(c).forEach(function (k) { out[k] = c[k]; });
+            Object.keys(more[i] || {}).forEach(function (k) { if (more[i][k]) out[k] = more[i][k]; });
+            return out;
+        });
+    }
+
     function reportBody(report, ctx) {
         var html = '';
-        if (report.narrative) html += ui.section('Inspection narrative', ui.paragraphs([report.narrative]), { open: true });
-        if (report.citations.length) {
-            html += ui.heading(citationWord(ctx, report.citations.length));
-            html += report.citations.map(function (c) { return citationFinding(c, ctx, report); }).join('');
+        var narrative = report.detail ? safeString(report.detail.narrative) : '';
+        if (narrative) html += ui.section('Inspection narrative', ui.paragraphs([narrative]), { open: true });
+        var citations = fullCitations(report);
+        if (citations.length) {
+            html += ui.heading(citationWord(ctx, citations.length));
+            html += citations.map(function (c) { return citationFinding(c, ctx, report); }).join('');
             if (report.form === 'table') html += ui.note(TABLE_NOTE);
         } else if (report.kind === 'citation' || report.kind === 'sanction') {
             html += ui.note('The citations in this document could not be read into a list; they are in the full text below.');
@@ -224,11 +243,16 @@
     // The row's type: the inspection ("Renewal inspection", "Complaint
     // inspection") when the summary names it; the badges say what the
     // document found.
+    var PLAIN_TYPES = {
+        citation: 'Inspection', followup: 'Inspection', clean: 'Inspection',
+        sanction: 'Department letter', licence: 'Licence', waiver: 'Waiver', other: 'Document'
+    };
+
     function typeLabel(report) {
         if (report.inspectionType && report.kind !== 'licence' && report.kind !== 'waiver') {
             return report.inspectionType + ' inspection';
         }
-        return KIND_LABELS[report.kind];
+        return PLAIN_TYPES[report.kind] || 'Document';
     }
 
     function reportFacts(report, ctx) {

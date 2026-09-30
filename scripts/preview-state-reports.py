@@ -43,6 +43,7 @@ def main() -> int:
     adapter = REPO / "js" / "inspections" / "states" / f"{state}.js"
     data = json.loads(args.file.read_text(encoding="utf-8"))
     texts = {}
+    details = {}
     lite = {k: v for k, v in data.items() if k != "facilities"}
     lite["facilities"] = []
     row = 0
@@ -53,10 +54,16 @@ def main() -> int:
             row += 1
             texts[str(row)] = report.get("raw_content", "")
             slim = {k: v for k, v in report.items() if k != "raw_content"}
+            # Like the live lite list: categories.detail comes with the text.
+            cats = dict(slim.get("categories") or {})
+            if "detail" in cats:
+                details[str(row)] = cats.pop("detail")
+                slim["categories"] = cats
             slim["row_id"] = row
             slim["has_text"] = bool(report.get("raw_content"))
             reports.append(slim)
-            name = (report.get("categories") or {}).get("archive_name")
+            cats = report.get("categories") or {}
+            name = cats.get("archive_name") or cats.get("file_name")
             if name:
                 archive[archive_key(name)] = name
         lite["facilities"].append({**facility, "reports": reports})
@@ -66,7 +73,10 @@ def main() -> int:
     def read_api(route, request):
         query = parse_qs(urlparse(request.url).query)
         if "text" in query:
-            body = json.dumps({"raw_content": texts.get(query["text"][0], "")})
+            answer = {"raw_content": texts.get(query["text"][0], "")}
+            if query["text"][0] in details:
+                answer["detail"] = details[query["text"][0]]
+            body = json.dumps(answer)
         else:
             body = lite_body
         route.fulfill(status=200, content_type="application/json", body=body)

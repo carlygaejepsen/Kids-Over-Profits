@@ -15,6 +15,11 @@
  * while the new one is built behind it.
  * ?state=FL&text=<row_id> returns one report's raw_content, for a report
  * opened on a lite page.
+ *
+ * categories.detail, when a scraper sets it (Pennsylvania's citation plans,
+ * verifications and requirement text), is what a report shows only once
+ * opened: lite lists leave it out and ?text= returns it as "detail" beside
+ * raw_content (KOP.reportPage.withText() puts it on report.detail).
  */
 require_once __DIR__ . '/config.php';
 
@@ -34,19 +39,24 @@ $textId = isset($_GET['text']) ? (int) $_GET['text'] : 0;
 if ($textId > 0) {
     try {
         $stmt = $pdo->prepare("
-            SELECT r.raw_content FROM inspection_reports r
+            SELECT r.raw_content, r.categories_json FROM inspection_reports r
             JOIN inspection_facilities f ON f.id = r.facility_id
             WHERE r.id = ? AND f.state = ?
         ");
         $stmt->execute([$textId, $state]);
-        $raw = $stmt->fetchColumn();
-        if ($raw === false) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row === false) {
             http_response_code(404);
             echo json_encode(['error' => 'Report not found']);
             exit;
         }
+        $answer = ['raw_content' => (string) $row['raw_content']];
+        $categories = json_decode((string) $row['categories_json'], true);
+        if (is_array($categories) && isset($categories['detail'])) {
+            $answer['detail'] = $categories['detail'];
+        }
         header('Cache-Control: public, max-age=86400');
-        echo json_encode(['raw_content' => (string) $raw], JSON_UNESCAPED_UNICODE);
+        echo json_encode($answer, JSON_UNESCAPED_UNICODE);
     } catch (Exception $e) {
         http_response_code(500);
         error_log("inspections-read text error: " . $e->getMessage());
@@ -210,7 +220,7 @@ try {
             ];
             if ($lite) {
                 $raw = (string) $rep['raw_content'];
-                unset($out['raw_content']);
+                unset($out['raw_content'], $out['categories']['detail']);
                 $out['row_id'] = (int) $rep['id'];
                 $out['has_text'] = kop_its_trim($raw) !== '';
                 $out['text_signals'] = in_array($state, kop_its_states(), true)

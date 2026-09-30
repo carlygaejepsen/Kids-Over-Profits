@@ -733,7 +733,9 @@
      * ?lite=1): run build() once report.raw_content is filled, fetching it by
      * report.row_id first when the list came without it. Returns html, or a
      * promise of html that the engine shows when it arrives. A body function
-     * returns withText(report, 'NC', function () { ... }).
+     * returns withText(report, 'NC', function () { ... }). A report whose
+     * categories carry a detail object gets it as report.detail on the same
+     * fetch (lite lists leave it out).
      */
     function withText(report, state, build) {
         if (report.raw_content || !report.has_text || !report.row_id) return build();
@@ -745,6 +747,8 @@
             })
             .then(function (data) {
                 report.raw_content = String((data && data.raw_content) || '');
+                // categories.detail, which lite lists leave out (see api/inspections-read.php).
+                if (data && data.detail) report.detail = data.detail;
                 return build();
             });
     }
