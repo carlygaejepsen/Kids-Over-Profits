@@ -258,7 +258,7 @@ try {
                 . "Description:\n$description\n\n"
                 . (trim((string)($input['steps'] ?? '')) !== '' ? "Steps to reproduce:\n" . trim((string)$input['steps']) . "\n\n" : '')
                 . ($contact !== '' ? "Contact: " . $contact . ($notifyUpdates ? " (wants status updates by email)" : '') . "\n\n" : '')
-                . "Review it in wp-admin → KOP Data Tools → Bug Reports.";
+                . "Review it in wp-admin → KOP Tools → Bug Reports.";
             @wp_mail($adminEmail, $subject, $body);
         }
     }

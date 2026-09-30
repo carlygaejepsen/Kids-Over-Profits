@@ -692,7 +692,7 @@ if (!function_exists('kop_facility_unwrap')) {
                 $inner = $inner['data'];
             }
             // Keys that sit beside the facility, not in it: curated
-            // matchAliases (api/apply-match-aliases.php) live there and are
+            // matchAliases (api/restore-match-aliases.php) live there and are
             // authoritative for news and inspection matching, so they travel
             // with the facility instead of being dropped with the wrapper.
             foreach ($inner as $key => $value) {

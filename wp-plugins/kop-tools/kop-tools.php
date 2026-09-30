@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KOP Tools
  * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
- * Version: 2.1.0
+ * Version: 2.2.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -69,6 +69,27 @@ function kop_tools_registry() {
                 'screen'   => 'kop-glossary-feedback',
                 'requires' => 'kop_render_glossary_feedback_page',
             ),
+            array(
+                'title'    => 'Closure Reports',
+                'desc'     => 'Facility closures the hourly news scan found. Confirming one sets the facility\'s status on its page and on the network map.',
+                'type'     => 'screen',
+                'screen'   => 'kop-closure-reports',
+                'requires' => 'kop_render_closure_reports_page',
+            ),
+            array(
+                'title'    => 'Facilities from News',
+                'desc'     => 'Programs named in the news with no record: the ones the hourly scan created or matched, and the possible duplicates it held back.',
+                'type'     => 'screen',
+                'screen'   => 'kop-facilities-from-news',
+                'requires' => 'kop_render_facilities_from_news_page',
+            ),
+            array(
+                'title'    => 'Woodbury Reports',
+                'desc'     => 'File the Woodbury Reports pages the scan cut for each program into its "Woodbury Reports Mentions" folder.',
+                'type'     => 'screen',
+                'screen'   => 'kop-woodbury-reports',
+                'requires' => 'kop_render_woodbury_page',
+            ),
         ),
         'Records & editors' => array(
             array(
@@ -121,8 +142,15 @@ function kop_tools_registry() {
                 'requires' => 'kop_render_glossary_editor_page',
             ),
             array(
+                'title'    => 'Page Text',
+                'desc'     => 'Edit the words of pages whose text lives in js/data/pages/ (e.g. Indian Boarding Schools); drafts stay private until published.',
+                'type'     => 'screen',
+                'screen'   => 'kop-page-text',
+                'requires' => 'kop_render_page_text_editor',
+            ),
+            array(
                 'title' => 'Manage Addresses',
-                'desc'  => 'Give each physical campus a stable address ID and record which facilities stood there, independent of the names on the sign.',
+                'desc'  => 'Give each physical campus a stable address ID and record which facilities stood there, independent of the names on the sign. Reads the facility records; re-seed after address edits.',
                 'type'  => 'page',
                 'path'  => 'api/manage-addresses.php',
             ),
@@ -157,6 +185,22 @@ function kop_tools_registry() {
                 'desc'  => 'Re-cluster every news submission into cross-outlet story groups. Idempotent repair; day-to-day grouping already happens on save.',
                 'type'  => 'action',
                 'path'  => 'api/rebuild-news-story-groups.php',
+            ),
+        ),
+        'Network map' => array(
+            array(
+                'title'    => 'Map Years',
+                'desc'     => 'Review researched operating years for map programs; accepted years go on the map at once.',
+                'type'     => 'screen',
+                'screen'   => 'kop-network-years',
+                'requires' => 'kop_network_years_page',
+            ),
+            array(
+                'title'    => 'Map Renames',
+                'desc'     => 'Set the year a program was renamed, which splits the two names\' years on the map at once.',
+                'type'     => 'screen',
+                'screen'   => 'kop-network-renames',
+                'requires' => 'kop_network_renames_page',
             ),
         ),
         'Inspections' => array(
@@ -220,35 +264,11 @@ function kop_tools_registry() {
         ),
         'Maintenance & repairs' => array(
             array(
-                'title' => 'Fix Staging Links',
-                'desc'  => 'Rewrite links to the old /staging/ copy of the site back to the live pages. Preview on open; ticked rows are applied.',
-                'type'  => 'page',
-                'path'  => 'api/fix-staging-links.php',
-            ),
-            array(
-                'title' => 'Consolidate FileBird Folders',
-                'desc'  => 'Repair orphaned folder subtrees whose parent folder no longer exists.',
-                'type'  => 'page',
-                'path'  => 'api/consolidate-filebird-folders.php',
-            ),
-            array(
-                'title' => 'Fix Document Folders',
-                'desc'  => 'Repair facility records whose stored FileBird folder ID points at a deleted folder.',
-                'type'  => 'page',
-                'path'  => 'api/fix-doc-folders.php',
-            ),
-            array(
                 'title' => 'Backfill FileBird Folders',
-                'desc'  => 'Create missing FileBird folders for operators and their facilities. Opens as a dry run.',
+                'desc'  => 'Create FileBird folders for operators and the facilities they run that have no folder of their name anywhere. Opens as a dry run.',
                 'type'  => 'page',
                 'path'  => 'api/backfill-filebird-folders.php',
                 'query' => 'run=1&dry=1',
-            ),
-            array(
-                'title' => 'Fix Slug Titles',
-                'desc'  => 'Humanize attachment titles left as filename slugs by the Google Drive media restore.',
-                'type'  => 'page',
-                'path'  => 'api/fix-slug-titles.php',
             ),
             array(
                 'title' => 'Retitle From Content',
@@ -275,12 +295,6 @@ function kop_tools_registry() {
                 'desc'  => 'Purge rejected/deleted wiki submissions and collapse duplicates (dry-run first).',
                 'type'  => 'page',
                 'path'  => 'api/cleanup-wiki-submissions.php',
-            ),
-            array(
-                'title' => 'Rebuild Header Menu',
-                'desc'  => 'Show the task-based header navigation plan (read-only; rebuilding is retired, new entries come from kop_nav_item_specs()).',
-                'type'  => 'page',
-                'path'  => 'api/rebuild-header-menu.php',
             ),
             array(
                 'title' => 'Database Schema',

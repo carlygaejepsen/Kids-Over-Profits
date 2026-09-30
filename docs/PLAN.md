@@ -116,8 +116,8 @@ The date is when each was last confirmed open.
 
 1. (Done 2026-09-29, no action: Severe Reports joins the Monitor menu
    through `kop_nav_item_specs()` on deploy. `rebuild-header-menu.php`
-   is retired; its apply would have dropped TTI Glossary, Open Data and
-   Report Abuse.)
+   was retired (its apply would have dropped TTI Glossary, Open Data and
+   Report Abuse) and deleted 2026-09-30.)
 2. **PDF covers** (2026-09-29: 177 left).
    [regenerate-pdf-previews.php?apply=1](https://kidsoverprofits.org/wp-content/themes/child/api/regenerate-pdf-previews.php?apply=1)
    until it reports 0 remaining. A PDF that gets the process killed (the
@@ -461,7 +461,9 @@ Next, in order:
    - Change Academy at Lake of the Ozarks (#11355)
    - Cleo Wallace Academy (#12621)
 
-   New curated aliases have no v2 path yet, because
-   `api/apply-match-aliases.php` exits on the frozen legacy tables.
+   New curated aliases go in `api/match-aliases-seed.json` and are copied
+   into the v2 documents by `api/restore-match-aliases.php`
+   (`api/apply-match-aliases.php`, which wrote the frozen legacy tables,
+   was deleted 2026-09-30).
 
 ---

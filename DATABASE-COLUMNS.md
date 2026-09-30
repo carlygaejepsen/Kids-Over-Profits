@@ -154,26 +154,6 @@ https://kidsoverprofits.org/wp-content/themes/child/api/get-database-schema.php
 php api/get-database-schema.php
 ```
 
-### View All Data
-Display data from any table:
-
-```bash
-# View specific table (HTML)
-https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=html
-
-# View specific table (JSON)
-https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master
-
-# View all tables
-https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?show=all
-
-# Export to CSV
-https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&format=csv
-
-# Limit results
-https://kidsoverprofits.org/wp-content/themes/child/api/get-all-data.php?table=facilities_master&limit=10
-```
-
 ---
 
 ## Example SELECT Queries

@@ -85,10 +85,22 @@ require $theme . '/wp-plugins/kop-tools/kop-tools.php';
 // The screens the theme registers elsewhere (only their callbacks are needed).
 function kop_render_glossary_editor_page() {}
 function kop_render_glossary_feedback_page() {}
+function kop_render_closure_reports_page() {}
+function kop_render_facilities_from_news_page() {}
+function kop_render_woodbury_page() {}
+function kop_render_page_text_editor() {}
+function kop_network_years_page() {}
+function kop_network_renames_page() {}
 class AnonymousDocPortal {}
 add_action('admin_menu', function () {
     add_submenu_page(kop_tools_parent_slug(), 'Glossary Editor', 'Glossary Editor', 'manage_options', 'kop-glossary-editor');
     add_submenu_page(kop_tools_parent_slug(), 'Glossary Feedback', 'Glossary Feedback', 'manage_options', 'kop-glossary-feedback');
+    add_submenu_page(kop_tools_parent_slug(), 'Closure Reports', 'Closure Reports', 'manage_options', 'kop-closure-reports');
+    add_submenu_page(kop_tools_parent_slug(), 'Facilities from News', 'Facilities from News', 'manage_options', 'kop-facilities-from-news');
+    add_submenu_page(kop_tools_parent_slug(), 'Woodbury Reports', 'Woodbury Reports', 'manage_options', 'kop-woodbury-reports');
+    add_submenu_page(kop_tools_parent_slug(), 'Page Text', 'Page Text', 'manage_options', 'kop-page-text');
+    add_submenu_page(kop_tools_parent_slug(), 'Map Years', 'Map Years', 'manage_options', 'kop-network-years');
+    add_submenu_page(kop_tools_parent_slug(), 'Map Renames', 'Map Renames', 'manage_options', 'kop-network-renames');
 }, 21);
 
 // --- Run --------------------------------------------------------------------

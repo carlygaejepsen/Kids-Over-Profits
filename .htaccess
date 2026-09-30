@@ -2,7 +2,7 @@
 # origins. Admin and write endpoints stay same-origin (they are protected by
 # WordPress capability and nonce checks, which wildcard CORS would weaken).
 <IfModule mod_headers.c>
-  <FilesMatch "^(get-master-data|get-all-data|get-referrers-only|get-transporters-only|get-providers-only|get-autocomplete|facility-search|inspections-read|check-duplicate-url|fetch-wiki-page)\.php$">
+  <FilesMatch "^(get-master-data|get-referrers-only|get-transporters-only|get-providers-only|get-autocomplete|facility-search|inspections-read|check-duplicate-url)\.php$">
     Header set Access-Control-Allow-Origin "*"
     Header set Access-Control-Allow-Methods "GET, OPTIONS"
     Header set Access-Control-Allow-Headers "Content-Type"

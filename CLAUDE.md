@@ -38,10 +38,10 @@ node scripts/test-network-modules.js
 # The map on facility pages (embed.js + kop_network_map_slice_from_graph, PHP must match focus.js)
 node scripts/test-network-embed.js [--php=<Local php.exe>]
 node scripts/test-network-timeline.js           # the timeline (store years, timeline.js), seconds
-# Researched map years reviewed at KOP Data Tools > Map Years (inc/network-years.php); accepted ones go on the map at once
+# Researched map years reviewed at KOP Tools > Map Years (inc/network-years.php); accepted ones go on the map at once
 node scripts/build-years-candidates.js [tmp/years-research]   # results -> js/data/network/years-candidates.json
 php scripts/test-network-years.php && python scripts/check-network-years-page.py
-# Renamed programs reviewed at KOP Data Tools > Map Renames (inc/network-renames.php): the rename year splits the two names' years on the map at once
+# Renamed programs reviewed at KOP Tools > Map Renames (inc/network-renames.php): the rename year splits the two names' years on the map at once
 php scripts/test-network-renames.php
 
 # After editing the reporting directory data in js/data/reporting/
@@ -63,7 +63,7 @@ php scripts/test-operator-pages.php               # renders every /operator/<slu
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
 php scripts/test-hub-pages.php
-# Pages whose words live in js/data/pages/<slug>.json, edited at KOP Data Tools > Page Text
+# Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
 # (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/, a draft until published)
 php scripts/test-page-text.php
 # Utility and legal page templates: shortcode/share behavior, case metadata and image alt text
@@ -75,12 +75,12 @@ python scripts/preview-hub-pages.py --shots tmp/hub-preview
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
 # Facility closures reported in the news (inc/closure-reports.php): hourly WP-Cron scan of saved
-# articles -> KOP Data Tools > Closure Reports; confirming one sets the facility's status, which the
+# articles -> KOP Tools > Closure Reports; confirming one sets the facility's status, which the
 # /facility/ page and the network map (kop_network_map_status_overrides) follow at once
 php scripts/test-closure-reports.php              # offline, against tmp/prod.sqlite, no Groq calls
 php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dry run; "apply" stores reports
 # Facilities the news mentions that have no record (inc/facility-discovery.php): the hourly scan creates
-# them from the article, or links a known one; KOP Data Tools > Facilities from News to remove or create by hand
+# them from the article, or links a known one; KOP Tools > Facilities from News to remove or create by hand
 php scripts/test-facility-discovery.php           # offline, against tmp/prod.sqlite, no Groq calls
 php api/scan-new-facilities.php --ids=502         # on the server: dry run; "apply" creates records
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
@@ -102,7 +102,7 @@ php scripts/test-icons.php
 python scripts/check-bare-text.py               # one page per child template, live site
 # Woodbury Reports pages about each program (inc/woodbury-mentions.php): scan every issue in the
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
-# folder to ~/kop-import/woodbury/ on the server, review and file at KOP Data Tools > Woodbury Reports
+# folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
 python scripts/woodbury-scan.py [--no-cut]
 # Unsilenced's archive (public Drive folders) on facility/operator pages: only documents KOP has no copy of.
 # Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
@@ -134,7 +134,7 @@ program groups `###`/`####`, entries `**Term** *(aka ...)*: text. Used at: *A, B
 `build-glossary.js` writes the `glossary.json` the /glossary/ page reads and
 fails on any `**cross-reference**` that does not name an entry. Rendered
 server-side by `inc/glossary.php` (`templates/page-glossary.php`).
-Admins can also edit entries in wp-admin (KOP Data Tools > Glossary Editor,
+Admins can also edit entries in wp-admin (KOP Tools > Glossary Editor,
 `inc/glossary-editor.php`): saved changes sit in the `kop_glossary_edits`
 option and are applied over the deployed glossary.md by a PHP port of the
 build (`inc/glossary-build.php`), live at once. Commit them by downloading the
@@ -174,7 +174,7 @@ to the program aggregate otherwise.
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
-- `{prefix}kop_glossary_feedback` - Reader notes from the glossary's "My facility used this too" / "Suggest a correction" buttons (`inc/glossary-feedback.php`; reviewed under KOP Data Tools > Glossary Feedback)
+- `{prefix}kop_glossary_feedback` - Reader notes from the glossary's "My facility used this too" / "Suggest a correction" buttons (`inc/glossary-feedback.php`; reviewed under KOP Tools > Glossary Feedback)
 - `{prefix}kop_addresses` / `{prefix}kop_facility_addresses` - Physical address IDs and which facility stood where (`api/manage-addresses.php`; join table rebuilt from facility data on each seed)
 
 ### Page Template → Script Loading Pattern

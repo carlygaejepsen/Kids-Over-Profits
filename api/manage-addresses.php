@@ -8,12 +8,14 @@
  * a campus can be linked systematically instead of by tribal knowledge.
  *
  * Two tables:
- *   {prefix}kop_addresses          — CURATED: one row per physical address,
- *                                    stable id, unique normalized key.
+ *   {prefix}kop_addresses          — one row per physical address, stable
+ *                                    id, unique normalized key. Written only
+ *                                    by the seed, which also drops addresses
+ *                                    no facility stands at any more.
  *   {prefix}kop_facility_addresses — DERIVED: which facility stood at which
  *                                    address (role: current/additional/former,
  *                                    with years). Rebuilt from
- *                                    facilities_master json_data on every
+ *                                    facilities_v2 json_data on every
  *                                    seed run — never edited by hand, so
  *                                    admins keep editing addresses in the
  *                                    facility form as usual and re-run the
@@ -25,7 +27,7 @@
  *
  * Views:
  *   (default)      Scan report — every street address found in
- *                  facilities_master (main + additionalLocations +
+ *                  facilities_v2 (main + additionalLocations +
  *                  formerLocations), grouped by normalized key, matched to
  *                  existing address rows. "Seed / refresh" writes new address
  *                  rows and rebuilds the join table.
@@ -205,26 +207,8 @@ function kop_ma_dismissed_keys() {
 }
 
 // ---------------------------------------------------------------------------
-// Extraction: every street address in facilities_master & locations_master
+// Extraction: every street address in facilities_v2
 // ---------------------------------------------------------------------------
-
-/**
- * Resolve table name with optional WordPress prefix.
- */
-function kop_ma_resolve_table_name($base) {
-    global $wpdb;
-    $candidates = [];
-    if (!empty($wpdb->prefix)) {
-        $candidates[] = $wpdb->prefix . $base;
-    }
-    $candidates[] = $base;
-    foreach ($candidates as $cand) {
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $cand)) === $cand) {
-            return $cand;
-        }
-    }
-    return $candidates[0];
-}
 
 /**
  * Parse a free-form address string into street, city, state, zip.
@@ -290,103 +274,6 @@ function kop_ma_parse_address_string($raw_addr, $fallback_city = '', $fallback_s
         'state'  => trim($state, " \t\n\r\0\x0B,."),
         'zip'    => trim($zip, " \t\n\r\0\x0B,."),
     ];
-}
-
-/**
- * Extract facility entries from a project row.
- *
- * Row shapes in production (counts as of Sep 2026):
- *   {__facility_ref, name, displayName, city, state, data: {facility: {...}}}
- *       one row per facility, written by api/facility-promotion.php. These
- *       are NOT stubs - they hold the facility's address and are the vast
- *       majority of rows, so they must be scanned.
- *   {operator, facilities: [...]} or {data: {operator, facilities: [...]}}
- *       operator projects with nested campuses.
- *   {address, locationDetails, ...}
- *       bare facility payload.
- *
- * @param array|null $decoded
- * @param string $row_unique_name
- * @return array[] each: ['name' => string, 'facility' => array,
- *                        'city' => row-level fallback city, 'state' => row-level fallback state]
- */
-function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
-    if (!is_array($decoded)) {
-        return [];
-    }
-
-    // Promoted rows carry city/state on the wrapper; use them when the
-    // facility's own locationDetails are blank.
-    $fb_city = is_scalar($decoded['city'] ?? null) ? trim((string)$decoded['city']) : '';
-    $fb_state = is_scalar($decoded['state'] ?? null) ? trim((string)$decoded['state']) : '';
-    $default_name = is_scalar($decoded['displayName'] ?? null) ? trim((string)$decoded['displayName']) : '';
-    if ($default_name === '') {
-        $default_name = (string)$row_unique_name;
-    }
-
-    $d = isset($decoded['data']) && is_array($decoded['data']) ? $decoded['data'] : $decoded;
-    if (isset($decoded['project']['data']) && is_array($decoded['project']['data'])) {
-        $d = $decoded['project']['data'];
-    } elseif (isset($decoded['project']) && is_array($decoded['project'])) {
-        $d = $decoded['project'];
-    }
-
-    $fac_list = [];
-    if (isset($d['facilities']) && is_array($d['facilities'])) {
-        $fac_list = $d['facilities'];
-    } elseif (isset($decoded['facilities']) && is_array($decoded['facilities'])) {
-        $fac_list = $decoded['facilities'];
-    } elseif (isset($d['facility']) && is_array($d['facility'])) {
-        $fac_list = [$d['facility']];
-    } elseif (is_string($d['facilities'] ?? null)) {
-        $parsed = json_decode($d['facilities'], true);
-        if (is_array($parsed)) {
-            $fac_list = $parsed;
-        }
-    }
-
-    $results = [];
-    if (!empty($fac_list)) {
-        foreach ($fac_list as $f) {
-            if (!is_array($f)) continue;
-            $name = '';
-            if (isset($f['identification']) && is_array($f['identification'])) {
-                $name = trim((string)($f['identification']['name'] ?? ($f['identification']['currentName'] ?? '')));
-            }
-            if ($name === '' && isset($f['name']) && is_string($f['name'])) {
-                $name = trim($f['name']);
-            }
-            if ($name === '') {
-                $name = $default_name;
-            }
-            $results[] = [
-                'name'     => $name,
-                'facility' => $f,
-                'city'     => $fb_city,
-                'state'    => $fb_state,
-            ];
-        }
-    } else {
-        // Single facility / standalone record
-        $name = '';
-        if (isset($d['identification']) && is_array($d['identification'])) {
-            $name = trim((string)($d['identification']['name'] ?? ($d['identification']['currentName'] ?? '')));
-        }
-        if ($name === '' && isset($d['name']) && is_string($d['name'])) {
-            $name = trim($d['name']);
-        }
-        if ($name === '') {
-            $name = $default_name;
-        }
-        $results[] = [
-            'name'     => $name,
-            'facility' => $d,
-            'city'     => $fb_city,
-            'state'    => $fb_state,
-        ];
-    }
-
-    return $results;
 }
 
 /**
@@ -514,7 +401,10 @@ function kop_ma_extract_entries($f, $facility_name, $fb_city = '', $fb_state = '
 }
 
 /**
- * Scan facilities_master and locations_master, group every address entry by normalized key.
+ * Scan every facility document in facilities_v2 (current, additional and
+ * former locations), group every address entry by normalized key. Each
+ * document goes through kop_facility_to_legacy() so the extractor reads the
+ * same locationDetails / addressParts shape it always has.
  * @return array norm_key => ['display' => entry, 'members' => [facility-entry...]]
  */
 function kop_ma_scan() {
@@ -522,44 +412,41 @@ function kop_ma_scan() {
 
     $groups = [];
     $dismissed_keys = kop_ma_dismissed_keys();
-    $tables = [];
-    foreach (['facilities_master', 'locations_master'] as $base) {
-        $tbl = kop_ma_resolve_table_name($base);
-        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tbl)) === $tbl) {
-            $tables[] = $tbl;
+    $table = function_exists('kop_facility_table') ? kop_facility_table('facilities') : 'facilities_v2';
+    $rows = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table
+        ? (array)$wpdb->get_results("SELECT unique_name, name, json_data FROM `{$table}` ORDER BY id")
+        : [];
+    $blank = function_exists('kop_facility_blank_document') ? kop_facility_blank_document() : null;
+
+    foreach ($rows as $row) {
+        $doc = json_decode($row->json_data ?: '', true);
+        if (!is_array($doc) || $blank === null || !function_exists('kop_facility_to_legacy')) {
+            continue;
         }
-    }
-
-    foreach ($tables as $tbl) {
-        $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$tbl}");
-        foreach ((array)$rows as $row) {
-            $decoded = json_decode($row->json_data ?: '', true);
-            $facilities = kop_ma_get_facilities_from_project($decoded, (string)$row->unique_name);
-            foreach ($facilities as $item) {
-                foreach (kop_ma_extract_entries($item['facility'], $item['name'], $item['city'] ?? '', $item['state'] ?? '') as $e) {
-                    $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
-                    if ($key === '' || isset($dismissed_keys[$key])) {
-                        continue;
-                    }
-                    if (!isset($groups[$key])) {
-                        $groups[$key] = ['display' => $e, 'members' => []];
-                    } else {
-                        // Prefer the most complete display entry for the group.
-                        $cur = $groups[$key]['display'];
-                        $score = static function ($x) {
-                            return strlen($x['street']) + ($x['city'] !== '' ? 20 : 0)
-                                + ($x['zip'] !== '' ? 20 : 0) + ($x['state'] !== '' ? 10 : 0);
-                        };
-                        if ($score($e) > $score($cur)) {
-                            $groups[$key]['display'] = $e;
-                        }
-                    }
-
-                    // Deduplicate identical stint across tables (same facility, role, from, to)
-                    $m_key = $e['facility'] . '|' . $e['role'] . '|' . $e['from'] . '|' . $e['to'];
-                    $groups[$key]['members'][$m_key] = $e;
+        $legacy = kop_facility_to_legacy(array_replace_recursive($blank, $doc));
+        $name = trim((string)($row->name ?: $row->unique_name));
+        foreach (kop_ma_extract_entries($legacy, $name) as $e) {
+            $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
+            if ($key === '' || isset($dismissed_keys[$key])) {
+                continue;
+            }
+            if (!isset($groups[$key])) {
+                $groups[$key] = ['display' => $e, 'members' => []];
+            } else {
+                // Prefer the most complete display entry for the group.
+                $cur = $groups[$key]['display'];
+                $score = static function ($x) {
+                    return strlen($x['street']) + ($x['city'] !== '' ? 20 : 0)
+                        + ($x['zip'] !== '' ? 20 : 0) + ($x['state'] !== '' ? 10 : 0);
+                };
+                if ($score($e) > $score($cur)) {
+                    $groups[$key]['display'] = $e;
                 }
             }
+
+            // Deduplicate identical stints (same facility, role, from, to)
+            $m_key = $e['facility'] . '|' . $e['role'] . '|' . $e['from'] . '|' . $e['to'];
+            $groups[$key]['members'][$m_key] = $e;
         }
     }
 
@@ -673,10 +560,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 }
             }
         }
+        // Addresses no facility stands at any more (a corrected street, a
+        // removed location) would linger in search with no facility.
+        $pruned = (int)$wpdb->query(
+            "DELETE a FROM {$addr_tbl} a LEFT JOIN {$fa_tbl} fa ON fa.address_id = a.id
+             WHERE fa.address_id IS NULL"
+        );
         $wpdb->query('COMMIT');
         $log_ok = true;
         $log[] = "Seed complete: {$new_rows} new address(es), " . count($groups)
-            . " total, {$memberships} facility-address membership(s) rebuilt.";
+            . " total, {$memberships} facility-address membership(s) rebuilt"
+            . ($pruned ? ", {$pruned} address(es) no facility stands at removed." : '.');
     } catch (Throwable $e) {
         $wpdb->query('ROLLBACK');
         $log[] = 'FAILED — rolled back: ' . $e->getMessage();
@@ -894,7 +788,7 @@ a { color: #000080; }
 .pathsm { font-size: 0.76rem; color: #555; }
 </style></head><body>
 <h1>Manage Addresses <small style="font-weight:400">&mdash; physical-campus identity for facilities</small></h1>
-<p class="help">Every street address in facilities_master and locations_master (main, additional, and former locations)
+<p class="help">Every street address in facilities_v2 (main, additional, and former locations)
 gets a stable <strong>address ID</strong>. Facilities that occupied the same campus under different
 names then link together by address instead of tribal knowledge. Address identity is separate from
 name aliases on purpose &mdash; a shared address only <em>suggests</em> that folders belong together;

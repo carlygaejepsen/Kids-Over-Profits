@@ -74,6 +74,31 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/docs/HANDOFF-2026-09-24-network-map.md
     - /bin/rm -f $DEPLOYPATH/docs/HANDOFF-2026-09-24-portal-inspections.md
     - /bin/rm -f $DEPLOYPATH/docs/PAGE-TEMPLATE-HANDOFF.md
+    # Stale admin tools removed 2026-09-30: diagnostics, finished one-offs and
+    # tools that only wrote the frozen legacy facility tables.
+    - /bin/rm -f $DEPLOYPATH/api/consolidate-filebird-folders.php
+    - /bin/rm -f $DEPLOYPATH/api/fix-doc-folders.php
+    - /bin/rm -f $DEPLOYPATH/api/rebuild-header-menu.php
+    - /bin/rm -f $DEPLOYPATH/api/fix-staging-links.php
+    - /bin/rm -f $DEPLOYPATH/api/fix-slug-titles.php
+    - /bin/rm -f $DEPLOYPATH/api/diagnose-rest.php
+    - /bin/rm -f $DEPLOYPATH/api/diagnose-oregon2.php
+    - /bin/rm -f $DEPLOYPATH/api/diagnose-referrers.php
+    - /bin/rm -f $DEPLOYPATH/api/check-referrers-api.php
+    - /bin/rm -f $DEPLOYPATH/api/fetch-wiki-page.php
+    - /bin/rm -f $DEPLOYPATH/api/get-all-data.php
+    - /bin/rm -f $DEPLOYPATH/api/test-db-connection.php
+    - /bin/rm -f $DEPLOYPATH/api/test-table.php
+    - /bin/rm -f $DEPLOYPATH/api/show-config.php
+    - /bin/rm -f $DEPLOYPATH/api/setup-database.php
+    - /bin/rm -f $DEPLOYPATH/api/cleanup-lowercase.php
+    - /bin/rm -f $DEPLOYPATH/api/clean-historical-fields.php
+    - /bin/rm -f $DEPLOYPATH/api/fix-category.php
+    - /bin/rm -f $DEPLOYPATH/api/import-international-programs.php
+    - /bin/rm -f $DEPLOYPATH/api/apply-match-aliases.php
+    - /bin/rm -f $DEPLOYPATH/api/migrate-template-paths.php
+    - /bin/rm -f $DEPLOYPATH/api/fix-wiki-submissions-table.php
+    - /bin/rm -f $DEPLOYPATH/scripts/test-staging-link-fixer.php
     # /favicon.ico is answered by LiteSpeed before WordPress (its own 404 page),
     # so WordPress core's Site Icon redirect never runs. Ship a physical file
     # built from the Site Icon (attachment 3455) to the web root.
