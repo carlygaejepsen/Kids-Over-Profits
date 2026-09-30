@@ -44,6 +44,8 @@ require_once get_stylesheet_directory() . '/inc/admin.php';
 require_once get_stylesheet_directory() . '/inc/redirects.php';
 
 // Generated facility pages (/facility/<slug>/) rendered from facilities_v2
+// Unsilenced archive documents KOP lacks, listed on facility and operator pages
+require_once get_stylesheet_directory() . '/inc/unsilenced-archive.php';
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
 require_once get_stylesheet_directory() . '/inc/operator-pages.php';
 

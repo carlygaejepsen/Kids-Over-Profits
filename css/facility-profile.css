@@ -582,6 +582,43 @@
     color: var(--kop-text-primary, #1a1a2e);
 }
 
+/* Unsilenced archive documents (inc/unsilenced-archive.php): one folding
+   group per folder of theirs, long file names wrap. */
+.kop-unsilenced-archive {
+    margin-top: 1.25rem;
+}
+
+.kop-unsilenced-files a {
+    overflow-wrap: anywhere;
+}
+
+.kop-unsilenced-group {
+    margin: 0 0 0.5rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-radius: 4px;
+    background: var(--kop-bg-secondary, #fff);
+}
+
+.kop-unsilenced-group summary {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+    overflow-wrap: anywhere;
+}
+
+.kop-unsilenced-group summary .meta {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-unsilenced-group .kop-fp-records {
+    padding: 0 0.75rem 0.25rem;
+    max-height: 32rem;
+    overflow-y: auto;
+}
+
 .kop-fp-notes {
     margin: 0;
     padding-left: 1.1rem;

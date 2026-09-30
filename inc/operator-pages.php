@@ -717,6 +717,7 @@ if (!function_exists('kop_operator_page_data')) {
         );
         $documents = kop_facility_pages_documents(array('documentFolderId' => $folder), $folder);
         $research = kop_operator_pages_research($members);
+        $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('o', $members) : null;
 
         // ---- Summary ---------------------------------------------------------
         $n = count($facilities);
@@ -758,6 +759,7 @@ if (!function_exists('kop_operator_page_data')) {
             'notes'         => $notes,
             'documents'     => $documents,
             'research'      => $research,
+            'unsilenced'    => $unsilenced,
             'network_url'   => kop_operator_pages_network_url(array_merge(array($entry['name'], $name, $abbr), $aka)),
             'summary'       => $summary,
             'seo_title'     => $name . ' | Parent company profile | Kids Over Profits',

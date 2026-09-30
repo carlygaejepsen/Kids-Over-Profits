@@ -28,7 +28,9 @@ if ($page['news']) $kop_op_sections['news'] = 'News coverage';
 if ($page['lawsuits']) $kop_op_sections['lawsuits'] = 'Lawsuits';
 if ($page['memorials']) $kop_op_sections['memorials'] = 'Deaths on record';
 $kop_op_has_research = !empty($page['research']);
-if (!empty($page['documents']['html']) || $kop_op_has_research) $kop_op_sections['documents'] = 'Documents';
+$kop_op_has_unsilenced = !empty($page['unsilenced']['groups']);
+$kop_op_has_docs = !empty($page['documents']['html']) || $kop_op_has_research || $kop_op_has_unsilenced;
+if ($kop_op_has_docs) $kop_op_sections['documents'] = 'Documents';
 if ($page['notes']) $kop_op_sections['notes'] = 'Research notes';
 if ($page['websites']) $kop_op_sections['links'] = 'Websites';
 
@@ -217,7 +219,7 @@ get_header();
             </section>
             <?php endif; ?>
 
-            <?php if (!empty($page['documents']['html']) || $kop_op_has_research) : ?>
+            <?php if ($kop_op_has_docs) : ?>
             <section class="kop-fp-section kop-fp-documents" id="documents">
                 <h2>Documents</h2>
                 <?php if (!empty($page['documents']['html'])) : ?>
@@ -237,6 +239,9 @@ get_header();
                         <?php endforeach; ?>
                     </ul>
                     <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">The whole research library</a></p>
+                <?php endif; ?>
+                <?php if ($kop_op_has_unsilenced) : ?>
+                    <?php echo kop_unsilenced_render($page['unsilenced'], $page['name']); // Escaped inside. ?>
                 <?php endif; ?>
             </section>
             <?php endif; ?>

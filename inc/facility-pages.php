@@ -332,6 +332,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'research:' . (string) $research;
         // A new build of the network map changes which facilities it draws.
         $parts[] = 'network:' . (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '-');
+        // A new build of the Unsilenced archive lists (inc/unsilenced-archive.php).
+        $parts[] = 'unsilenced:' . (function_exists('kop_unsilenced_cache_key') ? kop_unsilenced_cache_key() : '-');
         $parts[] = 'v:4';
         return md5(implode(';', $parts));
     }
@@ -578,12 +580,13 @@ if (!function_exists('kop_facility_pages_link_sets')) {
      *   inspections      state code => name key => {rows, reports}
      *   operators        facility id => operator id
      *   folders          name key => FileBird folder id (folders holding files)
+     *   unsilenced       facility id => Unsilenced archive documents KOP lacks
      */
     function kop_facility_pages_link_sets() {
         global $wpdb;
         $sets = array('news' => array(), 'lawsuits' => array(), 'lawsuit_keys' => array(), 'memorial_keys' => array(),
                       'wiki' => array(), 'inspections' => array(), 'operators' => array(), 'folders' => array(),
-                      'network' => array(), 'research' => array());
+                      'network' => array(), 'research' => array(), 'unsilenced' => array());
 
         if (kop_facility_pages_table_exists('news_facility_links') && kop_facility_pages_table_exists('news_submissions')) {
             $rows = $wpdb->get_results("SELECT l.facility_id, COUNT(*) AS n FROM news_facility_links l JOIN news_submissions n ON n.id = l.news_id WHERE n.status IN ('approved','published') GROUP BY l.facility_id", ARRAY_A);
@@ -655,6 +658,10 @@ if (!function_exists('kop_facility_pages_link_sets')) {
             foreach (kop_network_map_facility_connections() as $fid => $entry) {
                 if (!empty($entry['links'])) $sets['network'][(int) $fid] = count($entry['links']);
             }
+        }
+        // Documents in Unsilenced's archive that KOP has no copy of.
+        if (function_exists('kop_unsilenced_index')) {
+            $sets['unsilenced'] = kop_unsilenced_index()['facilities'];
         }
         return $sets;
     }
@@ -1105,6 +1112,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (!empty($links['operators'][$id])) $s[] = 'operator';
         if (!empty($links['network'][$id])) $s[] = 'network';
         if (!empty($links['research'][$id])) $s[] = 'research';
+        if (!empty($links['unsilenced'][$id])) $s[] = 'unsilenced';
 
         $keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $state_code = strtoupper(trim((string) ($loc['state'] ?? '')));
@@ -1783,6 +1791,7 @@ if (!function_exists('kop_facility_page_data')) {
         $wiki = kop_facility_pages_wiki($name, $unique_name, $current_name);
         $inspections = kop_facility_pages_inspections($name_keys, $state_code, $state_name);
         $documents = kop_facility_pages_documents($doc, $entry ? $entry['folder'] : 0);
+        $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('f', $facility_id) : null;
 
         // ---- Copy ----------------------------------------------------------------
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
@@ -1838,6 +1847,7 @@ if (!function_exists('kop_facility_page_data')) {
             'inspections'   => $inspections,
             'documents'     => $documents,
             'research'      => $research,
+            'unsilenced'    => $unsilenced,
             'network'       => kop_facility_pages_network($facility_id),
             'updated_at'    => $updated,
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',

@@ -99,6 +99,12 @@ python scripts/check-bare-text.py               # one page per child template, l
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Data Tools > Woodbury Reports
 python scripts/woodbury-scan.py [--no-cut]
+# Unsilenced's archive (public Drive folders) on facility/operator pages: only documents KOP has no copy of.
+# Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
+# then the build compares with the media library md5s and inspection scrapers -> js/data/unsilenced/
+php api/list-unsilenced-files.php [probe] [--minutes=25]   # on the server (ea-php82), resumable
+python scripts/build-unsilenced-links.py                   # report in tmp/unsilenced/build-report.md
+php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
 # Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,
 # linked as "Archived copy" on the state report pages (server CLI + nightly cron; no apply = dry run)
 php api/sync-inspection-archive.php apply --limit=2000 --minutes=25
