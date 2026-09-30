@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Sixteen tracker pages, one per state, at `/xx-reports/` (Michigan's and Oklahoma's are linked once the owner creates the page, see below):
+Seventeen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's and Pennsylvania's are linked once the owner creates the page, see below):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -21,11 +21,12 @@ Sixteen tracker pages, one per state, at `/xx-reports/` (Michigan's and Oklahoma
 | North Carolina (`NC`) | `nc-reports` | shared engine | API |
 | Oklahoma (`OK`) | `ok-reports` | shared engine | API (`ok_scraper.py`; the state's pages are kept in the Drive folder `ok_html/`, no PDFs) |
 | Oregon (`OR`) | `or-reports` | shared engine | API |
+| Pennsylvania (`PA`) | `pa-reports` | shared engine | API (`pa_scraper.py`; PDFs archived to the Drive folder `pa_pdfs/`, scans before mid-2019 read by OCR) |
 | Texas (`TX`) | `tx-reports` | `js/inspections/tx_reports.js` (legacy) | API |
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 
@@ -37,7 +38,7 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 
 ### Asset Loading
 - `kop_enqueue_report_scripts()` in `inc/enqueue.php` matches the current page against an explicit list of slugs with `is_page()` (not a `*-reports` pattern) and loads that state's script plus `css/facility-reports.css`. Its `json_glob` entry is resolved to URLs and localized as `<xx>ReportsData.jsonFileUrls`.
-- Fourteen states (AR, AZ, CT, FL, GA, MI, MN, MT, NC, NV, OK, OR, UT, WA) are marked `report_page`: the shared engine `js/inspections/report-page.js` loads first with `css/kop-components.css`, `css/skeleton.css` and `css/report-page.css`, then the state adapter `js/inspections/states/<xx>.js`, which calls `KOP.reportPage.mount(adapter)`. The adapter contract (required `load`, `facilityName`, `reportTime`, `isFlagged`, `summary`, `report`; optional filters, sorts and notes) is documented at the top of `report-page.js`.
+- Fifteen states (AR, AZ, CT, FL, GA, MI, MN, MT, NC, NV, OK, OR, PA, UT, WA) are marked `report_page`: the shared engine `js/inspections/report-page.js` loads first with `css/kop-components.css`, `css/skeleton.css` and `css/report-page.css`, then the state adapter `js/inspections/states/<xx>.js`, which calls `KOP.reportPage.mount(adapter)`. The adapter contract (required `load`, `facilityName`, `reportTime`, `isFlagged`, `summary`, `report`; optional filters, sorts and notes) is documented at the top of `report-page.js`.
 - The old per-state viewers (`js/inspections/<xx>_reports.js`) stay in the repo as rollback targets; each migrated entry in `inc/enqueue.php` names its own.
 - Every tracker page also loads `js/inspections/severe-flags.js` and `css/severe-reports.css` (see Severe Findings).
 - `kop_state_reports_body_class()` adds `kop-state-reports-page` to the same slug list.

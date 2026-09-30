@@ -46,6 +46,7 @@ $FOLDERS = array(
     'mi_pdfs'       => 'mi',
     'nc_pdfs'       => 'nc',
     'or_pdfs'       => 'or',
+    'pa_pdfs'       => 'pa',
     'ut_checklists' => 'ut',
     'wa_pdfs'       => 'wa',
 );
