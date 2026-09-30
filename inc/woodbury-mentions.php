@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_WOODBURY_DB_VERSION', '1');
+define('KOP_WOODBURY_DB_VERSION', '2');
 define('KOP_WOODBURY_SUBFOLDER', 'Woodbury Reports Mentions');
 
 function kop_wb_table() {
@@ -63,6 +63,8 @@ function kop_wb_ensure_table() {
         facility_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
         facility_name VARCHAR(255) NOT NULL DEFAULT '',
         facility_state VARCHAR(8) NOT NULL DEFAULT '',
+        target_kind VARCHAR(12) NOT NULL DEFAULT 'facility',
+        target_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
         alternatives TEXT NULL,
         note TEXT NULL,
         snippet MEDIUMTEXT NULL,
@@ -278,6 +280,17 @@ function kop_wb_file(array $r, $fid, $reviewer) {
     if (!$fac) {
         throw new RuntimeException('Facility #' . $fid . ' not found.');
     }
+    return kop_wb_file_target($r, array('kind' => 'facility', 'id' => $fid, 'name' => $fac['name']), $reviewer);
+}
+
+/**
+ * File the candidate under any record: a facility, or a company, consultant
+ * or provider created from this screen (inc/woodbury-create.php). $target is
+ * kind, id, name and, for anything but a facility, folder: the record's own
+ * document folder, which the Woodbury subfolder goes under.
+ */
+function kop_wb_file_target(array $r, array $target, $reviewer) {
+    global $wpdb;
     // A request the host answers with a 503 keeps running and files the
     // candidate anyway, so the page can send the same one again while the
     // first is still at work. One request per candidate at a time; MySQL
@@ -287,15 +300,17 @@ function kop_wb_file(array $r, $fid, $reviewer) {
         throw new RuntimeException('Another request is filing this one. Reload the page in a minute.');
     }
     try {
-        return kop_wb_file_locked(kop_wb_get($r['ckey']) ?: $r, $fac, $reviewer);
+        return kop_wb_file_locked(kop_wb_get($r['ckey']) ?: $r, $target, $reviewer);
     } finally {
         $wpdb->query($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
     }
 }
 
-function kop_wb_file_locked(array $r, array $fac, $reviewer) {
+function kop_wb_file_locked(array $r, array $target, $reviewer) {
     global $wpdb;
-    $fid = (int) $fac['id'];
+    $kind = $target['kind'];
+    $fid = $kind === 'facility' ? (int) $target['id'] : 0;
+    $fac = array('name' => $target['name']);
     if ($r['status'] === 'filed' && $r['attachment_id']) {
         throw new RuntimeException('Already filed.');
     }
@@ -308,7 +323,10 @@ function kop_wb_file_locked(array $r, array $fac, $reviewer) {
     require_once ABSPATH . 'wp-admin/includes/media.php';
     require_once ABSPATH . 'wp-admin/includes/image.php';
 
-    $parent = kop_wb_facility_folder($fid);
+    $parent = $kind === 'facility' ? kop_wb_facility_folder($fid) : (int) $target['folder'];
+    if ($parent <= 0) {
+        throw new RuntimeException('No document folder for ' . $target['name'] . '.');
+    }
     $folder = kop_wb_find_folder(KOP_WOODBURY_SUBFOLDER, $parent) ?: kop_wb_create_folder(KOP_WOODBURY_SUBFOLDER, $parent);
 
     $title = kop_wb_title($r, $fac['name']);
@@ -364,6 +382,8 @@ function kop_wb_file_locked(array $r, array $fac, $reviewer) {
         'status'        => 'filed',
         'facility_id'   => $fid,
         'facility_name' => $fac['name'],
+        'target_kind'   => $kind,
+        'target_id'     => (int) $target['id'],
         'attachment_id' => (int) $att,
         'folder_id'     => $folder,
         'reviewed_by'   => $reviewer,
@@ -659,7 +679,9 @@ function kop_render_woodbury_page() {
         . '<strong>File it</strong> puts those pages, as their own small PDF, in the program\'s document library (a "Woodbury Reports Mentions" '
         . 'folder on its facility page), linked to the full issue. Nothing is filed until you click. <strong>Undo</strong> takes it back out.</p>'
         . '<p style="color:#555">Tick rows and use the buttons at the top to do many at once. Check the program when a row says '
-        . '<em>close name</em> or offers other matches: click the right one before filing. <strong>View pages</strong> opens the extract itself.</p>';
+        . '<em>close name</em> or offers other matches: click the right one before filing. <strong>View pages</strong> opens the extract itself. '
+        . 'When the report is about something with no record yet (a program, company, educational consultant or mental health provider), '
+        . 'open <strong>Create a record</strong> under it: that makes the record and files the pages under it in one click.</p>';
 
     $counts = array();
     foreach ($tabs as $k => $t) {
@@ -726,6 +748,9 @@ function kop_render_woodbury_page() {
         echo '</p>';
     }
     kop_wb_render_assets();
+    if (function_exists('kop_wbc_render_assets')) {
+        kop_wbc_render_assets();
+    }
     echo '</div>';
 }
 
@@ -760,6 +785,10 @@ function kop_wb_render_row(array $r, $tab) {
         }
     } elseif ($pending) {
         echo '<em>No program record matches this name.</em>';
+    } elseif ($r['facility_name'] !== '') {
+        $kinds_made = function_exists('kop_wbc_kinds') ? kop_wbc_kinds() : array();
+        echo '<strong>' . esc_html($r['facility_name']) . '</strong>'
+            . (isset($kinds_made[$r['target_kind']]) ? ' <span class="kop-wb-muted">' . esc_html($kinds_made[$r['target_kind']]) . '</span>' : '');
     }
     if ($pending) {
         echo '<label class="kop-wb-choice kop-wb-other">Other facility id <input type="number" class="kop-wb-fid" style="width:90px"'
@@ -769,6 +798,9 @@ function kop_wb_render_row(array $r, $tab) {
     echo '<div class="kop-wb-muted">' . esc_html($kinds[$r['kind']] ?? $r['kind']) . ($said !== '' ? ': &ldquo;' . esc_html($said) . '&rdquo;' : '') . '</div>';
     if (trim((string) $r['note']) !== '') {
         echo '<div class="kop-wb-note">' . esc_html($r['note']) . '</div>';
+    }
+    if ($pending && function_exists('kop_wbc_render_form')) {
+        kop_wbc_render_form($r);
     }
     echo '</td>';
 
