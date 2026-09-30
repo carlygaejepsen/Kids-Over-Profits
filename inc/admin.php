@@ -2088,3 +2088,68 @@ function kop_maybe_apply_template_assignments() {
     update_option('kop_template_assignments_applied', $version);
 }
 add_action('init', 'kop_maybe_apply_template_assignments', 20);
+
+/**
+ * One-time: provider projects named after a bare state or country
+ * ("MONTANA") become "MONTANA PROVIDERS". The data form treats a bare state
+ * name as the location project, so it opened and saved the provider project
+ * as Montana's location project. Pending provider suggestions filed under a
+ * bare state name follow. Bump $version to run it again.
+ */
+function kop_maybe_rename_state_provider_projects() {
+    $version = '1';
+    if (get_option('kop_state_provider_projects_renamed') === $version) {
+        return;
+    }
+    $pdo = kop_seed_pdo();
+    if (!$pdo) {
+        return;
+    }
+    require_once get_stylesheet_directory() . '/api/lib-suggested-edits.php';
+    try {
+        $table = kop_resolve_table_name($pdo, 'providers_master', '');
+        $exists = $pdo->prepare('SHOW TABLES LIKE ?');
+        $exists->execute([$table]);
+        if ($exists->fetchColumn()) {
+            $rows = $pdo->query("SELECT id, unique_name, json_data FROM `{$table}`")->fetchAll(PDO::FETCH_ASSOC);
+            $taken = $pdo->prepare("SELECT COUNT(*) FROM `{$table}` WHERE unique_name = ?");
+            $update = $pdo->prepare("UPDATE `{$table}` SET unique_name = ?, json_data = ? WHERE id = ?");
+            foreach ($rows as $row) {
+                if (!kop_is_location_project_name($row['unique_name'])) {
+                    continue;
+                }
+                $new_name = kop_provider_location_project_name($row['unique_name']);
+                $taken->execute([$new_name]);
+                if ((int) $taken->fetchColumn() > 0) {
+                    error_log("kop_maybe_rename_state_provider_projects: {$new_name} already exists, left {$row['unique_name']} as it is");
+                    continue;
+                }
+                $project = json_decode((string) $row['json_data'], true);
+                if (is_array($project)) {
+                    $project['name'] = $new_name;
+                    if (isset($project['data']) && is_array($project['data'])) {
+                        if (isset($project['data']['name'])) $project['data']['name'] = $new_name;
+                        if (isset($project['data']['projectName'])) $project['data']['projectName'] = $new_name;
+                    }
+                    $json = json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                } else {
+                    $json = $row['json_data'];
+                }
+                $update->execute([$new_name, $json, $row['id']]);
+            }
+        }
+
+        $edits = kop_resolve_table_name($pdo, 'suggested_edits', '');
+        $pending = $pdo->query("SELECT id, master_id, edited_json_data FROM `{$edits}` WHERE status = 'pending'")->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($pending as $row) {
+            if (kop_is_location_project_name($row['master_id'])) {
+                kop_rename_placeholder_provider_suggestion($pdo, $edits, $row['id'], $row['master_id'], json_decode((string) $row['edited_json_data'], true));
+            }
+        }
+    } catch (Exception $e) {
+        error_log('kop_maybe_rename_state_provider_projects: ' . $e->getMessage());
+        return;
+    }
+    update_option('kop_state_provider_projects_renamed', $version);
+}
+add_action('init', 'kop_maybe_rename_state_provider_projects', 21);
