@@ -108,6 +108,11 @@ function kop_submission_types() {
             'label'      => 'facility added from the news',
             'admin_page' => 'kop-facilities-from-news',
         ),
+        // Pages sent from the browser extension that are not an article,
+        // lawsuit or bill (inc/source-submissions.php).
+        'website' => array(
+            'label' => 'website sent from the browser extension',
+        ),
     );
 }
 

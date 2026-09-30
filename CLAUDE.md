@@ -88,6 +88,10 @@ php api/scan-new-facilities.php --ids=502         # on the server: dry run; "app
 php scripts/test-indigenous-schools.php          # the first move and the page, on an in-memory copy of tmp/prod.sqlite
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
+# "Send to KOP" Chrome extension (browser-extension/send-to-kop/, loaded unpacked, not deployed) posts to
+# kop/v1/extension/* (inc/source-submissions.php): articles -> news_submissions, lawsuits, legislation,
+# anything else -> KOP Tools > Websites Sent In; same duplicate rules as the public forms
+php -d extension=pdo_sqlite scripts/test-source-submissions.php   # against an in-memory copy of tmp/prod.sqlite
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
