@@ -447,7 +447,7 @@ add_action('wp_ajax_kop_wb_create', function () {
 function kop_wbc_render_form(array $r) {
     $p = kop_wbc_prefill($r);
     $states = kop_wb_state_names();
-    echo '<details class="kop-wbc"><summary>Create a record</summary><div class="kop-wbc-form">';
+    echo '<details class="kop-wbc"><summary>Not in the database? Create a record</summary><div class="kop-wbc-form">';
     echo '<label>Kind <select class="kop-wbc-kind">';
     foreach (kop_wbc_kinds() as $k => $label) {
         echo '<option value="' . esc_attr($k) . '">' . esc_html($label) . '</option>';
@@ -530,16 +530,15 @@ function kop_wbc_render_assets() {
                         if (!j || !j.success) throw new Error((j && j.data) || 'Request failed');
                         var rec = j.data.record;
                         msg.className = 'kop-wbc-msg ok';
-                        msg.textContent = 'Created ' + j.data.label.toLowerCase() + ' #' + rec.id + ' and filed the pages. ';
+                        msg.textContent = 'Created the ' + j.data.label.toLowerCase() + ' record "' + rec.name + '". ';
                         if (rec.url) {
                             var a = document.createElement('a');
                             a.href = rec.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = 'Open its page';
                             msg.appendChild(a);
                         }
-                        tr.classList.add('kop-wb-done');
-                        tr.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
-                        var pick = tr.querySelector('.kop-wb-pick');
-                        if (pick) { pick.checked = false; pick.disabled = true; }
+                        var filed = j.data.filed || {};
+                        (filed.places || []).forEach(function (p) { p.name = rec.name; p.page = p.page || rec.url || ''; });
+                        window.kopWbFiled(tr, filed, 'Created and filed');
                     })
                     .catch(function (e) {
                         go.disabled = false;

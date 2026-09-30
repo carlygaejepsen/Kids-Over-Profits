@@ -114,6 +114,24 @@ function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
     return $out;
 }
 
+/**
+ * "<a>Wellspring Academies</a> (Brattleboro, VT)" for success messages, so a
+ * screen says which facility it changed by name. Escaped HTML.
+ */
+function kop_facility_finder_label(PDO $pdo, $fid) {
+    $stmt = $pdo->prepare('SELECT name, unique_name, city, state, country, status FROM facilities_v2 WHERE id = ?');
+    $stmt->execute(array((int) $fid));
+    $f = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$f) {
+        return 'facility #' . (int) $fid;
+    }
+    $name = esc_html($f['name'] !== '' && $f['name'] !== null ? $f['name'] : $f['unique_name']);
+    $url = function_exists('kop_facility_page_url') ? kop_facility_page_url((int) $fid) : '';
+    $place = trim(implode(', ', array_filter(array($f['city'], $f['state'] ?: $f['country']))));
+    return ($url ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener"><strong>' . $name . '</strong></a>' : '<strong>' . $name . '</strong>')
+        . ($place !== '' ? ' (' . esc_html($place) . ')' : '');
+}
+
 add_action('wp_ajax_kop_facility_finder', function () {
     if (!current_user_can('manage_options') || !check_ajax_referer('kop_facility_finder', 'nonce', false)) {
         wp_send_json_error('Not authorized', 403);
@@ -133,11 +151,16 @@ add_action('wp_ajax_kop_facility_finder', function () {
 /**
  * A facility id box with the finder beside it. $name is the form field name
  * ('' for a box read by script only); $attrs is extra raw attribute text
- * (e.g. ' class="kop-wb-fid"').
+ * (e.g. ' class="kop-wb-fid"'). With $multi the box is hidden and each pick
+ * fires a "kop-facility-picked" event (detail: the facility) for the screen
+ * to collect, so one search can add any number of facilities.
  */
-function kop_facility_finder_field($name, $value = '', $attrs = '') {
+function kop_facility_finder_field($name, $value = '', $attrs = '', $multi = false) {
     if (!has_action('admin_footer', 'kop_facility_finder_print_assets')) {
         add_action('admin_footer', 'kop_facility_finder_print_assets');
+    }
+    if ($multi) {
+        return '<input type="hidden" data-kop-facility-finder="multi"' . ($name !== '' ? ' name="' . esc_attr($name) . '"' : '') . $attrs . '>';
     }
     return '<input type="number" min="1" data-kop-facility-finder="1"'
         . ($name !== '' ? ' name="' . esc_attr($name) . '"' : '')
@@ -194,6 +217,12 @@ function kop_facility_finder_print_assets() {
 
             function close() { list.hidden = true; active = -1; }
             function choose(f) {
+                if (box.getAttribute('data-kop-facility-finder') === 'multi') {
+                    box.dispatchEvent(new CustomEvent('kop-facility-picked', { bubbles: true, detail: f }));
+                    q.value = '';
+                    close();
+                    return;
+                }
                 box.value = f.id;
                 box.dispatchEvent(new Event('input', { bubbles: true }));
                 box.dispatchEvent(new Event('change', { bubbles: true }));

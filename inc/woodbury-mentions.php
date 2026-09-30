@@ -12,8 +12,11 @@
  * KOP Data Tools > Woodbury Reports lists the candidates. "File it" imports the
  * PDF into the media library and files it in a "Woodbury Reports Mentions"
  * folder under the program's own FileBird folder, the one its /facility/ page
- * shows, so it appears there at once. Nothing is filed without a click; Undo
- * deletes the imported copy and puts the candidate back in the queue.
+ * shows, so it appears there at once. One excerpt can be filed under several
+ * facilities: the PDF sits in the first one's folder and the others get it as
+ * a tag (kop_media_folder_tags) in their own Woodbury subfolder; the extras are
+ * kept in also_facilities. Nothing is filed without a click; Undo deletes the
+ * imported copy and its tags and puts the candidate back in the queue.
  *
  * Candidates live in {prefix}kop_woodbury_mentions, keyed by the scanner's
  * candidate key, so a rescan adds new ones and never undoes a decision.
@@ -23,12 +26,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_WOODBURY_DB_VERSION', '2');
+define('KOP_WOODBURY_DB_VERSION', '3');
 define('KOP_WOODBURY_SUBFOLDER', 'Woodbury Reports Mentions');
 
 function kop_wb_table() {
     global $wpdb;
     return $wpdb->prefix . 'kop_woodbury_mentions';
+}
+
+function kop_wb_tags_table() {
+    global $wpdb;
+    return $wpdb->prefix . 'kop_media_folder_tags';
 }
 
 /** Where the scanner's PDFs and candidates.json wait: ~/kop-import/woodbury. */
@@ -66,6 +74,7 @@ function kop_wb_ensure_table() {
         target_kind VARCHAR(12) NOT NULL DEFAULT 'facility',
         target_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
         alternatives TEXT NULL,
+        also_facilities TEXT NULL,
         note TEXT NULL,
         snippet MEDIUMTEXT NULL,
         file VARCHAR(255) NOT NULL DEFAULT '',
@@ -80,6 +89,14 @@ function kop_wb_ensure_table() {
         KEY status_kind (status, kind),
         KEY facility_id (facility_id)
     ) {$charset};");
+    // Extra facilities an excerpt is filed under are tags in the theme's
+    // multi-folder table, which every folder feed reads (inc/database.php).
+    $wpdb->query('CREATE TABLE IF NOT EXISTS ' . kop_wb_tags_table() . ' (
+        folder_id BIGINT UNSIGNED NOT NULL,
+        attachment_id BIGINT UNSIGNED NOT NULL,
+        PRIMARY KEY (folder_id, attachment_id),
+        KEY idx_attachment (attachment_id)
+    ) ' . $charset);
     update_option('kop_woodbury_mentions_db', KOP_WOODBURY_DB_VERSION);
 }
 
@@ -390,7 +407,140 @@ function kop_wb_file_locked(array $r, array $target, $reviewer) {
         'reviewed_at'   => current_time('mysql', true),
     ), array('ckey' => $r['ckey']));
     delete_transient('kop_hidden_preview_ids');
-    return array('attachment_id' => (int) $att, 'folder_id' => $folder, 'url' => (string) wp_get_attachment_url($att), 'facility' => $fac['name']);
+    return array('attachment_id' => (int) $att, 'folder_id' => $folder, 'url' => (string) wp_get_attachment_url($att), 'facility' => $fac['name'],
+        'places' => array(kop_wb_place($fid, $fac['name'], $folder, true)));
+}
+
+/** "Utah › Wellspring Academies › Woodbury Reports Mentions": the folder's path in the media library. */
+function kop_wb_folder_path($folder_id) {
+    global $wpdb;
+    $names = array();
+    $id = (int) $folder_id;
+    for ($depth = 0; $id > 0 && $depth < 10; $depth++) {
+        $row = $wpdb->get_row($wpdb->prepare('SELECT name, parent FROM ' . $wpdb->prefix . 'fbv WHERE id = %d', $id), ARRAY_A);
+        if (!$row) {
+            break;
+        }
+        array_unshift($names, $row['name']);
+        $id = (int) $row['parent'];
+    }
+    return implode(' › ', $names);
+}
+
+/** One place a filed excerpt shows: the facility (0 for a non-facility record), its folder path and public page. */
+function kop_wb_place($fid, $name, $folder, $primary) {
+    return array(
+        'id'      => (int) $fid,
+        'name'    => (string) $name,
+        'folder'  => (int) $folder,
+        'where'   => kop_wb_folder_path($folder),
+        'page'    => $fid && function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $fid) : '',
+        'primary' => (bool) $primary,
+    );
+}
+
+/** The extra facilities a filed excerpt is tagged under: [{id, name, folder}]. */
+function kop_wb_also(array $r) {
+    $also = json_decode((string) ($r['also_facilities'] ?? ''), true);
+    return is_array($also) ? array_values($also) : array();
+}
+
+/** Every place a filed excerpt shows, the facility holding the PDF first. */
+function kop_wb_places(array $r) {
+    $places = array();
+    if ($r['status'] === 'filed') {
+        $places[] = kop_wb_place($r['target_kind'] === 'facility' ? (int) $r['facility_id'] : 0, $r['facility_name'], (int) $r['folder_id'], true);
+        foreach (kop_wb_also($r) as $a) {
+            $places[] = kop_wb_place((int) $a['id'], $a['name'], (int) $a['folder'], false);
+        }
+    }
+    return $places;
+}
+
+/** Title the filed PDF after every facility it is filed under. */
+function kop_wb_retitle(array $r) {
+    $names = array($r['facility_name']);
+    foreach (kop_wb_also($r) as $a) {
+        $names[] = $a['name'];
+    }
+    wp_update_post(array('ID' => (int) $r['attachment_id'], 'post_title' => kop_wb_title($r, implode('; ', $names))));
+}
+
+/**
+ * File the excerpt under several facilities: the PDF goes in the first one's
+ * folder, the others get it as a tag in their own Woodbury subfolder.
+ */
+function kop_wb_file_many(array $r, array $fids, $reviewer) {
+    $fids = array_values(array_unique(array_filter(array_map('intval', $fids))));
+    if (!$fids) {
+        throw new RuntimeException('Tick at least one facility to file it under.');
+    }
+    $res = kop_wb_file($r, array_shift($fids), $reviewer);
+    if ($fids) {
+        $added = kop_wb_add_facilities(kop_wb_get($r['ckey']), $fids);
+        $res['places'] = array_merge($res['places'], $added);
+    }
+    return $res;
+}
+
+/** Tag an already filed excerpt into more facilities' folders. Returns the new places. */
+function kop_wb_add_facilities(array $r, array $fids) {
+    global $wpdb;
+    if ($r['status'] !== 'filed' || !$r['attachment_id']) {
+        throw new RuntimeException('File it first.');
+    }
+    $also = kop_wb_also($r);
+    $have = array_map('intval', array_column($also, 'id'));
+    if ($r['target_kind'] === 'facility') {
+        $have[] = (int) $r['facility_id'];
+    }
+    $places = array();
+    foreach (array_unique(array_map('intval', $fids)) as $fid) {
+        if ($fid <= 0 || in_array($fid, $have, true)) {
+            continue;
+        }
+        $fac = $wpdb->get_row($wpdb->prepare('SELECT id, name FROM facilities_v2 WHERE id = %d', $fid), ARRAY_A);
+        if (!$fac) {
+            throw new RuntimeException('Facility #' . $fid . ' not found.');
+        }
+        $parent = kop_wb_facility_folder($fid);
+        $folder = kop_wb_find_folder(KOP_WOODBURY_SUBFOLDER, $parent) ?: kop_wb_create_folder(KOP_WOODBURY_SUBFOLDER, $parent);
+        $wpdb->query($wpdb->prepare('INSERT IGNORE INTO ' . kop_wb_tags_table() . ' (folder_id, attachment_id) VALUES (%d, %d)',
+            $folder, (int) $r['attachment_id']));
+        $also[] = array('id' => $fid, 'name' => $fac['name'], 'folder' => $folder);
+        $have[] = $fid;
+        $places[] = kop_wb_place($fid, $fac['name'], $folder, false);
+    }
+    if ($places) {
+        $wpdb->update(kop_wb_table(), array('also_facilities' => wp_json_encode($also)), array('ckey' => $r['ckey']));
+        $r['also_facilities'] = wp_json_encode($also);
+        kop_wb_retitle($r);
+        delete_transient('kop_hidden_preview_ids');
+    }
+    return $places;
+}
+
+/** Take one extra facility off a filed excerpt (the PDF stays with the others). */
+function kop_wb_remove_facility(array $r, $fid) {
+    global $wpdb;
+    $keep = array();
+    $removed = null;
+    foreach (kop_wb_also($r) as $a) {
+        if ((int) $a['id'] === (int) $fid && $removed === null) {
+            $removed = $a;
+        } else {
+            $keep[] = $a;
+        }
+    }
+    if (!$removed) {
+        throw new RuntimeException('That facility is not an extra one on this excerpt. Use Undo to take the whole filing back.');
+    }
+    $wpdb->delete(kop_wb_tags_table(), array('folder_id' => (int) $removed['folder'], 'attachment_id' => (int) $r['attachment_id']), array('%d', '%d'));
+    $wpdb->update(kop_wb_table(), array('also_facilities' => $keep ? wp_json_encode($keep) : null), array('ckey' => $r['ckey']));
+    $r['also_facilities'] = $keep ? wp_json_encode($keep) : null;
+    kop_wb_retitle($r);
+    delete_transient('kop_hidden_preview_ids');
+    return $removed;
 }
 
 /* ---- Covers for filed extracts, drawn in the background ------------- */
@@ -526,12 +676,16 @@ add_action('admin_post_kop_wb_dedupe', function () {
 function kop_wb_undo(array $r, $reviewer) {
     global $wpdb;
     $att = (int) $r['attachment_id'];
+    foreach (kop_wb_also($r) as $a) {
+        $wpdb->delete(kop_wb_tags_table(), array('folder_id' => (int) $a['folder'], 'attachment_id' => $att), array('%d', '%d'));
+    }
     if ($att && get_post_meta($att, '_kop_woodbury_key', true) === $r['ckey']) {
         wp_delete_attachment($att, true);
         $wpdb->delete($wpdb->prefix . 'fbv_attachment_folder', array('attachment_id' => $att), array('%d'));
+        $wpdb->delete(kop_wb_tags_table(), array('attachment_id' => $att), array('%d'));
     }
     $wpdb->update(kop_wb_table(), array(
-        'status' => 'pending', 'attachment_id' => 0, 'folder_id' => 0,
+        'status' => 'pending', 'attachment_id' => 0, 'folder_id' => 0, 'also_facilities' => null,
         'reviewed_by' => $reviewer, 'reviewed_at' => current_time('mysql', true),
     ), array('ckey' => $r['ckey']));
 }
@@ -562,9 +716,16 @@ add_action('wp_ajax_kop_wb_act', function () {
             if (!$r) {
                 throw new RuntimeException('Not found.');
             }
+            $fids = isset($item['fids']) && is_array($item['fids']) ? array_map('intval', $item['fids']) : array();
             if ($act === 'file') {
-                $fid = (int) ($item['fid'] ?? 0) ?: (int) $r['facility_id'];
-                $res += kop_wb_file($r, $fid, $user);
+                $res += kop_wb_file_many($r, $fids, $user);
+            } elseif ($act === 'add') {
+                $res['places'] = kop_wb_add_facilities($r, $fids);
+                if (!$res['places']) {
+                    throw new RuntimeException('Already filed under that facility.');
+                }
+            } elseif ($act === 'untag') {
+                $res['removed'] = kop_wb_remove_facility($r, (int) ($item['fid'] ?? 0));
             } elseif ($act === 'skip') {
                 kop_wb_set_status($r, 'skipped', $user);
             } elseif ($act === 'undo') {
@@ -676,12 +837,16 @@ function kop_render_woodbury_page() {
             . '<code>pending</code> folder to <code>' . esc_html(kop_wb_pending_dir()) . '</code>.</p></div>';
     }
     echo '<p>Pages of the Woodbury Reports newsletter that write about a program, found by scanning every issue in the media library. '
-        . '<strong>File it</strong> puts those pages, as their own small PDF, in the program\'s document library (a "Woodbury Reports Mentions" '
-        . 'folder on its facility page), linked to the full issue. Nothing is filed until you click. <strong>Undo</strong> takes it back out.</p>'
-        . '<p style="color:#555">Tick rows and use the buttons at the top to do many at once. Check the program when a row says '
-        . '<em>close name</em> or offers other matches: click the right one before filing. <strong>View pages</strong> opens the extract itself. '
-        . 'When the report is about something with no record yet (a program, company, educational consultant or mental health provider), '
-        . 'open <strong>Create a record</strong> under it: that makes the record and files the pages under it in one click.</p>';
+        . 'Filing one puts those pages, as their own small PDF, in a "Woodbury Reports Mentions" folder on each facility\'s page, '
+        . 'linked to the full issue. Nothing is filed until you click, and <strong>Undo</strong> on the Filed tab takes it back out.</p>'
+        . '<ol class="kop-wb-how">'
+        . '<li><strong>Check who it is about.</strong> Under <em>File under</em>, tick every facility the pages discuss (one excerpt can go to several). '
+        . 'The scanner\'s best match is ticked for you; untick it if it is wrong. <em>Add a facility</em> finds any other by name. '
+        . '<strong>View pages</strong> opens the excerpt.</li>'
+        . '<li><strong>File it.</strong> Click <em>File it</em> on the row, or tick <em>Select</em> on several rows and use <em>File selected</em> at the top. '
+        . 'Each row then lists the folders it went into, and a summary of everything filed builds up at the top of the page.</li>'
+        . '<li><strong>Not useful?</strong> <em>Skip</em> it. About something with no record yet (a program, company, educational consultant or provider)? '
+        . 'Open <em>Create a record</em> under it to make the record and file the pages in one click.</li></ol>';
 
     $counts = array();
     foreach ($tabs as $k => $t) {
@@ -717,22 +882,23 @@ function kop_render_woodbury_page() {
     }
 
     $pending = !in_array($tab, array('filed', 'skipped'), true);
-    echo '<div class="kop-wb-bar">';
+    echo '<div class="notice notice-success kop-wb-log" hidden><p><strong>Done on this page</strong></p><ul></ul></div>';
+    echo '<div class="kop-wb-bar"><label class="kop-wb-allbox"><input type="checkbox" class="kop-wb-all"> Select all on this page</label> '
+        . '<span class="kop-wb-count"></span> ';
     if ($pending) {
-        echo '<label><input type="checkbox" class="kop-wb-all"> Select all on this page</label> '
-            . '<button type="button" class="button button-primary" data-bulk="file">File selected</button> '
+        echo '<button type="button" class="button button-primary" data-bulk="file">File selected</button> '
             . '<button type="button" class="button" data-bulk="skip">Skip selected</button>';
     } elseif ($tab === 'filed') {
-        echo '<label><input type="checkbox" class="kop-wb-all"> Select all on this page</label> '
-            . '<button type="button" class="button" data-bulk="undo">Undo selected</button>';
+        echo '<button type="button" class="button" data-bulk="undo">Undo selected</button>';
     } else {
-        echo '<label><input type="checkbox" class="kop-wb-all"> Select all on this page</label> '
-            . '<button type="button" class="button" data-bulk="reopen">Put selected back</button>';
+        echo '<button type="button" class="button" data-bulk="reopen">Put selected back</button>';
     }
-    echo ' <span class="kop-wb-progress" aria-live="polite"></span></div>';
+    echo ' <span class="kop-wb-progress" aria-live="polite"></span>'
+        . ($tab === 'articles' ? '<div class="kop-wb-muted">Articles with a confident match start selected.</div>' : '') . '</div>';
 
-    echo '<table class="widefat striped kop-wb-table"><thead><tr><th style="width:24px"></th>'
-        . '<th style="width:28%">Program</th><th>Woodbury Reports pages</th><th style="width:150px"></th></tr></thead><tbody>';
+    echo '<table class="widefat kop-wb-table"><thead><tr><th class="kop-wb-selcol">Select</th>'
+        . '<th style="width:30%">' . ($tab === 'filed' ? 'Filed under' : 'File under') . '</th>'
+        . '<th>Woodbury Reports pages</th><th style="width:150px">Action</th></tr></thead><tbody>';
     foreach ($rows as $r) {
         kop_wb_render_row($r, $tab);
     }
@@ -760,41 +926,69 @@ function kop_wb_facility_link($fid, $name, $state = '') {
     return $url ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener">' . $label . '</a>' : $label;
 }
 
+/** One "Filed under" line: the record, the folder it is in, and Remove for an extra facility. */
+function kop_wb_place_html(array $p) {
+    $name = $p['page'] !== ''
+        ? '<a href="' . esc_url($p['page']) . '" target="_blank" rel="noopener"><strong>' . esc_html($p['name']) . '</strong></a>'
+        : '<strong>' . esc_html($p['name']) . '</strong>' . ($p['id'] ? ' <span class="kop-wb-muted">(no public page yet)</span>' : '');
+    return '<li data-fid="' . (int) $p['id'] . '">' . $name
+        . ($p['where'] !== '' ? '<span class="kop-wb-where">Folder: ' . esc_html($p['where']) . '</span>' : '')
+        . (!$p['primary'] ? ' <button type="button" class="button-link kop-wb-untag" data-fid="' . (int) $p['id'] . '">Remove</button>' : '')
+        . '</li>';
+}
+
+/** A "File under" checkbox for one facility. */
+function kop_wb_fac_box($fid, $name, $state, $checked, $note = '') {
+    return '<label class="kop-wb-fac-row"><input type="checkbox" class="kop-wb-fac" value="' . (int) $fid . '"' . ($checked ? ' checked' : '') . '> '
+        . kop_wb_facility_link($fid, $name, $state) . ($note !== '' ? ' <span class="kop-wb-muted">' . esc_html($note) . '</span>' : '') . '</label>';
+}
+
 function kop_wb_render_row(array $r, $tab) {
     $view = add_query_arg(array('action' => 'kop_wb_view', 'key' => $r['ckey'], 'nonce' => wp_create_nonce('kop_woodbury')), admin_url('admin-ajax.php'));
     $issue_url = $r['issue_id'] ? wp_get_attachment_url((int) $r['issue_id']) : '';
     $alts = json_decode((string) $r['alternatives'], true);
     $alts = is_array($alts) ? $alts : array();
     $pending = $r['status'] === 'pending';
+    $filed = $r['status'] === 'filed';
     $kinds = array('section' => 'Article', 'fuzzy' => 'Article, close name', 'news' => 'News item', 'mention' => 'Mentioned', 'unmatched' => 'Article, no record');
+    $label = 'Woodbury Reports, ' . $r['issue_label'] . ', ' . kop_wb_page_label($r['pages']);
+    $selected = $pending && $r['kind'] === 'section';
 
-    echo '<tr data-key="' . esc_attr($r['ckey']) . '">';
-    echo '<td><input type="checkbox" class="kop-wb-pick"' . ($pending && $r['kind'] === 'section' ? ' checked' : '') . '></td>';
+    echo '<tr data-key="' . esc_attr($r['ckey']) . '" data-label="' . esc_attr($label) . '"' . ($selected ? ' class="kop-wb-selected"' : '') . '>';
+    echo '<td class="kop-wb-selcol"><label class="kop-wb-sel"><input type="checkbox" class="kop-wb-pick"' . ($selected ? ' checked' : '') . '><span>Select</span></label></td>';
 
-    // Program column.
+    // Who it is filed under.
     echo '<td>';
-    $name = 'fid_' . $r['ckey'];
-    if ($r['facility_id']) {
-        echo '<label class="kop-wb-choice"><input type="radio" name="' . esc_attr($name) . '" value="' . (int) $r['facility_id'] . '" checked> <strong>'
-            . kop_wb_facility_link($r['facility_id'], $r['facility_name'], $r['facility_state']) . '</strong></label>';
-        if ($pending) {
-            foreach (array_slice($alts, 0, 5) as $a) {
-                echo '<label class="kop-wb-choice"><input type="radio" name="' . esc_attr($name) . '" value="' . (int) $a['id'] . '"> '
-                    . kop_wb_facility_link($a['id'], $a['name'], $a['state'] ?? '') . '</label>';
+    if ($pending) {
+        echo '<div class="kop-wb-facs">';
+        $shown = array();
+        if ($r['facility_id']) {
+            echo kop_wb_fac_box($r['facility_id'], $r['facility_name'], $r['facility_state'], true, $r['kind'] === 'fuzzy' ? 'close name, check it' : 'best match');
+            $shown[(int) $r['facility_id']] = true;
+        }
+        foreach (array_slice($alts, 0, 5) as $a) {
+            if (!isset($shown[(int) $a['id']])) {
+                echo kop_wb_fac_box($a['id'], $a['name'], $a['state'] ?? '', false, 'other possible match');
+                $shown[(int) $a['id']] = true;
             }
         }
-    } elseif ($pending) {
-        echo '<em>No program record matches this name.</em>';
+        echo '</div>';
+        if (!$shown) {
+            echo '<p class="kop-wb-none">No facility matched this name. Add one below, or create a record.</p>';
+        }
+        echo '<div class="kop-wb-add">Add a facility: ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"', true) . '</div>';
+    } elseif ($filed) {
+        echo '<ul class="kop-wb-places">';
+        foreach (kop_wb_places($r) as $p) {
+            echo kop_wb_place_html($p);
+        }
+        echo '</ul>';
+        echo '<div class="kop-wb-add">Also file under: ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"', true) . '</div>';
     } elseif ($r['facility_name'] !== '') {
-        $kinds_made = function_exists('kop_wbc_kinds') ? kop_wbc_kinds() : array();
-        echo '<strong>' . esc_html($r['facility_name']) . '</strong>'
-            . (isset($kinds_made[$r['target_kind']]) ? ' <span class="kop-wb-muted">' . esc_html($kinds_made[$r['target_kind']]) . '</span>' : '');
-    }
-    if ($pending) {
-        echo '<div class="kop-wb-choice kop-wb-other">Other facility ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"') . '</div>';
+        echo '<strong>' . esc_html($r['facility_name']) . '</strong>';
     }
     $said = $r['header'] !== '' ? $r['header'] . ($r['place'] !== '' ? ', ' . $r['place'] : '') : $r['matched_name'];
-    echo '<div class="kop-wb-muted">' . esc_html($kinds[$r['kind']] ?? $r['kind']) . ($said !== '' ? ': &ldquo;' . esc_html($said) . '&rdquo;' : '') . '</div>';
+    echo '<div class="kop-wb-muted">' . esc_html($kinds[$r['kind']] ?? $r['kind']) . ($said !== '' ? ': the pages say &ldquo;' . esc_html($said) . '&rdquo;' : '') . '</div>';
     if (trim((string) $r['note']) !== '') {
         echo '<div class="kop-wb-note">' . esc_html($r['note']) . '</div>';
     }
@@ -806,8 +1000,8 @@ function kop_wb_render_row(array $r, $tab) {
     // Evidence column.
     echo '<td><strong>' . esc_html($r['issue_label']) . ($r['issue_number'] !== '' ? ' (' . esc_html($r['issue_number']) . ')' : '')
         . ', ' . esc_html(kop_wb_page_label($r['pages'])) . '</strong> &middot; ';
-    if ($r['status'] === 'filed' && $r['attachment_id']) {
-        echo '<a href="' . esc_url(wp_get_attachment_url((int) $r['attachment_id'])) . '" target="_blank" rel="noopener">Filed copy</a>';
+    if ($filed && $r['attachment_id']) {
+        echo '<a href="' . esc_url(wp_get_attachment_url((int) $r['attachment_id'])) . '" target="_blank" rel="noopener">Filed PDF</a>';
     } else {
         echo '<a href="' . esc_url($view) . '" target="_blank" rel="noopener">View pages</a>';
     }
@@ -829,13 +1023,13 @@ function kop_wb_render_row(array $r, $tab) {
     if ($pending) {
         echo '<button type="button" class="button button-primary" data-act="file">File it</button> '
             . '<button type="button" class="button" data-act="skip">Skip</button>';
-    } elseif ($r['status'] === 'filed') {
+    } elseif ($filed) {
         echo '<span class="kop-wb-muted">Filed' . ($r['reviewed_by'] ? ' by ' . esc_html($r['reviewed_by']) : '') . '</span><br>'
-            . '<button type="button" class="button button-small" data-act="undo">Undo</button>';
+            . '<button type="button" class="button button-small" data-act="undo">Undo filing</button>';
     } else {
         echo '<button type="button" class="button button-small" data-act="reopen">Put back</button>';
     }
-    echo '<div class="kop-wb-result"></div></td>';
+    echo '<div class="kop-wb-result" aria-live="polite"></div></td>';
     echo '</tr>';
 }
 
@@ -843,32 +1037,110 @@ function kop_wb_render_assets() {
     $nonce = wp_create_nonce('kop_woodbury');
     ?>
     <style>
-        .kop-wb-bar { position: sticky; top: 32px; z-index: 5; background: #f0f0f1; padding: 8px 0; }
+        .kop-wb-how { margin: 0 0 12px 20px; max-width: 960px; }
+        .kop-wb-how li { margin-bottom: 4px; }
+        .kop-wb-bar { position: sticky; top: 32px; z-index: 5; background: #f0f0f1; padding: 8px 0; border-bottom: 1px solid #dcdcde; }
+        .kop-wb-allbox { font-weight: 600; margin-right: 6px; }
+        .kop-wb-count { display: inline-block; min-width: 90px; margin-right: 6px; color: #1d2327; }
         .kop-wb-table td { vertical-align: top; }
-        .kop-wb-choice { display: block; margin: 2px 0; }
-        .kop-wb-other { margin-top: 6px; color: #555; }
+        .kop-wb-table tbody tr { background: #fff; }
+        .kop-wb-table tbody tr:nth-child(even) { background: #f9f9f9; }
+        .kop-wb-table tbody tr.kop-wb-selected { background: #e8f4f6; box-shadow: inset 4px 0 0 #33A7B5; }
+        .kop-wb-selcol { width: 64px; text-align: center; }
+        .kop-wb-sel { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: #50575e; cursor: pointer; }
+        .kop-wb-sel input { margin: 0; transform: scale(1.3); }
+        .kop-wb-facs { margin-bottom: 4px; }
+        .kop-wb-fac-row { display: block; margin: 3px 0; }
+        .kop-wb-none { margin: 0 0 4px; font-style: italic; }
+        .kop-wb-add { margin-top: 6px; color: #50575e; font-size: 12px; }
+        .kop-wb-places { margin: 0; }
+        .kop-wb-places li { margin: 0 0 6px; }
+        .kop-wb-where { display: block; color: #50575e; font-size: 12px; }
+        .kop-wb-untag { color: #b32d2e !important; font-size: 12px; }
         .kop-wb-muted { color: #666; font-size: 12px; margin-top: 4px; }
         .kop-wb-note { color: #8a4b00; font-size: 12px; margin-top: 4px; }
         .kop-wb-quote { margin: 6px 0; padding-left: 8px; border-left: 3px solid #33A7B5; color: #333; }
         .kop-wb-actions .button { margin-bottom: 4px; }
         .kop-wb-result { font-size: 12px; margin-top: 4px; }
+        .kop-wb-result ul { margin: 4px 0 0; }
         .kop-wb-result.ok { color: #1a7f37; }
         .kop-wb-result.err { color: #d63638; }
-        tr.kop-wb-done { opacity: .55; }
+        tr.kop-wb-done td:not(.kop-wb-actions) { opacity: .6; }
+        .kop-wb-log ul { margin: 0 0 8px 18px; list-style: disc; }
+        .kop-wb-log li span { color: #50575e; }
     </style>
     <script>
     (function () {
         var ajax = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
         var nonce = <?php echo wp_json_encode($nonce); ?>;
         var progress = document.querySelector('.kop-wb-progress');
-        var labels = { file: 'Filed', skip: 'Skipped', undo: 'Undone', reopen: 'Back in the queue' };
+        var count = document.querySelector('.kop-wb-count');
+        var log = document.querySelector('.kop-wb-log');
+        var labels = { file: 'Filed', skip: 'Skipped', undo: 'Filing undone', reopen: 'Back in the queue', add: 'Also filed', untag: 'Removed' };
 
-        function item(tr) {
-            var key = tr.getAttribute('data-key');
-            var typed = tr.querySelector('.kop-wb-fid');
-            var picked = tr.querySelector('input[type=radio]:checked');
-            var fid = typed && typed.value ? typed.value : (picked ? picked.value : '');
-            return { key: key, fid: fid };
+        function el(tag, cls, text) {
+            var e = document.createElement(tag);
+            if (cls) e.className = cls;
+            if (text) e.textContent = text;
+            return e;
+        }
+        function link(href, text) {
+            var a = el('a', '', text);
+            a.href = href; a.target = '_blank'; a.rel = 'noopener';
+            return a;
+        }
+        // "Wellspring Academies (Folder: Vermont › Wellspring Academies › Woodbury Reports Mentions)"
+        function placeLine(p) {
+            var li = el('li');
+            li.appendChild(p.page ? link(p.page, p.name) : el('strong', '', p.name));
+            if (p.where) li.appendChild(el('span', 'kop-wb-where', 'Folder: ' + p.where));
+            return li;
+        }
+        function addToLog(tr, verb, places, pdf) {
+            if (!log) return;
+            log.hidden = false;
+            var li = el('li');
+            li.appendChild(el('strong', '', tr.getAttribute('data-label')));
+            li.appendChild(document.createTextNode(' ' + verb + ' '));
+            places.forEach(function (p, i) {
+                if (i) li.appendChild(document.createTextNode('; '));
+                li.appendChild(p.page ? link(p.page, p.name) : el('strong', '', p.name));
+                if (p.where) li.appendChild(el('span', '', ' (' + p.where + ')'));
+            });
+            if (pdf) { li.appendChild(document.createTextNode(' · ')); li.appendChild(link(pdf, 'PDF')); }
+            log.querySelector('ul').appendChild(li);
+        }
+        function markDone(tr) {
+            tr.classList.add('kop-wb-done');
+            tr.classList.remove('kop-wb-selected');
+            tr.querySelectorAll('.kop-wb-actions button, .kop-wbc-go').forEach(function (b) { b.disabled = true; });
+            var pick = tr.querySelector('.kop-wb-pick');
+            if (pick) { pick.checked = false; pick.disabled = true; }
+            updateCount();
+        }
+        // Shown on the row and in the summary once pages are filed (also used by "Create a record").
+        window.kopWbFiled = function (tr, filed, verb) {
+            var out = tr.querySelector('.kop-wb-result');
+            out.className = 'kop-wb-result ok';
+            out.textContent = (verb || 'Filed') + ' under:';
+            var ul = el('ul');
+            (filed.places || []).forEach(function (p) { ul.appendChild(placeLine(p)); });
+            out.appendChild(ul);
+            if (filed.url) out.appendChild(link(filed.url, 'Open the filed PDF'));
+            addToLog(tr, (verb || 'filed').toLowerCase() + ' under', filed.places || [], filed.url);
+            markDone(tr);
+        };
+
+        function item(tr, act) {
+            var it = { key: tr.getAttribute('data-key'), fids: [] };
+            if (act === 'file') {
+                tr.querySelectorAll('.kop-wb-fac:checked').forEach(function (c) { it.fids.push(c.value); });
+            } else if (act === 'add') {
+                it.fids = tr._kopAdd || [];
+            } else if (act === 'untag') {
+                it.fid = tr._kopUntag;
+            }
+            return it;
         }
 
         function send(act, rows) {
@@ -877,9 +1149,10 @@ function kop_wb_render_assets() {
             body.append('nonce', nonce);
             body.append('act', act);
             rows.forEach(function (tr, i) {
-                var it = item(tr);
+                var it = item(tr, act);
                 body.append('items[' + i + '][key]', it.key);
-                body.append('items[' + i + '][fid]', it.fid);
+                it.fids.forEach(function (f) { body.append('items[' + i + '][fids][]', f); });
+                if (it.fid) body.append('items[' + i + '][fid]', it.fid);
             });
             return fetch(ajax, { method: 'POST', body: body, credentials: 'same-origin' })
                 .then(function (r) {
@@ -893,22 +1166,36 @@ function kop_wb_render_assets() {
                         var tr = document.querySelector('tr[data-key="' + res.key + '"]');
                         if (!tr) return;
                         var out = tr.querySelector('.kop-wb-result');
-                        if (res.ok) {
-                            tr.classList.add('kop-wb-done');
-                            tr.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
-                            var pick = tr.querySelector('.kop-wb-pick');
-                            if (pick) { pick.checked = false; pick.disabled = true; }
-                            out.className = 'kop-wb-result ok';
-                            out.textContent = labels[act] + (res.url ? ': ' : '');
-                            if (res.url) {
-                                var a = document.createElement('a');
-                                a.href = res.url; a.target = '_blank'; a.rel = 'noopener';
-                                a.textContent = res.facility || 'open';
-                                out.appendChild(a);
-                            }
-                        } else {
+                        if (!res.ok) {
                             out.className = 'kop-wb-result err';
                             out.textContent = res.error || 'Failed';
+                            return;
+                        }
+                        if (act === 'file') {
+                            window.kopWbFiled(tr, res);
+                        } else if (act === 'add') {
+                            var list = tr.querySelector('.kop-wb-places');
+                            res.places.forEach(function (p) {
+                                var li = placeLine(p);
+                                li.setAttribute('data-fid', p.id);
+                                li.appendChild(document.createTextNode(' '));
+                                li.appendChild(untagButton(p.id));
+                                list.appendChild(li);
+                            });
+                            out.className = 'kop-wb-result ok';
+                            out.textContent = 'Also filed under ' + res.places.map(function (p) { return p.name; }).join(', ') + '.';
+                            addToLog(tr, 'also filed under', res.places, '');
+                        } else if (act === 'untag') {
+                            var gone = tr.querySelector('.kop-wb-places li[data-fid="' + res.removed.id + '"]');
+                            if (gone) gone.remove();
+                            out.className = 'kop-wb-result ok';
+                            out.textContent = 'Removed from ' + res.removed.name + '.';
+                            addToLog(tr, 'removed from', [{ name: res.removed.name }], '');
+                        } else {
+                            out.className = 'kop-wb-result ok';
+                            out.textContent = labels[act] + '.';
+                            addToLog(tr, labels[act].toLowerCase(), [], '');
+                            markDone(tr);
                         }
                     });
                 });
@@ -920,7 +1207,11 @@ function kop_wb_render_assets() {
             running = true;
             var queue = rows.slice(), done = 0, total = rows.length, size = act === 'file' ? 3 : 10;
             function next() {
-                if (!queue.length) { running = false; progress.textContent = labels[act] + ' ' + done + ' of ' + total + '.'; return; }
+                if (!queue.length) {
+                    running = false;
+                    progress.textContent = total > 1 ? labels[act] + ' ' + done + ' of ' + total + '. Each row says where it went; the summary is at the top.' : '';
+                    return;
+                }
                 var batch = queue.splice(0, size);
                 progress.textContent = 'Working... ' + done + ' of ' + total;
                 return send(act, batch).then(function () { done += batch.length; return next(); })
@@ -929,27 +1220,93 @@ function kop_wb_render_assets() {
             return next();
         }
 
+        function untagButton(fid) {
+            var b = el('button', 'button-link kop-wb-untag', 'Remove');
+            b.type = 'button';
+            b.setAttribute('data-fid', fid);
+            return b;
+        }
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('.kop-wb-untag');
+            if (!b) return;
+            var tr = b.closest('tr');
+            tr._kopUntag = b.getAttribute('data-fid');
+            run('untag', [tr]);
+        });
+
+        // A facility picked in "Add a facility": a ticked box on a waiting row, filed at once on a filed row.
+        document.addEventListener('kop-facility-picked', function (e) {
+            var tr = e.target.closest('tr');
+            if (!tr) return;
+            var f = e.detail;
+            var facs = tr.querySelector('.kop-wb-facs');
+            if (!facs) {
+                tr._kopAdd = [f.id];
+                run('add', [tr]);
+                return;
+            }
+            var box = facs.querySelector('.kop-wb-fac[value="' + f.id + '"]');
+            if (!box) {
+                var lab = el('label', 'kop-wb-fac-row');
+                box = el('input', 'kop-wb-fac');
+                box.type = 'checkbox';
+                box.value = f.id;
+                lab.appendChild(box);
+                lab.appendChild(document.createTextNode(' '));
+                lab.appendChild(f.url ? link(f.url, f.name) : el('strong', '', f.name));
+                var place = [f.city, f.state || f.country].filter(Boolean).join(', ');
+                if (place) lab.appendChild(el('span', 'kop-wb-muted', ' ' + place));
+                facs.appendChild(lab);
+            }
+            box.checked = true;
+            var none = tr.querySelector('.kop-wb-none');
+            if (none) none.hidden = true;
+            select(tr, true);
+        });
+
+        function select(tr, on) {
+            var pick = tr.querySelector('.kop-wb-pick');
+            if (!pick || pick.disabled) return;
+            pick.checked = on;
+            tr.classList.toggle('kop-wb-selected', on);
+            updateCount();
+        }
+        function updateCount() {
+            if (!count) return;
+            var n = document.querySelectorAll('.kop-wb-pick:checked').length;
+            count.textContent = n === 1 ? '1 row selected' : n + ' rows selected';
+        }
+        document.querySelectorAll('.kop-wb-pick').forEach(function (c) {
+            c.addEventListener('change', function () { select(c.closest('tr'), c.checked); });
+        });
+        document.addEventListener('change', function (e) {
+            if (e.target.classList && e.target.classList.contains('kop-wb-fac') && e.target.checked) select(e.target.closest('tr'), true);
+        });
+
         document.querySelectorAll('.kop-wb-table button[data-act]').forEach(function (b) {
-            b.addEventListener('click', function () { run(b.getAttribute('data-act'), [b.closest('tr')]); });
+            b.addEventListener('click', function () {
+                var tr = b.closest('tr'), act = b.getAttribute('data-act');
+                if (act === 'file' && !tr.querySelector('.kop-wb-fac:checked')) {
+                    var out = tr.querySelector('.kop-wb-result');
+                    out.className = 'kop-wb-result err';
+                    out.textContent = 'Tick at least one facility under File under first.';
+                    return;
+                }
+                run(act, [tr]);
+            });
         });
         document.querySelectorAll('.kop-wb-bar button[data-bulk]').forEach(function (b) {
             b.addEventListener('click', function () {
                 var rows = Array.prototype.map.call(document.querySelectorAll('.kop-wb-pick:checked'), function (c) { return c.closest('tr'); });
-                if (!rows.length) { progress.textContent = 'Tick some rows first.'; return; }
+                if (!rows.length) { progress.textContent = 'Tick Select on some rows first.'; return; }
                 run(b.getAttribute('data-bulk'), rows);
             });
         });
         var all = document.querySelector('.kop-wb-all');
         if (all) all.addEventListener('change', function () {
-            document.querySelectorAll('.kop-wb-pick:not(:disabled)').forEach(function (c) { c.checked = all.checked; });
+            document.querySelectorAll('.kop-wb-pick:not(:disabled)').forEach(function (c) { select(c.closest('tr'), all.checked); });
         });
-        // Typing an id or picking another match ticks the row.
-        document.querySelectorAll('.kop-wb-fid, .kop-wb-table input[type=radio]').forEach(function (el) {
-            el.addEventListener('change', function () {
-                var pick = el.closest('tr').querySelector('.kop-wb-pick');
-                if (pick && !pick.disabled) pick.checked = true;
-            });
-        });
+        updateCount();
     })();
     </script>
     <?php

@@ -936,7 +936,8 @@ function kop_render_facilities_from_news_page() {
         wp_die('Not authorized', 'Access Denied', array('response' => 403));
     }
     $pdo = kop_closure_pdo();
-    echo '<div class="wrap"><h1>Facilities from News</h1>';
+    echo '<div class="wrap"><h1>Facilities from News</h1>'
+        . '<style>.kop-fd-box{margin:0 0 10px;padding:8px;background:#f6f7f7;border:1px solid #dcdcde}.kop-fd-hint{color:#666;font-size:12px}</style>';
     if (!$pdo) {
         echo '<p>The records database is not reachable.</p></div>';
         return;
@@ -949,20 +950,28 @@ function kop_render_facilities_from_news_page() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kop_fd_action'])) {
         check_admin_referer('kop_facilities_from_news');
         $id = (int) ($_POST['kop_fd_id'] ?? 0);
+        $stmt = $pdo->prepare('SELECT c.mention, c.facility_id, n.article_title FROM news_facility_candidates c
+                                 LEFT JOIN news_submissions n ON n.id = c.news_id WHERE c.id = ?');
+        $stmt->execute(array($id));
+        $cand = $stmt->fetch(PDO::FETCH_ASSOC) ?: array('mention' => '', 'facility_id' => 0, 'article_title' => '');
+        $article = $cand['article_title'] !== '' && $cand['article_title'] !== null ? '&ldquo;' . esc_html($cand['article_title']) . '&rdquo;' : 'the article';
         try {
+            // Messages are built from escaped parts, so they are printed as HTML.
             switch (sanitize_key($_POST['kop_fd_action'])) {
                 case 'remove':
-                    $fid = kop_facdisc_remove($pdo, $id, $user);
-                    $msg = 'Record #' . $fid . ' removed; the scan will not create it again.';
+                    $was = $cand['facility_id'] ? kop_facility_finder_label($pdo, (int) $cand['facility_id']) : '&ldquo;' . esc_html($cand['mention']) . '&rdquo;';
+                    kop_facdisc_remove($pdo, $id, $user);
+                    $msg = 'Removed the record for ' . $was . '. The scan will not create it again.';
                     break;
                 case 'create':
                     list($decision, $fid) = kop_facdisc_create_by_hand($pdo, $id, wp_unslash($_POST), $user);
-                    $msg = $decision === 'created' ? 'Record #' . $fid . ' created and linked to the article.'
-                        : 'A record with that name and place already exists (#' . $fid . '); the article is linked to it.';
+                    $msg = $decision === 'created'
+                        ? 'Created ' . kop_facility_finder_label($pdo, $fid) . ' and linked ' . $article . ' to it.'
+                        : 'That name and place is already in the database as ' . kop_facility_finder_label($pdo, $fid) . ', so ' . $article . ' is linked to it. No new record was made.';
                     break;
                 case 'link':
                     $fid = kop_facdisc_link_by_hand($pdo, $id, (int) ($_POST['kop_fd_facility'] ?? 0), $user);
-                    $msg = 'The article is now linked to record #' . $fid . '.';
+                    $msg = 'Linked ' . $article . ' to ' . kop_facility_finder_label($pdo, $fid) . '. It now lists the article.';
                     break;
                 case 'scan':
                     $ids = array_filter(array_map('intval', preg_split('/[\s,]+/', (string) ($_POST['kop_fd_news'] ?? ''))));
@@ -976,9 +985,9 @@ function kop_render_facilities_from_news_page() {
                         }
                     };
                     $r = kop_facdisc_scan_batch($pdo, $ids ? count($ids) : 15, 110, true, $ids, $log);
-                    $msg = sprintf('Scanned %d articles: %d new facilities, %d closure reports matched, %d failed%s.',
+                    $msg = esc_html(sprintf('Scanned %d articles: %d new facilities, %d closure reports matched, %d failed%s.',
                         $r['counts']['scanned'], $r['counts']['created'], $r['counts']['rematched'] ?? 0, $r['counts']['error'],
-                        $r['counts']['error'] ? ' (Groq allows a few articles a minute; the hourly run carries on)' : '');
+                        $r['counts']['error'] ? ' (Groq allows a few articles a minute; the hourly run carries on)' : ''));
                     if ($lines) {
                         echo '<div class="notice notice-info"><p>' . implode('<br>', array_map('esc_html', $lines)) . '</p></div>';
                     }
@@ -987,7 +996,7 @@ function kop_render_facilities_from_news_page() {
                     $msg = '';
             }
             if ($msg !== '') {
-                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($msg) . '</p></div>';
+                echo '<div class="notice notice-success is-dismissible"><p>' . $msg . '</p></div>';
             }
         } catch (Throwable $e) {
             echo '<div class="notice notice-error"><p>' . esc_html($e->getMessage()) . '</p></div>';
@@ -1019,9 +1028,8 @@ function kop_render_facilities_from_news_page() {
     echo '</ul><div style="clear:both"></div>';
     echo '<form method="post" style="margin:8px 0 16px">';
     wp_nonce_field('kop_facilities_from_news');
-    echo '<input type="hidden" name="kop_fd_action" value="scan"><label>Scan now: article ids '
-        . '<input type="text" name="kop_fd_news" placeholder="blank = next 10 unscanned" style="width:240px"></label> '
-        . '<button type="submit" class="button">Scan</button></form>';
+    echo '<input type="hidden" name="kop_fd_action" value="scan"><button type="submit" class="button">Scan the next 10 articles now</button> '
+        . '<label style="color:#666">or only these article numbers (optional) <input type="text" name="kop_fd_news" style="width:160px"></label></form>';
 
     $stmt = $pdo->prepare('SELECT c.*, n.article_title, n.publication_name, n.publication_date, n.article_url
                              FROM news_facility_candidates c LEFT JOIN news_submissions n ON n.id = c.news_id
@@ -1056,14 +1064,15 @@ function kop_render_facilities_from_news_page() {
             echo '<form method="post">';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="remove"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'
-                . '<button type="submit" class="button button-small" onclick="return confirm(\'Remove this record?\')">Remove record</button></form>';
+                . '<button type="submit" class="button button-small" onclick="return confirm(\'Remove the record the scan created for this?\')">Remove the record it created</button></form>';
         } elseif (in_array($r['decision'], array('possible_duplicate', 'other_era', 'needs_place', 'provider', 'not_facility', 'removed'), true)) {
-            echo '<form method="post" style="margin-bottom:8px">';
+            echo '<form method="post" class="kop-fd-box">';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="link"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'
-                . 'Same as facility ' . kop_facility_finder_field('kop_fd_facility', $r['facility_id']) . ' '
-                . '<button type="submit" class="button button-small">Link</button></form>';
-            echo '<form method="post">';
+                . '<strong>Already in the database?</strong> Pick it:<br>' . kop_facility_finder_field('kop_fd_facility', $r['facility_id'])
+                . ($r['facility_id'] ? '<br><span class="kop-fd-hint">Filled in with the closest record (left column). Search to change it.</span>' : '')
+                . '<br><button type="submit" class="button button-small">Link the article to this facility</button></form>';
+            echo '<form method="post" class="kop-fd-box"><strong>Not in the database?</strong> Create it:';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="create"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">';
             $field = static function ($name, $label, $value, $width) {
@@ -1077,7 +1086,7 @@ function kop_render_facilities_from_news_page() {
             foreach (kop_facdisc_types() as $type) {
                 echo '<option' . (($e['type'] ?? '') === $type ? ' selected' : '') . '>' . esc_html($type) . '</option>';
             }
-            echo '</select></label><button type="submit" class="button button-small">Create facility</button></form>';
+            echo '</select></label><button type="submit" class="button button-small">Create this facility</button></form>';
         }
         echo '</td></tr>';
     }

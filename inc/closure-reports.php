@@ -729,33 +729,43 @@ function kop_render_closure_reports_page() {
         check_admin_referer('kop_closure_reports');
         $action = sanitize_key($_POST['kop_cr_action']);
         $id = (int) ($_POST['kop_cr_id'] ?? 0);
+        $report = $id ? kop_closure_get_report($pdo, $id) : null;
+        $about = $report ? '&ldquo;' . esc_html($report['program_name']) . '&rdquo;' : 'the report';
+        $status_now = static function ($fid) use ($pdo) {
+            $stmt = $pdo->prepare('SELECT status, end_year FROM facilities_v2 WHERE id = ?');
+            $stmt->execute(array((int) $fid));
+            $f = $stmt->fetch(PDO::FETCH_ASSOC) ?: array('status' => '', 'end_year' => null);
+            return '<strong>' . esc_html($f['status'] ?: 'Unknown') . '</strong>' . ($f['end_year'] ? ', ended ' . (int) $f['end_year'] : '');
+        };
         try {
+            // Messages are built from escaped parts, so they are printed as HTML.
             if ($action === 'apply') {
                 // A cleared box is 0: set no end year. No box at all (a
                 // Suspended report) leaves it to the closure date, if any.
                 $end = isset($_POST['kop_cr_end_year']) ? (int) $_POST['kop_cr_end_year'] : null;
                 $fid = kop_closure_apply($pdo, $id, $user, (int) ($_POST['kop_cr_facility'] ?? 0), $end);
-                $msg = 'Report #' . $id . ' confirmed: facility #' . $fid . ' updated. Its page and the network map show the new status now.';
+                $msg = 'Confirmed. ' . kop_facility_finder_label($pdo, $fid) . ' is now marked ' . $status_now($fid)
+                    . '. Its facility page and the network map already show this. The report moved to the <em>Confirmed</em> tab, where Undo puts it back.';
             } elseif ($action === 'undo') {
                 $fid = kop_closure_undo($pdo, $id, $user);
-                $msg = 'Report #' . $id . ' undone: facility #' . $fid . ' is back to what it was.';
+                $msg = 'Undone. ' . kop_facility_finder_label($pdo, $fid) . ' is back to ' . $status_now($fid) . ', and the report is waiting again.';
             } elseif ($action === 'dismiss') {
                 kop_closure_set_status($pdo, $id, 'dismissed', $user);
-                $msg = 'Report #' . $id . ' dismissed.';
+                $msg = 'Dismissed the report about ' . $about . '. No facility was changed.';
             } elseif ($action === 'reopen') {
                 kop_closure_set_status($pdo, $id, 'pending', $user);
-                $msg = 'Report #' . $id . ' reopened.';
+                $msg = 'The report about ' . $about . ' is waiting for review again.';
             } elseif ($action === 'scan') {
                 $ids = array_filter(array_map('intval', preg_split('/[\s,]+/', (string) ($_POST['kop_cr_news'] ?? ''))));
                 $result = kop_closure_scan_batch($pdo, $ids ? count($ids) : 10, 90, true, $ids);
                 $c = $result['counts'];
-                $msg = sprintf('Scanned %d articles: %d with a closure, %d without, %d not about closures, %d failed.',
-                    $c['scanned'], $c['found'], $c['none'], $c['skipped'], $c['error']);
+                $msg = esc_html(sprintf('Scanned %d articles: %d with a closure, %d without, %d not about closures, %d failed.',
+                    $c['scanned'], $c['found'], $c['none'], $c['skipped'], $c['error']));
             } else {
                 $msg = '';
             }
             if ($msg !== '') {
-                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($msg) . '</p></div>';
+                echo '<div class="notice notice-success is-dismissible"><p>' . $msg . '</p></div>';
             }
         } catch (Throwable $e) {
             echo '<div class="notice notice-error"><p>' . esc_html($e->getMessage()) . '</p></div>';
@@ -792,8 +802,8 @@ function kop_render_closure_reports_page() {
     echo '<form method="post" style="margin:8px 0 16px">';
     wp_nonce_field('kop_closure_reports');
     echo '<input type="hidden" name="kop_cr_action" value="scan">'
-        . '<label>Scan now: article ids <input type="text" name="kop_cr_news" placeholder="blank = next 10 unscanned" style="width:240px"></label> '
-        . '<button type="submit" class="button">Scan</button></form>';
+        . '<button type="submit" class="button">Scan the next 10 articles now</button> '
+        . '<label style="color:#666">or only these article numbers (optional) <input type="text" name="kop_cr_news" style="width:160px"></label></form>';
 
     $sql = "SELECT r.*, n.article_title, n.publication_name, n.publication_date, n.article_url, n.status AS news_status
               FROM facility_closure_reports r
@@ -848,14 +858,15 @@ function kop_render_closure_reports_page() {
         if (in_array($r['status'], array('pending', 'unmatched'), true)) {
             $year = $r['closure_date'] && $r['target_status'] === 'Closed' ? substr($r['closure_date'], 0, 4) : '';
             $form('apply', 'Confirm: mark ' . $r['target_status'],
-                '<div style="margin-bottom:4px">Facility ' . kop_facility_finder_field('kop_cr_facility', $r['facility_id']) . '</div>'
+                '<div style="margin-bottom:6px"><strong>Which facility closed?</strong><br>' . kop_facility_finder_field('kop_cr_facility', $r['facility_id'])
+                . '<br><span style="color:#666;font-size:12px">' . ($r['facility_id'] ? 'Filled in with the scan\'s match (left column). Search to change it.' : 'The scan found no match: search for it by name.') . '</span></div>'
                 . ($r['target_status'] === 'Closed' ? '<label style="display:block;margin-bottom:4px">End year <input type="number" name="kop_cr_end_year" value="' . esc_attr($year) . '" style="width:70px"></label>' : ''),
                 true);
-            $form('dismiss', 'Dismiss');
+            $form('dismiss', 'Dismiss: not a closure');
         } elseif ($r['status'] === 'applied') {
-            $form('undo', 'Undo');
+            $form('undo', 'Undo: restore the old status');
         } else {
-            $form('reopen', 'Reopen');
+            $form('reopen', 'Put back to review');
         }
         echo '</td></tr>';
     }
