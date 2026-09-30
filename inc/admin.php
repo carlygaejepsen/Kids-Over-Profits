@@ -477,6 +477,9 @@ function kop_tool_page_specs() {
         // mostly directions to Indigenous-led organizations. A draft so the owner
         // reads it (ideally with Indigenous reviewers) before publishing by hand.
         array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'draft'),
+        // Frequently asked questions; text in js/data/pages/faq.json (Page Text editor).
+        // A draft so the owner reads every answer before publishing by hand.
+        array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'draft'),
     );
 }
 
@@ -657,7 +660,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '13';
+    $version = '14';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

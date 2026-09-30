@@ -41,6 +41,12 @@ function kop_page_text_pages() {
             'prefix' => 'kop-ibs',
             'css'    => 'css/indian-boarding-schools.css',
         ),
+        'faq' => array(
+            'title'  => 'Frequently Asked Questions',
+            'file'   => 'js/data/pages/faq.json',
+            'prefix' => 'kop-faq',
+            'css'    => 'css/faq.css',
+        ),
     );
 }
 

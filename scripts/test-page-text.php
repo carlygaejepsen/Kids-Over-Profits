@@ -1,7 +1,7 @@
 <?php
 /**
  * Offline checks for the page text system (inc/page-text.php, the editor in
- * inc/page-text-editor.php) and the /indian-boarding-schools/ template.
+ * inc/page-text-editor.php) and the /indian-boarding-schools/ and /faq/ templates.
  *
  *   php scripts/test-page-text.php
  *
@@ -56,7 +56,8 @@ function add_query_arg($args, $url) { return $url . '&' . http_build_query($args
 function wp_nonce_field() { echo '<input type="hidden" name="_wpnonce" value="n">'; }
 function wp_nonce_url($u) { return $u . '&_wpnonce=n'; }
 function wp_create_nonce() { return 'n'; }
-function wp_json_encode($v) { return json_encode($v); }
+function wp_json_encode($v, $f = 0) { return json_encode($v, $f); }
+function wp_strip_all_tags($s) { return strip_tags((string) $s); }
 function wp_date($f, $t) { return date($f, $t); }
 function get_edit_post_link() { return ''; }
 
@@ -72,10 +73,10 @@ function check($ok, $what) {
     }
 }
 
-function render_page() {
+function render_page($template = 'page-indian-boarding-schools.php') {
     $GLOBALS['kop_test_posts'] = 1;
     ob_start();
-    include dirname(__DIR__) . '/templates/page-indian-boarding-schools.php';
+    include dirname(__DIR__) . '/templates/' . $template;
     return ob_get_clean();
 }
 
@@ -146,10 +147,50 @@ check(kop_page_text_edits() === array(), 'typing the original text back removes 
 update_option('kop_page_text_edits', array('indian-boarding-schools' => array('wrong' => array('heading' => $defaults[6]['heading'], 'body' => $defaults[6]['body'], 'user' => 'x', 'time' => 1))));
 check(kop_page_text_clear_matching('indian-boarding-schools') === 1 && kop_page_text_edits() === array(), 'an edit the repo has caught up with clears itself');
 
+echo "FAQ
+";
+update_option('kop_page_text_edits', array());
+$faq = kop_page_text_defaults('faq');
+$questions = array('what-is-the-tti', 'why-sent', 'educational-consultant', 'transporters', 'vocabulary', 'synanon', 'legal', 'licensed',
+    'dr-phil', 'some-okay', 'not-abused', 'politics', 'juvenile-justice', 'red-flags', 'help');
+$nq = count($questions);
+check(array_column($faq, 'key') === array_merge(array('intro'), $questions, array('updated')), "intro, the $nq questions in order, last updated");
+$html = render_page('page-faq.php');
+if (getenv('KOP_DUMP_FAQ')) {
+    file_put_contents(getenv('KOP_DUMP_FAQ'), $html);
+}
+foreach ($questions as $k) {
+    check(strpos($html, '<section id="kop-faq-' . $k . '" aria-labelledby="kop-faq-' . $k . '-title">') !== false
+        && strpos($html, '<li><a href="#kop-faq-' . $k . '">') !== false, "question $k is on the page and in the list of questions");
+}
+check(substr_count($html, '<li><a href="#kop-faq-') === $nq, "the list of questions has exactly the $nq questions");
+check(strpos($html, 'class="kop-faq-note" id="kop-faq-intro"') < strpos($html, 'class="kop-faq-toc"'), 'the opening note comes before the list of questions');
+check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), 'no format syntax left over');
+preg_match_all('/href="([^"]+)"/', $html, $m);
+$bad = array_filter($m[1], function ($u) { return !preg_match('#^(https://|\#kop-faq-)#', $u); });
+check(!$bad, 'every link is https or an in-page anchor' . ($bad ? ': ' . implode(' ', $bad) : ''));
+preg_match('#<script type="application/ld\+json">(.*?)</script>#s', $html, $ld);
+$ld = $ld ? json_decode($ld[1], true) : null;
+check($ld && $ld['@type'] === 'FAQPage' && count($ld['mainEntity']) === $nq
+    && $ld['mainEntity'][0]['name'] === 'What is the troubled teen industry?'
+    && strpos($ld['mainEntity'][0]['acceptedAnswer']['text'], '<') === false, "FAQPage structured data: $nq questions, answers as plain text");
+libxml_use_internal_errors(true);
+libxml_clear_errors();
+$doc = new DOMDocument();
+$doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
+$errs = array_filter(libxml_get_errors(), function ($e) { return !preg_match('/^Tag (main|header|section|nav) invalid/', trim($e->message)); });
+check(!$errs, 'the FAQ page parses as HTML without errors');
+
 echo "Editor screen
 ";
 $_SERVER['REQUEST_METHOD'] = 'GET';
 $_POST = array();
+$_REQUEST = array();
+ob_start();
+kop_render_page_text_editor();
+$picker = ob_get_clean();
+check(strpos($picker, 'Choose a page to edit') !== false && strpos($picker, 'kop_page=faq') !== false && strpos($picker, 'kop_page=indian-boarding-schools') !== false, 'with several pages the editor asks which one');
+$_REQUEST = array('kop_page' => 'indian-boarding-schools');
 update_option('kop_page_text_edits', array('indian-boarding-schools' => array('wrong' => array('heading' => 'Tell us', 'body' => 'Edited.', 'user' => 'Tester', 'time' => 1790000000))));
 ob_start();
 kop_render_page_text_editor();

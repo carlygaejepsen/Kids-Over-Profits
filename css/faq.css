@@ -1,0 +1,145 @@
+/*
+ * Frequently asked questions (templates/page-faq.php).
+ *
+ * One white card, one column, like the other Page Text pages. The list of
+ * questions sits at the top; each answer is a section with a teal rule on
+ * its left so the questions are easy to find while scrolling.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-faq-page {
+    max-width: 52rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.65;
+}
+
+/* Text never sits on the site's gradient: edge to edge on a phone. */
+@media (max-width: 600px) {
+    .kop-faq-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-faq-header {
+    margin-bottom: 1.5rem;
+}
+
+.kop-faq-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-faq-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-faq-editor-content {
+    margin-bottom: 2rem;
+}
+
+.kop-faq-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-faq-page p,
+.kop-faq-page ul {
+    margin: 0 0 1rem;
+}
+
+.kop-faq-page li {
+    margin-bottom: 0.45rem;
+}
+
+/* ---- Opening note ------------------------------------------------------- */
+
+.kop-faq-note {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    font-size: 0.98rem;
+}
+
+.kop-faq-note p {
+    margin: 0;
+}
+
+.kop-faq-note p + p {
+    margin-top: 0.5rem;
+}
+
+/* ---- The list of questions ---------------------------------------------- */
+
+.kop-faq-toc {
+    margin: 0 0 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 8px;
+}
+
+.kop-faq-toc ol {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+
+.kop-faq-toc li {
+    margin-bottom: 0.35rem;
+}
+
+.kop-faq-toc li:last-child {
+    margin-bottom: 0;
+}
+
+/* ---- Each question ------------------------------------------------------ */
+
+.kop-faq-page section {
+    margin-top: 2.5rem;
+    padding-left: 1.1rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    scroll-margin-top: 1.5rem;
+}
+
+.kop-faq-page h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-faq-page h3 {
+    margin: 1.5rem 0 0.4rem;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-faq-page section > :last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .kop-faq-page section {
+        padding-left: 0.8rem;
+    }
+}
+
+.kop-faq-updated {
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-faq-updated p {
+    margin: 0;
+}
