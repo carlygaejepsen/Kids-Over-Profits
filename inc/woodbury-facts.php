@@ -351,7 +351,10 @@ function kop_wbf_doc_undo(array &$doc, array $done) {
         }
     } elseif ($done['op'] === 'add_list') {
         $list = &kop_wbf_ref($doc, $done['path']);
-        $list = array_values(array_filter(is_array($list) ? $list : array(), function ($x) use ($done) { return $x !== $done['value']; }));
+        // Matched as kop_wbf_list_has() does: the save fills in a location's city and country, so by its raw text.
+        $list = array_values(array_filter(is_array($list) ? $list : array(), function ($x) use ($done) {
+            return !kop_wbf_list_has(array($x), $done['value']);
+        }));
         $empty = !$list;
         unset($list);
         if ($empty && !empty($done['created'])) {
