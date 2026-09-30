@@ -13,6 +13,7 @@
  *   consultant  referrers_master, mirrored into the state's locations_master
  *               row as api/save-master.php does
  *   provider    providers_master, one project per provider
+ *   transporter transporters_master, a youth transport company
  *
  * Every create refuses a name that is already a record, and a facility also
  * refuses a close match (kop_facdisc_near_duplicate) unless "It is a
@@ -23,7 +24,8 @@
  * Companies, consultants and providers get a FileBird folder named after
  * them (companies at the top level, as the existing company folders are;
  * consultants under "Educational Consultants", providers under "Mental
- * Health Providers") and the Woodbury pages go in a subfolder of it. Only the
+ * Health Providers", transporters under "Transporters") and the Woodbury
+ * pages go in a subfolder of it. Only the
  * company folder shows on a public page today.
  */
 
@@ -38,6 +40,7 @@ function kop_wbc_kinds() {
         'company'    => 'Company (operator)',
         'consultant' => 'Educational consultant',
         'provider'   => 'Mental health provider',
+        'transporter' => 'Transporter (youth transport)',
     );
 }
 
@@ -362,6 +365,40 @@ function kop_wbc_create_provider(array $r, array $f, PDO $pdo) {
     $pdo->prepare("INSERT INTO `{$table}` (unique_name, json_data, updated_at) VALUES (?, ?, NOW())")
         ->execute(array($f['name'], wp_json_encode($payload)));
     return array('kind' => 'provider', 'id' => (int) $pdo->lastInsertId(), 'name' => $f['name'], 'folder' => $folder, 'url' => '');
+}
+
+/* ---- Transporter ----------------------------------------------------- */
+
+/**
+ * A youth transport company in transporters_master, in the wrapper
+ * api/save-master.php stores; the data form fills the other fields' defaults
+ * when it is opened (data-normalizer.js).
+ */
+function kop_wbc_create_transporter(array $r, array $f, PDO $pdo) {
+    global $wpdb;
+    require_once get_stylesheet_directory() . '/api/lib-suggested-edits.php';
+    $table = kop_resolve_table_name($pdo, 'transporters_master', $wpdb->prefix);
+    kop_ensure_master_table($pdo, $table);
+    $taken = $pdo->prepare("SELECT unique_name FROM `{$table}` WHERE LOWER(unique_name) = LOWER(?) OR json_data LIKE ? LIMIT 1");
+    $taken->execute(array($f['name'], '%"name":"' . str_replace(array('%', '_'), array('\%', '\_'), $f['name']) . '"%'));
+    if ($hit = $taken->fetchColumn()) {
+        throw new RuntimeException('Already a transporter record: ' . $hit . '.');
+    }
+    $parent = kop_wbc_folder('Transporters', 0);
+    $folder = kop_wbc_folder($f['name'], $parent);
+    $empty = array('otherNames', 'parentCompanies', 'websites', 'serviceAreas', 'vehicleTypes', 'pickupMethods', 'restraintPractices',
+        'licensing', 'affiliations', 'keyPersonnel', 'knownFacilities', 'knownReferrers', 'lawsuits', 'sourceUrls', 'socialMedia');
+    $company = array('name' => $f['name'], 'city' => $f['city'], 'state' => $f['state'], 'country' => $f['country'] !== '' ? $f['country'] : ($f['state'] !== '' ? 'United States' : ''),
+        'status' => '', 'website' => '', 'notes' => kop_wbc_source_note($r), 'fieldNotes' => new stdClass());
+    foreach ($empty as $k) {
+        $company[$k] = array();
+    }
+    $data = array('transporterCompany' => $company, 'transporters' => array(), 'documentFolderId' => $folder);
+    $payload = array('name' => $f['name'], 'data' => $data, 'category' => 'transporters', 'currentFacilityIndex' => 0,
+        'timestamp' => date('c'), 'documentFolderId' => $folder, '_source' => 'woodbury');
+    $pdo->prepare("INSERT INTO `{$table}` (unique_name, json_data, updated_at) VALUES (?, ?, NOW())")
+        ->execute(array($f['name'], wp_json_encode($payload)));
+    return array('kind' => 'transporter', 'id' => (int) $pdo->lastInsertId(), 'name' => $f['name'], 'folder' => $folder, 'url' => '');
 }
 
 /* ---- AJAX: create and file in one click ------------------------------- */
