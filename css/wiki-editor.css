@@ -216,8 +216,14 @@ body {
     white-space: nowrap;
 }
 
-.category-tab:hover {
+/* Kadence's button:hover/:focus (white text) outrank `.category-tab`, so both
+   colours are named here; .active keeps its own. */
+button.category-tab:not(.active):hover,
+button.category-tab:not(.active):focus,
+button.category-tab:not(.active):active {
     background: #fff;
+    color: #000435;
+    box-shadow: none;
 }
 
 .category-tab.active {

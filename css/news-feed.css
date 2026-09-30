@@ -406,9 +406,15 @@
     transition: all 0.2s;
 }
 
-.filter-btn:hover {
+/* Kadence's button:hover/:focus (white text) outrank `.filter-btn`, so both
+   colours are named here; .active keeps its own. */
+button.filter-btn:not(.active):hover,
+button.filter-btn:not(.active):focus,
+button.filter-btn:not(.active):active {
     background: var(--kop-mint-green);
     border-color: var(--kop-teal);
+    color: var(--kop-midnight-blue);
+    box-shadow: none;
 }
 
 .filter-btn.active {

@@ -103,6 +103,7 @@ MEASURE = r"""
   while ((t = walker.nextNode())) {
     const text = t.textContent.replace(/\s+/g, ' ').trim();
     if (!text) continue;
+    if (/^[•·|\/–—»«-]+$/.test(text)) continue;  // separator marks, decoration
     const el = t.parentElement;
     if (!el || el.closest('script,style,noscript,svg,[hidden],[aria-hidden="true"]')) continue;
     if (onlyInteractive && !el.closest('[data-kop-forced]')) continue;
@@ -148,16 +149,34 @@ def local_routes(page):
     page.route(re.compile(r'/themes/child/.*\.(css|js)(\?|$)'), handler)
 
 
+MARK_REPRESENTATIVES = r"""
+(sel) => {
+  // Hover and focus colours come from the element's classes and its context,
+  // so three of each kind stand for the rest (the glossary has thousands of links).
+  const root = document.querySelector('#primary') || document.body;
+  const count = new Map();
+  let n = 0;
+  for (const el of root.querySelectorAll(sel)) {
+    const p = el.parentElement;
+    const key = el.tagName + '|' + (typeof el.className === 'string' ? el.className : '') + '|' +
+      (p && typeof p.className === 'string' ? p.className : '');
+    const c = count.get(key) || 0;
+    if (c >= 3) continue;
+    count.set(key, c + 1);
+    el.setAttribute('data-kop-forced', '1');
+    n++;
+  }
+  return n;
+}
+"""
+
+
 def force_state(cdp, state):
-    """Force a pseudo-class on every interactive element (or clear it with [])."""
-    doc = cdp.send('DOM.getDocument', {'depth': -1})
-    ids = cdp.send('DOM.querySelectorAll', {'nodeId': doc['root']['nodeId'], 'selector': INTERACTIVE})['nodeIds']
+    """Force a pseudo-class on the marked representatives (or clear it with [])."""
+    doc = cdp.send('DOM.getDocument', {'depth': 0})
+    ids = cdp.send('DOM.querySelectorAll', {'nodeId': doc['root']['nodeId'], 'selector': '[data-kop-forced]'})['nodeIds']
     for nid in ids:
         cdp.send('CSS.forcePseudoState', {'nodeId': nid, 'forcedPseudoClasses': state})
-        if state:
-            cdp.send('DOM.setAttributeValue', {'nodeId': nid, 'name': 'data-kop-forced', 'value': '1'})
-        else:
-            cdp.send('DOM.removeAttribute', {'nodeId': nid, 'name': 'data-kop-forced'})
 
 
 def main():
@@ -187,6 +206,7 @@ def main():
             page.wait_for_timeout(2500)
 
             found = {}
+            page.evaluate(MARK_REPRESENTATIVES, INTERACTIVE)
             for state in ([], ['hover'], ['focus', 'focus-visible']):
                 if state:
                     force_state(cdp, state)
