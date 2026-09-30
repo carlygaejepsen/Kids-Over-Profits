@@ -3,17 +3,17 @@
   "sourceHash": "6c769881b11a",
   "facilitySource": "facilities_v2",
   "counts": {
-   "nodes": 1343,
-   "edges": 2539,
-   "facilityMatches": 536,
-   "withYears": 336,
+   "nodes": 1344,
+   "edges": 2543,
+   "facilityMatches": 537,
+   "withYears": 337,
    "withDeaths": 28,
    "rebranded": 90,
-   "profileEdges": 99,
+   "profileEdges": 103,
    "staffMovementEdges": 26,
    "staffListEdges": 935,
-   "addedPeople": 345,
-   "kind_person": 676,
+   "addedPeople": 346,
+   "kind_person": 677,
    "kind_facility": 527,
    "kind_parent": 93,
    "kind_association": 14,
@@ -28,7 +28,7 @@
    "edge_leadership": 688,
    "edge_clinical": 391,
    "edge_admissions": 124,
-   "edge_staff": 354,
+   "edge_staff": 358,
    "edge_membership": 20,
    "edge_other": 6,
    "edge_unknown": 216
@@ -126,6 +126,9 @@
      "innerchange",
      "new-haven-rtc",
      "scott-boice",
+     "bromley-brook-school",
+     "mary-jo-degrandi",
+     "first-light-wilderness-therapy",
      "universal-health-services",
      "bill-lane-and-associates",
      "mel-wasserman"
@@ -503,7 +506,7 @@
     "x": -654.2,
     "y": -3.11
    },
-   "years": "from 1971",
+   "years": "1971-2026",
    "otherNames": [
     "PCS",
     "UHS of Provo Canyon dba Provo Campus"
@@ -819,6 +822,36 @@
    "deaths": 1
   },
   {
+   "id": "embark-behavioral-health",
+   "name": "Embark Behavioral Health",
+   "aliases": [],
+   "kind": "parent",
+   "status": "open",
+   "chain": "Embark",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": true,
+   "importance": 139713,
+   "degree": 23,
+   "degreeByCategory": {
+    "corporate": 15,
+    "leadership": 2,
+    "clinical": 2,
+    "staff": 2,
+    "admissions": 2
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 927.03,
+    "y": 69.86
+   },
+   "years": "from 2018"
+  },
+  {
    "id": "solstice-east",
    "name": "Solstice East",
    "aliases": [],
@@ -879,36 +912,6 @@
     "y": -400.72
    },
    "years": "2008-2023"
-  },
-  {
-   "id": "embark-behavioral-health",
-   "name": "Embark Behavioral Health",
-   "aliases": [],
-   "kind": "parent",
-   "status": "open",
-   "chain": "Embark",
-   "regions": [
-    "Embark"
-   ],
-   "natsap": true,
-   "importance": 139713,
-   "degree": 22,
-   "degreeByCategory": {
-    "corporate": 15,
-    "leadership": 2,
-    "clinical": 2,
-    "admissions": 2,
-    "staff": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 927.03,
-    "y": 69.86
-   },
-   "years": "from 2018"
   },
   {
    "id": "northwest-academy",
@@ -1337,6 +1340,37 @@
    "years": "from 1960"
   },
   {
+   "id": "academy-at-swift-river",
+   "name": "Academy at Swift River",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "Aspen",
+   "regions": [
+    "Wilderness"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 16,
+   "degreeByCategory": {
+    "leadership": 4,
+    "admissions": 1,
+    "staff": 5,
+    "clinical": 3,
+    "corporate": 1,
+    "unknown": 2
+   },
+   "facilityId": 11977,
+   "uniqueName": "Academy at Swift River",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 882.06,
+    "y": -246.86
+   },
+   "years": "1997-2013"
+  },
+  {
    "id": "auldern-academy",
    "name": "Auldern Academy",
    "aliases": [],
@@ -1397,37 +1431,6 @@
     "y": 431.55
    },
    "deaths": 1
-  },
-  {
-   "id": "academy-at-swift-river",
-   "name": "Academy at Swift River",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "Aspen",
-   "regions": [
-    "Wilderness"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 15,
-   "degreeByCategory": {
-    "leadership": 4,
-    "admissions": 1,
-    "staff": 4,
-    "clinical": 3,
-    "corporate": 1,
-    "unknown": 2
-   },
-   "facilityId": 11977,
-   "uniqueName": "Academy at Swift River",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 882.06,
-    "y": -246.86
-   },
-   "years": "1997-2013"
   },
   {
    "id": "agape-boarding-school",
@@ -1763,6 +1766,36 @@
    "years": "2016-2023"
   },
   {
+   "id": "first-light-wilderness-therapy",
+   "name": "First Light Wilderness Therapy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "Embark",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": false,
+   "importance": 28749,
+   "degree": 13,
+   "degreeByCategory": {
+    "clinical": 6,
+    "leadership": 2,
+    "staff": 3,
+    "corporate": 1,
+    "admissions": 1
+   },
+   "facilityId": 12490,
+   "uniqueName": "First Light Wilderness Therapy",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 939.93,
+    "y": 172.3
+   },
+   "years": "from 2020"
+  },
+  {
    "id": "hidden-lake-academy",
    "name": "Hidden Lake Academy",
    "aliases": [],
@@ -1908,36 +1941,6 @@
     "y": 397.84
    },
    "years": "1995-2011"
-  },
-  {
-   "id": "first-light-wilderness-therapy",
-   "name": "First Light Wilderness Therapy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "Embark",
-   "regions": [
-    "Embark"
-   ],
-   "natsap": false,
-   "importance": 28749,
-   "degree": 12,
-   "degreeByCategory": {
-    "clinical": 6,
-    "leadership": 2,
-    "staff": 2,
-    "corporate": 1,
-    "admissions": 1
-   },
-   "facilityId": 12490,
-   "uniqueName": "First Light Wilderness Therapy",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 939.93,
-    "y": 172.3
-   },
-   "years": "from 2020"
   },
   {
    "id": "lake-house-academy",
@@ -2859,8 +2862,8 @@
     "staff": 2,
     "other": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100182,
+   "uniqueName": "Synanon",
    "dates": "",
    "isolated": false,
    "board": {
@@ -5593,6 +5596,34 @@
    }
   },
   {
+   "id": "bromley-brook-school",
+   "name": "Bromley Brook School",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "Aspen",
+   "regions": [
+    "Aspen"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 5,
+   "degreeByCategory": {
+    "leadership": 2,
+    "corporate": 2,
+    "staff": 1
+   },
+   "facilityId": 12132,
+   "uniqueName": "Bromley Brook School",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 342.74,
+    "y": 100.12
+   },
+   "years": "2004-2011"
+  },
+  {
    "id": "bryan-delaney",
    "name": "Bryan Delaney",
    "aliases": [],
@@ -7698,33 +7729,6 @@
    }
   },
   {
-   "id": "bromley-brook-school",
-   "name": "Bromley Brook School",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "Aspen",
-   "regions": [
-    "Aspen"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 4,
-   "degreeByCategory": {
-    "leadership": 2,
-    "corporate": 2
-   },
-   "facilityId": 12132,
-   "uniqueName": "Bromley Brook School",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 342.74,
-    "y": 100.12
-   },
-   "years": "2004-2011"
-  },
-  {
    "id": "browning-distance-learning-academy",
    "name": "Browning Distance Learning Academy",
    "aliases": [],
@@ -9645,6 +9649,35 @@
     "Three Springs of Marion"
    ],
    "currentName": "Silver Springs Youth Academy"
+  },
+  {
+   "id": "mary-jo-degrandi",
+   "name": "Mary Jo DeGrandi",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 4,
+   "degreeByCategory": {
+    "staff": 4
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 772.94,
+    "y": 23.86
+   },
+   "addedFrom": [
+    "consultant records"
+   ],
+   "edCon": true
   },
   {
    "id": "matthew-fitzgerald",
@@ -12453,6 +12486,7 @@
     "x": -520.87,
     "y": -294.32
    },
+   "years": "until 2022",
    "otherNames": [
     "Britt Halfway House"
    ]
@@ -57638,6 +57672,62 @@
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0100",
+   "source": "mary-jo-degrandi",
+   "target": "embark-behavioral-health",
+   "category": "staff",
+   "roles": [
+    "former Senior Director of Clinical Partnerships, now an educational consultant"
+   ],
+   "raw": "former Senior Director of Clinical Partnerships, now an educational consultant (consultant profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0101",
+   "source": "mary-jo-degrandi",
+   "target": "first-light-wilderness-therapy",
+   "category": "staff",
+   "roles": [
+    "former Senior Director of Professional Relations, now an educational consultant"
+   ],
+   "raw": "former Senior Director of Professional Relations, now an educational consultant (consultant profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0102",
+   "source": "mary-jo-degrandi",
+   "target": "academy-at-swift-river",
+   "category": "staff",
+   "roles": [
+    "former Director of Admissions, now an educational consultant"
+   ],
+   "raw": "former Director of Admissions, now an educational consultant (consultant profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0103",
+   "source": "mary-jo-degrandi",
+   "target": "bromley-brook-school",
+   "category": "staff",
+   "roles": [
+    "former Coordinator of Special Therapeutic Programs, now an educational consultant"
+   ],
+   "raw": "former Coordinator of Special Therapeutic Programs, now an educational consultant (consultant profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
    "provenance": "profile"
   },
   {

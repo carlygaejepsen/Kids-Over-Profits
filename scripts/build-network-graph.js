@@ -917,8 +917,55 @@ function readProfileClaims(nodes, overrides) {
     } catch (err) {
         console.warn('  ! could not read profile relationships: ' + err.message);
     }
+    try {
+        readConsultantClaims(db, resolve, claim);
+    } catch (err) {
+        console.warn('  ! could not read consultant records: ' + err.message);
+    }
     db.close();
     return claims;
+}
+
+/**
+ * Educational consultants (referrers_master): the programs each one worked
+ * at before or beside consulting (pastTTIJobs, flagged from Woodbury Reports
+ * and the admin form) and the programs they are known to refer to. A
+ * consultant with an industry past gets a person node even with one program
+ * (addPeople), because the link between placing children and having worked
+ * at the place is the point.
+ */
+function readConsultantClaims(db, resolve, claim) {
+    const has = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'referrers_master'").get();
+    if (!has) return;
+    db.prepare('SELECT json_data FROM referrers_master').all().forEach(function (row) {
+        let doc = null;
+        try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { return; }
+        const data = (doc && doc.data) || {};
+        const people = [];
+        if (data.referrerIndividual) people.push(data.referrerIndividual);
+        (Array.isArray(data.referrerConsultants) ? data.referrerConsultants : []).forEach(function (c) { people.push(c); });
+        const seen = new Set();
+        people.forEach(function (c) {
+            if (!c || typeof c !== 'object') return;
+            const name = String(c.fullName || [c.firstName, c.lastName].filter(Boolean).join(' ') || '').trim();
+            if (!name || seen.has(nameKey(name))) return;
+            seen.add(nameKey(name));
+            (Array.isArray(c.pastTTIJobs) ? c.pastTTIJobs : []).forEach(function (job) {
+                const org = typeof job === 'string' ? job : String((job && (job.organization || job.employer)) || '');
+                const place = resolve(org.trim());
+                if (!place || place.kind === 'person') return;
+                const role = typeof job === 'string' ? '' : String((job && job.role) || '').trim();
+                claim(name, place, 'staff', (role ? 'former ' + role : 'former staff') + ', now an educational consultant',
+                    'consultant profile', true, 'edcon');
+            });
+            profileTexts(c.knownReferrals).concat(profileTexts(c.facilitiesReferred)).forEach(function (org) {
+                const place = resolve(org);
+                if (place && place.kind !== 'person') {
+                    claim(name, place, 'referral', 'educational consultant referring here', 'consultant profile', true, 'edcon');
+                }
+            });
+        });
+    });
 }
 
 function addProfileEdges(nodes, edges, claims, overrides) {
@@ -1074,14 +1121,19 @@ function addPeople(nodes, nodeById, claims, overrides) {
         const name = cleanPersonName(rawName);
         const key = nameKey(name);
         if (!key || resolve(name)) return;
-        if (!people.has(key)) people.set(key, { name: name, places: new Map(), leads: false, from: new Set() });
+        if (!people.has(key)) people.set(key, { name: name, places: new Map(), leads: false, edCon: false, from: new Set() });
         const p = people.get(key);
         p.places.set(place.id, place);
         if (LEADS.test(role || '')) p.leads = true;
         p.from.add(from);
+        return p;
     };
 
-    claims.forEach(function (c) { if (c.person) note(c.name, c.node, c.role, 'profiles'); });
+    claims.forEach(function (c) {
+        if (!c.person) return;
+        const p = note(c.name, c.node, c.role, c.listedAs === 'edcon' ? 'consultant records' : 'profiles');
+        if (p && c.listedAs === 'edcon') p.edCon = true;
+    });
     if (fs.existsSync(STAFF_MOVEMENT_CSV)) {
         /* A move is only drawn when both ends are nodes, so only then does
          * it count towards a person's places. */
@@ -1109,7 +1161,7 @@ function addPeople(nodes, nodeById, claims, overrides) {
     let added = 0;
     Array.from(people.values()).sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (p) {
         const places = Array.from(p.places.values());
-        if (places.length < 2 && !p.leads) return;
+        if (places.length < 2 && !p.leads && !p.edCon) return;
         let id = slugify(p.name), n = 2;
         while (ids.has(id)) { id = slugify(p.name) + '-' + n; n++; }
         ids.add(id);
@@ -1136,6 +1188,7 @@ function addPeople(nodes, nodeById, claims, overrides) {
             },
             addedFrom: Array.from(p.from).sort()
         };
+        if (p.edCon) node.edCon = true;
         nodes.push(node);
         nodeById.set(id, node);
         added++;
