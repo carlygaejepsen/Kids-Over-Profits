@@ -229,6 +229,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $jsonKey = ($type === 'data') ? 'edited_json_data' : 'json_data';
         $submission['json_data'] = json_decode($submission[$jsonKey] ?? '', true);
         if ($type === 'data') {
+            if (($submission['status'] ?? '') === 'pending') {
+                $renamed = kop_rename_placeholder_provider_suggestion($pdo, $table, $submission['id'], $submission['master_id'], $submission['json_data']);
+                if ($renamed !== '') {
+                    $submission['master_id'] = $renamed;
+                }
+            }
             $submission['program_name'] = $submission['master_id'];
             $submission['submitted_by'] = $submission['submitter_ip'] ?? 'Anonymous';
             $submission['submission_notes'] = $submission['reason'] ?? '';
@@ -342,6 +348,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $row['json_data'] = json_decode($row['json_data'] ?? '', true);
         if ($type === 'data' && empty($row['submitted_by'])) {
              $row['submitted_by'] = 'Anonymous';
+        }
+        if ($type === 'data' && ($row['status'] ?? '') === 'pending') {
+            $renamed = kop_rename_placeholder_provider_suggestion($pdo, $table, $row['id'], $row['program_name'], $row['json_data']);
+            if ($renamed !== '') {
+                $row['program_name'] = $renamed;
+            }
         }
     }
     unset($row);

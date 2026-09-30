@@ -192,6 +192,32 @@ if (!function_exists('kop_provider_project_name')) {
     }
 }
 
+if (!function_exists('kop_rename_placeholder_provider_suggestion')) {
+    /**
+     * A pending provider suggestion saved as "Unknown Project" (before
+     * save-suggestion.php named providers) is renamed in place to the project
+     * approval would file it under, so the admin list shows where it goes.
+     * Returns the new name, or '' when the row is left as it is.
+     */
+    function kop_rename_placeholder_provider_suggestion(PDO $pdo, $table, $id, $master_id, $decoded_data) {
+        if (!kop_is_placeholder_project_name($master_id) || !is_array($decoded_data)) {
+            return '';
+        }
+        $project_data = kop_extract_project_data($decoded_data);
+        $category = $project_data['category'] ?? $decoded_data['category'] ?? '';
+        if (strtolower(trim((string) $category)) !== 'providers') {
+            return '';
+        }
+        $name = kop_sanitize_project_identifier(kop_provider_project_name($project_data));
+        if ($name === '') {
+            return '';
+        }
+        $stmt = $pdo->prepare("UPDATE $table SET master_id = ? WHERE id = ? AND status = 'pending'");
+        $stmt->execute([$name, (int) $id]);
+        return $stmt->rowCount() > 0 ? $name : '';
+    }
+}
+
 if (!function_exists('kop_preserve_hidden_testimony')) {
     /**
      * The public form never sees unpublished survivor testimony (it is
