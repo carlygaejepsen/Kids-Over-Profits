@@ -434,6 +434,71 @@ def consultant_proposals(args, issues, items, recs, match, prog_name, proposals,
     stats['consultants_seen'] = len(people)
 
 
+RENAME_WORDS = re.compile(r'formerly|renamed|previously|originally|known as|changed (?:its|the|their) name|new name', re.I)
+MOVE_WORDS = re.compile(r'moved|relocat|new (?:campus|location|home)', re.I)
+START_WORDS = re.compile(r'found|open|establish|began|begun|since|start|launch|creat', re.I)
+SIZE_WORDS = re.compile(r'student|bed|capacity|resident|youth|boys|girls|client|teen|adolescent|participant|young (?:men|women)', re.I)
+
+
+def auto_ok(p):
+    """
+    Listed so plainly that it goes into the record without review: a verified
+    quote, a sure match, nothing in the way, and the quote itself saying the
+    exact thing that is added. Closures, incidents, consultant flags and
+    programs with no record always wait for a person.
+    """
+    if not (p['found'] and p['match'] == 'exact' and p['facility_id'] and not p['conflict'] and not p.get('current')):
+        return False
+    if p['group'] in ('incident', 'consultant') or p['op'] == 'set_closed':
+        return False
+    quotes = [flat(e['quote']) for e in p['evidence'] if e['found']]
+    v = p['value']
+
+    def said(text):
+        t = flat(text)
+        return len(t) >= 3 and any(t in q or unhyphen(t) in unhyphen(q) for q in quotes)
+
+    if p['op'] == 'add_staff':
+        role = v['role'].split(' (')[0].strip()
+        if role.lower().startswith('former') or role in ('', 'Staff'):
+            return False
+        parts = person_key(v['name']).split()
+        return any(all(w in q for w in parts) and (flat(role) in q or flat(role.split(',')[0]) in q) for q in quotes)
+    if p['op'] == 'set_if_empty':
+        path = p['path']
+        if path == 'operatingPeriod.startYear':
+            return any(str(v) in q and START_WORDS.search(q) for q in quotes)
+        if path == 'facilityDetails.capacity':
+            return any(re.search(r'\b%d\b' % v, q) and SIZE_WORDS.search(q) for q in quotes)
+        if path == 'facilityDetails.ageRange':
+            return any(re.search(r'\b%d\b' % v['min'], q) and re.search(r'\b%d\b' % v['max'], q) for q in quotes)
+        if path == 'facilityDetails.gender':
+            girls = re.compile(r'\bgirls\b|\bfemales?\b|young women', re.I)
+            boys = re.compile(r'\bboys\b|\bmales?\b|young men', re.I)
+            both = re.compile(r'co-?ed|both genders|boys and girls|girls and boys', re.I)
+            if v == 'Female':
+                return any(girls.search(q) and not boys.search(q) for q in quotes)
+            if v == 'Male':
+                return any(boys.search(q) and not girls.search(q) for q in quotes)
+            return any(both.search(q) for q in quotes)
+        if path == 'facilityDetails.type':
+            pats = [pat for pat, name in TYPES if name == v]
+            return any(re.search(pat, q, re.I) for pat in pats for q in quotes)
+        return False
+    if p['op'] == 'add_list':
+        if p['path'] == 'identification.pastOperators':
+            return said(v)
+        if p['path'] == 'identification.pastNames':
+            return said(v) and any(RENAME_WORDS.search(q) for q in quotes)
+        if p['path'] == 'location.formerLocations':
+            return said(v['raw']) and any(MOVE_WORDS.search(q) for q in quotes)
+        if p['path'] == 'notes':
+            # "Membership: NATSAP (Woodbury Reports, ...)": the part between the label and the citation.
+            m = re.match(r'^[^:]{2,30}:\s*(.+?)\s*\(Woodbury Reports', v)
+            return bool(m) and said(m.group(1))
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', default=os.path.join(ROOT, 'tmp', 'woodbury-extract'))
@@ -869,6 +934,7 @@ def main():
         p['evidence'].sort(key=lambda e: (e['issue'], e['page']))
         p['issue_date'] = p['evidence'][0]['issue']
         p['preselect'] = bool(p['found'] and p['match'] in ('exact', 'consultant') and not p['conflict'])
+        p['auto'] = auto_ok(p)
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     json.dump({'built': 'woodbury-facts', 'proposals': out}, open(args.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 

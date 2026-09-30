@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_WOODBURY_FACTS_DB_VERSION', '1');
+define('KOP_WOODBURY_FACTS_DB_VERSION', '2');
 
 function kop_wbf_table() {
     global $wpdb;
@@ -62,6 +62,7 @@ function kop_wbf_ensure_table() {
         evidence LONGTEXT NULL,
         found TINYINT(1) NOT NULL DEFAULT 0,
         preselect TINYINT(1) NOT NULL DEFAULT 0,
+        auto TINYINT(1) NOT NULL DEFAULT 0,
         issue_date VARCHAR(7) NOT NULL DEFAULT '',
         status VARCHAR(12) NOT NULL DEFAULT 'pending',
         applied LONGTEXT NULL,
@@ -139,6 +140,7 @@ function kop_wbf_sync($force = false) {
             'evidence'           => wp_json_encode(array_values((array) ($p['evidence'] ?? array()))),
             'found'              => !empty($p['found']) ? 1 : 0,
             'preselect'          => !empty($p['preselect']) ? 1 : 0,
+            'auto'               => !empty($p['auto']) ? 1 : 0,
             'issue_date'         => substr((string) ($p['issue_date'] ?? ''), 0, 7),
         );
         if (!isset($existing[$pkey])) {
@@ -481,6 +483,8 @@ function kop_wbf_undo(array $rows, $reviewer) {
     $opts = kop_wbf_opts();
     $by = array();
     foreach ($rows as $r) {
+        // Something taken back by hand is never added automatically again.
+        $wpdb->update(kop_wbf_table(), array('auto' => 0), array('pkey' => $r['pkey']));
         if ($r['status'] === 'applied' && $r['grp'] === 'consultant') {
             kop_wbf_consultant_undo($r);
             $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
@@ -514,6 +518,60 @@ function kop_wbf_undo(array $rows, $reviewer) {
         do_action('kop_facility_status_changed', $fid);
     }
 }
+
+/* ---- Automatic additions --------------------------------------------------- */
+
+/**
+ * Add the items the build marked as plainly stated (auto = 1: verified quote,
+ * sure match, the quote saying exactly what is added; never closures,
+ * incidents, consultant flags or programs with no record), one facility at a
+ * time until $seconds run out. They land on the "Added automatically" tab,
+ * each with Undo. Runs hourly and for a moment whenever the screen opens.
+ */
+function kop_wbf_auto_run($seconds = 40) {
+    global $wpdb;
+    if (get_transient('kop_wbf_auto_lock')) {
+        return 0;
+    }
+    set_transient('kop_wbf_auto_lock', 1, 5 * MINUTE_IN_SECONDS);
+    $table = kop_wbf_table();
+    $start = microtime(true);
+    $added = 0;
+    try {
+        $fids = $wpdb->get_col("SELECT DISTINCT facility_id FROM {$table} WHERE status = 'pending' AND auto = 1 AND facility_id > 0 LIMIT 200");
+        foreach ($fids as $fid) {
+            if (microtime(true) - $start > $seconds) {
+                break;
+            }
+            $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$table} WHERE status = 'pending' AND auto = 1 AND facility_id = %d", (int) $fid), ARRAY_A);
+            try {
+                foreach (kop_wbf_apply($rows, (int) $fid, 'auto') as $res) {
+                    $added += !empty($res['ok']) ? 1 : 0;
+                }
+            } catch (Throwable $e) {
+                // Leave them for a person, with the reason.
+                error_log('kop woodbury facts auto #' . (int) $fid . ': ' . $e->getMessage());
+                foreach ($rows as $r) {
+                    $wpdb->update($table, array('auto' => 0, 'conflict' => 'Could not be added automatically: ' . $e->getMessage()), array('pkey' => $r['pkey']));
+                }
+            }
+        }
+    } finally {
+        delete_transient('kop_wbf_auto_lock');
+    }
+    return $added;
+}
+
+add_action('init', function () {
+    if (!wp_next_scheduled('kop_wbf_auto_hourly')) {
+        wp_schedule_event(time() + 300, 'hourly', 'kop_wbf_auto_hourly');
+    }
+});
+add_action('kop_wbf_auto_hourly', function () {
+    kop_wbf_ensure_table();
+    kop_wbf_sync();
+    kop_wbf_auto_run(120);
+});
 
 /* ---- Educational consultants with an industry past ----------------------- */
 
@@ -778,6 +836,7 @@ function kop_wbf_tabs() {
         'norecord' => array('label' => 'Programs with no record', 'where' => "status = 'pending' AND facility_id = 0 AND grp <> 'consultant'"),
         'consultants' => array('label' => 'Ed cons who worked in the industry', 'where' => "status = 'pending' AND grp = 'consultant'"),
         'applied'  => array('label' => 'Added', 'where' => "status = 'applied'"),
+        'auto'     => array('label' => 'Added automatically', 'where' => "status = 'applied' AND reviewed_by = 'auto'"),
         'rejected' => array('label' => 'Rejected', 'where' => "status = 'rejected'"),
     );
 }
@@ -819,6 +878,8 @@ function kop_render_woodbury_facts_page() {
     global $wpdb;
     kop_wbf_ensure_table();
     $sync = kop_wbf_sync(isset($_GET['wbf_resync']));
+    $auto_now = kop_wbf_auto_run(15);
+    $auto_left = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND auto = 1 AND facility_id > 0");
     $table = kop_wbf_table();
     $tabs = kop_wbf_tabs();
     $groups = kop_wbf_groups();
@@ -846,6 +907,13 @@ function kop_render_woodbury_facts_page() {
         . '<li><strong>Click <em>Add checked to record</em></strong> on the card, or <em>Add everything ticked on this page</em> at the top. '
         . 'The facility page shows the additions at once, each citing the issue; new staff, past operators and past names reach the network map on its next build.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo, which takes back exactly what was added.</li></ol>';
+    $auto_done = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . " WHERE status = 'applied' AND reviewed_by = 'auto'");
+    echo '<div class="notice notice-info inline"><p><strong>Plainly stated items are added for you.</strong> '
+        . 'When the quote itself names the person and their role at the program, or states the year, size, ages, owner or past name word for word, '
+        . 'and the program is a sure match, the item goes into the record without a click. Closures, incidents, consultant flags and programs with no record always wait for you. '
+        . number_format($auto_done) . ' added automatically so far' . ($auto_now ? ' (' . (int) $auto_now . ' just now)' : '')
+        . ($auto_left ? ', ' . number_format($auto_left) . ' more being added in the background' : '')
+        . '. Check or undo them on the <em>Added automatically</em> tab; anything you undo stays manual.</p></div>';
 
     $where = $tabs[$tab]['where'];
     if ($grp !== '') {
@@ -875,7 +943,7 @@ function kop_render_woodbury_facts_page() {
     echo '</select> <button class="button">Show</button>'
         . ($q !== '' || $grp !== '' ? ' <a href="' . esc_url(add_query_arg('wbf_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
 
-    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program' : ($tab === 'applied' ? 'applied_fid' : 'facility_id');
+    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program' : (in_array($tab, array('applied', 'auto'), true) ? 'applied_fid' : 'facility_id');
     $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card_col}) FROM {$table} WHERE {$where}");
     $order = $tab === 'norecord' ? 'COUNT(*) DESC, program' : 'MIN(program)';
     $cards = $wpdb->get_col("SELECT {$card_col} FROM {$table} WHERE {$where} GROUP BY {$card_col} ORDER BY {$order} LIMIT "
@@ -921,7 +989,7 @@ function kop_render_woodbury_facts_page() {
 function kop_wbf_render_card(array $rows, $tab) {
     $first = $rows[0];
     $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
-    $fid = $tab === 'applied' ? (int) $first['applied_fid'] : (int) $first['facility_id'];
+    $fid = in_array($tab, array('applied', 'auto'), true) ? (int) $first['applied_fid'] : (int) $first['facility_id'];
     echo '<div class="kop-wbf-card" data-fid="' . $fid . '">';
     echo '<div class="kop-wbf-head">';
     if ($fid) {
@@ -984,7 +1052,7 @@ function kop_wbf_render_card(array $rows, $tab) {
             . '<label><input type="checkbox" class="kop-wbf-cforce"> It is a different place from a close match</label> '
             . '<button type="button" class="button" data-act="create">Create the record and add checked</button></details>'
             . ' <button type="button" class="button" data-act="reject">Reject checked</button>';
-    } elseif ($tab === 'applied') {
+    } elseif (in_array($tab, array('applied', 'auto'), true)) {
         echo '<button type="button" class="button" data-act="undo">Undo checked</button>';
     } else {
         echo '<button type="button" class="button" data-act="undo">Put checked back to review</button>';
