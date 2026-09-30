@@ -1,0 +1,136 @@
+/* Site footer (inc/site-footer.php), on every page. A solid midnight band so
+   no footer text sits on the gradient body background. */
+
+.kop-site-footer {
+    margin-top: 3rem;
+    background: var(--kop-midnight-blue, #000435);
+    border-top: 4px solid var(--kop-teal, #33A7B5);
+    color: #fff;
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+.kop-site-footer__inner {
+    max-width: var(--global-content-width, 1290px);
+    margin: 0 auto;
+    /* Bottom room so the fixed Search button never covers the last line. */
+    padding: 2.5rem var(--global-content-edge-padding, 1.5rem) 5.5rem;
+}
+
+.kop-site-footer p {
+    margin: 0;
+}
+
+.kop-site-footer a {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: var(--kop-teal, #33A7B5);
+    text-underline-offset: 0.2em;
+}
+
+.kop-site-footer a:hover,
+.kop-site-footer a:focus-visible {
+    color: var(--kop-soft-pastel-yellow, #FFF5CB);
+    text-decoration-color: currentColor;
+}
+
+.kop-site-footer__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 2rem 3rem;
+    align-items: start;
+}
+
+.kop-site-footer__name {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.kop-site-footer__name a {
+    text-decoration: none;
+}
+
+.kop-site-footer__tagline {
+    margin-top: 0.5rem !important;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 32ch;
+}
+
+.kop-site-footer__nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem 1.5rem;
+}
+
+.kop-site-footer__nav a {
+    text-decoration: none;
+}
+
+.kop-site-footer__nav a:hover,
+.kop-site-footer__nav a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-site-footer__donate {
+    padding: 1.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.kop-site-footer__heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.35rem !important;
+}
+
+.kop-site-footer__donate > p:not(.kop-site-footer__heading) {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+}
+
+.kop-site-footer__widget {
+    margin: 0.9rem 0 0.5rem;
+}
+
+.kop-site-footer__more {
+    font-size: 0.9rem;
+}
+
+.kop-site-footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: 2rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .kop-site-footer__grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+    .kop-site-footer__donate {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .kop-site-footer__inner {
+        padding: 2rem 16px 5.5rem;
+    }
+    .kop-site-footer__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .kop-site-footer__bottom {
+        flex-direction: column;
+    }
+}

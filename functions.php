@@ -71,6 +71,9 @@ require_once get_stylesheet_directory() . '/inc/widgets.php';
 // Kadence content wrapper + sidebar (donate / newsletter widgets) around templates/*.php
 require_once get_stylesheet_directory() . '/inc/template-layout.php';
 
+// Site footer on every page: links, Givebutter donate button, copyright
+require_once get_stylesheet_directory() . '/inc/site-footer.php';
+
 // Ajax Search Lite live-dropdown integration (KOP database results)
 require_once get_stylesheet_directory() . '/inc/ajax-search-lite.php';
 

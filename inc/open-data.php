@@ -887,8 +887,8 @@ add_action('kop_open_data_daily', 'kop_open_data_cron');
 /* ---- Footer -------------------------------------------------------------- */
 
 /**
- * "Open source. Open data." under the copyright line on every page. Kadence
- * prints the customizer's footer HTML at the default priority; this follows it.
+ * "Open source. Open data." beside the copyright line on every page, printed
+ * by the site footer (inc/site-footer.php).
  */
 function kop_open_data_footer_line() {
     $page = get_page_by_path(KOP_OPEN_DATA_SLUG);
@@ -902,7 +902,6 @@ function kop_open_data_footer_line() {
         esc_url(KOP_OPEN_DATA_LICENSE_URL)
     );
 }
-add_action('kadence_footer_html', 'kop_open_data_footer_line', 20);
 
 /* ---- Page helpers ------------------------------------------------------- */
 
