@@ -362,7 +362,13 @@
             });
         }
 
-        if (searchInput)     searchInput.addEventListener('input', filterAndSort);
+        // Search once typing pauses: the first letters match most of a state,
+        // and redrawing it for every keystroke kept the box from keeping up.
+        var searchTimer = null;
+        if (searchInput) searchInput.addEventListener('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(filterAndSort, 150);
+        });
         if (sortSelect)      sortSelect.addEventListener('change', filterAndSort);
         if (newOnlyCheckbox) newOnlyCheckbox.addEventListener('change', filterAndSort);
 
