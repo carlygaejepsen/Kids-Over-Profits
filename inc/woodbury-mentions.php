@@ -791,8 +791,7 @@ function kop_wb_render_row(array $r, $tab) {
             . (isset($kinds_made[$r['target_kind']]) ? ' <span class="kop-wb-muted">' . esc_html($kinds_made[$r['target_kind']]) . '</span>' : '');
     }
     if ($pending) {
-        echo '<label class="kop-wb-choice kop-wb-other">Other facility id <input type="number" class="kop-wb-fid" style="width:90px"'
-            . ($r['facility_id'] ? '' : ' placeholder="id"') . '></label>';
+        echo '<div class="kop-wb-choice kop-wb-other">Other facility ' . kop_facility_finder_field('', '', ' class="kop-wb-fid"') . '</div>';
     }
     $said = $r['header'] !== '' ? $r['header'] . ($r['place'] !== '' ? ', ' . $r['place'] : '') : $r['matched_name'];
     echo '<div class="kop-wb-muted">' . esc_html($kinds[$r['kind']] ?? $r['kind']) . ($said !== '' ? ': &ldquo;' . esc_html($said) . '&rdquo;' : '') . '</div>';

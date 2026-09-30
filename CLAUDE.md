@@ -80,6 +80,8 @@ php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dr
 # them from the article, or links a known one; KOP Data Tools > Facilities from News to remove or create by hand
 php scripts/test-facility-discovery.php           # offline, against tmp/prod.sqlite, no Groq calls
 php api/scan-new-facilities.php --ids=502         # on the server: dry run; "apply" creates records
+# Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
+php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into

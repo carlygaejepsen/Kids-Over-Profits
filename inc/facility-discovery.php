@@ -1061,7 +1061,7 @@ function kop_render_facilities_from_news_page() {
             echo '<form method="post" style="margin-bottom:8px">';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="link"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'
-                . '<label>Same as facility id <input type="number" name="kop_fd_facility" value="' . ((int) $r['facility_id'] ?: '') . '" style="width:90px"></label> '
+                . 'Same as facility ' . kop_facility_finder_field('kop_fd_facility', $r['facility_id']) . ' '
                 . '<button type="submit" class="button button-small">Link</button></form>';
             echo '<form method="post">';
             wp_nonce_field('kop_facilities_from_news');

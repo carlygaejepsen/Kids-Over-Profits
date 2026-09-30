@@ -848,7 +848,7 @@ function kop_render_closure_reports_page() {
         if (in_array($r['status'], array('pending', 'unmatched'), true)) {
             $year = $r['closure_date'] && $r['target_status'] === 'Closed' ? substr($r['closure_date'], 0, 4) : '';
             $form('apply', 'Confirm: mark ' . $r['target_status'],
-                '<label style="display:block;margin-bottom:4px">Facility id <input type="number" name="kop_cr_facility" value="' . ((int) $r['facility_id'] ?: '') . '" style="width:90px"></label>'
+                '<div style="margin-bottom:4px">Facility ' . kop_facility_finder_field('kop_cr_facility', $r['facility_id']) . '</div>'
                 . ($r['target_status'] === 'Closed' ? '<label style="display:block;margin-bottom:4px">End year <input type="number" name="kop_cr_end_year" value="' . esc_attr($year) . '" style="width:70px"></label>' : ''),
                 true);
             $form('dismiss', 'Dismiss');

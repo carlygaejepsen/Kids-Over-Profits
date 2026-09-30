@@ -96,6 +96,8 @@ require_once get_stylesheet_directory() . '/inc/resources-list.php';
 // Network map data access (graph metadata + facility profile URLs)
 require_once get_stylesheet_directory() . '/inc/network-map.php';
 
+// Find-by-name box beside every facility id field on the admin screens
+require_once get_stylesheet_directory() . '/inc/facility-finder.php';
 // Facility closures reported in the news: hourly scan, review queue, confirm sets the status
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
