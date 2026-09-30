@@ -360,11 +360,11 @@ updated.
    --state=MI --file=<out.json>`; near misses such as "Calumet Center" /
    "Calumet RTC" are left for other names on the records). Owner: create
    `/mi-reports/` (State Reports template; the tracker lists pick it up once
-   published), approve the first post, and run `python backup_reports.py
-   --migrate` in the Tools repo (the first run's 1,890 PDFs landed in the
-   local `mi_pdfs/` fallback while Drive was not mounted). Then the severe
+   published) and approve the first post. (The 1,890 PDFs that landed in the
+   local `mi_pdfs/` fallback were moved to Drive on 2026-09-30.) Then the severe
    finding extractor (plan step 10).
-   **Oklahoma built 2026-09-30, not yet posted:** `ok_scraper.py` (Tools
+   **Oklahoma live 2026-09-30:** posted (93 facilities, 994 reports) and
+   `/ok-reports/` published (created on deploy by `kop_tool_page_specs()`). `ok_scraper.py` (Tools
    repo) and `js/inspections/states/ok.js`. A full `--no-post` run: 93
    programs (72 residential, 21 shelters), 994 reports: 844 monitoring
    visits (561 with non-compliances, 1,553 items, 38 marked numerous,
@@ -375,10 +375,7 @@ updated.
    names reach a `facilities_v2` record (most unmatched are shelters KOP
    does not track); near misses left as they are: "Positive Outcome/St.
    Anthony" / "Positive Outcome - St. Anthony" and "Cookson Hills" /
-   "Cookson Hills Christian Ministries". Owner: create `/ok-reports/`
-   (State Reports template; suggested intro: the state shows 36 months at a
-   time and publishes only substantiated complaints that did not rise to
-   abuse or neglect), approve the first post, then run the scraper **at
+   "Cookson Hills Christian Ministries". Owner: run the scraper **at
    least monthly** (Oklahoma in `scraper_launcher.py`), or say whether a
    scheduled task on this machine is wanted. Then the severe finding
    extractor (plan step 11: substantiated complaints and NRS items).
