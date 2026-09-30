@@ -300,6 +300,10 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
     }
 
     if ($r['op'] === 'set_if_empty') {
+        // A type is only ever one of the agreed types, the list the discovery form and "Create a record" use.
+        if ($r['path'] === 'facilityDetails.type' && function_exists('kop_facdisc_types') && !in_array($value, kop_facdisc_types(), true)) {
+            throw new RuntimeException('"' . $value . '" is not one of the agreed facility types.');
+        }
         $slot = &kop_wbf_ref($doc, $r['path']);
         $empty = $slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null);
         if (!$empty) {
@@ -477,7 +481,11 @@ function kop_wbf_undo(array $rows, $reviewer) {
     $opts = kop_wbf_opts();
     $by = array();
     foreach ($rows as $r) {
-        if ($r['status'] === 'applied') {
+        if ($r['status'] === 'applied' && $r['grp'] === 'consultant') {
+            kop_wbf_consultant_undo($r);
+            $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
+                'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
+        } elseif ($r['status'] === 'applied') {
             $by[(int) $r['applied_fid']][] = $r;
         } elseif ($r['status'] === 'rejected') {
             $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
@@ -504,6 +512,176 @@ function kop_wbf_undo(array $rows, $reviewer) {
             }
         });
         do_action('kop_facility_status_changed', $fid);
+    }
+}
+
+/* ---- Educational consultants with an industry past ----------------------- */
+
+function kop_wbf_referrer_table(PDO $pdo) {
+    global $wpdb;
+    require_once get_stylesheet_directory() . '/api/lib-suggested-edits.php';
+    $table = kop_resolve_table_name($pdo, 'referrers_master', $wpdb->prefix);
+    kop_ensure_master_table($pdo, $table);
+    return $table;
+}
+
+/** The person entries of a consultant record that are this person: referrerIndividual and referrerConsultants[]. */
+function kop_wbf_consultant_entries(array &$data, $key) {
+    $refs = array();
+    if (isset($data['referrerIndividual']) && is_array($data['referrerIndividual'])) {
+        $c = $data['referrerIndividual'];
+        $name = $c['fullName'] ?? trim(($c['firstName'] ?? '') . ' ' . ($c['lastName'] ?? ''));
+        if (kop_wbf_person_key($name) === $key) {
+            $refs[] = &$data['referrerIndividual'];
+        }
+    }
+    if (isset($data['referrerConsultants']) && is_array($data['referrerConsultants'])) {
+        foreach ($data['referrerConsultants'] as $i => $c) {
+            $name = is_array($c) ? ($c['fullName'] ?? trim(($c['firstName'] ?? '') . ' ' . ($c['lastName'] ?? ''))) : '';
+            if (kop_wbf_person_key($name) === $key) {
+                $refs[] = &$data['referrerConsultants'][$i];
+            }
+        }
+    }
+    return $refs;
+}
+
+/**
+ * Flag a consultant as former industry staff: their programs go into
+ * pastTTIJobs (the directory's "Career History"), formerIndustryStaff is set
+ * and the issue is cited in their notes. A consultant with no record gets one
+ * (kop_wbc_create_consultant, which also files it under Educational
+ * Consultants). Returns what Undo needs.
+ */
+function kop_wbf_consultant_apply(array $r) {
+    $v = kop_wbf_row_value($r);
+    $pdo = function_exists('kop_closure_pdo') ? kop_closure_pdo() : null;
+    if (!$pdo) {
+        throw new RuntimeException('No database connection.');
+    }
+    $table = kop_wbf_referrer_table($pdo);
+    $key = kop_wbf_person_key($v['name'] ?? '');
+    if ($key === '') {
+        throw new RuntimeException('No name to flag.');
+    }
+    $rid = (int) ($v['referrer_id'] ?? 0);
+    $created = false;
+    if ($rid <= 0) {
+        // A record made since the build may name them already.
+        $find = $pdo->prepare("SELECT id FROM `{$table}` WHERE LOWER(unique_name) = LOWER(?) OR json_data LIKE ? LIMIT 1");
+        $find->execute(array($v['name'], '%"' . str_replace(array('%', '_'), array('\%', '\_'), $v['name']) . '"%'));
+        $rid = (int) $find->fetchColumn();
+    }
+    if ($rid <= 0) {
+        if (!function_exists('kop_wbc_create_consultant')) {
+            throw new RuntimeException('Record creation is not available.');
+        }
+        $e = kop_wbf_evidence($r);
+        $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
+        $state = ($v['state'] ?? '') !== '' ? (string) kop_facility_state_code($v['state']) : '';
+        $made = kop_wbc_create_consultant(
+            array('issue_id' => (int) $first['issue_id'], 'issue_label' => (string) $first['label'],
+                'issue_number' => (string) $first['number'], 'pages' => (string) (int) $first['page']),
+            array('name' => $v['name'], 'who' => 'person', 'city' => (string) ($v['city'] ?? ''), 'state' => $state, 'country' => ''),
+            $pdo
+        );
+        $rid = (int) $made['id'];
+        $created = true;
+    }
+    $row = $pdo->prepare("SELECT unique_name, json_data FROM `{$table}` WHERE id = ?");
+    $row->execute(array($rid));
+    $rec = $row->fetch(PDO::FETCH_ASSOC);
+    if (!$rec) {
+        throw new RuntimeException("Consultant record #{$rid} does not exist.");
+    }
+    $before = (string) $rec['json_data'];
+    $payload = json_decode($before, true);
+    if (!is_array($payload)) {
+        throw new RuntimeException('The consultant record could not be read.');
+    }
+    if (!isset($payload['data']) || !is_array($payload['data'])) {
+        $payload['data'] = array();
+    }
+    $data = &$payload['data'];
+    $entries = kop_wbf_consultant_entries($data, $key);
+    if (!$entries) {
+        // A firm's record without this person on it: add them to its consultants.
+        $bits = explode(' ', trim($v['name']));
+        $last = count($bits) > 1 ? array_pop($bits) : '';
+        $data['referrerConsultants'] = isset($data['referrerConsultants']) && is_array($data['referrerConsultants']) ? $data['referrerConsultants'] : array();
+        $data['referrerConsultants'][] = array('firstName' => implode(' ', $bits), 'lastName' => $last, 'fullName' => trim($v['name']),
+            'role' => 'Educational Consultant', 'credentials' => (string) ($v['credentials'] ?? ''), 'pastTTIJobs' => array(), 'notes' => '');
+        $entries = kop_wbf_consultant_entries($data, $key);
+    }
+    $cite = kop_wbf_cite($r);
+    $added = 0;
+    foreach ($entries as &$entry) {
+        $jobs = isset($entry['pastTTIJobs']) && is_array($entry['pastTTIJobs']) ? $entry['pastTTIJobs'] : array();
+        $have = array();
+        foreach ($jobs as $j) {
+            $have[] = strtolower(trim(is_array($j) ? ($j['organization'] ?? $j['employer'] ?? '') : (string) $j));
+        }
+        foreach ((array) ($v['jobs'] ?? array()) as $j) {
+            $org = trim((string) ($j['organization'] ?? ''));
+            if ($org === '' || in_array(strtolower($org), $have, true)) {
+                continue;
+            }
+            $role = trim((string) ($j['role'] ?? '')) . (($j['when'] ?? '') !== '' ? ' (' . $j['when'] . ')' : '');
+            $jobs[] = array('role' => $role, 'organization' => $org, 'employer' => $org, 'source' => 'Woodbury Reports');
+            $have[] = strtolower($org);
+            $added++;
+        }
+        $entry['pastTTIJobs'] = $jobs;
+        $entry['formerIndustryStaff'] = true;
+        $line = 'Worked in the troubled teen industry before or while consulting, per ' . $cite;
+        $notes = (string) ($entry['notes'] ?? '');
+        if (strpos($notes, $line) === false) {
+            $entry['notes'] = trim($notes . ($notes !== '' ? "\n" : '') . $line);
+        }
+    }
+    unset($entry);
+    unset($data);
+    $after = wp_json_encode($payload);
+    $pdo->prepare("UPDATE `{$table}` SET json_data = ?, updated_at = NOW() WHERE id = ?")->execute(array($after, $rid));
+    kop_wbf_consultant_mirror($pdo, $rec['unique_name'], $payload, $key);
+    return array('op' => 'consultant_jobs', 'referrer_id' => $rid, 'created' => $created, 'added' => $added,
+        'before' => $before, 'after_md5' => md5($after), 'unique_name' => $rec['unique_name']);
+}
+
+/** State pages list consultants from their state's locations_master row: keep that copy in step. */
+function kop_wbf_consultant_mirror(PDO $pdo, $project, array $payload, $key) {
+    global $wpdb;
+    if (!function_exists('kop_wbc_mirror_consultant')) {
+        return;
+    }
+    $data = isset($payload['data']) && is_array($payload['data']) ? $payload['data'] : array();
+    foreach (kop_wbf_consultant_entries($data, $key) as $entry) {
+        $state = (string) ($entry['state'] ?? '');
+        $code = $state !== '' ? (string) kop_facility_state_code($state) : '';
+        if ($code !== '') {
+            kop_wbc_mirror_consultant($pdo, $wpdb->prefix, $project, $code, $entry);
+        }
+        break;
+    }
+}
+
+function kop_wbf_consultant_undo(array $r) {
+    $done = json_decode((string) $r['applied'], true);
+    if (!is_array($done) || empty($done['referrer_id'])) {
+        return;
+    }
+    $pdo = kop_closure_pdo();
+    $table = kop_wbf_referrer_table($pdo);
+    $row = $pdo->prepare("SELECT json_data FROM `{$table}` WHERE id = ?");
+    $row->execute(array((int) $done['referrer_id']));
+    $now = (string) $row->fetchColumn();
+    if ($now !== '' && md5($now) !== $done['after_md5']) {
+        throw new RuntimeException('The consultant record was edited since; change it in the data form instead.');
+    }
+    $pdo->prepare("UPDATE `{$table}` SET json_data = ?, updated_at = NOW() WHERE id = ?")->execute(array($done['before'], (int) $done['referrer_id']));
+    $payload = json_decode($done['before'], true);
+    if (is_array($payload)) {
+        kop_wbf_consultant_mirror($pdo, $done['unique_name'], $payload, kop_wbf_person_key(kop_wbf_row_value($r)['name'] ?? ''));
     }
 }
 
@@ -553,6 +731,19 @@ add_action('wp_ajax_kop_wbf_act', function () {
             $url = function_exists('kop_facility_page_url') ? kop_facility_page_url($fid) : '';
             wp_send_json_success(array('results' => $results, 'fid' => $fid, 'url' => $url,
                 'label' => wp_strip_all_tags(kop_facility_finder_label(kop_closure_pdo(), $fid))));
+        } elseif ($act === 'consultant') {
+            $results = array();
+            foreach ($rows as $r) {
+                if ($r['status'] !== 'pending' || $r['grp'] !== 'consultant') {
+                    $results[$r['pkey']] = array('ok' => false, 'error' => 'Not a waiting consultant.');
+                    continue;
+                }
+                $done = kop_wbf_consultant_apply($r);
+                $GLOBALS['wpdb']->update(kop_wbf_table(), array('status' => 'applied', 'applied' => wp_json_encode($done),
+                    'reviewed_by' => $user, 'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
+                $results[$r['pkey']] = array('ok' => true, 'created' => $done['created'], 'added' => $done['added']);
+            }
+            wp_send_json_success(array('results' => $results, 'url' => home_url('/referrers-educational-consultants/')));
         } elseif ($act === 'reject') {
             foreach ($rows as $r) {
                 if ($r['status'] === 'pending') {
@@ -584,7 +775,8 @@ add_action('admin_menu', function () {
 function kop_wbf_tabs() {
     return array(
         'records'  => array('label' => 'For existing records', 'where' => "status = 'pending' AND facility_id > 0"),
-        'norecord' => array('label' => 'Programs with no record', 'where' => "status = 'pending' AND facility_id = 0"),
+        'norecord' => array('label' => 'Programs with no record', 'where' => "status = 'pending' AND facility_id = 0 AND grp <> 'consultant'"),
+        'consultants' => array('label' => 'Ed cons who worked in the industry', 'where' => "status = 'pending' AND grp = 'consultant'"),
         'applied'  => array('label' => 'Added', 'where' => "status = 'applied'"),
         'rejected' => array('label' => 'Rejected', 'where' => "status = 'rejected'"),
     );
@@ -596,6 +788,7 @@ function kop_wbf_groups() {
         'incident' => 'Incidents',
         'history'  => 'History (openings, closings, names, owners, moves)',
         'details'  => 'Details (size, ages, type, memberships, other)',
+        'consultant' => 'Educational consultant who worked in the industry',
     );
 }
 
@@ -614,6 +807,7 @@ function kop_wbf_where_it_goes(array $r) {
         'facilityDetails.ageRange'          => 'Age range',
         'facilityDetails.gender'            => 'Gender',
         'facilityDetails.type'              => 'Type',
+        'referrer'                          => 'Consultant record: Career History, flagged former industry staff',
     );
     return $map[$r['path']] ?? $r['path'];
 }
@@ -681,7 +875,7 @@ function kop_render_woodbury_facts_page() {
     echo '</select> <button class="button">Show</button>'
         . ($q !== '' || $grp !== '' ? ' <a href="' . esc_url(add_query_arg('wbf_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
 
-    $card_col = $tab === 'norecord' ? 'program' : ($tab === 'applied' ? 'applied_fid' : 'facility_id');
+    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program' : ($tab === 'applied' ? 'applied_fid' : 'facility_id');
     $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card_col}) FROM {$table} WHERE {$where}");
     $order = $tab === 'norecord' ? 'COUNT(*) DESC, program' : 'MIN(program)';
     $cards = $wpdb->get_col("SELECT {$card_col} FROM {$table} WHERE {$where} GROUP BY {$card_col} ORDER BY {$order} LIMIT "
@@ -698,7 +892,7 @@ function kop_render_woodbury_facts_page() {
         $by[(string) $r[$card_col]][] = $r;
     }
 
-    $pending = in_array($tab, array('records', 'norecord'), true);
+    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
     echo '<div class="kop-wbf-bar">';
     if ($tab === 'records') {
         echo '<button type="button" class="button button-primary kop-wbf-all">Add everything ticked on this page</button> ';
@@ -726,7 +920,7 @@ function kop_render_woodbury_facts_page() {
 
 function kop_wbf_render_card(array $rows, $tab) {
     $first = $rows[0];
-    $pending = in_array($tab, array('records', 'norecord'), true);
+    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
     $fid = $tab === 'applied' ? (int) $first['applied_fid'] : (int) $first['facility_id'];
     echo '<div class="kop-wbf-card" data-fid="' . $fid . '">';
     echo '<div class="kop-wbf-head">';
@@ -760,6 +954,13 @@ function kop_wbf_render_card(array $rows, $tab) {
     if ($tab === 'records') {
         echo '<button type="button" class="button button-primary" data-act="apply">Add checked to record</button> '
             . '<button type="button" class="button" data-act="reject">Reject checked</button>';
+    } elseif ($tab === 'consultants') {
+        $v = kop_wbf_row_value($first);
+        echo '<button type="button" class="button button-primary" data-act="consultant">Flag as former industry staff</button> '
+            . '<button type="button" class="button" data-act="reject">Reject</button>'
+            . '<div class="kop-wbf-muted">' . (!empty($v['referrer_id'])
+                ? 'Adds these jobs to the Career History on the consultant record ' . esc_html($v['referrer_name']) . '.'
+                : 'No consultant record yet: flagging creates one (filed under Educational Consultants) with this Career History.') . '</div>';
     } elseif ($tab === 'norecord') {
         $alts = json_decode((string) $first['alternatives'], true) ?: array();
         echo '<div class="kop-wbf-pick"><strong>Which record is it?</strong> ';
@@ -793,8 +994,8 @@ function kop_wbf_render_card(array $rows, $tab) {
 }
 
 function kop_wbf_render_row(array $r, $tab) {
-    $pending = in_array($tab, array('records', 'norecord'), true);
-    $checked = $pending ? ($r['preselect'] && $tab === 'records') : false;
+    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
+    $checked = $pending ? ($r['preselect'] && in_array($tab, array('records', 'consultants'), true)) : false;
     $extra = json_decode((string) $r['extra'], true) ?: array();
     echo '<tr data-key="' . esc_attr($r['pkey']) . '">';
     echo '<td class="kop-wbf-check"><input type="checkbox" class="kop-wbf-pick"' . ($checked ? ' checked' : '') . ' aria-label="Select"></td>';
@@ -911,7 +1112,9 @@ function kop_wbf_render_assets() {
                     if (r.ok) { ok++; if (tr) tr.classList.add('kop-wbf-gone'); }
                     else { skipped.push(r.error); if (tr) tr.classList.add('kop-wbf-gone'); }
                 });
-                var words = { apply: 'Added ' + ok + ' to ', create: 'Created the record and added ' + ok + ' to ', reject: 'Rejected ' + ok + '.', undo: 'Undone: ' + ok + '.' }[act];
+                var words = { apply: 'Added ' + ok + ' to ', create: 'Created the record and added ' + ok + ' to ', reject: 'Rejected ' + ok + '.', undo: 'Undone: ' + ok + '.',
+                    consultant: 'Flagged as former industry staff; the jobs are in their Career History on the consultants directory.' }[act];
+                if (act === 'consultant') res.data.label = '';
                 out.className = 'kop-wbf-result ok';
                 out.textContent = words + (res.data.label ? res.data.label + '.' : '') + (skipped.length ? ' ' + skipped.length + ' already on the record, skipped.' : '');
                 if (res.data.url) {

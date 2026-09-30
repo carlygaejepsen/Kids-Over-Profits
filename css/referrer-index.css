@@ -435,3 +435,21 @@
         font-size: 1.1rem;
     }
 }
+
+/* An educational consultant who worked at a troubled teen industry program
+   (Career History filled in, or flagged from Woodbury Reports). */
+.referrer-badge-former-staff {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 3px 10px;
+    border: 2px solid var(--kop-orange);
+    border-radius: 999px;
+    background: var(--kop-sand);
+    color: var(--kop-midnight-blue);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+.referrer-card--former-staff {
+    box-shadow: 0 0 0 3px var(--kop-orange), 0 3px 8px rgba(0,4,53,0.1);
+}

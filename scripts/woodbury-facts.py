@@ -58,22 +58,36 @@ NOTE_LABELS = {
     'length_of_stay': 'Length of stay', 'address': 'Address', 'founder': 'Founded by', 'merged': 'Merger',
     'new_campus': 'Campus', 'other': 'Note', 'renamed': 'Name change', 'moved': 'Move', 'owner': 'Owner',
     'operator': 'Operator', 'acquired': 'Acquired', 'opened': 'Opened', 'closed': 'Closed',
-    'capacity': 'Capacity', 'ages': 'Ages', 'gender': 'Gender', 'program_type': 'Type',
+    'capacity': 'Capacity', 'ages': 'Ages', 'gender': 'Gender', 'program_type': 'Described as',
 }
 COMPANY_WORDS = re.compile(r'\b(inc|llc|l\.l\.c|ltd|group|education|services|health|healthcare|company|corp|'
                            r'corporation|foundation|partners|capital|holdings|enterprises|associates|behavioral|'
                            r'systems|management|ministries|network|family of|schools)\b', re.I)
-TYPES = [
-    (r'wilderness', 'Wilderness Therapy'),
-    (r'residential treatment|\brtc\b', 'Residential Treatment Center'),
-    (r'therapeutic boarding|\btbs\b', 'Therapeutic Boarding School'),
-    (r'emotional growth', 'Emotional Growth School'),
-    (r'young adult|transitional', 'Young Adult Program'),
-    (r'transport|escort', 'Transport Service'),
-    (r'ranch', 'Ranch Program'),
-    (r'boarding school', 'Boarding School'),
-    (r'psychiatric hospital', 'Psychiatric Hospital'),
+# Only the site's agreed facility types (kop_facdisc_types() in
+# inc/facility-discovery.php), first match wins; anything else about the kind
+# of program stays a note, never a new type.
+AGREED_TYPES = [
+    'Residential Treatment Center', 'Psychiatric Residential Treatment Facility', 'Therapeutic Boarding School',
+    'Wilderness Therapy', 'Boot Camp', 'Therapeutic Group Home', 'Group Home', 'Transitional Living Program',
+    'Substance Abuse Treatment', 'Maternity Home', 'Fundamentalist Religious Home', 'Specialty Boarding School',
+    'Juvenile Detention Facility', 'Juvenile Correctional Facility', 'Juvenile Justice RTC', 'Other',
 ]
+TYPES = [
+    (r'psychiatric residential treatment|\bprtf\b', 'Psychiatric Residential Treatment Facility'),
+    (r'juvenile detention|detention (center|facility)', 'Juvenile Detention Facility'),
+    (r'juvenile correction|correctional', 'Juvenile Correctional Facility'),
+    (r'wilderness', 'Wilderness Therapy'),
+    (r'boot ?camp', 'Boot Camp'),
+    (r'residential treatment|\brtcs?\b', 'Residential Treatment Center'),
+    (r'therapeutic boarding|\btbs\b|emotional growth', 'Therapeutic Boarding School'),
+    (r'therapeutic group home', 'Therapeutic Group Home'),
+    (r'group home', 'Group Home'),
+    (r'transitional living|young adult|independent living|transition program', 'Transitional Living Program'),
+    (r'substance abuse|addiction|chemical dependency|drug and alcohol|drug treatment|recovery (center|program)', 'Substance Abuse Treatment'),
+    (r'maternity', 'Maternity Home'),
+    (r'boarding school|special needs school|learning disabilit', 'Specialty Boarding School'),
+]
+assert all(t in AGREED_TYPES for _, t in TYPES)
 
 
 HARM = re.compile(r'\b(abus|assault|death|died|dies|killed|suicid|injur|hospital|arrest|charg|convict|guilty|plead|pled|'
@@ -214,6 +228,210 @@ def staff_names(doc):
             if pk:
                 out[pk] = (k, s)
     return out
+
+
+EDCON_ROLE = re.compile(r'\b(?:educational|education|placement|therapeutic|independent|family|transition(?:al)?)\s+consultant'
+                        r'|placement specialist|\bIEC\b', re.I)
+# A job counts when its place is a facility record or reads like a program.
+PROGRAM_WORDS = re.compile(r'academy|school|ranch|wilderness|treatment|expedition|program|lodge|youth|camp|hospital|\brtc\b|'
+                           r'residential|village|institute|recovery|quest|outdoor|journey|house|home|center|centre|'
+                           r'natsap|aspen|crc|uhs|sequel|eckerd|behavioral|therapeutic|intervention|transport|escort', re.I)
+NOT_EDCON = re.compile(r'liaison|relations|outreach|psychiatr|psycholog|business|marketing|employment', re.I)
+CONSULTING_ORG = re.compile(r'consult|woodbury reports|strugglingteens|placement|\bIECA\b|\bIEC\b|educational services|'
+                            r'educational options|& associates|and associates|advisors|advocates|solutions|coaching|'
+                            r'private practice|university|college\b|school system|school district|public school', re.I)
+
+
+def load_referrers(con):
+    """person key -> (id, name) and practice key -> (id, name), from referrers_master; plus each id's past jobs."""
+    people, practices, jobs = {}, {}, {}
+    try:
+        rows = con.execute('SELECT id, unique_name, json_data FROM referrers_master').fetchall()
+    except sqlite3.Error:
+        return people, practices, jobs
+    for rid, uname, js in rows:
+        try:
+            data = (json.loads(js) or {}).get('data') or {}
+        except Exception:  # noqa: BLE001
+            continue
+        practices[ws.key(uname or '')] = (rid, uname)
+        agency = data.get('referrerAgency') or {}
+        if agency.get('name'):
+            practices.setdefault(ws.key(agency['name']), (rid, uname))
+        for c in [data.get('referrerIndividual')] + list(data.get('referrerConsultants') or []):
+            if not isinstance(c, dict):
+                continue
+            name = c.get('fullName') or ' '.join(x for x in (c.get('firstName'), c.get('lastName')) if x)
+            pk = person_key(name or '')
+            if pk:
+                people.setdefault(pk, (rid, uname))
+                for j in c.get('pastTTIJobs') or []:
+                    org = j if isinstance(j, str) else (j.get('organization') or j.get('employer') or '')
+                    jobs.setdefault((rid, pk), set()).add(ws.key(org))
+        if person_key(uname or ''):
+            people.setdefault(person_key(uname), (rid, uname))
+    return people, practices, jobs
+
+
+def consultant_proposals(args, issues, items, recs, match, prog_name, proposals, stats):
+    """One proposal per educational consultant the newsletter shows working in the industry."""
+    con = sqlite3.connect(ws.DB)
+    ref_people, ref_practices, ref_jobs = load_referrers(con)
+    page_cache = {}
+
+    def pages_of(date):
+        if date not in page_cache:
+            page_cache[date] = load_pages(os.path.join(args.dir, 'text', issues[date]['file']))
+        return page_cache[date]
+
+    def ev(date, page, quote, found):
+        iss = issues[date]
+        return {'issue': date, 'label': iss['label'], 'number': iss['number'], 'issue_id': iss['id'], 'page': page,
+                'url': iss['url'] + '#page=%d' % page, 'quote': re.sub(r'\s+', ' ', quote or '').strip()[:600], 'found': found}
+
+    people = {}
+
+    def person(name):
+        pk = person_key(name)
+        if not pk:
+            return None
+        if pk not in people:
+            people[pk] = {'name': name.strip(), 'credentials': set(), 'practices': collections.OrderedDict(), 'places': [],
+                          'evidence': [], 'jobs': collections.OrderedDict()}
+        p = people[pk]
+        if len(name.strip()) > len(p['name']):
+            p['name'] = name.strip()
+        return p
+
+    def add_job(p, org, role, when, e):
+        org = (org or '').strip()
+        if not org or CONSULTING_ORG.search(org) or ws.key(org) in [ws.key(x) for x in p['practices']]:
+            return
+        # Their own name in it ("BJ Hopper", "Shawen-Hannah Solutions") makes it their practice.
+        surname = person_key(p['name']).split(' ')[-1]
+        if surname and len(surname) > 2 and surname in ws.key(org).split():
+            return
+        f, _a, kind, _n = match(org, '')
+        if not (f and kind in ('exact', 'past_name')) and not PROGRAM_WORDS.search(org):
+            return
+        name = recs[f['id']]['name'] if f and kind in ('exact', 'past_name') else org
+        j = p['jobs'].setdefault(ws.key(name), {'organization': name, 'facility_id': f['id'] if f and kind == 'exact' else 0,
+                                                 'roles': [], 'when': [], 'evidence': []})
+        role = clean_role(role)
+        if role and role.lower() not in [r.lower() for r in j['roles']]:
+            j['roles'].append(role)
+        if when and when not in j['when']:
+            j['when'].append(when)
+        if e:
+            j['evidence'].append(e)
+
+    # The consultant pass: who is an ed con, and the jobs each issue gives them.
+    cons_dir = os.path.join(args.dir, 'cons')
+    for fn in sorted(os.listdir(cons_dir)) if os.path.isdir(cons_dir) else []:
+        date = fn[:7]
+        if not fn.endswith('.json') or date not in issues:
+            continue
+        try:
+            data = json.load(open(os.path.join(cons_dir, fn), encoding='utf-8'))
+        except Exception as e:  # noqa: BLE001
+            print('bad json', fn, e, file=sys.stderr)
+            continue
+        pages = pages_of(date)
+        for c in data.get('consultants') or []:
+            p = person(c.get('person') or '')
+            if not p:
+                continue
+            found, pg = find_quote(c.get('quote') or '', int(c.get('page') or 0), pages)
+            stats['consultant_quote_found' if found else 'consultant_quote_missing'] += 1
+            p['evidence'].append(ev(date, pg, c.get('quote'), found))
+            if c.get('credentials'):
+                p['credentials'].add(c['credentials'])
+            if (c.get('practice') or '').strip():
+                p['practices'][c['practice'].strip()] = True
+            if (c.get('place') or '').strip():
+                p['places'].append(c['place'].strip())
+            for j in c.get('industry_jobs') or []:
+                jf, jpg = find_quote(j.get('quote') or '', int(j.get('page') or 0), pages)
+                if not jf:
+                    stats['consultant_job_quote_missing'] += 1
+                add_job(p, j.get('program'), j.get('role'), (j.get('when') or '').strip(), ev(date, jpg, j.get('quote'), jf))
+
+    # The first pass: people it recorded in an ed con role are consultants too,
+    # and every program job it gives a consultant goes on their list.
+    for it in items:
+        if it.get('kind') == 'person' and EDCON_ROLE.search(it.get('role') or '') and not NOT_EDCON.search(it.get('role') or ''):
+            p = person(it.get('person') or '')
+            if p:
+                p['evidence'].append(ev(it['issue'], it['page'], it.get('quote'), it['found']))
+                if CONSULTING_ORG.search(it['program']) or not it['fid']:
+                    p['practices'][it['program'].strip()] = True
+                if it.get('place'):
+                    p['places'].append(it['place'])
+    for it in items:
+        if it.get('kind') != 'person':
+            continue
+        pk = person_key(it.get('person') or '')
+        if pk not in people:
+            continue
+        role = it.get('role') or ''
+        if EDCON_ROLE.search(role) and not NOT_EDCON.search(role):
+            continue
+        y = year_of(it.get('date', '')) or it['issue_year']
+        when = ('before %d' % it['issue_year']) if (it.get('event') or '') == 'previously' and not year_of(it.get('date', '')) else str(y)
+        add_job(people[pk], it['program'], role, when, ev(it['issue'], it['page'], it.get('quote'), it['found']))
+        if it.get('from_program'):
+            add_job(people[pk], it['from_program'], it.get('from_role') or '', 'before %d' % y, None)
+
+    n = 0
+    for pk, p in people.items():
+        ref = ref_people.get(pk)
+        if not ref:
+            for pr in p['practices']:
+                ref = ref_practices.get(ws.key(pr))
+                if ref:
+                    break
+        have = ref_jobs.get((ref[0], pk), set()) if ref else set()
+        jobs = [j for k, j in p['jobs'].items() if k not in have and ws.key(j['organization']) not in have]
+        if not jobs:
+            stats['consultant_no_new_jobs'] += 1
+            continue
+        place = collections.Counter(p['places']).most_common(1)[0][0] if p['places'] else ''
+        city, state = '', ''
+        m = re.match(r'^(.*?),\s*([A-Za-z .]+)$', place)
+        if m:
+            city, state = m.group(1).strip(), ws.place_state(place) or ''
+        elif place:
+            state = ws.place_state('x, ' + place) or ''
+        jobs_out = []
+        for j in jobs:
+            when = ', '.join(sorted(set(j['when']), key=lambda w: (re.sub(r'\D', '', w) or '9999')))
+            jobs_out.append({'role': ', '.join(j['roles']) or 'Staff', 'organization': j['organization'], 'when': when,
+                             'facility_id': j['facility_id']})
+        evs = p['evidence'][:4] + [e for j in jobs for e in j['evidence']]
+        seen, evs2 = set(), []
+        for e in evs:
+            k = (e['issue'], e['page'], e['quote'][:80])
+            if k not in seen:
+                seen.add(k)
+                evs2.append(e)
+        evs2.sort(key=lambda e: (e['issue'], e['page']))
+        practice = next(iter(p['practices']), '')
+        label = '%s, educational consultant%s: ' % (p['name'], ' (' + practice + ')' if practice else '') + '; '.join(
+            '%s at %s%s' % (j['role'], j['organization'], ' (%s)' % j['when'] if j['when'] else '') for j in jobs_out)
+        key = ckey('c' + pk, 'consultant')
+        proposals[key] = {
+            'key': key, 'facility_id': 0, 'program': p['name'], 'program_as_written': p['name'], 'place': place,
+            'match': 'consultant', 'match_note': ('Consultant record: ' + ref[1]) if ref else 'No consultant record yet',
+            'alternatives': [], 'group': 'consultant', 'op': 'consultant_jobs', 'path': 'referrer',
+            'value': {'name': p['name'], 'credentials': ', '.join(sorted(p['credentials'])), 'practice': practice,
+                      'city': city, 'state': state, 'referrer_id': ref[0] if ref else 0, 'referrer_name': ref[1] if ref else '',
+                      'jobs': jobs_out},
+            'label': label, 'conflict': '', 'current': '', 'evidence': evs2,
+            'found': any(e['found'] for e in evs2), 'person': p['name'],
+        }
+        n += 1
+    stats['consultants_flagged'] = n
+    stats['consultants_seen'] = len(people)
 
 
 def main():
@@ -627,6 +845,9 @@ def main():
             continue
         note(it, field, value)
 
+    # ---- Educational consultants who worked in the industry --------------
+    consultant_proposals(args, issues, items, recs, match, prog_name, proposals, stats)
+
     # One value per slot: where issues disagree (a start year of 2006 and of
     # 2009), the best-supported one is proposed and the others become notes.
     slots = collections.defaultdict(list)
@@ -647,7 +868,7 @@ def main():
     for p in out:
         p['evidence'].sort(key=lambda e: (e['issue'], e['page']))
         p['issue_date'] = p['evidence'][0]['issue']
-        p['preselect'] = bool(p['found'] and p['match'] == 'exact' and not p['conflict'])
+        p['preselect'] = bool(p['found'] and p['match'] in ('exact', 'consultant') and not p['conflict'])
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     json.dump({'built': 'woodbury-facts', 'proposals': out}, open(args.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 

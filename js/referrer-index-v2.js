@@ -246,11 +246,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 label = 'Independent Consultant';
             }
 
+            // Someone on the record worked inside the industry (Career History, or flagged from Woodbury Reports).
+            const formerStaff = profiles.some(c => c.formerIndustryStaff === true
+                || (Array.isArray(c.pastTTIJobs) && c.pastTTIJobs.some(j => clean(typeof j === 'string' ? j : (j && (j.organization || j.employer || j.role))))));
+            if (formerStaff) card.classList.add('referrer-card--former-staff');
+
             // SUMMARY: The "Tile" View
             let html = `
                 <summary class="referrer-card-summary">
                     <h3 class="referrer-main-name">${esc(p.db_name)}</h3>
                     <span class="referrer-sub-label">${label}</span>
+                    ${formerStaff ? '<span class="referrer-badge-former-staff" title="Worked at a troubled teen industry program; see Career History">Former industry staff</span>' : ''}
                 </summary>
                 
                 <!-- BODY: The Expanded View -->
