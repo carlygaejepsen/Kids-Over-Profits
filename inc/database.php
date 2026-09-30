@@ -1280,7 +1280,7 @@ function kop_get_hidden_preview_ids() {
         return $ids;
     }
 
-    $pattern = '-(pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$';
+    $pattern = '[-.](pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$';
     $sidecars = $wpdb->get_results($wpdb->prepare(
         "SELECT pm.post_id, pm.meta_value AS file
          FROM {$wpdb->postmeta} pm
@@ -1305,7 +1305,7 @@ function kop_get_hidden_preview_ids() {
         }
         foreach ($sidecars as $row) {
             $file = basename((string) $row->file);
-            if (!preg_match('/^(.*)-(pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$/i', $file, $m)) {
+            if (!preg_match('/^(.*)[-.](pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$/i', $file, $m)) {
                 continue;
             }
             $base = strtolower($m[1]);

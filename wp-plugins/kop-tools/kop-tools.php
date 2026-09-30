@@ -200,9 +200,10 @@ function kop_tools_registry() {
             ),
             array(
                 'title' => 'Dedupe Media',
-                'desc'  => 'Clear duplicate tiles from the document libraries: imported PDF preview images and byte-identical copies. Each tab previews first.',
+                'desc'  => 'Clear duplicate tiles from the document libraries: imported PDF preview images (-pdf.jpg and .pdf.png) and byte-identical copies. Each tab previews first.',
                 'type'  => 'page',
                 'path'  => 'api/dedupe-media.php',
+                'sidebar' => true,
             ),
             array(
                 'title' => 'Regenerate PDF Previews',
@@ -296,7 +297,8 @@ function kop_tools_registry() {
  * Categories whose tools are also listed in the wp-admin sidebar. The rest
  * (repair and batch tools) are one hover away in the admin bar dropdown and
  * on the dashboard; listing all forty in the sidebar makes a flyout taller
- * than the screen.
+ * than the screen. A tool elsewhere can join the sidebar on its own with
+ * 'sidebar' => true.
  */
 function kop_tools_sidebar_categories() {
     return apply_filters('kop_tools_sidebar_categories', array('Review queue', 'Records & editors'));
@@ -387,11 +389,12 @@ add_action('admin_menu', function () {
     add_submenu_page('kop-tools', 'All Tools', 'All Tools', 'manage_options', 'kop-tools', 'kop_tools_render_dashboard');
 
     $registry = kop_tools_registry();
-    foreach (kop_tools_sidebar_categories() as $category) {
-        if (empty($registry[$category])) {
-            continue;
-        }
-        foreach ($registry[$category] as $tool) {
+    $sidebar = kop_tools_sidebar_categories();
+    foreach ($registry as $category => $tools) {
+        foreach ($tools as $tool) {
+            if (!in_array($category, $sidebar, true) && empty($tool['sidebar'])) {
+                continue;
+            }
             $type = isset($tool['type']) ? $tool['type'] : 'page';
             if ($type === 'screen' || $type === 'action') {
                 continue;

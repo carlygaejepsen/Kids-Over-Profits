@@ -424,7 +424,7 @@ function kop_research_recover_sidecar_documents($folder_ids) {
         if ($file === '') {
             continue;
         }
-        if (!preg_match('/^(.*)-(pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$/i', basename($file), $m)) {
+        if (!preg_match('/^(.*)[-.](pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$/i', basename($file), $m)) {
             continue;
         }
         $stem   = $m[1] . '.' . strtolower($m[2]);

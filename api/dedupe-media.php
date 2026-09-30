@@ -6,7 +6,8 @@
  *
  * What it finds (each tab previews first; nothing changes until Apply):
  *
- *  1. previews  PDF preview images (<name>-pdf.jpg) that were imported as
+ *  1. previews  PDF preview images (<name>-pdf.jpg, or <name>.pdf.png from the
+ *               Drive restore) that were imported as
  *               their own media items, so each PDF shows twice. The record is
  *               removed; the JPG stays on disk when it is the PDF's own
  *               generated preview (1,900+ of them share the exact path).
@@ -61,8 +62,8 @@ $SECTIONS = array(
 );
 $section = isset($_GET['s']) && isset($SECTIONS[$_GET['s']]) ? $_GET['s'] : 'previews';
 
-$SIDECAR_RE = '/-(pdf|docx?)(-\d+)?(-scaled)?\.(jpe?g|png|webp)$/i';
-$SIDECAR_SQL = '-(pdf|docx?)(-[0-9]+)?(-scaled)?\\.(jpe?g|png|webp)$';
+$SIDECAR_RE = '/[-.](pdf|docx?)(-\d+)?(-scaled)?\.(jpe?g|png|webp)$/i';
+$SIDECAR_SQL = '[-.](pdf|docx?)(-[0-9]+)?(-scaled)?\\.(jpe?g|png|webp)$';
 $JUNK_RE = '#^(popularfx-templates|ast-block-templates-json|fonts|wpforms|wp-rollback|uag-plugin|integrate-google-drive-thumbnails|wp-file-manager-pro|dlm_uploads|anonymous-submissions|elementor|kadence|cache)/#';
 $JUNK_SQL = '^(popularfx-templates|ast-block-templates-json|fonts|wpforms|wp-rollback|uag-plugin|integrate-google-drive-thumbnails|wp-file-manager-pro|dlm_uploads|anonymous-submissions|elementor|kadence|cache)/';
 
@@ -467,7 +468,7 @@ function kop_dm_sidecar_rows() {
     $pdfs = kop_dm_pdfs_by_base();
     $out = array();
     foreach ($rows as $r) {
-        $base = strtolower(preg_replace('/-(pdf|docx?)(-\d+)?(-scaled)?\.(jpe?g|png|webp)$/i', '', basename((string) $r->file)));
+        $base = strtolower(preg_replace('/[-.](pdf|docx?)(-\d+)?(-scaled)?\.(jpe?g|png|webp)$/i', '', basename((string) $r->file)));
         $cands = isset($pdfs[$base]) ? $pdfs[$base] : array();
         if (!$cands && preg_match('/^(.*)-\d+$/', $base, $m) && isset($pdfs[$m[1]])) {
             $cands = $pdfs[$m[1]];
