@@ -60,7 +60,8 @@ function first_diff($a, $b, $path = '') {
     return $a === $b ? '' : "$path: " . var_export($a, true) . ' vs ' . var_export($b, true);
 }
 
-$md = kop_glossary_repo_markdown();
+/* Git stores glossary.md with LF; a Windows checkout has CRLF, and the editor always writes LF. */
+$md = str_replace("\r\n", "\n", kop_glossary_repo_markdown());
 $json = json_decode(file_get_contents(get_stylesheet_directory() . '/js/data/glossary/glossary.json'), true);
 
 /* 1. Parity with the Node build. */
