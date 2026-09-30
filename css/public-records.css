@@ -81,20 +81,33 @@
     box-shadow: var(--kop-focus-shadow, 0 0 0 3px rgba(51, 167, 181, 0.25));
 }
 
-.kop-filter-clear {
+/* A <button>: Kadence's button, button:hover and button:focus paint white
+   text on teal and outrank a one-class rule, so every state names both
+   colours at element + class specificity. */
+button.kop-filter-clear {
     padding: 0.4rem 0.9rem;
     background: var(--kop-sand);
     border: 1px solid var(--kop-mint-green);
     border-radius: 6px;
     font-size: 0.85rem;
     color: var(--kop-midnight-blue);
+    box-shadow: none;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.kop-filter-clear:hover {
+button.kop-filter-clear:hover,
+button.kop-filter-clear:focus,
+button.kop-filter-clear:active {
     background: var(--kop-mint-green);
     border-color: var(--kop-teal);
+    color: var(--kop-midnight-blue);
+    box-shadow: none;
+}
+
+button.kop-filter-clear:focus-visible {
+    outline: 2px solid var(--kop-navy-blue);
+    outline-offset: 2px;
 }
 
 .kop-filter-count {

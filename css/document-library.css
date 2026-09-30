@@ -452,7 +452,7 @@
 
 .kop-document-single .doc-link:hover {
     border-color: var(--kop-focus-color);
-    box-shadow: 0 4px 12px var(--kop-shadow-hover);
+    box-shadow: 0 4px 12px rgba(0, 4, 53, 0.12);
     transform: translateY(-2px);
 }
 
@@ -461,7 +461,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    color: var(--kop-link-color);
+    color: var(--kop-navy-blue);
     text-decoration: none;
     padding: 4px 8px;
     border-radius: 4px;
@@ -469,8 +469,8 @@
 }
 
 .kop-doc-link-simple:hover {
-    color: var(--kop-link-hover);
-    background: var(--kop-bg-hover);
+    color: var(--kop-midnight-blue);
+    background: var(--kop-soft-pastel-yellow);
 }
 
 .doc-icon-inline {
@@ -488,7 +488,7 @@
 
 .doc-size-inline {
     font-size: 0.9em;
-    color: var(--kop-text-muted);
+    color: var(--kop-text-secondary);
 }
 
 /* Document library button wrapper — centers the button in its field row */

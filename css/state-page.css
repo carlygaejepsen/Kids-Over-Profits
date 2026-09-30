@@ -191,6 +191,13 @@
     transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
+/* Kadence's a:focus / a:active (midnight) tie with `.facility-alphabet-filter a`
+   and load later, so focus is named here too: midnight on navy otherwise. */
+.facility-alphabet-filter a:focus,
+.facility-alphabet-filter a:active {
+    color: #ffffff;
+}
+
 .facility-alphabet-filter a:hover {
     background-color: #33A7B5;
     color: #ffffff;
@@ -622,8 +629,20 @@
     font-weight: 600;
 }
 
-.facility-expand-btn:hover {
+/* Kadence's button:hover/:focus (0,1,1) paint white text and outrank the
+   one-class rule above, so both colours are named for every state. */
+button.facility-expand-btn:hover,
+button.facility-expand-btn:focus,
+button.facility-expand-btn:active {
     background: #e3e9f7;
+    color: #00004d;
+    box-shadow: none;
+}
+
+.facility-group-closed button.facility-expand-btn:hover,
+.facility-group-closed button.facility-expand-btn:focus,
+.facility-group-closed button.facility-expand-btn:active {
+    color: #4a5b85;
 }
 
 .facility-expand-btn:disabled {

@@ -185,6 +185,15 @@
     text-align: left;
 }
 
+/* The navy link style (.kop-volunteer-more) would be navy on this navy box,
+   and Kadence's a:hover/a:focus midnight too, so every state is named here. */
+.kop-home-reports a.kop-volunteer-more,
+.kop-home-reports a.kop-volunteer-more:hover,
+.kop-home-reports a.kop-volunteer-more:focus,
+.kop-home-reports a.kop-volunteer-more:active {
+    color: #fff;
+}
+
 .kop-home-reports-buttons {
     display: flex;
     justify-content: center;

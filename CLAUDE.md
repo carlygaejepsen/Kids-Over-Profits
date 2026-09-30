@@ -103,6 +103,8 @@ php scripts/build-open-data.php                   # on the server (ea-php82), re
 php scripts/test-icons.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
+# ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")
+python scripts/check-contrast.py [--local]      # --local serves the working tree's css/js on the live pages
 # Woodbury Reports pages about each program (inc/woodbury-mentions.php): scan every issue in the
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
@@ -222,6 +224,32 @@ Accents: Orange (#EF9034), Chartreuse (#B2E102), Coral Pink (#FE8088)
 Backgrounds: Sand (#F2EEDF), Soft Pastel Yellow (#FFF5CB), Mint Green (#B6E3D4)
 
 Reserve bright accents (Chartreuse, Coral Pink, Bubblegum Pink) for borders/highlights, not backgrounds.
+
+### Kadence colour traps (why text goes invisible)
+Our stylesheets load **before** `kadence-global-css` on every page, so any
+specificity tie goes to Kadence. Kadence also colours these elements directly,
+so they do **not** inherit a panel's `color`:
+
+- `h1`-`h6`: #1A202C / #2D3748. A navy panel with `color:#fff` still gets black headings.
+- `a`: navy #000080 (hover #000435). A link in a navy panel is navy on navy.
+- `button`, `.button`, `input[type=submit]`: white text on teal, and `button:hover`,
+  `button:focus` (0,1,1) beat a one-class rule (0,1,0). A button styled
+  `.x { background:#fff; color:navy }` or `.x:hover { background:sand }` goes
+  white on white/sand on hover, or after a click (focus sticks).
+- `input`/`select`/`textarea`: grey text on a white box. A transparent field on a dark panel is grey on navy;
+  `select option` popups need their own background and colour.
+- Undefined `var(--kop-x)` with no fallback resolves to *inherit*, so it silently
+  takes the panel colour (the old `--kop-navy` white-on-white).
+- Our own `.panel * { color:#fff !important }` blankets repaint components injected
+  into the panel (doc tiles, pills, bug flags) white on their white backgrounds.
+
+Rules: a dark panel sets colours for its headings, links and buttons explicitly.
+Every `<button>` rule is `button.x` and names **both** colour and background in
+the rest, `:hover`, `:focus` and `:active` states. A reusable component
+sets its own foreground and background instead of inheriting. No `*` colour blankets.
+Accent colours as text use the `--kop-*-ink` versions. Check with
+`python scripts/check-contrast.py [--local] [paths]`: it measures every text
+node against its real background, with hover and focus forced on buttons and links.
 
 ## Program Data Pipeline
 
