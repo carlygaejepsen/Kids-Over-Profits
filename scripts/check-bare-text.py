@@ -23,7 +23,7 @@ SAMPLES = [
     '', 'history/', 'antiquity/', 'alabama/', 'australia/', 'hyde/', 'report-abuse/',
     'glossary/', 'network-map/', 'lawsuits/', 'legislative-efforts/',
     'in-loving-memory/', 'inspection-reports/', 'severe-reports/', 'tti-program-index/',
-    'referrers-educational-consultants/', 'youth-transport-companies/', 'tti-news-feed/', 'ar-reports/',
+    'referrers-educational-consultants/', 'youth-transport-companies/', 'mental-health-providers/', 'tti-news-feed/', 'ar-reports/',
     'document-library-discovery-ranch/', 'privacy-policy/', 'terms-of-service/',
     'richardson-v-elevations-rtc-prelitigation-panel-opinion/',
     'submit-lawsuit/', 'submit-legislation/', 'tti-data-submission/',

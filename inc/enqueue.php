@@ -2156,6 +2156,15 @@ function kop_enqueue_template_assets() {
         return;
     }
 
+    if (kop_page_uses_template('page-provider-index.php')) {
+        $style('kop-provider-index', '/css/provider-index.css');
+        $style('kop-directory-documents', '/css/directory-documents.css', array('kop-colors'));
+        $script('kop-directory-documents', '/js/directory-documents.js');
+        $script('kop-submit-info', '/js/submit-info.js');
+        $script('kop-provider-index', '/js/provider-index.js', array('kop-submit-info', 'kop-program-links', 'kop-directory-documents'));
+        return;
+    }
+
     if (kop_page_uses_template('page-transporter-index.php')) {
         $style('kop-transporter-index', '/css/transporter-index.css');
         $style('kop-directory-documents', '/css/directory-documents.css', array('kop-colors'));

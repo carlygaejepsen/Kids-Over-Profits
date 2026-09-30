@@ -471,6 +471,8 @@ function kop_tool_page_specs() {
         // Youth transport companies, from transporters_master (records made in the data
         // form or from a Woodbury report), with each one's documents on file.
         array('template' => 'page-transporter-index.php',  'title' => 'Youth Transport Companies', 'slug' => 'youth-transport-companies', 'status' => 'publish'),
+        // Mental health providers outside the TTI, from providers_master.
+        array('template' => 'page-provider-index.php',     'title' => 'Mental Health Providers', 'slug' => 'mental-health-providers', 'status' => 'publish'),
     );
 }
 
@@ -524,6 +526,11 @@ function kop_nav_item_specs() {
             'slug'   => 'youth-transport-companies',
             'parent' => 'Monitor',
             'title'  => 'Youth Transport Companies',
+        ),
+        array(
+            'slug'   => 'mental-health-providers',
+            'parent' => 'Monitor',
+            'title'  => 'Mental Health Providers',
         ),
     );
 }
@@ -646,7 +653,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '11';
+    $version = '12';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -1243,6 +1250,55 @@ function kop_apply_facility_seed_to_nested(PDO $pdo, array $target, array $field
         $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
     }
     return $changed;
+}
+
+/**
+ * Document folders for directory records (consultants, transporters,
+ * providers), so each card's "Documents on file" shows them
+ * (js/directory-documents.js). Keyed by table and unique_name. Sets
+ * documentFolderId only where the record has none, so a folder chosen
+ * later in the data form is never overwritten.
+ */
+function kop_directory_folder_links() {
+    return array(
+        // Matched by name against the media library, 2026-09-30. The only
+        // consultants with a folder of their own; Tippett's (under Three
+        // Springs Inc) holds 10 documents, Johnson's is empty so far.
+        'referrers_master' => array(
+            'Rosemary Tippett' => 24,
+            'Angela Johnson'   => 2391,
+        ),
+    );
+}
+
+function kop_apply_directory_folder_links() {
+    $done = array();
+    $pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
+    if (!$pdo) {
+        return $done;
+    }
+    foreach (kop_directory_folder_links() as $table => $links) {
+        foreach ($links as $name => $folder) {
+            $stmt = $pdo->prepare("SELECT id, json_data FROM `{$table}` WHERE unique_name = ?");
+            $stmt->execute(array($name));
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            $record = $row ? json_decode((string) $row['json_data'], true) : null;
+            if (!is_array($record)) {
+                continue;
+            }
+            if (!empty($record['documentFolderId']) || !empty($record['data']['documentFolderId'])) {
+                continue;
+            }
+            $record['documentFolderId'] = (int) $folder;
+            if (isset($record['data']) && is_array($record['data'])) {
+                $record['data']['documentFolderId'] = (int) $folder;
+            }
+            $pdo->prepare("UPDATE `{$table}` SET json_data = ?, updated_at = NOW() WHERE id = ?")
+                ->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $row['id']));
+            $done[] = $name . ' => folder ' . (int) $folder;
+        }
+    }
+    return $done;
 }
 /**
  * Alternate names for operator (company) projects (seeds/operator-aliases.json).
@@ -1961,6 +2017,7 @@ function kop_apply_template_assignments() {
     $summary['seeded']       = kop_apply_seed_posts();
     $summary['facilities']   = kop_apply_facility_record_seeds();
     $summary['operators']    = kop_apply_operator_alias_seeds();
+    $summary['directory_folders'] = kop_apply_directory_folder_links();
     $summary['new_facilities'] = kop_apply_new_facility_seeds();
     if (function_exists('kop_facility_v2_request_sync')) {
         kop_facility_v2_request_sync();   // before the write switch the seeds above edit the legacy tables
@@ -2023,7 +2080,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '59';
+    $version = '60';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

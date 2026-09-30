@@ -1,0 +1,415 @@
+/* =================================================================
+   MENTAL HEALTH PROVIDER DIRECTORY (copied from transporter-index.css)
+   ================================================================= */
+
+.provider-directory-container {
+    max-width: 1100px;
+    margin: 1.5rem auto 3rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--kop-midnight-blue);
+    padding: 2rem 2.5rem 2.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+}
+
+@media (max-width: 640px) {
+    .provider-directory-container {
+        margin: 0 auto 1.5rem;
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 0;
+    }
+}
+
+/* --- Controls --- */
+.provider-directory-container .controls {
+    background: var(--kop-white);
+    border: 2px solid var(--kop-teal);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.provider-directory-container input[type="text"] {
+    flex: 1;
+    min-width: 280px;
+    padding: 12px;
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 6px;
+}
+
+.provider-directory-container select {
+    padding: 12px;
+    min-width: 180px;
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 6px;
+}
+
+.provider-directory-container button {
+    padding: 12px 24px;
+    background: var(--kop-navy-blue);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* --- Alphabet Filter --- */
+.provider-alpha-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 25px;
+    padding: 15px;
+    background: var(--kop-sand);
+    border-radius: 10px;
+}
+
+.provider-directory-container .alpha-btn {
+    padding: 8px 14px;
+    border: 1px solid var(--kop-navy-blue);
+    background: var(--kop-white);
+    color: var(--kop-navy-blue);
+    cursor: pointer;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.provider-directory-container .alpha-btn.active {
+    background: var(--kop-navy-blue);
+    color: var(--kop-white);
+}
+
+/* --- Grid (Matching TTI Layout) --- */
+.provider-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 220px);
+    justify-content: center;
+    gap: 20px;
+    align-items: start;
+}
+
+/* --- Collapsible Card (Details Element) --- */
+.provider-card {
+    width: 220px;
+    min-height: 220px;
+    background: var(--kop-white);
+    border-radius: 8px;
+    border: 2px solid var(--kop-navy-blue);
+    box-shadow: 0 3px 8px rgba(0,4,53,0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+/* Summary is the Header - Collapsed State */
+.provider-card-summary {
+    background: var(--kop-navy-blue);
+    width: 100%;
+    height: 100%;
+    min-height: 216px;
+    padding: 15px;
+    cursor: pointer;
+    list-style: none;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.provider-card-summary:hover {
+    background: #000060;
+}
+
+/* Expanded State */
+.provider-card[open] {
+    width: 100%;
+    max-width: none;
+    grid-column: 1 / -1;
+    min-height: auto;
+    height: auto;
+}
+
+.provider-card[open] .provider-card-summary {
+    min-height: auto;
+    height: auto;
+    padding: 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 4px solid var(--kop-orange);
+}
+
+/* Hide default marker */
+.provider-card-summary::-webkit-details-marker { display: none; }
+.provider-card-summary::marker { display: none; }
+
+/* Content */
+.provider-main-name {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--kop-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+}
+
+.provider-sub-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--kop-soft-pastel-yellow) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 5px;
+}
+
+.provider-card-summary::after {
+    content: '+ View Details';
+    display: block;
+    font-size: 0.75rem;
+    color: var(--kop-white);
+    margin-top: 15px;
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.9;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.provider-card[open] .provider-card-summary::after {
+    content: '- Collapse';
+    margin-top: 0;
+}
+
+/* Card Body */
+.provider-card-body {
+    padding: 20px;
+    background: #fdfdfd;
+}
+
+/* --- Company Info --- */
+.company-info-section {
+    background: var(--kop-sand);
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+/* --- Provider site sub-card --- */
+.provider-sub-card {
+    background: var(--kop-white);
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    border-left: 6px solid var(--kop-orange);
+}
+
+.provider-name-header {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--kop-midnight-blue);
+    margin-bottom: 12px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+/* --- Data Rows --- */
+.provider-directory-container .data-row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    align-items: baseline;
+}
+
+.provider-directory-container .data-label {
+    font-weight: 700;
+    color: var(--kop-navy-blue);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.provider-directory-container .data-value {
+    color: var(--kop-text-primary);
+    word-break: break-word;
+}
+
+.provider-directory-container .data-value a {
+    color: var(--kop-teal) !important;
+    text-decoration: underline;
+}
+
+/* --- List Sections --- */
+.provider-directory-container .list-section {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+
+.provider-directory-container .section-label {
+    font-weight: 800;
+    color: var(--kop-orange);
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.provider-directory-container .data-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+}
+
+.provider-directory-container .data-list-item {
+    background: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 3px solid var(--kop-orange);
+    font-size: 0.85rem;
+}
+
+.provider-directory-container .job-role { font-weight: 700; display: block; color: var(--kop-midnight-blue); }
+.provider-directory-container .job-meta { color: #666; font-size: 0.8rem; font-style: italic; }
+
+/* =================================================================
+   RESPONSIVE
+   ================================================================= */
+
+@media (max-width: 768px) {
+    .provider-directory-container {
+        padding: 10px;
+    }
+
+    .provider-directory-container .controls {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .provider-directory-container input[type="text"],
+    .provider-directory-container select,
+    .provider-directory-container .controls button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .provider-directory-container .alpha-btn {
+        width: auto;
+    }
+
+    .provider-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .provider-card,
+    details.provider-card:not([open]) {
+        width: 100%;
+        min-height: 100px;
+    }
+
+    .provider-card-summary {
+        min-height: 100px;
+        padding: 15px;
+    }
+
+    .provider-card[open] .provider-card-summary {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .provider-card-summary::after {
+        margin-top: 10px;
+    }
+
+    .provider-directory-container .data-row {
+        grid-template-columns: 1fr;
+        gap: 2px;
+        margin-bottom: 12px;
+    }
+
+    .provider-directory-container .data-label {
+        font-size: 0.75rem;
+        opacity: 0.7;
+    }
+
+    .provider-sub-card {
+        padding: 15px;
+    }
+
+    .provider-directory-container .data-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .provider-alpha-filter {
+        gap: 4px;
+        padding: 10px;
+    }
+
+    .provider-directory-container .alpha-btn {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+    }
+
+    .provider-main-name {
+        font-size: 1.1rem;
+    }
+}
+
+/* --- Header and loading text (the template carries no inline styles) --- */
+.provider-directory-container .directory-header {
+    margin-bottom: 2em;
+    text-align: center;
+}
+.provider-directory-container .directory-header h1 {
+    color: var(--kop-midnight-blue);
+    font-size: 2.5em;
+    margin: 0 0 0.2em;
+}
+.provider-directory-container .directory-header p {
+    font-size: 1.1em;
+    color: var(--kop-text-secondary);
+    max-width: 760px;
+    margin: 0 auto;
+}
+.provider-directory-container .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+.provider-directory-container .controls input[type="text"] {
+    flex: 1;
+    min-width: 0;
+}
+.provider-loading,
+.provider-empty {
+    text-align: center;
+    padding: 50px 10px;
+    color: var(--kop-text-secondary);
+}

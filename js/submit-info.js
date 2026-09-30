@@ -3,7 +3,7 @@
  *
  * Any page can render a button like:
  *   <button type="button" class="kop-submit-info-btn"
- *           data-kop-submit-type="facility|operator|transporter|referrer"
+ *           data-kop-submit-type="facility|operator|transporter|referrer|provider"
  *           data-kop-submit-name="Entry Name">Submit info</button>
  * This module (loaded once per page) catches the click, opens a modal with
  * only the fields that apply to that entry type, and posts the result to the
@@ -164,6 +164,39 @@
                         notes: v.notes || ''
                     },
                     transporters: individuals
+                };
+            }
+        },
+        // A mental health provider outside the TTI (the /mental-health-providers/
+        // directory). The data carries category 'providers' so
+        // api/save-suggestion.php files it for providers_master on approval.
+        provider: {
+            heading: 'provider',
+            category: 'providers',
+            fields: [
+                { id: 'careTypes', label: 'Care types', hint: 'e.g. inpatient psychiatric, day school. Separate with commas' },
+                { id: 'practices', label: 'TTI practices used', hint: 'e.g. level system, restraint. Separate with commas' },
+                { id: 'referrals', label: 'Programs they refer young people to', hint: 'Separate with commas' },
+                { id: 'transporters', label: 'Transporters used', hint: 'Separate with commas' },
+                { id: 'affiliations', label: 'TTI affiliations', hint: 'Separate with commas' },
+                { id: 'notes', label: 'Anything else', textarea: true }
+            ],
+            build: function (v, name) {
+                return {
+                    category: 'providers',
+                    facilities: [{
+                        identification: { name: name },
+                        providerDetails: {
+                            careTypes: {},
+                            otherCareTypes: splitList(v.careTypes),
+                            ttiPractices: {},
+                            otherTtiPractices: splitList(v.practices),
+                            ttiReferrals: splitList(v.referrals),
+                            transportersUsed: splitList(v.transporters),
+                            ttiAffiliations: splitList(v.affiliations),
+                            referralNotes: v.notes || ''
+                        }
+                    }]
                 };
             }
         },
