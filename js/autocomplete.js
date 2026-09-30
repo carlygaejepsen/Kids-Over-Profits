@@ -1213,7 +1213,8 @@ function getCategoryFunctions() {
 function initializeAutocompleteFields() {
     const categoryFunctions = getCategoryFunctions();
 
-    document.querySelectorAll('input[type="text"][data-autocomplete-category]').forEach(field => {
+    // List rows are one-line textareas (ui-render.js renderArray), so both.
+    document.querySelectorAll('input[type="text"][data-autocomplete-category], textarea[data-autocomplete-category]').forEach(field => {
         if (field.dataset.autocompleteInit === 'true') {
             return;
         }
