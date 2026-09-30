@@ -107,6 +107,12 @@ python scripts/check-bare-text.py               # one page per child template, l
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
 python scripts/woodbury-scan.py [--no-cut]
+# Woodbury Reports facts (inc/woodbury-facts.php): staff and careers, incidents, openings/closings, names,
+# owners, moves read from every issue into tmp/woodbury-extract/facts/ (readers follow INSTRUCTIONS.md there);
+# the build checks each quote, matches records, drops what they hold -> C:/tmp/kop-woodbury/pending/facts.json,
+# copied to ~/kop-import/woodbury/; owner adds them at KOP Tools > Woodbury Facts (live at once, Undo)
+python scripts/woodbury-facts.py
+php scripts/test-woodbury-facts.php               # applies every proposal to the real docs, validator, exact undo
 # Unsilenced's archive (public Drive folders) on facility/operator pages: only documents KOP has no copy of.
 # Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
 # then the build compares with the media library md5s and inspection scrapers -> js/data/unsilenced/
