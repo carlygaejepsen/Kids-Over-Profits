@@ -69,6 +69,30 @@
     opacity: 1;
 }
 
+/* Kadence's .button:focus/:active (0,2,0) fill the outline button with the
+   navy hover colour while its text is navy too; every state stays an
+   outline: transparent ground, navy text and border. */
+.button.kop-bug-report-link:hover,
+.button.kop-bug-report-link:focus,
+.button.kop-bug-report-link:active {
+    background: transparent;
+    color: var(--kop-navy-blue, #000080);
+    border-color: var(--kop-navy-blue, #000080);
+    box-shadow: none;
+}
+
+/* On a dark ground (navy section headers, operator cards) the navy outline
+   would vanish: white instead, in every state. bug-reporter.js adds the class
+   when the first solid background behind the link is dark. */
+.button.kop-bug-report-link.kop-bug-report-link--on-dark,
+.button.kop-bug-report-link.kop-bug-report-link--on-dark:hover,
+.button.kop-bug-report-link.kop-bug-report-link--on-dark:focus,
+.button.kop-bug-report-link.kop-bug-report-link--on-dark:active {
+    background: transparent;
+    color: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
 .kop-bug-report-link:hover .kop-bug-report-link__text,
 .kop-bug-report-link:focus-visible .kop-bug-report-link__text {
     /* Generous cap — only paces the slide-out; must never clip the label. */
@@ -167,6 +191,9 @@
     cursor: pointer;
     padding: 0 4px;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-bug-reporter__close:hover, .kop-bug-reporter__close:focus, .kop-bug-reporter__close:active { background: transparent; box-shadow: none; color: #fff; }
+
 
 .kop-bug-reporter__form {
     padding: 16px 18px 18px;

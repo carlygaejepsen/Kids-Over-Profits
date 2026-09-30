@@ -152,7 +152,7 @@ h1 { font-size: 1.3rem; }
 form.filters { margin: 14px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 input[type=text], input[type=search], input[type=number], select { padding: 6px 9px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
 button { background: #000080; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 700; cursor: pointer; }
-button.secondary { background: #33A7B5; }
+button.secondary { background: #24757F; }
 button.danger { background: #c0392b; }
 button.plain { background: #fff; color: #000080; border: 1px solid #000080; }
 .card { background: #fff; border: 1px solid #ccc; border-left: 6px solid #33A7B5; border-radius: 8px; padding: 12px 16px; margin: 12px 0; max-width: 980px; }

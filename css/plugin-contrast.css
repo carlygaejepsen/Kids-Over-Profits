@@ -1,0 +1,97 @@
+/**
+ * Readable colours for third-party plugin output (WCAG AA).
+ *
+ * Plugins print their own CSS after the theme's, often with an ID selector
+ * and !important, so each rule here repeats the plugin's selector with
+ * `html body` in front (two more elements of specificity) and carries
+ * !important where the plugin does. Loaded last (kop_enqueue_plugin_contrast,
+ * priority 99). Check with scripts/check-contrast.py.
+ */
+
+/* FileBird Document Library: its blue titles (#007cba on #f5f5f5, 4.2) and
+   Tailwind greys (#9ca3af, #8f8f8f, #777) for sizes, counts and pagination. */
+html body #filebird-document-library {
+    --fb-color-primary-1: #000080 !important;
+    --fb-color-primary-2: #24757F !important;
+    --fb-color-secondary: #4A5568 !important;
+}
+
+/* The plugin sets --fb-color-primary-1 again on an inner element, so the
+   titles and list links are coloured directly as well. */
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-title,
+html body #filebird-document-library div.fbdl-listview-container .fbdl-list table.fbdl-table tr td.fbdl-list-first-item .fbdl-list-item-title > div a {
+    color: #000080 !important;
+}
+
+/* White labels on that same blue (#007cba, 4.35): download buttons, the
+   selected page number. */
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-download-button,
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-download-button:focus,
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-download-button:active,
+html body #filebird-document-library div.fbdl-listview-container .fbdl-list table.fbdl-table tr td.fbdl-list-last-item a,
+html body #filebird-document-library .fbdl-pagination .fbdl-pagination-wrapper .fbdl-pagination-page-number a.fbdl-page-number.fbdl-selected {
+    background-color: #000080 !important;
+    color: #FFFFFF !important;
+}
+
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-download-button:hover,
+html body #filebird-document-library div.fbdl-listview-container .fbdl-list table.fbdl-table tr td.fbdl-list-last-item a:hover {
+    background-color: #24757F !important;
+    color: #FFFFFF !important;
+}
+
+html body #filebird-document-library div.fbdl-gridview-container .fbdl-grid .fbdl-grid-item .fbdl-file-size,
+html body #filebird-document-library div.fbdl-listview-container .fbdl-list table.fbdl-table tr td.fbdl-list-first-item .fbdl-list-item-title > div p,
+html body #filebird-document-library .fbdl-nested-folders-item-counter,
+html body #filebird-document-library .fbdl-folder-tooltip-content,
+html body #filebird-document-library .fbdl-sort-unselected,
+html body #filebird-document-library div.fbdl-breadcrumb .fbdl-breadcrumb-item,
+html body #filebird-document-library div.fbdl-breadcrumb div.fbdl-dropdown-toggle {
+    color: #4A5568 !important;
+}
+
+html body #filebird-document-library .fbdl-pagination .fbdl-pagination-wrapper .fbdl-pagination-info p,
+html body #filebird-document-library .fbdl-pagination .fbdl-pagination-wrapper .fbdl-pagination-info span {
+    color: #4A5568 !important;
+}
+
+html body #filebird-document-library input::placeholder,
+html body #filebird-document-library textarea::placeholder {
+    color: #4A5568 !important;
+}
+
+/* MailerLite newsletter form (sidebar and footer): white on teal (2.86),
+   hover #333. The embed injects its CSS at run time with ID + !important. */
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedSubmit button,
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow button,
+html body #mlb2-29353450 .ml-mobileButton-horizontal button {
+    background-color: #24757F !important;
+    border-color: #24757F !important;
+    color: #FFFFFF !important;
+}
+
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedSubmit button:hover,
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-embedSubmit button:focus,
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow button:hover,
+html body #mlb2-29353450.ml-form-embedContainer .ml-form-embedWrapper .ml-form-embedBody .ml-form-horizontalRow button:focus,
+html body #mlb2-29353450 .ml-mobileButton-horizontal button:hover,
+html body #mlb2-29353450 .ml-mobileButton-horizontal button:focus {
+    background-color: #000080 !important;
+    border-color: #000080 !important;
+    color: #FFFFFF !important;
+}
+
+/* AddToAny share buttons: hover fades the icon to 70%, taking the white
+   mark below 3:1 on the brand colour. Keep it solid; the pointer and focus
+   ring show the state. */
+html body .addtoany_list a:hover img,
+html body .addtoany_list a:hover span,
+html body .addtoany_list a:focus img,
+html body .addtoany_list a:focus span {
+    opacity: 1;
+}
+
+/* Kadence comment form: the required-field star (#d54e21, 4.0). */
+html body .comment-form .required {
+    color: #D9020F;
+}

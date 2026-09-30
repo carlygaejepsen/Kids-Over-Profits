@@ -1829,7 +1829,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const markdown = importedMarkdown || document.getElementById('outputCode')?.value || '';
 
         if (!markdown.trim()) {
-            facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>';
+            facilitiesList.innerHTML = '<p style="color: #4A5568; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>';
             return;
         }
 
@@ -1889,7 +1889,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (openPrograms.length === 0 && closedPrograms.length === 0) {
             const fallbackPrograms = extractTableLinks(markdown);
             if (fallbackPrograms.length === 0) {
-                facilitiesList.innerHTML = '<p style="color: #999; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
+                facilitiesList.innerHTML = '<p style="color: #4A5568; font-style: italic;">No facilities found in the organization\'s wiki page.</p>';
                 return;
             }
 
@@ -2389,9 +2389,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Clear list displays
         const ownerChangeListEl = document.getElementById('ownerChangeListOutput');
-        if (ownerChangeListEl) ownerChangeListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
+        if (ownerChangeListEl) ownerChangeListEl.innerHTML = '<p style="color:#4A5568;">No items added yet</p>';
         const campusListEl = document.getElementById('campusListOutput');
-        if (campusListEl) campusListEl.innerHTML = '<p style="color:#999;">No items added yet</p>';
+        if (campusListEl) campusListEl.innerHTML = '<p style="color:#4A5568;">No items added yet</p>';
 
         // Helper to safely set element values
         const setValue = (id, value) => {

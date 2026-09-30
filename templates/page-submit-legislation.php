@@ -144,7 +144,7 @@ if (!$tracker_url) { $tracker_url = home_url('/legislation'); }
 .kop-field-wide { grid-column: 1 / -1; }
 .kop-field-label { font-weight: 600; color: var(--kop-midnight-blue); font-size: 0.95em; }
 .kop-field .hint { font-weight: 400; color: #666; font-size: 0.85em; }
-.kop-field .req { color: var(--kop-coral-pink, #d6336c); }
+.kop-field .req { color: var(--kop-coral-pink-ink, #D9020F); }
 .kop-submit-form input,
 .kop-submit-form select,
 .kop-submit-form textarea {
@@ -160,7 +160,7 @@ if (!$tracker_url) { $tracker_url = home_url('/legislation'); }
 .kop-hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
 .kop-submit-actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; }
 .kop-submit-btn {
-    background: var(--kop-teal); color: #fff; border: none; border-radius: 6px;
+    background: var(--kop-teal-fill, #24757F); color: #fff; border: none; border-radius: 6px;
     padding: 0.7rem 1.5rem; font-weight: 700; font-size: 1em; cursor: pointer;
 }
 .kop-submit-btn:hover { background: var(--kop-navy, #000080); }

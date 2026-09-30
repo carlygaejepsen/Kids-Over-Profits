@@ -1073,7 +1073,7 @@ tbody tr.kop-excluded .old-title { color: #666; text-decoration: line-through; }
 .reason { font-size: 0.78rem; color: #7a1f1f; }
 input[name$="[go]"] { transform: scale(1.4); margin: 3px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; } .err { color: #a33; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+button { background: #24757F; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 button:disabled { opacity: 0.5; cursor: default; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin-bottom: 12px; }
 .kop-toolbar { position: sticky; top: 0; z-index: 60; background: #F2EEDF; padding: 8px 0 6px; border-bottom: 2px solid #33A7B5; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,4,53,0.08); }
@@ -1228,7 +1228,7 @@ td a { color: #000080; }
         <span>Showing <?php echo count($preview); ?> row(s) &middot; <span id="kop-count"></span></span>
         <button type="button" id="kop-tick-all" style="background:#000080">Tick all</button>
         <button type="button" id="kop-untick-all" style="background:#7a7a7a">Untick all</button>
-        <button type="button" id="kop-suggest" style="background:#EF9034">Suggest titles for ticked rows</button>
+        <button type="button" id="kop-suggest" style="background:#A3570D">Suggest titles for ticked rows</button>
         <button type="button" id="kop-apply" style="background:#1b7e3c">Apply titles</button>
         <span id="kop-progress" class="warn"></span>
     </div>

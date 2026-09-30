@@ -104,6 +104,9 @@
     font-weight: bold;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.referrer-directory-container button:focus, .referrer-directory-container button:active, .referrer-directory-container button:hover { background: var(--kop-navy-blue); color: white; }
+
 
 /* --- Alphabet Filter --- */
 .referrer-alpha-filter {
@@ -126,11 +129,17 @@
     border-radius: 4px;
     font-weight: 700;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.alpha-btn:focus, .alpha-btn:active, .alpha-btn:hover { background: var(--kop-white); color: var(--kop-navy-blue); }
+
 
 .alpha-btn.active {
     background: var(--kop-navy-blue);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.alpha-btn.active:focus, .alpha-btn.active:active, .alpha-btn.active:hover { background: var(--kop-navy-blue); color: var(--kop-white); }
+
 
 /* --- Grid (Matching TTI Layout) --- */
 .referrer-grid {
@@ -299,7 +308,7 @@
 }
 
 .data-value a {
-    color: var(--kop-teal) !important;
+    color: var(--kop-teal-ink, #24757F) !important;
     text-decoration: underline;
 }
 
@@ -312,7 +321,7 @@
 
 .section-label {
     font-weight: 800;
-    color: var(--kop-orange);
+    color: var(--kop-orange-ink, #A3570D);
     font-size: 0.8rem;
     margin-bottom: 8px;
     text-transform: uppercase;

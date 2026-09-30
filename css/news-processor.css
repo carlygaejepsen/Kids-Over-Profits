@@ -18,7 +18,7 @@
 }
 
 .news-header {
-    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+    background: linear-gradient(to right, #24757F, #000080); /* Teal to Navy Blue */
     color: #FFFFFF; /* White */
     padding: 2rem;
 }
@@ -63,7 +63,7 @@
 
 .news-icon {
     font-size: 1.25rem;
-    color: #33A7B5; /* Teal */
+    color: var(--kop-teal-ink, #24757F); /* Teal */
 }
 
 .news-section-title h2 {
@@ -83,7 +83,7 @@
 }
 
 .news-chevron {
-    color: #33A7B5; /* Teal */
+    color: var(--kop-teal-ink, #24757F); /* Teal */
     font-size: 1rem;
 }
 
@@ -165,9 +165,12 @@
     flex-shrink: 0;
     height: fit-content;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-save-btn:focus, .news-save-btn:active { background: #B2E102; color: #000435; }
+
 
 .news-save-btn:hover {
-    background-color: #33A7B5; /* Teal */
+    background-color: var(--kop-teal-fill, #24757F); /* Teal */
     border-color: #33A7B5;
     color: #FFFFFF;
 }
@@ -194,16 +197,19 @@
 .news-tag-remove {
     background: none;
     border: none;
-    color: #FE8088; /* Coral Pink */
+    color: var(--kop-coral-pink-ink, #D9020F); /* Coral Pink */
     cursor: pointer;
     font-size: 1rem;
     line-height: 1;
     padding: 0;
     margin-left: 0.25rem;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.news-tag-remove:hover, .news-tag-remove:focus, .news-tag-remove:active { background: transparent; box-shadow: none; color: var(--kop-coral-pink-ink, #D9020F); }
+
 
 .news-tag-remove:hover {
-    color: #FC8ED6; /* Bubblegum Pink */
+    color: var(--kop-bubblegum-pink-ink, #CC0587); /* Bubblegum Pink */
 }
 
 .news-warnings-grid {
@@ -230,17 +236,24 @@
     text-align: left;
     font-weight: 500;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-warning-btn:focus, .news-warning-btn:active { background: #FFFFFF; color: #000435; }
+
 
 .news-warning-btn:hover {
     background: #FFF5CB; /* Soft Pastel Yellow */
     border-color: #33A7B5; /* Teal */
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .news-warning-btn.active {
-    background-color: #FE8088; /* Coral Pink */
+    background-color: var(--kop-coral-pink-fill, #D9020F); /* Coral Pink */
     border-color: #FE8088;
     color: #FFFFFF;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-warning-btn.active:focus, .news-warning-btn.active:active, .news-warning-btn.active:hover { background: var(--kop-coral-pink-fill, #D9020F); color: #FFFFFF; }
+
 
 .news-info-box {
     background-color: #AEE0ED; /* Powder Blue */
@@ -305,10 +318,14 @@
     font-weight: 500;
     transition: all 0.2s;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-type-btn:focus, .news-type-btn:active { background: #FFFFFF; color: #000435; }
+
 
 .news-type-btn:hover {
     background: #FFF5CB; /* Soft Pastel Yellow */
     border-color: #33A7B5; /* Teal */
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .news-type-btn.active {
@@ -316,6 +333,9 @@
     border-color: #000080;
     color: #FFFFFF;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-type-btn.active:focus, .news-type-btn.active:active, .news-type-btn.active:hover { background: #000080; color: #FFFFFF; }
+
 
 .news-type-form {
     margin-top: 1rem;
@@ -357,7 +377,7 @@
 }
 
 .news-btn-primary {
-    background: linear-gradient(to right, #33A7B5, #000080); /* Teal to Navy Blue */
+    background: linear-gradient(to right, #24757F, #000080); /* Teal to Navy Blue */
     border-color: #000080;
 }
 
@@ -471,7 +491,7 @@
 
 .news-submit-status .error {
     color: #FFFFFF;
-    background: #FE8088;
+    background: var(--kop-coral-pink-fill, #D9020F);
     padding: 10px;
     border-radius: 5px;
     display: block;
@@ -534,6 +554,7 @@
     border-color: #33A7B5; /* Teal */
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 68, 53, 0.2);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .news-template-btn:active {
@@ -586,7 +607,7 @@
     height: 22px;
     left: 4px;
     top: 2px;
-    background-color: #33A7B5; /* Teal */
+    background-color: var(--kop-teal-fill, #24757F); /* Teal */
     border-radius: 50%;
     transition: all 0.3s;
 }
@@ -626,6 +647,7 @@
 .news-btn-ai:hover {
     background: linear-gradient(to right, #B2E102, #33A7B5); /* Reversed */
     box-shadow: 0 6px 12px rgba(51, 167, 181, 0.3);
+    color: #FFFFFF; /* the other half, or Kadence supplies it */
 }
 
 .news-ai-status {
@@ -644,7 +666,7 @@
 
 .news-ai-status .error {
     color: #FFFFFF;
-    background: #FE8088;
+    background: var(--kop-coral-pink-fill, #D9020F);
     border: 2px solid #FC8ED6;
 }
 
@@ -684,10 +706,11 @@
 .news-btn-add:hover {
     background: #B2E102;
     transform: translateY(-1px);
+    color: #000080; /* the other half, or Kadence supplies it */
 }
 
 .news-btn-remove {
-    background: #FE8088; /* Salmon Pink */
+    background: var(--kop-coral-pink-fill, #D9020F); /* Salmon Pink */
     border: 2px solid #FC8ED6; /* Hot Pink */
     color: #FFFFFF;
     width: 36px;
@@ -697,10 +720,14 @@
     line-height: 1;
     flex-shrink: 0;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.news-btn-remove:focus, .news-btn-remove:active { background: var(--kop-coral-pink-fill, #D9020F); color: #FFFFFF; }
+
 
 .news-btn-remove:hover {
-    background: #FC8ED6;
+    background: var(--kop-bubblegum-pink-fill, #CC0587);
     transform: scale(1.1);
+    color: #FFFFFF; /* the other half, or Kadence supplies it */
 }
 
 /* Autocomplete Dropdown Styles */

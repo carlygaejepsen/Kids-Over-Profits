@@ -100,6 +100,9 @@
     justify-content: center;
     transition: transform 0.3s ease;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.doc-folder-toggle:hover, .doc-folder-toggle:focus, .doc-folder-toggle:active { background: transparent; box-shadow: none; }
+
 
 .doc-folder-toggle .toggle-icon {
     font-size: 14px;
@@ -150,10 +153,14 @@
     color: inherit;
     transition: all 0.3s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.doc-layout-list .doc-link:focus, .doc-layout-list .doc-link:active { background: var(--kop-sand); color: inherit; }
+
 
 .doc-layout-list .doc-link:hover {
     background: var(--kop-mint-green);
     box-shadow: 0 2px 8px rgba(51, 167, 181, 0.1);
+    color: inherit; /* the other half, or Kadence supplies it */
 }
 
 .doc-layout-list .doc-thumbnail {
@@ -171,7 +178,7 @@
 
 .doc-layout-list .doc-download {
     font-size: 20px;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     flex-shrink: 0;
 }
 
@@ -202,6 +209,9 @@
     transition: all 0.3s ease;
     height: 100%;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.doc-layout-grid .doc-link:focus, .doc-layout-grid .doc-link:active { background: var(--kop-white); color: inherit; }
+
 
 .doc-layout-grid .doc-link:hover {
     box-shadow: 0 8px 20px rgba(51, 167, 181, 0.2);
@@ -249,7 +259,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white);
     font-size: 18px;
     font-weight: 700;
@@ -258,19 +268,19 @@
 }
 
 /* File type colors using KOP palette */
-.doc-icon-pdf { background: var(--kop-coral-pink); }
+.doc-icon-pdf { background: var(--kop-coral-pink-fill, #D9020F); }
 .doc-icon-doc,
 .doc-icon-docx { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
 .doc-icon-xls,
 .doc-icon-xlsx { background: var(--kop-mint-green); color: var(--kop-midnight-blue); }
 .doc-icon-ppt,
-.doc-icon-pptx { background: var(--kop-orange); }
+.doc-icon-pptx { background: var(--kop-orange-fill, #A3570D); }
 .doc-icon-zip,
 .doc-icon-rar { background: var(--kop-navy-blue); }
 .doc-icon-jpg,
 .doc-icon-jpeg,
 .doc-icon-png,
-.doc-icon-gif { background: var(--kop-bubblegum-pink); }
+.doc-icon-gif { background: var(--kop-bubblegum-pink-fill, #CC0587); }
 .doc-icon-txt { background: var(--kop-midnight-blue); }
 .doc-icon-mp4,
 .doc-icon-mov,
@@ -303,7 +313,7 @@
 .doc-layout-list .doc-download {
     display: block;
     font-size: 20px;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 /* No documents message */
@@ -369,7 +379,7 @@
 
 .doc-subfolder-title::before {
     content: '\25B8'; /* ▸ */
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     transition: transform 0.2s ease;
     flex: 0 0 auto;
 }
@@ -379,7 +389,7 @@
 }
 
 .doc-subfolder-title:hover {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .doc-subfolder-title .folder-icon {
@@ -409,7 +419,7 @@
 }
 
 .doc-subfolder-merged > .doc-subfolder-title::before {
-    color: var(--kop-orange);
+    color: var(--kop-orange-ink, #A3570D);
 }
 
 /* Grid layout option */
@@ -449,6 +459,9 @@
     color: inherit;
     transition: all 0.3s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-document-single .doc-link:focus, .kop-document-single .doc-link:active { background: var(--kop-white); color: inherit; }
+
 
 .kop-document-single .doc-link:hover {
     border-color: var(--kop-focus-color);
@@ -511,7 +524,7 @@
     align-items: center;
     gap: 10px;
     padding: 12px 24px;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white) !important;
     text-decoration: none;
     border-radius: 8px;
@@ -520,11 +533,15 @@
     border: none;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-doc-button:focus, .kop-doc-button:active { background: var(--kop-teal-fill, #24757F); color: var(--kop-white) !important; }
+
 
 .kop-doc-button:hover {
     background: var(--kop-navy-blue);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 128, 0.3);
+    color: var(--kop-white) !important; /* the other half, or Kadence supplies it */
 }
 
 .kop-doc-button .doc-icon-inline {
@@ -741,10 +758,13 @@
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white);
     transition: background 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-doc-modal__btn:focus, .kop-doc-modal__btn:active { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
+
 
 .kop-doc-modal__btn:hover {
     background: var(--kop-navy-blue);
@@ -832,6 +852,6 @@ body.kop-doc-modal-open {
 }
 
 .doc-meta-missing {
-    color: var(--kop-coral-pink, #fe8088) !important;
+    color: var(--kop-coral-pink-ink, #D9020F) !important;
     font-weight: 600;
 }

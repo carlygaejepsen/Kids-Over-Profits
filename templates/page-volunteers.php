@@ -148,7 +148,7 @@ try {
     color: #444;
 }
 .kop-vol-cta { margin-top: auto; padding-top: 0.5em; }
-.kop-vol-status-note { font-size: 0.85em; color: #888; font-style: italic; }
+.kop-vol-status-note { font-size: 0.85em; color: #4A5568; font-style: italic; }
 </style>
 
 <script>

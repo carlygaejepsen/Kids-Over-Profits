@@ -66,6 +66,9 @@
     font-weight: 500;
     transition: background-color 0.15s, border-color 0.15s, color 0.15s;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.admin-state-content-wrapper button:active { background: var(--kop-white); color: var(--kop-midnight-blue); }
+
 
 .admin-state-content-wrapper button:hover,
 .admin-state-content-wrapper button:focus {
@@ -80,6 +83,9 @@
     border: 1px solid var(--kop-button-primary);
     font-weight: 600;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.admin-state-content-wrapper .primary-btn:active { background: var(--kop-button-primary); color: var(--kop-white); }
+
 
 .admin-state-content-wrapper .primary-btn:hover,
 .admin-state-content-wrapper .primary-btn:focus {
@@ -211,6 +217,9 @@
     flex-shrink: 0;
     transition: background-color 0.15s, border-color 0.15s;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.edit-btn:active { background: var(--kop-button-primary); color: var(--kop-white); }
+
 
 .edit-btn:hover,
 .edit-btn:focus {
@@ -218,6 +227,7 @@
     border-color: var(--kop-button-primary-hover);
     outline: 2px solid var(--kop-border-accent);
     outline-offset: 1px;
+    color: var(--kop-white); /* the other half, or Kadence supplies it */
 }
 
 .form-row {
@@ -309,6 +319,6 @@
 
 .filebird-helper-link {
     font-size: 0.85em;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     white-space: nowrap;
 }

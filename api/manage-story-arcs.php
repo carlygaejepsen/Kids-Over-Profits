@@ -184,7 +184,7 @@ label { display: block; font-weight: 600; margin: 8px 0 2px; font-size: 0.85rem;
 input[type=text], input[type=number], textarea, select { width: 100%; max-width: 640px; padding: 5px 7px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }
 textarea { min-height: 60px; }
 button { background: #000080; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-button.secondary { background: #33A7B5; }
+button.secondary { background: #24757F; }
 button.danger { background: #c0392b; }
 button.small { padding: 3px 8px; font-size: 0.78rem; margin-top: 0; }
 .hint { font-size: 0.78rem; color: #666; margin: 2px 0 0; }

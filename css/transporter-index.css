@@ -59,6 +59,9 @@
     font-weight: bold;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.transporter-directory-container button:focus, .transporter-directory-container button:active, .transporter-directory-container button:hover { background: var(--kop-navy-blue); color: white; }
+
 
 /* --- Alphabet Filter --- */
 .transporter-alpha-filter {
@@ -81,11 +84,17 @@
     border-radius: 4px;
     font-weight: 700;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.transporter-directory-container .alpha-btn:focus, .transporter-directory-container .alpha-btn:active, .transporter-directory-container .alpha-btn:hover { background: var(--kop-white); color: var(--kop-navy-blue); }
+
 
 .transporter-directory-container .alpha-btn.active {
     background: var(--kop-navy-blue);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.transporter-directory-container .alpha-btn.active:focus, .transporter-directory-container .alpha-btn.active:active, .transporter-directory-container .alpha-btn.active:hover { background: var(--kop-navy-blue); color: var(--kop-white); }
+
 
 /* --- Grid (Matching TTI Layout) --- */
 .transporter-grid {
@@ -253,7 +262,7 @@
 }
 
 .transporter-directory-container .data-value a {
-    color: var(--kop-teal) !important;
+    color: var(--kop-teal-ink, #24757F) !important;
     text-decoration: underline;
 }
 
@@ -266,7 +275,7 @@
 
 .transporter-directory-container .section-label {
     font-weight: 800;
-    color: var(--kop-orange);
+    color: var(--kop-orange-ink, #A3570D);
     font-size: 0.8rem;
     margin-bottom: 8px;
     text-transform: uppercase;
@@ -420,7 +429,7 @@
 }
 
 .transporter-independent-badge {
-    background: var(--kop-orange);
+    background: var(--kop-orange-fill, #A3570D);
     color: var(--kop-white);
     padding: 3px 8px;
     border-radius: 12px;
@@ -431,5 +440,5 @@
 }
 
 .transporter-independent-badge.not-independent {
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
 }

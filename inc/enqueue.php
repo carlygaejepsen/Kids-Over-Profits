@@ -2183,3 +2183,21 @@ function kop_enqueue_template_assets() {
     }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_template_assets');
+
+/**
+ * Readable colours for plugin output (FileBird Document Library, MailerLite,
+ * AddToAny, Kadence comments, the Givebutter button), on every front-end page. Priority 99 so it
+ * prints after the plugins' own stylesheets; see css/plugin-contrast.css.
+ */
+function kop_enqueue_plugin_contrast() {
+    $path = get_stylesheet_directory() . '/css/plugin-contrast.css';
+    if (file_exists($path)) {
+        wp_enqueue_style('kop-plugin-contrast', get_stylesheet_directory_uri() . '/css/plugin-contrast.css', array(), filemtime($path));
+    }
+    // The Givebutter donate button sits in a shadow root CSS cannot reach.
+    $gb = get_stylesheet_directory() . '/js/givebutter-contrast.js';
+    if (file_exists($gb)) {
+        wp_enqueue_script('kop-givebutter-contrast', get_stylesheet_directory_uri() . '/js/givebutter-contrast.js', array(), filemtime($gb), true);
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_plugin_contrast', 99);

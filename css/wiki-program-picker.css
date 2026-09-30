@@ -47,7 +47,10 @@
     cursor: pointer;
     color: var(--kop-navy, #000080);
 }
-.kop-pp-close:hover { color: var(--kop-orange, #EF9034); }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-pp-close:hover, .kop-pp-close:focus, .kop-pp-close:active { background: transparent; box-shadow: none; color: var(--kop-navy, #000080); }
+
+.kop-pp-close:hover { color: var(--kop-orange-ink, #A3570D); }
 
 .kop-pp-intro {
     margin: 0 22px 12px;
@@ -107,7 +110,7 @@
 
 .kop-pp-result-name { font-weight: 600; flex: 1 1 auto; }
 .kop-pp-result-meta { color: #555; font-size: 0.82rem; flex: 0 0 auto; }
-.kop-pp-result-id { color: #888; font-size: 0.78rem; flex: 0 0 auto; }
+.kop-pp-result-id { color: var(--kop-text-muted, #4A5568); font-size: 0.78rem; flex: 0 0 auto; }
 
 .kop-pp-empty,
 .kop-pp-loading,
@@ -130,8 +133,12 @@
     cursor: pointer;
     padding: 6px 0;
 }
-.kop-pp-create-toggle:hover { color: var(--kop-orange, #EF9034); }
-.kop-pp-create-toggle.is-open { color: var(--kop-orange, #EF9034); }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-pp-create-toggle:hover, .kop-pp-create-toggle:focus, .kop-pp-create-toggle:active { background: transparent; box-shadow: none; color: var(--kop-navy, #000080); }
+
+.kop-pp-create-toggle:hover { color: var(--kop-orange-ink, #A3570D); background: transparent; /* the other half, or Kadence supplies it */
+}
+.kop-pp-create-toggle.is-open { color: var(--kop-orange-ink, #A3570D); }
 
 .kop-pp-create-panel {
     margin: 6px 22px 0;
@@ -150,7 +157,7 @@
 }
 
 .kop-pp-create-btn {
-    background: var(--kop-teal, #33A7B5);
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -158,7 +165,11 @@
     font-weight: 600;
     cursor: pointer;
 }
-.kop-pp-create-btn:hover { background: var(--kop-navy, #000080); }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-pp-create-btn:focus, .kop-pp-create-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
+.kop-pp-create-btn:hover { background: var(--kop-navy, #000080); color: #fff; /* the other half, or Kadence supplies it */
+}
 .kop-pp-create-btn:disabled { opacity: 0.6; cursor: default; }
 
 .kop-pp-create-status { margin-top: 8px; font-size: 0.85rem; }
@@ -176,7 +187,7 @@
     margin-bottom: 6px;
     color: var(--kop-navy, #000080);
 }
-.kop-pp-doc-hint { font-weight: 400; color: #777; font-size: 0.8rem; }
+.kop-pp-doc-hint { font-weight: 400; color: var(--kop-text-muted, #4A5568); font-size: 0.8rem; }
 .kop-pp-doc-row { display: flex; gap: 8px; align-items: stretch; }
 .kop-pp-doc-row .kop-pp-doc-input { flex: 0 0 130px; }
 .kop-pp-doc-browse {
@@ -203,8 +214,8 @@
     border-top: 1px solid rgba(0, 4, 53, 0.12);
 }
 .kop-pp-selected { font-size: 0.9rem; }
-.kop-pp-selected .kop-pp-none { color: #999; }
-.kop-pp-selected .kop-pp-id { color: #888; font-size: 0.8rem; }
+.kop-pp-selected .kop-pp-none { color: var(--kop-text-muted, #4A5568); }
+.kop-pp-selected .kop-pp-id { color: var(--kop-text-muted, #4A5568); font-size: 0.8rem; }
 
 .kop-pp-actions { display: flex; gap: 10px; }
 .kop-pp-btn {
@@ -216,7 +227,7 @@
 }
 .kop-pp-cancel { background: #e3ded0; color: var(--kop-midnight, #000435); }
 .kop-pp-cancel:hover { background: #d4ceba; }
-.kop-pp-confirm { background: var(--kop-orange, #EF9034); color: #fff; }
+.kop-pp-confirm { background: var(--kop-orange-fill, #A3570D); color: #fff; }
 .kop-pp-confirm:hover { background: var(--kop-navy, #000080); }
 .kop-pp-confirm:disabled { opacity: 0.5; cursor: default; }
 
@@ -255,15 +266,21 @@
     border: 1px dashed var(--kop-orange, #EF9034);
     color: #7a5b15;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.linked-program-none:focus, .linked-program-none:active, .linked-program-none:hover { background: var(--kop-soft-yellow, #FFF5CB); color: #7a5b15; }
+
 .linked-program-set {
     background: var(--kop-mint, #B6E3D4);
     border: 1px solid var(--kop-teal, #33A7B5);
     color: var(--kop-midnight, #000435);
     font-weight: 600;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.linked-program-set:focus, .linked-program-set:active, .linked-program-set:hover { background: var(--kop-mint, #B6E3D4); color: var(--kop-midnight, #000435); }
+
 
 .select-program-btn {
-    background: var(--kop-teal, #33A7B5);
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -271,7 +288,11 @@
     font-weight: 600;
     cursor: pointer;
 }
-.select-program-btn:hover { background: var(--kop-navy, #000080); }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.select-program-btn:focus, .select-program-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
+.select-program-btn:hover { background: var(--kop-navy, #000080); color: #fff; /* the other half, or Kadence supplies it */
+}
 
 .linked-program-help {
     font-size: 0.78rem;
@@ -321,7 +342,7 @@
 }
 
 .kop-pp-dup-anyway:hover {
-    color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-pp-dup-note {
@@ -334,7 +355,7 @@
    document viewer on the program's FileBird folder). */
 .linked-program-docs-btn {
     margin-left: 8px;
-    background: var(--kop-teal, #33A7B5);
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -344,7 +365,11 @@
     cursor: pointer;
     vertical-align: middle;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.linked-program-docs-btn:focus, .linked-program-docs-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
 
 .linked-program-docs-btn:hover {
     background: var(--kop-navy, #000080);
+    color: #fff; /* the other half, or Kadence supplies it */
 }

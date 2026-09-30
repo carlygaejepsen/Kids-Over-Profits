@@ -775,13 +775,13 @@ table { border-collapse: collapse; background: #fff; font-size: 0.82rem; width: 
 th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; vertical-align: top; }
 th { background: #000080; color: #fff; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; } .bad { color: #c0392b; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+button { background: #24757F; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 button.small { padding: 4px 9px; font-size: 0.78rem; }
 a.tab { display: inline-block; padding: 7px 12px; border-radius: 6px 6px 0 0; background: #ddd; color: #000435; text-decoration: none; font-weight: 700; font-size: 0.85rem; }
 a.tab.active { background: #000080; color: #fff; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin: 10px 0; }
 .role { color: #555; font-size: 0.76rem; }
-.aid { color: #888; font-size: 0.76rem; }
+.aid { color: #4A5568; font-size: 0.76rem; }
 input[type=search] { padding: 6px 9px; border: 1px solid #000080; border-radius: 6px; }
 .bar { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 a { color: #000080; }
@@ -814,7 +814,7 @@ addresses in the facility form as usual.</p>
     </form>
     <form method="post" style="margin-left:auto">
         <?php wp_nonce_field('kop_ma_apply'); ?>
-        <button type="submit" name="do_seed" value="1" style="background:#EF9034"
+        <button type="submit" name="do_seed" value="1" style="background:#A3570D"
             onclick="return window.confirm('Seed / refresh the address tables?\n\nNew addresses get IDs (existing IDs are kept), and facility-address memberships are rebuilt from the current facility data.');">
             Seed / refresh from facility data</button>
     </form>

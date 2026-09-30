@@ -48,6 +48,9 @@
     background: var(--kop-teal-ink, #24757F);
     color: var(--kop-white, #fff);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-hub-action--primary:focus, .kop-hub-action--primary:active, .kop-hub-action--primary:hover { background: var(--kop-teal-ink, #24757F); color: var(--kop-white, #fff); }
+
 
 .kop-hub-action:hover,
 .kop-hub-action:focus-visible {
@@ -249,7 +252,7 @@
 
 .kop-hub-more:hover,
 .kop-hub-more:focus-visible {
-    background: var(--kop-teal, #33a7b5);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white, #fff);
 }
 
@@ -641,6 +644,9 @@
     font: inherit;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-rl-chip-more:hover, .kop-rl-chip-more:focus, .kop-rl-chip-more:active { background: transparent; box-shadow: none; color: var(--kop-navy-blue, #000080); }
+
 
 .kop-rl-chip-more:hover,
 .kop-rl-chip-more:focus-visible {
@@ -664,6 +670,9 @@
     color: var(--kop-navy-blue, #000080);
     background: #fff;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rl-chip:focus, .kop-rl-chip:active { background: #fff; color: var(--kop-navy-blue, #000080); }
+
 
 .kop-rl-chip:hover,
 .kop-rl-chip:focus-visible {
@@ -721,6 +730,9 @@
     box-shadow: none;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-rl-tag-remove:hover, .kop-rl-tag-remove:focus, .kop-rl-tag-remove:active { background: transparent; box-shadow: none; color: var(--kop-text-secondary, #4a4f6a); }
+
 
 .kop-rl-tag-remove:hover,
 .kop-rl-tag-remove:focus,
@@ -844,11 +856,17 @@
     font-weight: 600;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-rl-edit-toggle:hover, .kop-rl-edit-toggle:focus, .kop-rl-edit-toggle:active { background: transparent; box-shadow: none; color: var(--kop-teal-ink, #24757F); }
+
 
 .kop-rl-edit-toggle[aria-pressed="true"] {
-    background: var(--kop-teal, #33a7b5);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white, #fff);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rl-edit-toggle[aria-pressed="true"]:focus, .kop-rl-edit-toggle[aria-pressed="true"]:active, .kop-rl-edit-toggle[aria-pressed="true"]:hover { background: var(--kop-teal-fill, #24757F); color: var(--kop-white, #fff); }
+
 
 .kop-rl-card {
     position: relative;
@@ -1024,11 +1042,15 @@
     font-size: 0.83rem;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rl-photo-actions button:focus, .kop-rl-photo-actions button:active, .kop-rl-form-actions button:focus, .kop-rl-form-actions button:active { background: var(--kop-white, #fff); color: var(--kop-text-primary, #23263a); }
+
 
 .kop-rl-photo-actions button:hover,
 .kop-rl-form-actions button:hover {
     border-color: var(--kop-teal, #33a7b5);
     color: var(--kop-teal-ink, #24757F);
+    background: var(--kop-white, #fff); /* the other half, or Kadence supplies it */
 }
 
 .kop-rl-form-msg {
@@ -1051,7 +1073,7 @@
 
 .kop-rl-save {
     border-color: var(--kop-teal, #33a7b5) !important;
-    background: var(--kop-teal, #33a7b5) !important;
+    background: var(--kop-teal-fill, #24757F) !important;
     color: var(--kop-white, #fff) !important;
     font-weight: 600;
 }

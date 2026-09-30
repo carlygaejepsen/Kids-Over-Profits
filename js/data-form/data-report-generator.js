@@ -54,7 +54,7 @@ function generateHTMLReport() {
         .report-title {
             font-size: 32px;
             font-weight: 700;
-            color: #33A7B5;
+            color: #24757F;
             margin-bottom: 10px;
         }
 
@@ -70,7 +70,7 @@ function generateHTMLReport() {
 
         .section-title {
             font-size: 24px;
-            color: #33A7B5;
+            color: #24757F;
             border-bottom: 2px solid #e5e7eb;
             padding-bottom: 10px;
             margin-bottom: 20px;
@@ -144,7 +144,7 @@ function generateHTMLReport() {
             content: "•";
             position: absolute;
             left: 5px;
-            color: #33A7B5;
+            color: #24757F;
             font-weight: bold;
         }
 
@@ -157,7 +157,7 @@ function generateHTMLReport() {
 
         .staff-role {
             font-weight: 600;
-            color: #33A7B5;
+            color: #24757F;
         }
 
         .actions {
@@ -176,7 +176,7 @@ function generateHTMLReport() {
 
         .btn {
             padding: 10px 20px;
-            background: #33A7B5;
+            background: #24757F;
             color: white;
             border: none;
             border-radius: 6px;
@@ -198,7 +198,7 @@ function generateHTMLReport() {
         }
 
         .empty-note {
-            color: #9ca3af;
+            color: #4A5568;
             font-style: italic;
         }
 
@@ -1333,7 +1333,7 @@ function formatWebsiteLink(url) {
         }
     }
     
-    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(displayText)}</a>`;
+    return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #24757F; text-decoration: underline;">${escapeHtml(displayText)}</a>`;
 }
 
 /**
@@ -1345,7 +1345,7 @@ function formatEmailLink(email) {
     let emailStr = safeString(email);
     if (!emailStr) return '';
     
-    return `<a href="mailto:${escapeHtml(emailStr)}" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(emailStr)}</a>`;
+    return `<a href="mailto:${escapeHtml(emailStr)}" style="color: #24757F; text-decoration: underline;">${escapeHtml(emailStr)}</a>`;
 }
 
 /**
@@ -1359,7 +1359,7 @@ function formatPhoneLink(phone) {
     
     // Clean the phone number for the tel: href (remove spaces, parens, dashes for some formats)
     const cleanPhone = phoneStr.replace(/[\s\(\)\-\.]/g, '');
-    return `<a href="tel:${escapeHtml(cleanPhone)}" style="color: #33A7B5; text-decoration: underline;">${escapeHtml(phoneStr)}</a>`;
+    return `<a href="tel:${escapeHtml(cleanPhone)}" style="color: #24757F; text-decoration: underline;">${escapeHtml(phoneStr)}</a>`;
 }
 
 // ============================
@@ -1593,7 +1593,7 @@ function renderReportHTMLFromGenerator(data, skipHeader = false) {
         html += `
             <div class="report-section">
                 <h2 class="section-title">Facilities</h2>
-                <p style="color: #6b7280; font-style: italic;">No facilities data available.</p>
+                <p style="color: #4A5568; font-style: italic;">No facilities data available.</p>
             </div>
         `;
     }
@@ -1813,10 +1813,10 @@ class FacilityReportGenerator {
                 <style>
                     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; padding: 20px; }
                     .report-header { border-bottom: 3px solid #33A7B5; padding-bottom: 15px; margin-bottom: 20px; }
-                    .report-title { font-size: 28px; color: #33A7B5; margin: 0 0 5px 0; }
-                    .report-meta { color: #6b7280; font-size: 14px; }
+                    .report-title { font-size: 28px; color: #24757F; margin: 0 0 5px 0; }
+                    .report-meta { color: #4A5568; font-size: 14px; }
                     .report-section { margin-bottom: 25px; page-break-inside: avoid; }
-                    .section-title { font-size: 20px; color: #33A7B5; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 15px; }
+                    .section-title { font-size: 20px; color: #24757F; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px; margin-bottom: 15px; }
                     .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px; }
                     .info-item { display: flex; gap: 8px; }
                     .info-label { font-weight: 600; color: #374151; min-width: 120px; }
@@ -1827,7 +1827,7 @@ class FacilityReportGenerator {
                     .list-title { font-weight: 600; color: #374151; margin-bottom: 5px; }
                     .list-items { margin: 0; padding-left: 20px; }
                     .list-items li { padding: 3px 0; }
-                    .subsection-title { font-size: 16px; color: #6b7280; font-weight: 600; margin: 15px 0 10px 0; }
+                    .subsection-title { font-size: 16px; color: #4A5568; font-weight: 600; margin: 15px 0 10px 0; }
                     @media print { body { padding: 0; } }
                 </style>
             </head>

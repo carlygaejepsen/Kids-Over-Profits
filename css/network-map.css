@@ -151,6 +151,9 @@ html.kop-network-pinned {
 	background: var(--kop-navy, #000080);
 	color: #fff;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__button--full[aria-pressed="true"]:focus, .kop-network__button--full[aria-pressed="true"]:active, .kop-network__button--full[aria-pressed="true"]:hover { background: var(--kop-navy, #000080); color: #fff; }
+
 
 /* -------------------------------------------------------------- toolbar -- */
 
@@ -276,6 +279,9 @@ html.kop-network-pinned {
 	white-space: nowrap;
 	cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__button:focus, .kop-network__button:active { background: #fff; color: inherit; }
+
 
 .kop-network__button:hover {
 	border-color: var(--kop-teal, #33A7B5);
@@ -286,6 +292,9 @@ html.kop-network-pinned {
 	margin-top: 0.5rem;
 	background: transparent;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-network__button--quiet:hover, .kop-network__button--quiet:focus, .kop-network__button--quiet:active { background: transparent; box-shadow: none; }
+
 
 /* ---------------------------------------------------------------- path -- */
 
@@ -553,6 +562,9 @@ html.kop-network-pinned {
 	white-space: nowrap;
 	cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__chain-list button:focus, .kop-network__chain-list button:active { background: #fff; color: inherit; }
+
 
 /* Start over sits at the far end, out of the way of the crumbs. */
 .kop-network__chain-home {
@@ -670,6 +682,9 @@ html.kop-network-pinned {
 	cursor: pointer;
 	box-shadow: 0 2px 6px rgba(0, 4, 53, 0.1);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__stage-button:focus, .kop-network__stage-button:active { background: rgba(255, 255, 255, 0.92); color: inherit; }
+
 
 /* Simplify while it is on: pressed, in the navy of the mode toggle. */
 .kop-network__stage-button.is-on {
@@ -677,6 +692,9 @@ html.kop-network-pinned {
 	background: var(--kop-navy-blue, #000080);
 	color: #fff;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__stage-button.is-on:focus, .kop-network__stage-button.is-on:active, .kop-network__stage-button.is-on:hover { background: var(--kop-navy-blue, #000080); color: #fff; }
+
 
 .kop-network__stage-button[hidden] {
 	display: none;
@@ -737,6 +755,9 @@ html.kop-network-pinned {
 	cursor: pointer;
 	box-shadow: 0 2px 6px rgba(0, 4, 53, 0.1);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__key-toggle:focus, .kop-network__key-toggle:active { background: rgba(255, 255, 255, 0.92); color: inherit; }
+
 
 .kop-network__key-toggle::after {
 	content: " \25BE";
@@ -812,7 +833,7 @@ html.kop-network-pinned {
 	flex: 0 0 auto;
 	font-size: 0.78rem;
 	font-variant-numeric: tabular-nums;
-	opacity: 0.55;
+	color: var(--kop-text-muted, #4A5568); /* was midnight at 0.55 opacity, 4.5 */
 }
 
 .kop-network__range {
@@ -844,6 +865,9 @@ html.kop-network-pinned {
 	text-transform: uppercase;
 	cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-network__legend-toggle:hover, .kop-network__legend-toggle:focus, .kop-network__legend-toggle:active { background: transparent; box-shadow: none; color: inherit; }
+
 
 .kop-network__legend-toggle::after {
 	content: " \25BE";
@@ -1158,6 +1182,9 @@ button.kop-network__popup-person {
 	text-decoration: underline;
 	cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+button.kop-network__popup-person:hover, button.kop-network__popup-person:focus, button.kop-network__popup-person:active { background: transparent; box-shadow: none; color: var(--kop-navy-blue, #000080); }
+
 
 .kop-network__popup-text,
 .kop-network__popup-source {
@@ -1260,6 +1287,9 @@ button.kop-network__popup-person {
 	line-height: 1;
 	cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-network__drawer-close:hover, .kop-network__drawer-close:focus, .kop-network__drawer-close:active { background: transparent; box-shadow: none; color: inherit; }
+
 
 .kop-network__drawer-close:hover {
 	background: rgba(0, 4, 53, 0.07);
@@ -1349,11 +1379,15 @@ button.kop-network__popup-person {
 	color: var(--kop-navy-blue, #000080);
 	cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-network__drawer-link:hover, .kop-network__drawer-link:focus, .kop-network__drawer-link:active { background: transparent; box-shadow: none; color: var(--kop-navy-blue, #000080); }
+
 
 .kop-network__drawer-link:hover,
 .kop-network__drawer-link:focus-visible {
 	background: var(--kop-sand, #F2EEDF);
 	text-decoration: underline;
+    color: var(--kop-navy-blue, #000080); /* the other half, or Kadence supplies it */
 }
 
 .kop-network__drawer-source {
@@ -1423,11 +1457,15 @@ button.kop-network__popup-person {
 	color: var(--kop-navy-blue, #000080);
 	cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-network__drawer-also-link:hover, .kop-network__drawer-also-link:focus, .kop-network__drawer-also-link:active { background: transparent; box-shadow: none; color: var(--kop-navy-blue, #000080); }
+
 
 .kop-network__drawer-also-link:hover,
 .kop-network__drawer-also-link:focus-visible {
 	background: var(--kop-sand, #F2EEDF);
 	text-decoration: underline;
+    color: var(--kop-navy-blue, #000080); /* the other half, or Kadence supplies it */
 }
 
 .kop-network__drawer-toggle {
@@ -1442,10 +1480,14 @@ button.kop-network__popup-person {
 	color: var(--kop-midnight-blue, #000435);
 	cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-network__drawer-toggle:focus, .kop-network__drawer-toggle:active { background: #fff; color: var(--kop-midnight-blue, #000435); }
+
 
 .kop-network__drawer-toggle:hover,
 .kop-network__drawer-toggle:focus-visible {
 	background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435); /* the other half, or Kadence supplies it */
 }
 
 .kop-network__drawer-empty {

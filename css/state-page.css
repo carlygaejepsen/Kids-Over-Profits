@@ -53,6 +53,9 @@
     font-size: 0.85em;
     border: 1px solid #d8dff0;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.count-pill:focus, .count-pill:active, .count-pill:hover { background: #f0f3fa; color: #00004d; }
+
 
 .count-pill em {
     font-style: normal;
@@ -80,9 +83,13 @@
     margin-bottom: -2px;
     transition: color 0.15s, border-color 0.15s;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.state-tab:hover, .state-tab:focus, .state-tab:active { background: transparent; box-shadow: none; color: #4b5563; }
+
 
 .state-tab:hover {
     color: #00004d;
+    background: transparent; /* the other half, or Kadence supplies it */
 }
 
 .state-tab.active {
@@ -112,7 +119,7 @@
 
 .section-content .loading,
 .section-content .empty {
-    color: #777;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
     padding: 0.5em 0;
 }
@@ -147,7 +154,7 @@
 }
 
 .result-count {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.9em;
     margin: 0 0 0.5em;
 }
@@ -199,13 +206,13 @@
 }
 
 .facility-alphabet-filter a:hover {
-    background-color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
     color: #ffffff;
     border-color: #33A7B5;
 }
 
 .facility-alphabet-filter a.active {
-    background-color: #EF9034;
+    background-color: var(--kop-orange-fill, #A3570D);
     color: #ffffff;
     border-color: #EF9034;
 }
@@ -231,7 +238,7 @@
 }
 
 .facility-group-heading .count {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-weight: 400;
     font-size: 0.92em;
 }
@@ -296,7 +303,7 @@
 }
 
 .facility-card-operator {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.8em;
     font-style: italic;
     margin-bottom: 0.4em;
@@ -307,14 +314,14 @@
     flex-wrap: wrap;
     gap: 0.5em 0.85em;
     font-size: 0.78em;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     margin-top: 0.4em;
     padding-top: 0.4em;
     border-top: 1px dashed #eef0f4;
 }
 
 .facility-card-address-missing {
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
@@ -334,7 +341,7 @@
     content: '•';
     position: absolute;
     left: 0;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .facility-card-address-list li + li {
@@ -432,7 +439,7 @@
 }
 
 .detail-sub {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.92em;
 }
 
@@ -441,7 +448,7 @@
 }
 
 .detail-sub-item {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.92em;
 }
 
@@ -515,6 +522,9 @@
     font-size: 0.82em;
     line-height: 1.4;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.resource-chip:focus, .resource-chip:active, .resource-chip:hover { background: #eef2ff; color: #312e81; }
+
 
 /* Critical-incident chips read as warnings, not neutral resources */
 .resource-chip.incident-chip {
@@ -522,6 +532,9 @@
     color: #991b1b;
     border-color: #fecaca;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.resource-chip.incident-chip:focus, .resource-chip.incident-chip:active, .resource-chip.incident-chip:hover { background: #fee2e2; color: #991b1b; }
+
 
 /* TTI practices (restraint, level systems...) sit between neutral and incident */
 .resource-chip.practice-chip {
@@ -529,6 +542,9 @@
     color: #8a4b00;
     border-color: #f7c998;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.resource-chip.practice-chip:focus, .resource-chip.practice-chip:active, .resource-chip.practice-chip:hover { background: #fff3e2; color: #8a4b00; }
+
 
 /* Per-facility news list inside expand panel */
 .facility-news-list {
@@ -561,7 +577,7 @@
 }
 
 .facility-news-meta {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.85em;
     margin-top: 0.2em;
 }
@@ -628,6 +644,9 @@
     font-size: 0.78em;
     font-weight: 600;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.facility-expand-btn:focus, .facility-expand-btn:active, .facility-expand-btn:hover { background: #f0f3fa; color: #00004d; }
+
 
 /* Kadence's button:hover/:focus (0,1,1) paint white text and outrank the
    one-class rule above, so both colours are named for every state. */
@@ -643,6 +662,7 @@ button.facility-expand-btn:active {
 .facility-group-closed button.facility-expand-btn:focus,
 .facility-group-closed button.facility-expand-btn:active {
     color: #4a5b85;
+    background: transparent; /* the other half, or Kadence supplies it */
 }
 
 .facility-expand-btn:disabled {
@@ -905,6 +925,9 @@ button.facility-expand-btn:active {
     color: #4a5b85;
     border-color: #cfd6e7;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.facility-group-closed .facility-expand-btn:focus, .facility-group-closed .facility-expand-btn:active, .facility-group-closed .facility-expand-btn:hover { background: #eaeefa; color: #4a5b85; }
+
 
 .facility-group-closed .facility-panel {
     background: #f3f6fb;
@@ -913,7 +936,7 @@ button.facility-expand-btn:active {
 
 /* Closed group: lighter blue palette */
 .facility-group-closed .facility-group-heading {
-    color: #6b8cc7;
+    color: #3D5A99;
     border-bottom-color: #d3dbeb;
 }
 
@@ -930,7 +953,7 @@ button.facility-expand-btn:active {
 
 .facility-group-closed .facility-card-address,
 .facility-group-closed .facility-card-operator {
-    color: #6b7c9d;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 /* Other lists */
@@ -966,7 +989,7 @@ button.facility-expand-btn:active {
 .news-meta,
 .lawsuit-meta,
 .legislation-meta {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.85em;
     margin-top: 0.2em;
     display: flex;
@@ -1050,22 +1073,58 @@ button.facility-expand-btn:active {
     background: #f3f4f6;
     color: #374151;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill:focus, .status-pill:active, .status-pill:hover, .position-pill:focus, .position-pill:active, .position-pill:hover { background: #f3f4f6; color: #374151; }
+
 
 .status-pill.status-filed { background: #dbeafe; color: #1e40af; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-filed:focus, .status-pill.status-filed:active, .status-pill.status-filed:hover { background: #dbeafe; color: #1e40af; }
+
 .status-pill.status-settled { background: #d1fae5; color: #065f46; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-settled:focus, .status-pill.status-settled:active, .status-pill.status-settled:hover { background: #d1fae5; color: #065f46; }
+
 .status-pill.status-dismissed { background: #fee2e2; color: #991b1b; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-dismissed:focus, .status-pill.status-dismissed:active, .status-pill.status-dismissed:hover { background: #fee2e2; color: #991b1b; }
+
 .status-pill.status-ruling { background: #ede9fe; color: #5b21b6; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-ruling:focus, .status-pill.status-ruling:active, .status-pill.status-ruling:hover { background: #ede9fe; color: #5b21b6; }
+
 .status-pill.status-appeal { background: #fef3c7; color: #92400e; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-appeal:focus, .status-pill.status-appeal:active, .status-pill.status-appeal:hover { background: #fef3c7; color: #92400e; }
+
 .status-pill.status-passed_house,
 .status-pill.status-passed_senate { background: #cffafe; color: #155e75; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-passed_house:focus, .status-pill.status-passed_house:active, .status-pill.status-passed_house:hover, .status-pill.status-passed_senate:focus, .status-pill.status-passed_senate:active, .status-pill.status-passed_senate:hover { background: #cffafe; color: #155e75; }
+
 .status-pill.status-signed,
 .status-pill.status-enacted { background: #d1fae5; color: #065f46; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-signed:focus, .status-pill.status-signed:active, .status-pill.status-signed:hover, .status-pill.status-enacted:focus, .status-pill.status-enacted:active, .status-pill.status-enacted:hover { background: #d1fae5; color: #065f46; }
+
 .status-pill.status-vetoed,
 .status-pill.status-dead { background: #fee2e2; color: #991b1b; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.status-pill.status-vetoed:focus, .status-pill.status-vetoed:active, .status-pill.status-vetoed:hover, .status-pill.status-dead:focus, .status-pill.status-dead:active, .status-pill.status-dead:hover { background: #fee2e2; color: #991b1b; }
+
 
 .position-pill.position-support { background: #d1fae5; color: #065f46; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.position-pill.position-support:focus, .position-pill.position-support:active, .position-pill.position-support:hover { background: #d1fae5; color: #065f46; }
+
 .position-pill.position-oppose { background: #fee2e2; color: #991b1b; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.position-pill.position-oppose:focus, .position-pill.position-oppose:active, .position-pill.position-oppose:hover { background: #fee2e2; color: #991b1b; }
+
 .position-pill.position-watch { background: #fef3c7; color: #92400e; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.position-pill.position-watch:focus, .position-pill.position-watch:active, .position-pill.position-watch:hover { background: #fef3c7; color: #92400e; }
+
 
 .lawsuit-facilities,
 .legislation-sponsors {
@@ -1100,9 +1159,13 @@ button.facility-expand-btn:active {
     cursor: pointer;
     font-size: 0.85em;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.docs-toggle:focus, .docs-toggle:active { background: #f0f3fa; color: #00004d; }
+
 
 .docs-toggle:hover {
     background: #e3e9f7;
+    color: #00004d; /* the other half, or Kadence supplies it */
 }
 
 .docs-target {
@@ -1110,7 +1173,7 @@ button.facility-expand-btn:active {
 }
 
 .docs-empty {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
     font-size: 0.9em;
 }
@@ -1197,7 +1260,7 @@ button.facility-expand-btn:active {
 
 .state-doc-subfolder-title::before {
     content: '\25B8'; /* ▸ */
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     transition: transform 0.2s ease;
     flex: 0 0 auto;
 }
@@ -1207,13 +1270,13 @@ button.facility-expand-btn:active {
 }
 
 .state-doc-subfolder-title:hover {
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .state-doc-subfolder-count {
     font-weight: 500;
     font-size: 0.9em;
-    color: #64748b;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 /* Contents pulled in from a LINKED folder (a renamed/successor program or an
@@ -1229,7 +1292,7 @@ button.facility-expand-btn:active {
 }
 
 .state-doc-subfolder-merged > .state-doc-subfolder-title::before {
-    color: #EF9034;
+    color: var(--kop-orange-ink, #A3570D);
 }
 
 .state-doc-subfolder-content {
@@ -1269,6 +1332,9 @@ button.facility-expand-btn:active {
     font-size: 0.92em;
     white-space: nowrap;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.state-page a.submit-news-btn:focus, .state-page a.submit-news-btn:active { background: #00004d; color: #fff; }
+
 
 .state-page a.submit-news-btn:hover {
     background: #1a1a66;
@@ -1291,7 +1357,7 @@ button.facility-expand-btn:active {
 
 .facility-card-profile:hover,
 .facility-card-profile:focus-visible {
-    background: #33a7b5;
+    background: var(--kop-teal-fill, #24757F);
     border-color: #33a7b5;
     color: #ffffff !important;
     text-decoration: none;

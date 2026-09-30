@@ -45,12 +45,18 @@ body {
     color: #000435;
     border: 1px solid #33A7B5;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.category-tabs .category-tab:focus, .category-tabs .category-tab:active, .category-tabs .category-tab:hover { background: #B6E3D4; color: #000435; }
+
 
 .category-tabs .category-tab.active {
-    background: #33A7B5;
+    background: var(--kop-teal-fill, #24757F);
     color: #FFFFFF;
     border-color: #000435;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.category-tabs .category-tab.active:focus, .category-tabs .category-tab.active:active, .category-tabs .category-tab.active:hover { background: var(--kop-teal-fill, #24757F); color: #FFFFFF; }
+
 
 .section {
     background: #FFFFFF;
@@ -58,7 +64,7 @@ body {
 }
 
 .section-header {
-    background: #33A7B5;
+    background: var(--kop-teal-fill, #24757F);
     color: #FFFFFF;
     border-bottom: 1px solid #000435;
 }
@@ -72,6 +78,9 @@ body {
     background: #000435;
     border-color: #000435;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.section-toggle:focus, .section-toggle:active, .section-toggle:hover { background: #000435; color: #FFFFFF; }
+
 
 .content-box,
 .info-box,
@@ -122,12 +131,12 @@ select:focus {
 }
 
 .project-search-input::placeholder {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
 .btn {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: #FFFFFF;
     border: 2px solid #33A7B5;
     transition: all 0.2s ease;
@@ -136,7 +145,7 @@ select:focus {
 
 .btn:hover,
 .btn:focus {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     color: #FFFFFF;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(51, 167, 181, 0.3);
@@ -150,6 +159,7 @@ select:focus {
 
 .btn-secondary:hover {
     background: linear-gradient(135deg, #FFF5CB 0%, #AEE0ED 100%);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .btn-danger,
@@ -162,12 +172,13 @@ select:focus {
 .btn-danger:hover,
 .save-master-btn:hover {
     background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .btn-primary,
 .btn-success,
 .save-suggestion-btn {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: #FFFFFF;
     border: 2px solid #33A7B5;
 }
@@ -175,7 +186,8 @@ select:focus {
 .btn-primary:hover,
 .btn-success:hover,
 .save-suggestion-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
+    color: #FFFFFF; /* the other half, or Kadence supplies it */
 }
 
 .info-text,
@@ -212,7 +224,7 @@ select:focus {
    HEADER & ADMIN ELEMENTS
    ============================================ */
 .admin-header {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal */
     color: white;
     padding: 25px;
     border-radius: 8px;
@@ -296,6 +308,9 @@ select:focus {
     border-radius: 6px;
     transition: all 0.2s ease;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.category-tab:hover, .category-tab:focus, .category-tab:active { background: transparent; box-shadow: none; color: #000435; }
+
 
 .category-tab:hover {
     background: #fff;
@@ -308,6 +323,9 @@ select:focus {
     box-shadow: 0 2px 4px rgba(0, 0, 128, 0.2);
     border: 2px solid #FE8088; /* Coral Pink */
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.category-tab.active:focus, .category-tab.active:active, .category-tab.active:hover { background: #000080; color: #FFFFFF; }
+
 
 /* Facility loader panel matches category navigation styling */
 .facility-loader-panel {
@@ -345,7 +363,7 @@ select:focus {
 }
 
 .quick-facilities-empty {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
@@ -361,7 +379,7 @@ select:focus {
 
 #consultants-toc .toc-header,
 #facility-toc .toc-header {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Match admin-header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Match admin-header */
     color: #FFFFFF;
     border-bottom: 3px solid #FE8088; /* Coral Pink accent */
 }
@@ -381,7 +399,7 @@ select:focus {
 
 #consultants-toc .toc-toggle:hover,
 #facility-toc .toc-toggle:hover {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: #FFFFFF;
 }
 
@@ -501,7 +519,7 @@ select:focus {
 
 .project-action-btn {
     padding: 8px 12px;
-    background: #33A7B5;
+    background: var(--kop-teal-fill, #24757F);
     color: #FFFFFF;
     border: 2px solid #000435;
     border-radius: 6px;
@@ -512,6 +530,9 @@ select:focus {
     box-shadow: 0 2px 6px rgba(0, 4, 53, 0.15);
     transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.project-action-btn:focus, .project-action-btn:active { background: var(--kop-teal-fill, #24757F); color: #FFFFFF; }
+
 
 .project-action-btn:hover {
     transform: translateY(-1px);
@@ -568,7 +589,7 @@ select:focus {
 }
 
 .location-card .kop-btn {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     color: #FFFFFF;
     border-color: #000435;
 }
@@ -649,7 +670,7 @@ select:focus {
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     color: #FFFFFF;
     font-weight: 700;
     display: flex;
@@ -674,7 +695,7 @@ select:focus {
 
 .consultant-item-details {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     line-height: 1.4;
     word-break: break-word;
 }
@@ -815,7 +836,7 @@ select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Match admin-header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Match admin-header */
     color: #FFFFFF;
     border-bottom: 3px solid #FE8088; /* Coral Pink accent */
     padding: 15px 20px;
@@ -842,7 +863,7 @@ select:focus {
 }
 
 .toc-toggle:hover {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: #FFFFFF;
     border-color: #000435;
     transform: scale(1.05);
@@ -922,7 +943,7 @@ select:focus {
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     color: #FFFFFF;
     font-weight: 700;
     display: flex;
@@ -1097,7 +1118,7 @@ select:focus {
     width: 32px;
     height: 32px;
     border-radius: 999px;
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     color: #FFFFFF;
     font-weight: 700;
     display: flex;
@@ -1120,7 +1141,7 @@ select:focus {
 
 .facility-quick-meta {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     line-height: 1.4;
     word-break: break-word;
 }
@@ -1128,7 +1149,7 @@ select:focus {
 .toc-no-project {
     padding: 20px;
     text-align: center;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
@@ -1163,7 +1184,7 @@ select:focus {
 }
 
 #facility-counter {
-    color: #33A7B5; /* Teal */
+    color: var(--kop-teal-ink, #24757F); /* Teal */
     font-weight: 700;
 }
 
@@ -1239,6 +1260,9 @@ select:focus {
     cursor: pointer;
     transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.section-toggle:focus, .section-toggle:active, .section-toggle:hover { background: #000435; color: #FFFFFF; }
+
 
 .section-toggle::before {
     content: 'Expand';
@@ -1270,6 +1294,9 @@ select:focus {
     color: #000435;
     border-color: #000435;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.section.expanded .section-toggle:focus, .section.expanded .section-toggle:active, .section.expanded .section-toggle:hover { background: #FFFFFF; color: #000435; }
+
 
 .section.expanded .section-header:hover .section-toggle {
     background: #FFF5CB;
@@ -1821,7 +1848,7 @@ textarea {
 }
 
 .autocomplete-item strong {
-    color: #33A7B5; /* Teal */
+    color: var(--kop-teal-ink, #24757F); /* Teal */
     font-weight: 600;
 }
 
@@ -1959,7 +1986,7 @@ input[type="url"].array-input {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     display: inline-flex;
     align-items: center;
@@ -1981,9 +2008,10 @@ input[type="url"].array-input {
 }
 
 .btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .btn:active {
@@ -1991,23 +2019,25 @@ input[type="url"].array-input {
 }
 
 .btn-danger {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-danger:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .btn-inline {
@@ -2031,7 +2061,7 @@ input[type="url"].array-input {
     max-width: 24px !important;
     min-height: 24px !important;
     max-height: 24px !important;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     font-size: 14px;
     font-weight: 700;
@@ -2044,16 +2074,17 @@ input[type="url"].array-input {
 }
 
 .add-plus-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 3px 8px rgba(51, 167, 181, 0.5), 0 0 10px rgba(254, 128, 136, 0.3);
     transform: scale(1.1);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 /* Add Item Button (at bottom of arrays) - matches admin header */
 .add-item-btn {
     padding: 5px 12px;
     margin-top: 6px;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     border: 1px solid #FE8088; /* Coral Pink */
     border-radius: 4px;
@@ -2067,9 +2098,10 @@ input[type="url"].array-input {
 }
 
 .add-item-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.5), 0 0 12px rgba(254, 128, 136, 0.3);
     transform: translateY(-1px);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 /* Remove Button - small inline minus button */
@@ -2081,7 +2113,7 @@ input[type="url"].array-input {
     max-width: 28px !important;
     min-height: 28px !important;
     max-height: 28px !important;
-    background: #FE8088; /* Coral Pink */
+    background: var(--kop-coral-pink-fill, #D9020F); /* Coral Pink */
     color: white;
     font-size: 16px;
     line-height: 1;
@@ -2094,11 +2126,15 @@ input[type="url"].array-input {
     justify-content: center;
     vertical-align: middle;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.remove-btn:focus, .remove-btn:active { background: var(--kop-coral-pink-fill, #D9020F); color: white; }
+
 
 .remove-btn:hover {
     background: #fa5f69 !important; /* Darker Coral Pink */
     transform: none !important;
     box-shadow: none !important;
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 /* ============================================
@@ -2228,7 +2264,7 @@ input[type="url"].array-input {
 
 .info-text {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     line-height: 1.6;
 }
 
@@ -2332,35 +2368,35 @@ input[type="url"].array-input {
     cursor: pointer;
     transition: all 0.15s ease;
     white-space: nowrap;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 
 .project-item-load {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 
 .project-item-load:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-rename {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-rename:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
 .project-item-delete {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
 }
 .project-item-delete:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
 }
@@ -2464,7 +2500,7 @@ input[type="url"].array-input {
 
 .copy-btn {
     padding: 8px 14px;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 6px;
@@ -3249,7 +3285,7 @@ input[type="url"].array-input {
 
     .toolbar-header {
         padding: 12px 15px;
-        background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+        background: linear-gradient(135deg, #000080 0%, #24757F 100%);
         border-radius: 12px 12px 0 0;
     }
 
@@ -3348,8 +3384,9 @@ input[type="url"].array-input {
 }
 
 .copy-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 #json-display {
@@ -3375,7 +3412,7 @@ input[type="url"].array-input {
 .save-master-btn {
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     border: 2px solid #FE8088; /* Coral Pink outline */
     border-radius: 8px;
@@ -3387,9 +3424,10 @@ input[type="url"].array-input {
 }
 
 .save-master-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(51, 167, 181, 0.5), 0 0 16px rgba(254, 128, 136, 0.3);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .save-master-btn:active {
@@ -3451,7 +3489,7 @@ input[type="url"].array-input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal - matches admin header */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal - matches admin header */
     color: white;
     border: 1px solid #FE8088; /* Coral Pink outline */
     border-radius: 4px;
@@ -3464,8 +3502,9 @@ input[type="url"].array-input {
 }
 
 .field-note-btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3), 0 0 8px rgba(254, 128, 136, 0.2);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .field-note-btn.has-note {
@@ -3584,7 +3623,7 @@ input[type="url"].array-input {
     height: 28px;
     padding: 0;
     min-width: 28px;
-    background: #FE8088; /* Coral Pink */
+    background: var(--kop-coral-pink-fill, #D9020F); /* Coral Pink */
     color: white;
     font-size: 18px;
     line-height: 1;
@@ -3595,9 +3634,13 @@ input[type="url"].array-input {
     align-items: center;
     justify-content: center;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.remove-note-btn:focus, .remove-note-btn:active { background: var(--kop-coral-pink-fill, #D9020F); color: white; }
+
 
 .remove-note-btn:hover {
     background: #fa5f69;
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .note-add-btn {
@@ -4525,7 +4568,7 @@ body.page-template-page-admin-data article > .entry-header {
 
 .autocomplete-item[data-placeholder="true"] {
     cursor: default;
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
@@ -4534,7 +4577,7 @@ body.page-template-page-admin-data article > .entry-header {
 }
 
 .autocomplete-item strong {
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
 }
 
@@ -4616,18 +4659,22 @@ body.page-template-page-admin-data article > .entry-header {
     .mobile-section-controls .btn-section-control {
         padding: 6px 12px;
         font-size: 12px;
-        background: #33A7B5;
+        background: var(--kop-teal-fill, #24757F);
         color: white;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         white-space: nowrap;
     }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.mobile-section-controls .btn-section-control:focus { background: var(--kop-teal-fill, #24757F); color: white; }
+
 
     .mobile-section-controls .btn-section-control:hover,
     .mobile-section-controls .btn-section-control:active {
         background: #000435;
-    }
+    color: white; /* the other half, or Kadence supplies it */
+}
 
     /* Make sections collapsible by default on mobile */
     .section:not(.expanded) .section-content {
@@ -4700,12 +4747,16 @@ body.page-template-page-admin-data article > .entry-header {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     line-height: 1.4;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-btn:focus { background: #ffffff; color: #374151; }
+
 
 .kop-btn:hover {
     background: #f3f4f6;
     border-color: #9ca3af;
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: #374151; /* the other half, or Kadence supplies it */
 }
 
 .kop-btn:active {

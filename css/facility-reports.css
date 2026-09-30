@@ -192,14 +192,14 @@ Inspection Details
 }
 
 .facility-report-container .inspection-box-violation {
-    background-color: #ff6600;
+    background-color: #B34700;
     color: #ffffff;
     padding: 15px;
     border: 1px solid #dddddd;
 }
 
 .facility-report-container .inspection-box-violation .inspection-header {
-    background-color: #ff6600;
+    background-color: #B34700;
     color: #ffffff;
     padding: 0 0 15px 0;
     font-weight: 700;
@@ -451,6 +451,9 @@ Inspection Details
     color: #000000 !important;
     border: 1px solid #000000 !important;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.ez-toc-toggle:focus, .ez-toc-toggle:active, .ez-toc-toggle:hover { background: #ffffff !important; color: #000000 !important; }
+
 
 /* =================================================================
    FACILITIES GRID & OPERATORS
@@ -562,7 +565,7 @@ Inspection Details
 }
 
 .status-badge.status-unknown {
-    color: #767676; /* Darker gray for better contrast (4.54:1) */
+    color: var(--kop-text-muted, #4A5568); /* Darker gray for better contrast (4.54:1) */
 }
 
 .facility-details {

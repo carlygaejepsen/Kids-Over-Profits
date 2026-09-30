@@ -114,7 +114,7 @@ get_header();
                 </div>
                 <div id="uploadProgress" class="upload-progress" style="display: none; margin-top:15px;">
                     <div class="progress-bar" style="height:10px; background:#eee; border-radius:5px; overflow:hidden;">
-                        <div id="progressBarFill" class="progress-bar-fill" style="height:100%; background:#33A7B5; width:0%;"></div>
+                        <div id="progressBarFill" class="progress-bar-fill" style="height:100%; background:#24757F; width:0%;"></div>
                     </div>
                     <p id="uploadStatus" class="upload-status" style="text-align:center; margin-top:5px; font-weight:600;"></p>
                 </div>
@@ -212,7 +212,7 @@ get_header();
 
                 <h4>Facilities Operated</h4>
                 <div class="organization-facilities-list" id="organizationFacilitiesList" style="background-color: #F0F9FA; border: 2px solid #AEE0ED; border-radius: 5px; padding: 15px; min-height: 100px;">
-                    <p style="color: #999; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>
+                    <p style="color: #4A5568; font-style: italic;">No facilities found. Facilities will appear here when this organization page is loaded.</p>
                 </div>
             </fieldset>
 

@@ -67,10 +67,12 @@
 
 .stat-card:nth-child(2) {
     background: linear-gradient(135deg, var(--kop-teal), var(--kop-mint-green));
+    color: var(--kop-midnight-blue); /* white fails on these light ends */
 }
 
 .stat-card:nth-child(3) {
     background: linear-gradient(135deg, var(--kop-orange), var(--kop-coral-pink));
+    color: var(--kop-midnight-blue); /* white fails on these light ends */
 }
 
 .stat-card:nth-child(4) {
@@ -146,6 +148,9 @@
     font-weight: 600;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.submission-tab:focus, .submission-tab:active { background: var(--kop-white); color: var(--kop-midnight-blue); }
+
 
 .submission-tab:hover {
     border-color: var(--kop-teal);
@@ -161,6 +166,9 @@
     border-color: var(--kop-midnight-blue);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.submission-tab.is-active:focus, .submission-tab.is-active:active, .submission-tab.is-active:hover { background: var(--kop-midnight-blue); color: var(--kop-white); }
+
 
 .type-tabs .submission-tab {
     font-size: 15px;
@@ -177,6 +185,9 @@
     font-weight: 700;
     text-align: center;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.tab-count:focus, .tab-count:active, .tab-count:hover { background: var(--kop-orange); color: var(--kop-midnight-blue); }
+
 
 .tab-count:empty,
 .tab-count[hidden] {
@@ -187,13 +198,16 @@
     border-radius: 14px;
     padding: 10px 22px;
     border: none;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white);
     font-weight: 700;
     letter-spacing: 0.08em;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-secondary:focus, .btn-secondary:active { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
+
 
 .btn-secondary:hover {
     transform: translateY(-2px);
@@ -348,21 +362,33 @@
     background: var(--kop-chartreuse);
     color: var(--kop-midnight-blue);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-quick-approve:focus, .btn-quick-approve:active, .btn-quick-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+
 
 .btn-quick-reject {
-    background: var(--kop-coral-pink);
+    background: var(--kop-coral-pink-fill, #D9020F);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-quick-reject:focus, .btn-quick-reject:active, .btn-quick-reject:hover { background: var(--kop-coral-pink-fill, #D9020F); color: var(--kop-white); }
+
 
 .btn-quick-publish {
-    background: var(--kop-orange);
+    background: var(--kop-orange-fill, #A3570D);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-quick-publish:focus, .btn-quick-publish:active, .btn-quick-publish:hover { background: var(--kop-orange-fill, #A3570D); color: var(--kop-white); }
+
 
 .btn-quick-promo {
     background: var(--kop-navy);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-quick-promo:focus, .btn-quick-promo:active, .btn-quick-promo:hover { background: var(--kop-navy); color: var(--kop-white); }
+
 
 .btn-quick:hover:not(:disabled) {
     transform: translateY(-1px);
@@ -382,7 +408,7 @@
 }
 
 .card-action-status.loading {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .card-action-status.success {
@@ -404,9 +430,13 @@
     background: var(--kop-button-primary);
     transition: background 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-view:focus, .btn-view:active { background: var(--kop-button-primary); color: #fff; }
+
 
 .btn-view:hover {
     background: var(--kop-button-primary-hover);
+    color: #fff; /* the other half, or Kadence supplies it */
 }
 
 .submission-modal {
@@ -448,6 +478,9 @@
     cursor: pointer;
     transition: color 0.2s ease;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.modal-close:hover, .modal-close:focus, .modal-close:active { background: transparent; box-shadow: none; color: var(--kop-text-secondary); }
+
 
 .modal-close:hover {
     color: var(--kop-text-primary);
@@ -549,10 +582,13 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white);
     transition: all 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-save-edits:focus, .btn-save-edits:active, .btn-save-edits:hover { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
+
 
 .btn-save-edits:hover:not(:disabled) {
     background: var(--kop-navy-blue);
@@ -657,14 +693,14 @@
     line-height: 20px;
     font-size: 11px;
     font-family: 'Source Code Pro', 'Consolas', 'Monaco', monospace;
-    color: #999;
+    color: var(--kop-text-muted, #4A5568);
     text-align: right;
     padding-right: 8px;
 }
 
 .line-num.diff-highlight {
     background: rgba(254, 128, 136, 0.3);
-    color: var(--kop-coral-pink);
+    color: var(--kop-coral-pink-ink, #D9020F);
     font-weight: 700;
 }
 
@@ -704,7 +740,7 @@
 
 .diff-summary.has-diffs {
     background: rgba(254, 128, 136, 0.15);
-    color: var(--kop-coral-pink);
+    color: var(--kop-coral-pink-ink, #D9020F);
 }
 
 /* --- Rendered colored diff view --- */
@@ -727,7 +763,7 @@
 .diff-gutter {
     flex: 0 0 26px;
     text-align: center;
-    color: #aaa;
+    color: var(--kop-text-muted, #4A5568);
     user-select: none;
     border-right: 1px solid #eee;
     background: rgba(0, 0, 0, 0.02);
@@ -745,7 +781,7 @@
 /* Inline word-level emphasis within an edited line */
 .diff-word-del { background: #ffb3b3; text-decoration: line-through; border-radius: 2px; }
 .diff-word-ins { background: #9fe6a0; border-radius: 2px; }
-.diff-empty { padding: 16px; color: #888; }
+.diff-empty { padding: 16px; color: var(--kop-text-muted, #4A5568); }
 
 /* Legend chips in the editor header */
 .diff-key-ins, .diff-key-del { padding: 0 5px; border-radius: 3px; font-weight: 600; }
@@ -869,26 +905,41 @@
     background: var(--kop-chartreuse);
     color: var(--kop-midnight-blue);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-approve:focus, .btn-approve:active, .btn-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+
 
 .btn-reject {
-    background: var(--kop-coral-pink);
+    background: var(--kop-coral-pink-fill, #D9020F);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-reject:focus, .btn-reject:active, .btn-reject:hover { background: var(--kop-coral-pink-fill, #D9020F); color: var(--kop-white); }
+
 
 .btn-publish {
-    background: var(--kop-orange);
+    background: var(--kop-orange-fill, #A3570D);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-publish:focus, .btn-publish:active, .btn-publish:hover { background: var(--kop-orange-fill, #A3570D); color: var(--kop-white); }
+
 
 .btn-promo {
     background: var(--kop-navy);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-promo:focus, .btn-promo:active, .btn-promo:hover { background: var(--kop-navy); color: var(--kop-white); }
+
 
 .btn-delete {
     background: var(--kop-midnight-blue);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-delete:focus, .btn-delete:active, .btn-delete:hover { background: var(--kop-midnight-blue); color: var(--kop-white); }
+
 
 .action-buttons button:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -902,15 +953,15 @@
 }
 
 .action-status .loading {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .action-status .success {
-    color: var(--kop-chartreuse);
+    color: var(--kop-chartreuse-ink, #5C7401);
 }
 
 .action-status .error {
-    color: var(--kop-coral-pink);
+    color: var(--kop-coral-pink-ink, #D9020F);
 }
 
 .error-message {
@@ -977,16 +1028,25 @@
     background: var(--kop-chartreuse);
     color: var(--kop-midnight-blue);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-bulk-approve:focus, .btn-bulk-approve:active, .btn-bulk-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+
 
 .btn-bulk-reject {
-    background: var(--kop-coral-pink);
+    background: var(--kop-coral-pink-fill, #D9020F);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-bulk-reject:focus, .btn-bulk-reject:active, .btn-bulk-reject:hover { background: var(--kop-coral-pink-fill, #D9020F); color: var(--kop-white); }
+
 
 .btn-bulk-promo {
     background: var(--kop-navy);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-bulk-promo:focus, .btn-bulk-promo:active, .btn-bulk-promo:hover { background: var(--kop-navy); color: var(--kop-white); }
+
 
 .btn-bulk:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -1121,7 +1181,7 @@
 
 .duplicate-submission-meta {
     font-size: 12px;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     margin-bottom: 4px;
 }
 
@@ -1135,7 +1195,7 @@
 
 .duplicate-submission-link a {
     font-size: 12px;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: none;
     font-weight: 600;
 }
@@ -1152,7 +1212,7 @@
 
 .submission-card .duplicate-badge {
     display: inline-block;
-    background: var(--kop-coral-pink);
+    background: var(--kop-coral-pink-fill, #D9020F);
     color: var(--kop-white);
     padding: 4px 8px;
     border-radius: 8px;
@@ -1230,7 +1290,7 @@
 .url-safety-status.clean    { color: #197a4a; }
 .url-safety-status.flagged  { color: #b22222; }
 .url-safety-status.error,
-.url-safety-status.empty    { color: #6b7280; }
+.url-safety-status.empty    { color: var(--kop-text-muted, #4A5568); }
 
 .url-safety-list {
     list-style: none;
@@ -1274,7 +1334,7 @@
 .url-safety-error {
     grid-column: 2;
     font-size: 0.85rem;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     margin-top: 4px;
 }
 
@@ -1313,6 +1373,9 @@
     background: var(--kop-coral-pink, #FE8088);
     color: var(--kop-midnight, #000435);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.submission-card.expanded .btn-view:focus, .submission-card.expanded .btn-view:active, .submission-card.expanded .btn-view:hover { background: var(--kop-coral-pink, #FE8088); color: var(--kop-midnight, #000435); }
+
 
 /* ============================================================
    Facility Link Panel
@@ -1359,6 +1422,9 @@
 }
 
 .badge-unlinked   { background: #e8e8e8; color: #555; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.badge-unlinked:focus, .badge-unlinked:active, .badge-unlinked:hover { background: #e8e8e8; color: #555; }
+
 .badge-suggested  { background: var(--kop-soft-yellow, #FFF5CB); color: #7a6000; border: 1px solid #e6c200; }
 .badge-confirmed  { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
 
@@ -1384,8 +1450,12 @@
     font-size: 0.82rem;
     font-weight: 600;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-confirm-link:focus, .btn-confirm-link:active { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
 
-.btn-confirm-link:hover { background: #9dd9c5; }
+
+.btn-confirm-link:hover { background: #9dd9c5; color: #1a5c45; /* the other half, or Kadence supplies it */
+}
 
 .btn-unlink {
     padding: 4px 12px;
@@ -1396,8 +1466,12 @@
     cursor: pointer;
     font-size: 0.82rem;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.btn-unlink:hover, .btn-unlink:focus, .btn-unlink:active { background: transparent; box-shadow: none; color: #c0392b; }
 
-.btn-unlink:hover { background: #fdecea; }
+
+.btn-unlink:hover { background: #fdecea; color: #c0392b; /* the other half, or Kadence supplies it */
+}
 
 .btn-suggest-links {
     margin-bottom: 10px;
@@ -1454,7 +1528,7 @@
 
 .no-candidates {
     font-size: 0.85rem;
-    color: #777;
+    color: var(--kop-text-muted, #4A5568);
     margin: 0 0 10px;
 }
 
@@ -1491,7 +1565,13 @@
 }
 
 .link-msg-ok    { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.link-msg-ok:focus, .link-msg-ok:active, .link-msg-ok:hover { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
+
 .link-msg-error { background: #fdecea; color: #c0392b; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.link-msg-error:focus, .link-msg-error:active, .link-msg-error:hover { background: #fdecea; color: #c0392b; }
+
 
 /* =========================================================================
    Structured field editor (legislation / lawsuit / news / data)

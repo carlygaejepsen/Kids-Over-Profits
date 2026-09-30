@@ -151,9 +151,13 @@
     color: var(--kop-white, #fff);
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-gl-go:focus, .kop-gl-go:active { background: var(--kop-button-primary, #33A7B5); color: var(--kop-white, #fff); }
+
 
 .kop-gl-go:hover {
     background: var(--kop-button-primary-hover, #000080);
+    color: var(--kop-white, #fff); /* the other half, or Kadence supplies it */
 }
 
 .kop-gl-clear {
@@ -658,6 +662,9 @@ a.kop-gl-ref:hover {
     text-underline-offset: 3px;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-gl-fb:hover, .kop-gl-fb:focus, .kop-gl-fb:active { background: transparent; box-shadow: none; color: var(--kop-teal-ink, #24757F); }
+
 
 .kop-gl-fb:hover {
     color: var(--kop-navy-blue, #000080);

@@ -15,12 +15,18 @@ accent - the same hue and saturation, darkened until it passes on white, sand
 and the pastel yellow - and text is supposed to use the ink while everything
 else keeps the accent.
 
-This checks both halves of that: the inks really do pass, and no rule in the
-public reading stylesheets sets `color:` to a display accent. A rule that also
-sets a dark background is left alone, because teal on midnight is 6.86 and the
-ink would vanish there.
+This checks both halves of that: the inks really do pass, and no rule in any
+stylesheet sets `color:` to a display accent. A rule that also sets a dark
+background is left alone, because teal on midnight is 6.86 and the ink would
+vanish there.
 
-Add a stylesheet to READING_CSS when it becomes something a visitor reads.
+The same goes the other way round for fills. White on teal is 2.86, on orange
+2.33, on coral 2.20, so a button or badge with white text takes the matching
+--kop-*-fill (the ink): white on teal fill is 5.35. This checks the fills pass
+under white and that no rule puts white text on a display accent.
+
+What this cannot see (colours set by Kadence, plugins, inheritance, hover and
+focus states) is measured on the live pages by scripts/check-contrast.py.
 """
 
 import os
@@ -30,8 +36,8 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 COLORS = os.path.join(ROOT, 'css', 'colors.css')
 
-# The stylesheets behind pages people read. The admin tools are not here: they
-# are one person's workbench, and several use accent text on purpose.
+# Every stylesheet, the admin tools included. (READING_CSS below was the first
+# list, kept so older notes that name it still make sense.)
 READING_CSS = [
     'css/article.css',
     'css/trail.css',
@@ -39,12 +45,19 @@ READING_CSS = [
     'css/facility-profile.css',
     'css/global-search.css',
 ]
+ALL_CSS = sorted('css/' + name for name in os.listdir(os.path.join(ROOT, 'css'))
+                 if name.endswith('.css') and name != 'plugin-contrast.css')
 
 # Light grounds an ink has to work on.
 GROUNDS = {'white': '#FFFFFF', 'sand': '#F2EEDF', 'pastel yellow': '#FFF5CB'}
 AA_TEXT = 4.5
 
-ACCENTS = ('teal', 'orange', 'coral-pink', 'chartreuse')
+ACCENTS = ('teal', 'orange', 'coral-pink', 'chartreuse', 'bubblegum-pink')
+ACCENT_HEX = {'teal': '#33a7b5', 'orange': '#ef9034', 'coral-pink': '#fe8088',
+              'chartreuse': '#b2e102', 'bubblegum-pink': '#fc8ed6'}
+FILLS = ('teal', 'orange', 'coral-pink', 'bubblegum-pink')
+WHITE_TEXT = re.compile(r'^(#fff|#ffffff|white|var\(--kop-white[^)]*\))(\s*!important)?$', re.I)
+BG_VALUE = re.compile(r'(?<![-\w])background(?:-color)?:\s*([^;]+);', re.I)
 
 # `color:` but not `border-color:`, `background-color:` or any other
 # <something>-color property.
@@ -140,7 +153,7 @@ for accent in ACCENTS:
 print('\n-- No accent is used as text on a light ground --')
 
 offenders = []
-for relative in READING_CSS:
+for relative in ALL_CSS:
     path = os.path.join(ROOT, relative)
     if not os.path.exists(path):
         continue
@@ -152,12 +165,40 @@ for relative in READING_CSS:
             continue
         for value in TEXT_COLOUR.findall(body):
             for accent in ACCENTS:
-                if re.search(r'var\(\s*--kop-%s\s*[,)]' % re.escape(accent), value):
+                if (re.search(r'var\(\s*--kop-%s\s*[,)]' % re.escape(accent), value)
+                        or re.match(r'\s*%s\b' % ACCENT_HEX[accent], value, re.I)):
                     offenders.append('%s  %s  color: %s'
                                      % (relative, selector[:48], value.strip()))
 
-check('no display accent is set as text in the reading stylesheets',
+check('no display accent is set as text in any stylesheet',
       not offenders, '\n     '.join(offenders))
+
+print('\n-- White text sits on a fill, never on a display accent --')
+
+for accent in FILLS:
+    ink = palette.get('--kop-%s-ink' % accent)
+    if ink:
+        ratio = contrast(ink, '#FFFFFF')
+        check('white on the %s fill (%s) is %.2f' % (accent, ink, ratio), ratio >= AA_TEXT)
+
+offenders = []
+for relative in ALL_CSS:
+    css = open(os.path.join(ROOT, relative), encoding='utf-8').read()
+    for rule in RULE.finditer(css):
+        body = rule.group(2)
+        colour = TEXT_COLOUR.search(body)
+        if not colour or not WHITE_TEXT.match(colour.group(1).strip()):
+            continue
+        for value in BG_VALUE.findall(body):
+            if 'gradient' in value:
+                continue
+            for accent in FILLS:
+                if (re.search(r'var\(\s*--kop-%s\s*[,)]' % re.escape(accent), value)
+                        or re.match(r'\s*%s\b' % ACCENT_HEX[accent], value, re.I)):
+                    selector = rule.group(1).strip().splitlines()[-1].strip()
+                    offenders.append('%s  %s  background: %s' % (relative, selector[:48], value.strip()))
+
+check('no rule puts white text on a display accent', not offenders, '\n     '.join(offenders))
 
 print('\n-- The display accents are still failing, which is why the inks exist --')
 

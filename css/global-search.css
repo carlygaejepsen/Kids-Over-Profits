@@ -34,7 +34,7 @@
 
 .kop-global-search__trigger:hover,
 .kop-global-search__trigger:focus-visible {
-    background: var(--kop-teal, #33A7B5) !important;
+    background: var(--kop-teal-fill, #24757F) !important;
     outline: none;
 }
 
@@ -114,6 +114,9 @@
     padding: 0 4px;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-global-search__close:hover, .kop-global-search__close:focus, .kop-global-search__close:active { background: transparent; box-shadow: none; color: #fff; }
+
 
 .kop-global-search__status {
     margin: 0;

@@ -122,9 +122,13 @@
     color: var(--kop-white, #fff);
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rep-go:focus, .kop-rep-go:active { background: var(--kop-button-primary, #33A7B5); color: var(--kop-white, #fff); }
+
 
 .kop-rep-go:hover {
     background: var(--kop-button-primary-hover, #000080);
+    color: var(--kop-white, #fff); /* the other half, or Kadence supplies it */
 }
 
 .kop-rep-picker-hint {
@@ -448,6 +452,9 @@
     font-weight: 600;
     text-decoration: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rep-action:focus, .kop-rep-action:active { background: var(--kop-button-primary, #33A7B5); color: var(--kop-white, #fff); }
+
 
 .kop-rep-action:hover {
     background: var(--kop-button-primary-hover, #000080);

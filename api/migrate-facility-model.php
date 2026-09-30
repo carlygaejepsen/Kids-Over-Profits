@@ -415,7 +415,7 @@ try {
   button[disabled] { opacity: .5; cursor: default; }
   pre { background: #F2EEDF; padding: 1rem; overflow-x: auto; white-space: pre-wrap; }
   .bar { height: 10px; background: #F2EEDF; border-radius: 5px; overflow: hidden; margin: 1rem 0; }
-  .bar > div { height: 100%; width: 0; background: #33A7B5; transition: width .3s; }
+  .bar > div { height: 100%; width: 0; background: #24757F; transition: width .3s; }
 </style>
 </head>
 <body>

@@ -86,11 +86,15 @@ body:not(.admin-bar) .fixed-toolbar {
     flex-shrink: 0;
     user-select: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.fixed-toolbar .toolbar-toggle:focus { background: #FFFFFF; color: #000435; }
+
 
 .fixed-toolbar .toolbar-toggle:hover {
     background: #FFF5CB;
     border-color: #33A7B5;
     transform: scale(1.05);
+    color: #000435; /* the other half, or Kadence supplies it */
 }
 
 .fixed-toolbar .toolbar-toggle:active {
@@ -217,6 +221,9 @@ body:not(.admin-bar) .fixed-toolbar {
     text-align: center;
     overflow: hidden;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.fixed-toolbar .btn-toolbar:focus, .fixed-toolbar .btn-toolbar:active, .fixed-toolbar .btn-toolbar:hover { background: #FFFFFF; color: #000435; }
+
 /* ... (hover states remain same) ... */
 
 /* Desktop & Tablet Optimizations (769px and above) */

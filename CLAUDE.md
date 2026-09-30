@@ -108,7 +108,8 @@ php scripts/test-icons.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")
-python scripts/check-contrast.py [--local]      # --local serves the working tree's css/js on the live pages
+python -u scripts/check-contrast.py [--local]   # WCAG AA, text and icons; --local serves the working tree css/js on the live pages
+python scripts/test-colour-contrast.py          # static: inks, fills, no accent text or white-on-accent in any stylesheet
 # Woodbury Reports pages about each program (inc/woodbury-mentions.php): scan every issue in the
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
@@ -249,11 +250,25 @@ so they do **not** inherit a panel's `color`:
 
 Rules: a dark panel sets colours for its headings, links and buttons explicitly.
 Every `<button>` rule is `button.x` and names **both** colour and background in
-the rest, `:hover`, `:focus` and `:active` states. A reusable component
-sets its own foreground and background instead of inheriting. No `*` colour blankets.
-Accent colours as text use the `--kop-*-ink` versions. Check with
-`python scripts/check-contrast.py [--local] [paths]`: it measures every text
-node against its real background, with hover and focus forced on buttons and links.
+the rest, `:hover`, `:focus` and `:active` states (links styled as buttons too:
+Kadence's `a:focus` is midnight). A reusable component sets its own foreground
+and background instead of inheriting. No `*` colour blankets.
+
+Every text passes WCAG AA (4.5:1, large text 3:1) and every icon 3:1, in every state.
+- Accent as **text or icon** on a light ground: `--kop-*-ink` (teal, orange, coral-pink,
+  chartreuse, bubblegum-pink). On navy/midnight keep the bright accent.
+- **White text on a fill**: `--kop-*-fill` (white on teal fill 5.35), never the bright
+  accent (white on teal 2.86). Dark text on a bright accent is fine (midnight on teal 6.86).
+- Secondary text (dates, sources, counts): `--kop-text-muted` (#4A5568), never Kadence
+  greys like #718096 / #9ca3af / #999.
+- Kadence's button and grey colours are restated from the palette in `css/colors.css`
+  (`html:root`); plugin output (FileBird, MailerLite, AddToAny) in `css/plugin-contrast.css`.
+- Icons (`kop_icon()` / `kopIcon()`) draw in `currentColor`: colour the text, not the SVG.
+
+Check with `python -u scripts/check-contrast.py [--local] [paths]` (every text node and
+small SVG against its real background, hover and focus forced, names the rule that set
+each failing colour) and `python scripts/test-colour-contrast.py` (static: tokens, no
+accent text, no white on an accent in any stylesheet).
 
 ## Program Data Pipeline
 

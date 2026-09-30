@@ -59,7 +59,7 @@ get_header();
                     </div>
                     <div class="project-management" id="project-panel-inner">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
-                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                        <div id="project-status" style="margin-top: 10px; font-size: 14px; color: #4A5568;"></div>
                         
                         <div class="form-group">
                             <label>Saved Projects</label>
@@ -67,7 +67,7 @@ get_header();
                                 <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                                <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
+                                <div style="color: #4A5568; font-style: italic;">No saved company projects</div>
                             </div>
                         </div>
                     </div>
@@ -81,17 +81,17 @@ get_header();
                     </div>
                     <div class="project-management location-project-management">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
-                        <div id="project-status-location" style="margin-top: 10px; font-size: 14px; color: #6b7280;"></div>
+                        <div id="project-status-location" style="margin-top: 10px; font-size: 14px; color: #4A5568;"></div>
                         <div class="form-group">
                             <label>Saved Location Projects</label>
                             <div style="margin-bottom: 10px;">
                                 <input type="text" id="location-search-input" class="input-form project-search-input" placeholder="Search by location, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
-                                <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
+                                <div style="color: #4A5568; font-style: italic;">No saved location projects</div>
                             </div>
                         </div>
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
+                        <p style="margin-top: 10px; color: #4A5568; font-size: 14px;"> Location projects appear automatically when their titles match a known state or country. </p>
                         <div class="project-actions">
                             <button type="button" id="new-project-btn-location" class="kop-btn project-action-btn">New Location Project</button>
                             <button type="button" id="export-all-btn-location" class="kop-btn project-action-btn">Export Locations</button>
@@ -127,7 +127,7 @@ get_header();
                                 <input type="text" id="referrer-search-input" class="input-form project-search-input" placeholder="Search by referrer name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="referrer-saved-projects-list" class="saved-projects-list">
-                                <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
+                                <div style="color: #4A5568; font-style: italic;">No saved referrer projects</div>
                             </div>
                         </div>
                         <div class="project-actions">
@@ -154,7 +154,7 @@ get_header();
                                 <input type="text" id="transporter-search-input" class="input-form project-search-input" placeholder="Search by transporter name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="transporter-saved-projects-list" class="saved-projects-list">
-                                <div style="color: #6b7280; font-style: italic;">No saved transporter projects</div>
+                                <div style="color: #4A5568; font-style: italic;">No saved transporter projects</div>
                             </div>
                         </div>
                         <div class="project-actions">
@@ -174,7 +174,7 @@ get_header();
 
                     <div class="project-management" id="provider-project-panel-inner">
                         <h2>Provider Projects &amp; Data Import</h2>
-                        <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">Psychiatric wards, PHP and IOP programs, day schools, respite care and outpatient therapists that are not TTI programs but use TTI practices or refer children to TTI facilities.</p>
+                        <p style="margin: 0 0 12px; color: #4A5568; font-size: 14px;">Psychiatric wards, PHP and IOP programs, day schools, respite care and outpatient therapists that are not TTI programs but use TTI practices or refer children to TTI facilities.</p>
                         <div id="provider-project-status"></div>
                         <div class="form-group">
                             <label>Saved Provider Projects</label>
@@ -182,7 +182,7 @@ get_header();
                                 <input type="text" id="provider-search-input" class="input-form project-search-input" placeholder="Search by provider name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="provider-saved-projects-list" class="saved-projects-list">
-                                <div style="color: #6b7280; font-style: italic;">No saved provider projects</div>
+                                <div style="color: #4A5568; font-style: italic;">No saved provider projects</div>
                             </div>
                         </div>
                         <div class="project-actions">
@@ -209,7 +209,7 @@ get_header();
                         <input type="checkbox" id="referrer-independent-toggle" style="display: none;">
                     </div>
                 </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                <p style="margin-top: 10px; color: #4A5568; font-size: 14px;">
                     Click "Edit consultant type" to choose via popup. Your choice still hides/shows the agency section like the old toggle.
                 </p>
             </div>
@@ -660,7 +660,7 @@ get_header();
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>Facility tools</strong>
-                    <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
+                    <span id="toolbar-project-name" style="color: #4A5568; font-weight: normal; margin-left: 10px;"></span>
                     <span class="toolbar-hint" id="toolbar-hint">Add, switch, search, or clone facilities</span>
                 </div>
                 <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Show facility tools">Show tools</button>
@@ -769,7 +769,7 @@ get_header();
                     <input type="checkbox" id="private-ownership-toggle" style="display: none;">
                 </div>
             </div>
-            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+            <p style="margin-top: 10px; color: #4A5568; font-size: 14px;">
                 Facilities start as privately owned, so the parent company section stays hidden. Choose "No" if this facility belongs to a chain and the parent company fields will appear.
             </p>
         </div>
@@ -936,7 +936,7 @@ get_header();
                         <!-- Current Owner(s) (shown for private ownership) -->
                         <div class="form-group" id="current-owner-group" style="display: none;">
                             <label>Current Owner(s)</label>
-                            <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add one or more current owners.</div>
+                            <div style="color: #4A5568; font-size: 13px; margin-bottom: 6px;">Add one or more current owners.</div>
                             <div class="array-container" data-path="identification.currentOwners" data-autocomplete-category="human"></div>
                         </div>
                         <!-- Past Owners (shown for private ownership) -->
@@ -998,7 +998,7 @@ get_header();
                 <span class="section-toggle"></span>
             </div>
             <div class="section-content">
-                <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">For providers outside the TTI that use its practices or send children into it. Each site of the provider is its own entry, like a facility.</p>
+                <p style="margin: 0 0 12px; color: #4A5568; font-size: 14px;">For providers outside the TTI that use its practices or send children into it. Each site of the provider is its own entry, like a facility.</p>
                 <div class="sub-section">
                     <div class="sub-section-header">
                         <h3 class="sub-section-title">Type of Care</h3>
@@ -1044,7 +1044,7 @@ get_header();
                     </div>
                     <?php kop_form_panel_help('provider-tti-practices'); ?>
                     <div class="sub-section-content">
-                        <p style="margin: 0 0 10px; color: #6b7280; font-size: 14px;">Also mark therapies and philosophies in the Treatment Types and Philosophy sections below.</p>
+                        <p style="margin: 0 0 10px; color: #4A5568; font-size: 14px;">Also mark therapies and philosophies in the Treatment Types and Philosophy sections below.</p>
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasLevelSystem" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasLevelSystem" id="practice-level-system">
                             <label for="practice-level-system">Level / Point System</label>
@@ -1141,7 +1141,7 @@ get_header();
                                     <span>Yes</span>
                                 </div>
                             </div>
-                            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                            <p style="margin-top: 10px; color: #4A5568; font-size: 14px;">
                                 Toggle to "Yes" for programs outside the United States to show Country field instead of State.
                             </p>
                         </div>
@@ -1183,7 +1183,7 @@ get_header();
                         </div>
                         <div class="form-group">
                             <label>Additional Locations</label>
-                            <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (address, city, state, ZIP).</div>
+                            <div style="color: #4A5568; font-size: 13px; margin-bottom: 6px;">Add other site addresses (address, city, state, ZIP).</div>
                             <div class="array-container" data-path="locationDetails.additionalLocations"></div>
                         </div>
                     </div>
@@ -1234,7 +1234,7 @@ get_header();
                             <input type="text" class="facility-field input-wide" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Open, Closed, Transferred, etc.">
                         </div>
                         <div class="form-group">
-                            <label>Years of Operation <small style="font-weight:400;color:#888;">(auto-filled from Opened / Closed)</small></label>
+                            <label>Years of Operation <small style="font-weight:400;color:#4A5568;">(auto-filled from Opened / Closed)</small></label>
                             <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="Set the Opened / Closed years above" readonly tabindex="-1" style="background:#f3f4f6;color:#555;cursor:not-allowed;">
                         </div>
                         <div class="form-group">
@@ -1890,7 +1890,7 @@ get_header();
                         <?php echo kop_icon('save'); ?> Save Draft Locally
                     </button>
                 </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 13px;">
+                <p style="margin-top: 10px; color: #4A5568; font-size: 13px;">
                     <?php echo kop_icon('lightbulb'); ?> <strong>Save Draft Locally</strong> saves your work to this browser so you can continue later. Your data stays on your device until you submit.
                 </p>
             </div>
@@ -1906,7 +1906,7 @@ get_header();
  <div class="form-group">
                         <label for="file-upload">Import Data Files</label>
                         <input type="file" id="file-upload" accept=".json,.csv,.txt">
-                        <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                        <p style="margin-top: 10px; color: #4A5568; font-size: 14px;">
                             Upload JSON or CSV files. JSON files will load directly into the form.
                         </p>
                     </div>
@@ -1932,7 +1932,7 @@ get_header();
 
                 <div class="form-group" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
                     <label style="color: #1f2937; font-weight: 600; margin-bottom: 10px;">Export All Projects</label>
-                    <p style="margin-bottom: 10px; color: #6b7280; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
+                    <p style="margin-bottom: 10px; color: #4A5568; font-size: 14px;">Export all saved projects for a specific category to a JSON file.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button type="button" class="btn" id="export-all-btn">Export All Companies</button>
                         <button type="button" class="btn" id="export-all-locations-btn">Export All Locations</button>
@@ -1953,7 +1953,7 @@ get_header();
                 <button class="modal-close" id="clone-modal-close">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 20px; color: #6b7280;">Choose a destination for the cloned facility:</p>
+                <p style="margin-bottom: 20px; color: #4A5568;">Choose a destination for the cloned facility:</p>
 
                 <div class="clone-option" style="margin-bottom: 15px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px;">
                     <label style="color: #1f2937; cursor: pointer; display: block;">
@@ -2062,7 +2062,7 @@ get_header();
                 </div>
 
                 <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;"><?php echo kop_icon('search'); ?> Search</button>
+                    <button class="btn" id="organize-search-btn-modal" style="background: #24757F; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;"><?php echo kop_icon('search'); ?> Search</button>
                     <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
                 </div>
 
@@ -2088,7 +2088,7 @@ get_header();
                 <button class="organizer-modal-close" id="suggestion-modal-close">&times;</button>
             </div>
             <div class="organizer-modal-body">
-                <p style="margin-top: 0; margin-bottom: 15px; color: #6b7280;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
+                <p style="margin-top: 0; margin-bottom: 15px; color: #4A5568;">Please briefly summarize the changes you made. This helps us review your suggestion more quickly.</p>
                 <div class="form-group">
                     <label for="suggestion-summary" style="font-weight: 600;">Summary of Changes:</label>
                     <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>
@@ -2096,7 +2096,7 @@ get_header();
                 </div>
                 <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                     <button class="modal-btn modal-btn-secondary" id="suggestion-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
-                    <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #33A7B5; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>
+                    <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #24757F; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>
                 </div>
             </div>
         </div>

@@ -132,7 +132,7 @@ th { background: #000080; color: #fff; }
 .notice { background: #FFF5CB; border: 2px solid #33A7B5; border-radius: 8px; padding: 10px 14px; margin: 10px 0; max-width: 860px; }
 .error { background: #fff; border: 2px solid #c0392b; border-radius: 8px; padding: 10px 14px; margin: 10px 0; max-width: 860px; color: #c0392b; }
 button { background: #000080; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 700; cursor: pointer; }
-button.secondary { background: #33A7B5; }
+button.secondary { background: #24757F; }
 button.danger { background: #c0392b; }
 button.small { padding: 3px 8px; font-size: 0.78rem; }
 input[type=text], input[type=search], select { padding: 6px 9px; border: 1px solid #bbb; border-radius: 4px; font: inherit; }

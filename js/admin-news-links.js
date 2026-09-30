@@ -47,7 +47,7 @@
     function renderEmpty() {
         const list = $('linked-news-list');
         if (list) {
-            list.innerHTML = '<div style="color:#6b7280; font-style:italic; padding:10px; background:#f9fafb; border-radius:4px;">No articles linked yet.</div>';
+            list.innerHTML = '<div style="color:#4A5568; font-style:italic; padding:10px; background:#f9fafb; border-radius:4px;">No articles linked yet.</div>';
         }
     }
 

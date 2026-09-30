@@ -177,11 +177,11 @@ button.kop-filter-clear:focus-visible {
     margin: 1rem 0 0;
     text-align: right;
     font-size: 0.78rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-flag-credit a {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
 }
 
@@ -211,7 +211,7 @@ button.kop-filter-clear:focus-visible {
 }
 
 .kop-card-title a:hover {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: underline;
 }
 
@@ -235,9 +235,9 @@ button.kop-filter-clear:focus-visible {
 .kop-badge-settled     { background: var(--kop-mint-green); color: #004a30; }
 .kop-badge-dismissed   { background: #e2e8f0; color: #4a5568; }
 .kop-badge-ruling      { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
-.kop-badge-appeal      { background: var(--kop-orange); color: #fff; }
+.kop-badge-appeal      { background: var(--kop-orange-fill, #A3570D); color: #fff; }
 .kop-badge-closed      { background: #cbd5e0; color: #2d3748; }
-.kop-badge-unknown     { background: #edf2f7; color: #718096; }
+.kop-badge-unknown     { background: #edf2f7; color: var(--kop-text-muted, #4A5568); }
 
 /* Legislation status badges */
 .kop-badge-proposed       { background: var(--kop-sand); color: var(--kop-midnight-blue); border: 1px dashed var(--kop-midnight-blue); }
@@ -258,7 +258,7 @@ button.kop-filter-clear:focus-visible {
 /* Position badges (legislation) */
 .kop-badge-support  { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
 .kop-badge-oppose   { background: var(--kop-coral-pink); color: #5a0010; }
-.kop-badge-watch    { background: var(--kop-orange); color: #fff; }
+.kop-badge-watch    { background: var(--kop-orange-fill, #A3570D); color: #fff; }
 .kop-badge-neutral  { background: #e2e8f0; color: #4a5568; }
 
 /* Type badges */
@@ -278,7 +278,7 @@ button.kop-filter-clear:focus-visible {
 
 .kop-card-meta {
     font-size: 0.875rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -314,7 +314,7 @@ button.kop-filter-clear:focus-visible {
 .kop-bill-number {
     font-size: 0.85em;
     font-weight: 700;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     display: block;
     margin-bottom: 0.15em;
 }
@@ -341,7 +341,7 @@ button.kop-filter-clear:focus-visible {
 }
 
 .kop-tag:hover {
-    background-color: var(--kop-orange);
+    background-color: var(--kop-orange-fill, #A3570D);
     color: var(--kop-white, #fff);
 }
 
@@ -351,7 +351,7 @@ button.kop-filter-clear:focus-visible {
 }
 
 .kop-tag-facility:hover {
-    background-color: var(--kop-teal);
+    background-color: var(--kop-teal-fill, #24757F);
     color: var(--kop-white, #fff);
 }
 
@@ -367,7 +367,7 @@ a.kop-tag:focus-visible {
 
 .kop-tag-more {
     font-size: 0.75rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     align-self: center;
 }
 
@@ -395,14 +395,14 @@ a.kop-tag:focus-visible {
 }
 
 .kop-coverage-item a:hover {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: underline;
 }
 
 .kop-coverage-meta {
     display: block;
     font-size: 0.78rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-coverage-more {
@@ -410,11 +410,14 @@ a.kop-tag:focus-visible {
     border: none;
     padding: 0;
     margin-top: 0.4rem;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
     font-size: 0.85rem;
     cursor: pointer;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-coverage-more:hover, .kop-coverage-more:focus, .kop-coverage-more:active { background: transparent; box-shadow: none; color: var(--kop-teal-ink, #24757F); }
+
 
 .kop-coverage-more:hover {
     color: var(--kop-navy-blue);
@@ -429,7 +432,7 @@ a.kop-tag:focus-visible {
 
 .kop-card-docs summary {
     cursor: pointer;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
 }
 
@@ -446,7 +449,7 @@ a.kop-tag:focus-visible {
 
 .kop-card-summary-toggle {
     cursor: pointer;
-    background-color: var(--kop-teal);
+    background-color: var(--kop-teal-fill, #24757F);
     color: var(--kop-white, #fff);
     font-weight: 600;
     font-size: 0.9rem;
@@ -463,6 +466,9 @@ a.kop-tag:focus-visible {
     transition: all 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-card-summary-toggle:focus { background: var(--kop-teal-fill, #24757F); color: var(--kop-white, #fff); }
+
 
 .kop-card-summary-toggle:hover {
     background-color: var(--kop-navy-blue);
@@ -505,7 +511,7 @@ a.kop-tag:focus-visible {
     display: inline-flex;
     align-items: center;
     gap: 0.2rem;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
@@ -515,6 +521,7 @@ a.kop-tag:focus-visible {
 .kop-card-link:hover {
     color: var(--kop-navy-blue);
     text-decoration: underline;
+    background: transparent; /* the other half, or Kadence supplies it */
 }
 
 /* ── Signup / CTA button ─────────────────────────────── */
@@ -523,7 +530,7 @@ a.kop-tag:focus-visible {
     display: inline-block;
     margin-top: auto;
     padding: 0.6rem 1.25rem;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -533,17 +540,20 @@ a.kop-tag:focus-visible {
     transition: background 0.2s;
     align-self: flex-start;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-card-cta:focus, .kop-card-cta:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
 
 .kop-card-cta:hover { background: var(--kop-navy-blue); color: #fff; }
 
 .kop-card-cta-email {
     background: transparent;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     border: 1.5px solid var(--kop-teal);
     padding: 0.55rem 1.15rem;
 }
 
-.kop-card-cta-email:hover { background: var(--kop-teal); color: #fff; }
+.kop-card-cta-email:hover { background: var(--kop-teal-fill, #24757F); color: #fff; }
 
 /* ── Empty state ─────────────────────────────────────── */
 
@@ -599,7 +609,7 @@ a.kop-tag:focus-visible {
 
 .kop-memorial-source-note {
     font-size: 0.88rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
 }
 
@@ -607,11 +617,11 @@ a.kop-tag:focus-visible {
     margin: 2.5rem 0 0;
     text-align: center;
     font-size: 0.9rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-memorial-credit a {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
 }
 

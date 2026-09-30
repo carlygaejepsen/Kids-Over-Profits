@@ -365,7 +365,7 @@ function kop_render_data_tools_landing() {
             echo '<td><a class="button button-primary" href="' . esc_url($url) . '">Open</a></td>';
         } else {
             echo '<td style="color:#b8860b">No page yet</td>';
-            echo '<td><span style="color:#777">Create a Page and set its template to '
+            echo '<td><span style="color:#4A5568">Create a Page and set its template to '
                 . '“' . esc_html(kop_template_display_name($template)) . '”.</span></td>';
         }
         echo '</tr>';

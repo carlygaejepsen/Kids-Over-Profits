@@ -350,7 +350,7 @@ table { border-collapse: collapse; background: #fff; font-size: 0.84rem; width: 
 th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; vertical-align: top; }
 th { background: #000080; color: #fff; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+button { background: #24757F; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 button.pick { background: #000080; }
 button.danger { background: #7a1f1f; padding: 4px 9px; font-size: 0.78rem; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin-bottom: 12px; }
@@ -362,7 +362,7 @@ button.danger { background: #7a1f1f; padding: 4px 9px; font-size: 0.78rem; }
 .addbox .picked-list li .cnt { font-weight: 400; }
 .addbox input[type=text] { padding: 6px 9px; border: 1px solid #000080; border-radius: 6px; width: 320px; }
 .group { color: #555; font-size: 0.78rem; }
-.cnt { color: #888; font-size: 0.78rem; }
+.cnt { color: #4A5568; font-size: 0.78rem; }
 a { color: #000080; }
 </style></head><body>
 <h1>Link Folders <small style="font-weight:400">&mdash; legacy and current names for the same facility</small></h1>

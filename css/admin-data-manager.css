@@ -45,7 +45,7 @@
     background: #fff;
     font-size: 0.95rem;
 }
-.kop-dm-result-count { color: #777; font-size: 0.85rem; margin-left: auto; }
+.kop-dm-result-count { color: var(--kop-text-muted, #4A5568); font-size: 0.85rem; margin-left: auto; }
 
 /* Buttons */
 .kop-dm-btn {
@@ -54,14 +54,22 @@
     padding: 9px 16px;
     font-weight: 600;
     cursor: pointer;
-    background: var(--kop-teal, #33A7B5);
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
     font-size: 0.9rem;
 }
-.kop-dm-btn:hover { background: var(--kop-navy, #000080); }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-dm-btn:focus, .kop-dm-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
+.kop-dm-btn:hover { background: var(--kop-navy, #000080); color: #fff; /* the other half, or Kadence supplies it */
+}
 .kop-dm-btn:disabled { opacity: 0.5; cursor: default; }
 .kop-dm-btn-ghost { background: #e3ded0; color: var(--kop-midnight, #000435); }
-.kop-dm-btn-ghost:hover { background: #d4ceba; }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-dm-btn-ghost:focus, .kop-dm-btn-ghost:active { background: #e3ded0; color: var(--kop-midnight, #000435); }
+
+.kop-dm-btn-ghost:hover { background: #d4ceba; color: var(--kop-midnight, #000435); /* the other half, or Kadence supplies it */
+}
 .kop-dm-btn-danger { background: #c0392b; }
 .kop-dm-btn-danger:hover { background: #962d22; }
 
@@ -90,11 +98,11 @@
 .kop-dm-table tr:hover td { background: var(--kop-sand, #F2EEDF); }
 
 .dm-name { font-weight: 600; min-width: 220px; }
-.dm-uniquename { font-weight: 400; font-size: 0.78rem; color: #888; margin-top: 2px; word-break: break-word; }
+.dm-uniquename { font-weight: 400; font-size: 0.78rem; color: var(--kop-text-muted, #4A5568); margin-top: 2px; word-break: break-word; }
 .dm-mono, .dm-id { font-family: monospace; }
-.dm-id { color: #999; font-size: 0.8rem; }
+.dm-id { color: var(--kop-text-muted, #4A5568); font-size: 0.8rem; }
 .dm-center { text-align: center; }
-.dm-muted { color: #999; }
+.dm-muted { color: var(--kop-text-muted, #4A5568); }
 .dm-error, .dm-error-text { color: #c0392b; }
 .dm-stub {
     font-size: 0.7rem;
@@ -115,9 +123,9 @@
     color: #fff;
 }
 .dm-cat-companies { background: var(--kop-navy, #000080); }
-.dm-cat-referrers { background: var(--kop-teal, #33A7B5); }
-.dm-cat-transporters { background: var(--kop-orange, #EF9034); }
-.dm-cat-locations { background: #777; }
+.dm-cat-referrers { background: var(--kop-teal-fill, #24757F); }
+.dm-cat-transporters { background: var(--kop-orange-fill, #A3570D); }
+.dm-cat-locations { background: #666; }
 
 .dm-wiki-confirmed { color: #1b7e3c; font-weight: 600; }
 .dm-wiki-suggested { color: #b8860b; font-weight: 600; }
@@ -143,7 +151,7 @@
     color: #8a4b00;
     font-weight: 700;
 }
-.dm-act-auto:hover { background: var(--kop-orange, #EF9034); color: #fff; }
+.dm-act-auto:hover { background: var(--kop-orange-fill, #A3570D); color: #fff; }
 
 .dm-auto-notes { margin: 8px 0 4px; padding-left: 18px; font-size: 0.9rem; }
 .dm-auto-notes li { margin-bottom: 4px; }
@@ -168,7 +176,7 @@
 .dm-scrape-fill {
     height: 100%;
     width: 0;
-    background: var(--kop-teal, #33A7B5);
+    background: var(--kop-teal-fill, #24757F);
     transition: width 0.2s ease;
 }
 .dm-scrape-stat { margin-top: 8px; font-size: 0.85rem; }
@@ -176,7 +184,7 @@
 .kop-dm-loading, .kop-dm-empty {
     padding: 30px;
     text-align: center;
-    color: #777;
+    color: var(--kop-text-muted, #4A5568);
     background: #fff;
     border-radius: 10px;
 }
@@ -220,7 +228,10 @@
 }
 .kop-dm-modal-header h3 { margin: 0; color: var(--kop-navy, #000080); font-size: 1.1rem; word-break: break-word; }
 .kop-dm-modal-close { background: none; border: none; font-size: 1.7rem; cursor: pointer; color: var(--kop-navy, #000080); line-height: 1; }
-.kop-dm-modal-close:hover { color: var(--kop-orange, #EF9034); }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-dm-modal-close:hover, .kop-dm-modal-close:focus, .kop-dm-modal-close:active { background: transparent; box-shadow: none; color: var(--kop-navy, #000080); }
+
+.kop-dm-modal-close:hover { color: var(--kop-orange-ink, #A3570D); }
 .kop-dm-modal-body { padding: 8px 20px 4px; }
 .kop-dm-modal-status { padding: 4px 20px 18px; min-height: 22px; font-size: 0.88rem; }
 
@@ -302,7 +313,11 @@
     font-weight: 600;
     cursor: pointer;
 }
-.dm-fac-toggle:hover { background: var(--kop-mint, #B6E3D4); }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.dm-fac-toggle:focus, .dm-fac-toggle:active { background: #fff; color: var(--kop-navy, #000080); }
+
+.dm-fac-toggle:hover { background: var(--kop-mint, #B6E3D4); color: var(--kop-navy, #000080); /* the other half, or Kadence supplies it */
+}
 .dm-fac-toggle[aria-expanded="true"] { background: var(--kop-mint, #B6E3D4); }
 
 .dm-fac-subcell { background: var(--kop-sand, #F2EEDF); padding: 10px 16px 14px; }

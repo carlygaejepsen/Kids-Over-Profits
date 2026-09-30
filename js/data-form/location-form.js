@@ -359,7 +359,7 @@ function updateLocationFacilitiesOverview() {
     facilitiesList.innerHTML = '';
 
     if (facilities.length === 0) {
-        facilitiesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No facilities in this location yet</div>';
+        facilitiesList.innerHTML = '<div style="padding: 20px; text-align: center; color: #4A5568;">No facilities in this location yet</div>';
         return;
     }
 

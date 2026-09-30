@@ -59,6 +59,9 @@
     font-weight: bold;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.provider-directory-container button:focus, .provider-directory-container button:active, .provider-directory-container button:hover { background: var(--kop-navy-blue); color: white; }
+
 
 /* --- Alphabet Filter --- */
 .provider-alpha-filter {
@@ -81,11 +84,17 @@
     border-radius: 4px;
     font-weight: 700;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.provider-directory-container .alpha-btn:focus, .provider-directory-container .alpha-btn:active, .provider-directory-container .alpha-btn:hover { background: var(--kop-white); color: var(--kop-navy-blue); }
+
 
 .provider-directory-container .alpha-btn.active {
     background: var(--kop-navy-blue);
     color: var(--kop-white);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.provider-directory-container .alpha-btn.active:focus, .provider-directory-container .alpha-btn.active:active, .provider-directory-container .alpha-btn.active:hover { background: var(--kop-navy-blue); color: var(--kop-white); }
+
 
 /* --- Grid (Matching TTI Layout) --- */
 .provider-grid {
@@ -253,7 +262,7 @@
 }
 
 .provider-directory-container .data-value a {
-    color: var(--kop-teal) !important;
+    color: var(--kop-teal-ink, #24757F) !important;
     text-decoration: underline;
 }
 
@@ -266,7 +275,7 @@
 
 .provider-directory-container .section-label {
     font-weight: 800;
-    color: var(--kop-orange);
+    color: var(--kop-orange-ink, #A3570D);
     font-size: 0.8rem;
     margin-bottom: 8px;
     text-transform: uppercase;

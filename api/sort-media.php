@@ -791,7 +791,7 @@ tbody tr:hover { background: #FFF5CB; }
 tbody tr.kop-ticked { background: #B6E3D4; }
 input[name$="[go]"] { transform: scale(1.4); margin: 3px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; } .bad { color: #c0392b; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+button { background: #24757F; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 a.tab { display: inline-block; padding: 7px 12px; border-radius: 6px 6px 0 0; background: #ddd; color: #000435; text-decoration: none; font-weight: 700; font-size: 0.85rem; }
 a.tab.active { background: #000080; color: #fff; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin-bottom: 12px; }
@@ -803,13 +803,13 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 .kop-tree { flex: 0 0 300px; background: #fff; border: 2px solid #33A7B5; border-radius: 8px; padding: 10px 12px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; font-size: 0.84rem; }
 .kop-tree a { color: #000435; text-decoration: none; display: inline-block; padding: 2px 5px; border-radius: 4px; }
 .kop-tree a:hover { background: #FFF5CB; }
-.kop-tree a.sel { background: #33A7B5; color: #fff; }
+.kop-tree a.sel { background: #24757F; color: #fff; }
 .kop-tree details { margin-left: 12px; }
 .kop-tree > details, .kop-tree > .leaf { margin-left: 0; }
 .kop-tree .leaf { margin-left: 12px; }
 .kop-tree > .leaf { margin-left: 0; }
 .kop-tree summary { cursor: pointer; }
-.kop-tree .cnt { color: #888; font-size: 0.75rem; }
+.kop-tree .cnt { color: #4A5568; font-size: 0.75rem; }
 .kop-tree .special { display: block; margin-bottom: 4px; font-weight: 700; }
 .kop-tree hr { border: none; border-top: 1px dashed #33A7B5; margin: 8px 0; }
 .kop-main { flex: 1 1 auto; min-width: 0; }
@@ -889,7 +889,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <strong style="font-size:0.85rem"><?php echo kop_icon('plus'); ?> New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
         <button type="button" id="kop-nf-parent" style="background:#7a7a7a"><?php echo kop_icon('folder'); ?> parent: top level</button>
-        <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
+        <button type="button" id="kop-nf-create" style="background:#A3570D">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
     <div class="bar" id="kop-working" hidden style="color:#000080;font-weight:600"></div>

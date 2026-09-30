@@ -2333,7 +2333,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                 organizeResultsCount.textContent = `Found ${results.length} facilities`;
                 
                 if (results.length === 0) {
-                    organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #6b7280;">No matches found</div>';
+                    organizeMatches.innerHTML = '<div style="padding: 20px; text-align: center; color: #4A5568;">No matches found</div>';
                 } else {
                     organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
@@ -2348,12 +2348,12 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
 
                         resultDiv.innerHTML = `
                             <div style="font-weight: 600; color: #1f2937; margin-bottom: 5px;"></div>
-                            <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;"></div>
+                            <div style="font-size: 14px; color: #4A5568; margin-bottom: 8px;"></div>
                             <div style="font-size: 13px;">
                                 <strong>Matches:</strong> 
                                 ${result.matches.map(match => `<span style="background: #fef3c7; padding: 2px 6px; border-radius: 3px; margin-right: 5px; color: #92400e;">${escapeHtmlForAttr(match)}</span>`).join('')}
                             </div>
-                            <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                            <div style="font-size: 12px; color: #4A5568; margin-top: 5px;">
                                 Project: ${escapeHtmlForAttr(result.projectName)} • Facility #${result.facilityIndex + 1}
                             </div>
                         `;
@@ -2715,7 +2715,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                         <span>Yes</span>
                     </div>
                 </div>
-                <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                <p style="margin-top: 10px; color: #4A5568; font-size: 14px;">
                     Select "Yes" for independently owned facilities to hide the operator section and show owner fields.
                 </p>
             `;

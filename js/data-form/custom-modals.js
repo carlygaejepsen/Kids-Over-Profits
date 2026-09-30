@@ -453,7 +453,7 @@ class OrganizerModal {
         if (modalResults) {
             modalResults.classList.remove('d-none');
             if (modalMatches) {
-                modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">' + ((typeof kopIcon === 'function') ? kopIcon('search') : '') + '</span><br>Searching database...</p>';
+                modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #4A5568;"><span style="font-size: 24px;">' + ((typeof kopIcon === 'function') ? kopIcon('search') : '') + '</span><br>Searching database...</p>';
             }
         }
 
@@ -588,7 +588,7 @@ class OrganizerModal {
 
         if (modalMatches) {
             if (results.length === 0) {
-                modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
+                modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #4A5568;">No matching facilities found.</p>';
             } else {
                 const esc = (v) => modalSystem.escapeHtml(v);
                 modalMatches.innerHTML = results.map((result, resultIndex) => {
@@ -604,12 +604,12 @@ class OrganizerModal {
                              onmouseover="this.style.background='#f3f4f6'"
                              onmouseout="this.style.background='transparent'">
                             <div style="font-weight: 600; color: #1f2937;">${esc(facilityName)}</div>
-                            <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
-                                <span style="color: #33A7B5;">${esc(result.projectLabel || result.projectName)}</span>
+                            <div style="font-size: 13px; color: #4A5568; margin-top: 4px;">
+                                <span style="color: #24757F;">${esc(result.projectLabel || result.projectName)}</span>
                                 ${operatorLine ? ` (${esc(operatorLine)})` : ''}
                                 ${location ? ` • ${esc(location)}` : ''}
                             </div>
-                            <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">
+                            <div style="font-size: 12px; color: #4A5568; margin-top: 4px;">
                                 Matches: ${esc(result.matches.join(', '))}
                             </div>
                         </div>

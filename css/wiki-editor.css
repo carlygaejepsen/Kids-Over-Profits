@@ -50,7 +50,7 @@ body {
 
 /* Headers */
 .admin-header {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: white;
     padding: 25px;
     border-radius: 8px;
@@ -159,7 +159,7 @@ body {
 .saved-projects-list p.loading,
 .entries-list p.loading,
 .index-entries-list p.loading {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
     text-align: center;
     padding: 20px;
@@ -215,6 +215,9 @@ body {
     transition: all 0.2s ease;
     white-space: nowrap;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.category-tab:hover, .category-tab:focus, .category-tab:active { background: transparent; box-shadow: none; color: #000435; }
+
 
 /* Kadence's button:hover/:focus (white text) outrank `.category-tab`, so both
    colours are named here; .active keeps its own. */
@@ -231,6 +234,9 @@ button.category-tab:not(.active):active {
     color: #FFFFFF;
     border: 2px solid #FE8088;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.category-tab.active:focus, .category-tab.active:active, .category-tab.active:hover { background: #000080; color: #FFFFFF; }
+
 
 .category-content {
     background: #f9fafb;
@@ -284,17 +290,20 @@ button.category-tab:not(.active):active {
     text-decoration: none;
     border: 1px solid #33A7B5;
     background: #fff;
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.index-entry-actions button:focus, .index-entry-actions button:active { background: #fff; color: var(--kop-teal-ink, #24757F); }
+
 
 .index-entry-actions button:hover {
-    background: #33A7B5;
+    background: var(--kop-teal-fill, #24757F);
     color: #fff;
 }
 
 .index-empty-flag {
-    color: #FE8088;
+    color: var(--kop-coral-pink-ink, #D9020F);
     font-weight: 800;
     font-size: 10px;
 }
@@ -314,7 +323,7 @@ fieldset {
 legend {
     font-size: 1.2rem;
     font-weight: 600;
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     padding: 0 10px;
     background: #FFFFFF;
     border: 2px solid #B2E102;
@@ -364,7 +373,7 @@ select {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%);
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%);
     color: white;
     display: inline-flex;
     align-items: center;
@@ -372,8 +381,9 @@ select {
 }
 
 .btn:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%);
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%);
     transform: translateY(-1px);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .btn-secondary {
@@ -381,9 +391,12 @@ select {
     color: #000435;
     border-color: #33A7B5;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.btn-secondary:focus, .btn-secondary:active, .btn-secondary:hover { background: #B6E3D4; color: #000435; }
+
 
 .btn-danger {
-    background: #FE8088;
+    background: var(--kop-coral-pink-fill, #D9020F);
     border-color: #000435;
 }
 
@@ -404,11 +417,17 @@ select {
     font-weight: 600;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.mode-btn:focus, .mode-btn:active, .mode-btn:hover { background: #FFFFFF; color: #000435; }
+
 
 .mode-btn.active {
-    background-color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
     color: #FFFFFF;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.mode-btn.active:focus, .mode-btn.active:active, .mode-btn.active:hover { background: var(--kop-teal-fill, #24757F); color: #FFFFFF; }
+
 
 .hidden-section {
     display: none !important;
@@ -441,7 +460,7 @@ select {
 }
 
 .list-preview-item button {
-    background: #FE8088;
+    background: var(--kop-coral-pink-fill, #D9020F);
     color: #FFFFFF;
     border: 2px solid #FE8088;
     font-size: 0.8rem;
@@ -449,6 +468,9 @@ select {
     border-radius: 3px;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.list-preview-item button:focus, .list-preview-item button:active, .list-preview-item button:hover { background: var(--kop-coral-pink-fill, #D9020F); color: #FFFFFF; }
+
 
 .staff-preview-item {
     flex-direction: column;
@@ -584,6 +606,9 @@ fieldset.facility-only-field {
     cursor: pointer;
     font-weight: 600;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.stub-override-btn:focus, .stub-override-btn:active, .stub-override-btn:hover { background: #FFF5CB; color: #000435; }
+
 
 .stub-override-btn:hover:not(:disabled) {
     background: #ECF385;
@@ -719,7 +744,7 @@ fieldset.facility-only-field {
 .autocomplete-item[data-placeholder="true"],
 .autocomplete-item[data-placeholder="true"]:hover {
     cursor: default;
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
     font-style: italic;
     background: transparent;
     border-left: none;
@@ -727,7 +752,7 @@ fieldset.facility-only-field {
 }
 
 .autocomplete-item strong {
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
 }
 
@@ -764,7 +789,7 @@ fieldset.facility-only-field {
 
 /* State label shown next to a stub on the aggregated Stubs tab */
 .index-entry-state {
-    color: #888;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.85em;
     font-weight: 400;
 }

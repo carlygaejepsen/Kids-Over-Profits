@@ -70,7 +70,7 @@
 }
 
 .upload-area p {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     margin: 0.25rem 0;
     font-size: 0.9rem;
 }
@@ -191,7 +191,7 @@
 .checkbox-group small {
     display: block;
     margin-top: 0.5rem;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.85rem;
     padding-left: 1rem;
     font-style: italic;
@@ -220,7 +220,7 @@
 .form-group small {
     display: block;
     margin-top: 0.25rem;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.8rem;
 }
 
@@ -272,7 +272,7 @@
 }
 
 .file-size {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.9rem;
 }
 
@@ -429,6 +429,9 @@
     border-radius: 4px;
     transition: all 0.2s;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.close-message:hover, .close-message:focus, .close-message:active { background: transparent; box-shadow: none; color: currentColor; }
+
 
 .close-message:hover {
     opacity: 1;

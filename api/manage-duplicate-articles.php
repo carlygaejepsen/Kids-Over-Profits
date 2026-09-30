@@ -239,7 +239,7 @@ th { background: #000080; color: #fff; }
 .group { background: #fff; border: 2px solid #EF9034; border-radius: 8px; padding: 14px 18px; margin: 16px 0; max-width: 1100px; }
 .group h3 { margin: 0 0 8px; font-size: 1rem; }
 button { background: #000080; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-button.secondary { background: #33A7B5; }
+button.secondary { background: #24757F; }
 button.danger { background: #c0392b; }
 button.small { padding: 3px 8px; font-size: 0.78rem; margin-top: 0; }
 .hint { font-size: 0.78rem; color: #666; margin: 2px 0 0; }

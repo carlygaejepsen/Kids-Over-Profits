@@ -31,7 +31,7 @@
 }
 
 .kop-sr-crumb-sep {
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-severe-reports .kop-sr-step h2,
@@ -103,7 +103,7 @@ a.kop-sr-state:focus-visible {
 .kop-sr-kind.is-empty {
     border-top-color: #e2e8f0;
     background: #f7fafc;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-sr-kind.is-empty {
@@ -158,7 +158,7 @@ a.kop-sr-kind:focus-visible {
 }
 
 .kop-sr-kind.is-empty .kop-sr-kind-icon {
-    color: #a0aec0;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .kop-sr-kind-text {
@@ -270,6 +270,7 @@ a.kop-sr-kind:focus-visible {
 
 .kop-sr-pill:hover {
     background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435); /* the other half, or Kadence supplies it */
 }
 
 .kop-sr-finding .kop-flagged-quote {

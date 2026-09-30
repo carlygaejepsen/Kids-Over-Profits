@@ -77,15 +77,15 @@ try {
             body { font-family: monospace; padding: 20px; background: #f5f5f5; }
             .table-section { background: white; margin: 20px 0; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
             h2 { color: #000435; margin-top: 0; }
-            h3 { color: #33A7B5; margin: 10px 0 5px 0; }
+            h3 { color: #24757F; margin: 10px 0 5px 0; }
             table { width: 100%; border-collapse: collapse; margin: 10px 0; }
             th { background: #000435; color: white; padding: 8px; text-align: left; }
             td { padding: 8px; border-bottom: 1px solid #ddd; }
             tr:hover { background: #f9f9f9; }
             .key-badge { display: inline-block; padding: 2px 6px; margin: 0 2px; border-radius: 3px; font-size: 11px; }
-            .pri { background: #EF9034; color: white; }
+            .pri { background: #A3570D; color: white; }
             .uni { background: #B2E102; color: #000; }
-            .mul { background: #33A7B5; color: white; }
+            .mul { background: #24757F; color: white; }
             .column-list { color: #666; }
             code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
         </style></head><body>';

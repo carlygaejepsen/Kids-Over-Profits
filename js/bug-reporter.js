@@ -184,7 +184,27 @@
         } else {
             container.appendChild(link);
         }
+        if (onDarkGround(link)) {
+            link.classList.add('kop-bug-report-link--on-dark');
+        }
         return link;
+    }
+
+    /**
+     * True when the first solid background behind `node` is dark (navy
+     * section headers, operator cards): the navy outline would vanish there,
+     * so the link switches to white (css/bug-reporter.css).
+     */
+    function onDarkGround(node) {
+        for (var n = node.parentElement; n && n !== document.documentElement; n = n.parentElement) {
+            var m = (getComputedStyle(n).backgroundColor || '').match(/rgba?\(([^)]+)\)/);
+            if (!m) continue;
+            var p = m[1].split(/[\s,\/]+/).filter(Boolean).map(Number);
+            if (p.length > 3 && p[3] < 0.5) continue;
+            var lum = function (v) { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+            return (0.2126 * lum(p[0]) + 0.7152 * lum(p[1]) + 0.0722 * lum(p[2])) < 0.18;
+        }
+        return false;
     }
 
     // Auto-attach to any markup tagged with data-kop-bug-feature.

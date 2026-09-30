@@ -12,7 +12,7 @@
         margin-bottom: 20px;
         padding-bottom: 10px;
     }
-    h1 { color: #33A7B5; margin-top: 0; }
+    h1 { color: var(--kop-teal-ink, #24757F); margin-top: 0; }
     .section {
         margin-bottom: 30px;
         page-break-inside: avoid;

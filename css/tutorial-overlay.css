@@ -125,10 +125,13 @@ body.tutorial-active .tutorial-card {
     border: none;
     font-size: 20px;
     cursor: pointer;
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
     padding: 0;
     line-height: 1;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.tutorial-close:hover, .tutorial-close:focus, .tutorial-close:active { background: transparent; box-shadow: none; color: var(--kop-text-muted, #4A5568); }
+
 
 .tutorial-close:hover {
     color: #4b5563;
@@ -152,7 +155,7 @@ body.tutorial-active .tutorial-card {
 
 .tutorial-steps {
     font-size: 12px;
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 .tutorial-nav {
@@ -175,18 +178,26 @@ body.tutorial-active .tutorial-card {
     border-color: #d1d5db;
     color: #374151;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.tutorial-btn-prev:focus, .tutorial-btn-prev:active { background: white; color: #374151; }
+
 
 .tutorial-btn-prev:hover {
     background-color: #f3f4f6;
+    color: #374151; /* the other half, or Kadence supplies it */
 }
 
 .tutorial-btn-next {
-    background-color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
     color: white;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.tutorial-btn-next:focus, .tutorial-btn-next:active { background: var(--kop-teal-fill, #24757F); color: white; }
+
 
 .tutorial-btn-next:hover {
-    background-color: #2a8c96;
+    background-color: var(--kop-navy-blue, #000080);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 /* Tutorial Toggle Button (Fixed). Lower-right: the site-wide search pill
@@ -196,8 +207,8 @@ body.tutorial-active .tutorial-card {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: rgba(51, 167, 181, 0.8);
-    color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
+    color: #FFFFFF;
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -211,10 +222,14 @@ body.tutorial-active .tutorial-card {
     font-size: 20px;
     transition: transform 0.2s, background-color 0.2s;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.tutorial-toggle-btn:focus, .tutorial-toggle-btn:active { background: var(--kop-teal-fill, #24757F); color: #FFFFFF; }
+
 
 .tutorial-toggle-btn:hover {
     transform: scale(1.1);
-    background-color: rgba(51, 167, 181, 0.4);
+    background-color: var(--kop-navy-blue, #000080);
+    color: #FFFFFF; /* the other half, or Kadence supplies it */
 }
 
 .tutorial-card {
@@ -251,6 +266,9 @@ body.tutorial-active .tutorial-card {
     transition: opacity 0.2s;
     pointer-events: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.tutorial-toggle-tooltip:focus, .tutorial-toggle-tooltip:active, .tutorial-toggle-tooltip:hover { background: #1f2937; color: white; }
+
 
 .tutorial-toggle-btn:hover .tutorial-toggle-tooltip {
     opacity: 1;
@@ -301,7 +319,7 @@ label.has-tooltip .field-tooltip-wrapper {
 }
 
 .field-tooltip-icon:hover {
-    background-color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
 }
 
 .field-tooltip-text {

@@ -86,7 +86,7 @@
     width: 0.35rem;
     height: 1.2em;
     border-radius: 2px;
-    background: var(--kop-teal, #33a7b5);
+    background: var(--kop-teal-fill, #24757F);
 }
 
 .kop-da-lede {
@@ -125,7 +125,7 @@
 
 .kop-da-more:hover,
 .kop-da-more:focus-visible {
-    background: var(--kop-teal, #33a7b5);
+    background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white, #fff);
 }
 
@@ -542,6 +542,9 @@
     background: var(--kop-midnight-blue, #000435);
     color: var(--kop-white, #fff);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-da-cta:focus, .kop-da-cta:active, .kop-da-cta:hover { background: var(--kop-midnight-blue, #000435); color: var(--kop-white, #fff); }
+
 
 .kop-da-cta h2 {
     margin: 0 0 0.5rem;
@@ -564,10 +567,14 @@
     font-weight: 700;
     text-decoration: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-da-cta-btn:focus, .kop-da-cta-btn:active { background: var(--kop-orange, #ef9034); color: var(--kop-midnight-blue, #000435); }
+
 
 .kop-da-cta-btn:hover,
 .kop-da-cta-btn:focus-visible {
     background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435); /* the other half, or Kadence supplies it */
 }
 
 /* ---- One collection ---------------------------------------------------- */

@@ -89,6 +89,9 @@
     transition: all 0.2s ease;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+#alphabet-filter button:focus, #alphabet-filter button:active, #alphabet-filter button:hover, #loc-alphabet-filter button:focus, #loc-alphabet-filter button:active, #loc-alphabet-filter button:hover { background: #00004d; color: #ffffff; }
+
 
 #alphabet-filter button.active,
 #loc-alphabet-filter button.active {
@@ -96,6 +99,9 @@
     color: #ffffff;
     border-color: #dddddd;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+#alphabet-filter button.active:focus, #alphabet-filter button.active:active, #alphabet-filter button.active:hover, #loc-alphabet-filter button.active:focus, #loc-alphabet-filter button.active:active, #loc-alphabet-filter button.active:hover { background: #00004d; color: #ffffff; }
+
 
 /* Facility card text colors - WHITE backgrounds get BLACK text.
    Set on the card only so descendants inherit it; a `*` blanket here
@@ -140,7 +146,7 @@
 }
 
 .facility-card.status-open {
-    border-color: #d45500; /* Accessible orange */
+    border-color: #B34700; /* Accessible orange */
     border-left-width: 8px;
     background: linear-gradient(135deg, #FFFFFF 0%, #FFF0E6 100%);
 }
@@ -239,7 +245,7 @@
 /* Higher specificity to override .facility-card * rule */
 .tti-program-index-wrapper .facility-card .status-badge.status-open {
     color: #ffffff !important;
-    background: #d45500;
+    background: #B34700;
 }
 
 .tti-program-index-wrapper .facility-card .status-badge.status-closed {
@@ -569,6 +575,9 @@ details.operator-section[open] .facility-card {
     font-weight: 600;
     color: #0d4450 !important;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.resource-chip:focus, .resource-chip:active, .resource-chip:hover { background: #ffffff; color: #0d4450 !important; }
+
 
 .facility-news-list {
     list-style: none;
@@ -633,7 +642,7 @@ details.operator-section[open] .facility-card {
 }
 
 .facility-latest-news .facility-latest-news-title:hover {
-    color: #33A7B5 !important;
+    color: var(--kop-teal-ink, #24757F) !important;
 }
 
 .facility-latest-news .facility-latest-news-meta {
@@ -649,7 +658,7 @@ details.operator-section[open] .facility-card {
     margin-top: 3px;
     font-size: 0.8em;
     font-style: italic;
-    color: #6b7280 !important;
+    color: var(--kop-text-muted, #4A5568) !important;
 }
 
 .operator-latest-news {
@@ -738,6 +747,9 @@ details.operator-section[open] .facility-card {
     border-color: rgba(255, 255, 255, 0.18);
     color: #ffffff !important;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.operator-details .resource-chip:focus, .operator-details .resource-chip:active, .operator-details .resource-chip:hover { background: rgba(255, 255, 255, 0.12); color: #ffffff !important; }
+
 
 .operator-link-list {
     display: flex;
@@ -1296,10 +1308,13 @@ RESPONSIVE
     border-radius: 6px;
     text-decoration: none;
     font-weight: 600;
-    background: #33A7B5;
+    background: var(--kop-teal-fill, #24757F);
     color: #ffffff;
     transition: background 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-doc-modal__btn:focus, .kop-doc-modal__btn:active { background: var(--kop-teal-fill, #24757F); color: #ffffff; }
+
 
 .kop-doc-modal__btn:hover {
     background: #00004d;
@@ -1406,7 +1421,7 @@ body.kop-doc-modal-open {
 
 .tti-program-index-wrapper .facility-card .facility-profile-link a:hover,
 .tti-program-index-wrapper .facility-card .facility-profile-link a:focus-visible {
-    background: #33a7b5;
+    background: var(--kop-teal-fill, #24757F);
     color: #ffffff !important;
 }
 
@@ -1434,6 +1449,9 @@ body.kop-doc-modal-open {
     font-weight: 500;
     transition: color 0.15s, border-color 0.15s;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-dir-tab:hover, .kop-dir-tab:focus, .kop-dir-tab:active { background: transparent; box-shadow: none; color: #4b5563; }
+
 
 .kop-dir-tab:hover,
 .kop-dir-tab:focus-visible {

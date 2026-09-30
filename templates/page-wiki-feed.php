@@ -132,13 +132,13 @@ get_header();
             if ($feed_page > 1) {
                 echo '<a class="pager-link" href="' . esc_url($feed_link(['pg' => $feed_page - 1])) . '">&larr; Previous</a>';
             } else {
-                echo '<span class="pager-link is-disabled">&larr; Previous</span>';
+                echo '<span class="pager-link is-disabled" aria-disabled="true">&larr; Previous</span>';
             }
             echo '<span class="pager-status">Page ' . (int) $feed_page . ' of ' . (int) $total_pages . '</span>';
             if ($feed_page < $total_pages) {
                 echo '<a class="pager-link" href="' . esc_url($feed_link(['pg' => $feed_page + 1])) . '">Next &rarr;</a>';
             } else {
-                echo '<span class="pager-link is-disabled">Next &rarr;</span>';
+                echo '<span class="pager-link is-disabled" aria-disabled="true">Next &rarr;</span>';
             }
             echo '</nav>';
         };

@@ -73,6 +73,9 @@
     font-weight: 700;
     text-decoration: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-utility__button:focus, .kop-utility__button:active { background: var(--kop-navy-blue, #000080); color: var(--kop-white, #fff); }
+
 
 .kop-utility__button:hover,
 .kop-utility__button:focus-visible {

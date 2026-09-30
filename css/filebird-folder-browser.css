@@ -38,7 +38,10 @@
     background: none; border: none; font-size: 1.7rem; line-height: 1;
     cursor: pointer; color: var(--kop-navy, #000080);
 }
-.kop-fb-close:hover { color: var(--kop-orange, #EF9034); }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-fb-close:hover, .kop-fb-close:focus, .kop-fb-close:active { background: transparent; box-shadow: none; color: var(--kop-navy, #000080); }
+
+.kop-fb-close:hover { color: var(--kop-orange-ink, #A3570D); }
 
 .kop-fb-search {
     margin: 6px 20px 10px;
@@ -62,7 +65,7 @@
 .kop-fb-loading, .kop-fb-empty {
     padding: 22px;
     text-align: center;
-    color: #777;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 0.9rem;
 }
 
@@ -81,6 +84,9 @@
     font-size: 0.92rem;
     color: var(--kop-midnight, #000435);
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-fb-row:hover, .kop-fb-row:focus, .kop-fb-row:active { background: transparent; box-shadow: none; color: var(--kop-midnight, #000435); }
+
 .kop-fb-row:last-child { border-bottom: none; }
 /* Keep the label dark: the parent theme turns hovered/focused buttons white. */
 .kop-fb-row:hover,
@@ -93,7 +99,7 @@
 }
 .kop-fb-name { flex: 1 1 auto; }
 .kop-fb-indent { white-space: pre; }
-.kop-fb-id { flex: 0 0 auto; color: #999; font-size: 0.78rem; font-family: monospace; }
+.kop-fb-id { flex: 0 0 auto; color: var(--kop-text-muted, #4A5568); font-size: 0.78rem; font-family: monospace; }
 
 .kop-fb-footer {
     display: flex;
@@ -110,5 +116,5 @@
 }
 .kop-fb-cancel { background: #e3ded0; color: var(--kop-midnight, #000435); }
 .kop-fb-cancel:hover { background: #d4ceba; }
-.kop-fb-clear { background: var(--kop-teal, #33A7B5); color: #fff; }
+.kop-fb-clear { background: var(--kop-teal-fill, #24757F); color: #fff; }
 .kop-fb-clear:hover { background: var(--kop-navy, #000080); }

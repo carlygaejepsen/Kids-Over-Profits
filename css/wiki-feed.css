@@ -127,7 +127,7 @@
 }
 
 .meta-separator {
-    color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal-ink, #24757F);
     opacity: 0.5;
 }
 
@@ -152,9 +152,13 @@
     font-weight: 600;
     transition: background-color 0.2s;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.toggle-markdown-btn:focus, .toggle-markdown-btn:active { background: var(--kop-button-primary, #33A7B5) !important; color: #FFFFFF !important; }
+
 
 .toggle-markdown-btn:hover {
     background-color: var(--kop-button-primary-hover, #000080) !important;
+    color: #FFFFFF !important; /* the other half, or Kadence supplies it */
 }
 
 .markdown-content {
@@ -247,7 +251,7 @@
 }
 
 .rendered-markdown a {
-    color: var(--kop-teal, #33A7B5) !important;
+    color: var(--kop-teal-ink, #24757F) !important;
     text-decoration: underline !important;
 }
 
@@ -300,7 +304,7 @@
 }
 
 .wiki-feed-sort a {
-    color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: underline;
 }
 
@@ -325,10 +329,14 @@
     color: var(--kop-text-primary, #000435);
     text-decoration: none;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.wiki-feed-pager .pager-link:focus, .wiki-feed-pager .pager-link:active, .wiki-feed-pager .pager-link:hover { background: var(--kop-bg-secondary, #FFFFFF); color: var(--kop-text-primary, #000435); }
+
 
 .wiki-feed-pager a.pager-link:hover {
     border-color: var(--kop-teal, #33A7B5);
-    color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal-ink, #24757F);
+    background: transparent; /* the other half, or Kadence supplies it */
 }
 
 .wiki-feed-pager .pager-link.is-disabled {

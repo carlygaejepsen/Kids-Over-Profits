@@ -119,7 +119,7 @@
     width: 14px;
     height: 14px;
     margin-top: 2px;
-    background: var(--kop-teal);
+    background: var(--kop-teal-fill, #24757F);
     border: 1px solid var(--kop-navy-blue);
     border-radius: 3px;
 }
@@ -209,6 +209,9 @@
     cursor: pointer;
     transition: background-color 0.15s ease;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.kop-holding-btn:hover, .kop-holding-btn:focus, .kop-holding-btn:active { background: transparent; box-shadow: none; color: inherit; }
+
 
 .kop-holdings--compact .kop-holding--linked {
     padding: 0;
@@ -223,6 +226,7 @@
 .kop-holding-btn:hover,
 .kop-holding-btn:focus-visible {
     background: var(--kop-bg-accent);
+    color: inherit; /* the other half, or Kadence supplies it */
 }
 
 .kop-holding-btn:focus-visible {
@@ -236,7 +240,7 @@
     align-self: center;
     font-size: 0.75rem;
     font-weight: 700;
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-holdings--compact .kop-holding-go {

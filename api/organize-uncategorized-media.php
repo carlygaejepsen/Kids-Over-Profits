@@ -315,7 +315,7 @@ tbody tr.kop-ticked { background: #B6E3D4; }
 input[name$="[go]"] { transform: scale(1.4); margin: 3px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; }
 .summary { font-size: 0.85rem; margin-bottom: 6px; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+button { background: #24757F; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin-bottom: 12px; }
 input[type=number] { width: 84px; }
 td a { color: #000080; }
@@ -360,7 +360,7 @@ td a { color: #000080; }
         <strong style="font-size:0.85rem">New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
         <button type="button" id="kop-nf-parent" style="background:#7a7a7a">parent: top level</button>
-        <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
+        <button type="button" id="kop-nf-create" style="background:#A3570D">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
 </div>

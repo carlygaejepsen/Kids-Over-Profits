@@ -20,9 +20,12 @@
     font-weight: 500;
     transition: all 0.2s ease;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.toggle-btn-span:focus, .toggle-btn-span:active, .toggle-btn-span:hover { background: #f3f4f6; color: #4b5563; }
+
 
 .toggle-btn-label input[type="radio"]:checked + .toggle-btn-span {
-    background-color: #33A7B5;
+    background-color: var(--kop-teal-fill, #24757F);
     border-color: #33A7B5;
     color: white;
     box-shadow: 0 2px 4px rgba(51, 167, 181, 0.3);

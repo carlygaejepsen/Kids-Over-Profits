@@ -70,6 +70,9 @@
     border-radius: 6px;
     transition: all 0.2s ease;
 }
+/* A <button>: Kadence's button:hover/:focus would fill it navy with white text. */
+.modal-close:hover, .modal-close:focus, .modal-close:active { background: transparent; box-shadow: none; color: #000435; }
+
 
 .modal-close:hover {
     background: linear-gradient(135deg, #FC8ED6 0%, #FE8088 100%); /* Bubblegum Pink to Coral Pink */
@@ -106,33 +109,35 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal */
     color: white;
 }
 
 .modal-btn-primary {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal */
     color: white;
     border: 2px solid #FE8088; /* Coral Pink outline */
     box-shadow: 0 2px 6px rgba(51, 167, 181, 0.3);
 }
 
 .modal-btn-primary:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 10px rgba(51, 167, 181, 0.4), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 .modal-btn-secondary {
-    background: linear-gradient(135deg, #000080 0%, #33A7B5 100%); /* Navy Blue to Teal */
+    background: linear-gradient(135deg, #000080 0%, #24757F 100%); /* Navy Blue to Teal */
     color: white;
     border: 2px solid #FE8088; /* Coral Pink outline */
 }
 
 .modal-btn-secondary:hover {
-    background: linear-gradient(135deg, #33A7B5 0%, #000080 100%); /* Reversed gradient */
+    background: linear-gradient(135deg, #24757F 0%, #000080 100%); /* Reversed gradient */
     box-shadow: 0 4px 6px rgba(51, 167, 181, 0.3), 0 0 12px rgba(254, 128, 136, 0.2);
     transform: translateY(-1px);
+    color: white; /* the other half, or Kadence supplies it */
 }
 
 /* ============================================
@@ -219,14 +224,14 @@
     border-left: 4px solid #33A7B5;
     border-radius: 6px;
     font-size: 14px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     line-height: 1.5;
     min-height: 48px;
 }
 
 .modal-option-description em {
     font-style: italic;
-    color: #9ca3af;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 /* ============================================
@@ -280,7 +285,7 @@
 
 .modal-choice-description {
     font-size: 14px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     line-height: 1.5;
 }
 
@@ -308,13 +313,13 @@
 
 .report-title {
     font-size: 24px;
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     margin: 0 0 5px 0;
     font-weight: 700;
 }
 
 .report-meta {
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-size: 14px;
 }
 
@@ -330,7 +335,7 @@
 
 .report-section .section-title {
     font-size: 18px;
-    color: #33A7B5;
+    color: var(--kop-teal-ink, #24757F);
     border-bottom: 2px solid #e5e7eb;
     padding-bottom: 8px;
     margin-bottom: 15px;
@@ -401,7 +406,7 @@
 
 .report-section .subsection-title {
     font-size: 15px;
-    color: #6b7280;
+    color: var(--kop-text-muted, #4A5568);
     font-weight: 600;
     margin: 15px 0 10px 0;
 }

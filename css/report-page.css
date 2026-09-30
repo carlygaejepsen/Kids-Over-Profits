@@ -197,6 +197,9 @@
     border: 1px solid transparent;
     border-radius: var(--kop-radius-pill);
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-rp .kop-rp-chip:focus, .kop-rp .kop-rp-chip:active, .kop-rp .kop-rp-chip:hover { background: var(--kop-rp-neutral-tint); color: var(--kop-midnight-blue); }
+
 
 .kop-rp .is-flagged.kop-rp-stat,
 .kop-rp .is-flagged.kop-rp-badge,
@@ -316,7 +319,7 @@
 
 .kop-rp .kop-rp-official:hover,
 .kop-rp .kop-rp-official:focus-visible {
-    color: var(--kop-teal);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 /* A second source link (e.g. the publisher's page next to the document). */

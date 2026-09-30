@@ -55,10 +55,13 @@
     font-size: 1rem;
     cursor: pointer;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-home-search button:active { background: var(--kop-navy-blue, #000080); color: #fff; }
+
 
 .kop-home-search button:hover,
 .kop-home-search button:focus {
-    background-color: var(--kop-teal, #33A7B5);
+    background-color: var(--kop-teal-fill, #24757F);
     color: #fff;
 }
 
@@ -93,7 +96,7 @@
 }
 
 .kop-home-btn {
-    background-color: var(--kop-teal, #33A7B5);
+    background-color: var(--kop-teal-fill, #24757F);
     color: #fff;
     padding: 8px 22px;
     border-radius: 6px;
@@ -101,6 +104,9 @@
     font-weight: 600;
     display: inline-block;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-home-btn:focus, .kop-home-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
 
 .kop-home-btn:hover {
     background-color: var(--kop-navy-blue, #000080);
@@ -202,7 +208,7 @@
 }
 
 .kop-home-report-btn {
-    background-color: var(--kop-teal, #33A7B5);
+    background-color: var(--kop-teal-fill, #24757F);
     color: #fff;
     padding: 12px 24px;
     border: 2px solid #fff;
@@ -210,6 +216,9 @@
     text-decoration: none;
     display: inline-block;
 }
+/* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
+.kop-home-report-btn:focus, .kop-home-report-btn:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
+
 
 .kop-home-report-btn:hover {
     background-color: #fff;
@@ -222,7 +231,7 @@
     margin-left: 8px;
     padding: 1px 8px;
     border-radius: 10px;
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(0, 4, 53, 0.35); /* dark wash: white on a white wash was 3.3 */
     font-size: 0.85em;
     font-variant-numeric: tabular-nums;
 }
@@ -335,7 +344,7 @@
 .kop-preview-meta {
     display: block;
     font-size: 0.78rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     margin-top: 2px;
 }
 
@@ -402,7 +411,7 @@
     width: 20px;
     height: 20px;
     margin-top: 1px;
-    color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-topic-label {
@@ -464,7 +473,7 @@
 
 .kop-flagged-date {
     font-size: 0.78rem;
-    color: #718096;
+    color: var(--kop-text-muted, #4A5568);
     margin-bottom: 0.5rem;
 }
 
