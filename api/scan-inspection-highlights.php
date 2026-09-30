@@ -52,7 +52,8 @@ try {
         echo ($apply ? 'Saved' : 'Dry run') . ": scanned {$result['scanned']} reports, {$result['remaining']} remaining";
         if ($apply) {
             echo "; {$result['added']} new candidates, {$result['refreshed']} refreshed, {$result['kept']} already reviewed and left alone, "
-                . "{$result['dropped']} withdrawn, {$result['duplicate']} duplicates skipped.\n";
+                . "{$result['dropped']} withdrawn, {$result['relabelled']} reviewed moved between self-harm and suicide attempt, "
+                . "{$result['duplicate']} duplicates skipped.\n";
         } else {
             $n = count($result['candidates']);
             echo "; $n candidates, {$result['duplicate']} duplicates skipped.\n";
