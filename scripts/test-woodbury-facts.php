@@ -25,6 +25,7 @@ if (!file_exists($db_path) || !file_exists($facts_path)) {
 }
 
 require __DIR__ . '/kop-test-harness.php';
+require_once dirname(__DIR__) . '/inc/facility-finder.php';
 require_once dirname(__DIR__) . '/inc/woodbury-facts.php';
 
 $failures = 0;
@@ -307,6 +308,42 @@ $owner = array('op' => 'add_list', 'path' => 'identification.pastOperators', 'la
 $check('a corrected owner keeps its date', kop_wbf_label_for($owner, 'Universal Health Services') === 'Operator/owner: Universal Health Services (2005-12-20)');
 $check('plain text drops the date and citation',
     kop_wbf_plain_text('2006-09-12: Injury: A boy was hurt. (Woodbury Reports, October 2006, p. 29)') === 'Injury: A boy was hurt.');
+
+echo "-- Another person in the same words --\n";
+// The AJAX handlers keep a field's case: "pastJobs", "endYear" once came through as "pastjobs".
+$posted = array();
+foreach (array('name' => 'Pat Q. Smith', 'role' => 'Therapist', 'pastJobs' => 'Aspen Ranch', 'where' => 'staff.administrator') as $k => $v) {
+    $posted[preg_replace('/[^A-Za-z]/', '', (string) $k)] = $v;
+}
+$shape = array('op' => 'add_staff', 'path' => 'staff.notableStaff', 'value' => 'null', 'label' => '');
+list($pv, $ppath) = kop_wbf_edited_value($shape, $posted);
+$check('past jobs survive the posted field names', $pv['pastJobs'] === 'Aspen Ranch');
+$check('the chosen list is kept', $ppath === 'staff.administrator');
+$check('the label names the person and role', kop_wbf_label_for($shape, $pv) === 'Pat Q. Smith, Therapist');
+$fid = (int) array_key_first($by);
+$stmt->execute(array($fid));
+$doc = $normalize(json_decode((string) $stmt->fetchColumn(), true));
+$before = $doc;
+$done = kop_wbf_doc_apply($doc, array('op' => 'add_staff', 'path' => $ppath, 'value' => json_encode($pv), 'label' => '', 'extra' => '{}', 'evidence' => '[]'));
+$saved = $normalize($doc);
+$names = array_map(function ($s) { return is_array($s) ? ($s['name'] ?? '') : $s; }, (array) ($saved['staff']['administrator'] ?? array()));
+$errors = array_filter(kop_facility_validate($saved), function ($v) { return $v['severity'] === 'error'; });
+$check('a hand-added person lands on the record', in_array('Pat Q. Smith', $names, true) && !$errors, "facility #$fid");
+kop_wbf_doc_undo($doc, $done);
+$check('and undo takes them off again', json_encode($normalize($doc)) === json_encode($normalize($before)));
+$first_row = array_merge(array('grp' => 'staff'), $by[$fid][0]);
+$check('a staff item offers "Another person"', strpos(kop_wbf_person_form($first_row), 'kop-wbf-addperson') !== false);
+$check('a consultant item does not', kop_wbf_person_form(array_merge($first_row, array('grp' => 'consultant'))) === '');
+
+echo "-- Another record, or a new one, from any card --\n";
+$card = array('facility_id' => 5, 'program' => 'Aspen Ranch', 'program_as_written' => 'Aspen Ranch Utah', 'place' => 'Loa, Utah',
+    'alternatives' => json_encode(array(array('id' => 5, 'name' => 'Matched', 'state' => 'UT'), array('id' => 7, 'name' => 'Other One', 'state' => 'UT'))));
+$html = kop_wbf_other_record($card, false);
+$check('a matched card can create a program record', strpos($html, 'data-act="create"') !== false && strpos($html, 'kop-wbf-ctype') !== false);
+$check('the create starts from the name as Woodbury wrote it', strpos($html, 'value="Aspen Ranch Utah"') !== false);
+$check('the create starts from the place', strpos($html, 'value="Loa"') !== false && strpos($html, 'value="Utah"') !== false);
+$check('the current match is not offered as "another record"', strpos($html, 'Matched') === false && strpos($html, 'Other One') !== false);
+$check('it has the facility finder', strpos($html, 'data-kop-facility-finder') !== false);
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed.\n";
 exit($failures ? 1 : 0);

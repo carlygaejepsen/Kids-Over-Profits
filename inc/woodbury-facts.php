@@ -104,10 +104,14 @@ function kop_wbf_sync($force = false) {
     $table = kop_wbf_table();
     $existing = array();
     $edited = array();
+    $manual = array();
     foreach ((array) $wpdb->get_results("SELECT pkey, status, extra FROM {$table}", ARRAY_A) as $r) {
         $existing[$r['pkey']] = $r['status'];
         if (strpos((string) $r['extra'], '"edited_by"') !== false) {
             $edited[$r['pkey']] = true;
+        }
+        if (strpos((string) $r['extra'], '"manual"') !== false) {
+            $manual[$r['pkey']] = true;
         }
     }
     $now = current_time('mysql', true);
@@ -165,7 +169,8 @@ function kop_wbf_sync($force = false) {
     }
     $gone = 0;
     foreach ($existing as $pkey => $status) {
-        if ($status === 'pending' && !isset($seen[$pkey])) {
+        // A person added by hand (kop_wbf_add_person) is never in the build: it stays.
+        if ($status === 'pending' && !isset($seen[$pkey]) && !isset($manual[$pkey])) {
             $gone += (int) $wpdb->update($table, array('status' => 'gone'), array('pkey' => $pkey));
         }
     }
@@ -1052,6 +1057,112 @@ function kop_wbf_edit_form(array $r) {
     return $html . '<span class="kop-wbf-edit-msg" aria-live="polite"></span></div></details>';
 }
 
+/* ---- A person the build missed ----------------------------------------- */
+
+/**
+ * Add a staff item by hand from another item's quote, when the words name
+ * more people than the build read. It joins the same card as a waiting item
+ * citing that quote (only the quotes that name the person, when any do), and
+ * is added, edited, rejected and undone like any other. A rebuild never
+ * touches it.
+ */
+function kop_wbf_add_person(array $from, array $f, $reviewer) {
+    global $wpdb;
+    if ($from['status'] !== 'pending' || $from['grp'] === 'consultant') {
+        throw new RuntimeException('Add people from a waiting item.');
+    }
+    $shape = array('op' => 'add_staff', 'path' => 'staff.notableStaff', 'value' => 'null', 'label' => '');
+    list($value, $path) = kop_wbf_edited_value($shape, $f);
+    $key = kop_wbf_person_key($value['name']);
+    if ($key === '') {
+        throw new RuntimeException('Give a first and last name.');
+    }
+    $pkey = md5('manual|' . $from['facility_id'] . '|' . $from['program'] . '|' . $key);
+    $taken = $wpdb->get_var($wpdb->prepare('SELECT status FROM ' . kop_wbf_table() . ' WHERE pkey = %s', $pkey));
+    if ($taken !== null) {
+        throw new RuntimeException($value['name'] . ' was already added by hand on this card (' . $taken . ').');
+    }
+    // Only the quotes that name them, so the record cites the right page.
+    $last = strtolower(substr($key, strrpos($key, ' ') + 1));
+    $evidence = array_values(array_filter(kop_wbf_evidence($from), function ($e) use ($last) {
+        return strpos(strtolower(remove_accents((string) ($e['quote'] ?? ''))), $last) !== false;
+    })) ?: kop_wbf_evidence($from);
+    $found = 1;
+    foreach ($evidence as $e) {
+        $found = $found && !empty($e['found']) ? 1 : 0;
+    }
+    $shape['path'] = $path;
+    $now = current_time('mysql', true);
+    $row = array(
+        'pkey'               => $pkey,
+        'facility_id'        => (int) $from['facility_id'],
+        'program'            => $from['program'],
+        'program_as_written' => $from['program_as_written'],
+        'place'              => $from['place'],
+        'match_kind'         => $from['match_kind'],
+        'match_note'         => $from['match_note'],
+        'alternatives'       => $from['alternatives'],
+        'grp'                => 'staff',
+        'op'                 => 'add_staff',
+        'path'               => $path,
+        'value'              => wp_json_encode($value),
+        'label'              => kop_wbf_label_for($shape, $value),
+        'conflict'           => '',
+        'current_val'        => '',
+        'extra'              => wp_json_encode(array('manual' => 1, 'from' => $from['pkey'], 'person' => $value['name'],
+            'edited_by' => $reviewer, 'edited_at' => $now)),
+        'evidence'           => wp_json_encode($evidence),
+        'found'              => $found,
+        'preselect'          => 1,
+        'auto'               => 0,
+        'issue_date'         => $from['issue_date'],
+        'status'             => 'pending',
+        'created_at'         => $now,
+    );
+    if ($wpdb->insert(kop_wbf_table(), $row) === false) {
+        throw new RuntimeException('Could not save: ' . $wpdb->last_error);
+    }
+    return kop_wbf_rows(array($pkey))[0];
+}
+
+/** The "Another person in these words" box under a waiting item. */
+function kop_wbf_person_form(array $r) {
+    if ($r['grp'] === 'consultant' || !kop_wbf_evidence($r)) {
+        return '';
+    }
+    return '<details class="kop-wbf-edit kop-wbf-more"><summary>Another person in these words</summary><div class="kop-wbf-edit-box">'
+        . '<label>Name <input type="text" data-f="name"></label>'
+        . '<label>Role at this program <input type="text" data-f="role"></label>'
+        . '<label>Past jobs <textarea data-f="pastJobs" rows="2"></textarea></label>'
+        . '<label>List <select data-f="where"><option value="staff.notableStaff">Notable staff</option>'
+        . '<option value="staff.administrator">Administrators</option></select></label>'
+        . '<button type="button" class="button button-small kop-wbf-addperson">Add to this card</button>'
+        . '<span class="kop-wbf-edit-msg" aria-live="polite"></span></div></details>';
+}
+
+add_action('wp_ajax_kop_wbf_person', function () {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('Not allowed.', 403);
+    }
+    check_ajax_referer('kop_woodbury_facts', 'nonce');
+    $rows = kop_wbf_rows(array((string) ($_POST['key'] ?? '')));
+    try {
+        if (!$rows) {
+            throw new RuntimeException('Not found.');
+        }
+        $f = array();
+        foreach ((array) ($_POST['f'] ?? array()) as $k => $v) {
+            $f[preg_replace('/[^A-Za-z]/', '', (string) $k)] = sanitize_textarea_field(wp_unslash((string) $v));
+        }
+        $r = kop_wbf_add_person($rows[0], $f, wp_get_current_user()->user_login);
+        ob_start();
+        kop_wbf_render_row($r, 'records');
+        wp_send_json_success(array('row' => ob_get_clean()));
+    } catch (Throwable $e) {
+        wp_send_json_error($e->getMessage());
+    }
+});
+
 add_action('wp_ajax_kop_wbf_edit', function () {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('Not allowed.', 403);
@@ -1067,7 +1178,7 @@ add_action('wp_ajax_kop_wbf_edit', function () {
         } else {
             $f = array();
             foreach ((array) ($_POST['f'] ?? array()) as $k => $v) {
-                $f[sanitize_key($k)] = sanitize_textarea_field(wp_unslash((string) $v));
+                $f[preg_replace('/[^A-Za-z]/', '', (string) $k)] = sanitize_textarea_field(wp_unslash((string) $v));
             }
             $r = kop_wbf_edit($rows[0], $f, wp_get_current_user()->user_login);
         }
@@ -1104,6 +1215,7 @@ add_action('wp_ajax_kop_wbf_act', function () {
                     'name'  => trim(preg_replace('/\s+/', ' ', sanitize_text_field(wp_unslash($_POST['name'] ?? '')))),
                     'city'  => sanitize_text_field(wp_unslash($_POST['city'] ?? '')),
                     'country' => sanitize_text_field(wp_unslash($_POST['country'] ?? '')),
+                    'type'  => sanitize_text_field(wp_unslash($_POST['type'] ?? '')),
                     'force' => !empty($_POST['force']),
                 );
                 $raw_state = sanitize_text_field(wp_unslash($_POST['state'] ?? ''));
@@ -1239,6 +1351,10 @@ function kop_render_woodbury_facts_page() {
         . '<li><strong>Read wrong?</strong> Click <em>Edit</em> under the item to fix the name, role, year or text (or move a person between administrators and notable staff), '
         . 'then <em>Save correction</em> and add it as usual. A corrected item is never added automatically, and a new scan does not overwrite it. '
         . 'Something already added automatically: Undo it on the <em>Added automatically</em> tab, then edit it here.</li>'
+        . '<li><strong>The words name someone the item missed?</strong> Click <em>Another person in these words</em> under it, '
+        . 'give the name and role, and they join the card as a ticked item citing the same page.</li>'
+        . '<li><strong>Wrong program, or one with no record?</strong> Open <em>Wrong program?</em> under the card to put the checked items on another record, '
+        . 'or create a new program record from the name and place Woodbury gives.</li>'
         . '<li><strong>Click <em>Add checked to record</em></strong> on the card, or <em>Add everything ticked on this page</em> at the top. '
         . 'The facility page shows the additions at once, each citing the issue; new staff, past operators and past names reach the network map on its next build.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo, which takes back exactly what was added.</li></ol>';
@@ -1321,6 +1437,45 @@ function kop_render_woodbury_facts_page() {
     echo '</div>';
 }
 
+/**
+ * Put a card's checked items on a record other than the build's match: the
+ * build's close names, the facility finder, or a new program record made
+ * from the name and place Woodbury gives.
+ */
+function kop_wbf_other_record(array $first, $no_record) {
+    $html = '<div class="kop-wbf-pick"><strong>' . ($no_record ? 'Which record is it?' : 'Another record:') . '</strong> ';
+    foreach (array_slice(json_decode((string) $first['alternatives'], true) ?: array(), 0, 3) as $a) {
+        if ((int) $a['id'] === (int) $first['facility_id']) {
+            continue;
+        }
+        $html .= '<button type="button" class="button button-small kop-wbf-alt" data-fid="' . (int) $a['id'] . '">'
+            . esc_html($a['name'] . ($a['state'] ? ' (' . $a['state'] . ')' : '')) . '</button> ';
+    }
+    $html .= kop_facility_finder_field('', '', ' class="kop-wbf-fid"')
+        . ' <button type="button" class="button button-primary" data-act="apply">Add checked to that record</button></div>';
+    $state = '';
+    $city = '';
+    if (preg_match('/^(.*?),\s*([A-Za-z .]+)$/', $first['place'], $m)) {
+        $city = trim($m[1]);
+        $state = trim($m[2]);
+    } elseif ($first['place'] !== '') {
+        $state = $first['place'];
+    }
+    $name = $no_record ? $first['program'] : ($first['program_as_written'] !== '' ? $first['program_as_written'] : $first['program']);
+    $types = '<option value="">Type: not sure</option>';
+    foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) {
+        $types .= '<option value="' . esc_attr($t) . '">' . esc_html($t) . '</option>';
+    }
+    return $html . '<div class="kop-wbf-create"><strong>No record yet? Create a program record:</strong><br>'
+        . '<label>Name <input type="text" class="kop-wbf-cname" value="' . esc_attr($name) . '" style="width:260px"></label> '
+        . '<label>City <input type="text" class="kop-wbf-ccity" value="' . esc_attr($city) . '" style="width:140px"></label> '
+        . '<label>State <input type="text" class="kop-wbf-cstate" value="' . esc_attr($state) . '" style="width:90px"></label> '
+        . '<label>or country <input type="text" class="kop-wbf-ccountry" style="width:110px"></label> '
+        . '<select class="kop-wbf-ctype" aria-label="Type">' . $types . '</select> '
+        . '<label><input type="checkbox" class="kop-wbf-cforce"> It is a different place from a close match</label> '
+        . '<button type="button" class="button" data-act="create">Create the record and add checked</button></div>';
+}
+
 function kop_wbf_render_card(array $rows, $tab) {
     $first = $rows[0];
     $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
@@ -1356,7 +1511,9 @@ function kop_wbf_render_card(array $rows, $tab) {
     echo '<div class="kop-wbf-actions">';
     if ($tab === 'records') {
         echo '<button type="button" class="button button-primary" data-act="apply">Add checked to record</button> '
-            . '<button type="button" class="button" data-act="reject">Reject checked</button>';
+            . '<button type="button" class="button" data-act="reject">Reject checked</button>'
+            . '<details class="kop-wbf-other"><summary>Wrong program? Put the checked items on another record, or create a new program record</summary>'
+            . kop_wbf_other_record($first, false) . '</details>';
     } elseif ($tab === 'consultants') {
         $v = kop_wbf_row_value($first);
         echo '<button type="button" class="button button-primary" data-act="consultant">Flag as former industry staff</button> '
@@ -1365,28 +1522,8 @@ function kop_wbf_render_card(array $rows, $tab) {
                 ? 'Adds these jobs to the Career History on the consultant record ' . esc_html($v['referrer_name']) . '.'
                 : 'No consultant record yet: flagging creates one (filed under Educational Consultants) with this Career History.') . '</div>';
     } elseif ($tab === 'norecord') {
-        $alts = json_decode((string) $first['alternatives'], true) ?: array();
-        echo '<div class="kop-wbf-pick"><strong>Which record is it?</strong> ';
-        foreach (array_slice($alts, 0, 3) as $a) {
-            echo '<button type="button" class="button button-small kop-wbf-alt" data-fid="' . (int) $a['id'] . '">' . esc_html($a['name'] . ($a['state'] ? ' (' . $a['state'] . ')' : '')) . '</button> ';
-        }
-        echo kop_facility_finder_field('', '', ' class="kop-wbf-fid"') . ' <button type="button" class="button button-primary" data-act="apply">Add checked to that record</button></div>';
-        $state = '';
-        $city = '';
-        if (preg_match('/^(.*?),\s*([A-Za-z .]+)$/', $first['place'], $m)) {
-            $city = trim($m[1]);
-            $state = trim($m[2]);
-        } elseif ($first['place'] !== '') {
-            $state = $first['place'];
-        }
-        echo '<details class="kop-wbf-create"><summary>No record yet? Create one</summary>'
-            . '<label>Name <input type="text" class="kop-wbf-cname" value="' . esc_attr($first['program']) . '" style="width:260px"></label> '
-            . '<label>City <input type="text" class="kop-wbf-ccity" value="' . esc_attr($city) . '" style="width:140px"></label> '
-            . '<label>State <input type="text" class="kop-wbf-cstate" value="' . esc_attr($state) . '" style="width:90px"></label> '
-            . '<label>or country <input type="text" class="kop-wbf-ccountry" style="width:110px"></label> '
-            . '<label><input type="checkbox" class="kop-wbf-cforce"> It is a different place from a close match</label> '
-            . '<button type="button" class="button" data-act="create">Create the record and add checked</button></details>'
-            . ' <button type="button" class="button" data-act="reject">Reject checked</button>';
+        echo '<div class="kop-wbf-other">' . kop_wbf_other_record($first, true) . '</div>'
+            . '<button type="button" class="button" data-act="reject">Reject checked</button>';
     } elseif (in_array($tab, array('applied', 'auto'), true)) {
         echo '<button type="button" class="button" data-act="undo">Undo checked</button>';
     } else {
@@ -1405,7 +1542,10 @@ function kop_wbf_render_row(array $r, $tab) {
     echo '<td class="kop-wbf-what"><strong class="kop-wbf-label">' . esc_html($r['label']) . '</strong>'
         . '<div class="kop-wbf-muted">Goes to: <span class="kop-wbf-goes">' . esc_html(kop_wbf_where_it_goes($r)) . '</span></div>';
     if ($r['status'] === 'pending') {
-        echo kop_wbf_edit_form($r);
+        echo kop_wbf_edit_form($r) . kop_wbf_person_form($r);
+    }
+    if (!empty($extra['manual'])) {
+        echo '<div class="kop-wbf-muted">Added by hand by ' . esc_html($extra['edited_by'] ?? '') . '</div>';
     }
     if ($r['conflict'] !== '') {
         echo '<div class="kop-wbf-warn">' . esc_html($r['conflict']) . '</div>';
@@ -1471,6 +1611,10 @@ function kop_wbf_render_assets() {
         .kop-wbf-actions { margin-top: 8px; }
         .kop-wbf-pick, .kop-wbf-create { margin-bottom: 6px; }
         .kop-wbf-create label { margin-right: 6px; }
+        .kop-wbf-other { margin: 8px 0 6px; }
+        .kop-wbf-other > summary { cursor: pointer; color: #2271b1; }
+        details.kop-wbf-other[open] { padding: 8px; background: #f6f7f7; border: 1px solid #dcdcde; }
+        .kop-wbf-other .kop-wbf-create { margin-top: 8px; }
         .kop-wbf-result.ok { color: #007017; }
         .kop-wbf-result.err { color: #d63638; }
         tr.kop-wbf-gone td { opacity: .45; }
@@ -1499,21 +1643,24 @@ function kop_wbf_render_assets() {
             return fetch(ajax, { method: 'POST', credentials: 'same-origin', body: body }).then(function (r) { return r.json(); });
         }
 
-        function run(card, act) {
+        function run(card, act, btn) {
             var keys = Array.prototype.map.call(card.querySelectorAll('tr[data-key]'), function (tr) {
                 return tr.querySelector('.kop-wbf-pick').checked && !tr.classList.contains('kop-wbf-gone') ? tr.dataset.key : null;
             }).filter(Boolean);
             var out = card.querySelector('.kop-wbf-result');
             if (!keys.length) { out.className = 'kop-wbf-result err'; out.textContent = 'Tick at least one item.'; return Promise.resolve(); }
             var data = { act: act, keys: keys, fid: card.dataset.fid || '' };
-            var box = card.querySelector('.kop-wbf-fid');
-            if (act === 'apply' && box && box.value) data.fid = box.value;
+            // The finder only counts for the button beside it, never for the card's own "Add checked to record".
+            var other = btn && btn.closest('.kop-wbf-other');
+            var box = other && card.querySelector('.kop-wbf-fid');
+            if (other && act === 'apply') data.fid = box && box.value ? box.value : '';
             if (act === 'apply' && !(+data.fid)) { out.className = 'kop-wbf-result err'; out.textContent = 'Pick the record first.'; return Promise.resolve(); }
             if (act === 'create') {
                 data.name = card.querySelector('.kop-wbf-cname').value;
                 data.city = card.querySelector('.kop-wbf-ccity').value;
                 data.state = card.querySelector('.kop-wbf-cstate').value;
                 data.country = card.querySelector('.kop-wbf-ccountry').value;
+                data.type = card.querySelector('.kop-wbf-ctype').value;
                 data.force = card.querySelector('.kop-wbf-cforce').checked ? 1 : '';
             }
             out.className = 'kop-wbf-result'; out.textContent = 'Working...';
@@ -1567,11 +1714,35 @@ function kop_wbf_render_assets() {
             }).catch(function () { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = 'Network error; try again.'; });
         }
 
+        // Another person in the same words: a new ticked item right under this one.
+        function addPerson(box) {
+            var tr = box.closest('tr[data-key]');
+            var msg = box.querySelector('.kop-wbf-edit-msg');
+            var body = new URLSearchParams();
+            body.append('action', 'kop_wbf_person');
+            body.append('nonce', nonce);
+            body.append('key', tr.dataset.key);
+            box.querySelectorAll('[data-f]').forEach(function (f) { body.append('f[' + f.dataset.f + ']', f.value); });
+            msg.className = 'kop-wbf-edit-msg'; msg.textContent = 'Saving...';
+            fetch(ajax, { method: 'POST', credentials: 'same-origin', body: body }).then(function (r) { return r.json(); }).then(function (res) {
+                if (!res.success) { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = res.data || 'Failed.'; return; }
+                var t = document.createElement('tbody');
+                t.innerHTML = res.data.row;
+                var row = t.firstElementChild;
+                row.querySelector('.kop-wbf-pick').checked = true;
+                tr.insertAdjacentElement('afterend', row);
+                box.querySelectorAll('input[data-f], textarea[data-f]').forEach(function (f) { f.value = ''; });
+                msg.className = 'kop-wbf-edit-msg ok'; msg.textContent = 'Added below, ticked. Another?';
+            }).catch(function () { msg.className = 'kop-wbf-edit-msg err'; msg.textContent = 'Network error; try again.'; });
+        }
+
         document.addEventListener('click', function (e) {
             var save = e.target.closest('.kop-wbf-save, .kop-wbf-reset');
             if (save) { saveEdit(save.closest('.kop-wbf-edit-box'), save.classList.contains('kop-wbf-reset')); return; }
             var btn = e.target.closest('.kop-wbf-card [data-act]');
-            if (btn) { run(btn.closest('.kop-wbf-card'), btn.dataset.act); return; }
+            if (btn) { run(btn.closest('.kop-wbf-card'), btn.dataset.act, btn); return; }
+            var person = e.target.closest('.kop-wbf-addperson');
+            if (person) { addPerson(person.closest('.kop-wbf-edit-box')); return; }
             var alt = e.target.closest('.kop-wbf-alt');
             if (alt) {
                 var card = alt.closest('.kop-wbf-card');
