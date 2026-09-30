@@ -3761,16 +3761,23 @@ function kop_state_name_suffixes() {
 
 /** Raw prefix-aware master pin (no state-suffix stripping). */
 function kop_master_state_pin_raw($name_key) {
+    // Every whole-word prefix of every master name => the states of the names
+    // it begins, built once: the state feed pins all ~3,700 inspection rows,
+    // and scanning the whole map per row took seconds.
+    static $by_prefix = null;
     if ($name_key === '') return '';
     $map = kop_master_facility_state_map();
-    $states = array();
-    foreach ($map[$name_key] ?? array() as $ab) $states[$ab] = true;
-    $prefix = $name_key . ' ';
-    foreach ($map as $k => $abs) {
-        if ($k !== $name_key && strncmp($k, $prefix, strlen($prefix)) === 0) {
-            foreach ($abs as $ab) $states[$ab] = true;
+    if ($by_prefix === null) {
+        $by_prefix = array();
+        foreach ($map as $k => $abs) {
+            $k = (string) $k;
+            for ($pos = strpos($k, ' '); $pos !== false; $pos = strpos($k, ' ', $pos + 1)) {
+                foreach ($abs as $ab) $by_prefix[substr($k, 0, $pos)][$ab] = true;
+            }
         }
     }
+    $states = $by_prefix[$name_key] ?? array();
+    foreach ($map[$name_key] ?? array() as $ab) $states[$ab] = true;
     return (count($states) === 1) ? array_key_first($states) : '';
 }
 
