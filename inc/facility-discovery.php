@@ -49,6 +49,7 @@ function kop_facdisc_decisions() {
         'needs_place'  => 'No place given',
         'provider'     => 'Provider, not a facility',
         'not_facility' => 'Not a facility',
+        'indigenous_school' => 'Indigenous residential school',
         'removed'      => 'Removed',
     );
 }
@@ -299,6 +300,11 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
  * or null when the model has to look.
  */
 function kop_facdisc_obvious_kind($name) {
+    // "Indian Agency Boarding School" and the like: the model decides, so
+    // the name reaches Indigenous Schools rather than "organization".
+    if (kop_facdisc_looks_indigenous_school($name)) {
+        return null;
+    }
     if (preg_match('/\b(department|dept|police|sheriff|sheriff\'s|court|courts|university|college|attorney|attorneys|llp|pllc|commission|agency|authority|ministry|bureau|division|office|council|legislature|senate|museum|newspaper|jail|prison|penitentiary|diocese)\b/i', $name)) {
         return 'organization';
     }
@@ -306,6 +312,11 @@ function kop_facdisc_obvious_kind($name) {
         return 'provider';
     }
     return null;
+}
+
+/** A name that reads like an Indian boarding, residential or mission school. */
+function kop_facdisc_looks_indigenous_school($name) {
+    return (bool) preg_match('/\b(indian|indigenous|native american|first nations?|tribal)\b.*\b(boarding|residential|industrial|manual labou?r|mission|agency)\b.*\bschool\b/i', (string) $name);
 }
 
 /** Changes when the article's names, or its unmatched closure programs, do. */
@@ -345,7 +356,7 @@ function kop_facdisc_articles(PDO $pdo, $limit, array $only_ids = array()) {
     }
     $known = array();
     if ($has_tables) {
-        foreach ($pdo->query('SELECT name_key, decision, facility_id FROM news_facility_candidates') as $r) {
+        foreach ($pdo->query('SELECT name_key, mention, decision, facility_id FROM news_facility_candidates') as $r) {
             $known[$r['name_key']] = $r;
         }
     }
@@ -405,9 +416,10 @@ function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, 
         }
     }
     $p .= "\nReturn ONLY a JSON object with one entry per name, in the same order:\n";
-    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|provider|organization|vague","sameAs":null,"renameOf":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Suspended|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
+    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|indigenous_school|provider|organization|vague","sameAs":null,"renameOf":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Suspended|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
     $p .= "kind:\n";
     $p .= "- facility: one specific youth residential program or site, named well enough to identify (a detention center, an academy, a ranch, a group home).\n";
+    $p .= "- indigenous_school: a school, past or present, that Indigenous children (American Indian, Alaska Native, Native Hawaiian, First Nations, Inuit, Metis) were sent to under a government or church policy of removal or assimilation: an Indian boarding school, Indian residential school, Indian industrial or manual labor school, or Indian mission school. Never a troubled teen program, even one with Native students. For one, fill officialName, otherNames, city, state or country, status, startYear and endYear (any year the article gives, even before 1900) and operator (the government, church or order that ran it).\n";
     $p .= "- provider: a psychiatric hospital or ward, outpatient clinic, day school, day treatment or partial hospitalization program.\n";
     $p .= "- organization: an agency, department, court, police force, law firm, company, charity, church, school district, or anything that is not one residential site. A company that runs programs is an organization; its programs are facilities.\n";
     $p .= "- vague: a description rather than a name (\"the facility\", \"an unnamed children's home\", \"Hope unit\", \"Safe\"), or a name too generic to identify one place.\n";
@@ -437,6 +449,11 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
         $y = is_numeric($v) ? (int) $v : 0;
         return ($y >= 1900 && $y <= (int) gmdate('Y') + 1) ? $y : null;
     };
+    // An Indigenous school's years go back to the early 1800s.
+    $old_year = static function ($v) {
+        $y = is_numeric($v) ? (int) $v : 0;
+        return ($y >= 1700 && $y <= (int) gmdate('Y')) ? $y : null;
+    };
     $out = array();
     foreach ($data['names'] as $i => $e) {
         if (!is_array($e)) {
@@ -452,7 +469,7 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
         }
         $name = $by_key[$key];
         $kind = strtolower($str($e['kind'] ?? ''));
-        if (!in_array($kind, array('facility', 'provider', 'organization', 'vague'), true)) {
+        if (!in_array($kind, array('facility', 'indigenous_school', 'provider', 'organization', 'vague'), true)) {
             $kind = 'vague';
         }
         $allowed = array();
@@ -481,8 +498,8 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
             'country'      => $str($e['country'] ?? '', 100),
             'type'         => isset($types[$str($e['type'] ?? '')]) ? $str($e['type']) : '',
             'status'       => in_array($status, array('Open', 'Closed', 'Suspended'), true) ? $status : 'Unknown',
-            'startYear'    => $year($e['startYear'] ?? null),
-            'endYear'      => $year($e['endYear'] ?? null),
+            'startYear'    => $kind === 'indigenous_school' ? $old_year($e['startYear'] ?? null) : $year($e['startYear'] ?? null),
+            'endYear'      => $kind === 'indigenous_school' ? $old_year($e['endYear'] ?? null) : $year($e['endYear'] ?? null),
             'operator'     => $str($e['operator'] ?? ''),
             'gender'       => in_array($gender, array('Male', 'Female', 'Co-ed'), true) ? $gender : '',
             'evidence'     => $str($e['evidence'] ?? '', 600),
@@ -599,6 +616,19 @@ function kop_facdisc_create(PDO $pdo, array $entry, array $news) {
  */
 function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
     $detail = array('entry' => $entry);
+    if ($entry['kind'] === 'indigenous_school' && !function_exists('kop_ischools_from_news')) {
+        $entry['kind'] = 'organization';   // the schools module is not loaded: never a facility
+    }
+    if ($entry['kind'] === 'indigenous_school') {
+        // Not a TTI facility: filed at Indigenous Schools, waiting for review,
+        // with the article (inc/indigenous-schools.php).
+        if (!$write) {
+            return array('indigenous_school', null);
+        }
+        $detail['school_id'] = kop_ischools_from_news($pdo, $entry, $news);
+        kop_facdisc_record($pdo, $entry['name'], $news, 'indigenous_school', null, $detail);
+        return array('indigenous_school', null);
+    }
     if ($entry['kind'] === 'facility' && $entry['sameAs']) {
         $decision = 'matched';
         $fid = $entry['sameAs'];
@@ -643,6 +673,9 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
         foreach ($decided as $known) {
             if (!empty($known['facility_id']) && in_array($known['decision'], array('created', 'matched'), true)) {
                 kop_facdisc_link($pdo, $news['id'], $known['facility_id']);
+            } elseif ($known['decision'] === 'indigenous_school' && function_exists('kop_ischools_find_by_name')
+                && ($school = kop_ischools_find_by_name($pdo, $known['mention'] ?? ''))) {
+                kop_ischools_link_news($pdo, (int) $school['id'], (int) $news['id'], 'news-discovery');
             }
         }
     }
@@ -1065,6 +1098,8 @@ function kop_render_facilities_from_news_page() {
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="remove"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'
                 . '<button type="submit" class="button button-small" onclick="return confirm(\'Remove the record the scan created for this?\')">Remove the record it created</button></form>';
+        } elseif ($r['decision'] === 'indigenous_school') {
+            echo 'Filed at <a href="' . esc_url(admin_url('admin.php?page=kop-indigenous-schools')) . '">Indigenous Schools</a>, not as a facility.';
         } elseif (in_array($r['decision'], array('possible_duplicate', 'other_era', 'needs_place', 'provider', 'not_facility', 'removed'), true)) {
             echo '<form method="post" class="kop-fd-box">';
             wp_nonce_field('kop_facilities_from_news');

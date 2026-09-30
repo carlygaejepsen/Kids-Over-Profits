@@ -61,7 +61,12 @@ get_header();
         endif;
     endwhile;
 
-    kop_page_text_render('indian-boarding-schools', array('skip' => array('note')));
+    /* The school records and their articles (inc/indigenous-schools.php),
+     * managed at KOP Data Tools > Indigenous Schools. */
+    kop_page_text_render('indian-boarding-schools', array(
+        'skip'  => array('note'),
+        'after' => array('records' => function_exists('kop_ischools_render_public') ? 'kop_ischools_render_public' : null),
+    ));
     ?>
 
 </div>

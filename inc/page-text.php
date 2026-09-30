@@ -274,7 +274,8 @@ function kop_page_text_section_html($section, $prefix) {
 
 /**
  * Print a page's sections. $opts: 'only' => keys, 'skip' => keys, so a
- * template can put its own content between two runs.
+ * template can put its own content between two runs; 'after' => array(key
+ * => callable) prints the callable's output right after that section.
  */
 function kop_page_text_render($slug, $opts = array()) {
     $page = kop_page_text_page($slug);
@@ -289,5 +290,8 @@ function kop_page_text_render($slug, $opts = array()) {
             continue;
         }
         echo kop_page_text_section_html($s, $page['prefix']);
+        if (isset($opts['after'][$s['key']]) && is_callable($opts['after'][$s['key']])) {
+            call_user_func($opts['after'][$s['key']]);
+        }
     }
 }
