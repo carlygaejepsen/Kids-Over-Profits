@@ -90,6 +90,11 @@ require_once get_stylesheet_directory() . '/inc/glossary.php';
 require_once get_stylesheet_directory() . '/inc/glossary-feedback.php';
 require_once get_stylesheet_directory() . '/inc/glossary-editor.php';
 
+// Page text edited in wp-admin (KOP Data Tools > Page Text): pages whose words
+// live in js/data/pages/<slug>.json, e.g. /indian-boarding-schools/
+require_once get_stylesheet_directory() . '/inc/page-text.php';
+require_once get_stylesheet_directory() . '/inc/page-text-editor.php';
+
 // Open data: daily bulk downloads of every public dataset (/open-data/)
 require_once get_stylesheet_directory() . '/inc/open-data.php';
 
