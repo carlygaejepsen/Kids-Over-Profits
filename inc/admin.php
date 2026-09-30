@@ -484,6 +484,9 @@ function kop_tool_page_specs() {
         // even though other pages use the template. Oklahoma (owner, 2026-09-30).
         array('template' => 'page-state-reports.php', 'title' => 'Oklahoma Inspection Reports', 'slug' => 'ok-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Oklahoma Department of Human Services, Child Care Services, which licenses residential programs and shelters for children and posts every monitoring visit and substantiated complaint at <a href="http://www.publicview.okdhs.org/ResidentialLocator/Default.aspx">its residential locator</a>. Oklahoma shows only the last 36 months at a time; visits that age out of the state&#8217;s window stay here. The state publishes only substantiated complaints, and complaints that rise to the level of abuse or neglect go to Child Welfare Services and are not published, so a program with no complaints listed may still have had them.</p><!-- /wp:paragraph -->'),
+        // Pennsylvania (owner, 2026-09-30).
+        array('template' => 'page-state-reports.php', 'title' => 'Pennsylvania Inspection Reports', 'slug' => 'pa-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Pennsylvania Department of Human Services, Office of Children, Youth and Families, which licenses residential programs, group homes, psychiatric residential treatment facilities, secure detention and secure care units, transitional living, and outdoor and mobile programs for children. Each licensed unit is listed on its own, with its legal entity&#8217;s name in front, because the state inspects and cites every cottage or building separately. The state publishes a Licensing Inspection Summary for each inspection in <a href="https://www.humanservices.dhs.pa.gov/HUMAN_SERVICE_PROVIDER_DIRECTORY/">its Human Services Provider Directory</a>, going back to 2009: each regulation cited, what the inspector found, and the provider&#8217;s plan of correction.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>The state blanks names and most dates before publishing, so gaps in the text are in the original. Summaries from before mid-2019 are scans; their text was read by software and has reading errors, and the state&#8217;s PDF is always linked. The state lists only currently licensed units; units that close stay here with their reports.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -665,7 +668,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '15';
+    $version = '16';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
