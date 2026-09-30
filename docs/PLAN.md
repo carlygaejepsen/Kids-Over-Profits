@@ -341,6 +341,29 @@ updated.
    GA, MN, AR and FL reports by their document link (08172021).
 4. **"What inspectors found" on facility pages** (the rest of fix-plan step
    14.5): approved highlights on `/facility/<slug>/`.
+5. **Next state scrapers: Oklahoma, Michigan, Pennsylvania** (researched
+   2026-09-30; 15 uncovered states checked, these three plus Idaho and
+   Virginia publish report text). One build plan per state, ready to hand to
+   an agent, in `docs/state-inspection-reports/plans/` (`README.md` first).
+   Oklahoma shows a rolling 36 months and Michigan lets licensees have
+   reports removed after two years, so both lose data while they wait. Owner
+   items per state: create the `/xx-reports/` page and approve the first
+   production post.
+   **Michigan built 2026-09-30, not yet posted:** `mi_scraper.py` (Tools
+   repo) and `js/inspections/states/mi.js`. A full `--no-post` run: 110
+   facilities, 1,891 reports (1,300 special investigations, 281 renewal,
+   229 interim, 81 original), 997 flagged, 2003-01-06 to 2026-09-30; every
+   investigation but one scan yields its allegations. One posted document
+   was a seclusion sheet naming a detained youth: documents that are not
+   licensing reports are never posted. 51 of the 110 names reach a
+   `facilities_v2` record (`php scripts/match-inspection-names.php
+   --state=MI --file=<out.json>`; near misses such as "Calumet Center" /
+   "Calumet RTC" are left for other names on the records). Owner: create
+   `/mi-reports/` (State Reports template; the tracker lists pick it up once
+   published), approve the first post, and run `python backup_reports.py
+   --migrate` in the Tools repo (the first run's 1,890 PDFs landed in the
+   local `mi_pdfs/` fallback while Drive was not mounted). Then the severe
+   finding extractor (plan step 10).
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

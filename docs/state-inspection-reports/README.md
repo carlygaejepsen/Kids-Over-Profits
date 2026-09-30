@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Fourteen tracker pages, one per state, at `/xx-reports/`:
+Fifteen tracker pages, one per state, at `/xx-reports/` (Michigan's is linked once the owner creates the page, see below):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -14,6 +14,7 @@ Fourteen tracker pages, one per state, at `/xx-reports/`:
 | Connecticut (`CT`) | `ct-reports` | shared engine | API, `js/data/ct_reports.json` fallback |
 | Florida (`FL`) | `fl-reports` | shared engine | API |
 | Georgia (`GA`) | `ga-reports` | shared engine | API |
+| Michigan (`MI`) | `mi-reports` | shared engine | API (`mi_scraper.py`; archived PDFs in `uploads/inspection-reports/mi/`) |
 | Minnesota (`MN`) | `mn-reports` | shared engine | API |
 | Montana (`MT`) | `mt-reports` | shared engine | `js/data/mt_reports.json` only (the API has no Montana rows) |
 | Nevada (`NV`) | `nv-reports` | shared engine | API |
@@ -23,7 +24,7 @@ Fourteen tracker pages, one per state, at `/xx-reports/`:
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 
@@ -35,7 +36,7 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 
 ### Asset Loading
 - `kop_enqueue_report_scripts()` in `inc/enqueue.php` matches the current page against an explicit list of slugs with `is_page()` (not a `*-reports` pattern) and loads that state's script plus `css/facility-reports.css`. Its `json_glob` entry is resolved to URLs and localized as `<xx>ReportsData.jsonFileUrls`.
-- Twelve states (AR, AZ, CT, FL, GA, MN, MT, NC, NV, OR, UT, WA) are marked `report_page`: the shared engine `js/inspections/report-page.js` loads first with `css/kop-components.css`, `css/skeleton.css` and `css/report-page.css`, then the state adapter `js/inspections/states/<xx>.js`, which calls `KOP.reportPage.mount(adapter)`. The adapter contract (required `load`, `facilityName`, `reportTime`, `isFlagged`, `summary`, `report`; optional filters, sorts and notes) is documented at the top of `report-page.js`.
+- Thirteen states (AR, AZ, CT, FL, GA, MI, MN, MT, NC, NV, OR, UT, WA) are marked `report_page`: the shared engine `js/inspections/report-page.js` loads first with `css/kop-components.css`, `css/skeleton.css` and `css/report-page.css`, then the state adapter `js/inspections/states/<xx>.js`, which calls `KOP.reportPage.mount(adapter)`. The adapter contract (required `load`, `facilityName`, `reportTime`, `isFlagged`, `summary`, `report`; optional filters, sorts and notes) is documented at the top of `report-page.js`.
 - The old per-state viewers (`js/inspections/<xx>_reports.js`) stay in the repo as rollback targets; each migrated entry in `inc/enqueue.php` names its own.
 - Every tracker page also loads `js/inspections/severe-flags.js` and `css/severe-reports.css` (see Severe Findings).
 - `kop_state_reports_body_class()` adds `kop-state-reports-page` to the same slug list.

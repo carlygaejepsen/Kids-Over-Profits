@@ -338,7 +338,7 @@ function kop_report_state_links() {
         : array(
             'Arkansas' => 'ar-reports', 'Arizona' => 'az-reports', 'California' => 'ca-reports',
             'Connecticut' => 'ct-reports', 'Florida' => 'fl-reports', 'Georgia' => 'ga-reports',
-            'Minnesota' => 'mn-reports', 'Montana' => 'mt-reports', 'Nevada' => 'nv-reports',
+            'Michigan' => 'mi-reports', 'Minnesota' => 'mn-reports', 'Montana' => 'mt-reports', 'Nevada' => 'nv-reports',
             'North Carolina' => 'nc-reports', 'Oregon' => 'or-reports', 'Texas' => 'tx-reports',
             'Utah' => 'ut-reports', 'Washington' => 'wa-reports',
         );

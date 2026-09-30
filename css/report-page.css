@@ -317,6 +317,13 @@
     text-underline-offset: 2px;
 }
 
+/* facility-reports.css greys every link in .facility-report-container below
+   768px (#ddd, 1.4:1 on white, from its dark-panel days); these outrank it. */
+.kop-rp .kop-rp-official:link,
+.kop-rp .kop-rp-official:visited {
+    color: var(--kop-navy-blue);
+}
+
 .kop-rp .kop-rp-official:hover,
 .kop-rp .kop-rp-official:focus-visible {
     color: var(--kop-teal-ink, #24757F);

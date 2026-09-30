@@ -43,6 +43,9 @@
  *   filters            Extra dropdowns added to the page controls:
  *                      [{ id, label, options: [{ value, label }], test(f, value) }].
  *                      The first option is the "all" choice and filters nothing.
+ *                      A filter may add testReport(r, value): the facility then
+ *                      keeps only the reports that pass, and drops out when
+ *                      none do (Michigan's report type).
  *   violationsNote     For states whose data carries no findings: shown instead
  *                      of an empty list when a violations sort is chosen, so
  *                      "no results" is not mistaken for "no violations".
@@ -362,6 +365,20 @@
             });
         }
 
+        // Filters with testReport keep only the matching reports.
+        function narrowReports(f) {
+            var narrowing = (adapter.filters || []).filter(function (filter) {
+                var value = filterValues[filter.id];
+                return typeof filter.testReport === 'function'
+                    && value !== undefined && value !== filter.options[0].value;
+            });
+            if (!narrowing.length) return f;
+            var kept = reportsOf(f).filter(function (r) {
+                return narrowing.every(function (filter) { return filter.testReport(r, filterValues[filter.id]); });
+            });
+            return kept.length ? withReports(f, kept) : null;
+        }
+
         // Search once typing pauses: the first letters match most of a state,
         // and redrawing it for every keystroke kept the box from keeping up.
         var searchTimer = null;
@@ -481,7 +498,7 @@
         };
 
         function sortFacilities(facilities, sortBy) {
-            var processed = facilities.filter(passesFilters);
+            var processed = facilities.filter(passesFilters).map(narrowReports).filter(Boolean);
 
             if (newOnlyCheckbox && newOnlyCheckbox.checked) {
                 processed = processed.map(function (f) {

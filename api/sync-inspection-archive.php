@@ -43,6 +43,7 @@ set_time_limit(0);
 $FOLDERS = array(
     'ar_pdfs'       => 'ar',
     'fl_pdfs'       => 'fl',
+    'mi_pdfs'       => 'mi',
     'nc_pdfs'       => 'nc',
     'or_pdfs'       => 'or',
     'ut_checklists' => 'ut',

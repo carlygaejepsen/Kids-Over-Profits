@@ -2503,7 +2503,7 @@ function kop_state_slug_to_name($slug) {
  * State -> existing inspection page slug (if any).
  */
 function kop_state_inspection_page_map() {
-    return array(
+    $map = array(
         'Arkansas'   => 'ar-reports',
         'Arizona'    => 'az-reports',
         'California' => 'ca-reports',
@@ -2519,6 +2519,18 @@ function kop_state_inspection_page_map() {
         'Utah'       => 'ut-reports',
         'Washington' => 'wa-reports',
     );
+    // Trackers whose page the owner creates by hand in wp-admin: linked only
+    // once that page is published, so no list points at a missing page.
+    $pending = array(
+        'Michigan' => 'mi-reports',
+    );
+    foreach ($pending as $state => $slug) {
+        $page = function_exists('get_page_by_path') ? get_page_by_path($slug) : null;
+        if ($page && $page->post_status === 'publish') {
+            $map[$state] = $slug;
+        }
+    }
+    return $map;
 }
 
 /**
