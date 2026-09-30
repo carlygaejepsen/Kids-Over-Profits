@@ -473,6 +473,10 @@ function kop_tool_page_specs() {
         array('template' => 'page-transporter-index.php',  'title' => 'Youth Transport Companies', 'slug' => 'youth-transport-companies', 'status' => 'publish'),
         // Mental health providers outside the TTI, from providers_master.
         array('template' => 'page-provider-index.php',     'title' => 'Mental Health Providers', 'slug' => 'mental-health-providers', 'status' => 'publish'),
+        // Indian boarding schools and residential schools: not our story, so it is
+        // mostly directions to Indigenous-led organizations. A draft so the owner
+        // reads it (ideally with Indigenous reviewers) before publishing by hand.
+        array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'draft'),
     );
 }
 
@@ -653,7 +657,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '12';
+    $version = '13';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

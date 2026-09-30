@@ -1,0 +1,174 @@
+/*
+ * Indian boarding schools and residential schools
+ * (templates/page-indian-boarding-schools.php).
+ *
+ * This page is mostly a door to other people's work, so it is plain and
+ * quiet: one white card, one column, no decoration, no photographs. The
+ * organizations led by survivors and Indigenous nations are the first thing
+ * below the opening note and get the most room; the crisis lines sit beside
+ * them rather than at the bottom.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-ibs-page {
+    max-width: 52rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.65;
+}
+
+/* Text never sits on the site's gradient: edge to edge on a phone. */
+@media (max-width: 600px) {
+    .kop-ibs-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-ibs-header {
+    margin-bottom: 1.5rem;
+}
+
+.kop-ibs-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ibs-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ibs-editor-content {
+    margin-bottom: 2rem;
+}
+
+.kop-ibs-page section {
+    margin-top: 2.5rem;
+}
+
+.kop-ibs-page h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ibs-page h3 {
+    margin: 1.5rem 0 0.4rem;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ibs-page p,
+.kop-ibs-page ul {
+    margin: 0 0 1rem;
+}
+
+.kop-ibs-page li {
+    margin-bottom: 0.45rem;
+}
+
+.kop-ibs-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ---- Content note and the "not our story" statement --------------------- */
+
+.kop-ibs-note {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    font-size: 0.98rem;
+}
+
+.kop-ibs-note p {
+    margin: 0;
+}
+
+.kop-ibs-note p + p {
+    margin-top: 0.5rem;
+}
+
+.kop-ibs-statement {
+    margin: 0;
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    font-size: 1.08rem;
+}
+
+.kop-ibs-statement p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---- Where to learn: the organizations ---------------------------------- */
+
+.kop-ibs-orgs {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.kop-ibs-org {
+    margin: 0 0 0.9rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 8px;
+}
+
+.kop-ibs-org-name {
+    font-weight: 700;
+}
+
+.kop-ibs-org p {
+    margin: 0.3rem 0 0;
+    font-size: 0.98rem;
+}
+
+/* ---- Support lines ------------------------------------------------------ */
+
+.kop-ibs-support {
+    padding: 1rem 1.2rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: 8px;
+}
+
+.kop-ibs-support h2 {
+    font-size: 1.2rem;
+}
+
+.kop-ibs-support ul {
+    padding-left: 1.2rem;
+    margin-bottom: 0;
+}
+
+.kop-ibs-phone {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ---- Sources ------------------------------------------------------------ */
+
+.kop-ibs-sources {
+    font-size: 0.92rem;
+}
+
+.kop-ibs-sources ol {
+    padding-left: 1.3rem;
+}
+
+.kop-ibs-updated {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--kop-navy-blue, #000080);
+}
