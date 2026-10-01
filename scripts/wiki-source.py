@@ -216,8 +216,8 @@ When done, print one line per file: `<name>: N items`.
 '''
 
 
-def cmd_text():
-    os.makedirs(TEXT, exist_ok=True)
+def wiki_pages():
+    """Every wiki page once: {key, file, title, url, date, body (plain text), md}. scripts/wiki-links.py reads the same pages."""
     dates = git_dates()
     pages, seen_hash, seen_key, titles = [], set(), {}, set()
     files = sorted(f for f in os.listdir(MD) if f.endswith('.md') and not f.startswith('empty'))
@@ -234,7 +234,7 @@ def cmd_text():
             continue
         seen_hash.add(h)
         t = title_of(md) or k
-        p = {'key': k, 'file': fn, 'title': t, 'url': slug_url(fn), 'date': dates.get(fn, '2025-12-16'), 'body': body}
+        p = {'key': k, 'file': fn, 'title': t, 'url': slug_url(fn), 'date': dates.get(fn, '2025-12-16'), 'body': body, 'md': md}
         if k in seen_key:
             pages[pages.index(seen_key[k])] = p
         else:
@@ -257,7 +257,13 @@ def cmd_text():
             titles.add(nt)
             k = 'sub-%d' % sid
             pages.append({'key': k, 'file': '', 'title': t, 'url': WIKI + 'index', 'date': (when or '')[:10] or '2025-12-16',
-                          'body': body})
+                          'body': body, 'md': md})
+    return pages
+
+
+def cmd_text():
+    os.makedirs(TEXT, exist_ok=True)
+    pages = wiki_pages()
     issues = []
     for p in pages:
         name = re.sub(r'[^a-z0-9-]+', '-', p['key'].lower()).strip('-')

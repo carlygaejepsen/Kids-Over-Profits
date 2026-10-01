@@ -157,6 +157,8 @@ python scripts/heal-docs.py                         # tmp/heal/heal-links.json -
 # text -> tmp/wiki/text/ + INSTRUCTIONS.md, batches of pages not read yet; readers write tmp/wiki/facts/
 python scripts/wiki-source.py text && python scripts/wiki-source.py batches
 python scripts/woodbury-facts.py --also tmp/heal --also tmp/wiki   # wiki facts cite the wiki page, never auto-added
+python scripts/wiki-links.py --gdocs <server links.json>   # the pages' links -> tmp/wiki/wiki-links.json, copied to ~/kop-import/gdocs/, reviewed at Drive Docs
+php scripts/test-drive-docs.php --links=tmp/wiki/wiki-links.json
 # Links from the owner's Google Docs and Sheets (docs/PLAN.md 3.9): tmp/gdocs/export.gs (from scripts/gdocs-select.py)
 # exports them to G:/My Drive/KOP Doc Export; the links pass ties each link to a facility and drops what is on file ->
 # tmp/gdocs/links.json, copied to ~/kop-import/gdocs/; reviewed at KOP Tools > Drive Docs (inc/drive-docs.php): news,

@@ -79,12 +79,13 @@ function kop_gdl_path() {
 }
 
 /**
- * Every links file the screen reads: the Google Docs pass, and the documents
- * from HEAL's archived site (scripts/heal-docs.py), which sit beside it.
+ * Every links file the screen reads: the Google Docs pass, the documents
+ * from HEAL's archived site (scripts/heal-docs.py) and the links on the
+ * r/troubledteens wiki's pages (scripts/wiki-links.py), which sit beside it.
  */
 function kop_gdl_paths() {
     $paths = array();
-    foreach (array(kop_gdl_path(), dirname(kop_gdl_path()) . '/heal-links.json') as $p) {
+    foreach (array(kop_gdl_path(), dirname(kop_gdl_path()) . '/heal-links.json', dirname(kop_gdl_path()) . '/wiki-links.json') as $p) {
         if (is_readable($p)) {
             $paths[] = $p;
         }
@@ -265,8 +266,9 @@ function kop_gdl_url_key($url) {
 /** The words that say where a link came from, for the record and the queues. */
 function kop_gdl_source_line(array $r) {
     $doc = $r['source_doc'] !== '' ? $r['source_doc'] : 'a Google Doc';
-    // HEAL's documents name their own source ("HEAL archive: heal-online.org/x.pdf, saved 2009").
-    return strpos($doc, 'HEAL archive') === 0 ? $doc : 'Google Doc: ' . $doc;
+    // HEAL's documents and the wiki's links name their own source ("HEAL archive: heal-online.org/x.pdf, saved 2009",
+    // "r/troubledteens wiki: page "X" (as of 2025-12-18)").
+    return (strpos($doc, 'HEAL archive') === 0 || strpos($doc, 'r/troubledteens wiki') === 0) ? $doc : 'Google Doc: ' . $doc;
 }
 
 /**
@@ -613,7 +615,8 @@ function kop_render_drive_docs_page() {
         echo '<div class="notice notice-warning"><p>No links uploaded yet. Run <code>python scripts/gdocs-extract.py</code> and copy '
             . '<code>tmp/gdocs/links.json</code> to <code>' . esc_html(dirname(kop_gdl_path())) . '</code>.</p></div>';
     }
-    echo '<p>Links from your Google Docs and Sheets, and documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine), '
+    echo '<p>Links from your Google Docs and Sheets, documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine) '
+        . 'and links on the r/troubledteens wiki\'s pages, '
         . 'that the database does not have yet, one card per facility. '
         . 'Each shows the doc it came from and the words around it.</p>'
         . '<ol class="kop-gdl-how"><li><strong>Read down a card.</strong> Links whose facility is a sure match start ticked; untick anything that is not about this place.</li>'
