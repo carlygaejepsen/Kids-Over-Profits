@@ -167,6 +167,7 @@ function kop_pub_action_upload(): void {
         'job_id'       => $job_id,
         'total_chunks' => count($chunked['chunks']),
         'doc_chars'    => $chunked['length'],
+        'wait_ms'      => kop_ai_pace_ms(),
     ]);
 }
 

@@ -440,16 +440,18 @@
                     }
 
                     const { job_id, total_chunks } = uploadData;
+                    const waitMs = uploadData.wait_ms || 65000;
 
-                    // Step 2: process each chunk, waiting 65s between requests to
-                    // stay within Groq's 6,000 token-per-minute free-tier limit.
+                    // Step 2: process each chunk, waiting between requests to stay
+                    // within the free tiers' per-minute limits (the server halves the
+                    // wait when Groq and Gemini take turns).
                     for (let i = 0; i < total_chunks; i++) {
                         if (i > 0) {
-                            // Wait 65s so we don't exceed the per-minute token quota.
+                            // Wait so we don't exceed the per-minute token quota.
                             extractLawsuitBtn.textContent = `Waiting… (${i}/${total_chunks})`;
                             extractLawsuitBtn.insertAdjacentHTML('afterbegin', kopIcon('file-text') + ' ');
-                            status.textContent = `Chunk ${i} of ${total_chunks} done. Waiting 65s before next chunk…`;
-                            await new Promise(resolve => setTimeout(resolve, 65000));
+                            status.textContent = `Chunk ${i} of ${total_chunks} done. Waiting ${Math.round(waitMs / 1000)}s before next chunk…`;
+                            await new Promise(resolve => setTimeout(resolve, waitMs));
                         }
 
                         extractLawsuitBtn.textContent = `Chunk ${i + 1}/${total_chunks}…`;

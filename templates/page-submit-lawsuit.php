@@ -381,8 +381,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 for (var i = 0; i < up.total_chunks; i++) {
                     if (i > 0) {
-                        // Pace requests to stay inside the free AI tier's per-minute quota.
-                        for (var s = 65; s > 0; s--) {
+                        // Pace requests to stay inside the free AI tiers' per-minute quota
+                        // (the server halves it when Groq and Gemini take turns).
+                        for (var s = Math.ceil((up.wait_ms || 65000) / 1000); s > 0; s--) {
                             autofillMsg('Read part ' + i + ' of ' + up.total_chunks + '. Continuing in ' + s + 's (long documents are read in parts)…');
                             await new Promise(function (r) { setTimeout(r, 1000); });
                         }

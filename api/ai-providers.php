@@ -84,6 +84,15 @@ if (!function_exists('kop_ai_api_keys')) {
         return array_merge(array_slice($have, $shift), array_slice($have, 0, $shift));
     }
 
+    /**
+     * The gap between back-to-back calls a page should wait, in ms. Taking
+     * turns, each provider sees every other call, so the gap one free tier
+     * needs ($one_provider_ms) is split between the providers with a key.
+     */
+    function kop_ai_pace_ms(int $one_provider_ms = 65000): int {
+        return (int) ceil($one_provider_ms / max(1, count(kop_ai_alternating_providers())));
+    }
+
     /** True when an error message says the provider is out of calls for now. */
     function kop_ai_is_rate_limit(string $message): bool {
         foreach (['rate limit', 'quota', 'HTTP 429', 'RESOURCE_EXHAUSTED'] as $needle) {

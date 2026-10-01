@@ -1134,7 +1134,9 @@ foreach ($listed as $r) {
 $ajax_nonce = wp_create_nonce('kop_rtc');
 // The free tier is token-limited; a 12,000-character document chunk can make
 // three requests inside one minute exceed the quota even when serialized.
-$groq_min_interval_ms = max(1000, (int) (getenv('KOP_RTC_GROQ_INTERVAL_MS') ?: 65000));
+// Groq and Gemini take turns, so each sees every other file: the gap is
+// split between the providers with a key (65 s with one, 33 s with both).
+$groq_min_interval_ms = max(1000, (int) (getenv('KOP_RTC_GROQ_INTERVAL_MS') ?: kop_ai_pace_ms(65000)));
 ?><!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Retitle From Content</title>
 <style>
