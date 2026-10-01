@@ -440,6 +440,40 @@ START_WORDS = re.compile(r'found|open|establish|began|begun|since|start|launch|c
 SIZE_WORDS = re.compile(r'student|bed|capacity|resident|youth|boys|girls|client|teen|adolescent|participant|young (?:men|women)', re.I)
 
 
+# ---- Young adult programs (18+) ---------------------------------------------
+# A program with no record goes on the review screen's own tab when Woodbury
+# gives its youngest age as 17 or more, or describes it as being for young
+# adults and not for teens too. A program that also takes teens ("13-17;
+# young adults 18-30") is a teen program. The owner moves anything else by
+# hand; that choice outlives a rebuild.
+YA_TEEN = re.compile(r'\b(adolescen\w*|teens?|teenage\w*|boys|girls|youth|children|kids|grades? \d|middle school|high school students)\b', re.I)
+YA_TEXT = re.compile(r'\b(young adults?|young (men|women) (ages? )?(18|19|2\d)|adults? (with|who|in)|(18|19|twenty)[- ]?(to|-|–)?\s*(2\d|3\d)\b'
+                     r'|18 (and|or) (over|older|up)|18\+|post-?secondary|post-?graduate|college students?)', re.I)
+YA_AGES = re.compile(r'\b(\d{1,2})\s*(?:-|to|–|through|and)\s*(\d{1,2}|over|older|up)\b', re.I)
+
+
+def young_adult(its):
+    """(True, why), (False, why) or (None, '') when Woodbury says nothing about who it serves."""
+    mins = []
+    for it in its:
+        if it.get('kind') == 'program' and it.get('field') == 'ages':
+            for m in YA_AGES.finditer(it.get('value') or ''):
+                lo = int(m.group(1))
+                if 5 <= lo <= 30:
+                    mins.append((lo, it))
+    if mins:
+        lo, it = min(mins, key=lambda x: x[0])
+        return lo >= 17, 'Ages: ' + (it.get('value') or '').strip()
+    for it in its:
+        v = it.get('value') or ''
+        if it.get('kind') == 'program' and it.get('field') == 'program_type' and YA_TEXT.search(v) and not YA_TEEN.search(v):
+            return True, v.strip()
+    for it in its:
+        if re.search(r'young adult', it.get('program') or '', re.I):
+            return True, 'Name: ' + it['program'].strip()
+    return None, ''
+
+
 def auto_ok(p):
     """
     Listed so plainly that it goes into the record without review: a verified
@@ -587,6 +621,14 @@ def main():
         it['alts'] = [{'id': a['id'], 'name': a['name'], 'state': a['state']} for a in alts[:5]]
         it['pkey'] = ('f%d' % f['id']) if f else ('p' + ws.key(it['program']))
 
+    # Young adult programs, for programs with no record.
+    by_prog = collections.defaultdict(list)
+    for it in items:
+        if not it['fid']:
+            by_prog[it['pkey']].append(it)
+    ya = {k: young_adult(v) for k, v in by_prog.items()}
+    stats['young_adult_programs'] = sum(1 for v in ya.values() if v[0])
+
     def evidence(it):
         iss = issues[it['issue']]
         return {'issue': it['issue'], 'label': iss['label'], 'number': iss['number'], 'issue_id': iss['id'],
@@ -624,6 +666,9 @@ def main():
             'alternatives': first['alts'], 'group': group, 'op': op, 'path': path, 'value': value, 'label': label,
             'conflict': conflict, 'current': current, 'evidence': evs, 'found': any(i['found'] for i in it_list),
         }
+        if not first['fid'] and ya.get(first['pkey'], (None,))[0]:
+            p['young_adult'] = True
+            p['young_adult_why'] = ya[first['pkey']][1][:300]
         proposals[key] = p
         return p
 

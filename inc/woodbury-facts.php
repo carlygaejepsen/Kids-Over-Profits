@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_WOODBURY_FACTS_DB_VERSION', '2');
+define('KOP_WOODBURY_FACTS_DB_VERSION', '3');
 
 function kop_wbf_table() {
     global $wpdb;
@@ -64,6 +64,8 @@ function kop_wbf_ensure_table() {
         preselect TINYINT(1) NOT NULL DEFAULT 0,
         auto TINYINT(1) NOT NULL DEFAULT 0,
         issue_date VARCHAR(7) NOT NULL DEFAULT '',
+        ya TINYINT(1) NOT NULL DEFAULT 0,
+        ya_why TEXT NULL,
         status VARCHAR(12) NOT NULL DEFAULT 'pending',
         applied LONGTEXT NULL,
         applied_fid BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -150,6 +152,8 @@ function kop_wbf_sync($force = false) {
             'preselect'          => !empty($p['preselect']) ? 1 : 0,
             'auto'               => !empty($p['auto']) ? 1 : 0,
             'issue_date'         => substr((string) ($p['issue_date'] ?? ''), 0, 7),
+            'ya'                 => kop_wbf_ya_for((string) ($p['program'] ?? ''), !empty($p['young_adult'])),
+            'ya_why'             => (string) ($p['young_adult_why'] ?? ''),
         );
         if (!isset($existing[$pkey])) {
             $row['pkey'] = $pkey;
@@ -490,6 +494,133 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
     return $results;
 }
 
+/* ---- Young adult programs (inc/young-adult-programs.php) ----------------- */
+
+/** Programs moved into or out of the young adult tab by hand: program => 1 or 0. */
+function kop_wbf_ya_overrides() {
+    $o = get_option('kop_wbf_ya_overrides');
+    return is_array($o) ? $o : array();
+}
+
+/** Whether a program's items go on the young adult tab: a choice made by hand wins over the build's. */
+function kop_wbf_ya_for($program, $build) {
+    $o = kop_wbf_ya_overrides();
+    return isset($o[$program]) ? (int) $o[$program] : ($build ? 1 : 0);
+}
+
+/** Move a program's waiting items onto the young adult tab (1) or off it (0), and remember it for the next build. */
+function kop_wbf_ya_override($program, $on) {
+    global $wpdb;
+    $o = kop_wbf_ya_overrides();
+    $o[(string) $program] = $on ? 1 : 0;
+    update_option('kop_wbf_ya_overrides', $o, false);
+    $wpdb->query($wpdb->prepare('UPDATE ' . kop_wbf_table() . " SET ya = %d WHERE program = %s AND facility_id = 0 AND status IN ('pending', 'gone')",
+        $on ? 1 : 0, (string) $program));
+}
+
+/**
+ * A waiting item as a young adult program's fact, and the empty fields it
+ * may fill: [fact, [column => value]].
+ */
+function kop_wbf_ya_fact(array $r) {
+    $cites = array();
+    foreach (array_slice(kop_wbf_evidence($r), 0, 3) as $e) {
+        $cites[] = array('label' => $e['label'], 'number' => $e['number'] ?? '', 'page' => (int) $e['page'], 'url' => $e['url']);
+    }
+    $v = kop_wbf_row_value($r);
+    $label = $r['label'];
+    if ($r['op'] === 'add_staff' && trim((string) ($v['pastJobs'] ?? '')) !== '') {
+        $label .= '. Earlier: ' . trim($v['pastJobs']);
+    }
+    $fact = array('key' => $r['pkey'], 'group' => $r['grp'] ?: 'details', 'label' => $label, 'cites' => $cites);
+    $fill = array();
+    switch ($r['op'] . ' ' . $r['path']) {
+        case 'set_if_empty operatingPeriod.startYear':
+            $fill['opened'] = (int) $v;
+            break;
+        case 'set_closed operatingPeriod':
+            $fill['status'] = 'Closed';
+            if (!empty($v['endYear'])) {
+                $fill['closed'] = (int) $v['endYear'];
+            }
+            break;
+        case 'set_if_empty facilityDetails.ageRange':
+            $fill['ages'] = (int) $v['min'] . '-' . (int) $v['max'];
+            break;
+        case 'set_if_empty facilityDetails.type':
+            $fill['program_type'] = (string) $v;
+            break;
+        case 'add_list identification.pastNames':
+            $fill['other_names'] = (string) $v;
+            break;
+        case 'add_list identification.pastOperators':
+            $fill['run_by'] = (string) $v;
+            break;
+    }
+    return array($fact, $fill);
+}
+
+/** Add checked items to a young adult program, each as a fact citing its page. Returns [pkey => result]. */
+function kop_wbf_ya_file(PDO $pdo, array $rows, $yid, $reviewer) {
+    global $wpdb;
+    $p = $yid ? kop_ya_get($pdo, $yid) : null;
+    if (!$p) {
+        throw new RuntimeException('Pick the young adult program first.');
+    }
+    $results = array();
+    $now = current_time('mysql', true);
+    foreach ($rows as $r) {
+        if ($r['status'] !== 'pending' || $r['grp'] === 'consultant') {
+            $results[$r['pkey']] = array('ok' => false, 'error' => 'Already ' . $r['status'] . '.');
+            continue;
+        }
+        list($fact, $fill) = kop_wbf_ya_fact($r);
+        $fact['by'] = $reviewer;
+        $fact['at'] = $now;
+        try {
+            $done = kop_ya_add_fact($pdo, (int) $yid, $fact, $fill);
+        } catch (RuntimeException $e) {
+            $results[$r['pkey']] = array('ok' => false, 'error' => $e->getMessage());
+            continue;
+        }
+        $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied_fid' => 0, 'reviewed_by' => $reviewer, 'reviewed_at' => $now,
+            'applied' => wp_json_encode(array('filed' => 'young_adult', 'id' => (int) $yid, 'name' => $p['name'], 'done' => $done))),
+            array('pkey' => $r['pkey']));
+        $results[$r['pkey']] = array('ok' => true);
+    }
+    return $results;
+}
+
+/** A young adult card's "which program is it" box: the existing records, or a new one. */
+function kop_wbf_ya_panel(array $first) {
+    $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+    $all = $pdo && kop_ya_ready($pdo) ? kop_ya_all($pdo, null) : array();
+    $match = $pdo && $all ? (kop_ya_find_by_name($pdo, $first['program']) ?: kop_ya_find_by_name($pdo, $first['program_as_written'])) : null;
+    $html = '<div class="kop-wbf-other"><div class="kop-wbf-pick"><strong>Young adult program:</strong> <select class="kop-wbf-yaid"><option value="">Pick one...</option>';
+    foreach ($all as $p) {
+        $html .= '<option value="' . (int) $p['id'] . '"' . ($match && (int) $match['id'] === (int) $p['id'] ? ' selected' : '') . '>'
+            . esc_html($p['name'] . ($p['state'] !== '' ? ' (' . $p['state'] . ')' : '')) . '</option>';
+    }
+    $html .= '</select> <button type="button" class="button button-primary" data-act="ya_apply">Add checked to that program</button></div>';
+    $city = '';
+    $state = $first['place'];
+    if (preg_match('/^(.*?),\s*([A-Za-z .]+)$/', $first['place'], $m)) {
+        $city = trim($m[1]);
+        $state = trim($m[2]);
+    }
+    $why = (string) $first['ya_why'];
+    $ages = preg_match('/^Ages:\s*(.*)$/', $why, $m) ? $m[1] : '';
+    $type = $why !== '' && !preg_match('/^(Ages|Name):/', $why) ? $why : '';
+    return $html . '<div class="kop-wbf-create"><strong>Not on the list yet? Create it:</strong><br>'
+        . '<label>Name <input type="text" class="kop-wbf-yname" value="' . esc_attr($first['program']) . '" style="width:260px"></label> '
+        . '<label>City <input type="text" class="kop-wbf-ycity" value="' . esc_attr($city) . '" style="width:140px"></label> '
+        . '<label>State <input type="text" class="kop-wbf-ystate" value="' . esc_attr($state) . '" style="width:90px"></label> '
+        . '<label>or country <input type="text" class="kop-wbf-ycountry" style="width:110px"></label> '
+        . '<label>Ages <input type="text" class="kop-wbf-yages" value="' . esc_attr($ages) . '" style="width:140px"></label> '
+        . '<label>Described as <input type="text" class="kop-wbf-ytype" value="' . esc_attr(mb_substr($type, 0, 255)) . '" style="width:260px"></label> '
+        . '<button type="button" class="button" data-act="ya_create">Create the young adult program and add checked</button></div></div>';
+}
+
 /** The kinds of record a card can create: a program, or what Woodbury wrote about that is not one. */
 function kop_wbf_create_kinds() {
     return array(
@@ -540,7 +671,7 @@ function kop_wbf_filed_on(array $r) {
     if (!is_array($done) || empty($done['filed'])) {
         return '';
     }
-    $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider');
+    $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider', 'young_adult' => 'young adult program');
     return 'the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
 }
 
@@ -553,6 +684,11 @@ function kop_wbf_undo(array $rows, $reviewer) {
         $wpdb->update(kop_wbf_table(), array('auto' => 0), array('pkey' => $r['pkey']));
         if ($r['status'] === 'applied' && kop_wbf_filed_on($r) !== '') {
             // Filed in a consultant or provider record's notes: back to review, the record and its notes stay.
+            // On a young adult program: the fact comes off it again, with any field it filled.
+            $done = json_decode((string) $r['applied'], true);
+            if (($done['filed'] ?? '') === 'young_adult' && !empty($done['done']) && function_exists('kop_ya_remove_fact') && kop_ya_pdo()) {
+                kop_ya_remove_fact(kop_ya_pdo(), $done['done']);
+            }
             $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'reviewed_by' => $reviewer,
                 'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
         } elseif ($r['status'] === 'applied' && $r['grp'] === 'consultant') {
@@ -1259,6 +1395,33 @@ add_action('wp_ajax_kop_wbf_act', function () {
         if (!$rows) {
             throw new RuntimeException('Nothing selected.');
         }
+        if ($act === 'ya_on' || $act === 'ya_off') {
+            kop_wbf_ya_override($rows[0]['program'], $act === 'ya_on' ? 1 : 0);
+            wp_send_json_success(array('results' => array_fill_keys(array_column($rows, 'pkey'), array('ok' => true))));
+        }
+        if ($act === 'ya_apply' || $act === 'ya_create') {
+            $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+            if (!$pdo) {
+                throw new RuntimeException('The records database is not reachable.');
+            }
+            kop_ya_install($pdo);
+            if ($act === 'ya_create') {
+                $f = array();
+                foreach (array('name', 'city', 'state', 'country', 'ages', 'program_type') as $k) {
+                    $f[$k] = sanitize_text_field(wp_unslash($_POST[$k] ?? ''));
+                }
+                $e = kop_wbf_evidence($rows[0]);
+                $f['source'] = 'Woodbury Reports' . ($e ? ', ' . $e[0]['label'] . ', p. ' . (int) $e[0]['page'] : '');
+                $f['review'] = 'approved';
+                $yid = kop_ya_save($pdo, $f, 0, $user);
+            } else {
+                $yid = (int) ($_POST['ya'] ?? 0);
+            }
+            $results = kop_wbf_ya_file($pdo, $rows, $yid, $user);
+            $p = kop_ya_get($pdo, $yid);
+            wp_send_json_success(array('results' => $results, 'url' => admin_url('admin.php?page=kop-young-adult-programs&edit=' . $yid),
+                'label' => 'the young adult program "' . $p['name'] . '"'));
+        }
         $kind = sanitize_key($_POST['kind'] ?? 'facility');
         if ($act === 'create' && $kind !== 'facility') {
             if (!isset(kop_wbf_create_kinds()[$kind])) {
@@ -1349,7 +1512,8 @@ add_action('admin_menu', function () {
 function kop_wbf_tabs() {
     return array(
         'records'  => array('label' => 'For existing records', 'where' => "status = 'pending' AND facility_id > 0"),
-        'norecord' => array('label' => 'Programs with no record', 'where' => "status = 'pending' AND facility_id = 0 AND grp <> 'consultant'"),
+        'norecord' => array('label' => 'Programs with no record', 'where' => "status = 'pending' AND facility_id = 0 AND grp <> 'consultant' AND ya = 0"),
+        'youngadult' => array('label' => 'Young adult programs (18+)', 'where' => "status = 'pending' AND facility_id = 0 AND grp <> 'consultant' AND ya = 1"),
         'consultants' => array('label' => 'Ed cons who worked in the industry', 'where' => "status = 'pending' AND grp = 'consultant'"),
         'applied'  => array('label' => 'Added', 'where' => "status = 'applied'"),
         'auto'     => array('label' => 'Added automatically', 'where' => "status = 'applied' AND reviewed_by = 'auto'"),
@@ -1428,6 +1592,8 @@ function kop_render_woodbury_facts_page() {
         . '<li><strong>Wrong program, or one with no record?</strong> Open <em>Wrong program?</em> under the card to put the checked items on another record, '
         . 'or create a new record from the name and place Woodbury gives: a program, an educational consultant (firm or person) or a mental health provider. '
         . 'A consultant or provider record gets the checked items in its notes.</li>'
+        . '<li><strong>A program for people 18 and older?</strong> Those are on the <em>Young adult programs (18+)</em> tab and never become facility records: '
+        . 'each card there creates or adds to a young adult program. A card on <em>Programs with no record</em> that is one: <em>It is a young adult program (18+)</em>.</li>'
         . '<li><strong>Click <em>Add checked to record</em></strong> on the card, or <em>Add everything ticked on this page</em> at the top. '
         . 'The facility page shows the additions at once, each citing the issue; new staff, past operators and past names reach the network map on its next build.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo, which takes back exactly what was added.</li></ol>';
@@ -1468,10 +1634,10 @@ function kop_render_woodbury_facts_page() {
         . ($q !== '' || $grp !== '' ? ' <a href="' . esc_url(add_query_arg('wbf_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
 
     // Items filed on a consultant or provider record have no facility: one card per program.
-    $card_col = in_array($tab, array('norecord', 'consultants'), true) ? 'program'
+    $card_col = in_array($tab, array('norecord', 'youngadult', 'consultants'), true) ? 'program'
         : (in_array($tab, array('applied', 'auto'), true) ? "IF(applied_fid > 0, CAST(applied_fid AS CHAR), CONCAT('p:', program))" : 'facility_id');
     $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card_col}) FROM {$table} WHERE {$where}");
-    $order = $tab === 'norecord' ? 'COUNT(*) DESC, program' : 'MIN(program)';
+    $order = in_array($tab, array('norecord', 'youngadult'), true) ? 'COUNT(*) DESC, program' : 'MIN(program)';
     $cards = $wpdb->get_col("SELECT {$card_col} FROM {$table} WHERE {$where} GROUP BY {$card_col} ORDER BY {$order} LIMIT "
         . (($paged - 1) * $per) . ", {$per}");
     if (!$cards) {
@@ -1486,7 +1652,13 @@ function kop_render_woodbury_facts_page() {
         $by[(string) $r['ck']][] = $r;
     }
 
-    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
+    if ($tab === 'youngadult') {
+        echo '<div class="notice notice-info inline"><p>Programs for people 18 and older. They are kept apart from the troubled teen programs: '
+            . 'a card here becomes (or adds to) a record on the <a href="' . esc_url(admin_url('admin.php?page=kop-young-adult-programs')) . '">Young Adult Programs</a> list, '
+            . 'never a facility record. The build puts a program here when Woodbury gives its ages as 17 or older or calls it a young adult program; '
+            . 'anything else can be moved here from <em>Programs with no record</em>, and back.</p></div>';
+    }
+    $pending = in_array($tab, array('records', 'norecord', 'youngadult', 'consultants'), true);
     echo '<div class="kop-wbf-bar">';
     if ($tab === 'records') {
         echo '<button type="button" class="button button-primary kop-wbf-all">Add everything ticked on this page</button> ';
@@ -1501,7 +1673,7 @@ function kop_render_woodbury_facts_page() {
 
     $pages = (int) ceil($total / $per);
     if ($pages > 1) {
-        echo '<p class="kop-wbf-pager">Page ' . $paged . ' of ' . $pages . ' (' . $total . ' ' . ($tab === 'norecord' ? 'programs' : 'facilities') . ') &middot; ';
+        echo '<p class="kop-wbf-pager">Page ' . $paged . ' of ' . $pages . ' (' . $total . ' ' . (in_array($tab, array('norecord', 'youngadult'), true) ? 'programs' : 'facilities') . ') &middot; ';
         for ($n = 1; $n <= $pages; $n++) {
             $url = add_query_arg(array('wbf_tab' => $tab, 'wbf_page' => $n, 'wbf_q' => $q !== '' ? $q : null, 'wbf_grp' => $grp !== '' ? $grp : null), $base);
             echo $n === $paged ? '<strong>' . $n . '</strong> ' : '<a href="' . esc_url($url) . '">' . $n . '</a> ';
@@ -1560,7 +1732,7 @@ function kop_wbf_other_record(array $first, $no_record) {
 
 function kop_wbf_render_card(array $rows, $tab) {
     $first = $rows[0];
-    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
+    $pending = in_array($tab, array('records', 'norecord', 'youngadult', 'consultants'), true);
     $fid = in_array($tab, array('applied', 'auto'), true) ? (int) $first['applied_fid'] : (int) $first['facility_id'];
     echo '<div class="kop-wbf-card" data-fid="' . $fid . '">';
     echo '<div class="kop-wbf-head">';
@@ -1575,6 +1747,9 @@ function kop_wbf_render_card(array $rows, $tab) {
         }
     } else {
         echo '<h2>' . esc_html($first['program']) . ($first['place'] !== '' ? ' <span class="kop-wbf-muted">' . esc_html($first['place']) . '</span>' : '') . '</h2>';
+        if ($tab === 'youngadult' && $first['ya_why'] !== '') {
+            echo '<div class="kop-wbf-muted">Why it is here: ' . esc_html($first['ya_why']) . '</div>';
+        }
     }
     echo '</div>';
 
@@ -1606,7 +1781,12 @@ function kop_wbf_render_card(array $rows, $tab) {
                 : 'No consultant record yet: flagging creates one (filed under Educational Consultants) with this Career History.') . '</div>';
     } elseif ($tab === 'norecord') {
         echo '<div class="kop-wbf-other">' . kop_wbf_other_record($first, true) . '</div>'
-            . '<button type="button" class="button" data-act="reject">Reject checked</button>';
+            . '<button type="button" class="button" data-act="reject">Reject checked</button> '
+            . '<button type="button" class="button" data-act="ya_on">It is a young adult program (18+)</button>';
+    } elseif ($tab === 'youngadult') {
+        echo kop_wbf_ya_panel($first)
+            . '<button type="button" class="button" data-act="reject">Reject checked</button> '
+            . '<button type="button" class="button" data-act="ya_off">Not a young adult program: move it back</button>';
     } elseif (in_array($tab, array('applied', 'auto'), true)) {
         echo '<button type="button" class="button" data-act="undo">Undo checked</button>';
     } else {
@@ -1617,7 +1797,7 @@ function kop_wbf_render_card(array $rows, $tab) {
 }
 
 function kop_wbf_render_row(array $r, $tab) {
-    $pending = in_array($tab, array('records', 'norecord', 'consultants'), true);
+    $pending = in_array($tab, array('records', 'norecord', 'youngadult', 'consultants'), true);
     $checked = $pending ? ($r['preselect'] && in_array($tab, array('records', 'consultants'), true)) : false;
     $extra = json_decode((string) $r['extra'], true) ?: array();
     echo '<tr data-key="' . esc_attr($r['pkey']) . '">';
@@ -1628,7 +1808,9 @@ function kop_wbf_render_row(array $r, $tab) {
         echo kop_wbf_edit_form($r) . kop_wbf_person_form($r);
     }
     if ($r['status'] === 'applied' && kop_wbf_filed_on($r) !== '') {
-        echo '<div class="kop-wbf-muted">Filed in the notes of ' . esc_html(kop_wbf_filed_on($r)) . '</div>';
+        $done = json_decode((string) $r['applied'], true);
+        echo '<div class="kop-wbf-muted">' . (($done['filed'] ?? '') === 'young_adult' ? 'Added to ' : 'Filed in the notes of ')
+            . esc_html(kop_wbf_filed_on($r)) . '</div>';
     }
     if (!empty($extra['manual'])) {
         echo '<div class="kop-wbf-muted">Added by hand by ' . esc_html($extra['edited_by'] ?? '') . '</div>';
@@ -1730,8 +1912,10 @@ function kop_wbf_render_assets() {
         }
 
         function run(card, act, btn) {
+            // Moving a card on or off the young adult tab takes all of it, ticked or not.
+            var whole = act === 'ya_on' || act === 'ya_off';
             var keys = Array.prototype.map.call(card.querySelectorAll('tr[data-key]'), function (tr) {
-                return tr.querySelector('.kop-wbf-pick').checked && !tr.classList.contains('kop-wbf-gone') ? tr.dataset.key : null;
+                return (whole || tr.querySelector('.kop-wbf-pick').checked) && !tr.classList.contains('kop-wbf-gone') ? tr.dataset.key : null;
             }).filter(Boolean);
             var out = card.querySelector('.kop-wbf-result');
             if (!keys.length) { out.className = 'kop-wbf-result err'; out.textContent = 'Tick at least one item.'; return Promise.resolve(); }
@@ -1750,6 +1934,15 @@ function kop_wbf_render_assets() {
                 data.kind = card.querySelector('.kop-wbf-ckind').value;
                 data.force = card.querySelector('.kop-wbf-cforce').checked ? 1 : '';
             }
+            if (act === 'ya_apply') {
+                data.ya = card.querySelector('.kop-wbf-yaid').value;
+                if (!(+data.ya)) { out.className = 'kop-wbf-result err'; out.textContent = 'Pick the young adult program first.'; return Promise.resolve(); }
+            }
+            if (act === 'ya_create') {
+                ['name', 'city', 'state', 'country', 'ages', 'type'].forEach(function (k) {
+                    data[k === 'type' ? 'program_type' : k] = card.querySelector('.kop-wbf-y' + k).value;
+                });
+            }
             out.className = 'kop-wbf-result'; out.textContent = 'Working...';
             return post(data).then(function (res) {
                 if (!res.success) { out.className = 'kop-wbf-result err'; out.textContent = res.data || 'Failed.'; return; }
@@ -1761,8 +1954,10 @@ function kop_wbf_render_assets() {
                     else { skipped.push(r.error); if (tr) tr.classList.add('kop-wbf-gone'); }
                 });
                 var words = { apply: 'Added ' + ok + ' to ', create: 'Created the record and added ' + ok + ' to ', reject: 'Rejected ' + ok + '.', undo: 'Undone: ' + ok + '.',
+                    ya_apply: 'Added ' + ok + ' to ', ya_create: 'Created and added ' + ok + ' to ',
+                    ya_on: 'Moved to Young adult programs (18+).', ya_off: 'Moved back to Programs with no record.',
                     consultant: 'Flagged as former industry staff; the jobs are in their Career History on the consultants directory.' }[act];
-                if (act === 'consultant') res.data.label = '';
+                if (act === 'consultant' || act === 'ya_on' || act === 'ya_off') res.data.label = '';
                 out.className = 'kop-wbf-result ok';
                 out.textContent = words + (res.data.label ? res.data.label + '.' : '') + (skipped.length ? ' ' + skipped.length + ' already on the record, skipped.' : '');
                 if (res.data.url) {

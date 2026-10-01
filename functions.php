@@ -103,6 +103,11 @@ require_once get_stylesheet_directory() . '/inc/page-text-editor.php';
 require_once get_stylesheet_directory() . '/inc/indigenous-schools.php';
 require_once get_stylesheet_directory() . '/inc/indigenous-schools-admin.php';
 
+// Young adult programs (18+): their own records, never TTI facilities
+// (listed on /young-adult-programs/, KOP Tools > Young Adult Programs, filled from Woodbury Facts)
+require_once get_stylesheet_directory() . '/inc/young-adult-programs.php';
+require_once get_stylesheet_directory() . '/inc/young-adult-programs-admin.php';
+
 // Open data: daily bulk downloads of every public dataset (/open-data/)
 require_once get_stylesheet_directory() . '/inc/open-data.php';
 

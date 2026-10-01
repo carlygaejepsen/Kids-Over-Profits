@@ -480,6 +480,9 @@ function kop_tool_page_specs() {
         // Frequently asked questions; text in js/data/pages/faq.json (Page Text editor).
         // A draft so the owner reads every answer before publishing by hand.
         array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'draft'),
+        // Programs for people 18 and older, kept apart from the TTI facilities
+        // (inc/young-adult-programs.php). A draft so the owner reads it before publishing by hand.
+        array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'draft'),
         // State trackers share one template, so 'shared' creates the page by slug
         // even though other pages use the template. Oklahoma (owner, 2026-09-30).
         array('template' => 'page-state-reports.php', 'title' => 'Oklahoma Inspection Reports', 'slug' => 'ok-reports', 'status' => 'publish', 'shared' => true,
@@ -668,7 +671,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '16';
+    $version = '17';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

@@ -1,0 +1,122 @@
+/*
+ * Young adult programs (templates/page-young-adult-programs.php).
+ *
+ * One white card, one column: a reference list. Text never sits on the
+ * site's gradient; bright accents stay on borders, never behind text.
+ */
+
+.kop-ya-page {
+    max-width: 56rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .kop-ya-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-ya-title {
+    margin: 0 0 1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ya-intro {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ya-intro p {
+    margin: 0;
+}
+
+.kop-ya-intro p + p {
+    margin-top: 0.6rem;
+}
+
+.kop-ya-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-ya-page a:hover,
+.kop-ya-page a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ya-count,
+.kop-ya-empty {
+    margin: 0 0 0.75rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-ya-jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.kop-ya-region {
+    margin: 2rem 0 0.75rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 3px solid var(--kop-teal, #33A7B5);
+    font-size: 1.35rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ya-program {
+    margin: 0 0 1.25rem;
+    padding: 0 0 1.1rem;
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+.kop-ya-name {
+    margin: 0 0 0.2rem;
+    font-size: 1.12rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ya-meta {
+    margin: 0 0 0.5rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-ya-fact {
+    margin: 0 0 0.35rem;
+}
+
+.kop-ya-list-title {
+    margin: 0.75rem 0 0.25rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ya-list {
+    margin: 0 0 0.5rem 1.2rem;
+    padding: 0;
+}
+
+.kop-ya-list li {
+    margin-bottom: 0.3rem;
+}
+
+.kop-ya-src {
+    font-size: 0.9em;
+    color: var(--kop-text-muted, #4A5568);
+}
