@@ -166,6 +166,12 @@ php scripts/test-drive-docs.php --links=tmp/wiki/wiki-links.json
 # resourceLinks ({url, label, kind, source}, listed on the /facility/ page under "Materials and links")
 python scripts/gdocs-extract.py
 php scripts/test-drive-docs.php                   # every link on its real record, validator, exact undo, the page list
+# SCIAD NET (WWASP Survivor Truth's Zotero archive, survey in tmp/sciad/survey.md) links that are not Drive documents: news
+# (Wayback unwrapped), court records (neutral titles, never a party's name), program pages, media; private classes and what
+# KOP holds dropped -> tmp/sciad/sciad-links.json (report sciad-links-report.md), copied to ~/kop-import/gdocs/, never
+# committed; reviewed at Drive Docs (source filter, Add all per facility), every row it fills credits SCIAD NET, linked
+python scripts/sciad-links.py [--selftest]       # --selftest: court titles and privacy rules on a made-up fixture
+php scripts/test-drive-docs.php                   # also SCIAD NET: credit on the page, no private class, court titles, paging
 # Unsilenced's archive (public Drive folders) on facility/operator pages: only documents KOP has no copy of.
 # Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
 # then the build compares with the media library md5s and inspection scrapers -> js/data/unsilenced/
@@ -177,11 +183,15 @@ php scripts/test-unsilenced-archive.php                    # inc/unsilenced-arch
 # nhym-alumni.org): fetch hashes every document their pages link (nothing kept; straights/nhym crawl same-host pages,
 # 1 request a second), build drops what the media library holds or an earlier site lists for the record, drops private
 # records by pattern and by js/data/survivor-archives/privacy.json (sha1 of url keys only, never a name; the repo is
-# public), and files the rest under the record RULES in the script -> js/data/survivor-archives/<site>/
+# public; "include" keeps a reviewed document a pattern would drop), and files the rest under the record RULES in the
+# script -> js/data/survivor-archives/<site>/. Site sciad = SCIAD NET's Google Drive files (not fetched: the build reads
+# the survey in tmp/sciad/ and tmp/unsilenced/files.jsonl; a file whose name Unsilenced has is dropped, records from the
+# exact program match or SCIAD_RULES, court records titled from kind/court/year/number only and grouped by case, the
+# block credits SCIAD NET linked to its archive page; every listed title -> tmp/survivor-archives/sciad-review.tsv)
 python scripts/survivor-archives.py fetch [--site ssi|wwasp|straights|nhym]   # resumable, into tmp/survivor-archives/
-python scripts/survivor-archives.py build                      # needs tmp/prod.sqlite; report in tmp/survivor-archives/build-report.md
+python scripts/survivor-archives.py build                      # needs tmp/prod.sqlite (+ tmp/sciad/ for sciad); report in tmp/survivor-archives/build-report.md
 python scripts/survivor-archives.py privacy-review             # every listed document + sha1 -> tmp/survivor-archives/privacy-review.md
-python scripts/survivor-archives.py selftest                   # privacy patterns and privacy.json shape
+python scripts/survivor-archives.py selftest                   # privacy patterns, SCIAD court titles, privacy.json shape
 php scripts/test-survivor-archives.php
 # Fornits survivor forum (inc/fornits.php): the crawl copies the treatment-abuse boards into tmp/fornits/ (never committed);
 # the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the

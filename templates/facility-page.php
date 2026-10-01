@@ -531,6 +531,12 @@ get_header();
                             </li>
                         <?php endforeach; ?>
                     </ul>
+                    <?php foreach ((array) ($kop_fp_group['credits'] ?? array()) as $kop_fp_credit) : ?>
+                        <p class="kop-fp-count">
+                            <?php echo $kop_fp_credit['count'] < count($kop_fp_group['links']) ? esc_html(sprintf('%d of these from', $kop_fp_credit['count'])) : 'From'; ?>
+                            <a href="<?php echo esc_url($kop_fp_credit['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_credit['label']); ?></a>.
+                        </p>
+                    <?php endforeach; ?>
                 <?php endforeach; ?>
             </section>
             <?php endif; ?>

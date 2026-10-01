@@ -1492,15 +1492,41 @@ if (!function_exists('kop_facility_pages_resource_links')) {
             $link = $l['kind'] === 'other'
                 ? kop_facility_pages_archive_link($l['url'], $label)
                 : array('url' => $l['url'], 'label' => $label, 'live_url' => '', 'go_url' => '');
+            $link['credit'] = kop_facility_pages_resource_link_credit($l['source']);
             $by[$l['kind']][] = $link;
         }
         $out = array();
         foreach ($kinds as $kind => $kind_label) {
             if (!empty($by[$kind])) {
-                $out[] = array('kind' => $kind, 'label' => $kind_label, 'links' => $by[$kind]);
+                // Each archive that asked to be credited, once under the group, with how many of its links it holds.
+                $credits = array();
+                foreach ($by[$kind] as $link) {
+                    if ($link['credit']) {
+                        $key = $link['credit']['url'];
+                        $credits[$key] = $credits[$key] ?? $link['credit'] + array('count' => 0);
+                        $credits[$key]['count']++;
+                    }
+                }
+                $out[] = array('kind' => $kind, 'label' => $kind_label, 'links' => $by[$kind], 'credits' => array_values($credits));
             }
         }
         return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_resource_link_credit')) {
+    /**
+     * The credit a resource link's source asks for, linked: SCIAD NET, the
+     * WWASP Survivor Truth archive (owner decision 2026-10-01, added through
+     * KOP Tools > Drive Docs). Null for every other source.
+     *
+     * @return array{label: string, url: string}|null
+     */
+    function kop_facility_pages_resource_link_credit($source) {
+        if (stripos((string) $source, 'SCIAD NET') === 0) {
+            return array('label' => 'SCIAD NET, the WWASP Survivor Truth archive', 'url' => 'https://wwaspsurvivorstruth.com/program-archive/');
+        }
+        return null;
     }
 }
 

@@ -23,13 +23,25 @@
  *
  * Decisions live in {prefix}kop_gdoc_links, keyed by the link's address, so a
  * rebuild adds new links and never undoes a decision.
+ *
+ * Three files feed it (kop_gdl_sources()): links.json (Google Docs),
+ * heal-links.json (scripts/heal-docs.py) and sciad-links.json
+ * (scripts/sciad-links.py: SCIAD NET, the WWASP Survivor Truth archive, about
+ * 13,000 links). A source with a credit puts it, not a doc name, on every
+ * record and queue row it fills; the facility page shows it linked. At that
+ * volume the screen filters by source, caps each card at KOP_GDL_CARD_ROWS
+ * rows (the rest a click away), and a facility card can add all its sure
+ * matches at once in batches.
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_GDOC_LINKS_DB_VERSION', '1');
+define('KOP_GDOC_LINKS_DB_VERSION', '2');
+if (!defined('KOP_GDL_CARD_ROWS')) {
+    define('KOP_GDL_CARD_ROWS', 40);
+}
 
 function kop_gdl_table() {
     global $wpdb;
@@ -57,6 +69,8 @@ function kop_gdl_ensure_table() {
         also_named TEXT NULL,
         operator_name VARCHAR(255) NOT NULL DEFAULT '',
         source_doc VARCHAR(255) NOT NULL DEFAULT '',
+        source VARCHAR(12) NOT NULL DEFAULT '',
+        rhash VARCHAR(32) NOT NULL DEFAULT '',
         seen LONGTEXT NULL,
         status VARCHAR(12) NOT NULL DEFAULT 'pending',
         applied LONGTEXT NULL,
@@ -68,8 +82,12 @@ function kop_gdl_ensure_table() {
         UNIQUE KEY pkey (pkey),
         KEY status_fac (status, facility_id),
         KEY operator_name (operator_name(80)),
-        KEY source_doc (source_doc(80))
+        KEY source_doc (source_doc(80)),
+        KEY source_status (source, status, facility_id)
     ) {$charset};");
+    // Rows from before version 2 name their source only in source_doc.
+    $wpdb->query("UPDATE {$table} SET source = CASE WHEN source_doc LIKE 'HEAL archive%' THEN 'heal' "
+        . "WHEN source_doc LIKE 'r/troubledteens wiki%' THEN 'wiki' ELSE 'gdocs' END WHERE source = ''");
     update_option('kop_gdoc_links_db', KOP_GDOC_LINKS_DB_VERSION);
 }
 
@@ -79,18 +97,44 @@ function kop_gdl_path() {
 }
 
 /**
- * Every links file the screen reads: the Google Docs pass, the documents
- * from HEAL's archived site (scripts/heal-docs.py) and the links on the
- * r/troubledteens wiki's pages (scripts/wiki-links.py), which sit beside it.
+ * The files the screen reads, all in ~/kop-import/gdocs/: the Google Docs
+ * pass, the documents from HEAL's archived site (scripts/heal-docs.py), the
+ * links on the r/troubledteens wiki's pages (scripts/wiki-links.py) and SCIAD
+ * NET's links (scripts/sciad-links.py). A source with a credit is named,
+ * linked, on whatever it fills (owner decision 18 for SCIAD NET); the others
+ * name the doc or page they came from.
  */
-function kop_gdl_paths() {
-    $paths = array();
-    foreach (array(kop_gdl_path(), dirname(kop_gdl_path()) . '/heal-links.json', dirname(kop_gdl_path()) . '/wiki-links.json') as $p) {
+function kop_gdl_sources() {
+    return array(
+        'gdocs' => array('label' => 'Google Docs', 'file' => 'links.json'),
+        'heal'  => array('label' => 'HEAL archive', 'file' => 'heal-links.json'),
+        'wiki'  => array('label' => 'r/troubledteens wiki', 'file' => 'wiki-links.json'),
+        'sciad' => array(
+            'label'      => 'SCIAD NET',
+            'file'       => 'sciad-links.json',
+            'credit'     => 'SCIAD NET, the WWASP Survivor Truth archive',
+            'credit_url' => 'https://wwaspsurvivorstruth.com/program-archive/',
+            'submitter'  => 'SCIAD NET import',
+        ),
+    );
+}
+
+/** source => readable path, for the files that are there. */
+function kop_gdl_files() {
+    $dir = dirname(kop_gdl_path());
+    $out = array();
+    foreach (kop_gdl_sources() as $key => $s) {
+        $p = $dir . '/' . $s['file'];
         if (is_readable($p)) {
-            $paths[] = $p;
+            $out[$key] = $p;
         }
     }
-    return $paths;
+    return $out;
+}
+
+/** Every links file the screen reads (kop_gdl_sources()). */
+function kop_gdl_paths() {
+    return array_values(kop_gdl_files());
 }
 
 /** The build's kinds, as the review screen names them. */
@@ -150,34 +194,46 @@ function kop_gdl_pkey($key) {
  * longer offers (now on file, or gone from the docs) are marked 'gone'.
  */
 function kop_gdl_sync($force = false) {
-    $paths = kop_gdl_paths();
-    if (!$paths) {
+    $files = kop_gdl_files();
+    if (!$files) {
         return null;
     }
-    $md5 = md5(implode('|', array_map('md5_file', $paths)));
+    $md5 = md5(implode('|', array_map('md5_file', $files)));
     if (!$force && get_option('kop_gdoc_links_md5') === $md5) {
         return null;
     }
+    if (function_exists('set_time_limit')) {
+        @set_time_limit(300); // The first SCIAD NET load is about 13,000 rows.
+    }
     $items = array();
-    foreach ($paths as $path) {
+    foreach ($files as $source => $path) {
         $list = json_decode((string) file_get_contents($path), true);
         if (!is_array($list)) {
             return null; // A half-copied file: nothing is marked gone until it reads.
         }
-        $items = array_merge($items, $list);
+        foreach ($list as $it) {
+            if (is_array($it)) {
+                $it['_source'] = $source;
+                $items[] = $it;
+            }
+        }
+        unset($list);
     }
     global $wpdb;
     $table = kop_gdl_table();
-    $existing = array();
-    foreach ((array) $wpdb->get_results("SELECT pkey, status FROM {$table}", ARRAY_A) as $r) {
+    $existing = $hashes = array();
+    foreach ((array) $wpdb->get_results("SELECT pkey, status, rhash FROM {$table}", ARRAY_A) as $r) {
         $existing[$r['pkey']] = $r['status'];
+        $hashes[$r['pkey']] = (string) $r['rhash'];
     }
     $kinds = kop_gdl_kinds();
+    $sources = kop_gdl_sources();
     $now = current_time('mysql', true);
     $seen = array();
     $added = $updated = 0;
+    $batch = array();
     foreach ($items as $it) {
-        if (!is_array($it) || !empty($it['on_file']) || ($it['category'] ?? '') === 'internal') {
+        if (!empty($it['on_file']) || ($it['category'] ?? '') === 'internal') {
             continue;
         }
         $url = (string) ($it['url'] ?? '');
@@ -185,8 +241,12 @@ function kop_gdl_sync($force = false) {
             continue;
         }
         $pkey = kop_gdl_pkey($it['key'] ?? $url);
+        if (isset($seen[$pkey])) {
+            continue; // The same address in two files: the first file's row stands.
+        }
         $seen[$pkey] = true;
         $places = array_values(array_filter((array) ($it['seen'] ?? array()), 'is_array'));
+        $source = (string) ($it['source'] ?? '');
         $row = array(
             'url'           => $url,
             'original'      => (string) ($it['original'] ?? ''),
@@ -199,19 +259,27 @@ function kop_gdl_sync($force = false) {
             'operator_name' => mb_substr((string) ($it['operator']['name'] ?? ''), 0, 255),
             'source_doc'    => mb_substr((string) ($places[0]['doc'] ?? ''), 0, 255),
             'seen'          => wp_json_encode(array_slice($places, 0, 12)),
+            'source'        => isset($sources[$source]) ? $source : $it['_source'],
         );
+        $row['rhash'] = md5(wp_json_encode($row));
         if (!isset($existing[$pkey])) {
             $row['pkey'] = $pkey;
             $row['status'] = 'pending';
             $row['created_at'] = $now;
-            if ($wpdb->insert($table, $row) !== false) {
-                $added++;
+            $batch[] = $row;
+            if (count($batch) >= 200) {
+                $added += kop_gdl_insert_rows($batch);
+                $batch = array();
             }
-        } elseif (in_array($existing[$pkey], array('pending', 'gone'), true)) {
+        } elseif ($existing[$pkey] === 'gone' || ($existing[$pkey] === 'pending' && $hashes[$pkey] !== $row['rhash'])) {
+            // A waiting row takes the build's latest match; an unchanged one is left alone.
             $row['status'] = 'pending';
             $wpdb->update($table, $row, array('pkey' => $pkey));
             $updated++;
         }
+    }
+    if ($batch) {
+        $added += kop_gdl_insert_rows($batch);
     }
     $gone = 0;
     foreach ($existing as $pkey => $status) {
@@ -221,6 +289,34 @@ function kop_gdl_sync($force = false) {
     }
     update_option('kop_gdoc_links_md5', $md5, false);
     return array('added' => $added, 'updated' => $updated, 'gone' => $gone);
+}
+
+/** Insert new rows a batch at a time (one row at a time when a batch is refused). Returns how many went in. */
+function kop_gdl_insert_rows(array $rows) {
+    global $wpdb;
+    if (!$rows) {
+        return 0;
+    }
+    $table = kop_gdl_table();
+    $cols = array_keys($rows[0]);
+    $one = '(' . implode(',', array_fill(0, count($cols), '%s')) . ')';
+    $values = array();
+    foreach ($rows as $r) {
+        foreach ($cols as $c) {
+            $values[] = (string) $r[$c];
+        }
+    }
+    $sql = $wpdb->prepare("INSERT INTO {$table} (`" . implode('`,`', $cols) . '`) VALUES ' . implode(',', array_fill(0, count($rows), $one)), $values);
+    if ($wpdb->query($sql) !== false) {
+        return count($rows);
+    }
+    $n = 0;
+    foreach ($rows as $r) {
+        if ($wpdb->insert($table, $r) !== false) {
+            $n++;
+        }
+    }
+    return $n;
 }
 
 function kop_gdl_rows(array $pkeys) {
@@ -265,6 +361,11 @@ function kop_gdl_url_key($url) {
 
 /** The words that say where a link came from, for the record and the queues. */
 function kop_gdl_source_line(array $r) {
+    $src = kop_gdl_sources()[$r['source'] ?? ''] ?? array();
+    if (!empty($src['credit'])) {
+        // SCIAD NET: the credit, never the collection path (which names programs' folders, not KOP's words).
+        return $src['credit'];
+    }
     $doc = $r['source_doc'] !== '' ? $r['source_doc'] : 'a Google Doc';
     // HEAL's documents and the wiki's links name their own source ("HEAL archive: heal-online.org/x.pdf, saved 2009",
     // "r/troubledteens wiki: page "X" (as of 2025-12-18)").
@@ -325,24 +426,50 @@ function kop_gdl_queue_pdo() {
     return $pdo;
 }
 
+/** The submission note a queue row carries: where it came from, with the credit's link and the archived copy. */
+function kop_gdl_queue_note(array $r, array $first) {
+    $src = kop_gdl_sources()[$r['source'] ?? ''] ?? array();
+    $note = kop_gdl_source_line($r);
+    if (!empty($src['credit_url'])) {
+        $note = 'Found in ' . $note . ' (' . $src['credit_url'] . ')';
+    }
+    if (!empty($first['archive']) && preg_match('#^https?://#i', (string) $first['archive'])) {
+        $note .= "\n\nArchived copy: " . $first['archive'];
+    }
+    if (!empty($first['text'])) {
+        $note .= "\n\n" . (!empty($src['credit']) ? 'Entry: ' : 'Words around the link: ')
+            . '"' . mb_substr((string) $first['text'], 0, 600) . '"';
+    }
+    return $note;
+}
+
 /** Send one link to a queue. Returns what was done; throws when it is already there. */
 function kop_gdl_queue_add(PDO $pdo, array $r, $target, $facility_name, $reviewer) {
     $type = array('news' => 'article', 'lawsuit' => 'lawsuit', 'legislation' => 'legislation')[$target];
     $seen = json_decode((string) $r['seen'], true) ?: array();
     $first = $seen[0] ?? array();
+    $src = kop_gdl_sources()[$r['source'] ?? ''] ?? array();
     $p = array(
         'url'       => $r['url'],
         'title'     => $r['label'] !== '' ? $r['label'] : $r['url'],
         'type'      => $type,
-        'site_name' => $r['domain'],
+        // SCIAD NET rows name the outlet and the day; the others only have the address.
+        'site_name' => !empty($first['outlet']) ? (string) $first['outlet'] : $r['domain'],
         'facility'  => (string) $facility_name,
     );
+    if (!empty($first['published'])) {
+        $p['published'] = (string) $first['published'];
+    }
+    $archive = !empty($first['archive']) && preg_match('#^https?://#i', (string) $first['archive']) ? (string) $first['archive'] : '';
     $dupes = kop_ext_find_duplicates($pdo, $p);
+    if (!$dupes && $archive !== '') {
+        $dupes = kop_ext_find_duplicates($pdo, array('url' => $archive, 'type' => $type));
+    }
     if ($dupes) {
         throw new RuntimeException('Already in the ' . $dupes[0]['type'] . ' records (#' . (int) $dupes[0]['id'] . ').');
     }
-    $note = kop_gdl_source_line($r) . (!empty($first['text']) ? "\n\nWords around the link: \"" . mb_substr((string) $first['text'], 0, 600) . '"' : '');
-    $submitter = mb_substr($reviewer . ' (Google Docs import)', 0, 255);
+    $note = kop_gdl_queue_note($r, $first);
+    $submitter = mb_substr($reviewer . ' (' . ($src['submitter'] ?? 'Google Docs import') . ')', 0, 255);
     $quiet = function () { return false; };
     add_filter('kop_notify_admins_enabled', $quiet);
     try {
@@ -531,6 +658,19 @@ add_action('wp_ajax_kop_gdl_act', function () {
     $rows = kop_gdl_rows($keys);
     $user = wp_get_current_user()->user_login;
     try {
+        if ($act === 'apply_card') {
+            // "Add all" on a facility card: its sure matches under the screen's filters, a batch per request.
+            $fid = (int) ($_POST['fid'] ?? 0);
+            if ($fid <= 0) {
+                throw new RuntimeException('No facility on this card.');
+            }
+            global $wpdb;
+            $where = kop_gdl_card_all_where($fid, kop_gdl_filters($_POST));
+            $batch = (array) $wpdb->get_results('SELECT * FROM ' . kop_gdl_table() . " WHERE {$where} ORDER BY id LIMIT 40", ARRAY_A);
+            $results = $batch ? kop_gdl_apply($batch, array(), $fid, $user) : array();
+            $left = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_gdl_table() . " WHERE {$where}");
+            wp_send_json_success(array('results' => $results, 'left' => $left));
+        }
         if (!$rows) {
             throw new RuntimeException('Nothing selected.');
         }
@@ -579,7 +719,7 @@ function kop_gdl_tabs() {
         'facility' => array('label' => 'For a facility', 'where' => "status = 'pending' AND facility_id > 0", 'card' => 'facility_id'),
         'company'  => array('label' => 'Company only', 'where' => "status = 'pending' AND facility_id = 0 AND operator_name <> ''", 'card' => 'operator_name'),
         'none'     => array('label' => 'No facility', 'where' => "status = 'pending' AND facility_id = 0 AND operator_name = ''", 'card' => 'source_doc'),
-        'applied'  => array('label' => 'Added', 'where' => "status = 'applied'", 'card' => "IF(applied_fid > 0, CAST(applied_fid AS CHAR), 'q')"),
+        'applied'  => array('label' => 'Added', 'where' => "status = 'applied'", 'card' => "CASE WHEN applied_fid > 0 THEN CAST(applied_fid AS CHAR) ELSE 'q' END"),
         'rejected' => array('label' => 'Skipped or already there', 'where' => "status = 'rejected'", 'card' => 'source_doc'),
     );
 }
@@ -587,6 +727,102 @@ function kop_gdl_tabs() {
 /** A match the screen trusts enough to tick the link to start with. */
 function kop_gdl_sure_match(array $r) {
     return $r['facility_id'] > 0 && strpos($r['facility_how'], 'close') === false;
+}
+
+/** The screen's filters from a request ($_GET, or the POST of an "add all"): kind, words, source, one card. */
+function kop_gdl_filters(array $in) {
+    $kinds = kop_gdl_kinds();
+    $sources = kop_gdl_sources();
+    $text = function ($v) {
+        $v = is_string($v) ? $v : '';
+        return trim(sanitize_text_field(function_exists('wp_unslash') ? wp_unslash($v) : $v));
+    };
+    $kind = (string) ($in['gdl_kind'] ?? '');
+    $src = (string) ($in['gdl_src'] ?? '');
+    return array(
+        'kind' => isset($kinds[$kind]) ? $kind : '',
+        'src'  => isset($sources[$src]) ? $src : '',
+        'q'    => $text($in['gdl_q'] ?? ''),
+        'card' => $text($in['gdl_card'] ?? ''),
+    );
+}
+
+/** The SQL condition for a tab under the kind, source and words filters (not the card). */
+function kop_gdl_where($tab, array $f) {
+    global $wpdb;
+    $tabs = kop_gdl_tabs();
+    $where = $tabs[$tab]['where'];
+    if (($f['kind'] ?? '') !== '') {
+        $where .= $wpdb->prepare(' AND kind = %s', $f['kind']);
+    }
+    if (($f['src'] ?? '') !== '') {
+        $where .= $wpdb->prepare(' AND source = %s', $f['src']);
+    }
+    if (($f['q'] ?? '') !== '') {
+        $like = '%' . $wpdb->esc_like($f['q']) . '%';
+        $where .= $wpdb->prepare(' AND (label LIKE %s OR url LIKE %s OR source_doc LIKE %s OR operator_name LIKE %s)', $like, $like, $like, $like);
+    }
+    return $where;
+}
+
+/** Rows within a card in the order the screen reads them: news first. */
+function kop_gdl_kind_order_sql() {
+    $order = array('news', 'court', 'legislation', 'inspection', 'government', 'social', 'people', 'advertising',
+        'reference', 'archive', 'program_site', 'other');
+    $sql = 'CASE kind';
+    foreach ($order as $i => $k) {
+        $sql .= " WHEN '{$k}' THEN {$i}";
+    }
+    return $sql . ' ELSE 99 END';
+}
+
+/**
+ * One page of cards, biggest first: array(total cards, array of array(card value, rows)).
+ * With $card set, just that card.
+ */
+function kop_gdl_card_page($tab, $where, $paged, $per, $card = '') {
+    global $wpdb;
+    $table = kop_gdl_table();
+    $col = kop_gdl_tabs()[$tab]['card'];
+    if ($card !== '') {
+        $n = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE {$where}" . $wpdb->prepare(" AND {$col} = %s", $card));
+        return array($n ? 1 : 0, $n ? array(array($card, $n)) : array());
+    }
+    $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$col}) FROM {$table} WHERE {$where}");
+    $list = (array) $wpdb->get_results("SELECT {$col} AS ck, COUNT(*) AS n FROM {$table} WHERE {$where} GROUP BY {$col} "
+        . 'ORDER BY COUNT(*) DESC, MIN(label) LIMIT ' . (max(1, (int) $paged) - 1) * (int) $per . ', ' . (int) $per, ARRAY_A);
+    return array($total, array_map(function ($r) { return array((string) $r['ck'], (int) $r['n']); }, $list));
+}
+
+/** A card's rows, $limit at a time. */
+function kop_gdl_card_rows($tab, $where, $card, $limit, $offset = 0) {
+    global $wpdb;
+    $col = kop_gdl_tabs()[$tab]['card'];
+    return (array) $wpdb->get_results('SELECT * FROM ' . kop_gdl_table() . " WHERE {$where}" . $wpdb->prepare(" AND {$col} = %s", $card)
+        . ' ORDER BY ' . kop_gdl_kind_order_sql() . ', label, id LIMIT ' . (int) $offset . ', ' . (int) $limit, ARRAY_A);
+}
+
+/** What "Add all" takes for a facility card: its sure matches under the filters. */
+function kop_gdl_card_all_where($fid, array $f) {
+    global $wpdb;
+    return kop_gdl_where('facility', $f) . $wpdb->prepare(' AND facility_id = %d AND facility_how NOT LIKE %s', (int) $fid, '%close%');
+}
+
+/** Page links: the first, the last and three either side of this one. */
+function kop_gdl_pager($paged, $pages, callable $url) {
+    $out = array();
+    $last = 0;
+    for ($n = 1; $n <= $pages; $n++) {
+        if ($n !== 1 && $n !== $pages && abs($n - $paged) > 3) {
+            continue;
+        }
+        if ($last && $n > $last + 1) {
+            $out[] = '&hellip;';
+        }
+        $out[] = $n === $paged ? '<strong>' . $n . '</strong>' : '<a href="' . esc_url($url($n)) . '">' . $n . '</a>';
+        $last = $n;
+    }
+    return implode(' ', $out);
 }
 
 function kop_render_drive_docs_page() {
@@ -599,12 +835,18 @@ function kop_render_drive_docs_page() {
     $table = kop_gdl_table();
     $tabs = kop_gdl_tabs();
     $kinds = kop_gdl_kinds();
+    $sources = kop_gdl_sources();
     $tab = isset($_GET['gdl_tab'], $tabs[$_GET['gdl_tab']]) ? $_GET['gdl_tab'] : 'facility';
-    $kind = isset($_GET['gdl_kind'], $kinds[$_GET['gdl_kind']]) ? $_GET['gdl_kind'] : '';
-    $q = isset($_GET['gdl_q']) ? trim(sanitize_text_field(wp_unslash($_GET['gdl_q']))) : '';
+    $f = kop_gdl_filters($_GET);
     $paged = max(1, (int) ($_GET['gdl_page'] ?? 1));
+    $rpage = max(1, (int) ($_GET['gdl_rpage'] ?? 1));
     $per = 15;
+    $card_rows = $f['card'] !== '' ? 200 : KOP_GDL_CARD_ROWS;
     $base = admin_url('admin.php?page=kop-drive-docs');
+    $link = function (array $args) use ($base, $tab, $f) {
+        $q = array_merge(array('gdl_tab' => $tab, 'gdl_kind' => $f['kind'], 'gdl_src' => $f['src'], 'gdl_q' => $f['q']), $args);
+        return add_query_arg(array_map(function ($v) { return $v === '' || $v === null ? null : $v; }, $q), $base);
+    };
 
     echo '<div class="wrap kop-gdl"><h1>Drive Docs</h1>';
     if ($sync) {
@@ -615,62 +857,60 @@ function kop_render_drive_docs_page() {
         echo '<div class="notice notice-warning"><p>No links uploaded yet. Run <code>python scripts/gdocs-extract.py</code> and copy '
             . '<code>tmp/gdocs/links.json</code> to <code>' . esc_html(dirname(kop_gdl_path())) . '</code>.</p></div>';
     }
-    echo '<p>Links from your Google Docs and Sheets, documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine) '
-        . 'and links on the r/troubledteens wiki\'s pages, '
+    echo '<p>Links from your Google Docs and Sheets, documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine), '
+        . 'links on the r/troubledteens wiki\'s pages, and the news, court records, program pages and media in '
+        . '<a href="' . esc_url($sources['sciad']['credit_url']) . '" target="_blank" rel="noopener">SCIAD NET, the WWASP Survivor Truth archive</a>, '
         . 'that the database does not have yet, one card per facility. '
-        . 'Each shows the doc it came from and the words around it.</p>'
+        . 'Each shows where it came from and the words around it. Pick a source to work through one at a time.</p>'
         . '<ol class="kop-gdl-how"><li><strong>Read down a card.</strong> Links whose facility is a sure match start ticked; untick anything that is not about this place.</li>'
         . '<li><strong>Check <em>Goes to</em>.</strong> News goes to the news queue, court records and bills to their queues, the program\'s own site to its website links, '
         . 'and everything else (licensing reports, survivor posts, staff profiles, reference) to the resource links on the facility page. Change it on any row.</li>'
         . '<li><strong>Click <em>Add checked</em></strong>, or <em>Add everything ticked on this page</em> at the top. Facility links show on the page at once; '
-        . 'queue items wait in their queue as if sent from the browser extension, with no emails.</li>'
+        . 'queue items wait in their queue as if sent from the browser extension, with no emails. A card with many links has <em>Add all</em>, '
+        . 'which adds every sure match the card holds under the filters you picked, in batches.</li>'
         . '<li><strong>Wrong place?</strong> Pick another record in the box under the card and click <em>Add checked to that record</em>. '
         . 'On <em>Company only</em> and <em>No facility</em>, pick the record first; news can go to the queue without one.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> tab has Undo: the link comes off the record, or leaves its queue if nobody has reviewed it yet.</li></ol>';
 
-    $where = $tabs[$tab]['where'];
-    if ($kind !== '') {
-        $where .= $wpdb->prepare(' AND kind = %s', $kind);
-    }
-    if ($q !== '') {
-        $like = '%' . $wpdb->esc_like($q) . '%';
-        $where .= $wpdb->prepare(' AND (label LIKE %s OR url LIKE %s OR source_doc LIKE %s OR operator_name LIKE %s)', $like, $like, $like, $like);
-    }
+    $where = kop_gdl_where($tab, $f);
+    $src_where = $f['src'] !== '' ? $wpdb->prepare(' AND source = %s', $f['src']) : '';
 
     echo '<ul class="subsubsub">';
     $i = 0;
     foreach ($tabs as $k => $t) {
-        $n = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE " . $t['where']);
-        echo '<li><a href="' . esc_url(add_query_arg(array('gdl_tab' => $k), $base)) . '"' . ($tab === $k ? ' class="current"' : '') . '>'
+        $n = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE " . $t['where'] . $src_where);
+        echo '<li><a href="' . esc_url(add_query_arg(array('gdl_tab' => $k, 'gdl_src' => $f['src'] !== '' ? $f['src'] : null), $base)) . '"'
+            . ($tab === $k ? ' class="current"' : '') . '>'
             . esc_html($t['label']) . ' <span class="count">(' . $n . ')</span></a>' . (++$i < count($tabs) ? ' | ' : '') . '</li>';
     }
     echo '</ul><div style="clear:both"></div>';
 
+    $by_src = array();
+    foreach ((array) $wpdb->get_results("SELECT source, COUNT(*) AS n FROM {$table} WHERE " . $tabs[$tab]['where'] . ' GROUP BY source', ARRAY_A) as $r) {
+        $by_src[(string) $r['source']] = (int) $r['n'];
+    }
     echo '<form method="get" class="kop-gdl-filter"><input type="hidden" name="page" value="kop-drive-docs">'
         . '<input type="hidden" name="gdl_tab" value="' . esc_attr($tab) . '">'
-        . '<input type="search" name="gdl_q" value="' . esc_attr($q) . '" placeholder="Words, address or doc" style="width:240px" aria-label="Search"> '
+        . '<select name="gdl_src" aria-label="Source"><option value="">Every source</option>';
+    foreach ($sources as $k => $s) {
+        echo '<option value="' . esc_attr($k) . '"' . selected($f['src'], $k, false) . '>' . esc_html($s['label'] . ' (' . ($by_src[$k] ?? 0) . ')') . '</option>';
+    }
+    echo '</select> <input type="search" name="gdl_q" value="' . esc_attr($f['q']) . '" placeholder="Words, address or doc" style="width:240px" aria-label="Search"> '
         . '<select name="gdl_kind" aria-label="Kind"><option value="">Every kind</option>';
     foreach ($kinds as $k => $label) {
-        echo '<option value="' . esc_attr($k) . '"' . selected($kind, $k, false) . '>' . esc_html($label) . '</option>';
+        echo '<option value="' . esc_attr($k) . '"' . selected($f['kind'], $k, false) . '>' . esc_html($label) . '</option>';
     }
     echo '</select> <button class="button">Show</button>'
-        . ($q !== '' || $kind !== '' ? ' <a href="' . esc_url(add_query_arg('gdl_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
+        . ($f['q'] !== '' || $f['kind'] !== '' || $f['src'] !== '' || $f['card'] !== '' ? ' <a href="' . esc_url(add_query_arg('gdl_tab', $tab, $base)) . '">Clear</a>' : '') . '</form>';
+    if ($f['card'] !== '') {
+        echo '<p><a href="' . esc_url($link(array())) . '">&larr; Every card</a></p>';
+    }
 
-    $card_col = $tabs[$tab]['card'];
-    $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card_col}) FROM {$table} WHERE {$where}");
-    $cards = $wpdb->get_col("SELECT {$card_col} FROM {$table} WHERE {$where} GROUP BY {$card_col} ORDER BY COUNT(*) DESC, MIN(label) LIMIT "
-        . (($paged - 1) * $per) . ", {$per}");
+    list($total, $cards) = kop_gdl_card_page($tab, $where, $paged, $per, $f['card']);
     if (!$cards) {
         echo '<p>Nothing here.</p></div>';
         kop_gdl_render_assets();
         return;
-    }
-    $in = implode(',', array_fill(0, count($cards), '%s'));
-    $rows = $wpdb->get_results($wpdb->prepare("SELECT *, {$card_col} AS ck FROM {$table} WHERE {$where} AND {$card_col} IN ({$in}) "
-        . "ORDER BY FIELD(kind,'news','court','legislation','inspection','government','social','people','advertising','reference','archive','program_site','other'), label", $cards), ARRAY_A);
-    $by = array();
-    foreach ($rows as $r) {
-        $by[(string) $r['ck']][] = $r;
     }
 
     echo '<div class="kop-gdl-bar">';
@@ -679,30 +919,46 @@ function kop_render_drive_docs_page() {
     }
     echo '<span class="kop-gdl-progress" aria-live="polite"></span></div>';
 
-    foreach ($cards as $c) {
-        if (!empty($by[(string) $c])) {
-            kop_gdl_render_card($by[(string) $c], $tab);
+    $offset = $f['card'] !== '' ? ($rpage - 1) * $card_rows : 0;
+    foreach ($cards as list($c, $n)) {
+        $rows = kop_gdl_card_rows($tab, $where, $c, $card_rows, $offset);
+        if (!$rows) {
+            continue;
+        }
+        $meta = array('total' => $n, 'shown' => count($rows), 'offset' => $offset, 'filters' => $f, 'all' => 0,
+            'more' => $n > count($rows) + $offset && $f['card'] === '' ? $link(array('gdl_card' => $c)) : '');
+        if ($tab === 'facility' && $n > 1) {
+            $meta['all'] = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE " . kop_gdl_card_all_where((int) $c, $f));
+        }
+        kop_gdl_render_card($rows, $tab, $meta);
+        if ($f['card'] !== '' && $n > $card_rows) {
+            echo '<p class="kop-gdl-pager">Links ' . ($offset + 1) . '-' . ($offset + count($rows)) . ' of ' . $n . ' &middot; '
+                . kop_gdl_pager($rpage, (int) ceil($n / $card_rows), function ($p) use ($link, $c) { return $link(array('gdl_card' => $c, 'gdl_rpage' => $p)); })
+                . '</p>';
         }
     }
 
     $pages = (int) ceil($total / $per);
-    if ($pages > 1) {
-        echo '<p class="kop-gdl-pager">Page ' . $paged . ' of ' . $pages . ' (' . $total . ' cards) &middot; ';
-        for ($n = 1; $n <= $pages; $n++) {
-            $url = add_query_arg(array('gdl_tab' => $tab, 'gdl_page' => $n, 'gdl_q' => $q !== '' ? $q : null, 'gdl_kind' => $kind !== '' ? $kind : null), $base);
-            echo $n === $paged ? '<strong>' . $n . '</strong> ' : '<a href="' . esc_url($url) . '">' . $n . '</a> ';
-        }
-        echo '</p>';
+    if ($pages > 1 && $f['card'] === '') {
+        echo '<p class="kop-gdl-pager">Page ' . $paged . ' of ' . $pages . ' (' . $total . ' cards) &middot; '
+            . kop_gdl_pager($paged, $pages, function ($p) use ($link) { return $link(array('gdl_page' => $p)); }) . '</p>';
     }
     kop_gdl_render_assets();
     echo '</div>';
 }
 
-function kop_gdl_render_card(array $rows, $tab) {
+/**
+ * One card. $meta (from the screen): total rows the card holds under the
+ * filters, how many are shown, the "show them all" link, how many sure
+ * matches "Add all" would take, and the filters it takes them under.
+ */
+function kop_gdl_render_card(array $rows, $tab, array $meta = array()) {
     $first = $rows[0];
     $pending = in_array($tab, array('facility', 'company', 'none'), true);
     $fid = $tab === 'applied' ? (int) $first['applied_fid'] : (int) $first['facility_id'];
-    echo '<div class="kop-gdl-card" data-fid="' . $fid . '">';
+    $f = $meta['filters'] ?? array();
+    echo '<div class="kop-gdl-card" data-fid="' . $fid . '" data-kind="' . esc_attr($f['kind'] ?? '') . '" data-src="'
+        . esc_attr($f['src'] ?? '') . '" data-q="' . esc_attr($f['q'] ?? '') . '">';
     echo '<div class="kop-gdl-head">';
     if ($tab === 'facility' || ($tab === 'applied' && $fid)) {
         $label = function_exists('kop_facility_finder_label') && kop_closure_pdo()
@@ -715,6 +971,16 @@ function kop_gdl_render_card(array $rows, $tab) {
         echo '<h2>Sent to the queues</h2>';
     } else {
         echo '<h2>' . esc_html($first['source_doc'] !== '' ? $first['source_doc'] : 'Other links') . ' <span class="kop-gdl-muted">doc</span></h2>';
+    }
+    $total = (int) ($meta['total'] ?? count($rows));
+    if ($total > count($rows)) {
+        echo '<p class="kop-gdl-muted">Showing ' . ((int) ($meta['offset'] ?? 0) + 1) . '-' . ((int) ($meta['offset'] ?? 0) + count($rows))
+            . ' of ' . $total . ' links.' . (!empty($meta['more']) ? ' <a href="' . esc_url($meta['more']) . '">Show them all</a>, 200 a page.' : '') . '</p>';
+    }
+    if ($tab === 'facility' && !empty($meta['all'])) {
+        echo '<p><button type="button" class="button kop-gdl-addall" data-left="' . (int) $meta['all'] . '">Add all '
+            . (int) $meta['all'] . ' sure match' . ((int) $meta['all'] === 1 ? '' : 'es') . ' on this card</button> '
+            . '<span class="kop-gdl-muted">each to where its kind goes, under the filters above, including links not shown</span></p>';
     }
     echo '</div>';
 
@@ -779,9 +1045,20 @@ function kop_gdl_render_row(array $r, $tab) {
     if (!empty($first['text'])) {
         echo '<blockquote>' . esc_html(mb_substr(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 0, 420)) . '</blockquote>';
     }
+    if (!empty($first['archive']) && preg_match('#^https?://#i', (string) $first['archive'])) {
+        echo '<div class="kop-gdl-muted"><a href="' . esc_url($first['archive']) . '" target="_blank" rel="noopener noreferrer nofollow">Archived copy</a>'
+            . ' (the link above is the original address)</div>';
+    }
+    $src = kop_gdl_sources()[$r['source'] ?? ''] ?? array();
+    if (!empty($src['credit'])) {
+        echo '<div class="kop-gdl-muted">Credit on the record: <a href="' . esc_url($src['credit_url']) . '" target="_blank" rel="noopener">'
+            . esc_html($src['credit']) . '</a></div>';
+    }
     $also = json_decode((string) $r['also_named'], true) ?: array();
     if ($also) {
-        echo '<div class="kop-gdl-muted">Also names: ' . esc_html(implode(', ', array_map(function ($a) {
+        // A SCIAD NET collection whose name is two or more KOP records lists them all and ties none.
+        echo '<div class="kop-gdl-muted">' . (($r['source'] ?? '') === 'sciad' && (int) $r['facility_id'] === 0 ? 'Same name as these records, pick one: ' : 'Also names: ')
+            . esc_html(implode(', ', array_map(function ($a) {
             return $a['name'] . (!empty($a['state']) ? ' (' . $a['state'] . ')' : '');
         }, array_slice($also, 0, 5)))) . '</div>';
     }
@@ -869,7 +1146,32 @@ function kop_gdl_render_assets() {
             }).catch(function () { out.className = 'kop-gdl-result err'; out.textContent = 'Network error; try again.'; });
         }
 
+        // "Add all" on a facility card: the server takes the card's sure matches a batch at a time until none wait.
+        function addAll(card, btn) {
+            var out = card.querySelector('.kop-gdl-result');
+            var added = 0, problems = 0, last = -1;
+            btn.disabled = true;
+            (function next() {
+                post({ act: 'apply_card', fid: card.dataset.fid, gdl_kind: card.dataset.kind, gdl_src: card.dataset.src, gdl_q: card.dataset.q }).then(function (res) {
+                    if (!res.success) { out.className = 'kop-gdl-result err'; out.textContent = res.data || 'Failed.'; btn.disabled = false; return; }
+                    Object.keys(res.data.results || {}).forEach(function (k) {
+                        var tr = card.querySelector('tr[data-key="' + k + '"]');
+                        if (res.data.results[k].ok) added++; else problems++;
+                        if (tr) tr.classList.add('kop-gdl-gone');
+                    });
+                    var left = res.data.left || 0;
+                    out.className = 'kop-gdl-result ok';
+                    out.textContent = 'Added ' + added + (problems ? ', ' + problems + ' already on file or refused' : '') + (left ? '; ' + left + ' to go...' : '.');
+                    if (left && left !== last) { last = left; next(); return; }
+                    btn.textContent = 'Done';
+                    if (!card.querySelector('tr[data-key]:not(.kop-gdl-gone)')) card.classList.add('kop-gdl-done');
+                }).catch(function () { out.className = 'kop-gdl-result err'; out.textContent = 'Network error after ' + added + ' added; click again to carry on.'; btn.disabled = false; });
+            })();
+        }
+
         document.addEventListener('click', function (e) {
+            var many = e.target.closest('.kop-gdl-addall');
+            if (many) { addAll(many.closest('.kop-gdl-card'), many); return; }
             var btn = e.target.closest('.kop-gdl-card [data-act]');
             if (btn) { run(btn.closest('.kop-gdl-card'), btn.dataset.act, btn); return; }
             var all = e.target.closest('.kop-gdl-all');

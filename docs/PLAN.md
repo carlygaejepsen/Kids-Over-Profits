@@ -881,6 +881,48 @@ Owner decisions in Waiting on the owner item 18.
    no md5 without a key); archived articles and clippings into a review
    screen like KOP Tools > Drive Docs, through `kop_ext_find_duplicates()`,
    never published on their own. Credit per decision 18.
+   - **Part B built 2026-10-01.**
+     `scripts/sciad-links.py` writes `tmp/sciad/sciad-links.json` (and
+     `sciad-links-report.md`) in the Drive Docs row format from the survey's
+     `items.jsonl`/`programs.json`, plus group 772277's links not already in
+     SCIAD NET (385 rows). 12,651 rows: 9,438 news, 2,244 reference (program
+     info, wikis, research, media), 426 archived program pages, 265
+     government, 167 court, 18 legislation, 89 other, 4 more. Tied by exact
+     program collection only: 6,109 to a facility (680 facilities), 892 to a
+     company only (14 operators), 358 to an ambiguous name (the KOP records
+     listed, none tied), 5,292 to none. News goes in under its original
+     address where the Wayback link gives it (archived copy kept for the
+     reviewer and the queue note); archive.today short ids stay as the
+     archive link with the title. Court records get neutral titles
+     ("Complaint, 13 pages - SAFE", "Court opinion - Elevations RTC (case
+     no. 1:2014cv00015)"); a court record whose address carries a party's
+     name (120) and family or juvenile files are left out. Dropped: 77,779
+     Drive documents (part A), the survey's private classes (3,180 survivor,
+     185 photo, 33 police ...), 1,671 "Random" folder items not from a news
+     outlet, court or government, 859 blog, forum and social posts, 708
+     titles that are only a person's name, 680 by private title words
+     (letters, statements, testimony, obituaries), 259 testimony videos, 252
+     survivor-site pages, 1,115 already offered by the Google Docs, HEAL or
+     wiki files, 2,154 survivor-archive and HEAL addresses, about 170 held in
+     KOP's records, posts or news headlines; 943 news rows merged by headline
+     and year, 1,750 by address. No abstract, tag, creator or Zotero user is
+     written.
+   - Drive Docs (`inc/drive-docs.php`, table version 2: `source`, `rhash`)
+     reads `sciad-links.json` (and the wiki's file) through
+     `kop_gdl_sources()`; a reload leaves unchanged rows alone and inserts
+     in batches. The screen filters by source, shows 40 rows per card with
+     the rest a click away (200 a page), pages cards with a windowed pager,
+     and a facility card's **Add all** adds its sure matches under the
+     filters, 40 per request. SCIAD NET rows put "SCIAD NET, the WWASP
+     Survivor Truth archive" on the record (resourceLinks `source`) and in
+     the queue note with its link and the archived copy; the facility page
+     shows the credit, linked, under each group it fills
+     (`kop_facility_pages_resource_link_credit()`). Google Docs, HEAL and
+     wiki rows behave as before. `php scripts/test-drive-docs.php` and
+     `python scripts/sciad-links.py --selftest`.
+   - Main session: copy `tmp/sciad/sciad-links.json` to
+     `~/kop-import/gdocs/` after the deploy; the first page load converts
+     the table and loads about 12,700 rows.
 5. **Review and ship** (Sonnet 5.5 running `/code-review medium` after
    steps 1-2 and again after 4). `php scripts/test-survivor-archives.php`,
    `test-facility-pages.php`, `test-operator-pages.php`,
