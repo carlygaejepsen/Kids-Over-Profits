@@ -503,6 +503,19 @@ updated.
    Milestone and the Fremont County group homes are near misses for KOP
    Tools > Inspection Links. Owner: approve the first post, then run it
    monthly from the launcher.
+   **Idaho built 2026-10-01, waiting for the owner's word to post:**
+   `id_scraper.py` (Tools repo), `js/inspections/states/id.js`,
+   `/id-reports/` created on deploy. A full `--no-post` run: 40 facilities
+   (39 residential, Blue Fire Wilderness Therapy), 156 documents: 117
+   statements of deficiencies (all flagged; 503 deficiencies, 75 repeat)
+   and 39 no-deficiency letters, 2021-11-16 to 2026-09-21. 12 facility
+   folders are no longer on the state's provider list; their reports are
+   kept and marked so (three share a licence number with a listed
+   facility and say so). PDFs archived to the Drive folder `id_pdfs/`.
+   Nothing held by the privacy check. 11 names reach 10 `facilities_v2`
+   records; near misses for KOP Tools > Inspection Links: Hawks Landing,
+   Hays Shelter Home, IYR Residential Center, Blue Fire. Owner: approve
+   the first post.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

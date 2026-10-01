@@ -2527,6 +2527,7 @@ function kop_state_inspection_page_map() {
         'Pennsylvania' => 'pa-reports',
         'New Hampshire' => 'nh-reports',
         'Wyoming' => 'wy-reports',
+        'Idaho' => 'id-reports',
     );
     foreach ($pending as $state => $slug) {
         $page = function_exists('get_page_by_path') ? get_page_by_path($slug) : null;

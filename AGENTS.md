@@ -138,7 +138,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
   - `wa-reports`
   - `ar-reports`
   - `mn-reports`
-  - `mi-reports`, `nc-reports`, `nv-reports`, `ok-reports`, `or-reports`, `pa-reports`, `fl-reports`, `ga-reports`, `nh-reports`, `wy-reports`
+  - `mi-reports`, `nc-reports`, `nv-reports`, `ok-reports`, `or-reports`, `pa-reports`, `fl-reports`, `ga-reports`, `nh-reports`, `wy-reports`, `id-reports`
 - Each slug loads a state-specific renderer from `js/inspections/` plus `css/facility-reports.css`.
 - The primary data source is `api/inspections-read.php?state=XX`.
 - Static JSON files in `js/data/` remain fallback or historical snapshots:

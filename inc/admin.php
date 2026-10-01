@@ -496,6 +496,9 @@ function kop_tool_page_specs() {
         // Wyoming (owner, 2026-10-01).
         array('template' => 'page-state-reports.php', 'title' => 'Wyoming Inspection Reports', 'slug' => 'wy-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from two Wyoming agencies. The Department of Family Services certifies residential treatment centers, group homes, crisis centers and residential schools and posts <a href="https://dfs.wyo.gov/providers/substitute-care/notice-of-non-compliance-findings-and-facility-visits/">notices of non-compliance and facility visits</a>: a notice records an allegation, whether the evidence supports it, and the rules broken. The Department of Health posts federal surveys of psychiatric residential treatment facilities in <a href="https://ohlssurvey.health.wyo.gov/PublicSearch">its survey search</a>.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>The state&#8217;s documents are scans. Notices are typed and their text was read by software, which makes reading errors; facility visits are handwritten forms and are shown as documents only, so a visit listed here may or may not have found violations. The state removes a provider&#8217;s documents when it leaves the list; the copies here stay.</p><!-- /wp:paragraph -->'),
+        // Idaho (owner, 2026-10-01).
+        array('template' => 'page-state-reports.php', 'title' => 'Idaho Inspection Reports', 'slug' => 'id-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Idaho Department of Health and Welfare, Division of Licensing and Certification, which licenses children&#8217;s residential care facilities and outdoor programs and posts every survey in <a href="https://publicdocuments.dhw.idaho.gov/WebLink/Browse.aspx?id=19853&amp;dbid=0&amp;repo=PUBLIC-DOCUMENTS">its public documents library</a>: a statement of deficiencies with each rule broken, what the surveyor found and the facility&#8217;s plan of correction, or a letter saying no deficiencies were found. The state does not say which surveys followed a complaint. Facilities that have left the state&#8217;s provider list keep their reports here.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -677,7 +680,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '19';
+    $version = '20';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
