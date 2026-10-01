@@ -51,7 +51,8 @@ jobs:
         run: |
           [ -n "$KEY" ] || { echo "Repo secret KOP_SSH_KEY is not set"; exit 1; }
           mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          printf '%s\n' "$KEY" > ~/.ssh/kop_nixihost && chmod 600 ~/.ssh/kop_nixihost
+          # A key pasted on Windows may carry CRLF, which OpenSSH rejects.
+          printf '%s\n' "$KEY" | tr -d '\r' > ~/.ssh/kop_nixihost && chmod 600 ~/.ssh/kop_nixihost
           if [ -n "$KNOWN" ]; then
             printf '%s\n' "$KNOWN" >> ~/.ssh/known_hosts
           else
