@@ -25,6 +25,7 @@
  *   txt:<key>               a line or block of template text (kop_text(), kop_ie_html_start())
  *   site:name               the site name and tagline
  *   referrer:5:all|raw      a referrer / educational consultant record (referrers_master)
+ *   row:memorial:4          a row of a table with no other editor (kop_ie_row_tables())
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -170,6 +171,7 @@ function kop_ie_sources() {
         'txt'      => array('load' => 'kop_ie_txt_load', 'save' => 'kop_ie_txt_save'),
         'site'     => array('load' => 'kop_ie_site_load', 'save' => 'kop_ie_site_save'),
         'referrer' => array('load' => 'kop_ie_referrer_load', 'save' => 'kop_ie_referrer_save'),
+        'row'      => array('load' => 'kop_ie_row_load', 'save' => 'kop_ie_row_save'),
     ));
 }
 
@@ -1288,6 +1290,129 @@ function kop_ie_referrer_save(array $p, array $v) {
     $pdo->prepare('UPDATE referrers_master SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
         ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
     $page = get_page_by_path('referrers-educational-consultants');
+    if ($page) {
+        kop_ie_purge_post($page->ID);
+    }
+    return array('message' => 'Saved.');
+}
+
+/* ---- Plain table rows with no other editor (memorial, story arcs) ------------- */
+
+/**
+ * table key => array(table, title column, page slug to purge, columns). A
+ * column is array(label, type[, options or extra]). Saved by a direct UPDATE
+ * of the listed columns only; dates are YYYY-MM-DD or empty.
+ */
+function kop_ie_row_tables() {
+    return array(
+        'memorial' => array('memorial_victims', 'name', 'memorial', array(
+            'name'               => array('Name as published ("Unknown" when not released)', 'text'),
+            'age'                => array('Age at death', 'number'),
+            'program'            => array('Program', 'text'),
+            'date_of_death'      => array('Date of death (YYYY-MM-DD; use 01 for an unknown month or day)', 'date'),
+            'date_precision'     => array('How much of the date is known', 'select', array('day', 'month', 'year', 'unknown')),
+            'cause_of_death'     => array('Cause, as reported', 'textarea'),
+            'cause_category'     => array('Cause, for the filter', 'select', array('', 'suicide', 'restraint', 'medical_neglect', 'overdose', 'escape_attempt', 'drowning', 'exposure', 'violence', 'accident', 'other', 'unknown')),
+            'location'           => array('State, or region outside the US', 'text'),
+            'source_name'        => array('Source name', 'text'),
+            'source_url'         => array('Source link', 'text'),
+            'kop_url'            => array('Related page on this site', 'text'),
+            'notes'              => array('Internal notes (not shown)', 'textarea'),
+            'publication_status' => array('Shown on the memorial', 'select', array('published', 'draft', 'archived')),
+        )),
+        'arc' => array('news_story_arcs', 'title', 'news', array(
+            'title'          => array('Title', 'text'),
+            'description'    => array('Description', 'textarea'),
+            'match_terms'    => array('Phrases that file a new article under it (one a line)', 'textarea'),
+            'facility_label' => array('Facility button label', 'text'),
+            'facility_url'   => array('Facility button link (empty: no button)', 'text'),
+            'status'         => array('Status', 'select', array('active', 'archived')),
+            'display_order'  => array('Order (lower first)', 'number'),
+        )),
+    );
+}
+
+function kop_ie_row_get($key, $id) {
+    $tables = kop_ie_row_tables();
+    if (!isset($tables[$key])) {
+        throw new RuntimeException('Unknown kind of record.');
+    }
+    $pdo = kop_ie_referrer_pdo();
+    $q = $pdo->prepare('SELECT * FROM `' . $tables[$key][0] . '` WHERE id = ?');
+    $q->execute(array((int) $id));
+    $row = $q->fetch(PDO::FETCH_ASSOC);
+    if (!$row) {
+        throw new RuntimeException('That record is gone.');
+    }
+    return array($pdo, $tables[$key], $row);
+}
+
+function kop_ie_row_load(array $p) {
+    list($pdo, $t, $row) = kop_ie_row_get($p[0] ?? '', $p[1] ?? 0);
+    $fields = array();
+    foreach ($t[3] as $col => $def) {
+        if (!array_key_exists($col, $row)) {
+            continue;
+        }
+        $type = $def[1] === 'date' ? 'text' : $def[1];
+        $extra = $def[1] === 'select' ? array('options' => $def[2]) : array();
+        $fields[] = kop_ie_field($col, $def[0], $type, (string) $row[$col], $extra);
+    }
+    return array('title' => (string) $row[$t[1]], 'fields' => $fields);
+}
+
+function kop_ie_row_save(array $p, array $v) {
+    list($pdo, $t, $row) = kop_ie_row_get($p[0] ?? '', $p[1] ?? 0);
+    $set = array();
+    $params = array();
+    foreach ($t[3] as $col => $def) {
+        if (!array_key_exists($col, $v) || !array_key_exists($col, $row)) {
+            continue;
+        }
+        $val = kop_ie_clean_text($v[$col]);
+        switch ($def[1]) {
+            case 'number':
+                $val = kop_ie_int($val, $def[0], 0, 100000);
+                break;
+            case 'date':
+                if ($val === '') {
+                    $val = null;
+                } elseif (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $val) || !checkdate((int) substr($val, 5, 2), (int) substr($val, 8, 2), (int) substr($val, 0, 4))) {
+                    throw new RuntimeException($def[0] . ': a date as YYYY-MM-DD, or empty.');
+                }
+                break;
+            case 'select':
+                if (!in_array($val, $def[2], true)) {
+                    throw new RuntimeException($def[0] . ': pick one of the choices.');
+                }
+                $val = $val === '' ? null : $val;
+                break;
+            case 'text':
+                $val = trim(preg_replace('/\s+/', ' ', $val));
+                break;
+        }
+        if ($col === $t[1] && ($val === '' || $val === null)) {
+            throw new RuntimeException($def[0] . ' cannot be empty.');
+        }
+        if ($val === '' && $row[$col] === null) {
+            $val = null;   // left blank: stays empty, not ''
+        }
+        // Unchanged, or only cleaned (line endings, edge spaces): left exactly as stored.
+        $stored = $row[$col] === null ? null : trim(str_replace(array("\r\n", "\r"), "\n", (string) $row[$col]));
+        if ($def[1] === 'text' && $stored !== null) {
+            $stored = trim(preg_replace('/\s+/', ' ', $stored));
+        }
+        if ($val === $row[$col] || ($val !== null && $stored !== null && (string) $val === $stored)) {
+            continue;
+        }
+        $set[] = "`$col` = ?";
+        $params[] = $val;
+    }
+    if ($set) {
+        $params[] = (int) $row['id'];
+        $pdo->prepare('UPDATE `' . $t[0] . '` SET ' . implode(', ', $set) . ' WHERE id = ?')->execute($params);
+    }
+    $page = get_page_by_path($t[2]);
     if ($page) {
         kop_ie_purge_post($page->ID);
     }

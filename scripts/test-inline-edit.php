@@ -246,6 +246,48 @@ $out = kop_ie_referrer_apply_values($r, $vals);
 $c0 = $out['data']['referrerConsultants'][0];
 $check('referrer edits land', $out['data']['referrerAgency']['name'] === 'B' && $c0['formerIndustryStaff'] === true && $c0['pastTTIJobs'][0]['organization'] === 'Some Ranch' && $c0['isIndependent'] === false);
 
+echo "-- Memorial and story arc rows sent back unchanged (in-memory copy) --\n";
+$mem = new PDO('sqlite::memory:');
+$mem->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+foreach (array('memorial_victims', 'news_story_arcs') as $tbl) {
+    $sqlc = $pdo->query("SELECT sql FROM sqlite_master WHERE name = '$tbl'")->fetchColumn();
+    if (!$sqlc) continue;
+    $mem->exec($sqlc);
+    foreach ($pdo->query("SELECT * FROM $tbl")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        $cols = array_keys($r);
+        $mem->prepare("INSERT INTO $tbl (" . implode(',', $cols) . ') VALUES (' . implode(',', array_fill(0, count($cols), '?')) . ')')->execute(array_values($r));
+    }
+}
+if (!function_exists('kop_seed_pdo')) {
+    function kop_seed_pdo() { return $GLOBALS['kop_test_mem_pdo']; }
+}
+$GLOBALS['kop_test_mem_pdo'] = $mem;
+foreach (array('memorial' => 'memorial_victims', 'arc' => 'news_story_arcs') as $key => $tbl) {
+    $before = $mem->query("SELECT * FROM $tbl ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+    $errs = array();
+    foreach ($before as $r) {
+        try {
+            $spec = kop_ie_row_load(array($key, $r['id']));
+            $vals = array();
+            foreach ($spec['fields'] as $f) $vals[$f['name']] = $as_posted($f);
+            kop_ie_row_save(array($key, $r['id']), $vals);
+        } catch (Throwable $e) {
+            if (count($errs) < 3) $errs[] = '#' . $r['id'] . ' ' . $e->getMessage();
+        }
+    }
+    $after = $mem->query("SELECT * FROM $tbl ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+    $diff = $first_diff($before, $after);
+    $check(count($before) . " $tbl rows round-trip unchanged", !$errs && $diff === '', implode('; ', $errs) . $diff);
+}
+$id = (int) $mem->query('SELECT id FROM memorial_victims ORDER BY id LIMIT 1')->fetchColumn();
+if ($id) {
+    kop_ie_row_save(array('memorial', $id), array('age' => '15', 'date_of_death' => '1998-03-01', 'cause_category' => 'restraint'));
+    $r = $mem->query("SELECT age, date_of_death, cause_category FROM memorial_victims WHERE id = $id")->fetch(PDO::FETCH_ASSOC);
+    $check('memorial edit lands', (int) $r['age'] === 15 && $r['date_of_death'] === '1998-03-01' && $r['cause_category'] === 'restraint');
+    $bad = function ($v) use ($id) { try { kop_ie_row_save(array('memorial', $id), $v); return false; } catch (RuntimeException $e) { return true; } };
+    $check('bad date, cause or empty name refused', $bad(array('date_of_death' => '1998-02-31')) && $bad(array('cause_category' => 'murder')) && $bad(array('name' => '  ')));
+}
+
 echo "-- Bad input refused --\n";
 $refused = function ($group, $values) use ($doc, $apply) {
     try {

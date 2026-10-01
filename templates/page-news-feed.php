@@ -252,14 +252,14 @@ try {
 
     <?php if (!empty($ongoing_arcs) && !empty($show_ongoing)): ?>
         <section class="ongoing-stories" data-kop-bug-feature="news-feed/ongoing-stories" data-kop-bug-label="Ongoing Stories">
-            <h2 class="ongoing-stories-title">Ongoing Stories</h2>
-            <p class="ongoing-stories-sub">Big stories we're following as they develop.</p>
+            <h2 class="ongoing-stories-title"<?php echo function_exists('kop_text_attr') ? kop_text_attr('news:ongoing-title', 'News: ongoing stories heading') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('news:ongoing-title', 'Ongoing Stories', 'News: ongoing stories heading') : 'Ongoing Stories'); ?></h2>
+            <p class="ongoing-stories-sub"<?php echo function_exists('kop_text_attr') ? kop_text_attr('news:ongoing-sub', 'News: ongoing stories line') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('news:ongoing-sub', "Big stories we're following as they develop.", 'News: ongoing stories line') : "Big stories we're following as they develop."); ?></p>
             <div class="ongoing-stories-grid">
                 <?php foreach ($ongoing_arcs as $oa):
                     $arc_url = '?story=' . rawurlencode($oa['slug']);
                     $latest_label = !empty($oa['latest_date']) ? date('M j, Y', strtotime($oa['latest_date'])) : '';
                 ?>
-                    <div class="ongoing-card">
+                    <div class="ongoing-card"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('row:arc:' . (int) $oa['id'], $oa['title']) : ''; ?>>
                         <h3 class="ongoing-card-title"><a href="<?php echo esc_url($arc_url); ?>"><?php echo esc_html($oa['title']); ?></a></h3>
                         <div class="ongoing-card-meta">
                             <?php echo (int) $oa['article_count']; ?> article<?php echo (int) $oa['article_count'] === 1 ? '' : 's'; ?>
@@ -627,7 +627,7 @@ try {
                     ? ($arc_index[(int) $item['story_arc_id']] ?? null) : null;
             ?>
                 <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
-                <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
+                <article class="news-card"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $item['id'], 'this article') : ''; ?> data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
                     <?php if ($organization_logo_url !== ''): ?>
                         <figure class="news-card-brand">
                             <img src="<?php echo esc_url($organization_logo_url, ['https']); ?>"

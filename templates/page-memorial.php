@@ -130,7 +130,7 @@ function kop_memorial_date($date, $precision) {
             $name         = trim((string) $v['name']);
             $name_unknown = $name === '' || preg_match('/^\(?\s*(unknown|unidentified|unnamed)/i', $name);
         ?>
-        <div class="kop-record-card kop-memorial-card"
+        <div class="kop-record-card kop-memorial-card"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('row:memorial:' . (int) $v['id'], $name !== '' ? $name : 'this record') : ''; ?>
              data-location="<?php echo esc_attr($v['location'] ?? ''); ?>"
              data-cause="<?php echo esc_attr($cause_slug); ?>"
              data-decade="<?php echo esc_attr($decade); ?>">

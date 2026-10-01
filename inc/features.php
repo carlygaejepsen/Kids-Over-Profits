@@ -1304,7 +1304,7 @@ function kop_ongoing_stories_shortcode($atts) {
                     ), ARRAY_A);
                 }
             ?>
-                <div class="ongoing-card">
+                <div class="ongoing-card"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('row:arc:' . (int) $arc['id'], $arc['title']) : ''; ?>>
                     <h3 class="ongoing-card-title"><a href="<?php echo esc_url($arc_url); ?>"><?php echo esc_html($arc['title']); ?></a></h3>
                     <div class="ongoing-card-meta">
                         <?php echo (int) $arc['article_count']; ?> article<?php echo (int) $arc['article_count'] === 1 ? '' : 's'; ?>
