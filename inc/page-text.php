@@ -253,22 +253,24 @@ function kop_page_text_body_html($body, $style, $prefix) {
 }
 
 /** One section, wrapped for its style. */
-function kop_page_text_section_html($section, $prefix) {
+function kop_page_text_section_html($section, $prefix, $slug = '') {
     $id = $prefix . '-' . $section['key'];
+    // An admin's pencil (inc/inline-edit.php); empty for everyone else.
+    $edit = $slug !== '' && function_exists('kop_ie_attr') ? kop_ie_attr('pt:' . $slug . ':' . $section['key'], $section['label']) : '';
     $heading = trim((string) $section['heading']);
     $h2 = $heading !== '' ? '<h2 id="' . $id . '-title">' . kop_page_text_inline($heading, $prefix) . "</h2>\n" : '';
     $labelled = $heading !== '' ? ' aria-labelledby="' . $id . '-title"' : '';
     $body = kop_page_text_body_html($section['body'], $section['style'], $prefix);
     switch ($section['style']) {
         case 'note':
-            return '<div class="' . $prefix . '-note" id="' . $id . '" role="note">' . $h2 . $body . "</div>\n";
+            return '<div class="' . $prefix . '-note" id="' . $id . '"' . $edit . ' role="note">' . $h2 . $body . "</div>\n";
         case 'updated':
-            return '<div class="' . $prefix . '-updated" id="' . $id . '">' . $h2 . $body . "</div>\n";
+            return '<div class="' . $prefix . '-updated" id="' . $id . '"' . $edit . '>' . $h2 . $body . "</div>\n";
         case 'statement':
         case 'support':
-            return '<section class="' . $prefix . '-' . $section['style'] . '" id="' . $id . '"' . $labelled . ">\n" . $h2 . $body . "</section>\n";
+            return '<section class="' . $prefix . '-' . $section['style'] . '" id="' . $id . '"' . $edit . $labelled . ">\n" . $h2 . $body . "</section>\n";
         default:
-            return '<section id="' . $id . '"' . $labelled . ">\n" . $h2 . $body . "</section>\n";
+            return '<section id="' . $id . '"' . $edit . $labelled . ">\n" . $h2 . $body . "</section>\n";
     }
 }
 
@@ -289,7 +291,7 @@ function kop_page_text_render($slug, $opts = array()) {
         if (isset($opts['skip']) && in_array($s['key'], $opts['skip'], true)) {
             continue;
         }
-        echo kop_page_text_section_html($s, $page['prefix']);
+        echo kop_page_text_section_html($s, $page['prefix'], $slug);
         if (isset($opts['after'][$s['key']]) && is_callable($opts['after'][$s['key']])) {
             call_user_func($opts['after'][$s['key']]);
         }

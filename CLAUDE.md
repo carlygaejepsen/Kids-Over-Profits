@@ -90,6 +90,9 @@ php scripts/test-indigenous-schools.php          # the first move and the page, 
 # /young-adult-programs/, managed at KOP Tools > Young Adult Programs, filled from Woodbury Facts' "Young adult programs (18+)" tab
 php scripts/test-young-adult-programs.php       # records, facts + exact undo, every no-record Woodbury item, the page
 php scripts/test-young-adult-move.php           # the first move of 18+ facility records, on an in-memory copy (sync the mirror first)
+# Edit in place (inc/inline-edit.php, js/inline-edit.js): admins get a pencil on every marked element
+# (kop_ie_attr('<source>:<what>')) that saves through the source's own save path; a new page or field gets a marker there
+php scripts/test-inline-edit.php                  # every facility sent back unchanged is unchanged, edits land, against tmp/prod.sqlite
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # "Send to KOP" Chrome extension (browser-extension/send-to-kop/, loaded unpacked, not deployed) posts to

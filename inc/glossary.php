@@ -335,7 +335,7 @@ function kop_glossary_render_tag($tag, $modifier, $page_url) {
 function kop_glossary_render_entry($entry, $page_url, $ref_base, $show) {
     $id = $entry['id'];
     ?>
-    <div class="kop-gl-entry" id="<?php echo esc_attr($id); ?>"
+    <div class="kop-gl-entry" id="<?php echo esc_attr($id); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('gl:' . $id, $entry['term']) : ''; ?>
          data-programs="<?php echo esc_attr(implode(' ', kop_glossary_entry_programs($entry))); ?>"
          data-search="<?php echo esc_attr(kop_glossary_entry_haystack($entry)); ?>"<?php echo $show ? '' : ' hidden'; ?>>
         <dt class="kop-gl-term">

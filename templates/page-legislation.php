@@ -187,7 +187,7 @@ $legislation_flag_for = static function ($jurisdiction) {
             $flag_image   = $legislation_flag_for($bill['jurisdiction'] ?? '');
             if ($flag_image) $show_flag_credit = true;
         ?>
-        <div class="kop-record-card" id="bill-<?php echo (int) $bill['id']; ?>"
+        <div class="kop-record-card" id="bill-<?php echo (int) $bill['id']; ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:legislation:' . (int) $bill['id'], (string) $bill['bill_number']) : ''; ?>
              data-status="<?php echo esc_attr($status_slug); ?>"
              data-jurisdiction="<?php echo esc_attr($bill['jurisdiction'] ?? ''); ?>"
              data-position="<?php echo esc_attr($position); ?>"

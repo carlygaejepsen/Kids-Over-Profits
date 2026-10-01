@@ -98,6 +98,9 @@ require_once get_stylesheet_directory() . '/inc/glossary-editor.php';
 require_once get_stylesheet_directory() . '/inc/page-text.php';
 require_once get_stylesheet_directory() . '/inc/page-text-editor.php';
 
+// Edit in place: a pencil on every piece of text for admins, saving to wherever it lives
+require_once get_stylesheet_directory() . '/inc/inline-edit.php';
+
 // Indigenous residential schools: their own records, never TTI facilities
 // (listed on /indian-boarding-schools/, KOP Data Tools > Indigenous Schools)
 require_once get_stylesheet_directory() . '/inc/indigenous-schools.php';

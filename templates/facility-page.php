@@ -23,6 +23,18 @@ if (!$page) {
     return;
 }
 
+// An admin's pencil on a group of the record's fields (inc/inline-edit.php); '' for everyone else.
+$kop_fp_edit = static function ($group, $label) use ($page) {
+    return function_exists('kop_ie_attr') ? kop_ie_attr('facility:' . (int) $page['id'] . ':' . $group, $label) : '';
+};
+// Rail fact label => the group of fields behind it.
+$kop_fp_fact_groups = array(
+    'Type' => 'details', 'Serves' => 'details', 'Capacity' => 'details', 'Current census' => 'details', 'Ownership' => 'details',
+    'Operated' => 'status',
+    'Operator' => 'people', 'Owners' => 'people', 'Other operators' => 'people', 'Past operators' => 'people', 'Investors' => 'people', 'Known referrers' => 'people',
+    'Accreditation' => 'credentials', 'Past accreditation' => 'credentials', 'Memberships' => 'credentials', 'Certifications' => 'credentials', 'Licensing' => 'credentials',
+);
+
 $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
     if (!$items) return;
     echo '<ul class="' . esc_attr($class) . '">';
@@ -79,7 +91,7 @@ get_header();
                 <?php endif; ?>
             <?php endif; ?>
         </p>
-        <h1 class="entry-title kop-fp-title"><?php echo esc_html($page['name']); ?></h1>
+        <h1 class="entry-title kop-fp-title"<?php echo $kop_fp_edit('names', 'names'); ?>><?php echo esc_html($page['name']); ?></h1>
         <?php if ($page['current_name'] !== '') : ?>
             <p class="kop-fp-formerly">Now known as <?php echo esc_html($page['current_name']); ?></p>
         <?php endif; ?>
@@ -89,7 +101,7 @@ get_header();
         <?php if ($page['aka']) : ?>
             <p class="kop-fp-formerly">Also known as <?php echo esc_html(implode(', ', $page['aka'])); ?></p>
         <?php endif; ?>
-        <div class="kop-fp-badges">
+        <div class="kop-fp-badges"<?php echo $kop_fp_edit('status', 'status and years'); ?>>
             <?php if ($page['status'] !== '') : ?>
                 <span class="kop-fp-status kop-fp-status--<?php echo esc_attr($page['status_class']); ?>"><?php echo esc_html($page['status']); ?></span>
             <?php endif; ?>
@@ -105,7 +117,7 @@ get_header();
             <h2>At a glance</h2>
             <dl class="kop-fp-facts">
                 <?php if ($page['addresses']) : ?>
-                    <div>
+                    <div<?php echo $kop_fp_edit('location', 'address'); ?>>
                         <dt><?php echo count($page['addresses']) > 1 ? 'Addresses' : 'Address'; ?></dt>
                         <?php foreach ($page['addresses'] as $addr) : ?>
                             <dd><?php echo esc_html($addr); ?></dd>
@@ -113,7 +125,7 @@ get_header();
                     </div>
                 <?php endif; ?>
                 <?php if ($page['former_locations']) : ?>
-                    <div>
+                    <div<?php echo $kop_fp_edit('location', 'former locations'); ?>>
                         <dt>Former locations</dt>
                         <?php foreach ($page['former_locations'] as $fl) : ?>
                             <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
@@ -121,7 +133,7 @@ get_header();
                     </div>
                 <?php endif; ?>
                 <?php foreach ($page['facts'] as $fact) : ?>
-                    <div>
+                    <div<?php echo isset($kop_fp_fact_groups[$fact['label']]) ? $kop_fp_edit($kop_fp_fact_groups[$fact['label']], strtolower($fact['label'])) : ''; ?>>
                         <dt><?php echo esc_html($fact['label']); ?></dt>
                         <?php if (is_array($fact['value'])) : ?>
                             <?php foreach ($fact['value'] as $v) : ?><dd><?php echo esc_html($v); ?></dd><?php endforeach; ?>
@@ -155,7 +167,7 @@ get_header();
 
         <div class="kop-fp-body kop-fp-generated-body">
 
-            <p class="kop-fp-summary"><?php echo esc_html($page['summary']); ?></p>
+            <p class="kop-fp-summary"<?php echo $kop_fp_edit('all', 'every field of this facility'); ?>><?php echo esc_html($page['summary']); ?></p>
 
             <?php if (count($kop_fp_sections) > 1) : ?>
             <nav class="kop-fp-jump" aria-label="On this page">
@@ -236,7 +248,7 @@ get_header();
                     <?php foreach ($page['news'] as $n) :
                         $bits = array_filter(array($n['outlet'], $n['date_label'], $n['type']), 'strlen');
                         ?>
-                        <li>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $n['id'], 'this article') : ''; ?>>
                             <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
                                 <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
                             <?php else : ?>
@@ -257,7 +269,7 @@ get_header();
                     <?php foreach ($page['lawsuits'] as $l) :
                         $bits = array_filter(array($l['year'], $l['status'], $l['court'], $l['case_number']), 'strlen');
                         ?>
-                        <li>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:lawsuit:' . (int) $l['id'], 'this lawsuit') : ''; ?>>
                             <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
                             <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
                             <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
@@ -295,7 +307,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($kop_fp_has_practices) : ?>
-            <section class="kop-fp-section" id="practices">
+            <section class="kop-fp-section" id="practices"<?php echo $kop_fp_edit('practices', 'reported practices'); ?>>
                 <h2>Reported practices</h2>
                 <?php foreach ($page['practices'] as $group) : ?>
                     <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
@@ -307,7 +319,7 @@ get_header();
             <?php if ($kop_fp_has_staff) :
                 $staff_labels = array('administrator' => 'Administration', 'notableStaff' => 'Notable staff', 'pastTTIJobs' => 'Staff who came from other programs');
                 ?>
-            <section class="kop-fp-section" id="staff">
+            <section class="kop-fp-section" id="staff"<?php echo $kop_fp_edit('staff', 'staff'); ?>>
                 <h2>Staff</h2>
                 <?php foreach ($staff_labels as $key => $label) :
                     if (empty($page['staff'][$key])) continue;
@@ -373,7 +385,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($kop_fp_has_testimony) : ?>
-            <section class="kop-fp-section" id="testimony">
+            <section class="kop-fp-section" id="testimony"<?php echo $kop_fp_edit('testimony', 'survivor testimony'); ?>>
                 <h2>Survivor testimony</h2>
                 <p class="kop-fp-detail">First-person accounts from people who were at this facility, published with their permission.</p>
                 <?php foreach ($page['testimony'] as $kop_fp_t) : ?>
@@ -386,7 +398,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($kop_fp_has_notes) : ?>
-            <section class="kop-fp-section" id="notes">
+            <section class="kop-fp-section" id="notes"<?php echo $kop_fp_edit('notes', 'research notes'); ?>>
                 <h2>Research notes</h2>
                 <?php $kop_fp_list($page['notes'], 'kop-fp-notes'); ?>
                 <?php if ($page['field_notes']) : ?>
@@ -453,7 +465,7 @@ get_header();
                     <?php endforeach; ?>
                 <?php endif; ?>
                 <?php if ($page['profile_links']) : ?>
-                    <h3 class="kop-fp-subhead">External links</h3>
+                    <h3 class="kop-fp-subhead"<?php echo $kop_fp_edit('links', 'external links'); ?>>External links</h3>
                     <?php
                     // A program's own site is linked as an archived snapshot
                     // (inc/facility-pages.php); say so once rather than on every row.

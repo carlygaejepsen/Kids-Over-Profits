@@ -1,0 +1,326 @@
+/* Edit in place (inc/inline-edit.php, js/inline-edit.js). Admins only. */
+
+.kop-ie-block {
+    display: contents;
+}
+
+.kop-ie-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 99980;
+}
+
+.kop-ie-box {
+    position: absolute;
+    pointer-events: none;
+    border: 2px dashed var(--kop-orange-ink, #A3570D);
+    border-radius: 4px;
+}
+
+button.kop-ie-pen,
+button.kop-ie-pen:hover,
+button.kop-ie-pen:focus,
+button.kop-ie-pen:active {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    min-height: 0;
+    padding: 0;
+    margin: 0;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 4, 53, 0.35);
+}
+
+button.kop-ie-pen {
+    color: #fff;
+    background: var(--kop-orange-fill, #A3570D);
+    opacity: 0.85;
+}
+
+button.kop-ie-pen:hover,
+button.kop-ie-pen:focus,
+button.kop-ie-pen:active {
+    color: #fff;
+    background: var(--kop-midnight, #000435);
+    opacity: 1;
+    outline: 2px solid var(--kop-orange-ink, #A3570D);
+    outline-offset: 1px;
+}
+
+/* ---- Toolbar ---------------------------------------------------------- */
+
+.kop-ie-bar {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    z-index: 99990;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-width: calc(100vw - 24px);
+    padding: 6px;
+    border-radius: 8px;
+    background: var(--kop-midnight, #000435);
+    box-shadow: 0 2px 10px rgba(0, 4, 53, 0.4);
+    font-size: 13px;
+}
+
+button.kop-ie-bar-btn,
+a.kop-ie-bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 0;
+    padding: 5px 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+    color: #fff;
+    background: var(--kop-midnight, #000435);
+    cursor: pointer;
+}
+
+button.kop-ie-bar-btn:hover,
+button.kop-ie-bar-btn:focus,
+button.kop-ie-bar-btn:active,
+a.kop-ie-bar-btn:hover,
+a.kop-ie-bar-btn:focus,
+a.kop-ie-bar-btn:active {
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+    text-decoration: none;
+}
+
+/* ---- Dialog -------------------------------------------------------------- */
+
+dialog.kop-ie-dialog {
+    width: min(760px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(0, 4, 53, 0.45);
+}
+
+dialog.kop-ie-dialog::backdrop {
+    background: rgba(0, 4, 53, 0.55);
+}
+
+.kop-ie-form {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 48px);
+}
+
+.kop-ie-dialog h2.kop-ie-title {
+    margin: 0;
+    padding: 16px 20px 10px;
+    font-size: 20px;
+    line-height: 1.3;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-body {
+    overflow-y: auto;
+    padding: 0 20px 12px;
+}
+
+.kop-ie-dialog .kop-ie-help {
+    margin: 2px 0 6px;
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-ie-field {
+    margin: 0 0 14px;
+}
+
+.kop-ie-dialog .kop-ie-label {
+    display: block;
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-dialog .kop-ie-input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 4px;
+    font: inherit;
+    font-size: 15px;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+.kop-ie-dialog select.kop-ie-input option {
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+.kop-ie-dialog .kop-ie-input:focus {
+    outline: 2px solid var(--kop-teal-fill, #1F6F7A);
+    outline-offset: 0;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+.kop-ie-dialog textarea.kop-ie-code {
+    font-family: Consolas, Menlo, monospace;
+    font-size: 13px;
+    white-space: pre;
+}
+
+.kop-ie-section {
+    margin: 0 0 16px;
+    padding: 8px 12px 0;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+}
+
+.kop-ie-dialog .kop-ie-section legend {
+    padding: 0 6px;
+    font-weight: 700;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 4px 12px;
+}
+
+.kop-ie-dialog .kop-ie-check {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-item,
+.kop-ie-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 0 0 6px;
+    padding: 6px;
+    border-radius: 4px;
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-ie-item textarea {
+    flex: 1 1 300px;
+}
+
+.kop-ie-cell {
+    flex: 1 1 140px;
+}
+
+.kop-ie-cell--wide {
+    flex-basis: 100%;
+}
+
+button.kop-ie-mini,
+button.kop-ie-cancel,
+button.kop-ie-save {
+    min-height: 0;
+    border-radius: 4px;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+}
+
+button.kop-ie-mini,
+button.kop-ie-mini:hover,
+button.kop-ie-mini:focus,
+button.kop-ie-mini:active {
+    padding: 3px 8px;
+    font-size: 12px;
+    border: 1px solid var(--kop-midnight, #000435);
+}
+
+button.kop-ie-mini {
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+button.kop-ie-mini:hover,
+button.kop-ie-mini:focus,
+button.kop-ie-mini:active {
+    color: #fff;
+    background: var(--kop-midnight, #000435);
+}
+
+.kop-ie-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+.kop-ie-dialog .kop-ie-status {
+    flex: 1;
+    margin: 0;
+    font-size: 14px;
+    color: var(--kop-midnight, #000435);
+}
+
+button.kop-ie-cancel,
+button.kop-ie-cancel:hover,
+button.kop-ie-cancel:focus,
+button.kop-ie-cancel:active,
+button.kop-ie-save,
+button.kop-ie-save:hover,
+button.kop-ie-save:focus,
+button.kop-ie-save:active {
+    padding: 7px 16px;
+    font-size: 15px;
+    border: 2px solid var(--kop-midnight, #000435);
+}
+
+button.kop-ie-cancel {
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+button.kop-ie-cancel:hover,
+button.kop-ie-cancel:focus,
+button.kop-ie-cancel:active {
+    color: var(--kop-midnight, #000435);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+button.kop-ie-save {
+    color: #fff;
+    background: var(--kop-teal-fill, #1F6F7A);
+}
+
+button.kop-ie-save:hover,
+button.kop-ie-save:focus,
+button.kop-ie-save:active {
+    color: #fff;
+    background: var(--kop-midnight, #000435);
+}
+
+button.kop-ie-save[disabled] {
+    opacity: 0.6;
+    cursor: default;
+}
