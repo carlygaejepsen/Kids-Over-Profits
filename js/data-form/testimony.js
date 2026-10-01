@@ -8,7 +8,8 @@
  * notes, the parent company notes, the custom treatment / philosophy /
  * incident entries, a provider's other TTI practices and referral notes, and
  * an open submission's reason), each with a "Move to testimony" button that
- * takes the text out of the note and into a new entry.
+ * takes the text out of the note and into a new entry. A note that repeats
+ * text already in testimony gets "Remove copy" instead, which only deletes it.
  *
  * Nothing is public by default: publish stays false until the "OK to publish"
  * box is ticked, and only then does /facility/<slug>/ show the entry
@@ -164,9 +165,24 @@
             items.push({ label: "Submitter's reason", text: reason, remove: () => {} });
         }
 
-        // Anything already moved (or copied) is not offered again.
-        const moved = new Set(testimonyList(facility).map(entry => String(entry.text || '').trim()));
-        return items.filter(item => !moved.has(item.text));
+        // A note whose text is already a testimony entry is a leftover copy:
+        // submissions often hold the same account twice (a field note and a
+        // custom list entry, or a note under a field id from the submitter's
+        // own form). Hiding it left it in the record for good, so it is
+        // offered as a copy to remove instead. The submitter's reason is not
+        // part of the record, so once copied it is simply not offered again.
+        const moved = new Set(testimonyList(facility).map(entry => sameText(entry.text)));
+        return items.filter(item => {
+            if (!moved.has(sameText(item.text))) return true;
+            if (item.label === "Submitter's reason") return false;
+            item.duplicate = true;
+            return true;
+        });
+    }
+
+    /** Text compared for "already in testimony": whitespace runs collapsed. */
+    function sameText(text) {
+        return String(text || '').replace(/\s+/g, ' ').trim();
     }
 
     function removeFieldNote(facility, key, note) {
@@ -194,22 +210,28 @@
     function moveToTestimony(item) {
         const facility = currentFacility();
         if (!facility) return;
-        const { source, date } = currentSource();
-        testimonyList(facility).push({
-            id: newId(),
-            text: item.text,
-            source,
-            date,
-            movedFrom: item.label,
-            publish: false
-        });
+        // A copy of text already in testimony is only removed, never added twice.
+        const already = testimonyList(facility).some(entry => sameText(entry.text) === sameText(item.text));
+        if (!already) {
+            const { source, date } = currentSource();
+            testimonyList(facility).push({
+                id: newId(),
+                text: item.text,
+                source,
+                date,
+                movedFrom: item.label,
+                publish: false
+            });
+        }
         item.remove();
         changed();
         // Re-render the whole form so the note disappears where it was.
         if (typeof window.updateAllUI === 'function') window.updateAllUI();
         else render();
         if (typeof window.showUploadStatus === 'function') {
-            window.showUploadStatus('Moved to Survivor Testimony. It stays private until "OK to publish" is ticked.', 'success');
+            window.showUploadStatus(already
+                ? 'Removed the copy. The text is still in Survivor Testimony.'
+                : 'Moved to Survivor Testimony. It stays private until "OK to publish" is ticked.', 'success');
         }
     }
 
@@ -303,10 +325,12 @@
         notes.forEach(item => {
             const rowEl = el('div', { style: 'display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--kop-border-primary, #B6E3D4);' });
             const body = el('div', { style: 'flex: 1;' });
-            body.append(el('div', { style: 'font-size: 12px; font-weight: 600;' }, item.label));
+            body.append(el('div', { style: 'font-size: 12px; font-weight: 600;' },
+                item.duplicate ? `${item.label} (copy of text already in testimony)` : item.label));
             const textEl = el('div', { style: 'font-size: 14px;', title: item.text }, preview(item.text));
             body.append(textEl);
-            const move = el('button', { type: 'button', className: 'btn', style: 'background: var(--kop-teal-ink, #24757F); color: var(--kop-white, #fff); border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap;' }, 'Move to testimony');
+            const move = el('button', { type: 'button', className: 'btn', style: 'background: var(--kop-teal-ink, #24757F); color: var(--kop-white, #fff); border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap;' },
+                item.duplicate ? 'Remove copy' : 'Move to testimony');
             move.addEventListener('click', () => moveToTestimony(item));
             rowEl.append(body, move);
             movable.append(rowEl);

@@ -93,6 +93,9 @@ php scripts/test-young-adult-move.php           # the first move of 18+ facility
 # Edit in place (inc/inline-edit.php, js/inline-edit.js): admins get a pencil on every marked element
 # (kop_ie_attr('<source>:<what>')) that saves through the source's own save path; a new page or field gets a marker there
 php scripts/test-inline-edit.php                  # every facility sent back unchanged is unchanged, edits land, against tmp/prod.sqlite
+# Survivor Testimony "Move to testimony" in the admin data form (js/data-form/testimony.js): every copy of a
+# moved note can be cleared ("Remove copy"), moved text leaves the fields the public pages list
+node scripts/test-testimony-move.js
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # Header search dropdown and the site-wide search widget (kop_v2_search() in inc/facility-v2-readers.php, read by
