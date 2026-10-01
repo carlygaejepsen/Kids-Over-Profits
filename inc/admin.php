@@ -1926,6 +1926,16 @@ function kop_apply_research_facility_tags() {
         }
         $offset  = (int) ($doc['pdf_page_offset'] ?? 0);
         $current = array_map('intval', (array) get_post_meta($aid, $meta, false));
+        // Two requests running this at once (before the runner had a lock) each added every tag: keep one of each.
+        $deduped = 0;
+        foreach (array_count_values($current) as $fid => $n) {
+            if ($n > 1) {
+                delete_post_meta($aid, $meta, $fid);
+                add_post_meta($aid, $meta, $fid);
+                $deduped += $n - 1;
+            }
+        }
+        $current = array_values(array_unique($current));
         $cites   = get_post_meta($aid, 'kop_research_facility_pages', true);
         $cites   = is_array($cites) ? $cites : array();
         $added   = 0;
@@ -1951,7 +1961,7 @@ function kop_apply_research_facility_tags() {
             $applied[$pair] = 1;
         }
         update_post_meta($aid, 'kop_research_facility_pages', $cites);
-        $done[] = 'att:' . $aid . ' +' . $added;
+        $done[] = 'att:' . $aid . ' +' . $added . ($deduped ? ' -' . $deduped . ' duplicate' . ($deduped > 1 ? 's' : '') : '');
     }
     update_option('kop_research_facility_tags_applied', $applied, false);
     return $done;
@@ -2113,12 +2123,35 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '70';
+    $version = '71';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
-    kop_apply_template_assignments();
-    update_option('kop_template_assignments_applied', $version);
+    // One run at a time: right after a deploy many requests arrive before the
+    // first finishes, and each used to apply the seeds (research tags were
+    // added twice). add_option() updates on a clash, so the lock is a plain
+    // INSERT IGNORE; a lock older than 15 minutes is from a run that died.
+    global $wpdb;
+    $lock = 'kop_template_assignments_lock';
+    $take = function () use ($wpdb, $lock) {
+        return (int) $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')", $lock, (string) time())) === 1;
+    };
+    if (!$take()) {
+        $since = (int) $wpdb->get_var($wpdb->prepare("SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", $lock));
+        if ($since > time() - 15 * MINUTE_IN_SECONDS) {
+            return;
+        }
+        $wpdb->delete($wpdb->options, array('option_name' => $lock));
+        if (!$take()) {
+            return;
+        }
+    }
+    try {
+        kop_apply_template_assignments();
+        update_option('kop_template_assignments_applied', $version);
+    } finally {
+        $wpdb->delete($wpdb->options, array('option_name' => $lock));
+    }
 }
 add_action('init', 'kop_maybe_apply_template_assignments', 20);
 

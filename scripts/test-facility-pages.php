@@ -369,13 +369,30 @@ function update_post_meta($id, $key, $value) {
     $pdo->prepare('DELETE FROM temp.wpdl_postmeta WHERE post_id = ? AND meta_key = ?')->execute(array((int) $id, $key));
     return add_post_meta($id, $key, $value);
 }
+function delete_post_meta($id, $key, $value = '') {
+    global $pdo;
+    $sql = 'DELETE FROM temp.wpdl_postmeta WHERE post_id = ? AND meta_key = ?' . ($value !== '' ? ' AND meta_value = ?' : '');
+    return $pdo->prepare($sql)->execute($value !== '' ? array((int) $id, $key, (string) $value) : array((int) $id, $key));
+}
 $pdo->exec('CREATE TEMP TABLE wpdl_postmeta AS SELECT * FROM main.wpdl_postmeta');
+// Start from a site the seed has not reached (the mirror is the live site, already tagged),
+// plus the leftover of two runs at once: one facility tagged twice.
+$seed_atts = array_values(array_unique($seed_ids));
+$pdo->exec("DELETE FROM temp.wpdl_postmeta WHERE meta_key = 'kop_research_facilities' AND post_id IN (" . implode(',', array_map('intval', $seed_atts)) . ')');
+$twice = array_key_first($seed_ids);
+add_post_meta($seed_ids[$twice], 'kop_research_facilities', $twice);
+add_post_meta($seed_ids[$twice], 'kop_research_facilities', $twice);
+$index_untagged = kop_facility_pages_index(true);
 $research_summary = kop_apply_research_facility_tags();
-$tagged = array_map('intval', $wpdb->get_col("SELECT meta_value FROM wpdl_postmeta WHERE meta_key = 'kop_research_facilities'"));
+$tagged = array_map('intval', $wpdb->get_col("SELECT meta_value FROM wpdl_postmeta WHERE meta_key = 'kop_research_facilities' AND post_id IN ("
+    . implode(',', array_map('intval', $seed_atts)) . ')'));
 $check('the deploy step tags every seeded facility once', count($tagged) === count($seed_ids) && !array_diff(array_keys($seed_ids), $tagged),
     implode(', ', $research_summary) . ', ' . count($tagged) . ' tags');
+$again = kop_apply_research_facility_tags();
+$check('a second run adds nothing', count($wpdb->get_col("SELECT meta_value FROM wpdl_postmeta WHERE meta_key = 'kop_research_facilities' AND post_id IN ("
+    . implode(',', array_map('intval', $seed_atts)) . ')')) === count($seed_ids), implode(', ', $again));
 $research_index = kop_facility_pages_index(true);
-$check('the tags change the index fingerprint', $research_index['fingerprint'] !== $index['fingerprint']);
+$check('the tags change the index fingerprint', $research_index['fingerprint'] !== $index_untagged['fingerprint']);
 $no_page = array();
 foreach ($seed_ids as $fid => $att) if (!isset($research_index['ids'][$fid])) $no_page[] = $fid;
 $check('every tagged facility has a page', !$no_page, $no_page ? implode(', ', $no_page) : count($seed_ids) . ' pages, ' . (count($research_index['ids']) - $eligible) . ' of them new');
