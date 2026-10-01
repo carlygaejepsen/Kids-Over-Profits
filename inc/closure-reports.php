@@ -49,6 +49,13 @@ function kop_closure_report_stages() {
     );
 }
 
+function kop_closure_classify_report($facility_id, $current_status, $target_status) {
+    if (!$facility_id) {
+        return 'unmatched';
+    }
+    return $current_status === 'Closed' || $current_status === $target_status ? 'already' : 'pending';
+}
+
 /** The records DB (news_submissions lives there, not in $wpdb on prod). */
 function kop_closure_pdo() {
     $pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
@@ -386,8 +393,7 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
             $stmt->execute(array($r['facility_id']));
             $r['current_status'] = $stmt->fetchColumn() ?: null;
         }
-        $r['report_status'] = !$r['facility_id'] ? 'unmatched'
-            : ($r['current_status'] === $r['target_status'] ? 'already' : 'pending');
+        $r['report_status'] = kop_closure_classify_report($r['facility_id'], $r['current_status'], $r['target_status']);
     }
     unset($r);
 

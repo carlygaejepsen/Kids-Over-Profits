@@ -77,6 +77,12 @@ $check('stage case folded', $parsed[2]['stage'] === 'suspended');
 $check('no closures array is unreadable', kop_closure_parse_reply('{"answer":"none"}', $linked) === null);
 $check('an empty list is a clean "none"', kop_closure_parse_reply('{"closures":[]}', $linked) === array());
 $check('YYYY-MM kept', kop_closure_clean_date('2024-11') === '2024-11');
+$check('closed facilities do not create another review alert',
+    kop_closure_classify_report(11, 'Closed', 'Suspended') === 'already');
+$check('an open facility still needs review',
+    kop_closure_classify_report(11, 'Open', 'Closed') === 'pending');
+$check('unmatched reports still need review',
+    kop_closure_classify_report(null, null, 'Closed') === 'unmatched');
 
 $text = 'LEBANON, Ind. - The Refuge Girls Academy closed last week, the ministry said. “We made the difficult decision,” a spokesperson wrote.';
 $check('a copied quote is found', kop_closure_quote_found('The Refuge Girls Academy closed last week, the ministry said.', $text));
