@@ -107,6 +107,10 @@ php scripts/test-facility-finder.php              # search by name/past name/id 
 # inc/ajax-search-lite.php, inc/global-search.php, search.php): also matches identification.pastNames/otherNames,
 # shown as "Formerly X" / "Also known as X", current-name hits ranked first
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
+# Facility names in free-text lists (inc/facility-suggest.php): kop/v1/facility-suggest feeds the data forms'
+# 'facilityref' autocomplete (ttiReferrals, knownReferrals, facilitiesReferred; reuses kop_v2_search); kop/v1/facility-links
+# resolves names to /facility/<slug>/ for "Refers young people to" on /mental-health-providers/ (one batch, ambiguous never links)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-links.php   # prints the Billings list's linked/ambiguous/unmatched names
 # "Send to KOP" Chrome extension (browser-extension/send-to-kop/, loaded unpacked, not deployed) posts to
 # kop/v1/extension/* (inc/source-submissions.php): articles -> news_submissions, lawsuits, legislation,
 # anything else -> KOP Tools > Websites Sent In; same duplicate rules as the public forms

@@ -518,7 +518,9 @@
             if (path.includes('parentCompanies') || path === 'otherOperators') defaultCategory = 'operator';
             else if (path.includes('Owners') || path.includes('founders') || path.includes('keyExecutives') || path.includes('investors') || path.includes('keyPersonnel')) defaultCategory = 'human';
             else if (path.includes('Referrers') || path.includes('knownReferrers')) defaultCategory = 'referrer';
-            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred') || path.includes('ttiReferrals')) defaultCategory = 'facility';
+            // Facility names: suggests real facility records from the server as you type
+            // (js/autocomplete.js 'facilityref'), free text still allowed.
+            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred') || path.includes('ttiReferrals')) defaultCategory = 'facilityref';
             else if (path.includes('transportersUsed')) defaultCategory = 'transporter';
             else if (path.includes('accreditations')) defaultCategory = 'accreditation';
             else if (path === 'memberships' || path.includes('affiliations')) defaultCategory = 'membership';

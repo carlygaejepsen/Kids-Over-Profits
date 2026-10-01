@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!container) return;
 
     let allProviders = [];
+    // Names in the referral lists that resolve to exactly one facility page (inc/facility-suggest.php).
+    let facilityLinks = {};
 
     const clean = v => (typeof v === 'string' ? v.trim() : (v ? String(v) : ''));
     const esc = v => clean(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c] || c));
@@ -59,6 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (res.success && res.projects && Object.values(res.projects).length) {
                 allProviders = Object.values(res.projects);
                 allProviders.sort((a, b) => (a.db_name || '').localeCompare(b.db_name || ''));
+                return loadFacilityLinks(allProviders).then(() => res);
+            }
+            return res;
+        })
+        .then(res => {
+            if (res.success && res.projects && Object.values(res.projects).length) {
                 const locs = new Set();
                 allProviders.forEach(p => recordStates(p).forEach(s => locs.add(s)));
                 statusFilter.innerHTML = '<option value="">All Locations</option>' + Array.from(locs).sort().map(l => `<option value="${l}">${l}</option>`).join('');
@@ -119,6 +127,56 @@ document.addEventListener('DOMContentLoaded', function () {
             return role && name ? `${name} (${role})` : (name || role);
         }
         return clean(item);
+    }
+
+    /**
+     * One list entry as the names it holds. An entry with two or more commas is a
+     * pasted list (the Billings Clinic record was entered that way) and is split
+     * on the commas; anything else is one name. Same rule as
+     * kop_facility_link_split_list() in inc/facility-suggest.php.
+     */
+    function splitNames(entry) {
+        const text = itemText(entry);
+        if (!text) return [];
+        if ((text.match(/,/g) || []).length < 2) return [text];
+        return text.split(/\s*,\s*/).map(clean).filter(Boolean);
+    }
+
+    function referralNames(arr) {
+        return (Array.isArray(arr) ? arr : (arr ? [arr] : [])).reduce((all, e) => all.concat(splitNames(e)), []);
+    }
+
+    /**
+     * One request for every referral name on the page: the server answers with
+     * the names that resolve to exactly one facility page. A failure leaves
+     * plain text, never a broken page.
+     */
+    function loadFacilityLinks(providers) {
+        const names = new Set();
+        providers.forEach(p => sites(p).forEach(s => {
+            referralNames(s.providerDetails && s.providerDetails.ttiReferrals).forEach(n => names.add(n));
+        }));
+        if (!names.size) return Promise.resolve();
+        return fetch('/wp-json/kop/v1/facility-links', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ names: Array.from(names) })
+        })
+            .then(r => (r.ok ? r.json() : null))
+            .then(j => { if (j && j.links && typeof j.links === 'object') facilityLinks = j.links; })
+            .catch(() => {});
+    }
+
+    /** "Refers young people to": each name that has a facility page links to it. */
+    function renderReferralList(label, arr) {
+        const items = referralNames(arr);
+        if (!items.length) return '';
+        return `<div class="list-section"><div class="section-label">${esc(label)}</div><ul class="data-list">`
+            + items.map(t => {
+                const url = Object.prototype.hasOwnProperty.call(facilityLinks, t) ? facilityLinks[t] : '';
+                const inner = url && /^https?:\/\//i.test(url) ? `<a href="${esc(url)}">${esc(t)}</a>` : esc(t);
+                return `<li class="data-list-item"><span class="job-role">${inner}</span></li>`;
+            }).join('') + '</ul></div>';
     }
 
     function renderArrayList(label, arr) {
@@ -182,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${renderField('Type', type)}
                 ${renderArrayList('Care types', checkedLabels(d.careTypes).concat(Array.isArray(d.otherCareTypes) ? d.otherCareTypes : []))}
                 ${renderArrayList('TTI practices used', checkedLabels(d.ttiPractices).concat(Array.isArray(d.otherTtiPractices) ? d.otherTtiPractices : []))}
-                ${renderArrayList('Refers young people to', d.ttiReferrals)}
+                ${renderReferralList('Refers young people to', d.ttiReferrals)}
                 ${renderArrayList('Transporters used', d.transportersUsed)}
                 ${renderArrayList('TTI affiliations', d.ttiAffiliations)}
                 ${renderNotes('Referral notes', d.referralNotes)}

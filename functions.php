@@ -124,6 +124,8 @@ require_once get_stylesheet_directory() . '/inc/network-rebuild.php';
 
 // Find-by-name box beside every facility id field on the admin screens
 require_once get_stylesheet_directory() . '/inc/facility-finder.php';
+// Facility name suggestions for the data forms and links for free-text facility lists (providers' referrals)
+require_once get_stylesheet_directory() . '/inc/facility-suggest.php';
 // Facility closures reported in the news: hourly scan, review queue, confirm sets the status
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records

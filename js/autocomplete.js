@@ -159,6 +159,7 @@ const aggregatedDataCache = {
 const CACHE_CATEGORY_MAP = {
     operator: 'operators',
     facility: 'facilityNames',
+    facilityref: 'facilityNames',
     human: 'humanNames',
     referrer: 'referrers',
     transporter: 'transporters',
@@ -671,6 +672,17 @@ function getAutocompleteEndpoint() {
     return `${baseUrl.replace(/\/$/, '')}/wp-json/kop/v1/autocomplete`;
 }
 
+/**
+ * Public read-only facility suggestions (inc/facility-suggest.php): real records
+ * by current, past and other name, with city and state.
+ * @returns {string} - The kop/v1/facility-suggest URL
+ */
+function getFacilitySuggestEndpoint() {
+    const config = window.KOP_DATA_FORM_CONFIG || {};
+    const base = (config.restUrl || config.api?.root || (window.location.origin + '/wp-json/kop/v1/')).replace(/\/?$/, '/');
+    return base + 'facility-suggest';
+}
+
 // ============================================
 // CUSTOM VALUE MANAGEMENT
 // ============================================
@@ -684,6 +696,7 @@ function getAutocompleteEndpoint() {
 function addCustomValue(category, value) {
     const trimmedValue = value?.trim();
     if (!trimmedValue) return false;
+    if (category === 'facilityref') category = 'facility'; // same stored names
 
     let array;
     let key;
@@ -955,12 +968,28 @@ function createAutocomplete(input, getDataFunction, category) {
         items.forEach((item) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-item';
-            const suggestionText = typeof item === 'string'
-                ? item
-                : (item === null || item === undefined ? '' : String(item));
+            // A suggestion is a string, or {value, detail} for a server-backed one
+            // (detail: where it is, and "Formerly X" for a past-name hit).
+            const detail = item && typeof item === 'object' ? String(item.detail || '') : '';
+            const suggestionText = item && typeof item === 'object'
+                ? String(item.value || '')
+                : (typeof item === 'string'
+                    ? item
+                    : (item === null || item === undefined ? '' : String(item)));
             div.dataset.value = suggestionText;
 
-            renderSuggestionContent(div, suggestionText, input.value);
+            if (detail) {
+                const nameEl = document.createElement('span');
+                nameEl.className = 'autocomplete-item-name';
+                renderSuggestionContent(nameEl, suggestionText, input.value);
+                const detailEl = document.createElement('span');
+                detailEl.className = 'autocomplete-item-detail';
+                detailEl.textContent = detail;
+                div.appendChild(nameEl);
+                div.appendChild(detailEl);
+            } else {
+                renderSuggestionContent(div, suggestionText, input.value);
+            }
 
             // Use mousedown to fire BEFORE blur event (which hides dropdown)
             div.addEventListener('mousedown', () => {
@@ -1029,6 +1058,41 @@ function createAutocomplete(input, getDataFunction, category) {
         if (pendingFetch) clearTimeout(pendingFetch);
         pendingFetch = setTimeout(async () => {
             const q = encodeURIComponent(value);
+
+            // Facility names: look the phrase up in the real records (3+ characters),
+            // then show those first, followed by names typed before. Typed text that
+            // matches nothing stays as it is.
+            if (category === 'facilityref') {
+                if (value.length < 3) {
+                    if (localSorted.length === 0) showDropdown([]);
+                    return;
+                }
+                try {
+                    abortController = new AbortController();
+                    const resp = await fetch(getFacilitySuggestEndpoint() + '?q=' + q, { signal: abortController.signal });
+                    const json = resp.ok ? await resp.json() : null;
+                    const records = json && Array.isArray(json.items) ? json.items : [];
+                    const seen = new Set();
+                    const merged = [];
+                    records.forEach(r => {
+                        if (!r || !r.name) return;
+                        const detail = [[r.place, r.status].filter(Boolean).join(' - '), r.hint].filter(Boolean).join(' | ');
+                        const key = r.name.toLowerCase() + '|' + detail.toLowerCase();
+                        if (seen.has(key)) return;
+                        seen.add(key);
+                        merged.push({ value: r.name, detail: detail });
+                    });
+                    const recordNames = new Set(merged.map(m => m.value.toLowerCase()));
+                    localSorted.forEach(n => { if (!recordNames.has(n.toLowerCase())) merged.push(n); });
+                    showDropdown(merged);
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                    console.warn('Facility suggestions failed:', e.message);
+                    if (localSorted.length === 0) showDropdown([]);
+                }
+                return;
+            }
+
             const params = `?category=${encodeURIComponent(category)}&q=${q}`;
             const remoteUrl = getAutocompleteEndpoint() + params;
 
@@ -1082,7 +1146,7 @@ function createAutocomplete(input, getDataFunction, category) {
                     showDropdown([]);
                 }
             }
-        }, 150); // Reduced debounce for faster response
+        }, category === 'facilityref' ? 250 : 150); // Reduced debounce for faster response
     }, { passive: true });
 
     input.addEventListener('focus', () => {
@@ -1129,7 +1193,8 @@ function createAutocomplete(input, getDataFunction, category) {
             if (currentFocus > -1 && items[currentFocus] && items[currentFocus].dataset && items[currentFocus].dataset.value) {
                 maybePreventDefault();
                 commitSelection(items[currentFocus].dataset.value);
-            } else if (hasVisibleOptions) {
+            } else if (hasVisibleOptions && category !== 'facilityref') {
+                // (facility names: Enter/Tab keep what was typed unless a suggestion is highlighted)
                 maybePreventDefault();
                 commitSelection(actionableItems[0].dataset.value);
             } else if (input.value.trim() && category) {
@@ -1185,6 +1250,7 @@ function getCategoryFunctions() {
     return {
         operator: getAllOperators,
         facility: getAllFacilityNames,
+        facilityref: getAllFacilityNames,
         human: getAllHumanNames,
         referrer: getAllReferrers,
         transporter: getAllTransporters,

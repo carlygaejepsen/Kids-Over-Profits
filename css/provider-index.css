@@ -339,6 +339,12 @@
 }
 
 .provider-directory-container .job-role { font-weight: 700; display: block; color: var(--kop-midnight-blue); }
+/* A referral name that links to its facility page (js/provider-index.js renderReferralList). */
+.provider-directory-container .job-role a,
+.provider-directory-container .job-role a:visited { color: var(--kop-teal-ink, #24757F); text-decoration: underline; }
+.provider-directory-container .job-role a:hover,
+.provider-directory-container .job-role a:focus,
+.provider-directory-container .job-role a:active { color: var(--kop-midnight-blue, #000435); text-decoration: underline; }
 .provider-directory-container .job-meta { color: #666; font-size: 0.8rem; font-style: italic; }
 
 /* =================================================================
