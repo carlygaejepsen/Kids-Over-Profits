@@ -29,7 +29,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_FORNITS_DB_VERSION', '1');
+define('KOP_FORNITS_DB_VERSION', '2');
 
 function kop_fornits_topics_table() {
     global $wpdb;
@@ -65,6 +65,9 @@ function kop_fornits_ensure_tables() {
         line INT UNSIGNED NOT NULL DEFAULT 0,
         read_status VARCHAR(12) NOT NULL DEFAULT 'pending',
         read_note TEXT NULL,
+        summary TEXT NULL,
+        categories VARCHAR(255) NOT NULL DEFAULT '',
+        importance TINYINT UNSIGNED NOT NULL DEFAULT 0,
         tries TINYINT UNSIGNED NOT NULL DEFAULT 0,
         read_at DATETIME NULL,
         created_at DATETIME NOT NULL,
@@ -84,6 +87,9 @@ function kop_fornits_ensure_tables() {
         quote TEXT NULL,
         quote_found TINYINT(1) NOT NULL DEFAULT 0,
         context MEDIUMTEXT NULL,
+        summary TEXT NULL,
+        categories VARCHAR(255) NOT NULL DEFAULT '',
+        importance TINYINT UNSIGNED NOT NULL DEFAULT 0,
         post_n INT UNSIGNED NOT NULL DEFAULT 0,
         author VARCHAR(120) NOT NULL DEFAULT '',
         post_date VARCHAR(20) NOT NULL DEFAULT '',
@@ -99,7 +105,86 @@ function kop_fornits_ensure_tables() {
         KEY kind_status (kind, status, facility_id),
         KEY topic_id (topic_id)
     ) {$charset};");
+    // Topics read before summaries existed are read again for them (their
+    // proposals are not repeated: each has a fixed key).
+    $wpdb->query("UPDATE {$topics} SET read_status = 'pending', tries = 0 WHERE read_status = 'read' AND summary IS NULL");
     update_option('kop_fornits_db', KOP_FORNITS_DB_VERSION);
+}
+
+/** What a thread is, as the reading tags it. */
+function kop_fornits_categories() {
+    return array(
+        'survivor_account'      => 'Survivor account',
+        'parent_account'        => 'Parent account',
+        'staff_account'         => 'Former staff account',
+        'abuse_allegation'      => 'Abuse',
+        'sexual_abuse'          => 'Sexual abuse',
+        'death'                 => 'Death',
+        'restraint_seclusion'   => 'Restraint or seclusion',
+        'medical_neglect'       => 'Medical neglect',
+        'staff_names'           => 'Staff named',
+        'ownership_business'    => 'Owners and business',
+        'legal'                 => 'Lawsuit or criminal case',
+        'investigation'         => 'Investigation or licensing',
+        'closure_rename'        => 'Closure or new name',
+        'news_coverage'         => 'News coverage',
+        'program_methods'       => 'Program methods',
+        'referral_marketing'    => 'Referrals and marketing',
+        'parent_seeking_advice' => 'Parent asking for advice',
+        'defending_program'     => 'Defending the program',
+        'chatter'               => 'Chatter',
+    );
+}
+
+/** The importance scale the reading uses. */
+function kop_fornits_importance_labels() {
+    return array(3 => 'Key evidence', 2 => 'Useful', 1 => 'Opinions only', 0 => 'Chatter');
+}
+
+/**
+ * Put together what the reading said about a topic across its parts:
+ * [summary, categories[], about[fid => [says, importance]]]. The summary is
+ * the first part's (a long thread's later parts add one more sentence or two),
+ * categories are every part's, and for each facility the most important part
+ * says what the thread says about it.
+ */
+function kop_fornits_merge_reads(array $replies, array $allowed) {
+    $cats = kop_fornits_categories();
+    $summaries = array();
+    $categories = array();
+    $about = array();
+    foreach ($replies as $data) {
+        $t = is_array($data['topic'] ?? null) ? $data['topic'] : array();
+        $sum = trim(preg_replace('/\s+/', ' ', (string) ($t['summary'] ?? '')));
+        if ($sum !== '') {
+            $summaries[] = $sum;
+        }
+        foreach ((array) ($t['categories'] ?? array()) as $c) {
+            $c = strtolower(trim((string) $c));
+            if (isset($cats[$c]) && !in_array($c, $categories, true)) {
+                $categories[] = $c;
+            }
+        }
+        foreach ((array) ($data['about'] ?? array()) as $a) {
+            $fid = (int) ($a['facility_id'] ?? 0);
+            if (!is_array($a) || !isset($allowed[$fid])) {
+                continue;
+            }
+            $imp = max(0, min(3, (int) ($a['importance'] ?? 0)));
+            $says = mb_substr(trim(preg_replace('/\s+/', ' ', (string) ($a['says'] ?? ''))), 0, 400);
+            if (!isset($about[$fid]) || $imp > $about[$fid][1] || ($about[$fid][0] === '' && $says !== '')) {
+                $about[$fid] = array($says !== '' ? $says : ($about[$fid][0] ?? ''), max($imp, $about[$fid][1] ?? 0));
+            }
+        }
+    }
+    $summary = $summaries ? $summaries[0] : '';
+    if (count($summaries) > 1) {
+        $summary .= ' Later: ' . $summaries[1];
+    }
+    if (count($categories) > 1) {
+        $categories = array_values(array_diff($categories, array('chatter')));
+    }
+    return array(mb_substr($summary, 0, 900), $categories, $about);
 }
 
 function kop_fornits_dir() {
@@ -317,11 +402,19 @@ function kop_fornits_prompt(array $topic, $posts_text) {
         . implode("\n", $facs) . "\n\n"
         . "Thread: \"" . $topic['title'] . "\" (board: " . $topic['board_name'] . ")\n\n"
         . "Return JSON only, in this shape:\n"
-        . "{\"staff\":[{\"facility_id\":0,\"person\":\"\",\"role\":\"\",\"years\":\"\",\"post\":0,\"quote\":\"\"}],\n"
+        . "{\"topic\":{\"summary\":\"\",\"categories\":[]},\n"
+        . " \"about\":[{\"facility_id\":0,\"says\":\"\",\"importance\":0}],\n"
+        . " \"staff\":[{\"facility_id\":0,\"person\":\"\",\"role\":\"\",\"years\":\"\",\"post\":0,\"quote\":\"\"}],\n"
         . " \"incidents\":[{\"facility_id\":0,\"category\":\"death|abuse|sexual_abuse|restraint|seclusion|neglect|runaway|injury|lawsuit|investigation|other\",\"year\":\"\",\"summary\":\"\",\"post\":0,\"quote\":\"\"}],\n"
         . " \"testimony\":[{\"facility_id\":0,\"years\":\"\",\"who\":\"survivor|parent|staff\",\"summary\":\"\",\"post\":0,\"quote\":\"\"}],\n"
         . " \"leads\":[{\"facility_id\":0,\"type\":\"closure|lawsuit|news|investigation|other\",\"year\":\"\",\"summary\":\"\",\"url\":\"\",\"post\":0,\"quote\":\"\"}]}\n\n"
         . "Rules:\n"
+        . "- topic.summary: two or three plain sentences on what this thread actually says: who is posting (a survivor, a parent, former staff, "
+        . "a program defender), what happened or is claimed, and any names, years, deaths, lawsuits or documents. No opinions of your own.\n"
+        . "- topic.categories: every one that fits, from: " . implode(', ', array_keys(kop_fornits_categories())) . ".\n"
+        . "- about: one entry per program above that the thread discusses. says: one or two sentences on what the thread says about that program. "
+        . "importance: 3 = key evidence (first-hand abuse, a death, named staff, dated incidents, lawsuits, documents); 2 = useful specific facts; "
+        . "1 = opinions or second-hand talk; 0 = only a passing mention or chatter.\n"
         . "- facility_id is one of the ids above. Leave out anything about another program.\n"
         . "- post is the [#n] number of the post the fact is in. quote is copied word for word from that post, "
         . "one to three sentences (under 400 characters for staff, incidents and leads; up to 900 for testimony). Never paraphrase in quote.\n"
@@ -474,6 +567,7 @@ function kop_fornits_read_topic(array $row, array $topic) {
         $posts[(int) $p['n']] = $p;
     }
     $added = 0;
+    $replies = array();
     foreach (kop_fornits_chunks($posts) as $chunk) {
         try {
             $reply = kop_fornits_ask(kop_fornits_prompt($topic, $chunk));
@@ -485,6 +579,7 @@ function kop_fornits_read_topic(array $row, array $topic) {
         if (!is_array($data)) {
             return array('error', $added, 'Unreadable reply: ' . mb_substr((string) $reply, 0, 200));
         }
+        $replies[] = $data;
         foreach (array('staff' => 'staff', 'incidents' => 'incident', 'testimony' => 'testimony', 'leads' => 'lead') as $key => $kind) {
             foreach ((array) ($data[$key] ?? array()) as $it) {
                 if (!is_array($it)) {
@@ -494,7 +589,35 @@ function kop_fornits_read_topic(array $row, array $topic) {
             }
         }
     }
+    kop_fornits_store_summary((int) $row['topic_id'], kop_fornits_merge_reads($replies, $allowed));
     return array('read', $added, '');
+}
+
+/**
+ * Keep a topic's summary, categories and importance, and put each
+ * facility's part on its discussion link: the most important links start
+ * ticked, chatter starts unticked.
+ */
+function kop_fornits_store_summary($tid, array $merged) {
+    global $wpdb;
+    list($summary, $categories, $about) = $merged;
+    $cats = implode(',', $categories);
+    $top = $about ? max(array_map(function ($a) { return $a[1]; }, $about)) : 0;
+    $wpdb->update(kop_fornits_topics_table(), array('summary' => $summary, 'categories' => $cats, 'importance' => $top), array('topic_id' => $tid));
+    $links = $wpdb->get_results($wpdb->prepare('SELECT pkey, facility_id, also FROM ' . kop_fornits_items_table()
+        . " WHERE topic_id = %d AND kind = 'link' AND status = 'pending'", $tid), ARRAY_A);
+    foreach ($links as $l) {
+        $a = $about[(int) $l['facility_id']] ?? array('', 0);
+        $also = json_decode((string) $l['also'], true) ?: array();
+        $wpdb->update(kop_fornits_items_table(), array(
+            'summary'    => $a[0] !== '' ? $a[0] : $summary,
+            'categories' => $cats,
+            'importance' => $a[1],
+            'preselect'  => !$also && $a[1] >= 2 ? 1 : 0,
+        ), array('pkey' => $l['pkey']));
+    }
+    // What Groq found in the thread carries its tags too, for the filter.
+    $wpdb->query($wpdb->prepare('UPDATE ' . kop_fornits_items_table() . " SET categories = %s WHERE topic_id = %d AND kind <> 'link'", $cats, $tid));
 }
 
 /** Clean one thing the model found and store it as a proposal. Returns 1 when stored. */
@@ -646,6 +769,16 @@ function kop_fornits_cite(array $r) {
         . ': ' . kop_fornits_post_url($r['topic_id'], $r['post_n']);
 }
 
+/** "Fornits: <title> (2004-2006, 12 posts). <what it says about this facility>" */
+function kop_fornits_link_label(array $r) {
+    $label = (string) $r['label'];
+    $says = trim((string) ($r['summary'] ?? ''));
+    if ($says !== '') {
+        $label .= '. ' . (mb_strlen($says) > 300 ? rtrim(mb_substr($says, 0, 297)) . '...' : $says);
+    }
+    return $label;
+}
+
 /** Where a lead goes by default. */
 function kop_fornits_lead_target(array $v) {
     if ($v['url'] !== '' && in_array($v['type'], array('news', 'lawsuit'), true)) {
@@ -682,7 +815,7 @@ function kop_fornits_doc_apply(array &$doc, array $r, $target) {
                 throw new RuntimeException('Already on the record.');
             }
         }
-        $doc['resourceLinks'][] = array('url' => $url, 'label' => (string) $r['label'], 'kind' => 'social',
+        $doc['resourceLinks'][] = array('url' => $url, 'label' => kop_fornits_link_label($r), 'kind' => 'social',
             'source' => 'Fornits forum' . (!empty($v['board']) ? ', board "' . $v['board'] . '"' : ''));
         return array('via' => 'link', 'url' => $url);
     }
@@ -972,6 +1105,9 @@ function kop_render_fornits_page() {
     $kind = isset($_GET['fn_kind'], $kinds[$_GET['fn_kind']]) ? $_GET['fn_kind'] : 'link';
     $state = in_array($_GET['fn_state'] ?? '', array('applied', 'rejected'), true) ? $_GET['fn_state'] : 'pending';
     $q = isset($_GET['fn_q']) ? trim(sanitize_text_field(wp_unslash($_GET['fn_q']))) : '';
+    $cats = kop_fornits_categories();
+    $cat = isset($_GET['fn_cat'], $cats[$_GET['fn_cat']]) ? $_GET['fn_cat'] : '';
+    $min = isset($_GET['fn_min']) && $_GET['fn_min'] !== '' ? max(0, min(3, (int) $_GET['fn_min'])) : -1;
     $paged = max(1, (int) ($_GET['fn_page'] ?? 1));
     $per = 15;
     $base = admin_url('admin.php?page=kop-fornits');
@@ -984,7 +1120,9 @@ function kop_render_fornits_page() {
         echo '<div class="notice notice-info"><p>Loaded ' . (int) $sync['topics'] . ' topics from new batches (' . (int) $sync['links'] . ' new discussion links).</p></div>';
     }
     echo '<p>What the old Fornits survivor forum (2001 on) says about each facility. Its treatment-abuse boards are copied a topic at a time; '
-        . 'every topic about a facility is offered as a discussion link for its page, and Groq reads the posts for staff, incidents, survivor accounts and leads. '
+        . 'every topic about a facility is offered as a discussion link for its page. The AI (Gemini, then Groq) reads each thread: a short summary, what it says about each facility, '
+        . 'categories, how much it matters (key evidence, useful, opinions only, chatter), and the staff, incidents, survivor accounts and leads in it. '
+        . 'The most important threads come first and start ticked; threads not read yet say so. '
         . 'Every quote below was checked against the post it came from; one marked <em>not found in the post</em> starts unticked.</p>'
         . '<ol class="kop-fn-how"><li><strong>Pick a tab</strong> and read down a card: one card per facility.</li>'
         . '<li><strong>Untick</strong> anything wrong, then <strong>Add checked</strong>. Discussion links appear under "Survivor posts and discussion" on the facility page; '
@@ -992,7 +1130,7 @@ function kop_render_fornits_page() {
         . '(tick "OK to publish" on the record when you want one shown).</li>'
         . '<li><strong>Wrong facility?</strong> Pick the right one in the box under the card and click <em>Add checked to that record</em>.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> view has Undo.</li></ol>';
-    echo '<p class="kop-fn-progress">Topics loaded: <strong>' . (int) $t['n'] . '</strong> &middot; read by Groq: <strong>' . (int) $t['done'] . '</strong>'
+    echo '<p class="kop-fn-progress">Topics loaded: <strong>' . (int) $t['n'] . '</strong> &middot; read by the AI: <strong>' . (int) $t['done'] . '</strong>'
         . ' &middot; calls today: ' . implode(', ', array_map(function ($p, $n) { return ucfirst($p) . ' ' . $n . ' of ' . kop_fornits_caps()[$p]; },
             array_keys(kop_fornits_calls_today()), kop_fornits_calls_today()))
         . ((int) $t['err'] ? ' &middot; could not read: ' . (int) $t['err'] : '')
@@ -1022,16 +1160,33 @@ function kop_render_fornits_page() {
     echo '<form method="get" class="kop-fn-filter"><input type="hidden" name="page" value="kop-fornits">'
         . '<input type="hidden" name="fn_kind" value="' . esc_attr($kind) . '"><input type="hidden" name="fn_state" value="' . esc_attr($state) . '">'
         . '<input type="search" name="fn_q" value="' . esc_attr($q) . '" placeholder="Words, person or poster" style="width:240px" aria-label="Search"> '
-        . '<button class="button">Show</button>' . ($q !== '' ? ' <a href="' . esc_url(add_query_arg(array('fn_kind' => $kind, 'fn_state' => $state), $base)) . '">Clear</a>' : '') . '</form>';
+        . '<select name="fn_cat" aria-label="Category"><option value="">Every category</option>';
+    foreach ($cats as $k => $label) {
+        echo '<option value="' . esc_attr($k) . '"' . selected($cat, $k, false) . '>' . esc_html($label) . '</option>';
+    }
+    echo '</select> <select name="fn_min" aria-label="Importance"><option value="">Any importance</option>';
+    foreach (array(3 => 'Key evidence only', 2 => 'Useful or better', 1 => 'Hide chatter', 0 => 'Read by the AI') as $k => $label) {
+        echo '<option value="' . $k . '"' . selected($min, $k, false) . '>' . esc_html($label) . '</option>';
+    }
+    echo '</select> <button class="button">Show</button>'
+        . ($q !== '' || $cat !== '' || $min >= 0 ? ' <a href="' . esc_url(add_query_arg(array('fn_kind' => $kind, 'fn_state' => $state), $base)) . '">Clear</a>' : '') . '</form>';
 
-    $where = $wpdb->prepare('kind = %s AND status = %s', $kind, $state);
+    // Every query below reads the items as i.
+    $where = $wpdb->prepare('i.kind = %s AND i.status = %s', $kind, $state);
     if ($q !== '') {
         $like = '%' . $wpdb->esc_like($q) . '%';
-        $where .= $wpdb->prepare(' AND (label LIKE %s OR quote LIKE %s OR author LIKE %s)', $like, $like, $like);
+        $where .= $wpdb->prepare(' AND (i.label LIKE %s OR i.quote LIKE %s OR i.author LIKE %s OR i.summary LIKE %s)', $like, $like, $like, $like);
+    }
+    if ($cat !== '') {
+        $where .= $wpdb->prepare(' AND FIND_IN_SET(%s, i.categories)', $cat);
+    }
+    if ($min >= 0) {
+        // "Read by the AI" (0): every row the reading has tagged.
+        $where .= $min > 0 ? $wpdb->prepare(' AND i.importance >= %d', $min) : " AND i.categories <> ''";
     }
     $card = $state === 'applied' ? 'applied_fid' : 'facility_id';
-    $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT {$card}) FROM {$items} WHERE {$where}");
-    $cards = $wpdb->get_col("SELECT {$card} FROM {$items} WHERE {$where} GROUP BY {$card} ORDER BY COUNT(*) DESC LIMIT " . (($paged - 1) * $per) . ", {$per}");
+    $total = (int) $wpdb->get_var("SELECT COUNT(DISTINCT i.{$card}) FROM {$items} i WHERE {$where}");
+    $cards = $wpdb->get_col("SELECT i.{$card} FROM {$items} i WHERE {$where} GROUP BY i.{$card} ORDER BY MAX(i.importance) DESC, COUNT(*) DESC LIMIT " . (($paged - 1) * $per) . ", {$per}");
     if (!$cards) {
         echo '<p>Nothing here' . ($state === 'pending' && (int) $t['n'] > (int) $t['done'] ? ' yet: Groq reads more topics every hour.' : '.') . '</p>';
         kop_fornits_render_assets();
@@ -1039,8 +1194,9 @@ function kop_render_fornits_page() {
         return;
     }
     $in = implode(',', array_map('intval', $cards));
-    $rows = $wpdb->get_results("SELECT i.*, t.title AS topic_title, t.url AS topic_url, t.board_name FROM {$items} i LEFT JOIN {$topics} t ON t.topic_id = i.topic_id
-        WHERE {$where} AND i.{$card} IN ({$in}) ORDER BY i.preselect DESC, i.post_date", ARRAY_A);
+    $rows = $wpdb->get_results("SELECT i.*, t.title AS topic_title, t.url AS topic_url, t.board_name, t.summary AS topic_summary, t.read_status
+        FROM {$items} i LEFT JOIN {$topics} t ON t.topic_id = i.topic_id
+        WHERE {$where} AND i.{$card} IN ({$in}) ORDER BY i.importance DESC, i.preselect DESC, i.post_date", ARRAY_A);
     $by = array();
     foreach ($rows as $r) {
         $by[(int) $r[$card]][] = $r;
@@ -1060,7 +1216,8 @@ function kop_render_fornits_page() {
     if ($pages > 1) {
         echo '<p class="kop-fn-pager">Page ' . $paged . ' of ' . $pages . ' (' . $total . ' facilities) &middot; ';
         for ($n = 1; $n <= $pages; $n++) {
-            $url = add_query_arg(array('fn_kind' => $kind, 'fn_state' => $state, 'fn_page' => $n, 'fn_q' => $q !== '' ? $q : null), $base);
+            $url = add_query_arg(array('fn_kind' => $kind, 'fn_state' => $state, 'fn_page' => $n, 'fn_q' => $q !== '' ? $q : null,
+                'fn_cat' => $cat !== '' ? $cat : null, 'fn_min' => $min >= 0 ? $min : null), $base);
             echo $n === $paged ? '<strong>' . $n . '</strong> ' : '<a href="' . esc_url($url) . '">' . $n . '</a> ';
         }
         echo '</p>';
@@ -1100,12 +1257,19 @@ function kop_fornits_render_row(array $r, $pending) {
     echo '<tr data-key="' . esc_attr($r['pkey']) . '"><td class="kop-fn-check"><input type="checkbox" class="kop-fn-pick"' . ($checked ? ' checked' : '') . ' aria-label="Select"></td>';
     echo '<td class="kop-fn-what">';
     if ($r['kind'] === 'link') {
-        echo '<a href="' . esc_url($v['url'] ?? $r['topic_url']) . '" target="_blank" rel="noopener noreferrer nofollow"><strong>' . esc_html($r['label']) . '</strong></a>'
-            . '<div class="kop-fn-muted">Board: ' . esc_html($r['board_name']) . ' &middot; matched by ' . esc_html($r['how']) . '</div>';
+        echo '<a href="' . esc_url($v['url'] ?? $r['topic_url']) . '" target="_blank" rel="noopener noreferrer nofollow"><strong>' . esc_html($r['label']) . '</strong></a>';
+        if ((string) $r['categories'] !== '') {
+            $imp = kop_fornits_importance_labels()[(int) $r['importance']] ?? '';
+            echo '<div class="kop-fn-imp kop-fn-imp-' . (int) $r['importance'] . '">' . esc_html($imp) . '</div>';
+        } else {
+            echo '<div class="kop-fn-muted"><em>Not read by the AI yet.</em></div>';
+        }
+        echo '<div class="kop-fn-muted">Board: ' . esc_html($r['board_name']) . ' &middot; matched by ' . esc_html($r['how']) . '</div>';
     } else {
         echo '<strong>' . esc_html($r['label']) . '</strong>'
             . '<div class="kop-fn-muted">In <a href="' . esc_url($r['topic_url']) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html($r['topic_title']) . '</a></div>';
     }
+    kop_fornits_render_tags((string) $r['categories']);
     if ($also) {
         echo '<div class="kop-fn-warn">The same name is on other records: ' . esc_html(implode(', ', array_map(function ($a) {
             return $a['name'] . (!empty($a['state']) ? ' (' . $a['state'] . ')' : '') . ' #' . (int) $a['id'];
@@ -1129,10 +1293,22 @@ function kop_fornits_render_row(array $r, $pending) {
         }
     }
     echo '</td><td class="kop-fn-ev">';
-    echo '<div class="kop-fn-muted"><a href="' . esc_url($post_url) . '" target="_blank" rel="noopener noreferrer nofollow">Post ' . ((int) $r['post_n'] + 1) . '</a> by '
+    if ($r['kind'] === 'link' && trim((string) $r['summary']) !== '') {
+        echo '<p class="kop-fn-summary">' . esc_html($r['summary']) . '</p>';
+        if (trim((string) $r['topic_summary']) !== '' && $r['topic_summary'] !== $r['summary']) {
+            echo '<p class="kop-fn-muted"><strong>The thread:</strong> ' . esc_html($r['topic_summary']) . '</p>';
+        }
+    } elseif ($r['kind'] !== 'link' && trim((string) ($r['topic_summary'] ?? '')) !== '') {
+        echo '<p class="kop-fn-muted"><strong>The thread:</strong> ' . esc_html($r['topic_summary']) . '</p>';
+    }
+    echo '<div class="kop-fn-muted"><a href="' . esc_url($post_url) . '" target="_blank" rel="noopener noreferrer nofollow">' . ($r['kind'] === 'link' ? 'Opening post' : 'Post ' . ((int) $r['post_n'] + 1)) . '</a> by '
         . esc_html($r['author']) . ', ' . esc_html(kop_fornits_month($r['post_date'])) . '</div>';
     if ($r['quote'] !== '') {
-        echo '<blockquote>' . esc_html($r['quote']) . '</blockquote>';
+        if ($r['kind'] === 'link' && trim((string) $r['summary']) !== '') {
+            echo '<details><summary>Opening words</summary><blockquote>' . esc_html($r['quote']) . '</blockquote></details>';
+        } else {
+            echo '<blockquote>' . esc_html($r['quote']) . '</blockquote>';
+        }
     }
     if ($r['kind'] !== 'link' && !(int) $r['quote_found']) {
         echo '<div class="kop-fn-warn">Quote not found in the post: read the post before adding.</div>';
@@ -1141,6 +1317,18 @@ function kop_fornits_render_row(array $r, $pending) {
         echo '<details><summary>Whole post</summary><div class="kop-fn-post">' . nl2br(esc_html($r['context'])) . '</div></details>';
     }
     echo '</td></tr>';
+}
+
+function kop_fornits_render_tags($categories) {
+    $cats = kop_fornits_categories();
+    $tags = array_filter(explode(',', $categories), function ($c) use ($cats) { return isset($cats[$c]); });
+    if ($tags) {
+        echo '<div class="kop-fn-tags">';
+        foreach ($tags as $c) {
+            echo '<span class="kop-fn-tag">' . esc_html($cats[$c]) . '</span> ';
+        }
+        echo '</div>';
+    }
 }
 
 function kop_fornits_render_assets() {
@@ -1167,6 +1355,12 @@ function kop_fornits_render_assets() {
         .kop-fn-result.ok, .kop-fn-read-out.ok { color: #007017; }
         .kop-fn-result.err, .kop-fn-read-out.err { color: #d63638; }
         tr.kop-fn-gone td { opacity: .45; }
+        .kop-fn-summary { margin: 0 0 6px; color: #1d2327; font-size: 13px; }
+        .kop-fn-tags { margin-top: 4px; }
+        .kop-fn-tag { display: inline-block; margin: 2px 4px 0 0; padding: 1px 7px; border-radius: 10px; background: #F2EEDF; color: #000435; font-size: 11px; }
+        .kop-fn-imp { display: inline-block; margin-top: 4px; padding: 1px 7px; border-radius: 3px; font-size: 11px; font-weight: 600; background: #f0f0f1; color: #1d2327; }
+        .kop-fn-imp-3 { background: #000435; color: #fff; }
+        .kop-fn-imp-2 { background: #B6E3D4; color: #000435; }
     </style>
     <script>
     (function () {

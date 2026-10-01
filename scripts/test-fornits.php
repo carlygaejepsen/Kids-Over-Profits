@@ -71,6 +71,29 @@ $prompt = kop_fornits_prompt(array('title' => 'T', 'board_name' => 'B', 'facilit
     'mentions' => array(array('id' => 12539, 'name' => 'Hidden Lake Academy', 'state' => 'GA'))), $chunks[0]);
 $check('the prompt lists the facilities by id', strpos($prompt, 'id 11449: Thayer Learning Center (MO)') !== false && strpos($prompt, 'id 12539') !== false);
 
+echo "-- Summaries and categories --\n";
+$check('the prompt asks for a summary, categories and importance per facility',
+    strpos($prompt, 'topic.summary') !== false && strpos($prompt, 'survivor_account') !== false && strpos($prompt, 'importance: 3') !== false);
+$allowed = array(11449 => array(), 12539 => array());
+list($sum, $cats, $about) = kop_fornits_merge_reads(array(
+    array('topic' => array('summary' => '  A survivor describes   2004 at Thayer. ', 'categories' => array('survivor_account', 'Restraint_Seclusion', 'made_up')),
+          'about' => array(array('facility_id' => 11449, 'says' => 'Restraints and food withheld.', 'importance' => 3),
+                           array('facility_id' => 12539, 'says' => 'Mentioned in passing.', 'importance' => 0),
+                           array('facility_id' => 999, 'says' => 'Not one of ours.', 'importance' => 3))),
+    array('topic' => array('summary' => 'A parent defends the program.', 'categories' => array('defending_program', 'chatter')),
+          'about' => array(array('facility_id' => 11449, 'says' => 'A parent says it helped.', 'importance' => 1),
+                           array('facility_id' => 12539, 'says' => 'A former student was sent there after.', 'importance' => 9))),
+), $allowed);
+$check('the first part gives the summary, the next adds a sentence', $sum === 'A survivor describes 2004 at Thayer. Later: A parent defends the program.', $sum);
+$check('categories are cleaned, joined and unknown ones dropped', $cats === array('survivor_account', 'restraint_seclusion', 'defending_program'), implode(',', $cats));
+$check('a facility keeps what its most important part says', $about[11449] === array('Restraints and food withheld.', 3));
+$check('importance is held to 0-3 and a facility not in the topic is ignored', $about[12539][1] === 3 && !isset($about[999]));
+list($s2, $c2) = kop_fornits_merge_reads(array(array('topic' => array('summary' => 'Small talk.', 'categories' => array('chatter')))), $allowed);
+$check('a thread that is only chatter is tagged chatter', $c2 === array('chatter'));
+$label = kop_fornits_link_label(array('label' => 'Fornits: Thayer (2004-2006, 12 posts)', 'summary' => str_repeat('x', 400)));
+$check('the record\'s link says what the thread says, kept short', strpos($label, 'Fornits: Thayer (2004-2006, 12 posts). xxx') === 0 && mb_strlen($label) < 360);
+$check('an unread thread keeps its plain label', kop_fornits_link_label(array('label' => 'Fornits: T', 'summary' => '')) === 'Fornits: T');
+
 echo "-- Lead targets --\n";
 $check('a news story with its link goes to the news queue', kop_fornits_lead_target(array('type' => 'news', 'url' => 'https://x.org/a')) === 'news');
 $check('a news story without a link is a note', kop_fornits_lead_target(array('type' => 'news', 'url' => '')) === 'note');
@@ -86,7 +109,7 @@ while (($line = gzgets($fh)) !== false) {
         $first = $t['posts'][0];
         $by[(int) $f['id']][] = array(
             'pkey' => 'x', 'kind' => 'link', 'topic_id' => $t['topic'], 'post_n' => 0, 'author' => $first['author'], 'post_date' => $first['date'],
-            'label' => 'Fornits: ' . $t['title'], 'quote' => '', 'value' => json_encode(array('url' => $t['url'], 'board' => $t['board_name'])),
+            'label' => 'Fornits: ' . $t['title'], 'summary' => 'Survivors describe restraints and a death in 2004.', 'quote' => '', 'value' => json_encode(array('url' => $t['url'], 'board' => $t['board_name'])),
         );
     }
 }
