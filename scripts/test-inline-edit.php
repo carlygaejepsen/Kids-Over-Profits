@@ -288,6 +288,34 @@ if ($id) {
     $check('bad date, cause or empty name refused', $bad(array('date_of_death' => '1998-02-31')) && $bad(array('cause_category' => 'murder')) && $bad(array('name' => '  ')));
 }
 
+echo "-- Reporting directory entries sent back unchanged --\n";
+require_once dirname(__DIR__) . '/inc/reporting-directory.php';
+$dir = kop_reporting_directory_raw();
+$chs = $dir['national']['channels'];
+foreach ($dir['states'] as $s) $chs = array_merge($chs, $s['channels']);
+$changed = 0;
+$examples = array();
+foreach ($chs as $c) {
+    try {
+        $spec = kop_ie_rep_load(array('ch', $c['id']));
+        $vals = array();
+        foreach ($spec['fields'] as $f) $vals[$f['name']] = $as_posted($f);
+        $mine = kop_ie_rep_changes($c, $vals);
+        if ($mine) { $changed++; if (count($examples) < 4) $examples[] = $c['id'] . ' ' . json_encode($mine); }
+    } catch (Throwable $e) {
+        $changed++;
+        if (count($examples) < 4) $examples[] = $c['id'] . ' ' . $e->getMessage();
+    }
+}
+$check(count($chs) . ' reporting entries round-trip with no change stored', $changed === 0, implode('; ', $examples));
+$c = $chs[0];
+$mine = kop_ie_rep_changes($c, array('phone' => '800-555-0100', 'note' => '', 'mandatory_reporter' => true));
+$applied = kop_reporting_apply_edits($dir, array('ch' => array($c['id'] => $mine)));
+$c2 = $applied['national']['channels'][0];
+$check('a reporting edit applies over the file', $c2['phone'] === '800-555-0100' && !empty($c2['mandatory_reporter']) && ($c2['name'] === $c['name']));
+$bad = function ($v) use ($c) { try { kop_ie_rep_changes($c, $v); return false; } catch (RuntimeException $e) { return true; } };
+$check('no sources, a bad date or a blank name refused', $bad(array('sources' => '')) && $bad(array('verified_on' => 'soon')) && $bad(array('name' => ' ')));
+
 echo "-- Bad input refused --\n";
 $refused = function ($group, $values) use ($doc, $apply) {
     try {

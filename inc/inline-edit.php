@@ -28,6 +28,7 @@
  *   row:memorial:4          a row of a table with no other editor (kop_ie_row_tables())
  *   ya:2                    a young adult program (inc/young-adult-programs.php)
  *   doc:812                 a document's title, caption, description, alt text
+ *   rep:ch:<id>|note:<AB>   a reporting directory entry or state note (kop_reporting_edits)
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -176,6 +177,7 @@ function kop_ie_sources() {
         'row'      => array('load' => 'kop_ie_row_load', 'save' => 'kop_ie_row_save'),
         'ya'       => array('load' => 'kop_ie_ya_load', 'save' => 'kop_ie_ya_save'),
         'doc'      => array('load' => 'kop_ie_doc_load', 'save' => 'kop_ie_doc_save'),
+        'rep'      => array('load' => 'kop_ie_rep_load', 'save' => 'kop_ie_rep_save'),
     ));
 }
 
@@ -1647,6 +1649,166 @@ function kop_ie_doc_save(array $p, array $v) {
     }
     do_action('litespeed_purge_all');
     return array('message' => 'Saved.');
+}
+
+/* ---- Where to report abuse (inc/reporting-directory.php) ----------------------- */
+
+/** A channel's fields: name => array(label, type[, options]). */
+function kop_ie_rep_fields() {
+    return array(
+        'name'               => array('Agency or service', 'text'),
+        'category'           => array('Kind', 'select', array('professional-board', 'facility-licensing', 'legal', 'oversight')),
+        'profession'         => array('Profession it licenses (boards)', 'text'),
+        'what_it_can_do'     => array('What it can do', 'textarea'),
+        'what_it_cannot_do'  => array('What it cannot do', 'textarea'),
+        'who_to_report'      => array('Who to report to it', 'textarea'),
+        'how'                => array('How to report', 'textarea'),
+        'complaint_url'      => array('Complaint form link', 'text'),
+        'info_url'           => array('More information link', 'text'),
+        'phone'              => array('Phone', 'text'),
+        'phone_note'         => array('Phone note', 'text'),
+        'email'              => array('Email', 'text'),
+        'mail'               => array('Postal address', 'text'),
+        'anonymous'          => array('Anonymous reports', 'select', array('unknown', 'allowed', 'discouraged', 'not-allowed')),
+        'mandatory_reporter' => array('Mandatory reporters report here', 'bool'),
+        'deadline'           => array('Deadline', 'textarea'),
+        'note'               => array('Note', 'textarea'),
+        'sources'            => array('Sources (one link a line; at least one)', 'lines'),
+        'verified_on'        => array('Checked on (YYYY-MM-DD)', 'text'),
+    );
+}
+
+/** The channel by id: [edited, as deployed]. */
+function kop_ie_rep_channel($id) {
+    $find = function ($dir) use ($id) {
+        if (!$dir) {
+            return null;
+        }
+        foreach (array_merge(array($dir['national']['channels'] ?? array()), array_map(function ($s) { return $s['channels'] ?? array(); }, $dir['states'])) as $list) {
+            foreach ($list as $c) {
+                if (($c['id'] ?? '') === $id) {
+                    return $c;
+                }
+            }
+        }
+        return null;
+    };
+    $base = $find(kop_reporting_directory_raw());
+    if (!$base) {
+        throw new RuntimeException('That entry is no longer in the directory.');
+    }
+    return array($find(kop_reporting_directory()), $base);
+}
+
+function kop_ie_rep_note_record($key) {
+    $dir = kop_reporting_directory_raw();
+    if ($key === 'national') {
+        return array('National', (string) ($dir['national']['note'] ?? ''));
+    }
+    foreach ((array) ($dir['states'] ?? array()) as $s) {
+        if ($s['abbr'] === $key) {
+            return array($s['state'], (string) ($s['note'] ?? ''));
+        }
+    }
+    throw new RuntimeException('Unknown state.');
+}
+
+function kop_ie_rep_load(array $p) {
+    $kind = $p[0] ?? '';
+    $key = implode(':', array_slice($p, 1));
+    $edits = kop_reporting_edits();
+    $help = 'Saved here over the deployed js/data/reporting files and live at once; the next rebuild of directory.json keeps them.';
+    if ($kind === 'note') {
+        list($label, $base) = kop_ie_rep_note_record($key);
+        return array('title' => $label . ': note', 'help' => $help . ' Saving it empty puts the original back.',
+            'fields' => array(kop_ie_field('note', 'Note', 'textarea', $edits['note'][$key] ?? $base, array('rows' => 6))));
+    }
+    list($c) = kop_ie_rep_channel($key);
+    $fields = array();
+    foreach (kop_ie_rep_fields() as $name => $def) {
+        $v = $c[$name] ?? '';
+        if ($def[1] === 'lines') {
+            $v = implode("\n", (array) $v);
+        }
+        $extra = $def[1] === 'select' ? array('options' => $def[2]) : array();
+        $fields[] = kop_ie_field($name, $def[0], $def[1], $def[1] === 'bool' ? !empty($v) : (string) $v, $extra);
+    }
+    return array('title' => $c['name'], 'help' => $help, 'fields' => $fields);
+}
+
+function kop_ie_rep_save(array $p, array $v) {
+    $kind = $p[0] ?? '';
+    $key = implode(':', array_slice($p, 1));
+    $edits = kop_reporting_edits();
+    if ($kind === 'note') {
+        list($label, $base) = kop_ie_rep_note_record($key);
+        $note = trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v['note'] ?? '')));
+        if ($note === '' || $note === $base) {
+            unset($edits['note'][$key]);
+        } else {
+            $edits['note'][$key] = $note;
+        }
+    } else {
+        list($c, $base) = kop_ie_rep_channel($key);
+        $mine = kop_ie_rep_changes($base, $v);
+        if ($mine) {
+            $edits['ch'][$key] = $mine;
+        } else {
+            unset($edits['ch'][$key]);
+        }
+    }
+    update_option('kop_reporting_edits', $edits, false);
+    do_action('litespeed_purge_all');
+    return array('message' => 'Saved.');
+}
+
+/** The dialog's values against the deployed entry: the fields that differ (checked), field => value ('' removes). */
+function kop_ie_rep_changes(array $base, array $v) {
+    $mine = array();
+    foreach (kop_ie_rep_fields() as $name => $def) {
+        if (!array_key_exists($name, $v)) {
+            continue;
+        }
+        switch ($def[1]) {
+            case 'lines':
+                $new = kop_ie_lines($v[$name]);
+                break;
+            case 'bool':
+                $new = $v[$name] === true || $v[$name] === 'true' || $v[$name] === '1';
+                break;
+            case 'select':
+                $new = (string) $v[$name];
+                if (!in_array($new, $def[2], true)) {
+                    throw new RuntimeException($def[0] . ': pick one of the choices.');
+                }
+                break;
+            default:
+                $new = trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v[$name])));
+        }
+        $was = $base[$name] ?? ($def[1] === 'bool' ? false : ($def[1] === 'lines' ? array() : ''));
+        if ($new === $was || ($def[1] === 'bool' && $new === (bool) $was)) {
+            continue;
+        }
+        $mine[$name] = $def[1] === 'bool' && !$new ? '' : $new;
+    }
+    $after = array_merge($base, $mine);
+    foreach (array('name', 'what_it_can_do', 'who_to_report') as $req) {
+        if (trim((string) ($after[$req] ?? '')) === '') {
+            throw new RuntimeException(kop_ie_rep_fields()[$req][0] . ' cannot be empty.');
+        }
+    }
+    if (!array_filter((array) ($after['sources'] ?? array()))) {
+        throw new RuntimeException('Every entry needs at least one source link.');
+    }
+    foreach ((array) $after['sources'] as $url) {
+        if (!preg_match('#^https?://#i', $url)) {
+            throw new RuntimeException('Sources: "' . $url . '" is not a link.');
+        }
+    }
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($after['verified_on'] ?? ''))) {
+        throw new RuntimeException('Checked on: a date as YYYY-MM-DD.');
+    }
+    return $mine;
 }
 
 /* ---- Hub and utility page settings (string lines in code) -------------------- */

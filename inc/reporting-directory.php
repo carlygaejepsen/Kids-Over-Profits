@@ -76,12 +76,69 @@ function kop_reporting_directory() {
     if ($data !== false) {
         return $data;
     }
-    $data = null;
+    $data = kop_reporting_directory_raw();
+    if ($data) {
+        $data = kop_reporting_apply_edits($data, kop_reporting_edits());
+    }
+    return $data;
+}
+
+/** The deployed directory.json, without edits made on the site. */
+function kop_reporting_directory_raw() {
+    static $raw = false;
+    if ($raw !== false) {
+        return $raw;
+    }
+    $raw = null;
     $path = kop_reporting_data_path();
     if (is_readable($path)) {
         $decoded = json_decode(file_get_contents($path), true);
         if (is_array($decoded) && !empty($decoded['states'])) {
-            $data = $decoded;
+            $raw = $decoded;
+        }
+    }
+    return $raw;
+}
+
+/**
+ * Edits made in place on the site (inc/inline-edit.php), over the deployed
+ * file: array('ch' => array(channel id => array(field => value, '' = remove)),
+ * 'note' => array(state abbr or 'national' => text)). Keyed by id, so a
+ * rebuilt directory.json keeps them.
+ */
+function kop_reporting_edits() {
+    $e = function_exists('get_option') ? get_option('kop_reporting_edits') : null;
+    return is_array($e) ? $e : array();
+}
+
+function kop_reporting_apply_edits(array $data, array $edits) {
+    $ch = isset($edits['ch']) && is_array($edits['ch']) ? $edits['ch'] : array();
+    $notes = isset($edits['note']) && is_array($edits['note']) ? $edits['note'] : array();
+    $fix = function (array $channels) use ($ch) {
+        foreach ($channels as $i => $c) {
+            if (!isset($c['id'], $ch[$c['id']])) {
+                continue;
+            }
+            foreach ($ch[$c['id']] as $field => $value) {
+                if ($value === '' || $value === array() || $value === null) {
+                    unset($channels[$i][$field]);
+                } else {
+                    $channels[$i][$field] = $value;
+                }
+            }
+        }
+        return $channels;
+    };
+    if (isset($data['national']['channels'])) {
+        $data['national']['channels'] = $fix($data['national']['channels']);
+    }
+    if (isset($notes['national'])) {
+        $data['national']['note'] = $notes['national'];
+    }
+    foreach ($data['states'] as $i => $s) {
+        $data['states'][$i]['channels'] = $fix($s['channels'] ?? array());
+        if (isset($notes[$s['abbr']])) {
+            $data['states'][$i]['note'] = $notes[$s['abbr']];
         }
     }
     return $data;
@@ -187,7 +244,7 @@ function kop_reporting_render_channel($channel, $heading_level = 'h3') {
     $tag       = in_array($heading_level, array('h3', 'h4'), true) ? $heading_level : 'h3';
     $anonymous = isset($channel['anonymous']) ? kop_reporting_anonymous_label($channel['anonymous']) : null;
     ?>
-    <article class="kop-rep-card" id="<?php echo esc_attr($channel['id']); ?>">
+    <article class="kop-rep-card" id="<?php echo esc_attr($channel['id']); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rep:ch:' . $channel['id'], $channel['name']) : ''; ?>>
         <header class="kop-rep-card-head">
             <<?php echo $tag; ?> class="kop-rep-card-name"><?php echo esc_html($channel['name']); ?></<?php echo $tag; ?>>
             <?php if (!empty($channel['profession'])) : ?>
@@ -421,7 +478,7 @@ function kop_reporting_render_state_block($state_name) {
     <section class="kop-rep kop-rep-embed" aria-label="Reporting abuse in <?php echo esc_attr($record['state']); ?>">
         <h2 class="kop-rep-embed-h">Reporting abuse in <?php echo esc_html($record['state']); ?></h2>
         <?php if (!empty($record['note'])) : ?>
-            <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
+            <p class="kop-rep-state-note"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rep:note:' . $record['abbr'], $record['state'] . ' note') : ''; ?>><?php echo esc_html($record['note']); ?></p>
         <?php endif; ?>
         <?php kop_reporting_render_deadlines($record); ?>
         <?php kop_reporting_render_groups($record['channels'], 'h4'); ?>
@@ -473,7 +530,7 @@ function kop_reporting_render_page($state_slug = '') {
             <section class="kop-rep-state" id="state">
                 <h2 class="kop-rep-state-h"><?php echo esc_html($record['state']); ?></h2>
                 <?php if (!empty($record['note'])) : ?>
-                    <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
+                    <p class="kop-rep-state-note"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rep:note:' . $record['abbr'], $record['state'] . ' note') : ''; ?>><?php echo esc_html($record['note']); ?></p>
                 <?php endif; ?>
                 <?php kop_reporting_render_deadlines($record); ?>
                 <?php kop_reporting_render_groups($record['channels']); ?>
@@ -487,7 +544,7 @@ function kop_reporting_render_page($state_slug = '') {
         <section class="kop-rep-national" id="national">
             <h2 class="kop-rep-state-h">Wherever the program is</h2>
             <?php if (!empty($directory['national']['note'])) : ?>
-                <p class="kop-rep-state-note"><?php echo esc_html($directory['national']['note']); ?></p>
+                <p class="kop-rep-state-note"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rep:note:national', 'national note') : ''; ?>><?php echo esc_html($directory['national']['note']); ?></p>
             <?php endif; ?>
             <?php kop_reporting_render_groups($directory['national']['channels']); ?>
         </section>
