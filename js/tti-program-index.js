@@ -2069,7 +2069,8 @@ function displayFacilities(facilitiesData, containerId) {
                 ? `<div class="facility-details">
                         <details class="facility-expanded-info">
                             <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                            <div class="facility-extra-content">${facilityExtraContent}</div>
+                            <template class="facility-extra-template">${facilityExtraContent}</template>
+                            <div class="facility-extra-content"></div>
                         </details>
                     </div>`
                 : '';
@@ -2138,7 +2139,20 @@ function displayFacilities(facilitiesData, containerId) {
 
         attachAliasEntryLinks(container);
 
-        loadLinkPreviews(container);
+        if (container.dataset.lazyDetailsBound !== 'true') {
+            container.dataset.lazyDetailsBound = 'true';
+            container.addEventListener('click', event => {
+                const summary = event.target && event.target.closest
+                    ? event.target.closest('.facility-expanded-info > summary')
+                    : null;
+                if (!summary || !container.contains(summary)) return;
+
+                window.requestAnimationFrame(() => {
+                    const details = summary.parentElement;
+                    if (details && details.open) hydrateFacilityDetails(details);
+                });
+            });
+        }
 
         // Store data globally for filtering
     window.facilitiesData = facilitiesData;
@@ -2520,6 +2534,17 @@ function loadLinkPreviews(scope) {
     });
 }
 
+function hydrateFacilityDetails(details) {
+    const template = details.querySelector(':scope > .facility-extra-template');
+    const content = details.querySelector(':scope > .facility-extra-content');
+    if (!template || !content) return;
+
+    content.replaceChildren(template.content.cloneNode(true));
+    template.remove();
+    attachDocumentButtons(content);
+    loadLinkPreviews(content);
+}
+
 function attachDocumentButtons(scope) {
     const root = scope && scope.querySelectorAll ? scope : document;
     const buttons = root.querySelectorAll('.doc-library-button');
@@ -2700,6 +2725,7 @@ function toggleAllFacilityDetails(button) {
 
     facilityDetails.forEach(detail => {
         detail.open = isExpanding;
+        if (isExpanding) hydrateFacilityDetails(detail);
     });
 
     button.textContent = isExpanding ? 'Collapse All Facility Details' : 'Expand All Facility Details';
