@@ -593,7 +593,7 @@ def main():
                 print('no issue for', fn, file=sys.stderr)
                 continue
             try:
-                data = json.load(open(os.path.join(d, 'facts', fn), encoding='utf-8'))
+                data = json.load(open(os.path.join(d, 'facts', fn), encoding='utf-8-sig'))
             except Exception as e:  # noqa: BLE001
                 print('bad json', fn, e, file=sys.stderr)
                 continue

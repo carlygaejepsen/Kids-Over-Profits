@@ -1002,7 +1002,8 @@ function kop_wbf_label_for(array $r, $v) {
         case 'add_list identification.pastOperators':
             return 'Operator/owner: ' . $v . (preg_match('/ \([^()]*\d{4}[^()]*\)$/', $old, $m) ? $m[0] : '');
         case 'add_list location.formerLocations':
-            return 'Former location: ' . $v['raw'];
+            // The build's label: "Former location: Denver (moved 1968)".
+            return 'Former location: ' . $v['raw'] . (!empty($v['toYear']) ? ' (moved ' . (int) $v['toYear'] . ')' : '');
     }
     if ($r['op'] === 'add_staff') {
         return $v['name'] . ($v['role'] !== '' ? ', ' . $v['role'] : '') . (preg_match('/ \(died [^()]*\)$/', $old, $m) ? $m[0] : '');
@@ -1125,7 +1126,7 @@ function kop_wbf_edited_value(array $r, array $f) {
             }
             $raw = $t('raw') !== '' ? $t('raw') : implode(', ', array_filter(array($t('city'), $state !== '' ? $state : $t('country'))));
             $v = array('raw' => $raw, 'city' => $t('city'),
-                'state' => $state, 'country' => $t('country') !== '' ? $t('country') : null,
+                'state' => $state !== '' ? $state : null, 'country' => $t('country') !== '' ? $t('country') : null,
                 'fromYear' => $year('fromYear', true), 'toYear' => $year('toYear', true));
             if ($v['raw'] === '') {
                 throw new RuntimeException('Give a city, a state or a country.');
