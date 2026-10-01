@@ -97,6 +97,9 @@ def page_name(urlkey):
     if not m:
         return None
     name = m.group(1).lower()
+    # The "tinc" message board, which the 2025 crawl also saved as root-level pages.
+    if name.startswith('tinc'):
+        return None
     return re.sub(r'\.html$', '.htm', name)
 
 
