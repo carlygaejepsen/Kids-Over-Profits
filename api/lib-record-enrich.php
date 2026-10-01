@@ -247,12 +247,29 @@ function kop_enrich_document_text($url) {
     if ($body !== '' && (stripos($type, 'pdf') !== false || strncmp($body, '%PDF', 4) === 0)) {
         $tmp = wp_tempnam('kop-enrich.pdf');
         file_put_contents($tmp, $body);
-        $text = kop_extract_pdf_text($tmp);
+        // Ghostscript is on the host (no pdftotext); the PHP reader is the fallback.
+        $text = '';
+        if (function_exists('shell_exec') && @is_executable('/usr/bin/gs')) {
+            $text = (string) @shell_exec('timeout 120 /usr/bin/gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=txtwrite '
+                . '-dFirstPage=1 -dLastPage=40 -sOutputFile=- ' . escapeshellarg($tmp) . ' 2>/dev/null');
+            $text = preg_replace('/[ 	]+/', ' ', $text) ?? $text;
+        }
+        if (mb_strlen(trim($text)) < 400) {
+            $text = kop_extract_pdf_text($tmp);
+        }
         @unlink($tmp);
         return trim($text);
     }
     require_once __DIR__ . '/lib-article-fetch.php';
-    return trim((string) fetchArticleContent($url));
+    $text = trim((string) fetchArticleContent($url));
+    if (mb_strlen($text) < 400) {
+        // Case-law sites (Justia, Casemine) refuse servers: read their Wayback copy.
+        $archived = trim((string) fetchFromArchiveOrg($url));
+        if (mb_strlen($archived) > mb_strlen($text)) {
+            $text = $archived;
+        }
+    }
+    return $text;
 }
 
 function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {

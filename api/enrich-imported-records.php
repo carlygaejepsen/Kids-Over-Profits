@@ -29,8 +29,15 @@ set_time_limit(0);
 require_once __DIR__ . '/lib-record-enrich.php';
 require_once __DIR__ . '/lawsuit-facility-links.php';
 
+// Read --name=value by hand: getopt() stops at the first plain word, so
+// "apply --limit=250" silently ran with the defaults.
 $apply = in_array('apply', $argv, true);
-$opt = getopt('', array('type::', 'ids::', 'limit::', 'minutes::'));
+$opt = array();
+foreach (array_slice($argv, 1) as $arg) {
+    if (preg_match('/^--(type|ids|limit|minutes)=(.*)$/', $arg, $m)) {
+        $opt[$m[1]] = $m[2];
+    }
+}
 $type = $opt['type'] ?? 'all';
 $ids = isset($opt['ids']) ? array_filter(array_map('intval', explode(',', $opt['ids']))) : array();
 $limit = max(1, (int) ($opt['limit'] ?? 50));
