@@ -167,6 +167,15 @@ The date is when each was last confirmed open.
     first full list ran 2026-09-30 (148,269 files); about 5,900 of their
     folders stay unmatched (`tmp/unsilenced/build-report.md`); a past or
     other name on a facility record ties one in.
+11. **Billings Clinic testimony** (2026-09-30). In the
+    [admin data form](https://kidsoverprofits.org/admin-data/), refresh, open
+    **MONTANA PROVIDERS** on the providers tab, and in Survivor Testimony
+    press "Move to testimony" on the six "Other TTI practice" paragraphs
+    (held down / safety smock, food and ARFID, records, peer pressure,
+    therapy, staff) and "Remove copy" on the group uprisings field note,
+    then save. The paragraphs leave
+    [/mental-health-providers/](https://kidsoverprofits.org/mental-health-providers/)
+    and stay private until "OK to publish" is ticked.
 
 ### Hosting
 
@@ -565,11 +574,24 @@ In order:
    Academy first, then Eagle Point Christian Academy marked "Also known as
    Bethel Boys Academy".
 3. **Moved testimony still shows in the normal sections** (Opus 5.5).
-   Reported 2026-09-30 on the Billings Clinic Psychiatric Center provider
-   submission: notes moved into survivor testimony also stay in the
-   original fields. No change since `js/data-form/testimony.js:194-208`.
-   Reproduce in the approval editor first; the cause may be the
-   submission's stored data or the notes cache rather than the move.
+   Done 2026-09-30 in
+   [da753fae](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/da753fae737d39ab3a75ec0bf4070a53bc86804a).
+   Two causes, read from the stored record (`providers_master` "MONTANA
+   PROVIDERS", submission #50). (a) The six paragraphs still under "TTI
+   practices used" on /mental-health-providers/ were never moved in the
+   record: the moves after approval were saved while the project was named
+   `MONTANA`, and the form saved that as Montana's location profile (fixed
+   by the rename in 3c82628c). (b) The submission held the same account
+   twice, a field note plus a copy under a key from the submitter's own
+   form; once one was moved, the move list hid the other for good. It is
+   now offered with "Remove copy", which deletes it without a second
+   entry. `node scripts/test-testimony-move.js` (19 checks, 5 fail on the
+   old code). Owner step: Admin runs item 11. Still open: the admin form's
+   save (`saveProjectToCloud` in `js/data-form-modules/api.js`, and the
+   state-name override in `api/save-master.php`) still files any project
+   named after a state as a location profile even on the providers tab;
+   a provider project typed as a bare state name would lose its saves the
+   same way. Approval already names them "<STATE> PROVIDERS".
 4. **Per-file retry in the report backup** (Done 2026-09-30 in
    [5f98a09f](https://github.com/carlygaejepsen/Kids-Over-Profits-Tools/commit/5f98a09fae021b528ad327201d3679433ae7dc7d)).
    `migrate_pair` in `backup_reports.py` now asks to retry when OneDrive or
