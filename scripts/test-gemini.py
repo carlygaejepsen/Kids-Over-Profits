@@ -45,7 +45,7 @@ def explain(code, body):
     text = (msg + ' ' + reasons).lower()
     if 'api_key_invalid' in text or 'api key not valid' in text:
         print('  -> The key is wrong or was deleted. Make a new one at https://aistudio.google.com/app/apikey '
-              '(it starts with "AIza") and copy it with no spaces or quotes.')
+              'and copy it with no spaces or quotes.')
     elif 'location is not supported' in text:
         print('  -> Google does not offer the Gemini API free tier where this request came from. '
               'A VPN set to another country can cause this too: turn it off and try again.')
@@ -77,8 +77,6 @@ def main():
     if not key:
         print('No key given.')
         return 2
-    if not key.startswith('AIza'):
-        print('Note: Gemini API keys from AI Studio start with "AIza"; this one does not. It may be a different kind of key.')
 
     print('1. Is the key accepted? (listing models)')
     code, body = call(f'{API}/models?pageSize=200&key={key}')

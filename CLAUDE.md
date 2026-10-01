@@ -173,8 +173,10 @@ python scripts/build-unsilenced-links.py                   # report in tmp/unsil
 php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
 # Fornits survivor forum (inc/fornits.php): the crawl copies the treatment-abuse boards into tmp/fornits/ (never committed);
 # the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the
-# server an hourly Groq read (capped per day, KOP_FORNITS_DAILY_CALLS) proposes staff, incidents, survivor accounts
-# (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo
+# server an hourly read, Gemini free tier first then Groq (daily caps KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS),
+# proposes staff, incidents, survivor accounts (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo.
+# "Check AI keys" there sends one request per provider through the site's own code (keys never shown)
+python scripts/test-gemini.py                     # is a Gemini key usable? lists its models, names the fix
 python scripts/fornits-crawl.py                   # resumable, one request per 3 s
 python scripts/fornits-process.py [--no-upload] [--keep-crawling]   # --no-upload: dry run, marks nothing read
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-fornits.php   # every link + each kind on real docs, exact undo

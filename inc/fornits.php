@@ -14,7 +14,8 @@
  *   - each batch is loaded into {prefix}kop_fornits_topics, and every topic
  *     becomes a "Fornits discussion" link proposal for each of its facilities
  *     (resourceLinks, kind 'social', "Survivor posts and discussion");
- *   - hourly, Groq reads waiting topics (kop_fornits_read_batch) and proposes
+ *   - hourly, Gemini (free tier) and then Groq read waiting topics
+ *     (kop_fornits_read_batch, kop_fornits_ask) and propose
  *     staff (the Woodbury Facts add_staff change), incidents (customIncidents
  *     lines), survivor accounts (survivorTestimony, never published until an
  *     admin ticks "OK to publish") and leads (news or court links to their
@@ -359,30 +360,113 @@ function kop_fornits_quote_found($quote, $text) {
 }
 
 /**
- * Groq calls a day the reading may make. The closure scan and the news
- * facility discovery share the key, so this leaves them room; raise it with
- * KOP_FORNITS_DAILY_CALLS when the plan allows.
+ * Calls a day the reading may make, per provider. Gemini's free tier allows
+ * about 500 a day on the Flash-Lite models and nothing else on the site uses
+ * it, so it goes first. Groq is shared with the closure scan and the news
+ * facility discovery, so it only fills in, up to its own cap. Raise either
+ * with KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS.
  */
-function kop_fornits_daily_cap() {
-    return defined('KOP_FORNITS_DAILY_CALLS') ? (int) KOP_FORNITS_DAILY_CALLS : 150;
+function kop_fornits_caps() {
+    return array(
+        'gemini' => defined('KOP_FORNITS_GEMINI_CALLS') ? (int) KOP_FORNITS_GEMINI_CALLS : 450,
+        'groq'   => defined('KOP_FORNITS_DAILY_CALLS') ? (int) KOP_FORNITS_DAILY_CALLS : 150,
+    );
 }
 
+/** Calls made today: [provider => n]. */
 function kop_fornits_calls_today() {
     $c = get_option('kop_fornits_calls', array());
-    return is_array($c) && ($c['day'] ?? '') === gmdate('Y-m-d') ? (int) $c['n'] : 0;
+    $out = array_fill_keys(array_keys(kop_fornits_caps()), 0);
+    if (is_array($c) && ($c['day'] ?? '') === gmdate('Y-m-d')) {
+        foreach ($out as $k => $v) {
+            $out[$k] = (int) ($c[$k] ?? 0);
+        }
+    }
+    return $out;
 }
 
-/** Ask Groq as the closure scan does (its model fallback included), within the daily cap. */
-function kop_fornits_groq($prompt) {
-    if (!function_exists('kop_closure_groq')) {
-        throw new RuntimeException('The closure scan helpers are not loaded.');
+function kop_fornits_count_call($provider) {
+    $c = kop_fornits_calls_today();
+    $c[$provider]++;
+    update_option('kop_fornits_calls', array('day' => gmdate('Y-m-d')) + $c, false);
+}
+
+/** Providers with a key, in the order the reading uses them. */
+function kop_fornits_providers() {
+    require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    $keys = kop_ai_api_keys();
+    return array_values(array_filter(array('gemini', 'groq'), function ($p) use ($keys) { return !empty($keys[$p]); }));
+}
+
+/**
+ * Ask Gemini, then Groq (the closure scan's call, its model fallback
+ * included), each within its daily cap. A provider that is out of calls or
+ * rate limited is skipped for the rest of the run. Throws "rate limit" when
+ * none is left, so the topic is tried again next run without spending a try.
+ */
+function kop_fornits_ask($prompt) {
+    static $spent = array();
+    static $last_gemini = 0.0;
+    require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    $caps = kop_fornits_caps();
+    $errors = array();
+    foreach (kop_fornits_providers() as $p) {
+        if (!empty($spent[$p]) || kop_fornits_calls_today()[$p] >= $caps[$p]) {
+            continue;
+        }
+        try {
+            kop_fornits_count_call($p);
+            if ($p === 'gemini') {
+                $wait = $last_gemini + 4.5 - microtime(true); // the free tier allows 15 a minute
+                if ($wait > 0) {
+                    usleep((int) ($wait * 1e6));
+                }
+                $last_gemini = microtime(true);
+                return kop_ai_generate('gemini', kop_ai_api_keys(), $prompt, array('maxTokens' => 3000));
+            }
+            if (!function_exists('kop_closure_groq')) {
+                throw new RuntimeException('The closure scan helpers are not loaded.');
+            }
+            return kop_closure_groq($prompt, 3000);
+        } catch (Throwable $e) {
+            $m = $e->getMessage();
+            if (stripos($m, 'rate limit') !== false || stripos($m, 'quota') !== false || strpos($m, 'HTTP 429') !== false) {
+                $spent[$p] = true;
+                $errors[] = $p . ': ' . $m;
+                continue;
+            }
+            throw new RuntimeException($p . ': ' . $m);
+        }
     }
-    $n = kop_fornits_calls_today();
-    if ($n >= kop_fornits_daily_cap()) {
-        throw new RuntimeException('Daily rate limit for the Fornits reading reached (' . $n . ' calls).');
+    throw new RuntimeException('Daily rate limit for the Fornits reading reached' . ($errors ? ' (' . implode('; ', $errors) . ')' : '') . '.');
+}
+
+/**
+ * One tiny request to each provider through the site's own code, for the
+ * "Check AI keys" button: [provider => [ok, message]]. Never shows a key.
+ */
+function kop_fornits_check_ai() {
+    require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    $keys = kop_ai_api_keys();
+    $prompt = 'Return JSON only: {"facility": "<the name>"} for this sentence: I was sent to Thayer Learning Center in 2004.';
+    $out = array();
+    foreach (array('gemini' => 'GEMINI_API_KEY', 'groq' => 'GROQ_API_KEY') as $p => $env) {
+        if (empty($keys[$p])) {
+            $out[$p] = array(false, $env . ' is not set: the site cannot see it in .env (check the line is in the same .env as the other keys, spelled exactly, with no spaces around =).');
+            continue;
+        }
+        try {
+            $reply = $p === 'gemini' ? kop_ai_generate('gemini', $keys, $prompt, array('maxTokens' => 200))
+                : kop_closure_groq($prompt, 200);
+            $data = kop_ai_extract_json((string) $reply);
+            $ok = is_array($data) && stripos((string) ($data['facility'] ?? ''), 'thayer') !== false;
+            $model = $p === 'gemini' ? (getenv('GEMINI_MODEL') ?: 'gemini-3.5-flash-lite') : (getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b');
+            $out[$p] = array($ok, ($ok ? 'Works' : 'Answered, but not as expected: ' . mb_substr((string) $reply, 0, 160)) . ' (model ' . $model . ').');
+        } catch (Throwable $e) {
+            $out[$p] = array(false, mb_substr(preg_replace('/key=[^&\s]+/', 'key=...', $e->getMessage()), 0, 300));
+        }
     }
-    update_option('kop_fornits_calls', array('day' => gmdate('Y-m-d'), 'n' => $n + 1), false);
-    return kop_closure_groq($prompt, 3000);
+    return $out;
 }
 
 /**
@@ -407,7 +491,7 @@ function kop_fornits_read_topic(array $row, array $topic) {
     $added = 0;
     foreach (kop_fornits_chunks($posts) as $chunk) {
         try {
-            $reply = kop_fornits_groq(kop_fornits_prompt($topic, $chunk));
+            $reply = kop_fornits_ask(kop_fornits_prompt($topic, $chunk));
         } catch (Throwable $e) {
             $limit = stripos($e->getMessage(), 'rate limit') !== false;
             return array($limit ? 'limit' : 'error', $added, mb_substr($e->getMessage(), 0, 300));
@@ -834,11 +918,18 @@ add_action('wp_ajax_kop_fornits_act', function () {
     $keys = isset($_POST['keys']) && is_array($_POST['keys']) ? array_slice($_POST['keys'], 0, 400) : array();
     $user = wp_get_current_user()->user_login;
     try {
+        if ($act === 'check_ai') {
+            $lines = array();
+            foreach (kop_fornits_check_ai() as $p => list($ok, $msg)) {
+                $lines[] = ucfirst($p) . ': ' . ($ok ? '' : 'NOT WORKING. ') . $msg;
+            }
+            wp_send_json_success(array('message' => implode('  |  ', $lines)));
+        }
         if ($act === 'read_now') {
             kop_fornits_sync(20);
             $c = kop_fornits_read_batch(6, 60);
             wp_send_json_success(array('message' => 'Read ' . $c['read'] . ' topics, ' . $c['items'] . ' new proposals'
-                . ($c['limit'] ? '; Groq rate limit reached, the hourly run carries on' : '') . ($c['error'] ? ', ' . $c['error'] . ' errors' : '') . '.'));
+                . ($c['limit'] ? '; the daily limit is reached, the hourly run carries on' : '') . ($c['error'] ? ', ' . $c['error'] . ' errors' : '') . '.'));
         }
         $rows = kop_fornits_rows($keys);
         if (!$rows) {
@@ -917,11 +1008,13 @@ function kop_render_fornits_page() {
         . '<li><strong>Wrong facility?</strong> Pick the right one in the box under the card and click <em>Add checked to that record</em>.</li>'
         . '<li><strong>Changed your mind?</strong> The <em>Added</em> view has Undo.</li></ol>';
     echo '<p class="kop-fn-progress">Topics loaded: <strong>' . (int) $t['n'] . '</strong> &middot; read by Groq: <strong>' . (int) $t['done'] . '</strong>'
-        . ' &middot; Groq calls today: ' . kop_fornits_calls_today() . ' of ' . kop_fornits_daily_cap()
+        . ' &middot; calls today: ' . implode(', ', array_map(function ($p, $n) { return ucfirst($p) . ' ' . $n . ' of ' . kop_fornits_caps()[$p]; },
+            array_keys(kop_fornits_calls_today()), kop_fornits_calls_today()))
         . ((int) $t['err'] ? ' &middot; could not read: ' . (int) $t['err'] : '')
         . (!empty($last['at']) ? ' &middot; last hourly run ' . esc_html(get_date_from_gmt($last['at'], 'M j, g:i a')) . ': read ' . (int) $last['read']
-            . ($last['limit'] ? ' (stopped at the Groq rate limit)' : '') : '')
-        . ' <button type="button" class="button kop-fn-read">Read a few more now</button> <span class="kop-fn-read-out" aria-live="polite"></span></p>';
+            . ($last['limit'] ? ' (stopped at the daily limit)' : '') : '')
+        . ' <button type="button" class="button kop-fn-read">Read a few more now</button> <button type="button" class="button kop-fn-check-ai">Check AI keys</button>'
+        . ' <span class="kop-fn-read-out" aria-live="polite"></span></p>';
     if (!(int) $t['n']) {
         echo '<div class="notice notice-warning"><p>No topics yet. <code>scripts/fornits-process.py</code> uploads batches to <code>'
             . esc_html(kop_fornits_dir()) . '</code> every hour while the crawl runs.</p></div>';
@@ -1158,6 +1251,17 @@ function kop_fornits_render_assets() {
                     out.className = 'kop-fn-read-out ' + (res.success ? 'ok' : 'err');
                     out.textContent = res.success ? res.data.message + ' Reload to see them.' : (res.data || 'Failed.');
                 }).catch(function () { read.disabled = false; out.className = 'kop-fn-read-out err'; out.textContent = 'Network error.'; });
+                return;
+            }
+            var chk = e.target.closest('.kop-fn-check-ai');
+            if (chk) {
+                var o = document.querySelector('.kop-fn-read-out');
+                chk.disabled = true; o.className = 'kop-fn-read-out'; o.textContent = 'Asking each provider...';
+                post({ act: 'check_ai' }).then(function (res) {
+                    chk.disabled = false;
+                    o.className = 'kop-fn-read-out ' + (res.success && res.data.message.indexOf('NOT WORKING') < 0 ? 'ok' : 'err');
+                    o.textContent = res.success ? res.data.message : (res.data || 'Failed.');
+                }).catch(function () { chk.disabled = false; o.className = 'kop-fn-read-out err'; o.textContent = 'Network error.'; });
                 return;
             }
             var all = e.target.closest('.kop-fn-all');
