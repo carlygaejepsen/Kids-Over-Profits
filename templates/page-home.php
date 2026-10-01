@@ -52,29 +52,44 @@ if (!function_exists('kop_home_existing_page_url')) {
     }
 }
 
-// Preview data: latest legislation and lawsuits. Both queries are suppressed
-// so a missing table just hides its block. Inspection findings are not
-// previewed here: quoted abuse findings on the front page were too much to
-// meet without warning, so they stay on the inspection hub and /severe-reports/.
-global $wpdb;
-$kop_suppress = $wpdb->suppress_errors(true);
-$kop_bills = $wpdb->get_results(
-    "SELECT bill_title, jurisdiction, status, last_action_date FROM legislation
-     WHERE publication_status IN ('approved','published')
-     ORDER BY last_action_date DESC, introduced_date DESC, id DESC LIMIT 3",
-    ARRAY_A
-);
-$kop_suits = $wpdb->get_results(
-    "SELECT case_name, jurisdiction, status, filing_date FROM lawsuits
-     WHERE publication_status IN ('approved','published')
-     ORDER BY filing_date DESC, id DESC LIMIT 3",
-    ARRAY_A
-);
-$wpdb->suppress_errors($kop_suppress);
+// Preview data: latest legislation and lawsuits. Those tables live in the
+// records database api/config.php connects to, not WordPress's, so $wpdb
+// cannot see them (silently finds nothing on prod); read them through
+// kop_seed_pdo() instead, the same way inc/legal-documents.php does. A null
+// PDO handle or a failed query just hides its block, same as before; it
+// never fatals. Inspection findings are not previewed here: quoted abuse
+// findings on the front page were too much to meet without warning, so they
+// stay on the inspection hub and /severe-reports/.
+$kop_records_pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
+$kop_bills = array();
+$kop_suits = array();
+if ($kop_records_pdo instanceof PDO) {
+    try {
+        $kop_bills = $kop_records_pdo->query(
+            "SELECT bill_title, jurisdiction, status, last_action_date FROM legislation
+             WHERE publication_status IN ('approved','published')
+             ORDER BY last_action_date DESC, introduced_date DESC, id DESC LIMIT 3"
+        )->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        $kop_bills = array();
+    }
+    try {
+        $kop_suits = $kop_records_pdo->query(
+            "SELECT case_name, jurisdiction, status, filing_date FROM lawsuits
+             WHERE publication_status IN ('approved','published')
+             ORDER BY filing_date DESC, id DESC LIMIT 3"
+        )->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        $kop_suits = array();
+    }
+}
 
 // By the numbers: live counts from the inspection database and the facility
 // directory, cached for six hours so the home page doesn't re-run COUNT
 // queries on every visit. A failed or empty result hides the whole strip.
+// inspection_reports, inspection_facilities and facilities_master are
+// WordPress-side tables, so $wpdb is correct here.
+global $wpdb;
 $kop_numbers = get_transient('kop_home_numbers');
 if (!is_array($kop_numbers)) {
     $kop_suppress = $wpdb->suppress_errors(true);
