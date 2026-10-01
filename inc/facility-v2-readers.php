@@ -576,12 +576,51 @@ if (!function_exists('kop_v2_place_page_url')) {
     }
 }
 
+if (!function_exists('kop_v2_search_name_list')) {
+    /**
+     * A names field (identification.pastNames / otherNames) as a flat list of
+     * display strings. Defers to kop_facility_pages_text_items() when it is
+     * already loaded (handles the object-shaped entries that function also
+     * covers); falls back to a plain-string reader so this file does not
+     * depend on inc/facility-pages.php's load order.
+     */
+    function kop_v2_search_name_list($value) {
+        if (function_exists('kop_facility_pages_text_items')) {
+            return kop_facility_pages_text_items($value);
+        }
+        $out = array();
+        if (is_string($value)) {
+            if (trim($value) !== '') $out[] = trim($value);
+            return $out;
+        }
+        if (!is_array($value)) return $out;
+        foreach ($value as $item) {
+            if (is_string($item) || is_numeric($item)) {
+                $t = trim((string)$item);
+                if ($t !== '') $out[] = $t;
+            }
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('kop_v2_search')) {
     /**
      * Operators, facilities and places matching a phrase, from v2.
-     * Each item: {kind, display, operator, location, fac_count, url}. `url` is
+     * Each operator/facility item: {kind, display, operator, location,
+     * fac_count, url, profile_url, matched_name, matched_kind}. `url` is
      * the facility's state or country page when one exists, '' otherwise (the
      * caller then links to the program index search).
+     *
+     * A facility's own name/name_key/unique_name is tried first; when a
+     * phrase of 3+ characters doesn't fill `facility_limit` that way, past
+     * and other names from identification.pastNames / otherNames in
+     * json_data are tried too (cheap LIKE scan, ~4,700 rows), so a renamed
+     * program ("Copper Canyon" -> Sedona Sky Academy) is still found. Those
+     * hits carry `matched_name` (the alias that matched) and `matched_kind`
+     * ('past' or 'other'), and always sort after direct name matches, so a
+     * name belonging to its own separate record (the docs/PLAN.md 3.7
+     * name-era rule) ranks ahead of another record's alias.
      */
     function kop_v2_search($phrase, $facility_limit = 10, $operator_limit = 5, $place_limit = 3) {
         global $wpdb;
@@ -619,6 +658,46 @@ if (!function_exists('kop_v2_search')) {
               LIMIT %d",
             $like, $key_like, $like, $wpdb->esc_like($phrase) . '%', $facility_limit
         ), ARRAY_A);
+
+        // Past/other-name fallback: only for queries long enough to avoid
+        // acronym noise, and only to fill out what the name match above left
+        // short, so a record's own name match is never crowded out by
+        // another record's alias.
+        $remaining = $facility_limit - count($rows);
+        if ($remaining > 0 && mb_strlen($phrase) >= 3) {
+            $exclude = array_map('intval', wp_list_pluck((array)$rows, 'id'));
+            $pool_limit = min(150, max(40, $facility_limit * 8));
+            $alias_pool = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name, state, city, country, status, json_data
+                   FROM facilities_v2
+                  WHERE json_data LIKE %s
+                  LIMIT %d",
+                $like, $pool_limit
+            ), ARRAY_A);
+            foreach ((array)$alias_pool as $ar) {
+                if ($remaining <= 0) break;
+                $id = (int)$ar['id'];
+                if (in_array($id, $exclude, true)) continue;
+                $doc = kop_v2_decode($ar['json_data']);
+                if (!$doc) continue;
+                $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
+                $hit = null;
+                $kind = null;
+                foreach (array('pastNames' => 'past', 'otherNames' => 'other') as $field => $k) {
+                    foreach (kop_v2_search_name_list($ident[$field] ?? null) as $n) {
+                        if (mb_stripos($n, $phrase) !== false) { $hit = $n; $kind = $k; break 2; }
+                    }
+                }
+                if ($hit === null) continue;
+                unset($ar['json_data']);
+                $ar['matched_name'] = $hit;
+                $ar['matched_kind'] = $kind;
+                $rows[] = $ar;
+                $exclude[] = $id;
+                $remaining--;
+            }
+        }
+
         $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck((array)$rows, 'id')));
         foreach ((array)$rows as $r) {
             $place = $r['state'] ? trim($r['city'] . ', ' . $r['state'], ', ') : trim($r['city'] . ', ' . $r['country'], ', ');
@@ -628,6 +707,8 @@ if (!function_exists('kop_v2_search')) {
                 'location' => $place . ($r['status'] && $r['status'] !== 'Unknown' ? ' (' . $r['status'] . ')' : ''),
                 'fac_count' => 0, 'url' => kop_v2_place_page_url($r['state'], $r['country']),
                 'profile_url' => function_exists('kop_facility_page_url') ? kop_facility_page_url((int)$r['id']) : '',
+                'matched_name' => $r['matched_name'] ?? null,
+                'matched_kind' => $r['matched_kind'] ?? null,
             );
         }
 
@@ -649,6 +730,20 @@ if (!function_exists('kop_v2_search')) {
             );
         }
         return $out;
+    }
+}
+
+if (!function_exists('kop_v2_search_alias_hint')) {
+    /**
+     * "Formerly X" / "Also known as X" for a kop_v2_search() facility/operator
+     * result hit on a past or other name, '' for a direct name match. Shared
+     * by every renderer of kop_v2_search() results (the header search, the
+     * site-wide search widget, and the full search results page) so the hint
+     * reads the same everywhere.
+     */
+    function kop_v2_search_alias_hint($result) {
+        if (empty($result['matched_name'])) return '';
+        return ($result['matched_kind'] === 'past' ? 'Formerly ' : 'Also known as ') . $result['matched_name'];
     }
 }
 

@@ -104,6 +104,10 @@ function kop_global_search_collect($phrase) {
             $meta = $r['kind'] === 'operator'
                 ? ($r['fac_count'] . ' facilit' . ($r['fac_count'] === 1 ? 'y' : 'ies'))
                 : ($r['kind'] === 'place' ? ($r['fac_count'] . ' facilities') : $r['location']);
+            $alias_hint = function_exists('kop_v2_search_alias_hint') ? kop_v2_search_alias_hint($r) : '';
+            if ($alias_hint !== '') {
+                $meta = $meta !== '' ? $meta . ' - ' . $alias_hint : $alias_hint;
+            }
             return array('title' => $r['display'], 'url' => $url, 'meta' => $meta);
         };
         $items = array_map($to_item, array_merge($v2['operators'], $v2['facilities']));

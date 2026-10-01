@@ -242,6 +242,10 @@ global $wpdb;
                         <?php if ($r['location']): ?>
                             <span class="kop-result-meta"><?php echo esc_html($r['location']); ?></span>
                         <?php endif; ?>
+                        <?php $alias_hint = function_exists('kop_v2_search_alias_hint') ? kop_v2_search_alias_hint($r) : ''; ?>
+                        <?php if ($alias_hint !== ''): ?>
+                            <span class="kop-result-meta kop-result-alias"><?php echo esc_html($alias_hint); ?></span>
+                        <?php endif; ?>
                         <?php if ($r['fac_count'] > 0): ?>
                             <span class="kop-result-badge"><?php echo (int) $r['fac_count']; ?> facilit<?php echo $r['fac_count'] === 1 ? 'y' : 'ies'; ?></span>
                         <?php endif; ?>

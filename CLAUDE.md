@@ -95,6 +95,10 @@ php scripts/test-young-adult-move.php           # the first move of 18+ facility
 php scripts/test-inline-edit.php                  # every facility sent back unchanged is unchanged, edits land, against tmp/prod.sqlite
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
+# Header search dropdown and the site-wide search widget (kop_v2_search() in inc/facility-v2-readers.php, read by
+# inc/ajax-search-lite.php, inc/global-search.php, search.php): also matches identification.pastNames/otherNames,
+# shown as "Formerly X" / "Also known as X", current-name hits ranked first
+php scripts/test-search-aliases.php               # against tmp/prod.sqlite
 # "Send to KOP" Chrome extension (browser-extension/send-to-kop/, loaded unpacked, not deployed) posts to
 # kop/v1/extension/* (inc/source-submissions.php): articles -> news_submissions, lawsuits, legislation,
 # anything else -> KOP Tools > Websites Sent In; same duplicate rules as the public forms
