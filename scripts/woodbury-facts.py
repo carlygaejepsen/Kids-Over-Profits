@@ -712,7 +712,9 @@ def main():
     people = collections.defaultdict(list)
     for it in items:
         if it.get('kind') == 'person':
-            pk = person_key(it.get('person', ''))
+            # "Maria (Last?)" is a first name and a placeholder, not "Maria Last"
+            # ("Ande (Andrea) Lane" is a name with a nickname, and stays).
+            pk = person_key(it.get('person', '')) if not re.search(r'\?|\(\s*last\b', it.get('person', ''), re.I) else ''
             if pk:
                 people[pk].append(it)
             else:
