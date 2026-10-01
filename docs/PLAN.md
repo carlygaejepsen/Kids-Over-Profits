@@ -246,10 +246,20 @@ The date is when each was last confirmed open.
 17. **Portal table.** Clear the leftover `wpdl_anonymous_submissions` row
     (empty message and contact, a `files_data` blob naming the file) or drop
     the table.
+18. **Survivor site archives** (2026-10-01, open work 3.10).
+    - New Horizons yearbooks: the alumni site publishes the Escuela Caribe
+      and New Horizons yearbooks, which name and picture the students (then
+      minors). Recommended: list them, since the alumni chose to publish
+      them and KOP only links; the alternative is a rule that leaves them out.
+    - DDoSecrets' Teen Challenge release (about 123,000 leaked files) is left
+      out: it holds residents' private records. Recommended: keep it out.
+    - SCIAD NET (step 3.10.3) is one person's paid-for research. Recommended:
+      name it on every block ("From SCIAD NET, the WWASP Survivor Truth
+      archive") and tell its owner before the lists go live.
 
 ### Unconfirmed settings
 
-18. Which mode production's `kop_data_model` / `kop_data_model_areas`
+19. Which mode production's `kop_data_model` / `kop_data_model_areas`
     options use for the `program_index` read area, and the value of
     `kop_submission_notify_emails` (no admin screen; default `admin_email`).
 
@@ -784,5 +794,62 @@ backfilled), board, IRS, FOIA templates and personal docs.
    resource links, and `resourceLinks` is not in the open data downloads.
 5. **Sheets** (Sonnet 5). A column map per sheet; only cells that differ
    from the record reach the review screen.
+
+### 3.10 More survivor site archives (2026-10-01)
+
+Surviving Straight Inc. and WWASP Survivors are live on the facility and
+operator pages since 13e8a328 (`scripts/survivor-archives.py`,
+`inc/survivor-archives.php`): link only, documents KOP holds dropped by
+md5 or distinctive name, records chosen by explicit RULES. Candidates
+checked 2026-10-01; dead or too small: jeriwho.net (gone), cedulegacy.org
+(domain lost), pfctruth.com and isaccorp.org (gone, no PDFs on Wayback),
+elanabuse.nfshost.com and survivingcedu.wordpress.com (1-5 documents,
+mostly HEAL copies), the Hephzibah House blog (a few scanned images).
+Owner decisions in Waiting on the owner item 18.
+
+1. **thestraights.net** (Sonnet 5.5, one general-purpose agent for steps
+   1-2, since both edit the same script). Wes Fager's Straight Inc.
+   research: about 680 static `.htm` pages, 54 documents on the site in the
+   first 150 (court filings, press kits, Straight Foundation / Drug Free
+   America Foundation finances), likely 150-250 in all. Add a generic
+   same-host crawler to the script (1 request a second, headings as
+   sections, the folder from the path) and a `straights` site whose RULES
+   reuse the Straight ones (branches by folder or page, the rest to
+   Straight Inc., o21). Also new: a document an earlier site already lists
+   for the same record is not listed again, so Surviving Straight and
+   thestraights.net copies of one filing show once. fetch, build, add the
+   site to `kop_survivor_archives_sites()` and the test.
+2. **nhym-alumni.org** (same agent). New Horizons Alumni Association,
+   `/documents/`: 45 PDFs (Escuela Caribe and New Horizons yearbooks
+   1986-1998, handbooks, application packets, annual reports, Form 990s).
+   Records: New Horizons Youth Ministries (f13339, Indiana); Escuela Caribe
+   and the other NHYM programs by `facilities_v2` name, or the operator
+   when KOP has one. Yearbooks per decision 18.
+3. **SCIAD NET survey** (Opus 5.5, a separate general-purpose agent, read
+   only, runs alongside 1-2). The WWASP Survivor Truth archive is a public
+   Zotero group (`api.zotero.org/groups/4552235`, no key needed): 104,282
+   items in 11,406 collections, no attachments; a 300-item sample was
+   archive.ph / Wayback page captures, forum posts, newspaper clippings
+   and about one in seven Google Drive files, none of them in Unsilenced's
+   archive. Page every item and the collection tree into `tmp/sciad/`
+   (about 1,050 requests, resumable, honouring `Backoff`). Report in
+   `tmp/sciad/survey.md`: items by type and host; how many collections are
+   a program and match a `facilities_v2` name or past/other name exactly;
+   the Drive files and how many KOP holds under the same name; the
+   newspaper items already in `news_submissions` (URL, then title + date);
+   overlap with Unsilenced; a recommendation for step 4. Nothing reaches
+   the site.
+4. **SCIAD NET build** (Opus 5.5, after the owner reads the survey). Likely
+   two parts: Drive documents as a `sciad` site in the survivor archives
+   (the collection gives the record, name dedupe only, since Drive gives
+   no md5 without a key); archived articles and clippings into a review
+   screen like KOP Tools > Drive Docs, through `kop_ext_find_duplicates()`,
+   never published on their own. Credit per decision 18.
+5. **Review and ship** (Sonnet 5.5 running `/code-review medium` after
+   steps 1-2 and again after 4). `php scripts/test-survivor-archives.php`,
+   `test-facility-pages.php`, `test-operator-pages.php`,
+   `python -u scripts/check-contrast.py --local` on one facility page with
+   the new block, commit to main, confirm the deploy by fetching
+   `js/data/survivor-archives/<site>/index.json` from the live site.
 
 ---
