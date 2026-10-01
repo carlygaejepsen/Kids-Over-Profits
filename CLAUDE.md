@@ -167,6 +167,13 @@ php api/list-unsilenced-files.php [probe] [--minutes=25]   # on the server (ea-p
 php api/list-unsilenced-files.php restart --check          # monthly cron: lists into ~/kop-import/unsilenced/check/, mails when Unsilenced added enough
 python scripts/build-unsilenced-links.py                   # report in tmp/unsilenced/build-report.md
 php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
+# Fornits survivor forum (inc/fornits.php): the crawl copies the treatment-abuse boards into tmp/fornits/ (never committed);
+# the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the
+# server an hourly Groq read (capped per day, KOP_FORNITS_DAILY_CALLS) proposes staff, incidents, survivor accounts
+# (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo
+python scripts/fornits-crawl.py                   # resumable, one request per 3 s
+python scripts/fornits-process.py [--no-upload] [--keep-crawling]   # --no-upload: dry run, marks nothing read
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-fornits.php   # every link + each kind on real docs, exact undo
 # Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,
 # linked as "Archived copy" on the state report pages (server CLI + nightly cron; no apply = dry run)
 php api/sync-inspection-archive.php apply --limit=2000 --minutes=25

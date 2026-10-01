@@ -138,6 +138,8 @@ require_once get_stylesheet_directory() . '/inc/woodbury-create.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-facts.php';
 // Links from the owner's Google Docs and Sheets (scripts/gdocs-extract.py), reviewed at KOP Tools > Drive Docs
 require_once get_stylesheet_directory() . '/inc/drive-docs.php';
+// What the old Fornits survivor forum says about each facility (scripts/fornits-crawl.py, fornits-process.py), reviewed at KOP Tools > Fornits
+require_once get_stylesheet_directory() . '/inc/fornits.php';
 
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';
