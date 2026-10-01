@@ -50,7 +50,11 @@ COURT = re.compile(r'courtlistener\.com|law\.justia\.com|dockets\.justia\.com|ca
                    r'uscourts\.gov|govinfo\.gov/app/details/USCOURTS|courts?\.[a-z]{2}\.gov|\.courts\.|'
                    r'unicourt\.com|trellis\.law|leagle\.com|casemine\.com|scholar\.google\.com/scholar_case|'
                    r'classaction\.org|topclassactions\.com|docketalarm\.com|clearinghouse\.net|'
-                   r'clearinghouse-umich|lawsuit', re.I)
+                   r'clearinghouse-umich', re.I)
+# A legislature's site holds fiscal notes, hearings and reports too: only a bill is legislation.
+BILL = re.compile(r'legiscan\.com|congress\.gov/bill|govtrack\.us/congress/bills|openstates\.org|/bills?/|billtext|'
+                  r'bill_?(?:status|info|history|number)|[?&](?:bill|billnumber|billid)=|[/_-](?:h|s|a)b[_-]?\d+|'
+                  r'[/_-](?:hf|sf|hb|sb|ab|ld|lb)\d+', re.I)
 # State licensing and inspection report hosts (the scrapers' sources).
 INSPECTION = re.compile(r'ccld\.dss\.ca\.gov|ccl\.utah\.gov|licensing\.utah\.gov|hslicensing\.utah\.gov|'
                         r'djj\.state\.fl\.us|myflfamilies\.com|apps\.hhs\.texas\.gov|childcare\.az\.gov|'
@@ -420,7 +424,7 @@ def classify(url, dom, news_domains, program_domains):
     if COURT.search(url):
         return 'court'
     if LEGISLATION.search(url):
-        return 'legislation'
+        return 'legislation' if BILL.search(url) else 'government'
     if b in SOCIAL or dom in SOCIAL:
         return 'social'
     if b in PEOPLE or dom in PEOPLE:

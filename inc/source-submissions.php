@@ -677,3 +677,6 @@ add_action('rest_api_init', function () {
         ),
     ));
 });
+
+// Links this sends arrive bare (title, address, site); the hourly job fills in the rest.
+require_once __DIR__ . '/record-enrich.php';
