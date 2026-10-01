@@ -6,7 +6,7 @@
    "nodes": 1421,
    "edges": 2727,
    "facilityMatches": 536,
-   "withYears": 366,
+   "withYears": 367,
    "withDeaths": 28,
    "rebranded": 90,
    "profileEdges": 339,
@@ -11801,6 +11801,7 @@
     "x": -312.59,
     "y": -762.81
    },
+   "years": "until 1991",
    "deaths": 1
   },
   {
