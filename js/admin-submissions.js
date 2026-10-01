@@ -210,6 +210,123 @@ document.addEventListener('DOMContentLoaded', () => {
     if (promoBtn) {
         promoBtn.addEventListener('click', () => performAction('promo'));
     }
+    /*
+     * "Not a news article?": move the link onto a facility record as its
+     * website (profileLinks) or an additional resource (resourceLinks). The
+     * server files the article as rejected and keeps json_data.movedTo for Undo.
+     */
+    const refileSection = document.getElementById('refileSection');
+    const refileForm = document.getElementById('refileForm');
+    const refileResourceFields = document.getElementById('refileResourceFields');
+    const refileKind = document.getElementById('refileKind');
+    const refileLabel = document.getElementById('refileLabel');
+    const refileFacility = document.getElementById('refileFacility');
+    const refileMentions = document.getElementById('refileMentions');
+    const refileBtn = document.getElementById('refileBtn');
+    const refileMoved = document.getElementById('refileMoved');
+    const refileMovedText = document.getElementById('refileMovedText');
+    const refileUndoBtn = document.getElementById('refileUndoBtn');
+    const refileStatus = document.getElementById('refileStatus');
+
+    function refileTarget() {
+        const on = refileSection && refileSection.querySelector('input[name="refileTarget"]:checked');
+        return on ? on.value : 'website';
+    }
+
+    function showRefile(submission) {
+        if (!refileSection) return;
+        const moved = submission.json_data && submission.json_data.movedTo;
+        refileStatus.textContent = '';
+        refileStatus.className = 'action-status';
+        refileForm.hidden = !!moved;
+        refileMoved.hidden = !moved;
+        if (moved) {
+            refileMovedText.textContent = `Moved to ${moved.facility_name || 'facility #' + moved.facility_id} as `
+                + (moved.target === 'website' ? 'its website.' : 'an additional resource.');
+            return;
+        }
+        refileLabel.value = '';
+        refileFacility.value = '';
+        const picked = refileSection.querySelector('.kop-ff-picked');
+        if (picked) picked.textContent = '';
+        // The names the article mentions, one click to search each.
+        refileMentions.textContent = '';
+        const names = coerceList(submission.facilities_mentioned || (submission.json_data && submission.json_data.facilities));
+        if (names.length) {
+            refileMentions.appendChild(document.createTextNode('Mentions: '));
+            names.slice(0, 8).forEach(name => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'btn-refile-mention';
+                b.textContent = name;
+                b.addEventListener('click', () => {
+                    const q = refileSection.querySelector('.kop-ff-q');
+                    if (!q) return;
+                    q.value = name;
+                    q.dispatchEvent(new Event('input', { bubbles: true }));
+                    q.focus();
+                });
+                refileMentions.appendChild(b);
+            });
+        }
+    }
+
+    async function runRefile(action) {
+        if (!currentSubmission) return;
+        const body = {
+            action: action,
+            type: 'news',
+            ids: [currentSubmission.id],
+            reviewedBy: (reviewerEmail && reviewerEmail.value.trim()) || REVIEWER || ''
+        };
+        if (action === 'refile') {
+            body.target = refileTarget();
+            body.facilityId = parseInt(refileFacility.value, 10) || 0;
+            body.resourceKind = refileKind.value;
+            body.label = refileLabel.value.trim();
+            if (!body.facilityId) {
+                refileStatus.className = 'action-status';
+                refileStatus.innerHTML = '<span class="error">✗ Pick the facility first.</span>';
+                return;
+            }
+        }
+        refileBtn.disabled = refileUndoBtn.disabled = true;
+        refileStatus.innerHTML = '<span class="loading">Working...</span>';
+        try {
+            const res = await fetch(MANAGE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const result = await res.json();
+            if (result.success) {
+                refileStatus.innerHTML = `<span class="success">${kopIcon('check')} ${escapeHtml(result.message)}</span>`;
+                setTimeout(() => {
+                    loadStats();
+                    loadSubmissions();
+                    viewSubmission(currentSubmission.id);
+                }, 1000);
+            } else {
+                refileStatus.innerHTML = `<span class="error">✗ ${escapeHtml(result.error || 'Move failed')}</span>`;
+            }
+        } catch (error) {
+            console.error('Move failed:', error);
+            refileStatus.innerHTML = '<span class="error">✗ Network error</span>';
+        } finally {
+            refileBtn.disabled = refileUndoBtn.disabled = false;
+        }
+    }
+
+    if (refileSection) {
+        refileSection.querySelectorAll('input[name="refileTarget"]').forEach(r => {
+            r.addEventListener('change', () => { refileResourceFields.hidden = refileTarget() !== 'resource'; });
+        });
+        refileBtn.addEventListener('click', () => runRefile('refile'));
+        refileUndoBtn.addEventListener('click', () => {
+            if (confirm('Take the link off the facility record and put the article back in the news queue?')) runRefile('unrefile');
+        });
+    }
+
     publishBtn.addEventListener('click', () => performAction('publish'));
     deleteBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to delete this submission? This cannot be undone.')) {
@@ -877,6 +994,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check for duplicate URLs
             const duplicates = getDuplicatesForUrl(submission.article_url);
             displayDuplicateWarning(duplicates, 'news');
+            showRefile(submission);
 
             // Hide markdown editor section for news (they have summaries, not markdown)
             if (markdownEditorSection) markdownEditorSection.style.display = 'none';

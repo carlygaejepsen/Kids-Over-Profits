@@ -1678,3 +1678,44 @@ textarea.kop-edit-input {
 .news-only[hidden] {
     display: none !important;
 }
+
+/* "Not a news article?": move the link onto a facility record. */
+.refile-section {
+    padding: 22px;
+    border-radius: 14px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
+}
+.refile-section[hidden], .refile-section [hidden] { display: none; }
+.refile-section h3 { margin: 0 0 8px; color: var(--kop-midnight-blue); }
+.refile-help { margin: 0 0 12px; color: var(--kop-text-muted); }
+.refile-targets { border: 0; margin: 0 0 12px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.refile-targets legend { font-weight: 600; margin-bottom: 4px; }
+.refile-resource-fields, .refile-facility { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-bottom: 12px; }
+.refile-resource-fields label, .refile-facility > label { font-weight: 600; }
+.refile-resource-fields select, .refile-resource-fields input { color: var(--kop-midnight-blue); background: var(--kop-white); }
+.refile-mentions { flex-basis: 100%; color: var(--kop-text-muted); font-size: 0.9em; }
+button.btn-refile-mention,
+button.btn-refile-mention:hover,
+button.btn-refile-mention:focus,
+button.btn-refile-mention:active {
+    margin: 2px 4px 2px 0;
+    padding: 2px 10px;
+    border: 1px solid var(--kop-navy);
+    border-radius: 999px;
+    background: var(--kop-white);
+    color: var(--kop-navy);
+    font-size: 0.9em;
+}
+button.btn-refile-mention:hover, button.btn-refile-mention:focus { background: var(--kop-sand); color: var(--kop-midnight-blue); }
+button.btn-refile, button.btn-refile:hover, button.btn-refile:focus, button.btn-refile:active {
+    background: var(--kop-navy);
+    color: var(--kop-white);
+}
+button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:focus, button.btn-refile-undo:active {
+    background: var(--kop-white);
+    color: var(--kop-navy);
+    border: 1px solid var(--kop-navy);
+}
+.refile-moved p { margin: 0 0 10px; }

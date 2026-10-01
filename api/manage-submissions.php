@@ -634,7 +634,128 @@ try {
                 'affected' => $affected
             ]);
             break;
-            
+
+        case 'refile':
+        case 'unrefile':
+            // A link sent in as news that is really the program's own website
+            // (the record's profileLinks) or a resource for its facility page
+            // (resourceLinks, "Materials and links"). The link goes on the record
+            // through the Drive Docs save path; the article is filed as rejected
+            // with a note saying where it went, so its URL still blocks
+            // rediscovery. json_data.movedTo remembers the move for Undo.
+            if ($type !== 'news' || count($ids) !== 1) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Move one news article at a time.']);
+                exit;
+            }
+            $nid = (int) $ids[0];
+            $row = $pdo->prepare('SELECT id, article_title, article_url, status, json_data FROM news_submissions WHERE id = ?');
+            $row->execute([$nid]);
+            $row = $row->fetch(PDO::FETCH_ASSOC);
+            if (!$row) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Submission not found']);
+                exit;
+            }
+            $json = json_decode((string) $row['json_data'], true);
+            $json = is_array($json) ? $json : [];
+            $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
+            $kinds = kop_facility_resource_link_kinds();
+            $where_words = static function (array $moved) use ($kinds) {
+                return $moved['target'] === 'website'
+                    ? 'program website'
+                    : 'additional resource (' . ($kinds[$moved['kind'] ?? 'other'] ?? 'Other links') . ')';
+            };
+
+            try {
+                $opts = kop_gdl_opts();
+                if ($action === 'refile') {
+                    if (!empty($json['movedTo'])) {
+                        throw new RuntimeException('Already moved to ' . ($json['movedTo']['facility_name'] ?? 'a facility') . '. Undo that first.');
+                    }
+                    $target = $data['target'] ?? '';
+                    if (!in_array($target, ['website', 'resource'], true)) {
+                        throw new RuntimeException('Choose facility website or additional resource.');
+                    }
+                    $fid = (int) ($data['facilityId'] ?? 0);
+                    if ($fid <= 0) {
+                        throw new RuntimeException('Pick the facility first.');
+                    }
+                    $url = trim((string) $row['article_url']);
+                    if (!preg_match('#^https?://#i', $url)) {
+                        throw new RuntimeException('This submission has no web address to move.');
+                    }
+                    $kind = (string) ($data['resourceKind'] ?? 'other');
+                    $kind = isset($kinds[$kind]) ? $kind : 'other';
+                    $label = trim((string) ($data['label'] ?? '')) ?: trim((string) $row['article_title']);
+                    $moved = ['target' => $target, 'facility_id' => $fid, 'url' => $url, 'kind' => $kind];
+
+                    kop_v2_with_write_lock($opts['pdo'], function () use ($fid, $opts, $url, $kind, $label, $target, $nid, &$moved) {
+                        $stored = kop_facility_load($fid, $opts);
+                        if (!$stored) {
+                            throw new RuntimeException("Facility #{$fid} does not exist.");
+                        }
+                        $doc = $stored['doc'];
+                        $key = kop_gdl_url_key($url);
+                        foreach (array_merge((array) ($doc['profileLinks'] ?? []), array_column((array) ($doc['resourceLinks'] ?? []), 'url')) as $have) {
+                            if (is_string($have) && kop_gdl_url_key($have) === $key) {
+                                throw new RuntimeException('That link is already on the record.');
+                            }
+                        }
+                        if ($target === 'website') {
+                            $doc['profileLinks'][] = $url;
+                        } else {
+                            $doc['resourceLinks'][] = ['url' => $url, 'label' => $label, 'kind' => $kind, 'source' => "Sent in as news (#{$nid})"];
+                        }
+                        kop_gdl_save($doc, $opts);
+                        $moved['facility_name'] = (string) ($doc['identification']['name'] ?? $stored['unique_name']);
+                    });
+
+                    $json['movedTo'] = $moved;
+                    $note = 'Moved to ' . $moved['facility_name'] . " (#{$fid}) as " . $where_words($moved) . '.';
+                    $pdo->prepare("UPDATE news_submissions SET status = 'rejected', json_data = ?,
+                            reviewer_notes = TRIM(LEADING '\n' FROM CONCAT(COALESCE(reviewer_notes, ''), '\n', ?)),
+                            reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?")
+                        ->execute([json_encode($json, JSON_UNESCAPED_UNICODE), $note, $reviewedBy, $nid]);
+                    $message = $note;
+                } else {
+                    $moved = $json['movedTo'] ?? null;
+                    if (!is_array($moved) || empty($moved['facility_id'])) {
+                        throw new RuntimeException('This article was not moved to a facility record.');
+                    }
+                    kop_v2_with_write_lock($opts['pdo'], function () use ($moved, $opts) {
+                        $stored = kop_facility_load((int) $moved['facility_id'], $opts);
+                        if (!$stored) {
+                            return; // the record is gone; nothing to take back
+                        }
+                        $doc = $stored['doc'];
+                        kop_gdl_doc_remove($doc, $moved);
+                        kop_gdl_save($doc, $opts);
+                    });
+                    unset($json['movedTo']);
+                    $note = 'Move to ' . ($moved['facility_name'] ?? 'facility') . ' undone; back in the queue.';
+                    $pdo->prepare("UPDATE news_submissions SET status = 'submitted', json_data = ?,
+                            reviewer_notes = TRIM(LEADING '\n' FROM CONCAT(COALESCE(reviewer_notes, ''), '\n', ?)),
+                            reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?")
+                        ->execute([json_encode($json, JSON_UNESCAPED_UNICODE), $note, $reviewedBy, $nid]);
+                    $message = $note;
+                }
+            } catch (Throwable $e) {
+                http_response_code($e instanceof RuntimeException ? 409 : 500);
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+                exit;
+            }
+
+            // A rejected article drops off the case cards; a restored one may return.
+            require_once __DIR__ . '/lawsuit-news-links.php';
+            try {
+                kop_sync_news_lawsuit_links($pdo, $nid, $reviewedBy ?: 'review');
+            } catch (Throwable $e) {
+                error_log("manage-submissions news lawsuit-link sync (id $nid) failed: " . $e->getMessage());
+            }
+            echo json_encode(['success' => true, 'message' => $message, 'affected' => 1]);
+            break;
+
         case 'delete':
             if (empty($ids)) {
                 http_response_code(400);
@@ -1018,7 +1139,7 @@ try {
             echo json_encode([
                 'success' => false,
                 'error' => 'Invalid action',
-                'valid_actions' => ['approve', 'reject', 'publish', 'promo', 'delete', 'update_status', 'update_fields', 'update_markdown', 'stats']
+                'valid_actions' => ['approve', 'reject', 'publish', 'promo', 'refile', 'unrefile', 'delete', 'update_status', 'update_fields', 'update_markdown', 'stats']
             ]);
     }
     

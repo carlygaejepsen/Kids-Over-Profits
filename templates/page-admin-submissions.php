@@ -247,6 +247,40 @@ get_header();
                         <div id="facilityLinkMessage" class="facility-link-message" style="display:none;"></div>
                     </div>
 
+                    <!-- Not news: move the link onto a facility record -->
+                    <div class="refile-section news-only" id="refileSection" hidden>
+                        <h3>Not a news article?</h3>
+                        <div id="refileForm">
+                            <p class="refile-help">Put the link on a facility record instead. It leaves the news queue (filed as rejected, with a note saying where it went) and can be undone here.</p>
+                            <fieldset class="refile-targets">
+                                <legend>Move it as</legend>
+                                <label><input type="radio" name="refileTarget" value="website" checked> Facility website</label>
+                                <label><input type="radio" name="refileTarget" value="resource"> Additional resource</label>
+                            </fieldset>
+                            <div class="refile-resource-fields" id="refileResourceFields" hidden>
+                                <label for="refileKind">Kind</label>
+                                <select id="refileKind">
+                                    <?php foreach (kop_facility_resource_link_kinds() as $kop_kind => $kop_kind_label) : ?>
+                                        <option value="<?php echo esc_attr($kop_kind); ?>"<?php selected($kop_kind, 'reference'); ?>><?php echo esc_html($kop_kind_label); ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <label for="refileLabel">Label</label>
+                                <input type="text" id="refileLabel" placeholder="Defaults to the article title">
+                            </div>
+                            <div class="refile-facility">
+                                <label>Facility</label>
+                                <?php echo kop_facility_finder_field('', '', ' id="refileFacility"'); ?>
+                                <div class="refile-mentions" id="refileMentions"></div>
+                            </div>
+                            <button type="button" id="refileBtn" class="btn-refile">Move to facility record</button>
+                        </div>
+                        <div class="refile-moved" id="refileMoved" hidden>
+                            <p id="refileMovedText"></p>
+                            <button type="button" id="refileUndoBtn" class="btn-refile-undo">Undo move</button>
+                        </div>
+                        <div id="refileStatus" class="action-status"></div>
+                    </div>
+
                     <!-- Reviewer Section -->
                     <div class="reviewer-section">
                         <h3>Review Actions</h3>
@@ -292,5 +326,7 @@ get_header();
 </div>
 
 <?php
+// The facility finder prints its script in admin_footer; this page is on the front end.
+add_action('wp_footer', 'kop_facility_finder_print_assets');
 get_footer();
 ?>
