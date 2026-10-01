@@ -31,7 +31,8 @@ function kop_enrich_sender_where($col) {
 /** Rows tried and failed twice are left for a person: [key => attempts]. */
 function kop_enrich_failed() {
     $f = get_option('kop_enrich_failed', array());
-    return is_array($f) ? $f : array();
+    // A rate limit says nothing about the article (older runs recorded them).
+    return is_array($f) ? array_filter($f, function ($e) { return !kop_enrich_rate_limited($e['why'] ?? ''); }) : array();
 }
 
 function kop_enrich_mark_failed($key, $why) {
@@ -46,6 +47,10 @@ function kop_enrich_clear_failed($key) {
         unset($f[$key]);
         update_option('kop_enrich_failed', $f, false);
     }
+}
+
+function kop_enrich_rate_limited($why) {
+    return (bool) preg_match('/rate limit|429|too many requests/i', (string) $why);
 }
 
 /** True for a title that is only an address or a site name ("sltrib.com", "law.justia.com: 2023 ny slip op"). */
@@ -116,6 +121,10 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
     $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => 'groq', 'customInstructions' => ''), 120);
     if (!$ai['ok'] || empty($ai['body']['success']) || !is_array($ai['body']['data'] ?? null)) {
         $why = (string) ($ai['body']['error'] ?? ('HTTP ' . $ai['status']));
+        if (kop_enrich_rate_limited($why)) {
+            // Not the article's fault: try it again on a later run.
+            return array('ok' => false, 'id' => $id, 'error' => 'AI: ' . mb_substr($why, 0, 200), 'rate_limited' => true);
+        }
         if ($apply) {
             kop_enrich_mark_failed('news:' . $id, $why);
         }
@@ -277,8 +286,14 @@ function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
     $results = array();
     foreach ($parts['chunks'] as $i => $chunk) {
         $r = kop_groq_call($key, $model, $chunk, $i + 1, count($parts['chunks']));
+        if (!$r['ok'] && kop_enrich_rate_limited($r['error'])) {
+            sleep(60);
+            $r = kop_groq_call($key, $model, $chunk, $i + 1, count($parts['chunks']));
+        }
         if (!$r['ok']) {
-            return $fail($r['error']);
+            return kop_enrich_rate_limited($r['error'])
+                ? array('ok' => false, 'id' => $id, 'error' => $r['error'], 'rate_limited' => true)
+                : $fail($r['error']);
         }
         $results[] = $r['data'];
     }
@@ -330,14 +345,29 @@ function kop_enrich_run(PDO $pdo, $type, $limit, $seconds, $apply, array $ids = 
     $start = time();
     $rows = $type === 'lawsuit' ? kop_enrich_lawsuit_ids($pdo, $limit, $ids) : kop_enrich_news_ids($pdo, $limit, $ids);
     $out = array();
+    $limited = 0;
     foreach ($rows as $i => $id) {
         if (time() - $start > $seconds) {
             break;
         }
         if ($i) {
-            sleep(4); // Groq's per-minute limits
+            sleep(12); // Groq's per-minute token limits: each article is a few thousand tokens
         }
-        $out[] = $type === 'lawsuit' ? kop_enrich_lawsuit_row($pdo, $id, $apply) : kop_enrich_news_row($pdo, $id, $apply);
+        $r = $type === 'lawsuit' ? kop_enrich_lawsuit_row($pdo, $id, $apply) : kop_enrich_news_row($pdo, $id, $apply);
+        if (!empty($r['rate_limited'])) {
+            // Wait the minute out and try the same row once more.
+            if (time() - $start + 75 > $seconds) {
+                $out[] = $r;
+                break;
+            }
+            sleep(65);
+            $r = $type === 'lawsuit' ? kop_enrich_lawsuit_row($pdo, $id, $apply) : kop_enrich_news_row($pdo, $id, $apply);
+            $limited = !empty($r['rate_limited']) ? $limited + 1 : 0;
+        }
+        $out[] = $r;
+        if ($limited >= 3) {
+            break; // Groq keeps refusing: stop until the next run
+        }
     }
     return $out;
 }
