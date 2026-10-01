@@ -6,7 +6,7 @@
    "nodes": 1421,
    "edges": 2727,
    "facilityMatches": 536,
-   "withYears": 367,
+   "withYears": 368,
    "withDeaths": 28,
    "rebranded": 90,
    "profileEdges": 339,
@@ -23703,7 +23703,8 @@
    "board": {
     "x": -301.5,
     "y": -793.59
-   }
+   },
+   "years": "until 2004"
   },
   {
    "id": "genesis-treatment-agency",
