@@ -38,6 +38,16 @@ if (file_exists($kop_gl_js)) {
     );
 }
 
+// Guided tour (js/glossary-tutorial.js) on the shared tutorial overlay.
+$kop_gl_tour_css = get_stylesheet_directory() . '/css/tutorial-overlay.css';
+$kop_gl_tour_base = get_stylesheet_directory() . '/js/tutorial-overlay.js';
+$kop_gl_tour_js = get_stylesheet_directory() . '/js/glossary-tutorial.js';
+if (file_exists($kop_gl_tour_css) && file_exists($kop_gl_tour_base) && file_exists($kop_gl_tour_js)) {
+    wp_enqueue_style('kop-tutorial-overlay-style', get_stylesheet_directory_uri() . '/css/tutorial-overlay.css', array(), filemtime($kop_gl_tour_css));
+    wp_enqueue_script('kop-tutorial-overlay-script', get_stylesheet_directory_uri() . '/js/tutorial-overlay.js', array('jquery'), filemtime($kop_gl_tour_base), true);
+    wp_enqueue_script('kop-glossary-tutorial', get_stylesheet_directory_uri() . '/js/glossary-tutorial.js', array('kop-tutorial-overlay-script', 'kop-glossary'), filemtime($kop_gl_tour_js), true);
+}
+
 get_header();
 
 /* Both filters are only ever compared against the built file, never printed

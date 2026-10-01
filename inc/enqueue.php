@@ -607,6 +607,12 @@ function kop_enqueue_report_scripts() {
                 ));
             }
 
+            // Guided tour for the pages on the shared engine (its facility
+            // rows are what the last step points at).
+            if (!empty($config['report_page'])) {
+                kop_enqueue_tour('kop-inspection-reports-tutorial', '/js/inspection-reports-tutorial.js', array($config['script_handle']));
+            }
+
             // Stop after finding the first matching page to avoid unnecessary checks.
             break;
         }
@@ -1658,8 +1664,26 @@ function enqueue_tti_processor_scripts() {
             'restUrl' => esc_url_raw(rest_url('kop/v1/'))
         )
     );
+
+    // Guided tour (js/program-index-tutorial.js) on the shared overlay.
+    kop_enqueue_tour('kop-program-index-tutorial', '/js/program-index-tutorial.js', array('tti-program-index-script', 'kop-location-index'));
 }
 add_action('wp_enqueue_scripts', 'enqueue_tti_processor_scripts');
+
+/**
+ * Loads the shared tutorial overlay (css + class) and one page's tour script
+ * (public pages; the tour script guards on its own page's markup).
+ */
+function kop_enqueue_tour($handle, $rel, $deps = array()) {
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+    if (!file_exists($theme_dir . '/css/tutorial-overlay.css') || !file_exists($theme_dir . '/js/tutorial-overlay.js') || !file_exists($theme_dir . $rel)) {
+        return;
+    }
+    wp_enqueue_style('kop-tutorial-overlay-style', $theme_uri . '/css/tutorial-overlay.css', array(), filemtime($theme_dir . '/css/tutorial-overlay.css'));
+    wp_enqueue_script('kop-tutorial-overlay-script', $theme_uri . '/js/tutorial-overlay.js', array('jquery'), filemtime($theme_dir . '/js/tutorial-overlay.js'), true);
+    wp_enqueue_script($handle, $theme_uri . $rel, array_merge(array('kop-tutorial-overlay-script'), $deps), filemtime($theme_dir . $rel), true);
+}
 
 /**
  * Enqueue the wiki editor generator assets when its template is used.
@@ -2139,6 +2163,7 @@ function kop_enqueue_template_assets() {
 
         if (wp_script_is('kop-network-app', 'enqueued') && function_exists('kop_network_map_config')) {
             wp_localize_script('kop-network-app', 'KOP_NETWORK_CONFIG', kop_network_map_config());
+            kop_enqueue_tour('kop-network-map-tutorial', '/js/network-map-tutorial.js', array('kop-network-app'));
         }
         return;
     }
