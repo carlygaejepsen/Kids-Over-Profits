@@ -19,7 +19,7 @@ inside each facility's JSON document, so no SQL columns are added.
 1. **Fixed top-level keys.** Every document has exactly these keys, in this
    order: `schema_version`, `facility_id`, `identification`, `location`,
    `operatingPeriod`, `facilityDetails`, `staff`, `accreditations`,
-   `memberships`, `certifications`, `licensing`, `profileLinks`, `resources`,
+   `memberships`, `certifications`, `licensing`, `profileLinks`, `resourceLinks`, `resources`,
    `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`,
    `philosophy`, `conditions`, `criticalIncidents`, `notes`, `fieldNotes`,
    `documentFolderId`, `provenance`, `legacy`. Sections are always present,
@@ -149,6 +149,7 @@ a `migration: original status "..."` note.
 | `accreditations` | `{current[], past[]}` | |
 | `memberships`, `certifications`, `licensing`, `notes` | string[] | |
 | `profileLinks` | string[] | URLs. |
+| `resourceLinks` | `{url, label, kind, source}[]` | Outside pages about the facility (licensing reports, court records, survivor posts, staff profiles, reference). One entry per address. `kind` is one of `licensing`, `court`, `government`, `news`, `social`, `people`, `reference`, `archive`, `other`. Shown on the facility page under "Materials and links"; added from KOP Tools > Drive Docs. |
 | `resources` | map | Every standard key is present (see Standard shapes): `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Keys the form adds later are typed by the same naming rule. |
 | `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. `targetedDiagnoses` and `targetedBehaviors` hold selected `hasX` booleans; `ttiPractices` holds selected `hasX` booleans and an optional `other` string list. A legacy array becomes `{"_legacy": [...]}`. |
 | `fieldNotes` | map | A legacy array becomes `{"_legacy": [...]}`. |
@@ -185,6 +186,10 @@ re-saved every document on 2026-09-18.
   organization.
 - **Links** (`profileLinks`, operator `websites`): URL strings. An object
   gives its `url`.
+- **Resource links** (`resourceLinks`): a bare string is `{url}`. An entry
+  without an http(s) URL is dropped, a repeat of an address already listed
+  (ignoring scheme, `www.` and a trailing slash) is dropped, and an unknown
+  `kind` becomes `other`.
 - **Resources**: `hasNews`, `newsDetails`, `hasPressReleases`,
   `pressReleasesDetails`, `hasInspections`, `hasStateReports`,
   `hasRegulatoryFilings`, `hasViolations`, `hasSettlements`, `hasLawsuits`,
@@ -320,6 +325,7 @@ campus; the identity split gave it its own row:
   "certifications": [],
   "licensing": [],
   "profileLinks": [],
+  "resourceLinks": [],
   "resources": { "hasNews": false, "hasLawsuits": false, "customResources": [] },
   "treatmentTypes": {},
   "targetedDiagnoses": {},

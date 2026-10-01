@@ -226,6 +226,11 @@ function kop_notify_admins($type, $title, $admin_url = '', $fields = array()) {
     if (!isset($types[$type])) {
         return false;
     }
+    // A bulk import an admin is doing by hand (KOP Tools > Drive Docs) turns
+    // these off, so 500 additions are not 500 emails.
+    if (function_exists('apply_filters') && !apply_filters('kop_notify_admins_enabled', true, $type)) {
+        return false;
+    }
 
     $title = kop_submission_flatten_value($title);
     if ($title === '') {

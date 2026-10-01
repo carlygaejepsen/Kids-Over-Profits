@@ -1104,6 +1104,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (kop_facility_pages_field_notes($doc['fieldNotes'] ?? null)) $s[] = 'fieldNotes';
         if (kop_facility_pages_testimony($doc['survivorTestimony'] ?? null)) $s[] = 'survivorTestimony';
         if (kop_facility_pages_resources_held($doc['resources'] ?? null)) $s[] = 'resources';
+        if (kop_facility_pages_resource_links($doc['resourceLinks'] ?? null)) $s[] = 'resourceLinks';
 
         $loc = isset($doc['location']) && is_array($doc['location']) ? $doc['location'] : array();
         if (kop_facility_pages_has_value($loc['additionalLocations'] ?? null)) $s[] = 'location.additionalLocations';
@@ -1371,6 +1372,39 @@ if (!function_exists('kop_facility_pages_archive_link')) {
             'live_url' => $url,
             'go_url'   => kop_program_go_url($url),
         );
+    }
+}
+
+if (!function_exists('kop_facility_pages_resource_links')) {
+    /**
+     * A record's resourceLinks, grouped by kind in kop_facility_resource_link_kinds()
+     * order: [{kind, label, links: [{url, label, live_url, go_url}]}]. They are
+     * the project's sources (reports, court records, survivors, reference) and
+     * keep their live address; only an 'other' link, which may be the
+     * program's own page, is shown as a snapshot like the external links.
+     */
+    function kop_facility_pages_resource_links($value) {
+        if (!is_array($value) || !function_exists('kop_facility_resource_link_list')) return array();
+        $kinds = kop_facility_resource_link_kinds();
+        $by = array();
+        foreach (kop_facility_resource_link_list($value) as $l) {
+            $label = $l['label'];
+            if ($label === '' || preg_match('#^https?://#i', $label)) {
+                $host = wp_parse_url($l['url'], PHP_URL_HOST);
+                $label = $host ? preg_replace('/^www\./', '', strtolower($host)) : $l['url'];
+            }
+            $link = $l['kind'] === 'other'
+                ? kop_facility_pages_archive_link($l['url'], $label)
+                : array('url' => $l['url'], 'label' => $label, 'live_url' => '', 'go_url' => '');
+            $by[$l['kind']][] = $link;
+        }
+        $out = array();
+        foreach ($kinds as $kind => $kind_label) {
+            if (!empty($by[$kind])) {
+                $out[] = array('kind' => $kind, 'label' => $kind_label, 'links' => $by[$kind]);
+            }
+        }
+        return $out;
     }
 }
 
@@ -1786,6 +1820,7 @@ if (!function_exists('kop_facility_page_data')) {
             $profile_links[] = kop_facility_pages_archive_link($url, $label);
         }
         $resources = kop_facility_pages_resources_held($doc['resources'] ?? null);
+        $resource_links = kop_facility_pages_resource_links($doc['resourceLinks'] ?? null);
 
         // ---- Linked records ----------------------------------------------------
         $name_keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
@@ -1845,6 +1880,7 @@ if (!function_exists('kop_facility_page_data')) {
             'testimony'     => $testimony,
             'profile_links' => $profile_links,
             'resources'     => $resources,
+            'resource_links' => $resource_links,
             'news'          => $news,
             'lawsuits'      => $lawsuits,
             'memorials'     => $memorials,

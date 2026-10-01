@@ -147,6 +147,13 @@ php scripts/test-woodbury-mentions.php            # "File under" facilities and 
 # copied to ~/kop-import/woodbury/; owner adds them at KOP Tools > Woodbury Facts (live at once, Undo)
 python scripts/woodbury-facts.py
 php scripts/test-woodbury-facts.php               # applies every proposal to the real docs, validator, exact undo
+# Links from the owner's Google Docs and Sheets (docs/PLAN.md 3.9): tmp/gdocs/export.gs (from scripts/gdocs-select.py)
+# exports them to G:/My Drive/KOP Doc Export; the links pass ties each link to a facility and drops what is on file ->
+# tmp/gdocs/links.json, copied to ~/kop-import/gdocs/; reviewed at KOP Tools > Drive Docs (inc/drive-docs.php): news,
+# court records and bills to their queues (no emails), program sites to profileLinks, the rest to the record's
+# resourceLinks ({url, label, kind, source}, listed on the /facility/ page under "Materials and links")
+python scripts/gdocs-extract.py
+php scripts/test-drive-docs.php                   # every link on its real record, validator, exact undo, the page list
 # Unsilenced's archive (public Drive folders) on facility/operator pages: only documents KOP has no copy of.
 # Server lists every file with its md5 (read-only; ~/kop-import/unsilenced/files.jsonl -> tmp/unsilenced/),
 # then the build compares with the media library md5s and inspection scrapers -> js/data/unsilenced/

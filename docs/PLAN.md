@@ -755,11 +755,22 @@ backfilled), board, IRS, FOIA templates and personal docs.
    addresses, arrests and closures, read like Woodbury Facts: every fact
    carries its quote, the build drops a quote not found in the doc and
    anything the record already holds.
-4. **Review screen** (Sonnet 5). KOP Tools > Drive Docs, built like
-   Woodbury Facts: source doc, quote, matched facility, Add / Skip / Undo.
-   Links go in through `kop_ext_insert_news` / `_lawsuit` /
-   `_legislation` / `_website` in `inc/source-submissions.php`; closures go
-   to Closure Reports, never straight to a status.
+4. **Review screen**. Built 2026-10-01: KOP Tools > Drive Docs
+   (`inc/drive-docs.php`, table `{prefix}kop_gdoc_links`, synced from
+   `~/kop-import/gdocs/links.json` when the page opens). Owner decisions
+   (2026-10-01): survivor/social posts and people links are not news; they
+   and the licensing reports the scrapers lack go on the facility as
+   resource links. So: news to the news queue, court records and bills to
+   their queues (`kop_ext_insert_*`, no admin emails via the
+   `kop_notify_admins_enabled` filter), the program's own site to
+   `profileLinks`, everything else to the new `resourceLinks` field
+   (`{url, label, kind, source}`, PHP and JS normalizers, listed by kind on
+   the /facility/ page; live links except kind `other`, shown as a
+   snapshot). Each row's "Goes to" can be changed; Undo takes a link off the
+   record, or a queue row nobody has reviewed yet. Company-only and
+   no-facility links need a record picked (news can go without one).
+   `php scripts/test-drive-docs.php`. Not yet: operator pages have no
+   resource links, and `resourceLinks` is not in the open data downloads.
 5. **Sheets** (Sonnet 5). A column map per sheet; only cells that differ
    from the record reach the review screen.
 

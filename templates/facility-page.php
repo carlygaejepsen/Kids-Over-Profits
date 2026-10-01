@@ -58,7 +58,7 @@ $kop_fp_has_unsilenced = !empty($page['unsilenced']['groups']);
 $kop_fp_has_docs = !empty($page['documents']['html']) || $kop_fp_has_research || $kop_fp_has_unsilenced;
 $kop_fp_has_wiki = !empty($page['wiki']);
 $kop_fp_has_siblings = !empty($page['siblings']);
-$kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']);
+$kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']) || !empty($page['resource_links']);
 $kop_fp_has_network = !empty($page['network']['groups']);
 
 if ($kop_fp_has_inspections) $kop_fp_sections['inspections'] = 'Licensing and inspections';
@@ -488,6 +488,19 @@ get_header();
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>
+                <?php foreach ((array) ($page['resource_links'] ?? array()) as $kop_fp_group) : ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($kop_fp_group['label']); ?></h3>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($kop_fp_group['links'] as $l) : ?>
+                            <li>
+                                <a href="<?php echo esc_url($l['url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($l['label']); ?></a>
+                                <?php if (!empty($l['live_url'])) : ?>
+                                    <span class="meta"><a href="<?php echo esc_url($l['go_url']); ?>" target="_blank" rel="nofollow noreferrer noopener">live site</a></span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endforeach; ?>
             </section>
             <?php endif; ?>
 

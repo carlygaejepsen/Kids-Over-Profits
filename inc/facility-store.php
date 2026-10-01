@@ -132,6 +132,54 @@ if (!function_exists('kop_facility_testimony_list')) {
     }
 }
 
+if (!function_exists('kop_facility_resource_link_kinds')) {
+    /** resourceLinks kinds, in the order the facility page groups them. */
+    function kop_facility_resource_link_kinds() {
+        return array(
+            'licensing'  => 'Licensing and inspection reports',
+            'court'      => 'Court records',
+            'government' => 'Government records',
+            'news'       => 'News coverage',
+            'social'     => 'Survivor posts and discussion',
+            'people'     => 'Staff and owners',
+            'reference'  => 'Reference and research',
+            'archive'    => 'Archived pages',
+            'other'      => 'Other links',
+        );
+    }
+}
+
+if (!function_exists('kop_facility_resource_link_list')) {
+    /**
+     * resourceLinks: outside pages about the facility, [{url, label, kind,
+     * source}], one entry per address (scheme, www. and a trailing slash
+     * ignored). An unknown kind is 'other'.
+     */
+    function kop_facility_resource_link_list($value) {
+        if (!is_array($value)) return array();
+        $kinds = kop_facility_resource_link_kinds();
+        $out = array();
+        $seen = array();
+        foreach ($value as $entry) {
+            if (is_string($entry)) $entry = array('url' => $entry);
+            if (!is_array($entry)) continue;
+            $url = kop_facility_str($entry['url'] ?? '');
+            if (!preg_match('#^https?://\S+$#i', $url)) continue;
+            $key = strtolower(rtrim(preg_replace('#^https?://(www\.)?#i', '', $url), '/'));
+            if (isset($seen[$key])) continue;
+            $seen[$key] = true;
+            $kind = kop_facility_str($entry['kind'] ?? '');
+            $out[] = array(
+                'url'    => $url,
+                'label'  => kop_facility_str($entry['label'] ?? ''),
+                'kind'   => isset($kinds[$kind]) ? $kind : 'other',
+                'source' => kop_facility_str($entry['source'] ?? ''),
+            );
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('kop_facility_testimony_redact')) {
     /**
      * Drop unpublished survivor testimony from any payload, at any depth, so
@@ -638,6 +686,7 @@ if (!function_exists('kop_facility_blank_document')) {
             'certifications' => array(),
             'licensing'     => array(),
             'profileLinks'  => array(),
+            'resourceLinks' => array(),
             'resources'     => array(),
             'treatmentTypes' => array(),
             'targetedDiagnoses' => array(),
@@ -967,6 +1016,7 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['certifications'] = kop_facility_list($f['certifications'] ?? array());
         $doc['licensing']      = kop_facility_list($f['licensing'] ?? array());
         $doc['profileLinks']   = kop_facility_link_list($f['profileLinks'] ?? array());
+        $doc['resourceLinks']  = kop_facility_resource_link_list($f['resourceLinks'] ?? array());
         $doc['notes']          = kop_facility_list($f['notes'] ?? array());
         if ($gender_note !== '') $doc['notes'] = kop_facility_list(array_merge($doc['notes'], array($gender_note)));
 
@@ -1015,7 +1065,7 @@ if (!function_exists('kop_facility_normalize')) {
         $known = array(
             'identification', 'locationDetails', 'addressParts', 'address', 'location',
             'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
-            'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
+            'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'resources', 'treatmentTypes',
             'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
             'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
             'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
@@ -1403,6 +1453,7 @@ if (!function_exists('kop_facility_validate')) {
             'certifications'              => $doc['certifications'] ?? null,
             'licensing'                   => $doc['licensing'] ?? null,
             'profileLinks'                => $doc['profileLinks'] ?? null,
+            'resourceLinks'               => $doc['resourceLinks'] ?? null,
             'notes'                       => $doc['notes'] ?? null,
             'survivorTestimony'           => $doc['survivorTestimony'] ?? null,
             'location.additionalLocations' => $loc['additionalLocations'] ?? null,
@@ -1616,6 +1667,7 @@ if (!function_exists('kop_facility_to_legacy')) {
             'certifications' => $doc['certifications'],
             'licensing'      => $doc['licensing'],
             'profileLinks'   => $doc['profileLinks'],
+            'resourceLinks'  => $doc['resourceLinks'] ?? array(),
             'resources'      => $doc['resources'],
             'treatmentTypes' => $doc['treatmentTypes'],
             'targetedDiagnoses' => $doc['targetedDiagnoses'] ?? array(),

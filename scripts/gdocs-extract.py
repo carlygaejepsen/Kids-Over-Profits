@@ -128,6 +128,23 @@ def base_domain(d):
     return '.'.join(parts[-2:])
 
 
+def link_label(anchor, row, url):
+    """What to call a link: its linked words, else the first plain cell of
+    its sheet row, else a short form of the address."""
+    a = flat(anchor)
+    if len(a) >= 3 and not URL_RE.match(a) and not re.fullmatch(r'[\W\d]+', a):
+        return a[:300]
+    for cell in (row or '').split(' | '):
+        c = flat(cell)
+        if len(c) >= 3 and not URL_RE.search(c) and not re.fullmatch(r'[\W\d/:.-]+', c):
+            return c[:300]
+    p = urllib.parse.urlparse(url)
+    tail = urllib.parse.unquote(p.path.rstrip('/').split('/')[-1]) if p.path.strip('/') else ''
+    tail = re.sub(r'\.(html?|php|aspx?)$', '', tail).replace('-', ' ').replace('_', ' ')
+    host = re.sub(r'^www\.', '', p.netloc)
+    return (host + (': ' + tail if tail and not tail.isdigit() else ''))[:300]
+
+
 def flat(s):
     return re.sub(r'\s+', ' ', (s or '').replace('\u00a0', ' ')).strip()
 
@@ -414,7 +431,7 @@ def classify(url, dom, news_domains, program_domains):
     if b in program_domains:
         return 'program_site'
     if b in news_domains or CALL_SIGN.match(b) or re.search(r'news|times|post|herald|tribune|gazette|journal|daily|press|courier|'
-                                       r'observer|chronicle|register|globe|sentinel|inquirer|star|telegraph|'
+                                       r'observer|chronicle|register|globe|sentinel|inquirer|(?<!guide)star|telegraph|'
                                        r'radio|tv|npr|pbs|abc|cbs|nbc|fox|kare|kutv|ksl|wral|wbur|vice|vox|'
                                        r'magazine|mag\b|insider|atlantic|guardian|independent|reuters|apnews|'
                                        r'bbc|cnn|wsj|bloomberg|huffpost|huffingtonpost|slate|salon|rollingstone|'
@@ -460,7 +477,8 @@ def main():
             if not doc_fac and not doc_op:
                 f, kind = m.title(seg, state)
                 if f:
-                    doc_fac, doc_how = f, 'folder' if seg != segs[-1] else 'doc title'
+                    doc_fac = f
+                    doc_how = ('folder' if seg != segs[-1] else 'doc title') + (' (close name)' if kind == 'close name' else '')
                     continue
             doc_op = doc_op or m.operator(seg)
 
@@ -514,7 +532,7 @@ def main():
                     heading_cache[heading] = m.title(heading, state)
                 f, kind = heading_cache[heading]
                 if f:
-                    fac, how = f, 'heading'
+                    fac, how = f, 'heading' + (' (close name)' if kind == 'close name' else '')
             if not fac and doc_fac:
                 fac, how = doc_fac, doc_how
             if not fac and cat == 'program_site':
@@ -539,6 +557,10 @@ def main():
                     'operator': None, 'on_file': [], 'seen': [],
                 }
             it['seen'].append(seen_at)
+            if not it.get('label'):
+                it['label'] = link_label(anchor, block if tab else '', orig or url)
+                if cat == 'inspection' and tab:
+                    it['label'] = 'Licensing report'
             if fac and not it['facility']:
                 it['facility'] = {'id': fac['id'], 'name': fac['name'], 'state': fac['state']}
                 it['facility_how'] = how

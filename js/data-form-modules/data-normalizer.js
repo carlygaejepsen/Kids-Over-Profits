@@ -895,6 +895,32 @@
         return out;
     }
 
+    const V2_RESOURCE_LINK_KINDS = ['licensing', 'court', 'government', 'news', 'social', 'people', 'reference', 'archive', 'other'];
+
+    /** Mirrors kop_facility_resource_link_list(). */
+    function v2ResourceLinkList(value) {
+        if (!Array.isArray(value)) return [];
+        const out = [];
+        const seen = new Set();
+        value.forEach((entry) => {
+            if (typeof entry === 'string') entry = { url: entry };
+            if (!isPlainObject(entry)) return;
+            const url = v2Str(entry.url);
+            if (!/^https?:\/\/\S+$/i.test(url)) return;
+            const key = url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/+$/, '').toLowerCase();
+            if (seen.has(key)) return;
+            seen.add(key);
+            const kind = v2Str(entry.kind);
+            out.push({
+                url,
+                label: v2Str(entry.label),
+                kind: V2_RESOURCE_LINK_KINDS.includes(kind) ? kind : 'other',
+                source: v2Str(entry.source)
+            });
+        });
+        return out;
+    }
+
     function v2List(value) {
         if (value === null || value === undefined || value === '') return [];
         if (!Array.isArray(value) && !isPlainObject(value)) return [v2Str(value)];
@@ -1212,7 +1238,7 @@
             },
             staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },
             accreditations: { current: [], past: [] },
-            memberships: [], certifications: [], licensing: [], profileLinks: [],
+            memberships: [], certifications: [], licensing: [], profileLinks: [], resourceLinks: [],
             resources: {}, treatmentTypes: {}, targetedDiagnoses: {}, targetedBehaviors: {}, ttiPractices: {},
             philosophy: {}, conditions: {}, criticalIncidents: {},
             notes: [], fieldNotes: {}, survivorTestimony: [],
@@ -1229,7 +1255,7 @@
     const V2_KNOWN_KEYS = new Set([
         'identification', 'locationDetails', 'addressParts', 'address', 'location',
         'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
-        'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
+        'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'resources', 'treatmentTypes',
         'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
         'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
         'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
@@ -1625,6 +1651,7 @@
         doc.certifications = v2List(f.certifications);
         doc.licensing = v2List(f.licensing);
         doc.profileLinks = v2LinkList(f.profileLinks);
+        doc.resourceLinks = v2ResourceLinkList(f.resourceLinks);
         doc.notes = v2List(f.notes);
         if (gender.note !== '') doc.notes = v2List(doc.notes.concat([gender.note]));
 
@@ -1730,6 +1757,7 @@
             certifications: doc.certifications || [],
             licensing: doc.licensing || [],
             profileLinks: doc.profileLinks || [],
+            resourceLinks: doc.resourceLinks || [],
             resources: doc.resources || {},
             treatmentTypes: doc.treatmentTypes || {},
             targetedDiagnoses: doc.targetedDiagnoses || {},
