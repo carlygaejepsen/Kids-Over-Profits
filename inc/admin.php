@@ -674,7 +674,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '17';
+    $version = '18';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
