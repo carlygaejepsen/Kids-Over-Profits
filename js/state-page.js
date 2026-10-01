@@ -20,6 +20,11 @@
         })[ch]);
     };
 
+    // An admin's pencil (inc/inline-edit.php prints KOP_INLINE_EDIT for admins only).
+    const kopEdit = (ref, label) => (window.KOP_INLINE_EDIT && ref)
+        ? ` data-kop-edit="${escapeHtml(ref)}" data-kop-edit-label="${escapeHtml(label || '')}"`
+        : '';
+
     const formatDate = value => {
         if (!value) return '';
         const ts = Date.parse(value);
@@ -1479,7 +1484,7 @@
         const firstLetter = (displayName.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
         const letterAttr = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
         return `
-            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}" data-kop-bug-feature="state-page/facility-card" data-kop-bug-label="Facility: ${escapeHtml(displayName)}">
+            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}" data-kop-bug-feature="state-page/facility-card" data-kop-bug-label="Facility: ${escapeHtml(displayName)}"${kopEdit((facility.facility_ids || []).length ? `facility:${parseInt(facility.facility_ids[0], 10)}:all` : '', displayName)}>
                 <div class="facility-card-header">
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
@@ -1776,7 +1781,7 @@
             </div>
             <ul class="news-list">
                 ${news.map(n => `
-                    <li class="news-item">
+                    <li class="news-item"${kopEdit(n.id ? `rec:news:${parseInt(n.id, 10)}` : '', 'this article')}>
                         <div class="news-item-header">
                             <span class="news-type-badge type-${escapeHtml(n.article_type)}">${escapeHtml(n.article_type)}</span>
                             <a href="${escapeHtml(n.article_url)}" target="_blank" rel="noopener" class="news-title">
@@ -1814,7 +1819,7 @@
             <input type="text" class="section-search" id="lawsuitSearch" placeholder="Search lawsuits...">
             <ul class="lawsuit-list">
                 ${lawsuits.map(l => `
-                    <li class="lawsuit-item">
+                    <li class="lawsuit-item"${kopEdit(l.id ? `rec:lawsuit:${parseInt(l.id, 10)}` : '', l.case_name)}>
                         <div class="lawsuit-header">
                             <h3 class="lawsuit-name">${escapeHtml(l.case_name)}</h3>
                             <span class="status-pill status-${escapeHtml(l.status)}">${escapeHtml(l.status)}</span>
@@ -1861,7 +1866,7 @@
             <input type="text" class="section-search" id="legislationSearch" placeholder="Search legislation...">
             <ul class="legislation-list">
                 ${bills.map(b => `
-                    <li class="legislation-item">
+                    <li class="legislation-item"${kopEdit(b.id ? `rec:legislation:${parseInt(b.id, 10)}` : '', b.bill_number)}>
                         <div class="legislation-header">
                             <h3 class="legislation-name">
                                 ${b.bill_number ? `<span class="bill-number">${escapeHtml(b.bill_number)}</span>` : ''}
