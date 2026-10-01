@@ -343,15 +343,15 @@ class Out:
 
 # Made-up case titles in SCIAD NET's shapes, with the private names each must not show.
 SELFTEST_COURT = [
-    ('Lytle v. Aspen Education Group', 'https://casetext.com/case/x', '', 'Aspen Education Group', ['lytle']),
-    ('Jordan Blair\'s Affidavit Page 1', 'https://web.archive.org/web/2004/http://example.com/a.htm', '2002-10-12', 'Mountain Park Academy', ['jordan', 'blair']),
-    ('Blair vs Wills First Complaint Page 5', 'https://example.com/b5.jpg', '2002-09-26', 'Mountain Park Academy', ['blair', 'wills']),
-    ('Deposition of Thelma Ford Part 4', 'https://example.org/d4', '', 'Hephzibah House', ['thelma', 'ford']),
-    ('Hinman v Island View Academy et al 3', 'https://law.justia.com/cases/federal/district-courts/utah/utdce/1:2014cv00015/92/3/',
-     '', 'Island View Academy', ['hinman']),
-    ('State of Tennessee vs Gregory Scott Allison', 'https://example.gov/op.pdf', '2010', 'Teen Challenge', ['gregory', 'allison']),
-    ('Porter v. Charter Medical Corp., 957 F. Supp. 1427', 'https://casetext.com/case/porter', '1997', 'Charter Medical', ['porter']),
-    ('Candy H vs Redemption Ranch Inc Et Al Complaint', 'https://example.org/c.pdf', '1982-02-17', 'Redemption Ranch', ['candy']),
+    ('Doe v. Aspen Education Group', 'https://casetext.com/case/x', '', 'Aspen Education Group', ['doe']),
+    ('Jane Roe\'s Affidavit Page 1', 'https://web.archive.org/web/2004/http://example.com/a.htm', '2002-10-12', 'Mountain Park Academy', ['jane', 'roe']),
+    ('Roe vs Poe First Complaint Page 5', 'https://example.com/b5.jpg', '2002-09-26', 'Mountain Park Academy', ['roe', 'poe']),
+    ('Deposition of Mary Moe Part 4', 'https://example.org/d4', '', 'Hephzibah House', ['mary', 'moe']),
+    ('Doe v Island View Academy et al 3', 'https://law.justia.com/cases/federal/district-courts/utah/utdce/1:2099cv00001/1/3/',
+     '', 'Island View Academy', ['doe']),
+    ('State of Tennessee vs John Quincy Roe', 'https://example.gov/op.pdf', '2010', 'Teen Challenge', ['john', 'quincy', 'roe']),
+    ('Poe v. Charter Medical Corp., 999 F. Supp. 9999', 'https://casetext.com/case/poe', '1997', 'Charter Medical', ['poe']),
+    ('Janie R vs Redemption Ranch Inc Et Al Complaint', 'https://example.org/c.pdf', '1982-02-17', 'Redemption Ranch', ['janie']),
 ]
 
 
@@ -364,12 +364,12 @@ def selftest():
         bad += not ok
         print(('PASS ' if ok else 'FAIL ') + repr(title) + ' -> ' + repr(label) + ('  leaks ' + ', '.join(leak) if leak else ''))
     checks = [
-        (party_tokens('Lytle v. Aspen Education Group', 'Aspen Education Group') == {'lytle'}, 'party tokens keep the plaintiff, drop the program'),
-        (family_case('NUSZEN vs NUSZEN') and not family_case('Doe v. Cedars Academy'), 'a family case is the same surname on both sides'),
+        (party_tokens('Exampleton v. Aspen Education Group', 'Aspen Education Group') == {'exampleton'}, 'party tokens keep the plaintiff, drop the program'),
+        (family_case('ROE vs ROE') and not family_case('Doe v. Cedars Academy'), 'a family case is the same surname on both sides'),
         (bool(FAMILY_OR_JUVENILE.search('In re the Matter of J.R., a minor')), 'juvenile files are recognised'),
-        (name_title('Daniel Jack Matthews - 2003') and name_title('The Beal Family') and not name_title('Hyde School, 1972'),
+        (name_title('John Quincy Doe - 2003') and name_title('The Roe Family') and not name_title('Hyde School, 1972'),
          'a title that is only a name'),
-        (bool(PRIVATE_TITLE.search('Blaine Schulz Obituary')) and bool(PRIVATE_TITLE.search('Survivors speak out')), 'stems match whole words'),
+        (bool(PRIVATE_TITLE.search('Richard Roe Obituary')) and bool(PRIVATE_TITLE.search('Survivors speak out')), 'stems match whole words'),
         (full_date('Sunday, Nov. 14, 2004') == '2004-11-14' and full_date('1998') == '' and full_date('2010-07-30') == '2010-07-30',
          'only a full day becomes a publication date'),
     ]
