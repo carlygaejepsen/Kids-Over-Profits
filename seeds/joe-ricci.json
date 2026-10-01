@@ -1,0 +1,22 @@
+{
+  "title": "Joe Ricci",
+  "slug": "joe-ricci",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 3,
+  "content_file": "joe-ricci.html",
+  "excerpt": "Editorial research draft about Joe Ricci and Elan School. Accounts of practices, deaths and investigations require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and director of Elan School (role and dates to verify)",
+    "person_active_years": "1970-2001"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Elan School", "Daytop Village"],
+    "person_notable_work": ["Founded Elan School", "Elan's reported use of Synanon-influenced encounter methods (influence to verify)"],
+    "person_role_sources": [1],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1]
+  }
+}

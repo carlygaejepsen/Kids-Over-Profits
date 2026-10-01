@@ -1,0 +1,22 @@
+{
+  "title": "Robert B. Lichfield",
+  "slug": "robert-lichfield",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 5,
+  "content_file": "robert-lichfield.html",
+  "excerpt": "Editorial research draft about Robert B. Lichfield, Cross Creek and WWASP. Program affiliations, corporate control, allegations and legal outcomes require case-by-case source verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder associated with Cross Creek and WWASP; earlier Provo Canyon School role reported in archival sources",
+    "person_active_years": "1977 to approximately 2010 in supplied notes; exact dates and roles require verification"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Provo Canyon School", "Cross Creek Programs", "Teen Help", "Worldwide Association of Specialty Programs and Schools"],
+    "person_notable_work": ["Founded or operated Cross Creek programs", "Founded WWASP"],
+    "person_role_sources": [1, 2, 3, 4, 18],
+    "person_active_years_sources": [1, 4, 5],
+    "person_organizations_sources": [1, 2, 3, 4, 18],
+    "person_notable_work_sources": [2, 4, 5, 18]
+  }
+}

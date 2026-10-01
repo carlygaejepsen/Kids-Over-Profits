@@ -1,0 +1,22 @@
+{
+  "title": "Mel Wasserman",
+  "slug": "mel-wasserman",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 5,
+  "content_file": "mel-wasserman.html",
+  "excerpt": "Editorial research draft about Mel Wasserman and the CEDU schools. Claims and historical details require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of CEDU (role and dates to verify)",
+    "person_active_years": "1967-2002"
+  },
+  "meta_arrays": {
+    "person_organizations": ["CEDU", "Rocky Mountain Academy", "Northwest Academy", "Ascent"],
+    "person_notable_work": ["Founded CEDU", "CEDU's influence on emotional-growth programs (scope to verify)"],
+    "person_role_sources": [1],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 2, 8],
+    "person_notable_work_sources": [1, 2, 8]
+  }
+}

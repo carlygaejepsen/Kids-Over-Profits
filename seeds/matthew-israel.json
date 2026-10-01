@@ -1,0 +1,22 @@
+{
+  "title": "Matthew Lewis Israel",
+  "slug": "matthew-israel",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "matthew-israel.html",
+  "excerpt": "Editorial research draft about Matthew Israel and the Judge Rotenberg Center. Claims and legal history require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Psychologist; founder of the Behavior Research Institute, later renamed the Judge Rotenberg Center",
+    "person_active_years": "1971 onward (dates and roles to verify)"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Behavior Research Institute", "Judge Rotenberg Center"],
+    "person_notable_work": ["Founded the Behavior Research Institute", "Associated with the GED aversive device (role to verify)"],
+    "person_role_sources": [1, 4],
+    "person_active_years_sources": [1, 4],
+    "person_organizations_sources": [1, 4],
+    "person_notable_work_sources": [1, 4]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "title": "Jan Moss Courtney",
+  "slug": "jan-moss-courtney",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "jan-moss-courtney.html",
+  "excerpt": "Editorial research draft about Jan Moss Courtney, Spring Ridge Academy and NATSAP. Her precise roles, standards work and 2007 testimony require primary-source review.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "NATSAP founder and first-board Secretary; former Spring Ridge Academy and NATSAP executive (dates to verify)",
+    "person_active_years": "1998-2009 in archived histories; retired status and dates require verification"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Spring Ridge Academy", "National Association of Therapeutic Schools and Programs"],
+    "person_notable_work": ["NATSAP founding history and early leadership", "NATSAP testimony at a 2007 congressional hearing"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 6]
+  }
+}

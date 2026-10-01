@@ -1,0 +1,21 @@
+{
+  "title": "David Gilcrease",
+  "slug": "david-gilcrease",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "david-gilcrease.html",
+  "excerpt": "Editorial research draft about David Gilcrease and seminars associated with WWASP. Claims about seminar practices and coercion require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Resource Realizations and Premier Educational Seminars (roles and dates to verify)",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["Resource Realizations", "Premier Educational Seminars", "World Wide Association of Specialty Programs and Schools"],
+    "person_notable_work": ["Seminars for WWASP-affiliated parents and students (scope and contractual relationships to verify)"],
+    "person_role_sources": [1, 2, 6],
+    "person_organizations_sources": [1, 2, 4, 6],
+    "person_notable_work_sources": [1, 3, 6]
+  }
+}

@@ -8,7 +8,7 @@
 
 /* The profile fills the standard content column (Kadence's sidebar layout,
    the same width as every other post); nothing here widens it. */
-.kop-facility-profile {
+:is(.kop-facility-profile, .kop-person-profile) {
     margin: 0 auto;
     padding: 1.5rem 1.25rem 3rem;
     box-sizing: border-box;
@@ -20,6 +20,13 @@
     padding: 0.5rem 0 1.5rem;
     margin-bottom: 2rem;
     border-bottom: 3px solid var(--kop-teal, #33a7b5);
+}
+
+.kop-person-draft-notice {
+    padding: 0.85rem 1rem;
+    border-left: 4px solid var(--kop-orange, #ef9034);
+    background: var(--kop-soft-pastel-yellow, #fff5cb);
+    color: var(--kop-midnight-blue, #000435);
 }
 
 .kop-fp-eyebrow {
@@ -41,7 +48,7 @@
     text-decoration: underline;
 }
 
-.kop-facility-profile .kop-fp-title {
+:is(.kop-facility-profile, .kop-person-profile) .kop-fp-title {
     margin: 0;
     font-size: clamp(2rem, 4vw, 3rem);
     line-height: 1.1;
@@ -366,7 +373,7 @@
 }
 
 @media (max-width: 640px) {
-    .kop-facility-profile {
+    :is(.kop-facility-profile, .kop-person-profile) {
         padding: 1rem 1rem 2rem;
     }
 

@@ -1,0 +1,21 @@
+{
+  "title": "Sue Crowell",
+  "slug": "sue-crowell",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "sue-crowell.html",
+  "excerpt": "Editorial research draft about Sue Crowell, wilderness-therapy leadership roles and a PGO, LLC listing described in the John Doe M.D.Y. v. Trails Academy complaint. Verify the filing and corporate relationships before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Former wilderness-therapy and Aspen Education Group executive; PGO, LLC member listing attributed to a Trails lawsuit extract (verify)",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["SUWS Adolescent Program", "SUWS of Idaho", "Aspen Education Group", "Skyterra Wellness Retreat", "PGO, LLC"],
+    "person_notable_work": ["Executive roles in wilderness therapy and youth programs", "Listed in the supplied complaint extract as associated with PGO, LLC and WTCSL, LLC"],
+    "person_role_sources": [1],
+    "person_organizations_sources": [1, 3, 4],
+    "person_notable_work_sources": [1, 2]
+  }
+}

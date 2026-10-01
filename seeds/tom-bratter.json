@@ -1,0 +1,22 @@
+{
+  "title": "Thomas E. Bratter, Ed.D.",
+  "slug": "tom-bratter",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 5,
+  "content_file": "tom-bratter.html",
+  "excerpt": "Editorial research draft about Thomas E. Bratter, also known as Tom Bratter, and the John Dewey Academy. Claims and legal history require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and director of the John Dewey Academy; also known as Tom Bratter",
+    "person_active_years": "1985-2012 (dates and roles to verify)"
+  },
+  "meta_arrays": {
+    "person_organizations": ["John Dewey Academy", "Searles Castle", "Columbia University", "Teen Centers and a methadone clinic in New York (details to verify)"],
+    "person_notable_work": ["Caring Confrontation Psychotherapy (attribution and description to verify)", "Confrontational group therapy at the John Dewey Academy"],
+    "person_role_sources": [1, 11],
+    "person_active_years_sources": [1, 11],
+    "person_organizations_sources": [1, 11],
+    "person_notable_work_sources": [1, 2, 11]
+  }
+}

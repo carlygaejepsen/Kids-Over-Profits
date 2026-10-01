@@ -954,6 +954,19 @@ function kop_apply_lawsuit_document_fixes() {
  */
 function kop_seed_posts() {
     return array(
+        // Personnel Profile research drafts; remain unpublished until reviewed.
+        'matthew-israel.json',
+        'tom-bratter.json',
+        'mel-wasserman.json',
+        'mel-sembler.json',
+        'larry-dean-olsen.json',
+        'david-gilcrease.json',
+        'joe-ricci.json',
+        'jared-balmer.json',
+        'robert-lichfield.json',
+        'jan-moss-courtney.json',
+        'sue-crowell.json',
+        'lester-roloff.json',
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
         'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
         'nc-reports.json',           // /nc-reports/ page for the NC adapter, 2026-09-16
@@ -2098,7 +2111,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '61';
+    $version = '68';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

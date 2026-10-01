@@ -1,0 +1,22 @@
+{
+  "title": "Larry Dean Olsen",
+  "slug": "larry-dean-olsen",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "larry-dean-olsen.html",
+  "excerpt": "Editorial research draft about Larry Dean Olsen, BYU 480 and primitive-skills wilderness programming. Dates, program-founder claims and the 1972 event require source verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Outdoor survival educator; led the first BYU survival trek and helped create BYU 480 (dates and titles to verify)",
+    "person_active_years": "1966 through the 2000s in supplied notes; verify"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Brigham Young University", "Outward Bound", "SUWS", "Challenger Foundation (role disputed)", "Anasazi Foundation (role to verify)"],
+    "person_notable_work": ["BYU 480: Youth Leadership Through Outdoor Survival", "Outdoor Survival Skills (1966 publication date to verify)"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 3, 4],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

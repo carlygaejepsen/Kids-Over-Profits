@@ -54,6 +54,7 @@ function kop_template_layout_current_template() {
 function kop_template_layout_normal_width() {
     return apply_filters('kop_template_layout_normal_width', array(
         'templates/single-facility-profile.php',
+        'templates/single-person-profile.php',
         'templates/facility-page.php',
         'templates/operator-page.php',
     ));

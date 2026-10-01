@@ -1,0 +1,22 @@
+{
+  "title": "Jared U. Balmer, Ph.D.",
+  "slug": "jared-balmer",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "jared-balmer.html",
+  "excerpt": "Editorial research draft about Jared U. Balmer and several Utah residential treatment programs. Career dates, roles and claims about industry standards require source verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and executive at multiple Utah youth treatment programs",
+    "person_active_years": "1977-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Rivendell Psychiatric Hospital", "Island View RTC", "The Oakley School", "Aspen Institute for Behavioral Assessment", "WayPoint Academy", "NATSAP"],
+    "person_notable_work": ["Leadership roles at Utah youth treatment programs", "NATSAP National Leadership Award (2006)"] ,
+    "person_role_sources": [8],
+    "person_active_years_sources": [8],
+    "person_organizations_sources": [8],
+    "person_notable_work_sources": [1, 8]
+  }
+}

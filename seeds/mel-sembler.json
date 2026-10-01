@@ -1,0 +1,21 @@
+{
+  "title": "Mel Sembler",
+  "slug": "mel-sembler",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 4,
+  "content_file": "mel-sembler.html",
+  "excerpt": "Editorial research draft about Mel Sembler and Straight, Inc. Claims and legal history require source verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founder of Straight, Inc.; political fundraiser and diplomat (details to verify)",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["Straight, Inc."],
+    "person_notable_work": ["Co-founded Straight, Inc.", "Political fundraising and diplomatic appointments (titles and dates to verify)"],
+    "person_role_sources": [1, 5],
+    "person_organizations_sources": [1, 5],
+    "person_notable_work_sources": [1, 5]
+  }
+}
