@@ -189,7 +189,11 @@ The date is when each was last confirmed open.
     asks for. Press Run again while the log says "Run again". It saves 167
     Docs as HTML and 18 Sheets as one CSV per tab into My Drive > KOP Doc
     Export. "HEAL INFO NWBHS" lives on kidsoverprofitsdani and is expected
-    to fail unless shared to ttiresearch.dani first.
+    to fail unless shared to ttiresearch.dani first. First run 2026-10-01:
+    182 of 185 saved; "TTI Database - Master" and "Troubled Teen Industry
+    Program Analysis - 2014" hit Google's rate limit (HTTP 429). The script
+    now waits and retries; paste the regenerated `tmp/gdocs/export.gs` and
+    Run once more (it skips the 182).
 
 ### Hosting
 
@@ -708,6 +712,20 @@ backfilled), board, IRS, FOIA templates and personal docs.
    `tmp/prod.sqlite`, sorts the link (news, court, legislation, licensing,
    the program's own site, other) and drops anything
    `kop_ext_find_duplicates()` would. Program sites follow the `/go/` rule.
+   Built 2026-10-01; writes `tmp/gdocs/links.json` and
+   `tmp/gdocs/links-report.md`. On the first 182 files: 2,878 distinct
+   links, 943 already on file (848 of them CA CCL reports, matched by
+   facNum + inx against `inspection_reports.report_id`, which holds no
+   URL), 1,935 new: 895 tied to a facility, 314 to a company only, 726 to
+   neither (state docs, the consultant lists, Death List rows with no
+   record). New by kind: 545 news, 270 social, 121 reference, 112 people,
+   103 archive copies, 95 government, 88 licensing, 66 program sites,
+   49 court, 16 legislation, 470 other. Matching: a record name in the
+   words around the link (never inside the URL; names of only generic
+   words skipped), else the heading, else an exact or close folder/title
+   name; a sheet or a doc naming many programs does not hand its folder's
+   program to every link; company folders ("Sequel", "UHS", "FHW") give
+   the operator.
 3. **Facts pass** (Opus 5.5). Staff and owners, years, past names,
    addresses, arrests and closures, read like Woodbury Facts: every fact
    carries its quote, the build drops a quote not found in the doc and

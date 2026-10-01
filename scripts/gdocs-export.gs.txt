@@ -44,6 +44,7 @@ function exportAll() {
           saveBlob_(folder, name, fetch_(csvUrl, token));
           entry.files.push(name);
           entry.tabs.push({ gid: gid, name: sheets[s].getName(), file: name });
+          Utilities.sleep(1500);
         }
       }
       entry.ok = true;
@@ -66,7 +67,13 @@ function exportFolder_() {
 }
 
 function fetch_(url, token) {
-  var res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + token }, muteHttpExceptions: true });
+  var res;
+  // Sheets answers 429 when tabs are exported back to back; wait and retry.
+  for (var attempt = 0; attempt < 6; attempt++) {
+    if (attempt) Utilities.sleep(5000 * attempt);
+    res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + token }, muteHttpExceptions: true });
+    if (res.getResponseCode() !== 429) break;
+  }
   if (res.getResponseCode() !== 200) {
     throw new Error('HTTP ' + res.getResponseCode() + ' ' + res.getContentText().slice(0, 200));
   }
