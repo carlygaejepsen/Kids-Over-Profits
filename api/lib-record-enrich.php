@@ -118,7 +118,13 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
         return array('ok' => false, 'id' => $id, 'error' => 'not found');
     }
     $api = get_stylesheet_directory_uri() . '/api/';
-    $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => 'groq', 'customInstructions' => ''), 120);
+    // Groq first; when it is rate-limited, Gemini reads the same article.
+    foreach (array('groq', 'gemini') as $provider) {
+        $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => $provider, 'customInstructions' => ''), 120);
+        if ($ai['ok'] && !empty($ai['body']['success']) || !kop_enrich_rate_limited((string) ($ai['body']['error'] ?? ''))) {
+            break;
+        }
+    }
     if (!$ai['ok'] || empty($ai['body']['success']) || !is_array($ai['body']['data'] ?? null)) {
         $why = (string) ($ai['body']['error'] ?? ('HTTP ' . $ai['status']));
         if (kop_enrich_rate_limited($why)) {
