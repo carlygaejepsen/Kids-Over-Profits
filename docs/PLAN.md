@@ -181,6 +181,17 @@ The date is when each was last confirmed open.
     "Submitted by a survivor (submission #50)"
     ([3f838787](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/3f838787b57cc02d664cffaea1a397662cd28151)).
 
+12. **Export the facility Google Docs** (2026-09-30, step 1 of 3.9).
+    Ask Claude for `tmp/gdocs/export.gs` (made by `python
+    scripts/gdocs-select.py`; it lists Drive file ids, so it never goes in
+    the repo). Signed in as ttiresearch.dani, open
+    [script.google.com](https://script.google.com/), New project, paste it
+    over Code.gs, Save, pick `exportAll` and press Run; allow the access it
+    asks for. Press Run again while the log says "Run again". It saves 167
+    Docs as HTML and 18 Sheets as one CSV per tab into My Drive > KOP Doc
+    Export. "HEAL INFO NWBHS" lives on kidsoverprofitsdani and is expected
+    to fail unless shared to ttiresearch.dani first.
+
 ### Hosting
 
 9. **Close `/staging/`.** It answers 200 and its inner pages carry no
@@ -665,5 +676,40 @@ Owner:
   general push. Schema changes ship through `api/update-schema.php` and
   data changes through a seed or an admin tool, both reviewed, so the
   shared live database never takes an unreviewed bulk write.
+
+### 3.9 Facility information from the Google Docs (2026-09-30)
+
+The owner keeps program links and notes in Google Docs and Sheets on the
+ttiresearch.dani Drive. `tmp/gdocs/inventory.json` lists all 426 Docs and
+43 Sheets on G: and I:, read from DriveFS's `metadata_sqlite_db` (no
+connector reads Drive in a Claude Code session). `scripts/gdocs-select.py`
+picks 167 Docs and 18 Sheets by folder and title: Active/Closed Programs,
+Altior, Focus Locations (Massachusetts, Israel, Ohio), Investigations,
+Lawsuits, Legislation, Sequel, the staff and owner lists, the address and
+website sheets, and the shared "TTI Database - Master" sheet (import it,
+no credit, owner 2026-09-30). Left out by the owner: podcast transcripts
+and survivor interviews. Also left out: the NATSAP directories (already
+backfilled), board, IRS, FOIA templates and personal docs.
+
+1. **Export** (owner, Admin runs item 12). HTML, not text, because a text
+   export drops the address behind every linked word.
+2. **Links pass** (Opus 5.5). `scripts/gdocs-extract.py` reads the HTML
+   (unwrapping `google.com/url?q=`) and, for every link, keeps the linked
+   text and its sentence. It assigns the facility from the folder path and
+   nearest heading against `facilities_v2` names and past/other names in
+   `tmp/prod.sqlite`, sorts the link (news, court, legislation, licensing,
+   the program's own site, other) and drops anything
+   `kop_ext_find_duplicates()` would. Program sites follow the `/go/` rule.
+3. **Facts pass** (Opus 5.5). Staff and owners, years, past names,
+   addresses, arrests and closures, read like Woodbury Facts: every fact
+   carries its quote, the build drops a quote not found in the doc and
+   anything the record already holds.
+4. **Review screen** (Sonnet 5). KOP Tools > Drive Docs, built like
+   Woodbury Facts: source doc, quote, matched facility, Add / Skip / Undo.
+   Links go in through `kop_ext_insert_news` / `_lawsuit` /
+   `_legislation` / `_website` in `inc/source-submissions.php`; closures go
+   to Closure Reports, never straight to a status.
+5. **Sheets** (Sonnet 5). A column map per sheet; only cells that differ
+   from the record reach the review screen.
 
 ---

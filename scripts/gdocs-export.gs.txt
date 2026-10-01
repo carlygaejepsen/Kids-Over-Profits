@@ -1,0 +1,92 @@
+// Kids Over Profits: export the facility Google Docs and Sheets (docs/PLAN.md 3.9).
+// Written by scripts/gdocs-select.py into tmp/gdocs/export.gs; the list below is filled there.
+//
+// 1. Go to https://script.google.com signed in as ttiresearch.dani, New project.
+// 2. Replace everything in Code.gs with this file, Save.
+// 3. Pick exportAll in the function menu and press Run. Allow the access it asks for
+//    (read your Drive, write the export folder, fetch the exports).
+// 4. Google stops a script after 6 minutes. If the log says "Run again", press Run again;
+//    it skips what is already saved.
+// The files land in My Drive > KOP Doc Export and sync down to G:\My Drive\KOP Doc Export.
+
+var FILES = /*FILES*/[];
+var FOLDER_NAME = 'KOP Doc Export';
+var STOP_AFTER_MS = 5 * 60 * 1000;
+
+function exportAll() {
+  var started = Date.now();
+  var folder = exportFolder_();
+  var manifest = readManifest_(folder);
+  var token = ScriptApp.getOAuthToken();
+  var done = 0, failed = 0, left = 0;
+
+  for (var i = 0; i < FILES.length; i++) {
+    var f = FILES[i];
+    var entry = manifest[f.id];
+    if (entry && entry.ok) { done++; continue; }
+    if (Date.now() - started > STOP_AFTER_MS) { left++; continue; }
+    entry = { path: f.path, kind: f.kind, files: [], ok: false };
+    try {
+      var meta = DriveApp.getFileById(f.id);
+      entry.title = meta.getName();
+      entry.modified = meta.getLastUpdated().toISOString();
+      if (f.kind === 'doc') {
+        var url = 'https://www.googleapis.com/drive/v3/files/' + f.id + '/export?mimeType=text/html';
+        saveBlob_(folder, f.id + '.html', fetch_(url, token));
+        entry.files.push(f.id + '.html');
+      } else {
+        var sheets = SpreadsheetApp.openById(f.id).getSheets();
+        entry.tabs = [];
+        for (var s = 0; s < sheets.length; s++) {
+          var gid = sheets[s].getSheetId();
+          var csvUrl = 'https://docs.google.com/spreadsheets/d/' + f.id + '/export?format=csv&gid=' + gid;
+          var name = f.id + '__' + gid + '.csv';
+          saveBlob_(folder, name, fetch_(csvUrl, token));
+          entry.files.push(name);
+          entry.tabs.push({ gid: gid, name: sheets[s].getName(), file: name });
+        }
+      }
+      entry.ok = true;
+      done++;
+    } catch (e) {
+      entry.error = String(e && e.message || e);
+      failed++;
+    }
+    manifest[f.id] = entry;
+    writeManifest_(folder, manifest);
+  }
+
+  Logger.log(done + ' saved, ' + failed + ' failed, ' + left + ' still to do of ' + FILES.length);
+  Logger.log(left ? 'Run again to continue.' : 'All done. Failures (if any) are listed in manifest.json with their error.');
+}
+
+function exportFolder_() {
+  var it = DriveApp.getRootFolder().getFoldersByName(FOLDER_NAME);
+  return it.hasNext() ? it.next() : DriveApp.getRootFolder().createFolder(FOLDER_NAME);
+}
+
+function fetch_(url, token) {
+  var res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + token }, muteHttpExceptions: true });
+  if (res.getResponseCode() !== 200) {
+    throw new Error('HTTP ' + res.getResponseCode() + ' ' + res.getContentText().slice(0, 200));
+  }
+  return res.getBlob();
+}
+
+function saveBlob_(folder, name, blob) {
+  var old = folder.getFilesByName(name);
+  while (old.hasNext()) old.next().setTrashed(true);
+  folder.createFile(blob.setName(name));
+}
+
+function readManifest_(folder) {
+  var it = folder.getFilesByName('manifest.json');
+  return it.hasNext() ? JSON.parse(it.next().getBlob().getDataAsString()) : {};
+}
+
+function writeManifest_(folder, manifest) {
+  var text = JSON.stringify(manifest, null, 1);
+  var it = folder.getFilesByName('manifest.json');
+  if (it.hasNext()) it.next().setContent(text);
+  else folder.createFile('manifest.json', text, 'application/json');
+}
