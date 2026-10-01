@@ -246,16 +246,21 @@ The date is when each was last confirmed open.
 17. **Portal table.** Clear the leftover `wpdl_anonymous_submissions` row
     (empty message and contact, a `files_data` blob naming the file) or drop
     the table.
-18. **Survivor site archives** (2026-10-01, open work 3.10).
-    - New Horizons yearbooks: the alumni site publishes the Escuela Caribe
-      and New Horizons yearbooks, which name and picture the students (then
-      minors). Recommended: list them, since the alumni chose to publish
-      them and KOP only links; the alternative is a rule that leaves them out.
-    - DDoSecrets' Teen Challenge release (about 123,000 leaked files) is left
-      out: it holds residents' private records. Recommended: keep it out.
-    - SCIAD NET (step 3.10.3) is one person's paid-for research. Recommended:
-      name it on every block ("From SCIAD NET, the WWASP Survivor Truth
-      archive") and tell its owner before the lists go live.
+18. **Survivor site archives** (2026-10-01, open work 3.10). Answered
+    2026-10-01: go ahead with all of 3.10, redact all private information,
+    credit SCIAD NET (its owner agreed to KOP using it).
+    - Private information: KOP only links, so a document that is itself
+      private (yearbooks, client, intake, medical or school records,
+      personal letters of private people) is not listed at all, and a
+      private person's name (a survivor, parent, minor, witness, victim; not
+      staff, owners, officials or public figures) is taken out of every
+      title and group KOP shows. A document whose URL carries a private name
+      is not listed. The privacy list in the repo holds no names (keyed by a
+      hash of the URL). This covers the New Horizons yearbooks: left out.
+    - DDoSecrets' Teen Challenge release stays out: leaked residents'
+      records cannot be redacted when KOP only links.
+    - SCIAD NET is credited on every block it fills, linked to WWASP Survivor
+      Truth's archive page.
 
 ### Unconfirmed settings
 
