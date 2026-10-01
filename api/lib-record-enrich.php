@@ -118,13 +118,8 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
         return array('ok' => false, 'id' => $id, 'error' => 'not found');
     }
     $api = get_stylesheet_directory_uri() . '/api/';
-    // Groq first; when it is rate-limited, Gemini reads the same article.
-    foreach (array('groq', 'gemini') as $provider) {
-        $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => $provider, 'customInstructions' => ''), 120);
-        if ($ai['ok'] && !empty($ai['body']['success']) || !kop_enrich_rate_limited((string) ($ai['body']['error'] ?? ''))) {
-            break;
-        }
-    }
+    // 'auto': Groq and Gemini take turns, and the other reads the article when one fails.
+    $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => 'auto', 'customInstructions' => ''), 120);
     if (!$ai['ok'] || empty($ai['body']['success']) || !is_array($ai['body']['data'] ?? null)) {
         $why = (string) ($ai['body']['error'] ?? ('HTTP ' . $ai['status']));
         if (kop_enrich_rate_limited($why)) {
@@ -283,18 +278,16 @@ function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
     if (mb_strlen($text) < 400) {
         return $fail('the page gave no readable text (' . mb_strlen($text) . ' characters)');
     }
-    $key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    if ($key === '') {
-        return $fail('no Groq key');
+    if (!kop_ai_alternating_providers()) {
+        return $fail('no Groq or Gemini key');
     }
     $parts = kop_lawsuit_chunk_text($text, 6);
-    $model = kop_lawsuit_pick_model(count($parts['chunks']));
     $results = array();
     foreach ($parts['chunks'] as $i => $chunk) {
-        $r = kop_groq_call($key, $model, $chunk, $i + 1, count($parts['chunks']));
+        $r = kop_lawsuit_ai_call($chunk, $i + 1, count($parts['chunks']));
         if (!$r['ok'] && kop_enrich_rate_limited($r['error'])) {
             sleep(60);
-            $r = kop_groq_call($key, $model, $chunk, $i + 1, count($parts['chunks']));
+            $r = kop_lawsuit_ai_call($chunk, $i + 1, count($parts['chunks']));
         }
         if (!$r['ok']) {
             return kop_enrich_rate_limited($r['error'])
@@ -357,7 +350,7 @@ function kop_enrich_run(PDO $pdo, $type, $limit, $seconds, $apply, array $ids = 
             break;
         }
         if ($i) {
-            sleep(12); // Groq's per-minute token limits: each article is a few thousand tokens
+            sleep(12); // Groq's and Gemini's per-minute limits: each article is a few thousand tokens
         }
         $r = $type === 'lawsuit' ? kop_enrich_lawsuit_row($pdo, $id, $apply) : kop_enrich_news_row($pdo, $id, $apply);
         if (!empty($r['rate_limited'])) {
@@ -372,7 +365,7 @@ function kop_enrich_run(PDO $pdo, $type, $limit, $seconds, $apply, array $ids = 
         }
         $out[] = $r;
         if ($limited >= 3) {
-            break; // Groq keeps refusing: stop until the next run
+            break; // both providers keep refusing: stop until the next run
         }
     }
     return $out;

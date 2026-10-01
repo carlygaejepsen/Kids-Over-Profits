@@ -59,7 +59,7 @@ jobs:
       - name: Run discovery
         env:
           NEWS_API_BASE: https://kidsoverprofits.org
-          AI_PROVIDER: groq
+          AI_PROVIDER: auto
         run: |
           ARGS=""
           if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi

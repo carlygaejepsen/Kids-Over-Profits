@@ -4,7 +4,8 @@
  *
  * Takes freeform prose about a TTI program/organization and returns the
  * structured wiki-editor fields it can infer, as JSON. Reuses the shared
- * multi-provider AI layer (api/ai-providers.php); defaults to Groq.
+ * multi-provider AI layer (api/ai-providers.php); defaults to 'auto' (Groq and
+ * Gemini take turns, the other answers when one fails).
  *
  * POST /api/extract-wiki-from-prose.php
  * Body: { prose: string, provider?: string, customInstructions?: string }
@@ -150,7 +151,7 @@ if (!is_array($input)) {
 }
 
 $prose = trim((string) ($input['prose'] ?? $input['text'] ?? ''));
-$provider = $input['provider'] ?? 'groq';
+$provider = $input['provider'] ?? 'auto';
 $custom = (string) ($input['customInstructions'] ?? '');
 
 if ($prose === '') {
@@ -164,7 +165,12 @@ if (strlen($prose) > 20000) {
 
 try {
     $prompt = kop_build_wiki_prompt($prose, $custom, $SCALAR_FIELDS, $NARRATIVE_FIELDS, $DIAGNOSES);
-    $raw = kop_ai_generate($provider, kop_ai_api_keys(), $prompt, ['maxTokens' => 4096]);
+    if ($provider === 'auto') {
+        $raw = kop_ai_generate_alternating($prompt, ['maxTokens' => 4096]);
+        $provider = $GLOBALS['kop_ai_last_provider'] ?? $provider;
+    } else {
+        $raw = kop_ai_generate($provider, kop_ai_api_keys(), $prompt, ['maxTokens' => 4096]);
+    }
     $parsed = kop_ai_extract_json($raw);
     if ($parsed === null) {
         throw new Exception('The AI did not return usable JSON. Try again, or pick a different provider.');

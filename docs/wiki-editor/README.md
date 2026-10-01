@@ -18,7 +18,7 @@ The **Wiki Editor** (page title "TTI Wiki Entry Generator") helps users create, 
   - `api/save-wiki-submission.php` - GET lists/searches (`?search=`, `?status=`, `?limit=`, `?offset=`) or fetches one (`?id=`) submission; POST creates or updates one.
   - `api/wiki-stubs.php` - empty wiki slugs still needing an entry (from `markdown_output/empty_files_updated.md` plus `markdown_output/wiki_stub_overrides.json`) and the names/slugs already completed.
   - `api/facility-search.php`, `api/facility-picker.php` - program index lookup for the picker.
-  - `api/extract-wiki-from-prose.php` - AI extraction of form fields from free prose (shared provider layer in `api/ai-providers.php`, Groq by default).
+  - `api/extract-wiki-from-prose.php` - AI extraction of form fields from free prose (shared provider layer in `api/ai-providers.php`; Groq and Gemini take turns by default).
 
 ## Key Features
 

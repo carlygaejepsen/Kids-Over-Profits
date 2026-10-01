@@ -16,7 +16,7 @@
  *
  * Differences from the admin endpoint:
  *   - No login required; instead each IP is limited to a few extraction jobs
- *     per hour (Groq quota + upload abuse protection).
+ *     per hour (Groq/Gemini quota + upload abuse protection).
  *   - Upload capped at 10 MB and 4 chunks (~48k chars) — enough for the
  *     caption, parties, and claims of a typical complaint.
  *   - The uploaded file is NOT registered in the media library and no
@@ -87,8 +87,7 @@ function kop_pub_rate_limit_ok(): bool {
 // Action: upload
 // =============================================================================
 function kop_pub_action_upload(): void {
-    $groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    if ($groq_key === '') {
+    if (!kop_ai_alternating_providers()) {
         echo json_encode(['success' => false, 'error' => 'Automatic extraction is not available right now. Please fill in the form manually.']);
         exit;
     }
@@ -197,9 +196,7 @@ function kop_pub_action_chunk(): void {
         exit;
     }
 
-    $groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    $model    = kop_lawsuit_pick_model($total);
-    $result   = kop_groq_call($groq_key, $model, $job['chunks'][$chunk_index], $chunk_index + 1, $total);
+    $result = kop_lawsuit_ai_call($job['chunks'][$chunk_index], $chunk_index + 1, $total);
 
     if (!$result['ok']) {
         echo json_encode(['success' => false, 'error' => $result['error']]);

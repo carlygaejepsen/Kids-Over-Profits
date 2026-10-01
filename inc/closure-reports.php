@@ -4,7 +4,7 @@
  *
  * Every saved article (nightly discovery, the news processor, imports) is
  * scanned once by an hourly WP-Cron job: articles whose title, summary or type
- * talk about a closure go to Groq with the article text and the facilities the
+ * talk about a closure go to the AI (Groq and Gemini in turn) with the article text and the facilities the
  * article is already linked to, and each program the article says closed, is
  * closing, was ordered closed or was suspended becomes a closure report in
  * facility_closure_reports (records DB, beside news_submissions).
@@ -168,7 +168,7 @@ function kop_closure_record_scan(PDO $pdo, $news_id, $hash, $outcome, $detail = 
         ->execute(array((int) $news_id, $hash, $outcome, mb_substr((string) $detail, 0, 2000)));
 }
 
-/* ---- Asking Groq ---------------------------------------------------- */
+/* ---- Asking the AI ------------------------------------------------- */
 
 /** Facilities the article is already linked to, for the model to pick from. */
 function kop_closure_linked_facilities(PDO $pdo, $news_id) {
@@ -331,26 +331,13 @@ function kop_closure_article_text($url, $max = 9000) {
 }
 
 /**
- * Ask Groq, falling back to the smaller model on a rate limit (token limits
- * are per model, so it usually still has room, as in process-news-ai.php) or
- * when Groq could not produce valid JSON (HTTP 400 "Failed to validate
- * JSON", which a second model usually gets past). Throws the last error,
- * whose message says "rate limit" when every model was out.
+ * Ask the AI: Groq and Gemini take turns (api/ai-providers.php), each with
+ * its own fallbacks, and the other answers when one fails. Throws the joined
+ * errors, whose message says "rate limit" when a provider was out of calls.
  */
-function kop_closure_groq($prompt, $max_tokens = 2048) {
+function kop_closure_ai($prompt, $max_tokens = 2048) {
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
-    $models = array_values(array_unique(array_filter(array(getenv('GROQ_MODEL') ?: null, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'))));
-    foreach ($models as $i => $model) {
-        try {
-            return kop_ai_generate('groq', kop_ai_api_keys(), $prompt, array('maxTokens' => $max_tokens, 'groqModel' => $model));
-        } catch (Throwable $e) {
-            $retry = stripos($e->getMessage(), 'rate limit') !== false || stripos($e->getMessage(), 'validate JSON') !== false;
-            if ($i === count($models) - 1 || !$retry) {
-                throw $e;
-            }
-        }
-    }
-    throw new RuntimeException('No Groq model to try');
+    return kop_ai_generate_alternating($prompt, array('maxTokens' => $max_tokens));
 }
 
 /**
@@ -370,7 +357,7 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
 
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
     try {
-        $raw = kop_closure_groq(kop_closure_build_prompt($news, $linked, $text));
+        $raw = kop_closure_ai(kop_closure_build_prompt($news, $linked, $text));
     } catch (Throwable $e) {
         // A rate limit says nothing about the article: leave it unscanned so
         // the next run tries again without spending one of its three tries.
@@ -420,7 +407,7 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
 }
 
 /**
- * Scan up to $limit articles. Stops early on a Groq rate limit or when
+ * Scan up to $limit articles. Stops early on an AI rate limit or when
  * $seconds run out. Returns counts and the new reports that need a person.
  */
 function kop_closure_scan_batch(PDO $pdo, $limit, $seconds, $write = true, array $only_ids = array(), $log = null) {

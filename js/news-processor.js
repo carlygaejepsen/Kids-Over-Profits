@@ -1306,7 +1306,7 @@
         const customInstructions = document.getElementById('ai-custom-instructions') && document.getElementById('ai-custom-instructions').value || '';
         const statusEl = document.getElementById('ai-status');
         const processBtn = document.getElementById('process-with-ai');
-        const provider = 'groq'; // provider dropdown removed — always use Groq
+        const provider = 'auto'; // Groq and Gemini take turns (api/ai-providers.php)
 
         if (!url && !pastedText) {
             statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';

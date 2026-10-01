@@ -5,7 +5,7 @@
  * Every saved article (nightly discovery, the news processor, imports) lists
  * the facilities it mentions. An hourly WP-Cron job takes the names that do
  * not resolve to a record (api/facility-aliases.php) - plus programs a closure
- * report could not match (inc/closure-reports.php) - and asks Groq about them
+ * report could not match (inc/closure-reports.php) - and asks the AI about them
  * with the article text and the database's look-alike records:
  *
  *   - a specific youth residential program we already have under another
@@ -397,7 +397,7 @@ function kop_facdisc_record_scan(PDO $pdo, $news_id, $hash, $outcome, $detail = 
         ->execute(array((int) $news_id, $hash, $outcome, mb_substr((string) $detail, 0, 2000)));
 }
 
-/* ---- Asking Groq ---------------------------------------------------- */
+/* ---- Asking the AI ------------------------------------------------- */
 
 function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, $text) {
     $p  = "You maintain a research database of youth residential programs in the troubled teen industry: residential treatment centers, therapeutic boarding schools, wilderness programs, boot camps, group homes, religious homes for youth, and juvenile detention and correctional facilities.\n\n";
@@ -712,7 +712,7 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
     }
     $text = kop_closure_article_text($news['article_url'] ?? '');
     try {
-        $raw = kop_closure_groq(kop_facdisc_build_prompt($news, $names, $lookalikes, $text), 3000);
+        $raw = kop_closure_ai(kop_facdisc_build_prompt($news, $names, $lookalikes, $text), 3000);
     } catch (Throwable $e) {
         if ($write && stripos($e->getMessage(), 'rate limit') === false) {
             kop_facdisc_record_scan($pdo, $news['id'], $news['hash'], 'error', $e->getMessage());
@@ -1020,7 +1020,7 @@ function kop_render_facilities_from_news_page() {
                     $r = kop_facdisc_scan_batch($pdo, $ids ? count($ids) : 15, 110, true, $ids, $log);
                     $msg = esc_html(sprintf('Scanned %d articles: %d new facilities, %d closure reports matched, %d failed%s.',
                         $r['counts']['scanned'], $r['counts']['created'], $r['counts']['rematched'] ?? 0, $r['counts']['error'],
-                        $r['counts']['error'] ? ' (Groq allows a few articles a minute; the hourly run carries on)' : ''));
+                        $r['counts']['error'] ? ' (Groq and Gemini allow a few articles a minute; the hourly run carries on)' : ''));
                     if ($lines) {
                         echo '<div class="notice notice-info"><p>' . implode('<br>', array_map('esc_html', $lines)) . '</p></div>';
                     }
@@ -1049,7 +1049,7 @@ function kop_render_facilities_from_news_page() {
     echo '<p>Facilities the hourly news scan found that were not in the database. A specific youth residential program with a known state or country '
         . 'is added as a new record from what the article says, cited in its notes, placed on its state hub and linked to the article. '
         . 'One already in the database under another spelling is linked to that record. Remove takes out a record the scan created while nobody has edited it.</p>';
-    echo '<p style="color:#666">' . $waiting . ' saved articles not scanned yet. The hourly run gets through a handful at a time (Groq\'s limit), '
+    echo '<p style="color:#666">' . $waiting . ' saved articles not scanned yet. The hourly run gets through a handful at a time (the Groq and Gemini free limits), '
         . 'likeliest programs first.</p>';
     echo '<ul class="subsubsub"><li><a href="' . esc_url(add_query_arg('fd', 'recent', $base)) . '"' . ($filter === 'recent' ? ' class="current"' : '') . '>'
         . 'All recent (' . (int) array_sum($counts) . ')</a> | </li>';

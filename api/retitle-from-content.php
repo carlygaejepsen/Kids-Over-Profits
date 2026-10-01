@@ -12,8 +12,10 @@
  * the heavy lifting happens in the browser or via a vision model):
  *   PDF        browser extracts the text layer with pdf.js; if the PDF is a
  *              scan with no text layer, the browser renders page 1 to a JPEG
- *              and the server sends it to a Groq vision model (the OCR step)
+ *              and the server sends it to a vision model (the OCR step)
  *   Images     server downscales with GD and sends to the vision model
+ * Groq and Gemini take turns (api/ai-providers.php); the other gets the
+ * request when one fails. Gemini reads images with its usual model.
  * Only PDFs and images are in scope; other attachment types (DOCX, JSON, ZIP,
  * audio, video...) never appear in the list and are refused by the suggester.
  *
@@ -411,7 +413,7 @@ function kop_rtc_is_unclear_title($title) {
 }
 
 // ---------------------------------------------------------------------------
-// Groq title generation (text and vision)
+// Title generation (text and vision), Groq and Gemini in turn
 // ---------------------------------------------------------------------------
 
 function kop_rtc_groq_key() {
@@ -498,15 +500,81 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 1500) {
         return ['ok' => false, 'error' => 'Groq error: ' . $msg];
     }
 
-    $raw = trim((string) ($decoded['choices'][0]['message']['content'] ?? ''));
-    $raw = preg_replace('/<think>.*?<\/think>/is', '', $raw);
+    return kop_rtc_parse_title_reply(
+        (string) ($decoded['choices'][0]['message']['content'] ?? ''),
+        (string) ($decoded['choices'][0]['finish_reason'] ?? 'unknown')
+    );
+}
+
+/**
+ * Gemini's turn (api/ai-providers.php alternates the two). $jpeg_b64 adds
+ * the page image: Gemini models read images, so one model serves both modes.
+ */
+function kop_rtc_gemini_chat($text, $jpeg_b64 = '', $max_tokens = 1500) {
+    $key = kop_ai_api_keys()['gemini'];
+    if ($key === '') {
+        return ['ok' => false, 'error' => 'Gemini API key not configured. Add GEMINI_API_KEY to .env.'];
+    }
+    $parts = [['text' => $text]];
+    if ($jpeg_b64 !== '') {
+        $parts[] = ['inline_data' => ['mime_type' => 'image/jpeg', 'data' => $jpeg_b64]];
+    }
+    $model = getenv('GEMINI_MODEL') ?: 'gemini-3.5-flash-lite';
+    try {
+        $r = kop_ai_curl(
+            'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode($model) . ':generateContent?key=' . urlencode($key),
+            [
+                'contents'         => [['parts' => $parts]],
+                // Thinking counts against maxOutputTokens, hence the floor.
+                'generationConfig' => ['maxOutputTokens' => max($max_tokens, 8192), 'responseMimeType' => 'application/json'],
+            ],
+            ['Content-Type: application/json'],
+            60
+        );
+    } catch (Throwable $e) {
+        return ['ok' => false, 'error' => 'Network error: ' . $e->getMessage()];
+    }
+    $decoded = json_decode($r['response'], true);
+    if ($r['httpCode'] !== 200) {
+        $msg = $decoded['error']['message'] ?? 'HTTP ' . $r['httpCode'];
+        if ($r['httpCode'] === 429) $msg = 'Gemini rate limit — wait a moment and retry.';
+        if ($r['httpCode'] >= 500) $msg = 'HTTP ' . $r['httpCode'] . ' ' . $msg;
+        return ['ok' => false, 'error' => 'Gemini error: ' . $msg];
+    }
+    $raw = '';
+    foreach ($decoded['candidates'][0]['content']['parts'] ?? [] as $part) {
+        if (isset($part['text']) && empty($part['thought'])) $raw .= $part['text'];
+    }
+    return kop_rtc_parse_title_reply($raw, (string) ($decoded['candidates'][0]['finishReason'] ?? 'unknown'));
+}
+
+/**
+ * Groq and Gemini take turns; when the one whose turn it is fails, the other
+ * gets the same request. $legs maps provider => callable returning a result.
+ */
+function kop_rtc_alternate(array $legs) {
+    $order = kop_ai_turn_order(array_keys($legs));
+    if (!$order) {
+        return ['ok' => false, 'error' => 'No AI key configured. Add GROQ_API_KEY or GEMINI_API_KEY to .env.'];
+    }
+    $errors = [];
+    foreach ($order as $p) {
+        $result = $legs[$p]();
+        if (!empty($result['ok'])) return $result;
+        $errors[] = $result['error'] ?? ($p . ' failed');
+    }
+    return ['ok' => false, 'error' => implode(' | ', $errors)];
+}
+
+/** A model's raw reply as a title result. */
+function kop_rtc_parse_title_reply($raw, $finish) {
+    $raw = preg_replace('/<think>.*?<\/think>/is', '', trim($raw));
     $raw = trim($raw);
     $raw = preg_replace('/^```json\s*/i', '', $raw);
     $raw = preg_replace('/```\s*$/', '', $raw);
     if ($raw === '') {
         // Nothing to parse: the model ran out of tokens while reasoning or
         // returned a bare stop. A model-side condition, never the file's fault.
-        $finish = (string) ($decoded['choices'][0]['finish_reason'] ?? 'unknown');
         return ['ok' => false, 'error' => 'Empty AI response (finish_reason: ' . $finish . ') - retry later.'];
     }
     $parsed = json_decode($raw, true);
@@ -523,11 +591,11 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 1500) {
 
 function kop_rtc_suggest_from_text($context_header, $doc_text) {
     $doc_text = kop_lawsuit_chunk_text($doc_text, 1)['chunks'][0] ?? '';
-    $model = getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b';
-    $result = kop_rtc_groq_chat(
-        $model,
-        $context_header . "\n\nDOCUMENT TEXT (may be truncated):\n" . $doc_text . "\n\n" . kop_rtc_title_prompt('text')
-    );
+    $prompt = $context_header . "\n\nDOCUMENT TEXT (may be truncated):\n" . $doc_text . "\n\n" . kop_rtc_title_prompt('text');
+    $result = kop_rtc_alternate([
+        'groq'   => static fn() => kop_rtc_groq_chat(getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b', $prompt),
+        'gemini' => static fn() => kop_rtc_gemini_chat($prompt),
+    ]);
     if ($result['ok'] && $result['basis'] === 'ocr') $result['basis'] = 'content';
     return $result;
 }
@@ -579,8 +647,19 @@ function kop_rtc_discover_vision_models() {
 }
 
 function kop_rtc_suggest_from_image($context_header, $jpeg_b64) {
+    $prompt = $context_header . "\n\nAttached is an image of the document's first page (or the image attachment itself). Read it.\n\n" . kop_rtc_title_prompt('vision');
+    $result = kop_rtc_alternate([
+        'groq'   => static fn() => kop_rtc_groq_vision($prompt, $jpeg_b64),
+        'gemini' => static fn() => kop_rtc_gemini_chat($prompt, $jpeg_b64),
+    ]);
+    if ($result['ok'] && $result['basis'] === 'content') $result['basis'] = 'ocr';
+    return $result;
+}
+
+/** Groq's turn at a page image: its vision model IDs are probed, not hard-coded. */
+function kop_rtc_groq_vision($prompt, $jpeg_b64) {
     $content = [
-        ['type' => 'text', 'text' => $context_header . "\n\nAttached is an image of the document's first page (or the image attachment itself). Read it.\n\n" . kop_rtc_title_prompt('vision')],
+        ['type' => 'text', 'text' => $prompt],
         ['type' => 'image_url', 'image_url' => ['url' => 'data:image/jpeg;base64,' . $jpeg_b64]],
     ];
 
@@ -595,7 +674,6 @@ function kop_rtc_suggest_from_image($context_header, $jpeg_b64) {
             $result = kop_rtc_groq_chat($model, $content);
             if ($result['ok']) {
                 set_transient('kop_rtc_vision_model', $model, WEEK_IN_SECONDS);
-                if ($result['basis'] === 'content') $result['basis'] = 'ocr';
                 return $result;
             }
             if (!kop_rtc_model_missing_error($result['error'])) {

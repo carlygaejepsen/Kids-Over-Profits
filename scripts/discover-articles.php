@@ -34,7 +34,7 @@
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
- *   AI_PROVIDER            (default: groq)
+ *   AI_PROVIDER            (default: auto - Groq and Gemini take turns)
  *   SHARD_COUNT            (default: 7 — facilities split into N daily shards)
  *   RSS_REQUEST_DELAY_MS   (default: 1500 — pause between Google News requests)
  *   AI_REQUEST_DELAY_MS    (default: 6000 — pause between AI submissions)
@@ -79,7 +79,7 @@ define('FACILITIES_URL', API_BASE . '/wp-json/kop/v1/facilities');
 define('AI_ENDPOINT', API_BASE . '/wp-content/themes/child/api/process-news-ai.php');
 define('SUBMIT_ENDPOINT', API_BASE . '/wp-content/themes/child/api/save-news-submission.php');
 
-define('AI_PROVIDER', getenv('AI_PROVIDER') ?: 'groq');
+define('AI_PROVIDER', getenv('AI_PROVIDER') ?: 'auto');
 define('SHARD_COUNT', (int)(getenv('SHARD_COUNT') ?: 7));
 
 define('SCORE_THRESHOLD', 3);

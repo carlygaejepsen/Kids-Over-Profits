@@ -173,7 +173,7 @@ python scripts/build-unsilenced-links.py                   # report in tmp/unsil
 php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
 # Fornits survivor forum (inc/fornits.php): the crawl copies the treatment-abuse boards into tmp/fornits/ (never committed);
 # the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the
-# server an hourly read, Gemini free tier first then Groq (daily caps KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS),
+# server an hourly read, Groq and Gemini free tiers in turn (daily caps KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS),
 # proposes staff, incidents, survivor accounts (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo.
 # "Check AI keys" there sends one request per provider through the site's own code (keys never shown)
 python scripts/test-gemini.py                     # is a Gemini key usable? lists its models, names the fix
@@ -269,6 +269,11 @@ Module dependency chain: `config.js` → `data-normalizer.js` → `api.js` → `
 
 ### API Configuration
 Credentials loaded from `.env`, WordPress constants, or `api/config.local.php` (gitignored). The data forms read `KOP_DATA_FORM_CONFIG` (also localized as `dataFormConfig`), which carries `ajaxUrl`, `restUrl`, `nonce`, `isAdmin`, `endpoints` and `mode`. There is no `apiBase` key.
+
+All AI work (news processing, discovery, closure/facility scans, Fornits, lawsuit extraction, wiki prose,
+retitling) alternates between Groq and Gemini: `kop_ai_generate_alternating()` in `api/ai-providers.php`
+(provider `'auto'` on `api/process-news-ai.php`) starts each call with the other one from the call before
+and gives the prompt to the other when one fails. A new AI call goes through it, never straight to one provider.
 
 ## Code Conventions
 

@@ -46,14 +46,15 @@ Typical workflow:
 
 ## AI Providers
 
-The page has no provider selector: `js/news-processor.js` always sends `provider: 'groq'`. `api/process-news-ai.php` still accepts other providers from API callers:
-- `groq` (default): tries `GROQ_MODEL` if set, then `openai/gpt-oss-120b`, then `openai/gpt-oss-20b`, moving on when a model is retired, gated or rate limited
+The page has no provider selector: `js/news-processor.js` sends `provider: 'auto'`, as do nightly discovery and the record enrichment. `api/process-news-ai.php` accepts:
+- `auto` (default): Groq and Gemini take turns (a shared counter in `api/ai-providers.php`, `kop_ai_turn_order()`), and when the one whose turn it is fails, the other reads the same article; the error joins both messages
+- `groq`: tries `GROQ_MODEL` if set, then `openai/gpt-oss-120b`, then `openai/gpt-oss-20b`, moving on when a model is retired, gated or rate limited
 - `claude`: `ANTHROPIC_MODEL` if set, else `claude-opus-5` at low effort, with server-side refusal fallbacks (`fallbacks: "default"`)
 - `gemini`: `GEMINI_MODEL` if set, else `gemini-3.5-flash-lite` (2.0 Flash-Lite was shut down on 2026-06-01)
 - `huggingface`: `meta-llama/Llama-3.1-8B-Instruct:fastest`
 - `ollama`: `llama3.2` on a local instance at `127.0.0.1:11434`
 
-Only Groq is used in practice: the page always sends `provider: 'groq'`, so the others run only when a request names them. Their model IDs were brought up to date on 2026-09-24 and can be overridden from `.env`. Groq retires model IDs on a schedule, so when extraction starts failing, check the Groq deprecations page and set `GROQ_MODEL`.
+Only Groq and Gemini are used in practice; the others run only when a request names them. Their model IDs were brought up to date on 2026-09-24 and can be overridden from `.env`. Groq retires model IDs on a schedule, so when extraction starts failing, check the Groq deprecations page and set `GROQ_MODEL`.
 
 ## Key Features
 
@@ -120,6 +121,7 @@ The form captures:
 Environment keys (loaded by `api/config.php` from `.env`, with `api/config.local.php` as the local override):
 - `GROQ_API_KEY` or `GROK_API_KEY`, and optionally `GROQ_MODEL`
 - optionally `ANTHROPIC_MODEL` and `GEMINI_MODEL`, to replace a retired model without a code change
-- `HUGGINGFACE_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY` (only for non-default providers)
+- `GEMINI_API_KEY` (the other half of `auto`; without it every call goes to Groq)
+- `HUGGINGFACE_API_KEY`, `ANTHROPIC_API_KEY` (only for non-default providers)
 
-Discovery reads its own settings from the cron environment: `NEWS_API_BASE`, `AI_PROVIDER` (default `groq`), `SHARD_COUNT`, request delays and time budgets, and optional `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`. See the header of `scripts/discover-articles.php`.
+Discovery reads its own settings from the cron environment: `NEWS_API_BASE`, `AI_PROVIDER` (default `auto`), `SHARD_COUNT`, request delays and time budgets, and optional `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`. See the header of `scripts/discover-articles.php`.

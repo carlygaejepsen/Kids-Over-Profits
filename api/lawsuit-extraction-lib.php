@@ -12,6 +12,8 @@
 
 if (!defined('ABSPATH')) { exit; }
 
+require_once __DIR__ . '/ai-providers.php';
+
 if (!function_exists('kop_resolve_secret')) {
     function kop_resolve_secret($name) {
         $v = getenv($name);
@@ -51,7 +53,7 @@ function kop_lawsuit_chunk_text(string $doc_text, int $max_chunks = 10): array {
     return ['chunks' => $chunks, 'length' => $len];
 }
 
-/** Pick the Groq model for a chunk call. */
+/** Pick the Groq model for a chunk call (Gemini's turns use GEMINI_MODEL). */
 function kop_lawsuit_pick_model(int $total_chunks): string {
     // Groq retires models out from under us (llama-3.3-70b-versatile went 404
     // Sep 2026, llama-3.1-8b-instant days later), so hardcode only one default
@@ -65,70 +67,25 @@ function kop_lawsuit_pick_model(int $total_chunks): string {
 }
 
 // =============================================================================
-// Groq API helper
+// AI call: Groq and Gemini take turns (api/ai-providers.php)
 // =============================================================================
-function kop_groq_call(string $key, string $model, string $text, int $chunk_num = 1, int $total = 1): array {
+function kop_lawsuit_ai_call(string $text, int $chunk_num = 1, int $total = 1): array {
     $prompt  = kop_lawsuit_extraction_prompt();
     $context = ($total > 1)
         ? "NOTE: This is chunk {$chunk_num} of {$total} of a longer document. Extract whatever fields you can find in this portion.\n\n"
         : '';
-
-    $body = json_encode([
-        'model'    => $model,
-        'messages' => [
-            ['role' => 'user', 'content' => "{$context}DOCUMENT TEXT:\n{$text}\n\n{$prompt}"],
-        ],
-        'temperature' => 0.1,
-        'max_tokens'  => 4096,
-    ]);
-
-    if ($body === false) {
-        return ['ok' => false, 'data' => null, 'error' => 'json_encode failed: ' . json_last_error_msg()];
+    try {
+        $raw_text = kop_ai_generate_alternating("{$context}DOCUMENT TEXT:\n{$text}\n\n{$prompt}", [
+            'maxTokens' => 4096,
+            'groqModel' => kop_lawsuit_pick_model($total),
+        ]);
+    } catch (Throwable $e) {
+        return ['ok' => false, 'data' => null, 'error' => 'AI error: ' . $e->getMessage()];
     }
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $key,
-    ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-
-    $response  = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $curl_err  = curl_error($ch);
-    curl_close($ch);
-
-    if ($curl_err) {
-        return ['ok' => false, 'data' => null, 'error' => "Network error: {$curl_err}"];
-    }
-
-    $decoded = json_decode($response, true);
-
-    if ($http_code !== 200) {
-        $msg = $decoded['error']['message'] ?? "HTTP {$http_code}";
-        if ($http_code === 429) $msg = 'Groq rate limit — please wait a moment and retry.';
-        if ($http_code === 401) $msg = 'Groq API key is invalid. Check GROQ_API_KEY in .env.';
-        return ['ok' => false, 'data' => null, 'error' => "Groq error: {$msg}"];
-    }
-
-    $raw_text = $decoded['choices'][0]['message']['content'] ?? '';
-    if ($raw_text === '') {
-        return ['ok' => false, 'data' => null, 'error' => 'Groq returned an empty response.'];
-    }
-
-    $raw_text = preg_replace('/^```json\s*/i', '', trim($raw_text));
-    $raw_text = preg_replace('/```\s*$/', '', $raw_text);
-
-    $parsed = json_decode($raw_text, true);
+    $parsed = kop_ai_extract_json($raw_text);
     if (!is_array($parsed)) {
-        return ['ok' => false, 'data' => null, 'error' => 'Could not parse Groq JSON. Preview: ' . substr($raw_text, 0, 200)];
+        return ['ok' => false, 'data' => null, 'error' => 'Could not parse the AI JSON. Preview: ' . substr($raw_text, 0, 200)];
     }
-
     return ['ok' => true, 'data' => $parsed, 'error' => ''];
 }
 

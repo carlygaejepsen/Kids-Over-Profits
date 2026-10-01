@@ -2258,7 +2258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please paste some prose to extract from first!');
                 return;
             }
-            const provider = 'groq'; // provider dropdown removed — always use Groq
+            const provider = 'auto'; // Groq and Gemini take turns (api/ai-providers.php)
             const setStatus = (msg, color) => {
                 if (extractProseStatus) {
                     extractProseStatus.textContent = msg;

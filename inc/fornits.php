@@ -14,7 +14,7 @@
  *   - each batch is loaded into {prefix}kop_fornits_topics, and every topic
  *     becomes a "Fornits discussion" link proposal for each of its facilities
  *     (resourceLinks, kind 'social', "Survivor posts and discussion");
- *   - hourly, Gemini (free tier) and then Groq read waiting topics
+ *   - hourly, Groq and Gemini (free tiers, taking turns) read waiting topics
  *     (kop_fornits_read_batch, kop_fornits_ask) and propose
  *     staff (the Woodbury Facts add_staff change), incidents (customIncidents
  *     lines), survivor accounts (survivorTestimony, never published until an
@@ -391,52 +391,37 @@ function kop_fornits_count_call($provider) {
     update_option('kop_fornits_calls', array('day' => gmdate('Y-m-d')) + $c, false);
 }
 
-/** Providers with a key, in the order the reading uses them. */
-function kop_fornits_providers() {
-    require_once get_stylesheet_directory() . '/api/ai-providers.php';
-    $keys = kop_ai_api_keys();
-    return array_values(array_filter(array('gemini', 'groq'), function ($p) use ($keys) { return !empty($keys[$p]); }));
-}
-
 /**
- * Ask Gemini, then Groq (the closure scan's call, its model fallback
- * included), each within its daily cap. A provider that is out of calls or
- * rate limited is skipped for the rest of the run. Throws "rate limit" when
- * none is left, so the topic is tried again next run without spending a try.
+ * Ask Groq and Gemini in turn (api/ai-providers.php: each call starts with the
+ * other one from the call before), each within its daily cap; when the one
+ * whose turn it is fails, the other gets the prompt. A provider that is out
+ * of calls or rate limited is skipped for the rest of the run. Throws "rate
+ * limit" when none is left, so the topic is tried again next run without
+ * spending a try.
  */
 function kop_fornits_ask($prompt) {
     static $spent = array();
-    static $last_gemini = 0.0;
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
     $caps = kop_fornits_caps();
+    $open = array_values(array_filter(kop_ai_alternating_providers(), function ($p) use ($spent, $caps) {
+        return empty($spent[$p]) && kop_fornits_calls_today()[$p] < $caps[$p];
+    }));
     $errors = array();
-    foreach (kop_fornits_providers() as $p) {
-        if (!empty($spent[$p]) || kop_fornits_calls_today()[$p] >= $caps[$p]) {
-            continue;
-        }
+    foreach ($open ? kop_ai_turn_order($open) : array() as $p) {
         try {
             kop_fornits_count_call($p);
-            if ($p === 'gemini') {
-                $wait = $last_gemini + 4.5 - microtime(true); // the free tier allows 15 a minute
-                if ($wait > 0) {
-                    usleep((int) ($wait * 1e6));
-                }
-                $last_gemini = microtime(true);
-                return kop_ai_generate('gemini', kop_ai_api_keys(), $prompt, array('maxTokens' => 3000));
-            }
-            if (!function_exists('kop_closure_groq')) {
-                throw new RuntimeException('The closure scan helpers are not loaded.');
-            }
-            return kop_closure_groq($prompt, 3000);
+            return $p === 'gemini' ? kop_ai_gemini($prompt, array('maxTokens' => 3000))
+                : kop_ai_groq($prompt, array('maxTokens' => 3000));
         } catch (Throwable $e) {
             $m = $e->getMessage();
-            if (stripos($m, 'rate limit') !== false || stripos($m, 'quota') !== false || strpos($m, 'HTTP 429') !== false) {
+            if (kop_ai_is_rate_limit($m)) {
                 $spent[$p] = true;
-                $errors[] = $p . ': ' . $m;
-                continue;
             }
-            throw new RuntimeException($p . ': ' . $m);
+            $errors[] = $p . ': ' . $m;
         }
+    }
+    if ($errors && !array_filter($errors, 'kop_ai_is_rate_limit')) {
+        throw new RuntimeException(implode('; ', $errors));
     }
     throw new RuntimeException('Daily rate limit for the Fornits reading reached' . ($errors ? ' (' . implode('; ', $errors) . ')' : '') . '.');
 }
@@ -456,8 +441,8 @@ function kop_fornits_check_ai() {
             continue;
         }
         try {
-            $reply = $p === 'gemini' ? kop_ai_generate('gemini', $keys, $prompt, array('maxTokens' => 200))
-                : kop_closure_groq($prompt, 200);
+            $reply = $p === 'gemini' ? kop_ai_gemini($prompt, array('maxTokens' => 200))
+                : kop_ai_groq($prompt, array('maxTokens' => 200));
             $data = kop_ai_extract_json((string) $reply);
             $ok = is_array($data) && stripos((string) ($data['facility'] ?? ''), 'thayer') !== false;
             $model = $p === 'gemini' ? (getenv('GEMINI_MODEL') ?: 'gemini-3.5-flash-lite') : (getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b');

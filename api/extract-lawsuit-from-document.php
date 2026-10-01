@@ -12,7 +12,7 @@
  *
  * POST action=chunk    JSON       {job_id, chunk_index}
  *   → {success, chunk_index, total_chunks}
- *   Calls Groq for one chunk and stores the result in its own transient.
+ *   Calls the AI (Groq and Gemini in turn) for one chunk and stores the result in its own transient.
  *
  * POST action=finalize JSON       {job_id}
  *   → {success, data: {...form fields...}, attachment: {id, url}}
@@ -42,7 +42,7 @@ require_once ABSPATH . 'wp-admin/includes/file.php';
 require_once ABSPATH . 'wp-admin/includes/media.php';
 require_once ABSPATH . 'wp-admin/includes/image.php';
 
-// Shared helpers: kop_resolve_secret, text extraction, chunking, Groq call,
+// Shared helpers: kop_resolve_secret, text extraction, chunking, AI call,
 // merge/normalize, extraction prompt.
 require_once __DIR__ . '/lawsuit-extraction-lib.php';
 
@@ -79,9 +79,8 @@ exit;
 // Action: upload
 // =============================================================================
 function kop_action_upload(): void {
-    $groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    if ($groq_key === '') {
-        echo json_encode(['success' => false, 'error' => 'Groq API key not configured. Add GROQ_API_KEY to your .env file. Free key at https://console.groq.com/keys']);
+    if (!kop_ai_alternating_providers()) {
+        echo json_encode(['success' => false, 'error' => 'No AI key configured. Add GROQ_API_KEY (https://console.groq.com/keys) or GEMINI_API_KEY (https://aistudio.google.com/app/apikey) to your .env file.']);
         exit;
     }
 
@@ -179,9 +178,7 @@ function kop_action_chunk(): void {
         exit;
     }
 
-    $groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    $model    = kop_lawsuit_pick_model($total);
-    $result   = kop_groq_call($groq_key, $model, $job['chunks'][$chunk_index], $chunk_index + 1, $total);
+    $result = kop_lawsuit_ai_call($job['chunks'][$chunk_index], $chunk_index + 1, $total);
 
     if (!$result['ok']) {
         echo json_encode(['success' => false, 'error' => $result['error']]);

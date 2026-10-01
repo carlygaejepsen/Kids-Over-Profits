@@ -32,6 +32,7 @@ define('SKIP_DB_CONNECTION', true);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-tags.php';
 require_once __DIR__ . '/lib-article-fetch.php';
+require_once __DIR__ . '/ai-providers.php';
 
 // Enable detailed error logging (set to false in production if too verbose)
 define('AI_DEBUG_LOGGING', true);
@@ -48,7 +49,7 @@ if (!$data) {
 
 $url = $data['url'] ?? '';
 $articleText = $data['articleText'] ?? '';
-$provider = $data['provider'] ?? 'groq';
+$provider = $data['provider'] ?? 'auto';
 $customInstructions = $data['customInstructions'] ?? '';
 
 if (empty($url) && empty($articleText)) {
@@ -87,7 +88,46 @@ try {
         $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
     }
 
-    // Process with selected AI provider
+    // 'auto' (the default): Groq and Gemini take turns, and when the one
+    // whose turn it is fails, the other reads the same article. The thrown
+    // message joins both errors, so "rate limit" still shows when one was out.
+    $order = $provider === 'auto' ? kop_ai_turn_order() : [$provider];
+    if (!$order) {
+        throw new Exception('No AI key configured. Add GROQ_API_KEY or GEMINI_API_KEY to your .env file.');
+    }
+    $errors = [];
+    $result = null;
+    foreach ($order as $p) {
+        try {
+            $result = processNewsWith($p, $apiKeys, $content, $url, $customInstructions);
+            $provider = $p;
+            break;
+        } catch (Exception $e) {
+            error_log("AI processing error [$p]: " . $e->getMessage());
+            $errors[] = $e->getMessage();
+        }
+    }
+    if ($result === null) {
+        throw new Exception(implode(' | ', $errors));
+    }
+
+    echo json_encode([
+        'success' => true,
+        'data' => $result,
+        'provider' => $provider
+    ]);
+
+} catch (Exception $e) {
+    error_log("AI processing error [$provider]: " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}
+
+/** Run one provider over the article; throws on failure. */
+function processNewsWith($provider, array $apiKeys, $content, $url, $customInstructions) {
     $result = null;
     switch ($provider) {
         case 'ollama':
@@ -120,19 +160,7 @@ try {
         default:
             throw new Exception('Invalid AI provider selected');
     }
-
-    echo json_encode([
-        'success' => true,
-        'data' => $result
-    ]);
-
-} catch (Exception $e) {
-    error_log("AI processing error [$provider]: " . $e->getMessage());
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage()
-    ]);
+    return $result;
 }
 
 /**
@@ -485,6 +513,9 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
         $errorMsg = $errorData['error']['message'] ?? "API request failed";
         
         // Check for common Gemini errors
+        if ($httpCode === 429) {
+            throw new Exception("Gemini rate limit exceeded (HTTP 429): $errorMsg");
+        }
         if ($httpCode === 400 && strpos($errorMsg, 'API_KEY_INVALID') !== false) {
             throw new Exception("Gemini API key is invalid. Please check your GEMINI_API_KEY in .env file. Get a new key at: https://aistudio.google.com/app/apikey");
         }
