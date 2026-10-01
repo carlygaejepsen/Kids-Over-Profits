@@ -102,6 +102,7 @@ function kop_gdl_kinds() {
         'government'   => 'Government page',
         'social'       => 'Survivor/social post',
         'people'       => 'Person (profile, obituary, company)',
+        'advertising'  => 'Advertising/marketing listing',
         'reference'    => 'Reference',
         'archive'      => 'Archive copy',
         'program_site' => "Program's own site",
@@ -128,7 +129,8 @@ function kop_gdl_default_target($kind) {
 /** A build kind as a resourceLinks kind (kop_facility_resource_link_kinds()). */
 function kop_gdl_resource_kind($kind) {
     $map = array('inspection' => 'licensing', 'court' => 'court', 'government' => 'government', 'news' => 'news',
-        'social' => 'social', 'people' => 'people', 'reference' => 'reference', 'archive' => 'archive');
+        'social' => 'social', 'people' => 'people', 'advertising' => 'advertising', 'reference' => 'reference',
+        'archive' => 'archive');
     return $map[$kind] ?? 'other';
 }
 
@@ -662,7 +664,7 @@ function kop_render_drive_docs_page() {
     }
     $in = implode(',', array_fill(0, count($cards), '%s'));
     $rows = $wpdb->get_results($wpdb->prepare("SELECT *, {$card_col} AS ck FROM {$table} WHERE {$where} AND {$card_col} IN ({$in}) "
-        . "ORDER BY FIELD(kind,'news','court','legislation','inspection','government','social','people','reference','archive','program_site','other'), label", $cards), ARRAY_A);
+        . "ORDER BY FIELD(kind,'news','court','legislation','inspection','government','social','people','advertising','reference','archive','program_site','other'), label", $cards), ARRAY_A);
     $by = array();
     foreach ($rows as $r) {
         $by[(string) $r['ck']][] = $r;

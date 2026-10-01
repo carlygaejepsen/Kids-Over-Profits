@@ -69,9 +69,11 @@ SOCIAL = {'reddit.com', 'facebook.com', 'youtube.com', 'youtu.be', 'instagram.co
           'tiktok.com', 'fornits.com', 'threads.net', 'medium.com', 'substack.com', 'tumblr.com'}
 PEOPLE = {'linkedin.com', 'indeed.com', 'glassdoor.com', 'findagrave.com', 'legacy.com', 'zoominfo.com',
           'opencorporates.com', 'bizapedia.com', 'rocketreach.co'}
-REFERENCE = {'en.wikipedia.org', 'wikipedia.org', 'strugglingteens.com', 'unsilenced.org', 'splcenter.org',
+REFERENCE = {'en.wikipedia.org', 'wikipedia.org', 'unsilenced.org', 'splcenter.org',
              'disabilityrightsohio.org', 'ndrn.org', 'autisticadvocacy.org', 'breakingcodesilence.org',
-             'documentcloud.org', 'change.org', 'crunchbase.com', 'prweb.com', 'yelp.com'}
+             'documentcloud.org', 'change.org', 'crunchbase.com', 'yelp.com'}
+# Where programs advertise: Woodbury Reports (strugglingteens.com), paid directories, press releases.
+ADVERTISING = {'strugglingteens.com', 'allkindsoftherapy.com', 'psychologytoday.com', 'prweb.com'}
 # Never a program's own site, even when a record's links name it.
 NOT_PROGRAM_SITE = re.compile(r'wordpress\.com|blogspot\.|wixsite\.|weebly\.|squarespace\.|google\.|yelp\.|'
                               r'patch\.com|psychologytoday\.|guidestar\.|charitynavigator\.|natsap\.org', re.I)
@@ -81,7 +83,7 @@ INTERNAL = {'drive.google.com', 'docs.google.com', 'g.co', 'goo.gl', 'kidsoverpr
 CATEGORY_LABEL = {
     'news': 'News article', 'court': 'Court record', 'inspection': 'Licensing/inspection report', 'legislation': 'Legislation', 'government': 'Government page',
     'archive': 'Archive copy', 'social': 'Survivor/social post', 'people': 'Person (profile, obituary, company)',
-    'reference': 'Reference', 'program_site': "Program's own site", 'internal': 'KOP, Drive or search page', 'other': 'Other',
+    'advertising': 'Advertising/marketing listing', 'reference': 'Reference', 'program_site': "Program's own site", 'internal': 'KOP, Drive or search page', 'other': 'Other',
 }
 
 
@@ -230,7 +232,7 @@ def load_program_domains(con, news_domains):
             u = wayback_original(u) or u
             dom = domain_of(u)
             b = base_domain(dom)
-            if (dom and not ARCHIVE.match(dom) and b not in SOCIAL | PEOPLE | REFERENCE | INTERNAL
+            if (dom and not ARCHIVE.match(dom) and b not in SOCIAL | PEOPLE | REFERENCE | ADVERTISING | INTERNAL
                     and b not in news_domains and not NOT_PROGRAM_SITE.search(dom)
                     and not GOVERNMENT.search('//' + dom + '/') and not INSPECTION.search(u)):
                 out[b].add(fid)
@@ -429,6 +431,8 @@ def classify(url, dom, news_domains, program_domains):
         return 'social'
     if b in PEOPLE or dom in PEOPLE:
         return 'people'
+    if b in ADVERTISING or dom in ADVERTISING:
+        return 'advertising'
     if dom in REFERENCE or b in REFERENCE:
         return 'reference'
     if GOVERNMENT.search('//' + dom + '/'):

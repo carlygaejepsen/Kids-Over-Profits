@@ -63,8 +63,8 @@ echo "-- Targets --\n";
 $check('news goes to the news queue', kop_gdl_default_target('news') === 'news');
 $check('court records go to lawsuits, bills to legislation', kop_gdl_default_target('court') === 'lawsuit' && kop_gdl_default_target('legislation') === 'legislation');
 $check("the program's site goes to its website links", kop_gdl_default_target('program_site') === 'website');
-foreach (array('inspection' => 'licensing', 'social' => 'social', 'people' => 'people', 'reference' => 'reference',
-               'government' => 'government', 'archive' => 'archive', 'other' => 'other') as $k => $rk) {
+foreach (array('inspection' => 'licensing', 'social' => 'social', 'people' => 'people', 'advertising' => 'advertising',
+               'reference' => 'reference', 'government' => 'government', 'archive' => 'archive', 'other' => 'other') as $k => $rk) {
     $check("$k goes to resource links as $rk", kop_gdl_default_target($k) === 'resource' && kop_gdl_resource_kind($k) === $rk);
 }
 $check('a close-name match starts unticked', !kop_gdl_sure_match(array('facility_id' => 5, 'facility_how' => 'folder (close name)'))
