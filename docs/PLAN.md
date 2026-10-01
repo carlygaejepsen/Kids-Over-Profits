@@ -169,13 +169,17 @@ The date is when each was last confirmed open.
     other name on a facility record ties one in.
 11. **Billings Clinic testimony** (2026-09-30). In the
     [admin data form](https://kidsoverprofits.org/admin-data/), refresh, open
-    **MONTANA PROVIDERS** on the providers tab, and in Survivor Testimony
-    press "Move to testimony" on the six "Other TTI practice" paragraphs
-    (held down / safety smock, food and ARFID, records, peer pressure,
-    therapy, staff) and "Remove copy" on the group uprisings field note,
-    then save. The paragraphs leave
-    [/mental-health-providers/](https://kidsoverprofits.org/mental-health-providers/)
-    and stay private until "OK to publish" is ticked.
+    **MONTANA PROVIDERS** on the providers tab, and open Survivor Testimony
+    (near the bottom; click its heading). Press "Combine into one account"
+    (the 12 entries are one survivor's account), then "Move to testimony" on
+    the six "Other TTI practice" paragraphs (they join it) and "Remove copy"
+    on the group uprisings field note. Not "Move all": the list also holds
+    six more field notes, three custom incidents and the custom philosophy
+    "Medication", which are the owner's call one by one. Save. The paragraphs leave
+    [/mental-health-providers/](https://kidsoverprofits.org/mental-health-providers/);
+    the combined account keeps its "OK to publish" tick and is sourced
+    "Submitted by a survivor (submission #50)"
+    ([3f838787](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/3f838787b57cc02d664cffaea1a397662cd28151)).
 
 ### Hosting
 
