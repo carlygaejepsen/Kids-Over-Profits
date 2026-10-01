@@ -29,7 +29,8 @@ if ($page['lawsuits']) $kop_op_sections['lawsuits'] = 'Lawsuits';
 if ($page['memorials']) $kop_op_sections['memorials'] = 'Deaths on record';
 $kop_op_has_research = !empty($page['research']);
 $kop_op_has_unsilenced = !empty($page['unsilenced']['groups']);
-$kop_op_has_docs = !empty($page['documents']['html']) || $kop_op_has_research || $kop_op_has_unsilenced;
+$kop_op_has_survivor_sites = !empty($page['survivor_sites']);
+$kop_op_has_docs = !empty($page['documents']['html']) || $kop_op_has_research || $kop_op_has_unsilenced || $kop_op_has_survivor_sites;
 if ($kop_op_has_docs) $kop_op_sections['documents'] = 'Documents';
 if ($page['notes']) $kop_op_sections['notes'] = 'Research notes';
 if ($page['websites']) $kop_op_sections['links'] = 'Websites';
@@ -246,6 +247,9 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <?php endif; ?>
                 <?php if ($kop_op_has_unsilenced) : ?>
                     <?php echo kop_unsilenced_render($page['unsilenced'], $page['name']); // Escaped inside. ?>
+                <?php endif; ?>
+                <?php if ($kop_op_has_survivor_sites) : ?>
+                    <?php echo kop_survivor_archives_render($page['survivor_sites'], $page['name']); // Escaped inside. ?>
                 <?php endif; ?>
             </section>
             <?php endif; ?>

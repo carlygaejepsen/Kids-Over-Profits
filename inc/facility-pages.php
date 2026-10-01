@@ -334,6 +334,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'network:' . (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '-');
         // A new build of the Unsilenced archive lists (inc/unsilenced-archive.php).
         $parts[] = 'unsilenced:' . (function_exists('kop_unsilenced_cache_key') ? kop_unsilenced_cache_key() : '-');
+        // ...and of the survivor site lists (inc/survivor-archives.php).
+        $parts[] = 'survivor-sites:' . (function_exists('kop_survivor_archives_cache_key') ? kop_survivor_archives_cache_key() : '-');
         // Approved record <-> inspection row links (inc/inspection-links.php).
         $parts[] = 'inspection-links:' . (function_exists('kop_inspection_links_cache_key') ? kop_inspection_links_cache_key() : '-');
         $parts[] = 'v:4';
@@ -583,12 +585,13 @@ if (!function_exists('kop_facility_pages_link_sets')) {
      *   operators        facility id => operator id
      *   folders          name key => FileBird folder id (folders holding files)
      *   unsilenced       facility id => Unsilenced archive documents KOP lacks
+     *   survivor_sites   facility id => survivor site documents KOP lacks
      */
     function kop_facility_pages_link_sets() {
         global $wpdb;
         $sets = array('news' => array(), 'lawsuits' => array(), 'lawsuit_keys' => array(), 'memorial_keys' => array(),
                       'wiki' => array(), 'inspections' => array(), 'operators' => array(), 'folders' => array(),
-                      'network' => array(), 'research' => array(), 'unsilenced' => array());
+                      'network' => array(), 'research' => array(), 'unsilenced' => array(), 'survivor_sites' => array());
 
         if (kop_facility_pages_table_exists('news_facility_links') && kop_facility_pages_table_exists('news_submissions')) {
             $rows = $wpdb->get_results("SELECT l.facility_id, COUNT(*) AS n FROM news_facility_links l JOIN news_submissions n ON n.id = l.news_id WHERE n.status IN ('approved','published') GROUP BY l.facility_id", ARRAY_A);
@@ -664,6 +667,10 @@ if (!function_exists('kop_facility_pages_link_sets')) {
         // Documents in Unsilenced's archive that KOP has no copy of.
         if (function_exists('kop_unsilenced_index')) {
             $sets['unsilenced'] = kop_unsilenced_index()['facilities'];
+        }
+        // ...and on Surviving Straight Inc. and WWASP Survivors.
+        if (function_exists('kop_survivor_archives_facility_counts')) {
+            $sets['survivor_sites'] = kop_survivor_archives_facility_counts();
         }
         return $sets;
     }
@@ -1119,6 +1126,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (!empty($links['network'][$id])) $s[] = 'network';
         if (!empty($links['research'][$id])) $s[] = 'research';
         if (!empty($links['unsilenced'][$id])) $s[] = 'unsilenced';
+        if (!empty($links['survivor_sites'][$id])) $s[] = 'survivorSites';
 
         $keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $state_code = strtoupper(trim((string) ($loc['state'] ?? '')));
@@ -1832,6 +1840,7 @@ if (!function_exists('kop_facility_page_data')) {
         $inspections = kop_facility_pages_inspections($name_keys, $state_code, $state_name, $facility_id);
         $documents = kop_facility_pages_documents($doc, $entry ? $entry['folder'] : 0);
         $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('f', $facility_id) : null;
+        $survivor_sites = function_exists('kop_survivor_archives') ? kop_survivor_archives('f', $facility_id) : array();
 
         // ---- Copy ----------------------------------------------------------------
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
@@ -1889,6 +1898,7 @@ if (!function_exists('kop_facility_page_data')) {
             'documents'     => $documents,
             'research'      => $research,
             'unsilenced'    => $unsilenced,
+            'survivor_sites' => $survivor_sites,
             'network'       => kop_facility_pages_network($facility_id),
             'updated_at'    => $updated,
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',

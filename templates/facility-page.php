@@ -55,7 +55,8 @@ $kop_fp_has_memorials = !empty($page['memorials']);
 $kop_fp_has_inspections = !empty($page['inspections']);
 $kop_fp_has_research = !empty($page['research']);
 $kop_fp_has_unsilenced = !empty($page['unsilenced']['groups']);
-$kop_fp_has_docs = !empty($page['documents']['html']) || $kop_fp_has_research || $kop_fp_has_unsilenced;
+$kop_fp_has_survivor_sites = !empty($page['survivor_sites']);
+$kop_fp_has_docs = !empty($page['documents']['html']) || $kop_fp_has_research || $kop_fp_has_unsilenced || $kop_fp_has_survivor_sites;
 $kop_fp_has_wiki = !empty($page['wiki']);
 $kop_fp_has_siblings = !empty($page['siblings']);
 $kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']) || !empty($page['resource_links']);
@@ -380,6 +381,9 @@ get_header();
                 <?php endif; ?>
                 <?php if ($kop_fp_has_unsilenced) : ?>
                     <?php echo kop_unsilenced_render($page['unsilenced'], $page['name']); // Escaped inside. ?>
+                <?php endif; ?>
+                <?php if ($kop_fp_has_survivor_sites) : ?>
+                    <?php echo kop_survivor_archives_render($page['survivor_sites'], $page['name']); // Escaped inside. ?>
                 <?php endif; ?>
             </section>
             <?php endif; ?>

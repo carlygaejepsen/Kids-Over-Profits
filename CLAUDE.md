@@ -171,6 +171,12 @@ php api/list-unsilenced-files.php [probe] [--minutes=25]   # on the server (ea-p
 php api/list-unsilenced-files.php restart --check          # monthly cron: lists into ~/kop-import/unsilenced/check/, mails when Unsilenced added enough
 python scripts/build-unsilenced-links.py                   # report in tmp/unsilenced/build-report.md
 php scripts/test-unsilenced-archive.php                    # inc/unsilenced-archive.php, fixture + the build
+# The same for Surviving Straight Inc. and WWASP Survivors' own sites (inc/survivor-archives.php): fetch hashes every
+# document their pages link (nothing kept), build drops what the media library holds and files the rest under the
+# record RULES in the script names (folder, section, linking post) -> js/data/survivor-archives/<site>/
+python scripts/survivor-archives.py fetch [--site ssi|wwasp]   # resumable, into tmp/survivor-archives/
+python scripts/survivor-archives.py build                      # needs tmp/prod.sqlite; report in tmp/survivor-archives/build-report.md
+php scripts/test-survivor-archives.php
 # Fornits survivor forum (inc/fornits.php): the crawl copies the treatment-abuse boards into tmp/fornits/ (never committed);
 # the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the
 # server an hourly read, Groq and Gemini free tiers in turn (daily caps KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS),

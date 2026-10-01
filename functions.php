@@ -46,6 +46,8 @@ require_once get_stylesheet_directory() . '/inc/redirects.php';
 // Generated facility pages (/facility/<slug>/) rendered from facilities_v2
 // Unsilenced archive documents KOP lacks, listed on facility and operator pages
 require_once get_stylesheet_directory() . '/inc/unsilenced-archive.php';
+// ...and those on Surviving Straight Inc. and WWASP Survivors
+require_once get_stylesheet_directory() . '/inc/survivor-archives.php';
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
 require_once get_stylesheet_directory() . '/inc/operator-pages.php';
 

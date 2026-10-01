@@ -250,6 +250,7 @@ require_once dirname(__DIR__) . '/inc/database.php';
 require_once dirname(__DIR__) . '/inc/rest-api.php';
 require_once dirname(__DIR__) . '/inc/country-rest-api.php';
 require_once dirname(__DIR__) . '/inc/unsilenced-archive.php';
+require_once dirname(__DIR__) . '/inc/survivor-archives.php';
 require_once dirname(__DIR__) . '/inc/facility-pages.php';
 require_once dirname(__DIR__) . '/inc/operator-pages.php';
 // Loaded before the index is built: a facility the network map draws
