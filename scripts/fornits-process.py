@@ -131,9 +131,19 @@ def topic_matches(m, board_facs, topic, posts):
     return strong, weak
 
 
+# Run windowless (pythonw from the scheduled task): no console pops up for ssh, scp or tasklist either.
+QUIET = {'creationflags': getattr(subprocess, 'CREATE_NO_WINDOW', 0)}
+
+
+def child_out():
+    return sys.stdout if getattr(sys.stdout, 'fileno', None) else subprocess.DEVNULL
+
+
 def upload(path):
-    subprocess.run(['ssh'] + [a if a != '-P' else '-p' for a in SSH] + [REMOTE, f'mkdir -p {REMOTE_DIR}'], check=True)
-    subprocess.run(['scp'] + SSH + [path, f'{REMOTE}:{REMOTE_DIR}/'], check=True)
+    subprocess.run(['ssh'] + [a if a != '-P' else '-p' for a in SSH] + [REMOTE, f'mkdir -p {REMOTE_DIR}'],
+                   check=True, stdin=subprocess.DEVNULL, stdout=child_out(), stderr=child_out(), **QUIET)
+    subprocess.run(['scp'] + SSH + [path, f'{REMOTE}:{REMOTE_DIR}/'],
+                   check=True, stdin=subprocess.DEVNULL, stdout=child_out(), stderr=child_out(), **QUIET)
 
 
 def keep_crawling(d):
@@ -143,14 +153,14 @@ def keep_crawling(d):
     pid_path = os.path.join(d, 'crawl.pid')
     if os.path.exists(pid_path):
         pid = open(pid_path).read().strip()
-        tl = subprocess.run(['tasklist', '/FI', f'PID eq {pid}', '/NH'], capture_output=True, text=True).stdout
+        tl = subprocess.run(['tasklist', '/FI', f'PID eq {pid}', '/NH'], capture_output=True, text=True, **QUIET).stdout
         if pid and pid in tl and 'python' in tl.lower():
             return
     log('crawl not running: starting it again')
     flags = getattr(subprocess, 'DETACHED_PROCESS', 0) | getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0)
     subprocess.Popen([sys.executable, '-u', os.path.join(ROOT, 'scripts', 'fornits-crawl.py'), '--out', d],
                      stdout=open(os.path.join(d, 'crawl.log'), 'a'), stderr=open(os.path.join(d, 'crawl.err'), 'a'),
-                     cwd=ROOT, creationflags=flags, close_fds=True)
+                     cwd=ROOT, creationflags=flags | QUIET['creationflags'], close_fds=True)
 
 
 def main():
@@ -159,7 +169,10 @@ def main():
     ap.add_argument('--no-upload', action='store_true', help='dry run: write the batch, upload nothing, mark nothing read')
     ap.add_argument('--all', action='store_true', help='read every saved topic again')
     ap.add_argument('--keep-crawling', action='store_true', help='restart the full crawl if it stopped before finishing')
+    ap.add_argument('--log', help='append everything printed to this file (the windowless scheduled run)')
     a = ap.parse_args()
+    if a.log:
+        sys.stdout = sys.stderr = open(a.log, 'a', encoding='utf-8', buffering=1)
     if a.keep_crawling:
         keep_crawling(a.dir)
 
