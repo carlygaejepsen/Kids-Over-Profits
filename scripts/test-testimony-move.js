@@ -10,7 +10,10 @@
  * fixture of that shape and checks that every copy can be cleared, that a
  * copy is removed without adding a second testimony entry, and that the
  * provider's "Other TTI practices" (what /mental-health-providers/ lists
- * under "TTI practices used") lose the moved text.
+ * under "TTI practices used") lose the moved text. Also checks that one
+ * survivor's account stays one entry: moves join the entry, "Combine into
+ * one account" joins existing entries, and the source reads "Submitted by a
+ * survivor (submission #N)".
  *
  *   node scripts/test-testimony-move.js
  */
@@ -112,17 +115,66 @@ function load(formData, extra = {}) {
     practices.forEach(item => api.moveToTestimony(item));
     check('other TTI practices emptied', facility.providerDetails.otherTtiPractices.length === 0,
         JSON.stringify(facility.providerDetails.otherTtiPractices));
-    check('both in testimony', facility.survivorTestimony.length === 2);
-    check('moved entries stay private', facility.survivorTestimony.every(e => e.publish === false));
-    check('moved text trimmed', facility.survivorTestimony[0].text === SMOCK.trim());
+    check('both in one account', facility.survivorTestimony.length === 1, `${facility.survivorTestimony.length}`);
+    check('moved entry stays private', facility.survivorTestimony.every(e => e.publish === false));
+    check('moved text trimmed, as paragraphs',
+        facility.survivorTestimony[0].text === SMOCK.trim() + '\n\n' + FOOD, JSON.stringify(facility.survivorTestimony[0].text));
 
     // A practice typed again after its move is a copy, removed without a new entry.
     facility.providerDetails.otherTtiPractices.push(FOOD + ' ');
     const again = api.collectMovableNotes(facility).filter(i => i.label === 'Other TTI practice');
-    check('re-added practice is a copy', again.length === 1 && again[0].duplicate === true);
+    check('re-added practice is a copy (matched by paragraph)', again.length === 1 && again[0].duplicate === true);
     if (again[0]) api.moveToTestimony(again[0]);
     check('copy removed from the list', facility.providerDetails.otherTtiPractices.length === 0);
-    check('still two entries', facility.survivorTestimony.length === 2);
+    check('still one entry', facility.survivorTestimony.length === 1);
+}
+
+// --- Combine one survivor's entries into one account, then add to it ------
+
+{
+    const data = fixture();
+    const { api } = load(data);
+    const facility = data.facilities[0];
+    facility.survivorTestimony = [
+        { id: 't1', text: 'First part.', source: 'Submission #50', date: '2026-09-25', movedFrom: 'General notes', publish: true },
+        { id: 't2', text: ' Second part. ', source: 'Submission #50', date: '2026-09-25', movedFrom: 'Field note, 2026-09-25', publish: true },
+        { id: 't3', text: UPRISING, source: 'Submission #50', date: '2026-09-25', movedFrom: 'Field note, 2026-09-25', publish: true }
+    ];
+
+    const merged = api.combineAll(facility);
+    check('combined into one entry', facility.survivorTestimony.length === 1);
+    check('paragraphs kept in order', merged.text === 'First part.\n\nSecond part.\n\n' + UPRISING, JSON.stringify(merged.text));
+    check('source says submitted by a survivor', merged.source === 'Submitted by a survivor (submission #50)', merged.source);
+    check('published entries stay published', merged.publish === true);
+    check('moved-from labels merged', merged.movedFrom === 'General notes, Field note, 2026-09-25', merged.movedFrom);
+
+    // Both copies of the uprising note are now copies of a paragraph.
+    const copies = api.collectMovableNotes(facility).filter(i => i.text.trim() === UPRISING);
+    check('field-note copies of a combined paragraph offered as copies',
+        copies.length === 2 && copies.every(i => i.duplicate === true), `${copies.length}`);
+
+    // An admin move (no submission open) goes into the only entry.
+    const practices = api.collectMovableNotes(facility).filter(i => i.label === 'Other TTI practice');
+    practices.forEach(item => api.moveToTestimony(item));
+    check('admin moves join the one account', facility.survivorTestimony.length === 1);
+    check('moved practices appended', facility.survivorTestimony[0].text.endsWith(SMOCK.trim() + '\n\n' + FOOD));
+    check('practices emptied', facility.providerDetails.otherTtiPractices.length === 0);
+    check('source unchanged by the admin move',
+        facility.survivorTestimony[0].source === 'Submitted by a survivor (submission #50)');
+}
+
+{
+    const data = fixture();
+    const { api } = load(data);
+    const facility = data.facilities[0];
+    facility.survivorTestimony = [
+        { id: 't1', text: 'A.', source: 'Submission #50', date: '2026-09-26', publish: true },
+        { id: 't2', text: 'B.', source: 'Submission #50', date: '2026-09-25', publish: false }
+    ];
+    const merged = api.combineAll(facility);
+    check('combined stays private unless every entry was published', merged.publish === false);
+    check('combined takes the earliest date', merged.date === '2026-09-25');
+    check('nothing to combine with one entry', api.combineAll(facility) === null);
 }
 
 // --- The submitter's reason is copied, and not offered again --------------
@@ -136,8 +188,14 @@ function load(formData, extra = {}) {
     const reason = api.collectMovableNotes(facility).find(i => i.label === "Submitter's reason");
     check('reason offered', !!reason);
     api.moveToTestimony(reason);
-    check('reason copied with the submission as source',
-        facility.survivorTestimony.length === 1 && facility.survivorTestimony[0].source === 'Submission #50');
+    check('reason copied, sourced as submitted by a survivor',
+        facility.survivorTestimony.length === 1
+        && facility.survivorTestimony[0].source === 'Submitted by a survivor (submission #50)');
+
+    // The rest of the same submission joins that entry.
+    const smock = api.collectMovableNotes(facility).find(i => i.label === 'Other TTI practice');
+    api.moveToTestimony(smock);
+    check('later moves from the submission join its entry', facility.survivorTestimony.length === 1);
     check('reason not offered again (not even as a copy)',
         !api.collectMovableNotes(facility).some(i => i.label === "Submitter's reason"));
 }

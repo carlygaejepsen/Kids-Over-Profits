@@ -904,9 +904,11 @@ if (!function_exists('kop_facility_pages_checklist_items')) {
 
 if (!function_exists('kop_facility_pages_testimony')) {
     /**
-     * Published survivor testimony as [{text, date_label}]. Only entries an
-     * admin marked "OK to publish" (publish === true) are returned; the
-     * source (e.g. "Submission #50") stays internal.
+     * Published survivor testimony as [{text, date_label, submitted}]. Only
+     * entries an admin marked "OK to publish" (publish === true) are
+     * returned. The source stays internal; submitted says it came from a
+     * survivor's own submission ("Submitted by a survivor (submission #50)",
+     * or the older "Submission #50"), which the caption names.
      */
     function kop_facility_pages_testimony($value) {
         $out = array();
@@ -920,6 +922,7 @@ if (!function_exists('kop_facility_pages_testimony')) {
             $out[] = array(
                 'text'       => $text,
                 'date_label' => $time ? date('F Y', $time) : '',
+                'submitted'  => (bool) preg_match('/^(Submitted by a survivor|Submission #\d+)/i', trim((string) ($entry['source'] ?? ''))),
             );
         }
         return $out;

@@ -8,8 +8,15 @@
  * notes, the parent company notes, the custom treatment / philosophy /
  * incident entries, a provider's other TTI practices and referral notes, and
  * an open submission's reason), each with a "Move to testimony" button that
- * takes the text out of the note and into a new entry. A note that repeats
+ * takes the text out of the note and into testimony. A note that repeats
  * text already in testimony gets "Remove copy" instead, which only deletes it.
+ *
+ * One survivor's account is one entry: a moved note is added as a paragraph
+ * of the entry picked in "Moved notes go into" (by default the open
+ * submission's entry, or the only entry), "Move all" moves every note at
+ * once, and "Combine into one account" joins existing entries. Text from a
+ * submission is sourced "Submitted by a survivor (submission #N)"; older
+ * "Submission #N" entries read and save that way.
  *
  * Nothing is public by default: publish stays false until the "OK to publish"
  * box is ticked, and only then does /facility/<slug>/ show the entry
@@ -54,14 +61,46 @@
         return new Date().toISOString().slice(0, 10);
     }
 
+    const SURVIVOR_SOURCE = 'Submitted by a survivor';
+
+    /** "Submission #50" (the old label) reads as "Submitted by a survivor (submission #50)". */
+    function normalizeSource(source) {
+        const text = String(source || '').trim();
+        const match = text.match(/^Submission #(\d+)$/i);
+        return match ? `${SURVIVOR_SOURCE} (submission #${match[1]})` : text;
+    }
+
     /** Where a moved note came from: the open submission, or an admin edit. */
     function currentSource() {
         const session = window.KOP_SubmissionEditor && window.KOP_SubmissionEditor.session;
         if (session && session.active && session.submission) {
             const created = String(session.submission.created_at || '').slice(0, 10);
-            return { source: `Submission #${session.id}`, date: created || today() };
+            return { source: `${SURVIVOR_SOURCE} (submission #${session.id})`, date: created || today(), fromSubmission: true };
         }
-        return { source: 'Added by an admin', date: today() };
+        return { source: 'Added by an admin', date: today(), fromSubmission: false };
+    }
+
+    // Which entry "Move to testimony" adds to: an entry id, 'new', or null for
+    // the default (the open submission's own entry, else the only entry).
+    let moveTarget = null;
+
+    function targetEntry(facility) {
+        const entries = testimonyList(facility);
+        if (moveTarget === 'new') return null;
+        if (moveTarget) {
+            const chosen = entries.find(entry => entry.id === moveTarget);
+            if (chosen) return chosen;
+        }
+        const current = currentSource();
+        if (current.fromSubmission) {
+            return entries.find(entry => normalizeSource(entry.source) === current.source) || null;
+        }
+        return entries.length === 1 ? entries[0] : null;
+    }
+
+    /** One account's paragraphs, as stored: blank lines between them. */
+    function paragraphs(text) {
+        return String(text || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
     }
 
     function changed() {
@@ -171,7 +210,7 @@
         // own form). Hiding it left it in the record for good, so it is
         // offered as a copy to remove instead. The submitter's reason is not
         // part of the record, so once copied it is simply not offered again.
-        const moved = new Set(testimonyList(facility).map(entry => sameText(entry.text)));
+        const moved = textsInTestimony(facility);
         return items.filter(item => {
             if (!moved.has(sameText(item.text))) return true;
             if (item.label === "Submitter's reason") return false;
@@ -183,6 +222,26 @@
     /** Text compared for "already in testimony": whitespace runs collapsed. */
     function sameText(text) {
         return String(text || '').replace(/\s+/g, ' ').trim();
+    }
+
+    /** Every entry, and every paragraph of a combined entry, as sameText(). */
+    function textsInTestimony(facility) {
+        const texts = new Set();
+        testimonyList(facility).forEach(entry => {
+            texts.add(sameText(entry.text));
+            paragraphs(entry.text).forEach(p => texts.add(sameText(p)));
+        });
+        return texts;
+    }
+
+    /** Distinct labels, in order, from "A, B" strings. */
+    function mergeLabels(values) {
+        const out = [];
+        values.forEach(value => String(value || '').split(/,\s*/).forEach(label => {
+            const clean = label.trim();
+            if (clean && !out.includes(clean)) out.push(clean);
+        }));
+        return out.join(', ');
     }
 
     function removeFieldNote(facility, key, note) {
@@ -207,32 +266,114 @@
         if (cache && cache !== facility.fieldNotes) drop(cache);
     }
 
+    /**
+     * Take one note into testimony: added as a paragraph of the target entry
+     * (one survivor's account stays one entry), or as a new entry. A copy of
+     * text already in testimony is only removed. Returns 'removed', 'added'
+     * (to an existing entry) or 'new'.
+     */
+    function moveOne(facility, item) {
+        let result = 'removed';
+        if (!textsInTestimony(facility).has(sameText(item.text))) {
+            const target = targetEntry(facility);
+            if (target) {
+                target.text = paragraphs(target.text).concat(item.text.trim()).join('\n\n');
+                target.movedFrom = mergeLabels([target.movedFrom, item.label]);
+                target.source = normalizeSource(target.source);
+                result = 'added';
+            } else {
+                const { source, date } = currentSource();
+                testimonyList(facility).push({
+                    id: newId(),
+                    text: item.text,
+                    source,
+                    date,
+                    movedFrom: item.label,
+                    publish: false
+                });
+                result = 'new';
+            }
+        }
+        item.remove();
+        return result;
+    }
+
+    function refresh(message) {
+        changed();
+        // Re-render the whole form so a moved note disappears where it was.
+        if (typeof window.updateAllUI === 'function') window.updateAllUI();
+        else render();
+        if (message && typeof window.showUploadStatus === 'function') window.showUploadStatus(message, 'success');
+    }
+
     function moveToTestimony(item) {
         const facility = currentFacility();
         if (!facility) return;
-        // A copy of text already in testimony is only removed, never added twice.
-        const already = testimonyList(facility).some(entry => sameText(entry.text) === sameText(item.text));
-        if (!already) {
-            const { source, date } = currentSource();
-            testimonyList(facility).push({
-                id: newId(),
-                text: item.text,
-                source,
-                date,
-                movedFrom: item.label,
-                publish: false
-            });
-        }
-        item.remove();
-        changed();
-        // Re-render the whole form so the note disappears where it was.
-        if (typeof window.updateAllUI === 'function') window.updateAllUI();
-        else render();
-        if (typeof window.showUploadStatus === 'function') {
-            window.showUploadStatus(already
-                ? 'Removed the copy. The text is still in Survivor Testimony.'
-                : 'Moved to Survivor Testimony. It stays private until "OK to publish" is ticked.', 'success');
-        }
+        const target = targetEntry(facility);
+        const result = moveOne(facility, item);
+        refresh(result === 'removed'
+            ? 'Removed the copy. The text is still in Survivor Testimony.'
+            : result === 'added'
+                ? `Added to testimony ${testimonyList(facility).indexOf(target) + 1}.${target.publish === true ? ' That account is published, so this shows on the public page too.' : ''}`
+                : 'Moved to Survivor Testimony. It stays private until "OK to publish" is ticked.');
+    }
+
+    /** Every note at once, into the chosen entry (copies are removed). */
+    function moveAll() {
+        const facility = currentFacility();
+        if (!facility) return;
+        const notes = collectMovableNotes(facility);
+        if (!notes.length) return;
+        const target = targetEntry(facility);
+        const where = target ? `testimony ${testimonyList(facility).indexOf(target) + 1}` : 'one new testimony entry';
+        if (!confirm(`Move all ${notes.length} notes into ${where}? They leave the fields they are in now.`)) return;
+        // Into one account: the first move creates the entry when none was chosen.
+        const before = moveTarget;
+        notes.forEach(item => {
+            moveOne(facility, item);
+            if (!targetEntry(facility)) {
+                const entries = testimonyList(facility);
+                if (entries.length) moveTarget = entries[entries.length - 1].id;
+            }
+        });
+        moveTarget = before;
+        refresh(`Moved ${notes.length} notes into ${where}.`);
+    }
+
+    /**
+     * One survivor's account in one entry: every entry joined, in order, as
+     * paragraphs. Published only if every entry was.
+     */
+    function combineAll(facility) {
+        const entries = testimonyList(facility);
+        if (entries.length < 2) return null;
+        const sources = [];
+        entries.forEach(entry => {
+            const source = normalizeSource(entry.source);
+            if (source && !sources.includes(source)) sources.push(source);
+        });
+        const dates = entries.map(entry => String(entry.date || '').trim()).filter(Boolean).sort();
+        const merged = {
+            id: entries[0].id,
+            text: entries.reduce((all, entry) => all.concat(paragraphs(entry.text)), []).join('\n\n'),
+            source: sources.join('; '),
+            date: dates[0] || '',
+            movedFrom: mergeLabels(entries.map(entry => entry.movedFrom)),
+            publish: entries.every(entry => entry.publish === true)
+        };
+        entries.splice(0, entries.length, merged);
+        moveTarget = null;
+        return merged;
+    }
+
+    function combineClicked() {
+        const facility = currentFacility();
+        if (!facility) return;
+        const count = testimonyList(facility).length;
+        if (count < 2) return;
+        if (!confirm(`Combine all ${count} testimony entries into one account? Their text is kept, in order, as paragraphs.`)) return;
+        const merged = combineAll(facility);
+        refresh(`Combined ${count} entries into one account.${merged.publish ? '' : ' It stays private until "OK to publish" is ticked.'}`);
     }
 
     // ------------------------------------------------------------------
@@ -264,6 +405,8 @@
         const sourceWrap = el('div', { style: 'flex: 1 1 200px;' });
         sourceWrap.append(el('label', { for: `${idBase}-source`, style: 'display: block; font-size: 13px;' }, 'Source'));
         const sourceInput = el('input', { id: `${idBase}-source`, type: 'text', style: 'width: 100%; box-sizing: border-box;' });
+        // Old entries say "Submission #50"; they read, and save, as submitted by a survivor.
+        entry.source = normalizeSource(entry.source);
         sourceInput.value = entry.source || '';
         sourceInput.addEventListener('input', () => { entry.source = sourceInput.value; changed(); });
         sourceWrap.append(sourceInput);
@@ -314,6 +457,16 @@
         if (!entries.length) {
             list.append(el('p', { style: 'margin: 0 0 12px; font-style: italic;' }, 'No survivor testimony on this facility yet.'));
         }
+        if (entries.length > 1) {
+            const combineRow = el('div', { style: 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: var(--kop-sand, #F2EEDF); color: var(--kop-midnight, #000435); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;' });
+            combineRow.append(el('span', { style: 'flex: 1 1 260px; font-size: 14px;' },
+                `${entries.length} entries. If they are one survivor's account, combine them into one.`));
+            const combine = el('button', { type: 'button', className: 'btn', style: 'background: var(--kop-navy, #000080); color: var(--kop-white, #fff); border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap;' },
+                'Combine into one account');
+            combine.addEventListener('click', combineClicked);
+            combineRow.append(combine);
+            list.append(combineRow);
+        }
         entries.forEach((entry, index) => list.append(renderEntry(facility, entry, index)));
 
         const notes = collectMovableNotes(facility);
@@ -322,6 +475,29 @@
             movable.append(el('p', { style: 'margin: 0; font-style: italic;' }, 'No notes on this facility.'));
             return;
         }
+
+        // Where moved notes go, and moving them all at once.
+        const controls = el('div', { style: 'display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px;' });
+        const pickLabel = el('label', { for: 'survivor-testimony-target', style: 'font-size: 14px; font-weight: 600;' }, 'Moved notes go into');
+        const pick = el('select', { id: 'survivor-testimony-target', style: 'background: var(--kop-white, #fff); color: var(--kop-midnight, #000435); border: 1px solid var(--kop-border-secondary, #AEE0ED); border-radius: 4px; padding: 4px 8px;' });
+        const current = targetEntry(facility);
+        entries.forEach((entry, index) => {
+            const option = el('option', { value: entry.id }, `Testimony ${index + 1}${entry.source ? ` (${normalizeSource(entry.source)})` : ''}`);
+            if (current && current.id === entry.id) option.selected = true;
+            pick.append(option);
+        });
+        const fresh = el('option', { value: 'new' }, 'A new testimony entry');
+        if (!current) fresh.selected = true;
+        pick.append(fresh);
+        pick.addEventListener('change', () => { moveTarget = pick.value; });
+        controls.append(pickLabel, pick);
+        if (notes.length > 1) {
+            const all = el('button', { type: 'button', className: 'btn', style: 'background: var(--kop-teal-ink, #24757F); color: var(--kop-white, #fff); border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap;' },
+                `Move all ${notes.length}`);
+            all.addEventListener('click', moveAll);
+            controls.append(all);
+        }
+        movable.append(controls);
         notes.forEach(item => {
             const rowEl = el('div', { style: 'display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--kop-border-primary, #B6E3D4);' });
             const body = el('div', { style: 'flex: 1;' });
@@ -369,7 +545,7 @@
         render();
     }
 
-    window.KOP_Testimony = { render, collectMovableNotes, moveToTestimony, init };
+    window.KOP_Testimony = { render, collectMovableNotes, moveToTestimony, moveOne, combineAll, normalizeSource, init };
 
     if (!document.getElementById(SECTION_ID)) return;
     if (window.formReady) init();
