@@ -464,6 +464,23 @@ updated.
    state: approve the first production post; West Virginia and Maine also need their
    scope tables settled, and New Hampshire, Wyoming and Ohio need a monthly
    run.
+   **New Hampshire built 2026-10-01, waiting for the owner's word to
+   post:** `nh_scraper.py` (Tools repo), `js/inspections/states/nh.js`,
+   `/nh-reports/` created on deploy (empty until the first post). A full
+   `--no-post` run: 24 programs, 146 visits (108 complaint, 21 renewal, 5
+   compliance, 5 monitoring, 4 quality assurance, 2 revision, 1 new), 141
+   flagged, 240 rules not met (15 "Founded, Problem Resolved", counted as
+   the state's own compliance level counts them), 2023-10-02 to
+   2026-08-13. 133 statements of findings archived to the Drive folder
+   `nh_pdfs/` (27 scans read by OCR) and every page kept gzipped in
+   `nh_html/`; `--from-saved` rebuilds the same payload. Six visits whose
+   counts and items disagree are the state's own (run log). One statement
+   (The Ridge RTC, 2025-12-15) is held by the privacy check and the visit
+   posts without it; **owner** to decide (children are lettered only; the
+   trigger is "Child Advocacy Center"). 11 of 24 names reach a
+   `facilities_v2` record; the seven Mount Prospect Academy sites and the
+   Nashua Children's Home names are for KOP Tools > Inspection Links.
+   Owner: approve the first post, then run it monthly from the launcher.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Seventeen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's and Pennsylvania's are linked once the owner creates the page, see below):
+Eighteen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's and New Hampshire's are linked once the owner creates the page, see below):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -18,6 +18,7 @@ Seventeen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma'
 | Minnesota (`MN`) | `mn-reports` | shared engine | API |
 | Montana (`MT`) | `mt-reports` | shared engine | `js/data/mt_reports.json` only (the API has no Montana rows) |
 | Nevada (`NV`) | `nv-reports` | shared engine | API |
+| New Hampshire (`NH`) | `nh-reports` | shared engine | API (`nh_scraper.py`; every licensing visit with observations and corrective action plans; the state's pages kept in the Drive folder `nh_html/`, statements of findings archived to `nh_pdfs/`; the state shows three years) |
 | North Carolina (`NC`) | `nc-reports` | shared engine | API |
 | Oklahoma (`OK`) | `ok-reports` | shared engine | API (`ok_scraper.py`; the state's pages are kept in the Drive folder `ok_html/`, no PDFs) |
 | Oregon (`OR`) | `or-reports` | shared engine | API |
@@ -26,7 +27,7 @@ Seventeen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma'
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania, New Hampshire): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 
