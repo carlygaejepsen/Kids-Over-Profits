@@ -33,6 +33,11 @@ node scripts/extract-reddit-wiki-links.js
 node scripts/build-network-graph.js
 node scripts/test-network-graph.js
 
+# The map rebuilds itself: inc/network-rebuild.php hashes what the build reads (staff, owners, names, years, status,
+# consultants) hourly and, when it moves, starts .github/workflows/build-network-map.yml (sync 5 tables over SSH,
+# build, test, commit graph.json, deploy). Status and "Rebuild now" at KOP Tools > Map Rebuild.
+# Needs repo secret KOP_SSH_KEY and KOP_GITHUB_DISPATCH_TOKEN in api/config.local.php or .env on the server
+php scripts/test-network-rebuild.php            # fingerprint + dispatch, against tmp/prod.sqlite, never calls GitHub
 # After editing anything in js/network-map/
 node scripts/test-network-modules.js
 # The map on facility pages (embed.js + kop_network_map_slice_from_graph, PHP must match focus.js)

@@ -1,0 +1,102 @@
+name: Build network map
+
+# Rebuilds js/data/network/graph.json from the live records and deploys it.
+# Started by the site itself (inc/network-rebuild.php checks hourly and asks
+# for a run when the staff, owners, names, years or status the map reads have
+# changed), or by hand from the Actions tab / KOP Tools > Map Rebuild.
+#
+# The server has no Node, so the build runs here: copy the five tables the
+# build reads over SSH (scripts/sync-prod-sqlite.py reads the database login
+# from wp-config.php on the server, so no DB secret is needed), build, test,
+# commit graph.json when it changed, then start the deploy.
+#
+# Requires repo secret KOP_SSH_KEY (private key for the kidsover account).
+# Optional KOP_SSH_KNOWN_HOSTS (the server's known_hosts line); without it the
+# host key is fetched with ssh-keyscan.
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this build was started'
+        required: false
+        default: 'started by hand'
+
+concurrency:
+  group: network-map-build
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: SSH key
+        env:
+          KEY: ${{ secrets.KOP_SSH_KEY }}
+          KNOWN: ${{ secrets.KOP_SSH_KNOWN_HOSTS }}
+        run: |
+          [ -n "$KEY" ] || { echo "Repo secret KOP_SSH_KEY is not set"; exit 1; }
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/kop_nixihost && chmod 600 ~/.ssh/kop_nixihost
+          if [ -n "$KNOWN" ]; then
+            printf '%s\n' "$KNOWN" >> ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p 1157 dfw-s07.nixihost.com >> ~/.ssh/known_hosts
+          fi
+
+      - name: Copy the map's tables from the live database
+        run: python scripts/sync-prod-sqlite.py --tables "facilities_v2,wpdl_kop_operators,wpdl_kop_operator_facilities,memorial_victims,referrers_master"
+
+      - name: Build
+        run: node scripts/build-network-graph.js
+
+      - name: Test
+        run: node scripts/test-network-graph.js
+
+      - name: Commit graph.json when it changed
+        id: commit
+        env:
+          REASON: ${{ inputs.reason }}
+        run: |
+          if git diff --quiet -- js/data/network/graph.json; then
+            echo "graph.json unchanged, nothing to deploy"
+            echo "changed=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "kop-map-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/data/network/graph.json
+          git commit -m "data(network map): rebuild from the live records" -m "Reason: ${REASON:-not given}"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && break
+            [ "$attempt" -lt 3 ] && sleep 15
+          done
+          [ "$(git rev-parse origin/main)" = "$(git rev-parse HEAD)" ] || { echo "push failed"; exit 1; }
+          echo "changed=1" >> "$GITHUB_OUTPUT"
+
+      # A push made with GITHUB_TOKEN does not start other workflows, but a
+      # workflow_dispatch made with it does.
+      - name: Deploy
+        if: steps.commit.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
+
+      - name: Rows the build had to guess at
+        if: always()
+        run: |
+          [ -f tmp/network-qa.md ] && { echo '```' ; head -c 60000 tmp/network-qa.md; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true

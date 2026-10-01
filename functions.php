@@ -119,6 +119,8 @@ require_once get_stylesheet_directory() . '/inc/resources-list.php';
 
 // Network map data access (graph metadata + facility profile URLs)
 require_once get_stylesheet_directory() . '/inc/network-map.php';
+// Hourly: start the map build on GitHub when the records it reads change
+require_once get_stylesheet_directory() . '/inc/network-rebuild.php';
 
 // Find-by-name box beside every facility id field on the admin screens
 require_once get_stylesheet_directory() . '/inc/facility-finder.php';
