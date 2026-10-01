@@ -22,6 +22,8 @@
  *   cfg:utility:links       a utility page's settings (inc/utility-pages.php)
  *   operator:7:all|raw      a parent company's fields (kop_operators), name excepted
  *   school:3                an indigenous school (inc/indigenous-schools.php)
+ *   txt:<key>               a line or block of template text (kop_text(), kop_ie_html_start())
+ *   site:name               the site name and tagline
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -161,6 +163,8 @@ function kop_ie_sources() {
         'cfg'      => array('load' => 'kop_ie_cfg_load', 'save' => 'kop_ie_cfg_save'),
         'operator' => array('load' => 'kop_ie_operator_load', 'save' => 'kop_ie_operator_save'),
         'school'   => array('load' => 'kop_ie_ischool_load', 'save' => 'kop_ie_ischool_save'),
+        'txt'      => array('load' => 'kop_ie_txt_load', 'save' => 'kop_ie_txt_save'),
+        'site'     => array('load' => 'kop_ie_site_load', 'save' => 'kop_ie_site_save'),
     ));
 }
 
@@ -1118,6 +1122,134 @@ function kop_ie_ischool_save(array $p, array $v) {
     if ($page) {
         kop_ie_purge_post($page->ID);
     }
+    return array('message' => 'Saved.');
+}
+
+/* ---- Text written in the templates --------------------------------------------- */
+
+/*
+ * A line or a section a template prints from code: kop_text('key', 'default')
+ * for a line, kop_ie_html_start('key', 'label') ... kop_ie_html_end() around a
+ * block of HTML. A saved version (option kop_inline_texts) replaces the code's
+ * wording; saving it empty or unchanged puts the code's wording back. The
+ * code's wording is noted (kop_inline_text_defaults) whenever an admin views
+ * the page, so the dialog can show it and compare against it.
+ */
+
+function kop_ie_texts() {
+    static $texts = null;
+    if ($texts === null) {
+        $texts = get_option('kop_inline_texts');
+        $texts = is_array($texts) ? $texts : array();
+    }
+    return $texts;
+}
+
+function kop_ie_text_note_default($key, $default, $html, $label) {
+    if (!kop_ie_can()) {
+        return;
+    }
+    $all = get_option('kop_inline_text_defaults');
+    $all = is_array($all) ? $all : array();
+    $entry = array('default' => (string) $default, 'html' => (bool) $html, 'label' => (string) $label);
+    if (($all[$key] ?? null) !== $entry) {
+        $all[$key] = $entry;
+        update_option('kop_inline_text_defaults', $all, false);
+    }
+}
+
+/** A line of template text: the saved wording, or the code's. Escape it as usual. */
+function kop_text($key, $default, $label = '') {
+    kop_ie_text_note_default($key, $default, false, $label);
+    $texts = kop_ie_texts();
+    return isset($texts[$key]) ? (string) $texts[$key] : (string) $default;
+}
+
+/** The marker for the element holding kop_text($key). */
+function kop_text_attr($key, $label = '') {
+    return kop_ie_attr('txt:' . $key, $label);
+}
+
+$GLOBALS['kop_ie_html_stack'] = array();
+
+/** Start a block of template HTML that admins can edit in place. */
+function kop_ie_html_start($key, $label = '') {
+    $GLOBALS['kop_ie_html_stack'][] = array($key, $label);
+    ob_start();
+}
+
+/** End it: print the saved HTML, or the template's. */
+function kop_ie_html_end() {
+    $default = ob_get_clean();
+    list($key, $label) = array_pop($GLOBALS['kop_ie_html_stack']);
+    kop_ie_text_note_default($key, $default, true, $label);
+    $texts = kop_ie_texts();
+    $html = isset($texts[$key]) ? wp_kses_post($texts[$key]) : $default;
+    if (kop_ie_can()) {
+        $html = '<div class="kop-ie-block"' . kop_ie_attr('txt:' . $key, $label) . '>' . $html . '</div>';
+    }
+    echo $html;
+}
+
+function kop_ie_txt_entry($key) {
+    $all = get_option('kop_inline_text_defaults');
+    if (!is_array($all) || !isset($all[$key])) {
+        throw new RuntimeException('This text is not known yet. Reload the page and try again.');
+    }
+    return $all[$key];
+}
+
+function kop_ie_txt_load(array $p) {
+    $key = implode(':', $p);
+    $entry = kop_ie_txt_entry($key);
+    $texts = kop_ie_texts();
+    $value = isset($texts[$key]) ? (string) $texts[$key] : $entry['default'];
+    return array(
+        'title'  => $entry['label'] !== '' ? $entry['label'] : 'Page text',
+        'help'   => ($entry['html'] ? 'The HTML of this part of the page. Change the words; keep the <tags>. ' : '')
+            . 'Saving it empty puts the original wording back.' . (isset($texts[$key]) ? ' It has been changed here before.' : ''),
+        'fields' => array(kop_ie_field('text', $entry['html'] ? 'HTML' : 'Text', $entry['html'] ? 'code' : (strlen($value) > 90 ? 'textarea' : 'text'), $value,
+            $entry['html'] ? array('rows' => 14) : array())),
+    );
+}
+
+function kop_ie_txt_save(array $p, array $v) {
+    $key = implode(':', $p);
+    $entry = kop_ie_txt_entry($key);
+    $text = (string) ($v['text'] ?? '');
+    $text = $entry['html'] ? trim(wp_kses_post(str_replace(array("\r\n", "\r"), "\n", $text))) : trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($text)));
+    $all = get_option('kop_inline_texts');
+    $all = is_array($all) ? $all : array();
+    if ($text === '' || $text === trim($entry['default'])) {
+        unset($all[$key]);
+    } else {
+        $all[$key] = $text;
+    }
+    update_option('kop_inline_texts', $all, false);
+    do_action('litespeed_purge_all');
+    return array('message' => 'Saved.');
+}
+
+/* ---- Site name and tagline (WordPress settings) ------------------------------- */
+
+function kop_ie_site_load(array $p) {
+    return array(
+        'title'  => 'Site name and tagline',
+        'fields' => array(
+            kop_ie_field('blogname', 'Site name', 'text', get_option('blogname')),
+            kop_ie_field('blogdescription', 'Tagline', 'text', get_option('blogdescription')),
+        ),
+    );
+}
+
+function kop_ie_site_save(array $p, array $v) {
+    $name = trim(sanitize_text_field((string) ($v['blogname'] ?? '')));
+    if ($name === '') {
+        throw new RuntimeException('The site needs a name.');
+    }
+    update_option('blogname', $name);
+    update_option('blogdescription', trim(sanitize_text_field((string) ($v['blogdescription'] ?? ''))));
+    do_action('litespeed_purge_all');
     return array('message' => 'Saved.');
 }
 

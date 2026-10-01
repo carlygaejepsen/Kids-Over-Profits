@@ -47,13 +47,20 @@ function kop_site_footer_links() {
 
 function kop_site_footer_render() {
     $tagline = trim((string) get_bloginfo('description'));
+    // Admin pencils (inc/inline-edit.php); the words fall back to these when it is not loaded.
+    $t = function ($key, $default) {
+        return function_exists('kop_text') ? kop_text('footer:' . $key, $default, 'Footer') : $default;
+    };
+    $a = function ($key) {
+        return function_exists('kop_text_attr') ? kop_text_attr('footer:' . $key, 'Footer') : '';
+    };
     $donate  = get_page_by_path('donate');
     $donate_url = $donate && $donate->post_status === 'publish' ? get_permalink($donate) : '';
     ?>
 <footer id="colophon" class="site-footer kop-site-footer" role="contentinfo">
     <div class="kop-site-footer__inner">
         <div class="kop-site-footer__grid">
-            <div class="kop-site-footer__about">
+            <div class="kop-site-footer__about"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('site:name', 'site name and tagline') : ''; ?>>
                 <p class="kop-site-footer__name"><a href="<?php echo esc_url(home_url('/')); ?>"><?php echo esc_html(get_bloginfo('name')); ?></a></p>
                 <?php if ($tagline !== '') : ?>
                     <p class="kop-site-footer__tagline"><?php echo esc_html($tagline); ?></p>
@@ -66,16 +73,16 @@ function kop_site_footer_render() {
                         if (!$page || $page->post_status !== 'publish') {
                             continue;
                         } ?>
-                        <li><a href="<?php echo esc_url(get_permalink($page)); ?>"><?php echo esc_html($label); ?></a></li>
+                        <li<?php echo $a('link-' . $slug); ?>><a href="<?php echo esc_url(get_permalink($page)); ?>"><?php echo esc_html($t('link-' . $slug, $label)); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </nav>
             <div class="kop-site-footer__donate">
-                <p class="kop-site-footer__heading">Support this work</p>
-                <p>Kids Over Profits is a 501(c)(3) nonprofit. Donations are tax-deductible.</p>
+                <p class="kop-site-footer__heading"<?php echo $a('donate-heading'); ?>><?php echo esc_html($t('donate-heading', 'Support this work')); ?></p>
+                <p<?php echo $a('donate-text'); ?>><?php echo esc_html($t('donate-text', 'Kids Over Profits is a 501(c)(3) nonprofit. Donations are tax-deductible.')); ?></p>
                 <?php kop_donate_widget('kop-site-footer__widget'); ?>
                 <?php if ($donate_url) : ?>
-                    <p class="kop-site-footer__more"><a href="<?php echo esc_url($donate_url); ?>">What your donation funds</a></p>
+                    <p class="kop-site-footer__more"<?php echo $a('donate-more'); ?>><a href="<?php echo esc_url($donate_url); ?>"><?php echo esc_html($t('donate-more', 'What your donation funds')); ?></a></p>
                 <?php endif; ?>
             </div>
         </div>

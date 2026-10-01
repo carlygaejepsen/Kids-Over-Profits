@@ -251,5 +251,24 @@ require_once dirname(__DIR__) . '/inc/page-text.php';
 $html = kop_page_text_section_html(array('key' => 'intro', 'label' => 'Intro', 'style' => 'plain', 'heading' => 'Hi', 'body' => 'Text.'), 'kop-faq', 'faq');
 $check('page text section has no edit marker', strpos($html, 'data-kop-edit') === false && strpos($html, '<section id="kop-faq-intro" aria-labelledby') === 0, substr($html, 0, 80));
 
+ob_start();
+kop_ie_html_start('t:block', 'Block');
+echo '<section><h2>Hi</h2></section>';
+kop_ie_html_end();
+$check('a template block prints as written for a visitor', ob_get_clean() === '<section><h2>Hi</h2></section>');
+$check('a template line prints as written for a visitor', kop_text('t:line', 'Default line') === 'Default line');
+
+// The legal pages, rendered as a visitor sees them: every section, no markers.
+foreach (array('templates/page-privacy-policy.php' => 8, 'templates/page-terms-of-service.php' => 10) as $tpl => $sections) {
+    if (!function_exists('wp_enqueue_style')) { function wp_enqueue_style() {} }
+    if (!function_exists('antispambot')) { function antispambot($s) { return $s; } }
+    ob_start();
+    include dirname(__DIR__) . '/' . $tpl;
+    $html = ob_get_clean();
+    $check(basename($tpl) . ' renders every section, no markers',
+        substr_count($html, '<section>') === $sections && substr_count($html, '</section>') === $sections && strpos($html, 'data-kop-edit') === false && strpos($html, 'kop-ie-block') === false,
+        substr_count($html, '<section>') . ' sections');
+}
+
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed.\n";
 exit($failures ? 1 : 0);

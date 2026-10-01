@@ -58,7 +58,7 @@ $rest_url = esc_url_raw(rest_url('kop/v1/country/' . $country_slug));
 
     <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel" data-kop-bug-feature="country-hub/facilities" data-kop-bug-label="Country Facilities List">
         <h2>Facilities in <?php echo esc_html($country_name); ?></h2>
-        <p class="facilities-intro">Residential facilities providing religious, behavioral, and mental health treatment to children operate in many countries beyond the United States. Some are known to be part of the Troubled Teen Industry pipeline that places American children abroad; others serve local populations under less oversight. This directory helps families and advocates identify programs and push for accountability across borders.</p>
+        <p class="facilities-intro"<?php echo function_exists('kop_text_attr') ? kop_text_attr('country-hub:facilities-intro', 'Facilities intro (every country page)') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('country-hub:facilities-intro', 'Residential facilities providing religious, behavioral, and mental health treatment to children operate in many countries beyond the United States. Some are known to be part of the Troubled Teen Industry pipeline that places American children abroad; others serve local populations under less oversight. This directory helps families and advocates identify programs and push for accountability across borders.', 'Facilities intro (every country page)') : ''); ?></p>
         <div class="section-content"><?php echo kop_loading_skeleton('facilities', 4); ?></div>
     </section>
 

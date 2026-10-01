@@ -59,7 +59,7 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
 
     <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel">
         <h2>Facilities in <?php echo esc_html($state_name); ?></h2>
-        <p class="facilities-intro">Residential facilities providing religious, behavioral, and mental health treatment to children exist in all 50 states. Some of these facilities are known to be part of the Troubled Teen Industry, while others have not yet been verified. Any facility where children live and receive care requires additional oversight. This directory helps communities monitor local programs and advocate for accountability.</p>
+        <p class="facilities-intro"<?php echo function_exists('kop_text_attr') ? kop_text_attr('state-hub:facilities-intro', 'Facilities intro (every state page)') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('state-hub:facilities-intro', 'Residential facilities providing religious, behavioral, and mental health treatment to children exist in all 50 states. Some of these facilities are known to be part of the Troubled Teen Industry, while others have not yet been verified. Any facility where children live and receive care requires additional oversight. This directory helps communities monitor local programs and advocate for accountability.', 'Facilities intro (every state page)') : ''); ?></p>
         <div class="section-content"><?php echo kop_loading_skeleton('facilities', 4); ?></div>
     </section>
 

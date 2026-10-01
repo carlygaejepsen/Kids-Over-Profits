@@ -20,11 +20,14 @@ get_header();
     <h1>Privacy Policy</h1>
     <p class="kop-privacy__updated">Last updated: <?php echo date('F j, Y'); ?></p>
 
+    <?php kop_ie_html_start('privacy:who-we-are', 'Privacy policy: Who We Are'); ?>
     <section>
       <h2>Who We Are</h2>
       <p>Kids Over Profits (<strong>kidsoverprofits.com</strong>) is a research project documenting the Troubled Teen Industry (TTI). We are not a commercial service and do not sell products or services.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:information-we-collect', 'Privacy policy: Information We Collect'); ?>
     <section>
       <h2>Information We Collect</h2>
 
@@ -44,7 +47,9 @@ get_header();
       <h3>Cookies</h3>
       <p>We use only the standard WordPress session cookies required for admin login. We do not use tracking cookies, advertising cookies, or analytics cookies.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:how-we-use-your-information', 'Privacy policy: How We Use Your Information'); ?>
     <section>
       <h2>How We Use Your Information</h2>
       <ul>
@@ -53,7 +58,9 @@ get_header();
         <li><strong>Email addresses (optional)</strong> — to follow up on your submission if we have questions; never used for marketing</li>
       </ul>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:third-party-services', 'Privacy policy: Third-Party Services'); ?>
     <section>
       <h2>Third-Party Services</h2>
       <p>We use the following external services. No personally identifying information about site visitors is shared with these services.</p>
@@ -63,12 +70,16 @@ get_header();
       </ul>
       <p>We do not use Google Analytics, Facebook Pixel, or any other behavioral tracking or advertising service.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:data-retention', 'Privacy policy: Data Retention'); ?>
     <section>
       <h2>Data Retention</h2>
       <p>Submitted data is retained indefinitely for research purposes. If you submitted information and wish to request its removal, contact us at the address below.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:your-rights', 'Privacy policy: Your Rights'); ?>
     <section>
       <h2>Your Rights</h2>
       <p>You may request to:</p>
@@ -79,11 +90,14 @@ get_header();
       </ul>
       <p>We will respond to verified requests within 30 days.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('privacy:children-s-privacy', 'Privacy policy: Children\'s Privacy'); ?>
     <section>
       <h2>Children's Privacy</h2>
       <p>This site is a research resource and is not directed at children under 13. We do not knowingly collect personal information from children.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
     <section>
       <h2>Contact</h2>

@@ -20,16 +20,21 @@ get_header();
     <h1>Terms of Service</h1>
     <p class="kop-privacy__updated">Last updated: <?php echo date('F j, Y'); ?></p>
 
+    <?php kop_ie_html_start('terms:about-this-site', 'Terms of service: About This Site'); ?>
     <section>
       <h2>About This Site</h2>
       <p>Kids Over Profits (<strong>kidsoverprofits.com</strong>) is a volunteer-run research project documenting facilities and organizations within the Troubled Teen Industry (TTI). By accessing or using this site you agree to these terms.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:informational-use-only', 'Terms of service: Informational Use Only'); ?>
     <section>
       <h2>Informational Use Only</h2>
       <p>All content on this site is provided for research and informational purposes only. It does not constitute legal, medical, therapeutic, or professional advice. We make no guarantee that information is current, complete, or error-free.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:submitting-data', 'Terms of service: Submitting Data'); ?>
     <section>
       <h2>Submitting Data</h2>
       <p>When you submit facility data, wiki entries, news tips, or any other information through our public forms, you agree that:</p>
@@ -42,13 +47,17 @@ get_header();
         <li>Once approved and published, your submitted content may remain in the public database indefinitely as part of the research record.</li>
       </ul>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:content-ownership', 'Terms of service: Content Ownership'); ?>
     <section>
       <h2>Content Ownership</h2>
       <p>By submitting content you grant Kids Over Profits a perpetual, royalty-free license to use, display, and publish that content as part of this research project. You retain ownership of any original writing you submit.</p>
       <p>We do not claim ownership of factual data (facility names, addresses, dates, public records). Factual data is not copyrightable.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:prohibited-uses', 'Terms of service: Prohibited Uses'); ?>
     <section>
       <h2>Prohibited Uses</h2>
       <p>You may not use this site to:</p>
@@ -60,26 +69,35 @@ get_header();
         <li>Harass, intimidate, or retaliate against survivors, researchers, or contributors</li>
       </ul>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:third-party-links', 'Terms of service: Third-Party Links'); ?>
     <section>
       <h2>Third-Party Links</h2>
       <p>This site links to external sources including news articles, government records, and advocacy organizations. We are not responsible for the content or availability of external sites.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:disclaimer-of-warranties', 'Terms of service: Disclaimer of Warranties'); ?>
     <section>
       <h2>Disclaimer of Warranties</h2>
       <p>This site is provided "as is" without warranties of any kind. We do not warrant that the information is accurate, complete, or up to date. Use of this site is at your own risk.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:limitation-of-liability', 'Terms of service: Limitation of Liability'); ?>
     <section>
       <h2>Limitation of Liability</h2>
       <p>Kids Over Profits and its contributors shall not be liable for any damages arising from your use of this site, reliance on its content, or inability to access the site.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
+    <?php kop_ie_html_start('terms:changes-to-these-terms', 'Terms of service: Changes to These Terms'); ?>
     <section>
       <h2>Changes to These Terms</h2>
       <p>We may update these terms at any time. Continued use of the site after changes are posted constitutes acceptance of the updated terms.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
     <section>
       <h2>Contact</h2>
