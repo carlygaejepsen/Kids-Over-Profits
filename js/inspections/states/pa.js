@@ -365,7 +365,7 @@
             if (latest > 0) stats.push({ text: 'Latest ' + ctx.formatDate(latest), tone: 'neutral' });
 
             var entityShown = facility.legalEntity
-                && facility.name.toLowerCase().indexOf(facility.legalEntity.toLowerCase().replace(/[\s,]+(inc|llc|corp)\.?$/i, '')) !== 0;
+                && facility.name.toLowerCase().indexOf(facility.legalEntity.toLowerCase().replace(/[\s,]+(inc|llc|corp|corporation|lp|ltd|co|incorporated)\.?$/i, '')) !== 0;
             return {
                 meta: [
                     facility.serviceType,

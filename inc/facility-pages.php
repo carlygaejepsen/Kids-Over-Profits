@@ -334,6 +334,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'network:' . (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '-');
         // A new build of the Unsilenced archive lists (inc/unsilenced-archive.php).
         $parts[] = 'unsilenced:' . (function_exists('kop_unsilenced_cache_key') ? kop_unsilenced_cache_key() : '-');
+        // Approved record <-> inspection row links (inc/inspection-links.php).
+        $parts[] = 'inspection-links:' . (function_exists('kop_inspection_links_cache_key') ? kop_inspection_links_cache_key() : '-');
         $parts[] = 'v:4';
         return md5(implode(';', $parts));
     }
@@ -1792,7 +1794,7 @@ if (!function_exists('kop_facility_page_data')) {
         $lawsuits = kop_facility_pages_lawsuits($facility_id, $name_keys);
         $memorials = kop_facility_pages_memorials($name_keys, $state_name);
         $wiki = kop_facility_pages_wiki($name, $unique_name, $current_name);
-        $inspections = kop_facility_pages_inspections($name_keys, $state_code, $state_name);
+        $inspections = kop_facility_pages_inspections($name_keys, $state_code, $state_name, $facility_id);
         $documents = kop_facility_pages_documents($doc, $entry ? $entry['folder'] : 0);
         $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('f', $facility_id) : null;
 
@@ -2143,11 +2145,13 @@ if (!function_exists('kop_facility_pages_inspections')) {
      * Licensing record and inspection reports from the state scrapes:
      * {summary: {...}, reports: [...], total, page_url} or null. Rows are
      * matched by name key within the facility's state (any state when the
-     * record has none).
+     * record has none), plus the rows an admin linked to the record at KOP
+     * Tools > Inspection Links (inc/inspection-links.php).
      */
-    function kop_facility_pages_inspections(array $name_keys, $state_code, $state_name) {
+    function kop_facility_pages_inspections(array $name_keys, $state_code, $state_name, $facility_id = 0) {
         global $wpdb;
-        if (!kop_facility_pages_table_exists('inspection_facilities') || !$name_keys) return null;
+        $linked_ids = ($facility_id && function_exists('kop_inspection_links_for')) ? kop_inspection_links_for($facility_id) : array();
+        if (!kop_facility_pages_table_exists('inspection_facilities') || (!$name_keys && !$linked_ids)) return null;
         $where = '';
         $params = array();
         if ($state_code !== '') {
@@ -2165,6 +2169,14 @@ if (!function_exists('kop_facility_pages_inspections')) {
             foreach ($name_keys as $fk) {
                 if ($fk === $rk || kop_facility_pages_key_matches($fk, $rk)) { $matched[(int) $r['id']] = $r; break; }
             }
+        }
+        if ($linked_ids) {
+            $placeholders = implode(',', array_fill(0, count($linked_ids), '%d'));
+            $linked = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, state, facility_name, full_address, phone, program_category, program_name, executive_director, bed_capacity, license_exp_date, relicense_visit_date, action FROM inspection_facilities WHERE id IN ($placeholders)",
+                $linked_ids
+            ), ARRAY_A);
+            foreach ((array) $linked as $r) $matched[(int) $r['id']] = $r;
         }
         if (!$matched) return null;
 

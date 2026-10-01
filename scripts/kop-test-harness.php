@@ -94,7 +94,9 @@ function wp_cache_set() { return true; }
 function get_transient($k) { return $GLOBALS['kop_test_transients'][$k] ?? false; }
 function set_transient($k, $v, $ttl = 0) { $GLOBALS['kop_test_transients'][$k] = $v; return true; }
 function delete_transient($k) { unset($GLOBALS['kop_test_transients'][$k]); return true; }
+$GLOBALS['kop_test_options'] = array();
 function get_option($name, $default = false) {
+    if (array_key_exists($name, $GLOBALS['kop_test_options'])) return $GLOBALS['kop_test_options'][$name];
     if ($name === 'kop_data_model_areas') return array('location_pages', 'program_index', 'search', 'homepage_stats', 'facility_profiles');
     if ($name === 'date_format') return 'F j, Y';
     return $default;

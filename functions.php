@@ -128,6 +128,8 @@ require_once get_stylesheet_directory() . '/inc/facility-finder.php';
 require_once get_stylesheet_directory() . '/inc/facility-suggest.php';
 // Facility closures reported in the news: hourly scan, review queue, confirm sets the status
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
+// Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links)
+require_once get_stylesheet_directory() . '/inc/inspection-links.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 // Woodbury Reports pages about a program, cut by scripts/woodbury-scan.py, reviewed and filed in its doc library
