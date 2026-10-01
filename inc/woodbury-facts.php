@@ -973,7 +973,7 @@ function kop_wbf_consultant_undo(array $r) {
 
 /** "Owner: ... (Woodbury Reports, May 2007, p. 20)" -> "Owner: ...": the words a list item shows, without its date and citation. */
 function kop_wbf_plain_text($text) {
-    $text = preg_replace('/\s*\((?:Woodbury Reports|HEAL)[^()]*(?:\([^()]*\)[^()]*)?\)\s*$/', '', trim((string) $text));
+    $text = preg_replace('/\s*\((?:Woodbury Reports|HEAL|r\/troubledteens wiki)[^()]*(?:\([^()]*\)[^()]*)?\)\s*$/', '', trim((string) $text));
     return trim(preg_replace('/^(\d{4}(-\d\d){0,2}|Reported [A-Z][a-z]+ \d{4}):\s*/', '', $text));
 }
 

@@ -155,7 +155,7 @@ def src(iss):
 def cite_at(iss, page):
     """"Woodbury Reports, May 2007, p. 20" / "HEAL, staff list for X (archived 2012-05-17)"."""
     if iss.get('page_dates'):
-        return '%s, %s (archived %s)' % (src(iss), iss['label'], iss['page_dates'].get(str(page), ''))
+        return '%s, %s (%s %s)' % (src(iss), iss['label'], iss.get('date_word') or 'archived', iss['page_dates'].get(str(page), ''))
     return '%s, %s, p. %d' % (src(iss), iss['label'], page)
 
 
@@ -557,7 +557,7 @@ def auto_ok(p):
             return said(v['raw']) and any(MOVE_WORDS.search(q) for q in quotes)
         if p['path'] == 'notes':
             # "Membership: NATSAP (Woodbury Reports, ...)": the part between the label and the citation.
-            m = re.match(r'^[^:]{2,30}:\s*(.+?)\s*\((?:Woodbury Reports|HEAL)', v)
+            m = re.match(r'^[^:]{2,30}:\s*(.+?)\s*\((?:Woodbury Reports|HEAL|r/troubledteens wiki)', v)
             return bool(m) and said(m.group(1))
     return False
 
@@ -848,6 +848,12 @@ def main():
         propose([it], 'history' if field in ('renamed', 'moved', 'merged', 'founder', 'new_campus', 'owner', 'operator', 'acquired', 'opened', 'closed') else 'details',
                 'add_list', 'notes', text, NOTE_LABELS.get(field, 'Note') + ': ' + value, vkey)
 
+    # A program's latest capacity is the one to fill in; earlier figures ("24 in 2016") stay as dated notes.
+    cap_year = {}
+    for it in items:
+        if it.get('kind') == 'program' and (it.get('field') or '').lower() == 'capacity' and it.get('fid'):
+            cap_year[it['fid']] = max(cap_year.get(it['fid'], 0), position_year(it))
+
     for it in items:
         if it.get('kind') != 'program':
             continue
@@ -950,9 +956,9 @@ def main():
             continue
         if field == 'capacity':
             m = re.search(r'\b(\d{1,4})\b', value)
-            if m and rec and det.get('capacity') is None:
+            if m and rec and det.get('capacity') is None and position_year(it) >= cap_year.get(it['fid'], 0):
                 propose([it], 'details', 'set_if_empty', 'facilityDetails.capacity', int(m.group(1)),
-                        'Capacity: %s (as of %s)' % (m.group(1), str(it['issue_year'])), 'cap|' + m.group(1))
+                        'Capacity: %s (as of %s)' % (m.group(1), position_year(it)), 'cap|' + m.group(1))
                 continue
             if rec and det.get('capacity') is not None and m and int(m.group(1)) == det.get('capacity'):
                 stats['already'] += 1
@@ -962,7 +968,8 @@ def main():
         if field == 'ages':
             m = re.search(r'\b(\d{1,2})\s*(?:-|to|–|through)\s*(\d{1,2})\b', value)
             ar = det.get('ageRange') or {}
-            if m and rec and ar.get('min') is None and ar.get('max') is None:
+            # The screen saves ages up to 30 (kop_wbf_edited_value); a wider range stays a note.
+            if m and rec and ar.get('min') is None and ar.get('max') is None and int(m.group(1)) <= int(m.group(2)) <= 30:
                 propose([it], 'details', 'set_if_empty', 'facilityDetails.ageRange', {'min': int(m.group(1)), 'max': int(m.group(2))},
                         'Ages %s-%s' % (m.group(1), m.group(2)), 'ages|%s-%s' % (m.group(1), m.group(2)))
                 continue

@@ -153,6 +153,10 @@ php scripts/test-woodbury-facts.php               # applies every proposal to th
 python scripts/heal-archive.py fetch && python scripts/heal-archive.py text && python scripts/heal-batches.py
 python scripts/woodbury-facts.py --also tmp/heal   # HEAL facts join Woodbury Facts, cited to the archived copy, never auto-added
 python scripts/heal-docs.py                         # tmp/heal/heal-links.json -> ~/kop-import/gdocs/, reviewed at Drive Docs
+# The r/troubledteens wiki (markdown_output/ + the wiki editor's copies in tmp/prod.sqlite) read the same way:
+# text -> tmp/wiki/text/ + INSTRUCTIONS.md, batches of pages not read yet; readers write tmp/wiki/facts/
+python scripts/wiki-source.py text && python scripts/wiki-source.py batches
+python scripts/woodbury-facts.py --also tmp/heal --also tmp/wiki   # wiki facts cite the wiki page, never auto-added
 # Links from the owner's Google Docs and Sheets (docs/PLAN.md 3.9): tmp/gdocs/export.gs (from scripts/gdocs-select.py)
 # exports them to G:/My Drive/KOP Doc Export; the links pass ties each link to a facility and drops what is on file ->
 # tmp/gdocs/links.json, copied to ~/kop-import/gdocs/; reviewed at KOP Tools > Drive Docs (inc/drive-docs.php): news,
