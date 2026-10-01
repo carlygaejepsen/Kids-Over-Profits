@@ -125,7 +125,7 @@ function kop_hub_module_category_posts() {
                     $url   = get_permalink($p);
                     $thumb = get_the_post_thumbnail($p, 'medium_large', array('loading' => 'lazy', 'alt' => ''));
                     ?>
-                    <li class="kop-hub-post<?php echo $thumb ? ' has-thumb' : ''; ?>">
+                    <li class="kop-hub-post<?php echo $thumb ? ' has-thumb' : ''; ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('post:' . (int) $p->ID . ':page', get_the_title($p)) : ''; ?>>
                         <?php if ($thumb) : ?>
                             <a class="kop-hub-post-thumb" href="<?php echo esc_url($url); ?>" tabindex="-1" aria-hidden="true"><?php echo $thumb; // phpcs:ignore WordPress.Security.EscapeOutput -- core markup ?></a>
                         <?php endif; ?>

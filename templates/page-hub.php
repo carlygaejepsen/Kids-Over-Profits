@@ -137,6 +137,7 @@ if (!function_exists('kop_hub_module_law_policy')) {
                 'more'  => 'All lawsuits',
                 'rows'  => array_map(static function ($c) use ($label, $meta) {
                     return array(
+                        'ref'    => 'rec:lawsuit:' . (int) $c['id'],
                         'anchor' => 'lawsuit-' . (int) $c['id'],
                         'title'  => (string) $c['case_name'],
                         'meta'   => $meta(array(
@@ -157,6 +158,7 @@ if (!function_exists('kop_hub_module_law_policy')) {
                 'rows'  => array_map(static function ($b) use ($label, $meta) {
                     $when = $b['last_action_date'] ?: $b['introduced_date'];
                     return array(
+                        'ref'    => 'rec:legislation:' . (int) $b['id'],
                         'anchor' => 'bill-' . (int) $b['id'],
                         'title'  => trim($b['bill_number'] . ' ' . $b['bill_title']),
                         'meta'   => $meta(array(
@@ -178,12 +180,12 @@ if (!function_exists('kop_hub_module_law_policy')) {
                             <span class="kop-hub-count"><?php echo esc_html($col['count']); ?></span>
                         <?php endif; ?>
                     </h2>
-                    <p class="kop-hub-col-intro"><?php echo esc_html($col['intro']); ?></p>
+                    <p class="kop-hub-col-intro"<?php echo function_exists('kop_text_attr') ? kop_text_attr('hub:law-' . $col['key'] . '-intro', $col['title'] . ' intro') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('hub:law-' . $col['key'] . '-intro', $col['intro'], $col['title'] . ' intro (law and policy hub)') : $col['intro']); ?></p>
                     <?php if ($col['rows']) : ?>
                         <h3 class="kop-hub-subh">Newest</h3>
                         <ul class="kop-hub-list">
                             <?php foreach ($col['rows'] as $row) : ?>
-                                <li>
+                                <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr($row['ref'], $row['title']) : ''; ?>>
                                     <a href="<?php echo esc_url($col['url'] . '#' . $row['anchor']); ?>"><?php echo esc_html($row['title']); ?></a>
                                     <?php if ($row['meta'] !== '') : ?>
                                         <span class="kop-hub-meta"><?php echo esc_html($row['meta']); ?></span>
@@ -235,7 +237,7 @@ if (!function_exists('kop_hub_module_locations')) {
                 <h2 class="kop-hub-h"><?php echo esc_html($heading); ?> <span class="kop-hub-count"><?php echo count($pages); ?></span></h2>
                 <ul class="kop-hub-grid">
                     <?php foreach ($pages as $p) : ?>
-                        <li><a href="<?php echo esc_url(get_permalink($p)); ?>"><?php echo esc_html(get_the_title($p)); ?></a></li>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('post:' . (int) $p->ID . ':page', get_the_title($p)) : ''; ?>><a href="<?php echo esc_url(get_permalink($p)); ?>"><?php echo esc_html(get_the_title($p)); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             <?php endforeach; ?>

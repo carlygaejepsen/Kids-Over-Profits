@@ -309,6 +309,7 @@ function kop_hub_reading($slug) {
         $post    = get_page_by_path($child);
         $excerpt = ($post && has_excerpt($post)) ? get_the_excerpt($post) : '';
         $items[] = array(
+            'id'    => $post ? (int) $post->ID : 0,
             'title' => $page['title'],
             'url'   => $page['url'],
             'note'  => $excerpt !== '' ? $excerpt : (isset($notes[$child]) ? $notes[$child] : ''),
@@ -322,10 +323,10 @@ function kop_hub_reading($slug) {
     }
     ?>
     <section class="kop-hub-reading" aria-labelledby="kop-hub-reading-h">
-        <h2 class="kop-hub-h" id="kop-hub-reading-h"><?php echo esc_html($config['reading']); ?></h2>
+        <h2 class="kop-hub-h" id="kop-hub-reading-h"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('cfg:hub:' . $slug, 'hub settings') : ''; ?>><?php echo esc_html($config['reading']); ?></h2>
         <ul class="kop-hub-reading-list">
             <?php foreach ($items as $item) : ?>
-                <li>
+                <li<?php echo $item['id'] ? function_exists('kop_ie_attr') ? kop_ie_attr('post:' . $item['id'] . ':page', $item['title']) : '' : ''; ?>>
                     <div class="kop-hub-reading-item<?php echo $item['thumb'] ? ' has-thumb' : ''; ?>">
                         <?php if ($item['thumb']) : ?>
                             <a class="kop-hub-reading-thumb" href="<?php echo esc_url($item['url']); ?>" tabindex="-1" aria-hidden="true"><?php echo $item['thumb']; // phpcs:ignore WordPress.Security.EscapeOutput -- core markup ?></a>
@@ -356,7 +357,7 @@ function kop_hub_positions($slug) {
     }
     $heading = !empty($config['positions']['heading']) ? $config['positions']['heading'] : 'Policy positions';
     ?>
-    <section class="kop-hub-reading kop-hub-positions" aria-labelledby="kop-hub-positions-h">
+    <section class="kop-hub-reading kop-hub-positions" aria-labelledby="kop-hub-positions-h"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('cfg:hub:' . $slug, 'hub settings') : ''; ?>>
         <h2 class="kop-hub-h" id="kop-hub-positions-h"><?php echo esc_html($heading); ?></h2>
         <ul class="kop-hub-reading-list kop-hub-positions-list">
             <?php foreach ($links as $link) : ?>
@@ -384,7 +385,7 @@ function kop_hub_contribute($slug) {
     }
     $heading = !empty($config['contribute']['heading']) ? $config['contribute']['heading'] : 'Get involved';
     ?>
-    <section class="kop-hub-contribute" aria-labelledby="kop-hub-contribute-h">
+    <section class="kop-hub-contribute" aria-labelledby="kop-hub-contribute-h"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('cfg:hub:' . $slug, 'hub settings') : ''; ?>>
         <h2 class="kop-hub-h" id="kop-hub-contribute-h"><?php echo esc_html($heading); ?></h2>
         <ul>
             <?php foreach ($links as $link) : ?>
