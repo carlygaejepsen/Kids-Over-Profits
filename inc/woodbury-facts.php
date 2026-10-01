@@ -258,6 +258,21 @@ function kop_wbf_create_source(array $e) {
     return $s;
 }
 
+/**
+ * The first source as a staff entry keeps it: {source: "r/troubledteens wiki, page "X" (as of 2025-12-18)",
+ * sourceUrl: "https://..."}; the Woodbury issue page as "Woodbury Reports, May 2007, p. 20".
+ */
+function kop_wbf_source_ref(array $r) {
+    $e = kop_wbf_evidence($r);
+    if (!$e) {
+        return array();
+    }
+    $first = $e[0];
+    $cite = !empty($first['cite']) ? (string) $first['cite']
+        : 'Woodbury Reports, ' . $first['label'] . (!empty($first['number']) ? ' (' . $first['number'] . ')' : '') . ', p. ' . (int) $first['page'];
+    return array('source' => $cite, 'sourceUrl' => (string) ($first['url'] ?? ''));
+}
+
 /** The line a structured change leaves in the notes, so the record says where it came from. */
 function kop_wbf_source_line(array $r) {
     return $r['label'] . ' (' . kop_wbf_cite($r) . ')';
@@ -299,7 +314,8 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
             foreach ($list as $i => $s) {
                 $s = is_array($s) ? $s : array('name' => (string) $s, 'role' => '', 'pastJobs' => '');
                 if ($key !== '' && kop_wbf_person_key($s['name'] ?? '') === $key) {
-                    $before = array('role' => (string) ($s['role'] ?? ''), 'pastJobs' => (string) ($s['pastJobs'] ?? ''));
+                    $before = array('role' => (string) ($s['role'] ?? ''), 'pastJobs' => (string) ($s['pastJobs'] ?? ''),
+                        'source' => $s['source'] ?? null, 'sourceUrl' => $s['sourceUrl'] ?? null);
                     if ($before['role'] !== '' && $before['pastJobs'] !== '') {
                         throw new RuntimeException('Already on the record\'s staff list.');
                     }
@@ -308,6 +324,9 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
                     }
                     if ($before['pastJobs'] === '') {
                         $s['pastJobs'] = $value['pastJobs'];
+                    }
+                    if (empty($s['source'])) {
+                        $s = array_merge($s, kop_wbf_source_ref($r));
                     }
                     $list[$i] = $s;
                     $done += array('mode' => 'merged', 'at' => $path, 'name' => $s['name'], 'before' => $before);
@@ -318,7 +337,8 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
         }
         $list = &kop_wbf_ref($doc, $r['path']);
         $list = is_array($list) ? $list : array();
-        $list[] = array('name' => (string) $value['name'], 'role' => (string) $value['role'], 'pastJobs' => (string) $value['pastJobs']);
+        $list[] = array('name' => (string) $value['name'], 'role' => (string) $value['role'], 'pastJobs' => (string) $value['pastJobs'])
+            + kop_wbf_source_ref($r);
         $done += array('mode' => 'added', 'at' => $r['path'], 'name' => (string) $value['name']);
         return $done;
     }
@@ -391,6 +411,17 @@ function kop_wbf_doc_undo(array &$doc, array $done) {
             } else {
                 $list[$i]['role'] = $done['before']['role'];
                 $list[$i]['pastJobs'] = $done['before']['pastJobs'];
+                // Applied before entries kept their source: those records have no 'source' key in 'before'.
+                foreach (array('source', 'sourceUrl') as $k) {
+                    if (!array_key_exists($k, $done['before'])) {
+                        continue;
+                    }
+                    if ($done['before'][$k] === null) {
+                        unset($list[$i][$k]);
+                    } else {
+                        $list[$i][$k] = $done['before'][$k];
+                    }
+                }
             }
             break;
         }

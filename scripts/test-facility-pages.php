@@ -404,6 +404,43 @@ $check('the program index feed lists a tagged facility\'s report with its pages'
 $pdo->exec('DROP TABLE temp.wpdl_postmeta');
 kop_facility_pages_index(true);
 
+// Sources: a staff entry names where it came from, and a fact the notes cite links to its page.
+echo "-- Sources --\n";
+$src_doc_staff = array('notableStaff' => array(
+    array('name' => 'Jane Doe', 'role' => 'Clinical Director (2025, r/troubledteens wiki)', 'pastJobs' => '',
+        'source' => 'r/troubledteens wiki, page "Test Academy" (as of 2025-12-18)', 'sourceUrl' => 'https://www.reddit.com/r/troubledteens/wiki/index/test'),
+    array('name' => 'John Roe', 'role' => 'Therapist', 'pastJobs' => ''),
+));
+$src_items = kop_facility_pages_staff_items(kop_facility_normalize(array('staff' => $src_doc_staff))['staff']);
+$check('a staff entry keeps its source through the normalizer', ($src_items['notableStaff'][0]['source'] ?? '') === 'r/troubledteens wiki'
+    && ($src_items['notableStaff'][0]['url'] ?? '') === 'https://www.reddit.com/r/troubledteens/wiki/index/test' && ($src_items['notableStaff'][1]['source'] ?? 'x') === '',
+    wp_json_encode($src_items));
+$src_notes = kop_facility_pages_note_sources(array(
+    'Capacity: 35 (as of 2020) (r/troubledteens wiki, page "Test Academy" (as of 2025-12-18): https://www.reddit.com/r/troubledteens/wiki/index/test)',
+    'Start year: 1998 (Woodbury Reports, May 2007 (#153), p. 20: https://kidsoverprofits.org/wp-content/uploads/w.pdf#page=20)',
+    'Past name: Old Name (HEAL, staff list for X (archived 2012-05-17)) https://web.archive.org/web/2012/x.htm',
+    'An unrelated note (Woodbury Reports, May 2007, p. 3: https://example.org/a)',
+));
+$check('the notes give each fact its source', ($src_notes['Capacity'][0]['source'] ?? '') === 'r/troubledteens wiki'
+    && ($src_notes['Capacity'][0]['url'] ?? '') === 'https://www.reddit.com/r/troubledteens/wiki/index/test'
+    && ($src_notes['Operated'][0]['source'] ?? '') === 'Woodbury Reports' && strpos($src_notes['Operated'][0]['url'] ?? '', '#page=20') !== false
+    && ($src_notes['formerly'][0]['url'] ?? '') === 'https://web.archive.org/web/2012/x.htm' && count($src_notes) === 3,
+    wp_json_encode($src_notes));
+if ($picks) {
+    $data = kop_facility_page_data($picks[0]);
+    $data['staff'] = $src_items;
+    $data['facts'][] = array('label' => 'Capacity', 'value' => '35');
+    $data['fact_sources'] = $src_notes;
+    $GLOBALS['kop_facility_page'] = $data;
+    ob_start();
+    include dirname(__DIR__) . '/templates/facility-page.php';
+    $html = ob_get_clean();
+    $check('the page links a staff entry and a fact to their sources',
+        preg_match('#Jane Doe \(Clinical Director[^<]*<span class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        && preg_match('#<dd class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        && strpos($html, 'John Roe (Therapist)</li>') !== false);
+}
+
 // Sitemap entries
 $entries = kop_facility_pages_sitemap_entries();
 $operator_pages = function_exists('kop_operator_pages_index') ? count(kop_operator_pages_index()['ids']) : 0;

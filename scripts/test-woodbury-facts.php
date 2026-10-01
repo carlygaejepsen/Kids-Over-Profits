@@ -70,7 +70,7 @@ printf("  %d proposals on %d records\n", array_sum(array_map('count', $by)), cou
 
 echo "-- Apply, save shape, undo on every record --\n";
 $stmt = $pdo->prepare('SELECT json_data FROM facilities_v2 WHERE id = ?');
-$applied = $refused = $invalid = $lost = $undo_bad = $twice_bad = 0;
+$applied = $refused = $invalid = $lost = $undo_bad = $twice_bad = $unsourced = 0;
 $examples = array();
 foreach ($by as $fid => $rows) {
     $stmt->execute(array($fid));
@@ -104,7 +104,13 @@ foreach ($by as $fid => $rows) {
         $at = $get($saved, $d['at'] ?? $r['path']);
         $ok = true;
         if ($r['op'] === 'add_staff') {
-            $ok = (bool) array_filter((array) $at, function ($s) use ($v) { return is_array($s) && kop_wbf_person_key($s['name'] ?? '') === kop_wbf_person_key($v['name']); });
+            $mine = array_filter((array) $at, function ($s) use ($v) { return is_array($s) && kop_wbf_person_key($s['name'] ?? '') === kop_wbf_person_key($v['name']); });
+            $ok = (bool) $mine;
+            // The entry names where it came from, through the save normalizer.
+            if ($mine && (trim((string) (reset($mine)['source'] ?? '')) === '' || !preg_match('#^https?://#', (string) (reset($mine)['sourceUrl'] ?? '')))) {
+                $unsourced++;
+                if (count($examples) < 12) $examples[] = "#$fid staff without a source: " . $v['name'];
+            }
         } elseif ($r['op'] === 'add_list') {
             $ok = kop_wbf_list_has((array) $at, is_array($v) ? $v : (string) $v);
         } elseif ($r['op'] === 'set_if_empty') {
@@ -136,6 +142,7 @@ foreach ($by as $fid => $rows) {
     }
 }
 printf("  applied %d, refused as already on the record %d\n", $applied, $refused);
+$check('every staff entry added or filled names its source and link', $unsourced === 0, "$unsourced without");
 $check('every changed record passes the validator', $invalid === 0, "$invalid records");
 $check('every addition survives the save normalizer', $lost === 0, "$lost lost");
 $check('the same addition twice is refused', $twice_bad === 0, "$twice_bad accepted twice");

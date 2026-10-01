@@ -291,6 +291,29 @@
     font-weight: 700;
 }
 
+/* "Source: r/troubledteens wiki": where a staff entry or fact came from. */
+.kop-fp-src {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+    color: var(--kop-text-muted, #4a5568);
+}
+
+.kop-fp-formerly .kop-fp-src {
+    display: inline;
+    margin-left: 0.4rem;
+}
+
+.kop-fp-src a {
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+}
+
+.kop-fp-src a:hover,
+.kop-fp-src a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 
 .kop-fp-footer {

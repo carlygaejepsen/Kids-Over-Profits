@@ -142,6 +142,7 @@ if (!function_exists('kop_facility_resource_link_kinds')) {
             'news'       => 'News coverage',
             'social'     => 'Survivor posts and discussion',
             'people'     => 'Staff and owners',
+            'advertising' => 'Advertising and marketing listings',
             'reference'  => 'Reference and research',
             'archive'    => 'Archived pages',
             'other'      => 'Other links',
@@ -1103,7 +1104,8 @@ if (!function_exists('kop_facility_normalize')) {
 
 if (!function_exists('kop_facility_person_list')) {
     /**
-     * Staff and operator people: every entry {name, role, pastJobs}. A bare
+     * Staff and operator people: every entry {name, role, pastJobs}, plus
+     * {source, sourceUrl} when the entry cites where it came from. A bare
      * string is a name; an entry with nothing in it is dropped.
      */
     function kop_facility_person_list($value) {
@@ -1116,6 +1118,10 @@ if (!function_exists('kop_facility_person_list')) {
                     'role'     => kop_facility_str($item['role'] ?? ($item['title'] ?? '')),
                     'pastJobs' => is_array($jobs) ? implode('; ', kop_facility_list($jobs)) : kop_facility_str($jobs),
                 );
+                // Where the entry came from (Woodbury Facts, Fornits): kept only when given.
+                foreach (array('source', 'sourceUrl') as $k) {
+                    if (kop_facility_str($item[$k] ?? '') !== '') $entry[$k] = kop_facility_str($item[$k]);
+                }
             } else {
                 $entry = array('name' => kop_facility_str($item), 'role' => '', 'pastJobs' => '');
             }

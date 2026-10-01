@@ -817,6 +817,74 @@ if (!function_exists('kop_facility_pages_clean_notes')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_source_label')) {
+    /** "r/troubledteens wiki, page "X" (as of 2025-12-18)" -> "r/troubledteens wiki": the publication a link names. */
+    function kop_facility_pages_source_label($cite) {
+        $cite = trim((string) $cite);
+        foreach (array('Woodbury Reports', 'HEAL', 'r/troubledteens wiki', 'Fornits') as $pub) {
+            if (stripos($cite, $pub) === 0) return $pub;
+        }
+        $first = trim(strtok($cite, ',('));
+        return $first !== '' ? $first : 'Source';
+    }
+}
+
+if (!function_exists('kop_facility_pages_staff_items')) {
+    /**
+     * The staff lists as the page shows them: {text, source, url} per entry,
+     * the source being where the entry came from (Woodbury Facts, Fornits).
+     */
+    function kop_facility_pages_staff_items($staff) {
+        $out = array();
+        if (!is_array($staff)) return $out;
+        foreach (array('administrator', 'notableStaff', 'pastTTIJobs') as $k) {
+            $items = array();
+            foreach (kop_facility_list($staff[$k] ?? null) as $item) {
+                $text = kop_facility_pages_text_items(array($item));
+                if (!$text) continue;
+                $cite = is_array($item) ? trim((string) ($item['source'] ?? '')) : '';
+                $url = is_array($item) ? trim((string) ($item['sourceUrl'] ?? '')) : '';
+                $items[] = array('text' => $text[0], 'source' => $cite !== '' ? kop_facility_pages_source_label($cite) : '',
+                    'cite' => $cite, 'url' => preg_match('#^https?://#i', $url) ? $url : '');
+            }
+            if ($items) $out[$k] = $items;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_note_sources')) {
+    /**
+     * Where the facts came from, read off the lines Woodbury Facts leaves in
+     * the notes ("Start year: 1998 (r/troubledteens wiki, page "X" (as of
+     * 2025-12-18): https://...)"): fact label => [{source, cite, url}].
+     */
+    function kop_facility_pages_note_sources(array $notes) {
+        $by = array(
+            'Type: ' => 'Type', 'Start year: ' => 'Operated', 'Closed in ' => 'Operated', 'Ages ' => 'Serves',
+            'Serves: ' => 'Serves', 'Capacity: ' => 'Capacity', 'Operator/owner: ' => 'Past operators',
+            'Past name: ' => 'formerly', 'Former location: ' => 'former_locations',
+        );
+        $out = array();
+        foreach ($notes as $line) {
+            $line = trim((string) $line);
+            foreach ($by as $prefix => $key) {
+                if (strpos($line, $prefix) !== 0) continue;
+                if (!preg_match('#\(((?:Woodbury Reports|HEAL|r/troubledteens wiki|Fornits)[^()]*(?:\([^()]*\)[^()]*)?)\)#', $line, $m)) break;
+                $cite = trim(preg_replace('#:?\s*https?://\S+$#', '', $m[1]));
+                $url = preg_match('#(https?://\S+?)[).]*$#', $line, $u) ? $u[1] : '';
+                $seen = false;
+                foreach ($out[$key] ?? array() as $have) {
+                    if ($have['cite'] === $cite) $seen = true;
+                }
+                if (!$seen) $out[$key][] = array('source' => kop_facility_pages_source_label($cite), 'cite' => $cite, 'url' => $url);
+                break;
+            }
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('kop_facility_pages_staff_entries')) {
     /** {administrator: [...], notableStaff: [...], pastTTIJobs: [...]} as text lists, empty groups removed. */
     function kop_facility_pages_staff_entries($staff) {
@@ -1799,8 +1867,9 @@ if (!function_exists('kop_facility_page_data')) {
             $items = kop_facility_pages_checklist_items($doc[$k] ?? null, $k);
             if ($items) $practices[] = array('label' => $label, 'items' => $items);
         }
-        $staff = kop_facility_pages_staff_entries($doc['staff'] ?? null);
+        $staff = kop_facility_pages_staff_items($doc['staff'] ?? null);
         $notes = array_merge(kop_facility_pages_clean_notes($doc['notes'] ?? null), kop_facility_pages_clean_notes($op['notes'] ?? null));
+        $fact_sources = kop_facility_pages_note_sources($notes);
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
         $testimony = kop_facility_pages_testimony($doc['survivorTestimony'] ?? null);
         $profile_links = array();
@@ -1882,6 +1951,7 @@ if (!function_exists('kop_facility_page_data')) {
             'operated'      => $operated,
             'summary'       => $summary,
             'facts'         => $facts,
+            'fact_sources'  => $fact_sources,
             'practices'     => $practices,
             'staff'         => $staff,
             'notes'         => $notes,

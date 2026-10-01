@@ -145,11 +145,11 @@ a `migration: original status "..."` note.
 
 | Field | Type | Notes |
 |---|---|---|
-| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | `administrator` and `notableStaff` entries are `{name, role, pastJobs}`; `pastTTIJobs` entries are `{role, organization, employer}`. |
+| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | `administrator` and `notableStaff` entries are `{name, role, pastJobs}`, plus `{source, sourceUrl}` when the entry was added from a cited source (Woodbury Facts, Fornits: the citation and its link, shown on the facility page; kept only when given); `pastTTIJobs` entries are `{role, organization, employer}`. |
 | `accreditations` | `{current[], past[]}` | |
 | `memberships`, `certifications`, `licensing`, `notes` | string[] | |
 | `profileLinks` | string[] | URLs. |
-| `resourceLinks` | `{url, label, kind, source}[]` | Outside pages about the facility (licensing reports, court records, survivor posts, staff profiles, reference). One entry per address. `kind` is one of `licensing`, `court`, `government`, `news`, `social`, `people`, `reference`, `archive`, `other`. Shown on the facility page under "Materials and links"; added from KOP Tools > Drive Docs. |
+| `resourceLinks` | `{url, label, kind, source}[]` | Outside pages about the facility (licensing reports, court records, survivor posts, staff profiles, reference). One entry per address. `kind` is one of `licensing`, `court`, `government`, `news`, `social`, `people`, `advertising` (the program's ads and paid listings: Woodbury Reports, AllKindsOfTherapy, press releases), `reference`, `archive`, `other`. Shown on the facility page under "Materials and links"; added from KOP Tools > Drive Docs. |
 | `resources` | map | Every standard key is present (see Standard shapes): `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Keys the form adds later are typed by the same naming rule. |
 | `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. `targetedDiagnoses` and `targetedBehaviors` hold selected `hasX` booleans; `ttiPractices` holds selected `hasX` booleans and an optional `other` string list. A legacy array becomes `{"_legacy": [...]}`. |
 | `fieldNotes` | map | A legacy array becomes `{"_legacy": [...]}`. |

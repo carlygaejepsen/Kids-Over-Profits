@@ -44,6 +44,19 @@ $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
     echo '</ul>';
 };
 
+// "Source: r/troubledteens wiki, HEAL": where a fact came from, each name linking to the page it cites.
+$kop_fp_sources = static function ($sources, $tag = 'dd') {
+    if (!$sources) return;
+    $links = array();
+    foreach ($sources as $src) {
+        $name = esc_html($src['source']);
+        $links[] = $src['url'] !== ''
+            ? '<a href="' . esc_url($src['url']) . '" title="' . esc_attr($src['cite']) . '" rel="nofollow noopener" target="_blank">' . $name . '</a>'
+            : '<span title="' . esc_attr($src['cite']) . '">' . $name . '</span>';
+    }
+    echo '<' . $tag . ' class="kop-fp-src">Source: ' . implode(', ', $links) . '</' . $tag . '>';
+};
+
 $kop_fp_sections = array();
 $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
@@ -97,7 +110,7 @@ get_header();
             <p class="kop-fp-formerly">Now known as <?php echo esc_html($page['current_name']); ?></p>
         <?php endif; ?>
         <?php if ($page['formerly']) : ?>
-            <p class="kop-fp-formerly">Formerly <?php echo esc_html(implode(', ', $page['formerly'])); ?></p>
+            <p class="kop-fp-formerly">Formerly <?php echo esc_html(implode(', ', $page['formerly'])); ?><?php $kop_fp_sources($page['fact_sources']['formerly'] ?? array(), 'span'); ?></p>
         <?php endif; ?>
         <?php if ($page['aka']) : ?>
             <p class="kop-fp-formerly">Also known as <?php echo esc_html(implode(', ', $page['aka'])); ?></p>
@@ -131,6 +144,7 @@ get_header();
                         <?php foreach ($page['former_locations'] as $fl) : ?>
                             <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
                         <?php endforeach; ?>
+                        <?php $kop_fp_sources($page['fact_sources']['former_locations'] ?? array()); ?>
                     </div>
                 <?php endif; ?>
                 <?php foreach ($page['facts'] as $fact) : ?>
@@ -143,6 +157,7 @@ get_header();
                         <?php else : ?>
                             <dd><?php echo esc_html($fact['value']); ?></dd>
                         <?php endif; ?>
+                        <?php $kop_fp_sources($page['fact_sources'][$fact['label']] ?? array()); ?>
                     </div>
                 <?php endforeach; ?>
             </dl>
@@ -326,7 +341,11 @@ get_header();
                     if (empty($page['staff'][$key])) continue;
                     ?>
                     <h3 class="kop-fp-subhead"><?php echo esc_html($label); ?></h3>
-                    <?php $kop_fp_list($page['staff'][$key], 'kop-fp-people'); ?>
+                    <ul class="kop-fp-people">
+                        <?php foreach ($page['staff'][$key] as $person) : ?>
+                            <li><?php echo esc_html($person['text']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endforeach; ?>
             </section>
             <?php endif; ?>

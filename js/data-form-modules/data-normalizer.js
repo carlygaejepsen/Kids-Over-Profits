@@ -895,7 +895,7 @@
         return out;
     }
 
-    const V2_RESOURCE_LINK_KINDS = ['licensing', 'court', 'government', 'news', 'social', 'people', 'reference', 'archive', 'other'];
+    const V2_RESOURCE_LINK_KINDS = ['licensing', 'court', 'government', 'news', 'social', 'people', 'advertising', 'reference', 'archive', 'other'];
 
     /** Mirrors kop_facility_resource_link_list(). */
     function v2ResourceLinkList(value) {
@@ -1287,6 +1287,10 @@
                     role: v2Str(item.role !== undefined && item.role !== null ? item.role : item.title),
                     pastJobs: Array.isArray(jobs) || isPlainObject(jobs) ? v2List(jobs).join('; ') : v2Str(jobs)
                 };
+                // Where the entry came from (Woodbury Facts, Fornits): kept only when given.
+                ['source', 'sourceUrl'].forEach((k) => {
+                    if (v2Str(item[k]) !== '') entry[k] = v2Str(item[k]);
+                });
             } else {
                 entry = { name: v2Str(item), role: '', pastJobs: '' };
             }
