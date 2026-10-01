@@ -26,6 +26,7 @@
  *   site:name               the site name and tagline
  *   referrer:5:all|raw      a referrer / educational consultant record (referrers_master)
  *   row:memorial:4          a row of a table with no other editor (kop_ie_row_tables())
+ *   ya:2                    a young adult program (inc/young-adult-programs.php)
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -172,6 +173,7 @@ function kop_ie_sources() {
         'site'     => array('load' => 'kop_ie_site_load', 'save' => 'kop_ie_site_save'),
         'referrer' => array('load' => 'kop_ie_referrer_load', 'save' => 'kop_ie_referrer_save'),
         'row'      => array('load' => 'kop_ie_row_load', 'save' => 'kop_ie_row_save'),
+        'ya'       => array('load' => 'kop_ie_ya_load', 'save' => 'kop_ie_ya_save'),
     ));
 }
 
@@ -1544,6 +1546,58 @@ function kop_ie_site_save(array $p, array $v) {
     update_option('blogname', $name);
     update_option('blogdescription', trim(sanitize_text_field((string) ($v['blogdescription'] ?? ''))));
     do_action('litespeed_purge_all');
+    return array('message' => 'Saved.');
+}
+
+/* ---- Young adult programs (inc/young-adult-programs.php) ---------------------- */
+
+function kop_ie_ya_get($id) {
+    $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+    $p = $pdo ? kop_ya_get($pdo, (int) $id) : null;
+    if (!$p) {
+        throw new RuntimeException('That program record is gone.');
+    }
+    return array($pdo, $p);
+}
+
+function kop_ie_ya_load(array $p) {
+    list($pdo, $r) = kop_ie_ya_get($p[0] ?? 0);
+    return array(
+        'title'  => $r['name'],
+        'help'   => 'Facts filed from Woodbury Reports are added and taken off under KOP Tools > Young Adult Programs.',
+        'fields' => array(
+            kop_ie_field('name', 'Name', 'text', $r['name']),
+            kop_ie_field('other_names', 'Other names', 'lines', $r['other_names']),
+            kop_ie_field('city', 'City', 'text', $r['city']),
+            kop_ie_field('state', 'State', 'text', $r['state']),
+            kop_ie_field('country', 'Country', 'text', $r['country']),
+            kop_ie_field('ages', 'Ages', 'text', $r['ages']),
+            kop_ie_field('program_type', 'Type of program', 'text', $r['program_type']),
+            kop_ie_field('run_by', 'Run by', 'text', $r['run_by']),
+            kop_ie_field('opened', 'Opened (year)', 'year', (string) $r['opened']),
+            kop_ie_field('closed', 'Closed (year)', 'year', (string) $r['closed']),
+            kop_ie_field('status', 'Status', 'select', $r['status'], array('options' => array('Open', 'Closed', 'Unknown'))),
+            kop_ie_field('notes', 'Notes', 'textarea', $r['notes'], array('rows' => 8, 'help' => 'A blank line between paragraphs; **bold**, *italic*, [link text](https://...).')),
+            kop_ie_field('links', 'Links (one address a line)', 'lines', $r['links']),
+        ),
+    );
+}
+
+/** kop_ya_save() writes every column, so the dialog's values go over the whole row. */
+function kop_ie_ya_save(array $p, array $v) {
+    list($pdo, $r) = kop_ie_ya_get($p[0] ?? 0);
+    foreach (array('opened' => 'Opened', 'closed' => 'Closed') as $k => $label) {
+        if (isset($v[$k])) {
+            kop_ie_int($v[$k], $label, 1850, (int) gmdate('Y') + 1);
+        }
+    }
+    $f = array_merge($r, array_intersect_key($v, array_flip(array('name', 'other_names', 'city', 'state', 'country', 'ages', 'program_type', 'run_by', 'opened', 'closed', 'status', 'notes', 'links'))));
+    unset($f['review']);
+    kop_ya_save($pdo, $f, (int) $r['id'], kop_ie_who());
+    $page = get_page_by_path('young-adult-programs');
+    if ($page) {
+        kop_ie_purge_post($page->ID);
+    }
     return array('message' => 'Saved.');
 }
 

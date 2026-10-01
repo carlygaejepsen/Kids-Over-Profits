@@ -683,7 +683,8 @@ function kop_ya_render_public() {
     foreach ($by as $region => $list) {
         echo '<h2 class="kop-ya-region" id="kop-ya-' . $e(sanitize_title($region)) . '">' . $e($region) . "</h2>\n";
         foreach ($list as $p) {
-            echo '<article class="kop-ya-program" id="kop-ya-program-' . (int) $p['id'] . '">';
+            echo '<article class="kop-ya-program" id="kop-ya-program-' . (int) $p['id'] . '"'
+                . (function_exists('kop_ie_attr') ? kop_ie_attr('ya:' . (int) $p['id'], $p['name']) : '') . '>';
             echo '<h3 class="kop-ya-name">' . $e($p['name']) . '</h3>';
             $meta = kop_ya_meta_line($p);
             if ($meta !== '') {
