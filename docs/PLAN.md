@@ -170,16 +170,15 @@ The date is when each was last confirmed open.
 11. **Billings Clinic testimony** (2026-09-30). In the
     [admin data form](https://kidsoverprofits.org/admin-data/), refresh, open
     **MONTANA PROVIDERS** on the providers tab, and open Survivor Testimony
-    (near the bottom; click its heading). Press "Combine into one account"
-    (the 12 entries are one survivor's account), then "Move to testimony" on
-    the six "Other TTI practice" paragraphs (they join it) and "Remove copy"
-    on the group uprisings field note. Not "Move all": the list also holds
-    six more field notes, three custom incidents and the custom philosophy
-    "Medication", which are the owner's call one by one. Save. The paragraphs leave
-    [/mental-health-providers/](https://kidsoverprofits.org/mental-health-providers/);
-    the combined account keeps its "OK to publish" tick and is sourced
-    "Submitted by a survivor (submission #50)"
-    ([3f838787](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/3f838787b57cc02d664cffaea1a397662cd28151)).
+    (near the bottom; click its heading). Combined and moved on 2026-09-30:
+    one 29-paragraph account. Left to do: delete the stray paragraph
+    "Medication" (the custom philosophy, moved in by "Move all"), tick "OK
+    to publish", save. The account then shows on
+    [/mental-health-providers/](https://kidsoverprofits.org/mental-health-providers/)
+    as "Submitted by a survivor, shared September 2026"; its source reads
+    "Submitted by a survivor (submission #50)" once the page is reloaded
+    (bc693647, and the follow-up that drops "Added by an admin" beside a
+    survivor and keeps one-word labels out of "Move all").
 
 12. **Export the facility Google Docs** (2026-09-30, step 1 of 3.9).
     Ask Claude for `tmp/gdocs/export.gs` (made by `python

@@ -63,11 +63,27 @@
 
     const SURVIVOR_SOURCE = 'Submitted by a survivor';
 
-    /** "Submission #50" (the old label) reads as "Submitted by a survivor (submission #50)". */
+    /**
+     * "Submission #50" (the old label) reads as "Submitted by a survivor
+     * (submission #50)". A survivor's account is theirs even when an admin
+     * moved some of it, so "Added by an admin" drops out beside a survivor.
+     */
     function normalizeSource(source) {
-        const text = String(source || '').trim();
-        const match = text.match(/^Submission #(\d+)$/i);
-        return match ? `${SURVIVOR_SOURCE} (submission #${match[1]})` : text;
+        const parts = [];
+        String(source || '').split(/;\s*/).forEach(part => {
+            const text = part.trim();
+            if (!text) return;
+            const match = text.match(/^Submission #(\d+)$/i);
+            const label = match ? `${SURVIVOR_SOURCE} (submission #${match[1]})` : text;
+            if (!parts.includes(label)) parts.push(label);
+        });
+        const survivor = parts.some(p => p.indexOf(SURVIVOR_SOURCE) === 0);
+        return parts.filter(p => !(survivor && /^Added by an admin$/i.test(p))).join('; ');
+    }
+
+    /** A label ("Medication"), not an account: kept out of "Move all". */
+    function isLabel(text) {
+        return String(text || '').trim().split(/\s+/).length < 4;
     }
 
     /** Where a moved note came from: the open submission, or an admin edit. */
@@ -322,7 +338,9 @@
     function moveAll() {
         const facility = currentFacility();
         if (!facility) return;
-        const notes = collectMovableNotes(facility);
+        // Copies are always cleared; one- to three-word labels ("Medication")
+        // stay for a one-by-one decision.
+        const notes = collectMovableNotes(facility).filter(item => item.duplicate || !isLabel(item.text));
         if (!notes.length) return;
         const target = targetEntry(facility);
         const where = target ? `testimony ${testimonyList(facility).indexOf(target) + 1}` : 'one new testimony entry';
@@ -347,16 +365,12 @@
     function combineAll(facility) {
         const entries = testimonyList(facility);
         if (entries.length < 2) return null;
-        const sources = [];
-        entries.forEach(entry => {
-            const source = normalizeSource(entry.source);
-            if (source && !sources.includes(source)) sources.push(source);
-        });
+        const source = normalizeSource(entries.map(entry => entry.source).join('; '));
         const dates = entries.map(entry => String(entry.date || '').trim()).filter(Boolean).sort();
         const merged = {
             id: entries[0].id,
             text: entries.reduce((all, entry) => all.concat(paragraphs(entry.text)), []).join('\n\n'),
-            source: sources.join('; '),
+            source,
             date: dates[0] || '',
             movedFrom: mergeLabels(entries.map(entry => entry.movedFrom)),
             publish: entries.every(entry => entry.publish === true)
@@ -491,11 +505,16 @@
         pick.append(fresh);
         pick.addEventListener('change', () => { moveTarget = pick.value; });
         controls.append(pickLabel, pick);
-        if (notes.length > 1) {
+        const bulk = notes.filter(item => item.duplicate || !isLabel(item.text)).length;
+        if (bulk > 1) {
             const all = el('button', { type: 'button', className: 'btn', style: 'background: var(--kop-teal-ink, #24757F); color: var(--kop-white, #fff); border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap;' },
-                `Move all ${notes.length}`);
+                `Move all ${bulk}`);
             all.addEventListener('click', moveAll);
             controls.append(all);
+            if (bulk < notes.length) {
+                controls.append(el('span', { style: 'font-size: 13px; color: var(--kop-text-muted, #4A5568);' },
+                    `${notes.length - bulk} short label${notes.length - bulk === 1 ? '' : 's'} left for you to move one by one`));
+            }
         }
         movable.append(controls);
         notes.forEach(item => {
@@ -545,7 +564,7 @@
         render();
     }
 
-    window.KOP_Testimony = { render, collectMovableNotes, moveToTestimony, moveOne, combineAll, normalizeSource, init };
+    window.KOP_Testimony = { render, collectMovableNotes, moveToTestimony, moveOne, moveAll, combineAll, normalizeSource, init };
 
     if (!document.getElementById(SECTION_ID)) return;
     if (window.formReady) init();

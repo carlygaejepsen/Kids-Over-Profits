@@ -70,7 +70,7 @@ function load(formData, extra = {}) {
         getElementById: () => null,
         addEventListener: () => {}
     };
-    vm.runInNewContext(source, { window, document, console, Date, Math, Set, String, Array, Object, JSON });
+    vm.runInNewContext(source, { window, document, console, Date, Math, Set, String, Array, Object, JSON, confirm: () => true });
     return { api: window.KOP_Testimony, window, statuses };
 }
 
@@ -175,6 +175,37 @@ function load(formData, extra = {}) {
     check('combined stays private unless every entry was published', merged.publish === false);
     check('combined takes the earliest date', merged.date === '2026-09-25');
     check('nothing to combine with one entry', api.combineAll(facility) === null);
+}
+
+// --- A survivor's account is theirs; labels stay out of "Move all" --------
+
+{
+    const data = fixture();
+    const { api } = load(data);
+    const facility = data.facilities[0];
+    check('admin label drops beside a survivor',
+        api.normalizeSource('Submitted by a survivor (submission #50); Added by an admin') === 'Submitted by a survivor (submission #50)');
+    check('old label normalized inside a list',
+        api.normalizeSource('Submission #50; Added by an admin') === 'Submitted by a survivor (submission #50)');
+    check('admin alone stays', api.normalizeSource('Added by an admin') === 'Added by an admin');
+
+    facility.survivorTestimony = [
+        { id: 't1', text: 'A long enough account here.', source: 'Submission #50', date: '2026-09-25', publish: true },
+        { id: 't2', text: 'Moved by an admin later on.', source: 'Added by an admin', date: '2026-09-30', publish: false }
+    ];
+    const merged = api.combineAll(facility);
+    check('combined survivor + admin entry is sourced to the survivor',
+        merged.source === 'Submitted by a survivor (submission #50)', merged.source);
+
+    // "Move all": the one-word custom philosophy "Medication" stays behind.
+    api.moveAll();
+    const left = api.collectMovableNotes(facility);
+    check('move all leaves the one-word label', left.length === 1 && left[0].text === 'Medication',
+        JSON.stringify(left.map(i => i.text)));
+    check('move all took the accounts', facility.providerDetails.otherTtiPractices.length === 0
+        && !JSON.stringify(facility.fieldNotes).includes('group uprisings'));
+    check('still one account', facility.survivorTestimony.length === 1);
+    check('label not added to the account', !/(^|\n)Medication(\n|$)/.test(facility.survivorTestimony[0].text));
 }
 
 // --- The submitter's reason is copied, and not offered again --------------
