@@ -22,6 +22,8 @@ if (!file_exists($db_path)) {
 }
 
 require __DIR__ . '/kop-test-harness.php';
+require_once dirname(__DIR__) . '/inc/ajax-search-lite.php';
+require_once dirname(__DIR__) . '/inc/global-search.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -103,6 +105,74 @@ if ($bethel && $eagle) {
     $check('the direct name match ranks before the alias match', $bethelPos < $eaglePos, "bethel@$bethelPos eagle@$eaglePos");
 }
 
+echo "-- Record-detail hits --\n";
+$detail_hit = null;
+foreach ($wpdb->get_results('SELECT id, name, unique_name, json_data FROM facilities_v2 ORDER BY name', ARRAY_A) as $row) {
+    $doc = json_decode($row['json_data'], true);
+    if (!is_array($doc)) continue;
+    $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
+    $names = array_merge(
+        array($row['name'], $row['unique_name'], $ident['name'] ?? '', $ident['currentName'] ?? ''),
+        kop_v2_search_name_list($ident['pastNames'] ?? null),
+        kop_v2_search_name_list($ident['otherNames'] ?? null)
+    );
+    $protected = implode(' ', array_filter($names, 'is_string'));
+    preg_match_all('/(?<![\pL\pN])[\pL][\pL\pN\'-]{5,}(?![\pL\pN])/u', $row['json_data'], $matches);
+    foreach (array_unique($matches[0]) as $term) {
+        if (mb_stripos($protected, $term) !== false) continue;
+        $count = (int)$wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM facilities_v2 WHERE json_data LIKE %s', '%' . $wpdb->esc_like($term) . '%'));
+        if ($count !== 1) continue;
+        $detail_hit = array('id' => (int)$row['id'], 'term' => $term);
+        break 2;
+    }
+}
+if ($detail_hit) {
+    $r = $search_with_ids($detail_hit['term'], 500);
+    $hit = $find($r, $detail_hit['id']);
+    $check('a unique field in facilities_v2.json_data finds its facility', $hit !== null, $detail_hit['term']);
+} else {
+    $check('found a searchable detail-only fixture in the mirror', false);
+}
+
+echo "-- Inspection PDF text --\n";
+$report_text_hit = null;
+$report_rows = $wpdb->get_results(
+    "SELECT r.id, r.raw_content, r.summary, r.categories_json, f.facility_name, f.state
+       FROM inspection_reports r JOIN inspection_facilities f ON f.id = r.facility_id
+      WHERE r.raw_content <> '' ORDER BY r.report_date DESC, r.id DESC LIMIT 30",
+    ARRAY_A
+);
+$term_counts = array();
+foreach ($report_rows as $row) {
+    preg_match_all('/(?<![\pL\pN])[\pL][\pL\pN\'-]{7,}(?![\pL\pN])/u', $row['raw_content'], $matches);
+    foreach (array_unique(array_map('mb_strtolower', $matches[0])) as $term) {
+        $term_counts[$term] = ($term_counts[$term] ?? 0) + 1;
+    }
+}
+foreach (array_slice($report_rows, 0, 5) as $row) {
+    $protected = implode(' ', array($row['facility_name'], $row['summary'], $row['categories_json']));
+    preg_match_all('/(?<![\pL\pN])[\pL][\pL\pN\'-]{7,}(?![\pL\pN])/u', $row['raw_content'], $matches);
+    foreach (array_unique($matches[0]) as $term) {
+        if (($term_counts[mb_strtolower($term)] ?? 0) !== 1 || mb_stripos($protected, $term) !== false) continue;
+        $report_text_hit = array('term' => $term, 'facility' => $row['facility_name'], 'state' => strtolower($row['state']));
+        break 2;
+    }
+}
+if ($report_text_hit) {
+    $GLOBALS['kop_test_search_report_pages'] = true;
+    $matches = kop_global_search_inspection_text_matches($report_text_hit['term'], 5);
+    $found = false;
+    foreach ($matches as $match) {
+        if ($match['title'] === $report_text_hit['facility']) {
+            $found = strpos($match['url'], '/' . $report_text_hit['state'] . '-reports/') !== false;
+            break;
+        }
+    }
+    $check('an extracted PDF-text term returns its state inspection result', $found, $report_text_hit['term']);
+} else {
+    $check('found a unique extracted inspection-text fixture in the mirror', false);
+}
+
 echo "-- Guards --\n";
 
 // The length gate: "Co" (2 chars) is a substring of "Copper Canyon Academy"
@@ -130,6 +200,10 @@ foreach (array(
 ) as $file => $needle) {
     $check("$file renders the alias hint", strpos(file_get_contents(dirname(__DIR__) . '/' . $file), $needle) !== false);
 }
+$global_search_source = file_get_contents(dirname(__DIR__) . '/inc/global-search.php');
+$check('sitewide search includes extracted inspection report text', strpos($global_search_source, 'r.raw_content LIKE %s') !== false);
+$check('sitewide search resolves eligible legacy facility profile URLs', strpos($global_search_source, 'kop_facility_page_url_for_name') !== false);
+$check('full results resolve eligible legacy facility profile URLs', strpos(file_get_contents(dirname(__DIR__) . '/search.php'), 'kop_facility_page_url_for_name') !== false);
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);

@@ -698,6 +698,29 @@ if (!function_exists('kop_v2_search')) {
             }
         }
 
+        // Search the remaining record fields after names and aliases. Keep
+        // the candidate set bounded; these JSON blobs are not indexed.
+        $remaining = $facility_limit - count($rows);
+        if ($remaining > 0 && mb_strlen($phrase) >= 4) {
+            $exclude = array_map('intval', wp_list_pluck((array)$rows, 'id'));
+            $detail_pool = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name, state, city, country, status
+                   FROM facilities_v2
+                  WHERE json_data LIKE %s
+                  ORDER BY name
+                  LIMIT %d",
+                $like, min(500, max(100, $facility_limit * 20))
+            ), ARRAY_A);
+            foreach ((array)$detail_pool as $detail) {
+                $id = (int)$detail['id'];
+                if (in_array($id, $exclude, true)) continue;
+                $rows[] = $detail;
+                $exclude[] = $id;
+                $remaining--;
+                if ($remaining <= 0) break;
+            }
+        }
+
         $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck((array)$rows, 'id')));
         foreach ((array)$rows as $r) {
             $place = $r['state'] ? trim($r['city'] . ', ' . $r['state'], ', ') : trim($r['city'] . ', ' . $r['country'], ', ');

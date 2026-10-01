@@ -158,9 +158,13 @@ function kop_global_search_collect($phrase) {
                 $operator = $inner['referrerAgency']['name'];
             }
             $display = $operator !== '' ? $operator : $row['unique_name'];
+            $profile_url = '';
+            if ($cfg['key'] === 'facilities' && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
+                $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+            }
             $items[] = array(
                 'title' => $display,
-                'url'   => $index_url ? add_query_arg('search', rawurlencode($display), $index_url) : add_query_arg('s', rawurlencode($display), home_url('/')),
+                'url'   => $profile_url ?: ($index_url ? add_query_arg('search', rawurlencode($display), $index_url) : add_query_arg('s', rawurlencode($display), home_url('/'))),
                 'meta'  => '',
             );
         }
@@ -224,6 +228,12 @@ function kop_global_search_collect($phrase) {
         }
         if ($items) {
             $groups[] = array('key' => 'inspections', 'label' => 'Inspection records', 'items' => $items);
+        }
+
+        // --- Extracted inspection PDF text ------------------------------------
+        $items = kop_global_search_inspection_text_matches($phrase, 5);
+        if ($items) {
+            $groups[] = array('key' => 'inspection_text', 'label' => 'Inspection report text', 'items' => $items);
         }
     }
 
@@ -381,4 +391,39 @@ function kop_global_search_collect($phrase) {
     }
 
     return $groups;
+}
+
+/** Search extracted report text, summaries and structured citation fields. */
+function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
+    global $wpdb;
+
+    if (strlen(trim((string)$phrase)) < 4 || !kop_asl_table_exists('inspection_reports') || !kop_asl_table_exists('inspection_facilities')) {
+        return array();
+    }
+
+    $like = '%' . $wpdb->esc_like(trim((string)$phrase)) . '%';
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT f.facility_name, f.state, r.report_date
+           FROM inspection_reports r
+           JOIN inspection_facilities f ON f.id = r.facility_id
+          WHERE r.raw_content LIKE %s OR r.summary LIKE %s OR r.categories_json LIKE %s
+          ORDER BY r.report_date DESC
+          LIMIT %d",
+        $like, $like, $like, max(1, (int)$limit)
+    ), ARRAY_A);
+
+    $items = array();
+    foreach ((array)$rows as $row) {
+        $facility = (string)$row['facility_name'];
+        $state = strtoupper((string)$row['state']);
+        $profile_url = function_exists('kop_facility_page_url_for_name')
+            ? kop_facility_page_url_for_name($facility)
+            : '';
+        $state_page = $state ? get_page_by_path(strtolower($state) . '-reports') : null;
+        $url = $profile_url ?: ($state_page ? add_query_arg('search', rawurlencode($facility), get_permalink($state_page)) : '');
+        if ($url === '') continue;
+        $meta = array_filter(array('Inspection report text', $state, (string)$row['report_date']));
+        $items[] = array('title' => $facility, 'url' => $url, 'meta' => implode(' · ', $meta));
+    }
+    return $items;
 }

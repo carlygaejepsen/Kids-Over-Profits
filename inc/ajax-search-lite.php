@@ -111,9 +111,13 @@ function kop_asl_collect_database_matches($phrase) {
             $inner    = (isset($data['data']) && is_array($data['data'])) ? $data['data'] : $data;
             $operator = isset($inner['operator']['name']) && is_string($inner['operator']['name']) ? $inner['operator']['name'] : '';
             $display  = $operator !== '' ? $operator : $row['unique_name'];
-            $items[]  = array(
+            $profile_url = '';
+            if ($cfg['table'] === $facilities_table && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
+                $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+            }
+            $items[] = array(
                 'title' => $display,
-                'link'  => $index_url ? add_query_arg('search', rawurlencode($display), $index_url) : home_url('/?s=' . rawurlencode($phrase)),
+                'link'  => $profile_url ?: ($index_url ? add_query_arg('search', rawurlencode($display), $index_url) : home_url('/?s=' . rawurlencode($phrase))),
                 'meta'  => $cfg['label'],
             );
         }
@@ -162,6 +166,16 @@ function kop_asl_collect_database_matches($phrase) {
                 'title' => $row['facility_name'],
                 'link'  => add_query_arg('search', rawurlencode($row['facility_name']), get_permalink($state_page)),
                 'meta'  => 'Inspection records · ' . $state,
+            );
+        }
+    }
+
+    if (function_exists('kop_global_search_inspection_text_matches')) {
+        foreach (kop_global_search_inspection_text_matches($phrase, 3) as $match) {
+            $items[] = array(
+                'title' => $match['title'],
+                'link'  => $match['url'],
+                'meta'  => $match['meta'],
             );
         }
     }

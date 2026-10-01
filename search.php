@@ -81,7 +81,7 @@ function kop_search_page_url_by_template($template_basename) {
  * Search a master table (unique_name + json_data LIKE) and normalize rows
  * for display. Skips __facility_ref promotion stubs.
  */
-function kop_search_master_table($table, $search_query, $limit = 10) {
+function kop_search_master_table($table, $search_query, $limit = 10, $facility_records = false) {
     global $wpdb;
 
     if (!$table || !kop_search_table_exists($table)) {
@@ -121,9 +121,14 @@ function kop_search_master_table($table, $search_query, $limit = 10) {
                 $snippet = $match;
             }
         }
+        $profile_url = '';
+        if ($facility_records && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
+            $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+        }
         $results[] = array(
             'name'      => $row['unique_name'],
             'display'   => $operator !== '' ? $operator : $row['unique_name'],
+            'url'       => $profile_url,
             'operator'  => $operator,
             'location'  => $location,
             'fac_count' => (isset($inner['facilities']) && is_array($inner['facilities'])) ? count($inner['facilities']) : 0,
@@ -205,7 +210,7 @@ global $wpdb;
         } elseif ($kop_v2_search !== null && $section['table'] === 'locations_master') {
             $master_sections[$i]['results'] = $kop_v2_search['places'];
         } else {
-            $master_sections[$i]['results'] = kop_search_master_table($section['table'], $search_query, $limit);
+            $master_sections[$i]['results'] = kop_search_master_table($section['table'], $search_query, $limit, $section['table'] === $facilities_table);
         }
         $master_sections[$i]['url']     = kop_search_page_url_by_template($section['template']);
         if (!empty($master_sections[$i]['results'])) {
@@ -385,6 +390,30 @@ global $wpdb;
     <?php endif; ?>
 
     <?php
+    $inspection_text_results = function_exists('kop_global_search_inspection_text_matches')
+        ? kop_global_search_inspection_text_matches($search_query, 10)
+        : array();
+    ?>
+
+    <?php if (!empty($inspection_text_results)): ?>
+    <section class="kop-search-section kop-search-inspection-text">
+        <h2 class="kop-search-section-title">Inspection Report Text</h2>
+        <ul class="kop-search-result-list">
+            <?php foreach ($inspection_text_results as $result): ?>
+            <li class="kop-search-result kop-result-inspection">
+                <div class="kop-result-main">
+                    <a class="kop-result-name kop-result-link" href="<?php echo esc_url($result['url']); ?>">
+                        <?php echo esc_html($result['title']); ?>
+                    </a>
+                    <span class="kop-result-meta"><?php echo esc_html($result['meta']); ?></span>
+                </div>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+    <?php endif; ?>
+
+    <?php
     // -------------------------------------------------------------------------
     // 4. News from news_submissions
     // -------------------------------------------------------------------------
@@ -501,7 +530,7 @@ global $wpdb;
     </section>
     <?php endif; ?>
 
-    <?php if (!$any_master_results && empty($wiki_results) && empty($inspection_results) && empty($news_results) && empty($glossary_results) && !$wp_results->have_posts()): ?>
+    <?php if (!$any_master_results && empty($wiki_results) && empty($inspection_results) && empty($inspection_text_results) && empty($news_results) && empty($glossary_results) && !$wp_results->have_posts()): ?>
         <div class="kop-search-no-results">
             <p>No results found for <strong><?php echo $safe_query; ?></strong>. Try a different term, or <a href="<?php echo esc_url(get_post_type_archive_link('page')); ?>">browse the site</a>.</p>
         </div>

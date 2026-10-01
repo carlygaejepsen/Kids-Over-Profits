@@ -108,6 +108,9 @@ function update_option() { return true; }
  * unnoticed until it reached the site. */
 function get_page_by_path($slug = '') {
     if ($slug === 'report-abuse') return (object) array('ID' => 1, 'post_name' => 'report-abuse');
+    if (!empty($GLOBALS['kop_test_search_report_pages']) && preg_match('/^[a-z]{2}-reports$/', (string)$slug)) {
+        return (object) array('ID' => 2, 'post_name' => $slug);
+    }
     return null;
 }
 function get_permalink($post = null) { return is_object($post) && isset($post->post_name) ? home_url('/' . $post->post_name . '/') : ''; }
