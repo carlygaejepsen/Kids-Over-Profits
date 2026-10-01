@@ -50,11 +50,15 @@ $kop_op_company_list = static function (array $items) {
 
 get_header();
 ?>
+<?php
+// An admin's pencil (inc/inline-edit.php); '' for everyone else.
+$kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) $page['id'] . ':all', 'this company') : '';
+?>
 <article id="operator-<?php echo (int) $page['id']; ?>" class="entry content-bg single-entry kop-facility-profile kop-facility-generated kop-operator-profile" data-kop-bug-feature="operator-page" data-kop-bug-label="Operator page: <?php echo esc_attr($page['name']); ?>">
 
     <header class="kop-fp-header">
         <p class="kop-fp-eyebrow">Parent company profile</p>
-        <h1 class="entry-title kop-fp-title"><?php echo esc_html($page['name']); ?></h1>
+        <h1 class="entry-title kop-fp-title"<?php echo $kop_op_edit; ?>><?php echo esc_html($page['name']); ?></h1>
         <?php if ($page['current_name'] !== '') : ?>
             <p class="kop-fp-formerly">Now known as <?php echo esc_html($page['current_name']); ?></p>
         <?php endif; ?>
@@ -75,7 +79,7 @@ get_header();
 
         <aside class="kop-fp-rail" aria-label="Company facts">
             <h2>At a glance</h2>
-            <dl class="kop-fp-facts">
+            <dl class="kop-fp-facts"<?php echo $kop_op_edit; ?>>
                 <?php foreach ($page['facts'] as $fact) : ?>
                     <div>
                         <dt><?php echo esc_html($fact['label']); ?></dt>
@@ -134,7 +138,7 @@ get_header();
                     <?php foreach ($page['facilities'] as $f) :
                         $bits = array_filter(array($f['place'], $f['years'], ($f['status'] !== '' && $f['status'] !== 'Unknown') ? $f['status'] : ''), 'strlen');
                         ?>
-                        <li>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('facility:' . (int) $f['id'] . ':all', $f['name']) : ''; ?>>
                             <a href="<?php echo esc_url($f['url']); ?>"><?php echo esc_html($f['name']); ?></a>
                             <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
                         </li>
@@ -144,7 +148,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($page['parents'] || $page['subsidiaries']) : ?>
-            <section class="kop-fp-section" id="ownership">
+            <section class="kop-fp-section" id="ownership"<?php echo $kop_op_edit; ?>>
                 <h2>Ownership</h2>
                 <?php if ($page['parents']) : ?>
                     <h3 class="kop-fp-subhead">Owned by</h3>
@@ -247,7 +251,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($page['notes']) : ?>
-            <section class="kop-fp-section" id="notes">
+            <section class="kop-fp-section" id="notes"<?php echo $kop_op_edit; ?>>
                 <h2>Research notes</h2>
                 <ul class="kop-fp-notes">
                     <?php foreach ($page['notes'] as $note) : ?>
@@ -258,7 +262,7 @@ get_header();
             <?php endif; ?>
 
             <?php if ($page['websites']) : ?>
-            <section class="kop-fp-section" id="links">
+            <section class="kop-fp-section" id="links"<?php echo $kop_op_edit; ?>>
                 <h2>Websites</h2>
                 <p class="kop-fp-count">A company's own website is linked as an archived snapshot, so the page reads as it did when it was captured.</p>
                 <ul class="kop-fp-records">

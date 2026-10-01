@@ -524,7 +524,8 @@ function kop_ischools_render_public() {
     foreach ($by_country as $country => $list) {
         echo '<h3>' . $e($country) . "</h3>\n";
         foreach ($list as $s) {
-            echo '<article class="kop-ibs-school" id="kop-ibs-school-' . (int) $s['id'] . '">';
+            echo '<article class="kop-ibs-school" id="kop-ibs-school-' . (int) $s['id'] . '"'
+                . (function_exists('kop_ie_attr') ? kop_ie_attr('school:' . (int) $s['id'], $s['name']) : '') . '>';
             echo '<h4 class="kop-ibs-school-name">' . $e($s['name']) . '</h4>';
             $meta = kop_ischools_meta_line($s);
             if ($meta !== '') {

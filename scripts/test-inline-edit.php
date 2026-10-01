@@ -194,6 +194,32 @@ if ($fid) {
     $check('unticked becomes false, custom entries kept', ($out4['philosophy']['has12Steps'] ?? null) === false && !empty($out4['philosophy']['customPhilosophy']));
 }
 
+echo "-- Every parent company sent back unchanged --\n";
+$ops = $changed = 0;
+$examples = array();
+foreach ($pdo->query('SELECT id, json_data FROM wpdl_kop_operators ORDER BY id') as $row) {
+    $json = json_decode((string) $row['json_data'], true);
+    $op = $json['operator'] ?? array();
+    $ops++;
+    $vals = array();
+    foreach (kop_ie_operator_form($op) as $f) $vals[$f['name']] = $as_posted($f);
+    $diff = $first_diff($op, kop_ie_operator_apply_values($op, $vals));
+    if ($diff !== '') {
+        $changed++;
+        if (count($examples) < 5) $examples[] = '#' . $row['id'] . ' ' . $diff;
+    }
+}
+$check("$ops company records round-trip unchanged", $ops > 0 && $changed === 0, $changed . ' changed' . ($examples ? ': ' . implode('; ', $examples) : ''));
+$op = array('keyStaff' => array('ceo' => 'A', 'founders' => array(array('name' => 'Old', 'role' => 'Founder', 'pastJobs' => ''))), 'otherNames' => array());
+$vals = array();
+foreach (kop_ie_operator_form($op) as $f) $vals[$f['name']] = $as_posted($f);
+$vals['keyStaff.ceo'] = 'New Boss';
+$vals['otherNames'] = "Short Name\nOther Name";
+$vals['keyStaff.founders'][0]['pastJobs'] = 'Somewhere';
+$out = kop_ie_operator_apply_values($op, $vals);
+$check('company edits land', $out['keyStaff']['ceo'] === 'New Boss' && $out['otherNames'] === array('Short Name', 'Other Name')
+    && $out['keyStaff']['founders'][0]['name'] === 'Old' && $out['keyStaff']['founders'][0]['pastJobs'] === 'Somewhere');
+
 echo "-- Bad input refused --\n";
 $refused = function ($group, $values) use ($doc, $apply) {
     try {

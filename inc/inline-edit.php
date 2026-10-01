@@ -20,6 +20,8 @@
  *                           re-syncs the facility links)
  *   cfg:hub:law-policy      every line of a hub's settings (inc/hub-shell.php)
  *   cfg:utility:links       a utility page's settings (inc/utility-pages.php)
+ *   operator:7:all|raw      a parent company's fields (kop_operators), name excepted
+ *   school:3                an indigenous school (inc/indigenous-schools.php)
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -74,6 +76,16 @@ function kop_ie_get_path(array $a, $path) {
         $a = $a[$k];
     }
     return $a;
+}
+
+function kop_ie_has_path(array $a, $path) {
+    foreach (explode('.', $path) as $k) {
+        if (!is_array($a) || !array_key_exists($k, $a)) {
+            return false;
+        }
+        $a = $a[$k];
+    }
+    return true;
 }
 
 function kop_ie_set_path(array &$a, $path, $value) {
@@ -147,6 +159,8 @@ function kop_ie_sources() {
         'facility' => array('load' => 'kop_ie_facility_load', 'save' => 'kop_ie_facility_save'),
         'rec'      => array('load' => 'kop_ie_rec_load', 'save' => null),
         'cfg'      => array('load' => 'kop_ie_cfg_load', 'save' => 'kop_ie_cfg_save'),
+        'operator' => array('load' => 'kop_ie_operator_load', 'save' => 'kop_ie_operator_save'),
+        'school'   => array('load' => 'kop_ie_ischool_load', 'save' => 'kop_ie_ischool_save'),
     ));
 }
 
@@ -704,6 +718,10 @@ function kop_ie_facility_apply(array &$doc, array $field, $value) {
                 $new = $new === '' ? null : $new;
             }
     }
+    // Left empty, a field the record never had is not added.
+    if (($new === '' || $new === null || $new === array()) && !kop_ie_has_path($doc, $path)) {
+        return;
+    }
     kop_ie_set_path($doc, $path, $new);
 }
 
@@ -932,6 +950,177 @@ function kop_ie_rec_load(array $p) {
     );
 }
 
+/* ---- Parent companies (kop_operators.json_data.operator) --------------------- */
+
+/** Every field of an operator record, in the facility field format. The name is not here: renaming moves the page and its references (kop_v2_rename_operator()). */
+function kop_ie_operator_fields() {
+    $people = array('columns' => array('name' => 'Name', 'role' => 'Role', 'pastJobs' => 'Past jobs'));
+    return array(
+        array('Names and status', array(
+            array('currentName', 'Name it uses now, if different', 'text'),
+            array('otherNames', 'Also known as', 'lines'),
+            array('type', 'Type', 'text'),
+            array('status', 'Status (Active, Defunct, Acquired, Merged)', 'text'),
+            array('founded', 'Founded', 'text'),
+            array('operatingPeriod', 'Operating (years, as written)', 'text'),
+        )),
+        array('Where', array(
+            array('headquarters', 'Headquarters, as one line', 'text', array('help' => 'Shown first; city and state below are used when it is empty.')),
+            array('headquartersCity', 'Headquarters city', 'text'),
+            array('headquartersState', 'Headquarters state', 'text'),
+            array('location', 'Location, as one line', 'text'),
+            array('locationCity', 'Location city', 'text'),
+            array('locationState', 'Location state', 'text'),
+        )),
+        array('People and money', array(
+            array('keyStaff.ceo', 'Chief executive', 'text'),
+            array('keyStaff.founders', 'Founders', 'rows', $people),
+            array('keyStaff.keyExecutives', 'Executives', 'rows', $people),
+            array('owners', 'Owners', 'lines'),
+            array('investors', 'Investors', 'lines'),
+            array('parentCompanies', 'Parent companies', 'lines'),
+        )),
+        array('Notes and links', array(
+            array('notes', 'Research notes', 'items'),
+            array('websites', 'Websites (one address a line)', 'lines'),
+        )),
+    );
+}
+
+function kop_ie_operator_row(PDO $pdo, $id) {
+    global $wpdb;
+    $q = $pdo->prepare('SELECT id, name, json_data FROM `' . $wpdb->prefix . 'kop_operators` WHERE id = ?');
+    $q->execute(array((int) $id));
+    $row = $q->fetch(PDO::FETCH_ASSOC);
+    $json = $row ? json_decode((string) $row['json_data'], true) : null;
+    if (!$row || !is_array($json)) {
+        throw new RuntimeException('That company record is gone.');
+    }
+    if (!isset($json['operator']) || !is_array($json['operator'])) {
+        $json['operator'] = array();
+    }
+    return array($row, $json);
+}
+
+function kop_ie_operator_form(array $op) {
+    $fields = array();
+    foreach (kop_ie_operator_fields() as $section) {
+        foreach ($section[1] as $def) {
+            $f = kop_ie_facility_field($op, $def);
+            $f['section'] = $section[0];
+            $fields[] = $f;
+        }
+    }
+    return $fields;
+}
+
+/** The dialog's values applied to an operator object (scripts/test-inline-edit.php runs it on every record). */
+function kop_ie_operator_apply_values(array $op, array $values) {
+    foreach (kop_ie_operator_form($op) as $field) {
+        if (array_key_exists($field['name'], $values)) {
+            kop_ie_facility_apply($op, $field, $values[$field['name']]);
+        }
+    }
+    return $op;
+}
+
+function kop_ie_operator_load(array $p) {
+    $opts = kop_ie_facility_opts();
+    list($row, $json) = kop_ie_operator_row($opts['pdo'], (int) ($p[0] ?? 0));
+    if (($p[1] ?? 'all') === 'raw') {
+        return array(
+            'title'  => $row['name'] . ': whole record',
+            'help'   => 'Every field this company holds, as stored. Keep the structure; change the values.',
+            'fields' => array(kop_ie_field('json', 'Record', 'code', wp_json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), array('rows' => 30))),
+        );
+    }
+    return array(
+        'title'  => $row['name'] . ': every field',
+        'help'   => 'The company name is changed under KOP Data Tools, because renaming moves its page and the facilities that name it.',
+        'fields' => kop_ie_operator_form($json['operator']),
+    );
+}
+
+function kop_ie_operator_save(array $p, array $v) {
+    global $wpdb;
+    $id = (int) ($p[0] ?? 0);
+    $raw = ($p[1] ?? 'all') === 'raw';
+    $opts = kop_ie_facility_opts();
+    kop_v2_with_write_lock($opts['pdo'], function () use ($opts, $id, $raw, $v, $wpdb) {
+        list($row, $json) = kop_ie_operator_row($opts['pdo'], $id);
+        if ($raw) {
+            $new = json_decode((string) ($v['json'] ?? ''), true);
+            if (!is_array($new) || !isset($new['operator']) || !is_array($new['operator'])) {
+                throw new RuntimeException('That is not a valid record: ' . (json_last_error() ? json_last_error_msg() : 'operator is missing') . '.');
+            }
+            if ((string) ($new['operator']['name'] ?? '') !== (string) ($json['operator']['name'] ?? '')) {
+                throw new RuntimeException('The name cannot be changed here; use KOP Data Tools.');
+            }
+            $json = $new;
+        } else {
+            $json['operator'] = kop_ie_operator_apply_values($json['operator'], $v);
+        }
+        $opts['pdo']->prepare('UPDATE `' . $wpdb->prefix . 'kop_operators` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+            ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
+    });
+    if (function_exists('kop_operator_pages_flush_index')) {
+        kop_operator_pages_flush_index();
+    }
+    $url = function_exists('kop_operator_page_url') ? (string) kop_operator_page_url($id) : '';
+    kop_ie_purge_url($url);
+    return array('message' => 'Saved.');
+}
+
+/* ---- Indigenous schools (inc/indigenous-schools.php) -------------------------- */
+
+function kop_ie_ischool_get($id) {
+    $pdo = function_exists('kop_ischools_pdo') ? kop_ischools_pdo() : null;
+    $s = $pdo ? kop_ischools_get($pdo, (int) $id) : null;
+    if (!$s) {
+        throw new RuntimeException('That school record is gone.');
+    }
+    return array($pdo, $s);
+}
+
+function kop_ie_ischool_load(array $p) {
+    list($pdo, $s) = kop_ie_ischool_get($p[0] ?? 0);
+    return array(
+        'title'  => $s['name'],
+        'fields' => array(
+            kop_ie_field('name', 'Name', 'text', $s['name']),
+            kop_ie_field('other_names', 'Other names', 'lines', $s['other_names']),
+            kop_ie_field('country', 'Country', 'text', $s['country']),
+            kop_ie_field('region', 'State, province or territory', 'text', $s['region']),
+            kop_ie_field('city', 'City or town', 'text', $s['city']),
+            kop_ie_field('nations', 'Nations whose children were sent there', 'textarea', $s['nations']),
+            kop_ie_field('run_by', 'Run by', 'text', $s['run_by']),
+            kop_ie_field('opened', 'Opened (year)', 'year', (string) $s['opened']),
+            kop_ie_field('closed', 'Closed (year)', 'year', (string) $s['closed']),
+            kop_ie_field('status', 'Status', 'select', $s['status'], array('options' => array('Open', 'Closed', 'Unknown'))),
+            kop_ie_field('notes', 'Notes', 'textarea', $s['notes'], array('rows' => 8, 'help' => 'A blank line between paragraphs; **bold**, *italic*, [link text](https://...).')),
+            kop_ie_field('links', 'Links (one address a line)', 'lines', $s['links']),
+        ),
+    );
+}
+
+/** kop_ischools_save() writes every column, so the dialog's values go over the whole row. */
+function kop_ie_ischool_save(array $p, array $v) {
+    list($pdo, $s) = kop_ie_ischool_get($p[0] ?? 0);
+    foreach (array('opened' => 'Opened', 'closed' => 'Closed') as $k => $label) {
+        if (isset($v[$k])) {
+            kop_ie_int($v[$k], $label, 1700, (int) gmdate('Y'));
+        }
+    }
+    $f = array_merge($s, array_intersect_key($v, array_flip(array('name', 'other_names', 'country', 'region', 'city', 'nations', 'run_by', 'opened', 'closed', 'status', 'notes', 'links'))));
+    unset($f['review']);
+    kop_ischools_save($pdo, $f, (int) $s['id'], kop_ie_who());
+    $page = get_page_by_path('indian-boarding-schools');
+    if ($page) {
+        kop_ie_purge_post($page->ID);
+    }
+    return array('message' => 'Saved.');
+}
+
 /* ---- Hub and utility page settings (string lines in code) -------------------- */
 
 /** Saved overrides: array('hub:<slug>' => array(dotted path => text)). */
@@ -1110,6 +1299,12 @@ function kop_ie_page_refs() {
         $fid = (int) $GLOBALS['kop_facility_page']['id'];
         $refs[] = array('ref' => 'facility:' . $fid . ':all', 'label' => 'Every field of this facility');
         $refs[] = array('ref' => 'facility:' . $fid . ':raw', 'label' => 'Whole record (JSON)');
+        return $refs;
+    }
+    if (!empty($GLOBALS['kop_operator_page']['id'])) {
+        $oid = (int) $GLOBALS['kop_operator_page']['id'];
+        $refs[] = array('ref' => 'operator:' . $oid . ':all', 'label' => 'Every field of this company');
+        $refs[] = array('ref' => 'operator:' . $oid . ':raw', 'label' => 'Whole record (JSON)');
         return $refs;
     }
     if (is_singular()) {
