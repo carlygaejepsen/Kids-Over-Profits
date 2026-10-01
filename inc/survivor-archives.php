@@ -2,8 +2,9 @@
 /**
  * Documents on survivor-run websites that KOP has no copy of.
  *
- * Surviving Straight Inc. (survivingstraightinc.com) and WWASP Survivors
- * (wwaspsurvivors.com) host their own document collections. Like the
+ * Surviving Straight Inc. (survivingstraightinc.com), WWASP Survivors
+ * (wwaspsurvivors.com), thestraights.net and the New Horizons Alumni
+ * Association (nhym-alumni.org) host their own document collections. Like the
  * Unsilenced archive (inc/unsilenced-archive.php), scripts/survivor-archives.py
  * hashes every document their pages link, drops what KOP's media library
  * already holds, and writes per facility and operator what is left:
@@ -26,7 +27,19 @@ if (!function_exists('kop_survivor_archives_sites')) {
         return array(
             'ssi'   => 'survivingstraightinc.com',
             'wwasp' => 'wwaspsurvivors.com',
+            'straights' => 'thestraights.net',
+            'nhym'  => 'nhym-alumni.org',
         );
+    }
+}
+
+if (!function_exists('kop_survivor_archives_scheme')) {
+    /**
+     * The scheme a site's documents must use: https, except thestraights.net,
+     * which has no https (its TLS handshake fails), so its links are http.
+     */
+    function kop_survivor_archives_scheme($site) {
+        return $site === 'straights' ? 'http' : 'https';
     }
 }
 
@@ -54,7 +67,7 @@ if (!function_exists('kop_survivor_archives_index')) {
             $entry = array(
                 'built'      => (string) ($data['built'] ?? ''),
                 'label'      => (string) ($data['label'] ?? $host),
-                'url'        => 'https://' . $host . '/',
+                'url'        => kop_survivor_archives_scheme($site) . '://' . ($site === 'nhym' ? 'www.' : '') . $host . '/',
                 'facilities' => array(),
                 'operators'  => array(),
             );
@@ -114,9 +127,9 @@ if (!function_exists('kop_survivor_archives')) {
                 $data = json_decode((string) file_get_contents($path), true);
                 foreach ((array) ($data['files'] ?? array()) as $f) {
                     $url = (string) ($f['url'] ?? '');
-                    // Only links to the site itself, over https.
+                    // Only links to the site itself, over its scheme (https; http for thestraights.net alone).
                     $host = strtolower((string) parse_url($url, PHP_URL_HOST));
-                    if (stripos($url, 'https://') !== 0 || preg_replace('/^www\./', '', $host) !== $hosts[$site]) continue;
+                    if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== kop_survivor_archives_scheme($site) || preg_replace('/^www\./', '', $host) !== $hosts[$site]) continue;
                     if (isset($seen[$url])) continue;
                     $seen[$url] = true;
                     $groups[trim((string) ($f['group'] ?? ''))][] = array(

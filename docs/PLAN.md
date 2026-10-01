@@ -812,24 +812,38 @@ elanabuse.nfshost.com and survivingcedu.wordpress.com (1-5 documents,
 mostly HEAL copies), the Hephzibah House blog (a few scanned images).
 Owner decisions in Waiting on the owner item 18.
 
-1. **thestraights.net** (Sonnet 5.5, one general-purpose agent for steps
-   1-2, since both edit the same script). Wes Fager's Straight Inc.
-   research: about 680 static `.htm` pages, 54 documents on the site in the
-   first 150 (court filings, press kits, Straight Foundation / Drug Free
-   America Foundation finances), likely 150-250 in all. Add a generic
-   same-host crawler to the script (1 request a second, headings as
-   sections, the folder from the path) and a `straights` site whose RULES
-   reuse the Straight ones (branches by folder or page, the rest to
-   Straight Inc., o21). Also new: a document an earlier site already lists
-   for the same record is not listed again, so Surviving Straight and
-   thestraights.net copies of one filing show once. fetch, build, add the
-   site to `kop_survivor_archives_sites()` and the test.
-2. **nhym-alumni.org** (same agent). New Horizons Alumni Association,
-   `/documents/`: 45 PDFs (Escuela Caribe and New Horizons yearbooks
-   1986-1998, handbooks, application packets, annual reports, Form 990s).
-   Records: New Horizons Youth Ministries (f13339, Indiana); Escuela Caribe
-   and the other NHYM programs by `facilities_v2` name, or the operator
-   when KOP has one. Yearbooks per decision 18.
+1. **thestraights.net** (built 2026-10-01). `survivor-archives.py` has a
+   generic same-host crawler (`crawl_site`: BFS from the home page plus
+   `sitemap.xml`, 1 request a second, images/styles/scripts skipped, page
+   path, title, nearest bold heading as section, folder from the document
+   path) and the site `straights`. It has no https (the TLS handshake
+   fails), so its links are http; `kop_survivor_archives_scheme()` in
+   `inc/survivor-archives.php` allows http for that site only (tested).
+   Real size: 388 live pages (89 dead links), 53 documents, not the 150-250
+   guessed: 46 listed (Straight Inc. o21 42, KIDS Centers o14 6, KIDS of
+   Bergen County f12760 2, Straight Tampa Bay f9632 1, SAFE/Substance Abuse
+   - Family Education f11222 1), 4 dead, 2 private (a survivor's story and a
+   list of named suicides), 1 Scientology press kit left unmapped. Also new:
+   a document an earlier site (SITES order) already lists for the same
+   record by md5 is not listed again.
+2. **nhym-alumni.org** (built 2026-10-01). Site `nhym`: 45 documents, 31
+   listed (New Horizons Youth Ministries f13339 28; Caribbean Mountain
+   Academy f14115, past name Escuela Caribe, 3), 10 yearbooks left out, 3
+   the site answers 403 to (never fetchable), 1 KOP already holds. KOP has
+   no NHYM operator and no other NHYM facility record under that name.
+   Privacy (owner decision 18), all four sites: the build drops yearbooks
+   and documents that look like private records by file name, link text and
+   section (client/student/medical records, progress reports on a youth,
+   filled-in applications, victim statements and personal letters, survivor
+   stories, named victims) and reads `js/data/survivor-archives/privacy.json`
+   ({exclude, titles, groups}, keys are sha1 of the url or the group label,
+   never a name; the repo is public). `python scripts/survivor-archives.py
+   privacy-review` writes `tmp/survivor-archives/privacy-review.md` (every
+   listed document with its hashes) for a reviewer to fill privacy.json,
+   which is still empty: that name-by-name pass is open. `selftest` checks
+   the patterns. Automatic exclusions so far: ssi 1, wwasp 5 (the Ben
+   Trane "Part 6 - Victim statements" group, which also holds two non-victim
+   exhibits), straights 2, nhym 10.
 3. **SCIAD NET survey** (Opus 5.5, a separate general-purpose agent, read
    only, runs alongside 1-2). The WWASP Survivor Truth archive is a public
    Zotero group (`api.zotero.org/groups/4552235`, no key needed): 104,282

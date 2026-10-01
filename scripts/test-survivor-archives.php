@@ -88,6 +88,33 @@ $check('a single short group prints open', strpos($html, '</p><ul class="kop-fp-
 $o = kop_survivor_archives('o', array(3, 4));
 $check('an operator merges its duplicate ids, each file once', $o && $o[0]['count'] === 3, $o ? $o[0]['count'] . ' files' : 'none');
 
+// ---- thestraights.net is http only; the other sites need https ---------------------
+$check('scheme: http for thestraights.net alone',
+    kop_survivor_archives_scheme('straights') === 'http' && kop_survivor_archives_scheme('ssi') === 'https'
+    && kop_survivor_archives_scheme('nhym') === 'https');
+foreach (array('straights/f', 'nhym/f') as $d) mkdir($fixture . '/' . $d, 0777, true);
+$put('straights/index.json', array('built' => '2026-10-01', 'label' => 'thestraights.net', 'facilities' => array('9' => 3), 'operators' => array()));
+$put('straights/f/9.json', array('files' => array(
+    array('url' => 'http://thestraights.net/docs/a.pdf', 'name' => 'Over http', 'group' => 'G'),
+    array('url' => 'https://thestraights.net/docs/b.pdf', 'name' => 'Over https', 'group' => 'G'),
+    array('url' => 'http://evil.example/c.pdf', 'name' => 'Off site', 'group' => 'G'),
+)));
+$put('nhym/index.json', array('built' => '2026-10-01', 'label' => 'NHYM', 'facilities' => array('9' => 2), 'operators' => array()));
+$put('nhym/f/9.json', array('files' => array(
+    array('url' => 'https://www.nhym-alumni.org/documents/a.pdf', 'name' => 'www host', 'group' => 'G'),
+    array('url' => 'http://www.nhym-alumni.org/documents/b.pdf', 'name' => 'http', 'group' => 'G'),
+)));
+kop_survivor_archives_index(true);
+$a = kop_survivor_archives('f', 9);
+$by = array();
+foreach ($a as $b) $by[$b['site']] = $b['count'];
+$check('straights lists its http link only', ($by['straights'] ?? 0) === 1, json_encode($by));
+$check('nhym lists its https www link only', ($by['nhym'] ?? 0) === 1, json_encode($by));
+$check('straights index url is http', kop_survivor_archives_index()['straights']['url'] === 'http://thestraights.net/');
+foreach (array('straights/f/9.json', 'straights/index.json', 'nhym/f/9.json', 'nhym/index.json') as $p) @unlink($fixture . '/' . $p);
+foreach (array('straights/f', 'straights/o', 'nhym/f', 'nhym/o', 'straights', 'nhym') as $d) @rmdir($fixture . '/' . $d);
+kop_survivor_archives_index(true);
+
 // ---- The real build, when present --------------------------------------------
 $real = dirname(__DIR__) . '/js/data/survivor-archives';
 foreach (kop_survivor_archives_sites() as $site => $host) {
@@ -104,7 +131,7 @@ foreach (kop_survivor_archives_sites() as $site => $host) {
             if (!is_array($shard) || count($shard['files'] ?? array()) !== (int) $n) $bad[] = "{$dir}/{$id}";
             foreach ((array) ($shard['files'] ?? array()) as $f) {
                 if (preg_replace('/^www\./', '', strtolower((string) parse_url($f['url'] ?? '', PHP_URL_HOST))) !== $host
-                    || stripos($f['url'], 'https://') !== 0) $off[] = $f['url'] ?? '?';
+                    || strtolower((string) parse_url($f['url'], PHP_URL_SCHEME)) !== kop_survivor_archives_scheme($site)) $off[] = $f['url'] ?? '?';
             }
         }
     }
