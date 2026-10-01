@@ -53,6 +53,7 @@ if (!function_exists('fetchUrlAsText')) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_ENCODING, ''); // accept and unpack gzip/br: Wayback serves id_ snapshots compressed
 
         $html = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -67,22 +68,54 @@ if (!function_exists('fetchUrlAsText')) {
             return ['text' => '', 'httpCode' => $httpCode, 'curlError' => $curlError];
         }
 
-        // Remove scripts, styles, and other non-content elements
-        $html = preg_replace('/<script\b[^>]*>(.*?)<\/script>/is', "", $html);
-        $html = preg_replace('/<style\b[^>]*>(.*?)<\/style>/is', "", $html);
-        $html = preg_replace('/<iframe\b[^>]*>(.*?)<\/iframe>/is', "", $html);
-        $html = preg_replace('/<noscript\b[^>]*>(.*?)<\/noscript>/is', "", $html);
+        // Remove scripts, styles, and other non-content elements. String
+        // search, not a regex: on a large page (most news sites) the regex
+        // ran out of backtracking room and returned null, which left no text
+        // at all and made the page look unfetchable.
+        foreach (['script', 'style', 'iframe', 'noscript', 'svg'] as $tag) {
+            $html = kopStripElements($html, $tag);
+        }
 
         // Strip the Wayback Machine toolbar wrapper if present — it adds nav text
         // that confuses the AI ("PLAYBACK FAILED", "save page", etc.).
-        $html = preg_replace('/<div\s+id="wm-ipp[^"]*"[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/i', '', $html);
+        $start = stripos($html, '<!-- BEGIN WAYBACK TOOLBAR INSERT -->');
+        $end = $start === false ? false : stripos($html, '<!-- END WAYBACK TOOLBAR INSERT -->', $start);
+        if ($start !== false && $end !== false) {
+            $html = substr($html, 0, $start) . substr($html, $end);
+        }
 
         // Basic HTML to text conversion
-        $text = strip_tags($html);
-        $text = preg_replace('/\s+/', ' ', $text);
+        $text = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/\s+/u', ' ', $text) ?? preg_replace('/\s+/', ' ', $text) ?? $text;
         $text = trim($text);
 
         return ['text' => $text, 'httpCode' => $httpCode, 'curlError' => $curlError];
+    }
+}
+
+if (!function_exists('kopStripElements')) {
+    /** Drop every <$tag ...>...</$tag> from $html, by string search (any page size). */
+    function kopStripElements($html, $tag) {
+        $out = '';
+        $pos = 0;
+        $open = '<' . $tag;
+        $close = '</' . $tag;
+        while (($start = stripos($html, $open, $pos)) !== false) {
+            $after = substr($html, $start + strlen($open), 1);
+            if ($after !== '' && !in_array($after, [' ', '>', "\t", "\n", "\r", '/'], true)) {
+                $out .= substr($html, $pos, $start + strlen($open) - $pos);
+                $pos = $start + strlen($open);
+                continue; // <scripts>, <styles>: not this tag
+            }
+            $out .= substr($html, $pos, $start - $pos);
+            $end = stripos($html, $close, $start);
+            if ($end === false) {
+                return $out;
+            }
+            $gt = strpos($html, '>', $end);
+            $pos = $gt === false ? strlen($html) : $gt + 1;
+        }
+        return $out . substr($html, $pos);
     }
 }
 
@@ -120,7 +153,15 @@ if (!function_exists('looksPaywalled')) {
             'register to read',
             'support local journalism',          // common upsell stub
             'enable javascript to view',
-            'please enable javascript'
+            'please enable javascript',
+            // Bot walls (Cloudflare and the like) answer 200 with a challenge page.
+            'just a moment...',
+            'attention required!',
+            'verify you are human',
+            'checking your browser',
+            'access denied',
+            'request blocked',
+            'are you a robot'
         ];
         foreach ($signals as $needle) {
             if (strpos($lower, $needle) !== false) return true;
@@ -146,6 +187,7 @@ if (!function_exists('fetchFromArchiveOrg')) {
         curl_setopt($ch, CURLOPT_URL, $apiUrl);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_USERAGENT, 'KOP-news-processor/1.0 (+https://kidsoverprofits.org)');
         $json = curl_exec($ch);
         $apiHttpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -158,22 +200,51 @@ if (!function_exists('fetchFromArchiveOrg')) {
 
         $data = json_decode($json, true);
         $snapshot = $data['archived_snapshots']['closest'] ?? null;
-        if (!$snapshot || empty($snapshot['url']) || empty($snapshot['available'])) {
+        $tried = [];
+        if ($snapshot && !empty($snapshot['url']) && !empty($snapshot['available'])) {
+            // Prefer the "id_" variant which serves the raw original HTML without the
+            // Wayback toolbar wrapper — cleaner extraction.
+            $snapshotUrl = preg_replace('#/web/(\d+)/#', '/web/$1id_/', $snapshot['url'], 1);
+            $tried[$snapshotUrl] = true;
+            $result = fetchUrlAsText($snapshotUrl);
+            if ($result['httpCode'] === 200 && !looksPaywalled($result['text'], 200)) {
+                return $result['text'];
+            }
+            error_log("archive.org snapshot HTTP " . $result['httpCode'] . " for $snapshotUrl");
+        }
+
+        // The availability API often answers "no snapshot" for pages Wayback
+        // holds, and its closest snapshot can be a block page. Ask the CDX
+        // index for the newest good captures (any scheme, www. or not) instead.
+        $bare = preg_replace('#^https?://(www\.)?#i', '', $url);
+        $cdx = 'https://web.archive.org/cdx/search/cdx?url=' . urlencode($bare)
+            . '&output=json&fl=timestamp,original&filter=statuscode:200&collapse=digest&limit=-6';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $cdx);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 25);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'KOP-news-processor/1.0 (+https://kidsoverprofits.org)');
+        $rows = json_decode((string) curl_exec($ch), true);
+        curl_close($ch);
+        if (!is_array($rows) || count($rows) < 2) {
             error_log("archive.org has no snapshot for $url");
             return '';
         }
-
-        $snapshotUrl = $snapshot['url'];
-        // Prefer the "id_" variant which serves the raw original HTML without the
-        // Wayback toolbar wrapper — cleaner extraction.
-        $snapshotUrl = preg_replace('#/web/(\d+)/#', '/web/$1id_/', $snapshotUrl, 1);
-
-        $result = fetchUrlAsText($snapshotUrl);
-        if ($result['httpCode'] !== 200) {
-            error_log("archive.org snapshot HTTP " . $result['httpCode'] . " for $snapshotUrl");
-            return '';
+        $best = '';
+        foreach (array_reverse(array_slice($rows, 1)) as $r) {
+            $snapshotUrl = 'https://web.archive.org/web/' . $r[0] . 'id_/' . $r[1];
+            if (isset($tried[$snapshotUrl])) {
+                continue;
+            }
+            $result = fetchUrlAsText($snapshotUrl);
+            if ($result['httpCode'] === 200 && strlen($result['text']) > strlen($best)) {
+                $best = $result['text'];
+                if (!looksPaywalled($best, 200)) {
+                    return $best;
+                }
+            }
         }
-
-        return $result['text'];
+        return $best;
     }
 }
