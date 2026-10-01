@@ -201,6 +201,10 @@ if (!function_exists('kop_network_rebuild_page')) {
         };
         $runs = 'https://github.com/' . KOP_NETWORK_REBUILD_REPO . '/actions/workflows/' . KOP_NETWORK_REBUILD_WORKFLOW;
         $pending = !empty($state['current']) && ($state['current'] !== ($state['built'] ?? ''));
+        // A check from before the token was added leaves its message behind.
+        if (!empty($state['error']) && strpos($state['error'], 'No GitHub token') === 0 && kop_network_rebuild_token() !== '') {
+            $state['error'] = '';
+        }
         echo '<div class="wrap"><h1>Map Rebuild</h1>';
         echo '<p>The network map is rebuilt on GitHub whenever the staff, owners, operators, names, years or status '
             . 'in the records change. This page checks every hour and starts a build only when something the map uses has changed. '
