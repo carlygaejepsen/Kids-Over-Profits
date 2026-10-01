@@ -543,14 +543,27 @@ In order:
    `inc/global-search.php`). Verified live at
    [kidsoverprofits.org](https://kidsoverprofits.org/): both cards render,
    three bills and three lawsuits.
-2. **Site search finds past and other names** (Sonnet 5). Since the v2
-   switch, `kop_v2_search()` (`inc/facility-v2-readers.php`) matches only
-   `name`, `name_key` and `unique_name`, so the header dropdown and global
-   search miss a past name. The program index and the wiki picker still
-   find them. Match `identification.otherNames` / `pastNames` too: a
-   generated names column on `facilities_v2`, or a LIKE on `json_data`
-   (4,700 rows), and show "formerly X" on the result. Done when searching
-   "Copper Canyon" finds Sedona Sky Academy.
+2. **Site search finds past and other names** (Sonnet 5). Done 2026-09-30
+   in
+   [72d5e405](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/72d5e4053835a5d1021fbcf74babcbdd44cde82e).
+   `kop_v2_search()` now also matches `identification.pastNames` /
+   `otherNames` with a LIKE on `json_data` (~4,700 rows), run only when the
+   direct name/name_key/unique_name match leaves the result limit unfilled
+   and the query is 3+ characters (acronym guard); a hit carries
+   `matched_name` / `matched_kind` and `kop_v2_search_alias_hint()` formats
+   "Formerly X" / "Also known as X", shown by every caller: the Ajax
+   Search Lite header dropdown (`inc/ajax-search-lite.php`), the
+   site-wide search widget (`inc/global-search.php`), and the full search
+   results page (`search.php`). A direct name match always ranks first, so
+   a name belonging to its own separate record (3.7's name-era rule, e.g.
+   Bethel Boys' Academy's own record vs. Eagle Point Christian Academy's
+   "Bethel Boys Academy" otherName) outranks another record's alias.
+   `scripts/test-search-aliases.php` checks this against `tmp/prod.sqlite`.
+   Verified live: `/wp-json/kop/v1/global-search?q=Copper+Canyon` returns
+   Copper Canyon Academy first, then Sedona Sky Academy marked "Formerly
+   Copper Canyon Academy"; `?q=Bethel+Boys+Academy` returns Bethel Boys'
+   Academy first, then Eagle Point Christian Academy marked "Also known as
+   Bethel Boys Academy".
 3. **Moved testimony still shows in the normal sections** (Opus 5.5).
    Reported 2026-09-30 on the Billings Clinic Psychiatric Center provider
    submission: notes moved into survivor testimony also stay in the
