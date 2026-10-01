@@ -223,6 +223,11 @@
                 holder.appendChild(built.node);
                 getters.push({ name: f.name, get: built.get });
             });
+            if (data.alt && data.alt.ref) {
+                var alt = el('button', { type: 'button', class: 'kop-ie-mini kop-ie-alt', text: data.alt.label || 'More' });
+                alt.addEventListener('click', function () { openEditor(data.alt.ref); });
+                status.parentNode.insertBefore(alt, status);
+            }
             save.removeAttribute('disabled');
             var first = body.querySelector('input, textarea, select');
             if (first) first.focus();

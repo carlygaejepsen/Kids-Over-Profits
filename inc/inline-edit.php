@@ -24,11 +24,15 @@
  *   school:3                an indigenous school (inc/indigenous-schools.php)
  *   txt:<key>               a line or block of template text (kop_text(), kop_ie_html_start())
  *   site:name               the site name and tagline
+ *   referrer:5:all|raw      a referrer / educational consultant record (referrers_master)
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
  *                                   rejects HTML in plain form fields) {ref, values}
  *                                   -> {message, redirect?}
+ *
+ * A load may name 'alt' => {ref, label}: another dialog for the same record
+ * (every field, or the whole record as JSON), offered as a button.
  *
  * Field types the dialog draws (js/inline-edit.js): text, textarea, code,
  * lines (one item a line), items (a list of paragraphs), number, year,
@@ -165,6 +169,7 @@ function kop_ie_sources() {
         'school'   => array('load' => 'kop_ie_ischool_load', 'save' => 'kop_ie_ischool_save'),
         'txt'      => array('load' => 'kop_ie_txt_load', 'save' => 'kop_ie_txt_save'),
         'site'     => array('load' => 'kop_ie_site_load', 'save' => 'kop_ie_site_save'),
+        'referrer' => array('load' => 'kop_ie_referrer_load', 'save' => 'kop_ie_referrer_save'),
     ));
 }
 
@@ -597,6 +602,8 @@ function kop_ie_facility_field(array $doc, array $def) {
                 }
             }
             return kop_ie_field($name, $label, 'checks', $checked, array('options' => kop_ie_check_options($path, $map)));
+        case 'bool':
+            return kop_ie_field($name, $label, 'bool', $raw === true || $raw === 'true' || $raw === 1 || $raw === '1', $extra);
         case 'select':
             if ($path === 'facilityDetails.isPrivatelyOwned') {
                 $raw = $raw === null ? '' : ($raw ? 'yes' : 'no');
@@ -629,6 +636,11 @@ function kop_ie_facility_apply(array &$doc, array $field, $value) {
     switch ($field['type']) {
         case 'lines':
             $new = kop_ie_lines($value);
+            // The same entries as stored (blank ones aside): left exactly as stored.
+            if (is_array($before) && !array_filter($before, 'is_array')
+                && array_values(array_filter(array_map('trim', array_map('strval', $before)), 'strlen')) === $new) {
+                return;
+            }
             break;
         case 'items':
             $new = array();
@@ -694,6 +706,16 @@ function kop_ie_facility_apply(array &$doc, array $field, $value) {
             break;
         case 'year':
             $new = kop_ie_int($value, $label, 1800, (int) gmdate('Y') + 1);
+            break;
+        case 'bool':
+            $new = $value === true || $value === 'true' || $value === 1 || $value === '1';
+            // Unticked, a flag the record never had stays absent.
+            if (!$new && $before === null) {
+                return;
+            }
+            if ($new === (bool) $before && !is_bool($before)) {
+                return;   // "true" stored as text and still ticked: left as it was
+            }
             break;
         case 'number':
             $new = kop_ie_int($value, $label, 0, 100000);
@@ -803,6 +825,7 @@ function kop_ie_facility_load(array $p) {
     return array(
         'title'  => $name . ': ' . ($group === 'all' ? 'every field' : $groups[$group][0] ?? ''),
         'fields' => kop_ie_facility_group_fields($doc, $group),
+        'alt'    => array('ref' => 'facility:' . $fid . ':' . ($group === 'all' ? 'raw' : 'all'), 'label' => $group === 'all' ? 'Whole record (JSON)' : 'Every field'),
     );
 }
 
@@ -1042,6 +1065,7 @@ function kop_ie_operator_load(array $p) {
         'title'  => $row['name'] . ': every field',
         'help'   => 'The company name is changed under KOP Data Tools, because renaming moves its page and the facilities that name it.',
         'fields' => kop_ie_operator_form($json['operator']),
+        'alt'    => array('ref' => 'operator:' . (int) $row['id'] . ':raw', 'label' => 'Whole record (JSON)'),
     );
 }
 
@@ -1119,6 +1143,151 @@ function kop_ie_ischool_save(array $p, array $v) {
     unset($f['review']);
     kop_ischools_save($pdo, $f, (int) $s['id'], kop_ie_who());
     $page = get_page_by_path('indian-boarding-schools');
+    if ($page) {
+        kop_ie_purge_post($page->ID);
+    }
+    return array('message' => 'Saved.');
+}
+
+/* ---- Referrers and educational consultants (referrers_master) ----------------- */
+
+/** A person's fields (the independent consultant, or one on an agency's list), relative to $base. */
+function kop_ie_referrer_person_defs($base) {
+    return array(
+        array($base . '.fullName', 'Full name', 'text'),
+        array($base . '.firstName', 'First name', 'text'),
+        array($base . '.lastName', 'Last name', 'text'),
+        array($base . '.role', 'Role', 'text'),
+        array($base . '.status', 'Status', 'text'),
+        array($base . '.credentials', 'Credentials', 'text'),
+        array($base . '.education', 'Education', 'text'),
+        array($base . '.city', 'City', 'text'),
+        array($base . '.state', 'State', 'text'),
+        array($base . '.email', 'Email (never shown publicly)', 'text'),
+        array($base . '.phone', 'Phone (never shown publicly)', 'text'),
+        array($base . '.website', 'Website', 'text'),
+        array($base . '.websites', 'Other websites', 'lines'),
+        array($base . '.isIndependent', 'Independent consultant', 'bool'),
+        array($base . '.formerIndustryStaff', 'Worked at a troubled teen program', 'bool'),
+        array($base . '.knownReferrals', 'Facility referrals', 'lines'),
+        array($base . '.facilitiesReferred', 'Facilities referred (older list)', 'lines'),
+        array($base . '.pastTTIJobs', 'Career history', 'rows', array('columns' => array('role' => 'Role', 'organization' => 'Program', 'employer' => 'Employer'))),
+        array($base . '.affiliations', 'Affiliations', 'lines'),
+        array($base . '.schoolDistricts', 'School districts', 'lines'),
+        array($base . '.lawsuits', 'Lawsuits', 'textarea'),
+        array($base . '.notes', 'Notes', 'textarea'),
+    );
+}
+
+/** [section label, defs] for one referrer record: the organization, the individual, each consultant. */
+function kop_ie_referrer_sections(array $json) {
+    $d = isset($json['data']) && is_array($json['data']) ? $json['data'] : array();
+    $sections = array(array('Record', array(
+        array('data.referrerType', 'Type (agency, individual)', 'text'),
+        array('data.isIndependentConsultant', 'Shown as an independent consultant', 'bool'),
+    )));
+    $sections[] = array('Organization', array(
+        array('data.referrerAgency.name', 'Name', 'text'),
+        array('data.referrerAgency.city', 'City', 'text'),
+        array('data.referrerAgency.state', 'State', 'text'),
+        array('data.referrerAgency.address', 'Address', 'text'),
+        array('data.referrerAgency.founded', 'Founded', 'text'),
+        array('data.referrerAgency.website', 'Website', 'text'),
+        array('data.referrerAgency.websites', 'Other websites', 'lines'),
+        array('data.referrerAgency.affiliations', 'Affiliations', 'lines'),
+        array('data.referrerAgency.keyPersonnel', 'Key personnel', 'lines'),
+        array('data.referrerAgency.notes', 'Notes', 'textarea'),
+    ));
+    if (isset($d['referrerIndividual']) && is_array($d['referrerIndividual'])) {
+        $who = trim((string) ($d['referrerIndividual']['fullName'] ?? ''));
+        $sections[] = array('Individual' . ($who !== '' ? ': ' . $who : ''), kop_ie_referrer_person_defs('data.referrerIndividual'));
+    }
+    foreach ((array) ($d['referrerConsultants'] ?? array()) as $i => $c) {
+        if (!is_array($c)) {
+            continue;
+        }
+        $who = trim((string) ($c['fullName'] ?? '')) ?: trim(($c['firstName'] ?? '') . ' ' . ($c['lastName'] ?? ''));
+        $sections[] = array('Consultant ' . ($i + 1) . ($who !== '' ? ': ' . $who : ''), kop_ie_referrer_person_defs('data.referrerConsultants.' . $i));
+    }
+    return $sections;
+}
+
+function kop_ie_referrer_form(array $json) {
+    $fields = array();
+    foreach (kop_ie_referrer_sections($json) as $section) {
+        foreach ($section[1] as $def) {
+            // A person's field the record never had (formerIndustryStaff on most) is still offered.
+            $f = kop_ie_facility_field($json, $def);
+            $f['section'] = $section[0];
+            $fields[] = $f;
+        }
+    }
+    return $fields;
+}
+
+/** The dialog's values applied to a referrer record (scripts/test-inline-edit.php runs it on every record). */
+function kop_ie_referrer_apply_values(array $json, array $values) {
+    foreach (kop_ie_referrer_form($json) as $field) {
+        if (array_key_exists($field['name'], $values)) {
+            kop_ie_facility_apply($json, $field, $values[$field['name']]);
+        }
+    }
+    return $json;
+}
+
+function kop_ie_referrer_row(PDO $pdo, $id) {
+    $q = $pdo->prepare('SELECT id, unique_name, json_data FROM referrers_master WHERE id = ?');
+    $q->execute(array((int) $id));
+    $row = $q->fetch(PDO::FETCH_ASSOC);
+    $json = $row ? json_decode((string) $row['json_data'], true) : null;
+    if (!$row || !is_array($json)) {
+        throw new RuntimeException('That referrer record is gone.');
+    }
+    return array($row, $json);
+}
+
+function kop_ie_referrer_pdo() {
+    $pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
+    if (!$pdo) {
+        throw new RuntimeException('No database connection.');
+    }
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    return $pdo;
+}
+
+function kop_ie_referrer_load(array $p) {
+    list($row, $json) = kop_ie_referrer_row(kop_ie_referrer_pdo(), (int) ($p[0] ?? 0));
+    if (($p[1] ?? 'all') === 'raw') {
+        return array(
+            'title'  => $row['unique_name'] . ': whole record',
+            'help'   => 'Every field this record holds, as stored (add a consultant here). Keep the structure; change the values.',
+            'fields' => array(kop_ie_field('json', 'Record', 'code', wp_json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), array('rows' => 30))),
+        );
+    }
+    return array(
+        'title'  => $row['unique_name'] . ': every field',
+        'help'   => 'The card title is the record name and stays as it is. To add a consultant, open the whole record (JSON).',
+        'fields' => kop_ie_referrer_form($json),
+        'alt'    => array('ref' => 'referrer:' . (int) $row['id'] . ':raw', 'label' => 'Whole record (JSON)'),
+    );
+}
+
+function kop_ie_referrer_save(array $p, array $v) {
+    $pdo = kop_ie_referrer_pdo();
+    $id = (int) ($p[0] ?? 0);
+    list($row, $json) = kop_ie_referrer_row($pdo, $id);
+    if (($p[1] ?? 'all') === 'raw') {
+        $new = json_decode((string) ($v['json'] ?? ''), true);
+        if (!is_array($new) || !isset($new['data']) || !is_array($new['data'])) {
+            throw new RuntimeException('That is not a valid record: ' . (json_last_error() ? json_last_error_msg() : 'data is missing') . '.');
+        }
+        $json = $new;
+    } else {
+        $json = kop_ie_referrer_apply_values($json, $v);
+    }
+    $pdo->prepare('UPDATE referrers_master SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+        ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
+    $page = get_page_by_path('referrers-educational-consultants');
     if ($page) {
         kop_ie_purge_post($page->ID);
     }

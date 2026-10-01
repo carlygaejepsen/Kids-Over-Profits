@@ -190,6 +190,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         <div class="kop-home-banner"><?php the_post_thumbnail('full'); ?></div>
     <?php endif; ?>
 
+    <?php kop_ie_html_start('home:hero', 'Home page: opening and audience buttons'); ?>
     <section class="kop-home-hero">
         <h2>Survivor-led accountability for the Troubled Teen Industry.</h2>
         <p>Click the button that best describes you to get started.</p>
@@ -200,6 +201,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
             <a class="kop-home-btn" href="/journalists">Journalists</a>
         </div>
     </section>
+    <?php kop_ie_html_end(); ?>
 
     <section class="kop-home-search-section">
         <form role="search" method="get" class="kop-home-search" action="<?php echo esc_url(home_url('/')); ?>">
@@ -210,12 +212,14 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         </form>
     </section>
 
+    <?php kop_ie_html_start('home:mission', 'Home page: mission'); ?>
     <section class="kop-home-mission">
         <p><strong>We are a collaborative of Troubled Teen Industry (TTI) survivors and advocates.
         Our mission is to educate the public about the current and historical dangers of the TTI,
         in pursuit of the ultimate goal of keeping all children safe from abuse.</strong>
         We are not affiliated with any political party, group, or candidate.</p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
     <?php if ($kop_show_numbers): ?>
     <section class="kop-home-numbers" aria-label="By the numbers">
@@ -248,9 +252,11 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     <?php if ($kop_memorial): ?>
     <section class="kop-home-memorial">
         <a class="kop-memorial-card" href="<?php echo esc_url(get_permalink($kop_memorial->ID)); ?>">
+            <?php kop_ie_html_start('home:memorial', 'Home page: memorial card'); ?>
             <h2>In Loving Memory</h2>
             <p>Remembering the children whose deaths in the Troubled Teen Industry were preventable.
             We grieve them today and every day.</p>
+            <?php kop_ie_html_end(); ?>
             <span class="kop-memorial-more">Visit the memorial &raquo;</span>
         </a>
     </section>
@@ -260,7 +266,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     <section class="kop-home-previews">
         <?php if ($kop_bills): ?>
         <div class="kop-preview-card">
-            <h2>Legislation We're Tracking</h2>
+            <h2<?php echo kop_text_attr('home:legislation-heading', 'Home page: legislation heading'); ?>><?php echo esc_html(kop_text('home:legislation-heading', 'Legislation We\'re Tracking', 'Home page: legislation heading')); ?></h2>
             <ul class="kop-preview-list">
                 <?php foreach ($kop_bills as $b):
                     $meta = array_filter(array(
@@ -280,7 +286,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         <?php endif; ?>
         <?php if ($kop_suits): ?>
         <div class="kop-preview-card">
-            <h2>Lawsuit Tracker</h2>
+            <h2<?php echo kop_text_attr('home:lawsuits-heading', 'Home page: lawsuits heading'); ?>><?php echo esc_html(kop_text('home:lawsuits-heading', 'Lawsuit Tracker', 'Home page: lawsuits heading')); ?></h2>
             <ul class="kop-preview-list">
                 <?php foreach ($kop_suits as $s):
                     $meta = array_filter(array(
@@ -303,15 +309,16 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
 
     <?php if ($kop_topics): ?>
     <section class="kop-home-topics" aria-labelledby="kop-home-topics-title">
-        <h2 id="kop-home-topics-title">Browse by Topic</h2>
-        <p>Pick a kind of record to start from, or use the search above.</p>
+        <h2 id="kop-home-topics-title"<?php echo kop_text_attr('home:topics-heading', 'Home page: topics heading'); ?>><?php echo esc_html(kop_text('home:topics-heading', 'Browse by Topic', 'Home page: topics heading')); ?></h2>
+        <p<?php echo kop_text_attr('home:topics-text', 'Home page: topics line'); ?>><?php echo esc_html(kop_text('home:topics-text', 'Pick a kind of record to start from, or use the search above.', 'Home page: topics line')); ?></p>
         <div class="kop-topics-grid">
             <?php foreach ($kop_topics as $topic): ?>
                 <a class="kop-topic-link" href="<?php echo esc_url($topic['href']); ?>">
                     <?php if (function_exists('kop_icon')) echo kop_icon($topic['icon'], array('class' => 'kop-topic-icon')); ?>
                     <span class="kop-topic-text">
-                        <span class="kop-topic-label"><?php echo esc_html($topic['label']); ?></span>
-                        <span class="kop-topic-desc"><?php echo esc_html($topic['desc']); ?></span>
+                        <?php $kop_tk = 'home:topic-' . sanitize_title($topic['label']); ?>
+                        <span class="kop-topic-label"<?php echo kop_text_attr($kop_tk . '-label', 'Home page: topic label'); ?>><?php echo esc_html(kop_text($kop_tk . '-label', $topic['label'], 'Home page: topic label')); ?></span>
+                        <span class="kop-topic-desc"<?php echo kop_text_attr($kop_tk . '-desc', 'Home page: topic description'); ?>><?php echo esc_html(kop_text($kop_tk . '-desc', $topic['desc'], 'Home page: topic description')); ?></span>
                     </span>
                 </a>
             <?php endforeach; ?>
@@ -320,10 +327,9 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     <?php endif; ?>
 
     <section class="kop-home-reports">
-        <h2>New Inspection Reports Available!</h2>
-        <p>We created inspection trackers to make it easier for everyone to monitor violations in
-        facilities for kids. <?php echo esc_html(kop_report_state_sentence()); ?> are available now.
-        More trackers are coming soon!</p>
+        <h2<?php echo kop_text_attr('home:reports-heading', 'Home page: inspection reports heading'); ?>><?php echo esc_html(kop_text('home:reports-heading', 'New Inspection Reports Available!', 'Home page: inspection reports heading')); ?></h2>
+        <p><span<?php echo kop_text_attr('home:reports-before', 'Home page: inspection reports line'); ?>><?php echo esc_html(kop_text('home:reports-before', 'We created inspection trackers to make it easier for everyone to monitor violations in facilities for kids.', 'Home page: inspection reports line')); ?></span> <?php echo esc_html(kop_report_state_sentence()); ?> are available now.
+        <span<?php echo kop_text_attr('home:reports-after', 'Home page: inspection reports line'); ?>><?php echo esc_html(kop_text('home:reports-after', 'More trackers are coming soon!', 'Home page: inspection reports line')); ?></span></p>
         <div class="kop-home-reports-buttons">
             <?php foreach ($kop_report_states as $slug => $label): ?>
                 <a class="kop-home-report-btn" href="/<?php echo esc_attr($slug); ?>"><?php echo esc_html($label); ?></a>
@@ -341,34 +347,41 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
             echo do_shortcode('[display-map id="592"]');
         }
         ?>
+        <?php kop_ie_html_start('home:map-text', 'Home page: map text'); ?>
         <p>Residential facilities providing religious, behavioral, and mental health treatment to
         children exist all over the world. Some of these facilities are known to be part of the
         Troubled Teen Industry, while others have not yet been verified. Any facility where children
         live and receive care requires additional oversight. This directory helps communities monitor
         local programs and advocate for accountability. Click your home state for a list of
         facilities near you, or <a href="/international">click here for international programs.</a></p>
+        <?php kop_ie_html_end(); ?>
     </section>
 
     <section class="kop-home-volunteer">
+        <?php kop_ie_html_start('home:volunteer', 'Home page: ways to help'); ?>
         <h2>Ways to Help Right Now</h2>
         <p>Every tool below has a built-in tutorial — no experience needed.</p>
+        <?php kop_ie_html_end(); ?>
         <div class="kop-volunteer-grid">
             <?php foreach ($kop_volunteer_links as $vl): ?>
                 <a class="kop-volunteer-link" href="<?php echo esc_url($vl['url']); ?>">
-                    <span class="kop-volunteer-label"><?php echo esc_html($vl['label']); ?></span>
-                    <span class="kop-volunteer-desc"><?php echo esc_html($vl['desc']); ?></span>
+                    <?php $kop_vk = 'home:help-' . sanitize_title($vl['label']); ?>
+                    <span class="kop-volunteer-label"<?php echo kop_text_attr($kop_vk . '-label', 'Home page: tool label'); ?>><?php echo esc_html(kop_text($kop_vk . '-label', $vl['label'], 'Home page: tool label')); ?></span>
+                    <span class="kop-volunteer-desc"<?php echo kop_text_attr($kop_vk . '-desc', 'Home page: tool description'); ?>><?php echo esc_html(kop_text($kop_vk . '-desc', $vl['desc'], 'Home page: tool description')); ?></span>
                 </a>
             <?php endforeach; ?>
         </div>
         <a class="kop-volunteer-more" href="/volunteer/">More ways to volunteer &raquo;</a>
     </section>
 
+    <?php kop_ie_html_start('home:help', 'Home page: contact line'); ?>
     <section class="kop-home-help">
         <p>Want to help? Contact
         <a href="mailto:dani@kidsoverprofits.org">dani@kidsoverprofits.org</a>
         for volunteer opportunities or
         <a href="/donate/">click here to help fund our mission.</a></p>
     </section>
+    <?php kop_ie_html_end(); ?>
 
     <?php if (shortcode_exists('addtoany')): ?>
         <div class="kop-home-share"><?php echo do_shortcode('[addtoany]'); ?></div>

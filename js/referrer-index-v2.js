@@ -219,6 +219,11 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'referrer-card';
             card.setAttribute('data-kop-bug-feature', 'referrer-index/card');
             card.setAttribute('data-kop-bug-label', 'Referrer: ' + (p.db_name || ''));
+            // An admin's pencil (inc/inline-edit.php prints KOP_INLINE_EDIT for admins only).
+            if (window.KOP_INLINE_EDIT && p.id) {
+                card.setAttribute('data-kop-edit', 'referrer:' + parseInt(p.id, 10) + ':all');
+                card.setAttribute('data-kop-edit-label', p.db_name || 'this record');
+            }
             
             const rawProfiles = findConsultantData(p);
             const agency = findAgencyInfo(p);

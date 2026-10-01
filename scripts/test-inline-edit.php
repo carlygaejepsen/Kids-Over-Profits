@@ -220,6 +220,32 @@ $out = kop_ie_operator_apply_values($op, $vals);
 $check('company edits land', $out['keyStaff']['ceo'] === 'New Boss' && $out['otherNames'] === array('Short Name', 'Other Name')
     && $out['keyStaff']['founders'][0]['name'] === 'Old' && $out['keyStaff']['founders'][0]['pastJobs'] === 'Somewhere');
 
+echo "-- Every referrer record sent back unchanged --\n";
+$refs = $changed = 0;
+$examples = array();
+foreach ($pdo->query('SELECT id, json_data FROM referrers_master ORDER BY id') as $row) {
+    $json = json_decode((string) $row['json_data'], true);
+    if (!is_array($json)) continue;
+    $refs++;
+    $vals = array();
+    foreach (kop_ie_referrer_form($json) as $f) $vals[$f['name']] = $as_posted($f);
+    $diff = $first_diff($json, kop_ie_referrer_apply_values($json, $vals));
+    if ($diff !== '') {
+        $changed++;
+        if (count($examples) < 5) $examples[] = '#' . $row['id'] . ' ' . $diff;
+    }
+}
+$check("$refs referrer records round-trip unchanged", $refs > 0 && $changed === 0, $changed . ' changed' . ($examples ? ': ' . implode('; ', $examples) : ''));
+$r = array('data' => array('referrerAgency' => array('name' => 'A'), 'referrerConsultants' => array(array('fullName' => 'Jo Doe', 'pastTTIJobs' => array(), 'isIndependent' => false))));
+$vals = array();
+foreach (kop_ie_referrer_form($r) as $f) $vals[$f['name']] = $as_posted($f);
+$vals['data.referrerConsultants.0.formerIndustryStaff'] = true;
+$vals['data.referrerConsultants.0.pastTTIJobs'] = array(array('__i' => '', 'role' => 'Admissions', 'organization' => 'Some Ranch', 'employer' => ''));
+$vals['data.referrerAgency.name'] = 'B';
+$out = kop_ie_referrer_apply_values($r, $vals);
+$c0 = $out['data']['referrerConsultants'][0];
+$check('referrer edits land', $out['data']['referrerAgency']['name'] === 'B' && $c0['formerIndustryStaff'] === true && $c0['pastTTIJobs'][0]['organization'] === 'Some Ranch' && $c0['isIndependent'] === false);
+
 echo "-- Bad input refused --\n";
 $refused = function ($group, $values) use ($doc, $apply) {
     try {
