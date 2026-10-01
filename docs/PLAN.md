@@ -616,10 +616,19 @@ In order:
    upload is verified. Three stray files remain in the `.nc_ocr_cache` and
    `.ar_pdf_cache` local caches; they will be picked up on the next migration
    attempt with the new retry logic.
-5. **Guided tours for the newer admin screens** (Sonnet 5). Screens built
-   after 2026-09-03 have no tutorial: Map Years, Map Renames, Woodbury
-   Facts, Woodbury Reports, Closure Reports, Facilities from News and the
-   Industry PR tab. Follow the existing tours in `js/tutorial-overlay.js`.
+5. **Guided tours for the public pages** (Done 2026-09-30,
+   [583d17f5](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/583d17f560c24419019dd031340a4a24517bf96e)).
+   Owner: public-facing tours only, no admin screens. Tours on the
+   [network map](https://kidsoverprofits.org/network-map/), the
+   [facility directory](https://kidsoverprofits.org/tti-program-index/) (both
+   tabs), the state inspection report pages on `report-page.js` and the
+   [glossary](https://kidsoverprofits.org/glossary/), loaded by
+   `kop_enqueue_tour()` in `inc/enqueue.php`, each checked live. Skipped, as
+   having no controls a visitor could miss: /severe-reports/, /report-abuse/,
+   /open-data/, facility and operator pages; the data form's provider
+   category is already a step of its tour; a site-wide search tour would put
+   a second "?" button on every page. Open: CA and TX report pages get a
+   tour when they move to the shared viewer (3.3.2).
 6. **Research tag proposals from document text** (Opus 5.5). Asked
    2026-09-29: read the contents of documents with no tagged facility and
    propose facilities and operators. Today's
