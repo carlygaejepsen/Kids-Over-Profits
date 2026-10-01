@@ -47,7 +47,7 @@ UA = {'User-Agent': 'Mozilla/5.0 (KidsOverProfits archive research)'}
 ROOT_FILE = re.compile(r'^org,heal-online\)/([^/?]+\.(?:htm|html|pdf))$', re.I)
 
 
-PAUSE = 4.5  # The Archive allows about 15 requests a minute and refuses connections for a while past that.
+PAUSE = 6  # The Archive allows about 15 requests a minute and refuses connections for a while past that.
 
 
 def get(url, binary=False, tries=10):
@@ -165,12 +165,13 @@ def cmd_fetch(limit=0, kind=''):
         caps = pages[name]
         is_pdf = name.endswith('.pdf')
         have = [c for c in caps if os.path.exists(raw_path(name, c[0]))]
-        want = 1 if is_pdf else 2
-        if len(have) >= min(want, len(caps)) or os.path.exists(raw_path(name, 'none')):
+        if have or os.path.exists(raw_path(name, 'none')):
             continue
         got = []
-        # Latest HEAL capture first, then (pages only) the earliest one.
-        order = list(reversed(caps))[:4]
+        # HEAL's own latest copy first: captures before 2023, when HEAL still
+        # ran the site (the 2025 re-crawl is mostly duplicates, parking pages
+        # and spam, and the Archive refuses it most), then the later ones.
+        order = ([c for c in reversed(caps) if c[0] < '2023'] + [c for c in reversed(caps) if c[0] >= '2023'])[:4]
         for c in order:
             data = get(f'https://web.archive.org/web/{c[0]}id_/{c[1]}', binary=True)
             time.sleep(PAUSE)
@@ -181,7 +182,8 @@ def cmd_fetch(limit=0, kind=''):
                 break
         if not got:
             open(raw_path(name, 'none'), 'w').close()
-        elif not is_pdf and caps[0][0] < got[0]:
+        elif not is_pdf and caps[0][0] < got[0] and b'staff list' in data[:20000].lower():
+            # Staff lists only: the earliest copy adds the staff who had left.
             c = caps[0]
             data = get(f'https://web.archive.org/web/{c[0]}id_/{c[1]}', binary=True)
             time.sleep(PAUSE)
