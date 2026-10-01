@@ -14,7 +14,9 @@
  *   js/data/survivor-archives/<site>/o/<id>.json  the same for an operator
  *
  * The facility and operator pages list them in their Documents section,
- * linked to the site. Nothing is copied to this site.
+ * linked to the site. SCIAD NET (the WWASP Survivor Truth archive) keeps its
+ * collection on Google Drive: its documents link to Drive, and its block credits
+ * the archive's page. Nothing is copied to this site.
  */
 
 if (!defined('ABSPATH')) {
@@ -29,7 +31,29 @@ if (!function_exists('kop_survivor_archives_sites')) {
             'wwasp' => 'wwaspsurvivors.com',
             'straights' => 'thestraights.net',
             'nhym'  => 'nhym-alumni.org',
+            'sciad' => 'drive.google.com',
         );
+    }
+}
+
+if (!function_exists('kop_survivor_archives_hosts')) {
+    /**
+     * The hosts a site's documents may link to: its own, and for SCIAD NET alone
+     * Google Drive and Google Docs, where its collection lives.
+     */
+    function kop_survivor_archives_hosts($site) {
+        if ($site === 'sciad') return array('drive.google.com', 'docs.google.com');
+        $sites = kop_survivor_archives_sites();
+        return isset($sites[$site]) ? array($sites[$site]) : array();
+    }
+}
+
+if (!function_exists('kop_survivor_archives_home')) {
+    /** The page a site's block links: its home page; for SCIAD NET the archive's own page (the credit). */
+    function kop_survivor_archives_home($site) {
+        if ($site === 'sciad') return 'https://wwaspsurvivorstruth.com/program-archive/';
+        $sites = kop_survivor_archives_sites();
+        return kop_survivor_archives_scheme($site) . '://' . ($site === 'nhym' ? 'www.' : '') . ($sites[$site] ?? '') . '/';
     }
 }
 
@@ -67,7 +91,7 @@ if (!function_exists('kop_survivor_archives_index')) {
             $entry = array(
                 'built'      => (string) ($data['built'] ?? ''),
                 'label'      => (string) ($data['label'] ?? $host),
-                'url'        => kop_survivor_archives_scheme($site) . '://' . ($site === 'nhym' ? 'www.' : '') . $host . '/',
+                'url'        => kop_survivor_archives_home($site),
                 'facilities' => array(),
                 'operators'  => array(),
             );
@@ -114,10 +138,10 @@ if (!function_exists('kop_survivor_archives')) {
      */
     function kop_survivor_archives($kind, $ids) {
         $kind = $kind === 'o' ? 'o' : 'f';
-        $hosts = kop_survivor_archives_sites();
         $out = array();
         foreach (kop_survivor_archives_index() as $site => $entry) {
             $list = $kind === 'o' ? $entry['operators'] : $entry['facilities'];
+            $hosts = kop_survivor_archives_hosts($site);
             $groups = array();
             $seen = array();
             foreach (array_unique(array_map('intval', (array) $ids)) as $id) {
@@ -127,9 +151,9 @@ if (!function_exists('kop_survivor_archives')) {
                 $data = json_decode((string) file_get_contents($path), true);
                 foreach ((array) ($data['files'] ?? array()) as $f) {
                     $url = (string) ($f['url'] ?? '');
-                    // Only links to the site itself, over its scheme (https; http for thestraights.net alone).
+                    // Only links to the site itself (SCIAD NET: Google Drive or Docs), over its scheme (https; http for thestraights.net alone).
                     $host = strtolower((string) parse_url($url, PHP_URL_HOST));
-                    if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== kop_survivor_archives_scheme($site) || preg_replace('/^www\./', '', $host) !== $hosts[$site]) continue;
+                    if (strtolower((string) parse_url($url, PHP_URL_SCHEME)) !== kop_survivor_archives_scheme($site) || !in_array(preg_replace('/^www\./', '', $host), $hosts, true)) continue;
                     if (isset($seen[$url])) continue;
                     $seen[$url] = true;
                     $groups[trim((string) ($f['group'] ?? ''))][] = array(
@@ -163,13 +187,25 @@ if (!function_exists('kop_survivor_archives_render')) {
             if (empty($a['groups'])) continue;
             $count = (int) $a['count'];
             $html .= '<div class="kop-unsilenced-archive kop-survivor-archive">';
-            $html .= '<h3 class="kop-fp-subhead">From ' . esc_html($a['label']) . '</h3>';
-            $intro = sprintf(
-                '%s %s about %s that %s published and Kids Over Profits does not hold a copy of.',
-                number_format($count), $count === 1 ? 'document' : 'documents', $name, $a['label']
-            );
-            $html .= '<p class="kop-fp-detail">' . esc_html($intro) . ' They open on <a href="' . esc_url($a['url'])
-                . '" target="_blank" rel="noopener">' . esc_html($a['label']) . '</a>\'s website.</p>';
+            if (($a['site'] ?? '') === 'sciad') {
+                // Credit on every block (owner decision 18): the heading links the archive's own page.
+                $html .= '<h3 class="kop-fp-subhead">From <a href="' . esc_url($a['url']) . '" target="_blank" rel="noopener">'
+                    . esc_html($a['label']) . '</a></h3>';
+                $intro = sprintf(
+                    '%s %s about %s that Kids Over Profits does not hold a copy of. SCIAD NET keeps %s on Google Drive, where %s.',
+                    number_format($count), $count === 1 ? 'document' : 'documents', $name,
+                    $count === 1 ? 'it' : 'them', $count === 1 ? 'it opens' : 'they open'
+                );
+                $html .= '<p class="kop-fp-detail">' . esc_html($intro) . '</p>';
+            } else {
+                $html .= '<h3 class="kop-fp-subhead">From ' . esc_html($a['label']) . '</h3>';
+                $intro = sprintf(
+                    '%s %s about %s that %s published and Kids Over Profits does not hold a copy of.',
+                    number_format($count), $count === 1 ? 'document' : 'documents', $name, $a['label']
+                );
+                $html .= '<p class="kop-fp-detail">' . esc_html($intro) . ' They open on <a href="' . esc_url($a['url'])
+                    . '" target="_blank" rel="noopener">' . esc_html($a['label']) . '</a>\'s website.</p>';
+            }
             $single = count($a['groups']) === 1;
             foreach ($a['groups'] as $g) {
                 $n = count($g['files']);

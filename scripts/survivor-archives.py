@@ -10,6 +10,11 @@ linked to the site itself. Nothing is copied to this site.
          and government documents, internal program papers)
   wwasp  WWASP Survivors (wwaspsurvivors.com): the Ben Trane trial record,
          WWASP seminar manuals, a parent manual, a lawsuit
+  straights  thestraights.net (http only), nhym  nhym-alumni.org
+  sciad  SCIAD NET, the WWASP Survivor Truth archive: a Zotero library whose
+         Google Drive files (state records, court records, program documents,
+         clippings) are listed; not crawled, read from the survey in tmp/sciad/
+         (docs/PLAN.md 3.10), see build_sciad()
 
 Only documents the site links from one of its public pages are listed: the
 WWASP media library also holds duplicate uploads and sentencing letters it
@@ -60,6 +65,10 @@ SITES = {
     # thestraights.net has no https (the TLS handshake fails): its documents link over http.
     'straights': {'label': 'thestraights.net', 'url': 'http://thestraights.net/', 'host': 'thestraights.net'},
     'nhym': {'label': 'New Horizons Alumni Association', 'url': 'https://www.nhym-alumni.org/', 'host': 'nhym-alumni.org'},
+    # SCIAD NET is a Zotero library whose documents sit on Google Drive (docs.google.com for
+    # its few Google Docs); the credit links to the archive's page (decision 18).
+    'sciad': {'label': 'SCIAD NET, the WWASP Survivor Truth archive', 'url': 'https://wwaspsurvivorstruth.com/program-archive/',
+              'host': 'drive.google.com'},
 }
 
 # KOP records: f<id> facilities_v2, o<id> wpdl_kop_operators.
@@ -391,6 +400,9 @@ def hash_files(site, links):
 
 def cmd_fetch(args):
     for site in ([args.site] if args.site else SITES):
+        if site == 'sciad':
+            print('sciad: nothing to fetch; the build reads the SCIAD NET survey in tmp/sciad/ (tmp/sciad/fetch.py, analyze.py)')
+            continue
         os.makedirs(os.path.join(WORK, site), exist_ok=True)
         links = {'ssi': crawl_ssi, 'wwasp': crawl_wwasp}.get(site, lambda: crawl_site(site))()
         with open(os.path.join(WORK, site, 'links.json'), 'w', encoding='utf8', newline='\n') as fh:
@@ -502,14 +514,16 @@ def url_hash(url):
 
 
 def load_privacy():
-    """js/data/survivor-archives/privacy.json: {exclude: [sha1 of url], titles:
-    {sha1 of url: redacted title}, groups: {sha1 of the group label: redacted
-    label}}. Keys are hashes: the repo is public and holds no private name."""
+    """js/data/survivor-archives/privacy.json: {exclude: [sha1 of url], include:
+    [sha1 of url: reviewed, not private, though a privacy pattern matches it],
+    titles: {sha1 of url: redacted title}, groups: {sha1 of the group label:
+    redacted label}}. Keys are hashes: the repo is public and holds no private name."""
     path = os.path.join(OUT, 'privacy.json')
     p = {}
     if os.path.exists(path):
         p = json.load(open(path, encoding='utf8'))
-    return {'exclude': set(p.get('exclude') or []), 'titles': dict(p.get('titles') or {}), 'groups': dict(p.get('groups') or {})}
+    return {'exclude': set(p.get('exclude') or []), 'include': set(p.get('include') or []),
+            'titles': dict(p.get('titles') or {}), 'groups': dict(p.get('groups') or {})}
 
 
 def cmd_privacy_review(args):
@@ -559,14 +573,700 @@ def cmd_selftest(args):
     pj = os.path.join(OUT, 'privacy.json')
     if os.path.exists(pj):
         raw = json.load(open(pj, encoding='utf8'))
-        keys = list(raw.get('exclude') or []) + list((raw.get('titles') or {})) + list((raw.get('groups') or {}))
+        keys = list(raw.get('exclude') or []) + list(raw.get('include') or []) + list((raw.get('titles') or {})) + list((raw.get('groups') or {}))
+        assert not set(raw.get('exclude') or []) & set(raw.get('include') or []), 'privacy.json: a url both excluded and included'
+        # Every value privacy.json shows (a redacted title or group) must be neutral words, never a hash or a url.
+        assert all(isinstance(v, str) and v.strip() and '://' not in v for v in list((raw.get('titles') or {}).values()) + list((raw.get('groups') or {}).values()))
         assert all(re.fullmatch(r'[0-9a-f]{40}', k) for k in keys), 'privacy.json keys must be sha1 hex'
     # Cross-site dedupe: the same bytes for one record list once, whichever site comes first.
     seen = collections.defaultdict(set)
     first = [t for t in ('f1', 'f2') if 'm' not in seen[t] and not seen[t].add('m')]
     second = [t for t in ('f2', 'f3') if 'm' not in seen[t] and not seen[t].add('m')]
     assert first == ['f1', 'f2'] and second == ['f3']
-    print('selftest passed: %d private and %d kept samples' % (len(must), len(keep)))
+    # SCIAD NET: court titles carry no party name; private program papers stay out.
+    court = {'Jane Roe vs Hyde School Motion for Extension of Time': 'Motion, 2021',
+             'Smith vs Grove School Answer of the Defendant to Plaintiffs Complaint': 'Answer, 2021',
+             'Roe v. Program - Order Granting Defendants Joint Motion to Sever': 'Order, 2021',
+             'Doe v. X 297 Exhibit A - Deposition of John Roe': 'Exhibit A, 2021',
+             '30 - Minute entry: The court grants motion to dismiss Roe\'s cause of action': 'Minutes, 2021',
+             '42-1': 'Court record, 2021, docket entry 42-1',
+             'Roe v. Program, U.S. District Court, Case No. 2:05-cv-00123 Complaint': 'Complaint, U.S. District Court (UT), 2021, case 2:05-cv-00123'}
+    for t, want in court.items():
+        got = sciad_court_title({'title': t, 'date': '2021-03-01'}, 'UT')
+        assert got == want, 'court title %r -> %r, wanted %r' % (t, got, want)
+        assert not re.search(r'\b(Roe|Smith|Doe|John|Jane)\b', got), got
+    row = lambda title, cat='programdoc', sub=('Program Documents',): {'title': title, 'cat': cat, 'privacy': 'institutional', 'subcats': list(sub)}
+    for t in ('Jane Roe Face Sheet', 'Consent to Medical Treatment & Health Summary', 'Employee Wages 2010', 'Triangle Cross Program Application - 2019',
+              'Discovery Registration Form', 'Monthly Phone Logs', 'Shift Leader Notes - 07-23-07 Redacted', 'Letter from John Roe', 'IMG_2201.jpg', 'Home Pass 1.pdf'):
+        assert sciad_private(row(t)), 'should stay out: ' + t
+    for t in ('Student Manual 2012', 'Parent Handbook 2006', 'Application Procedure', 'Olympus Academy Blank VOB Final', 'Seminar Information Sheet (Blank)',
+              'Canyon State Academy Brochure', 'Corrective Action Plan 8.27.15'):
+        assert not sciad_private(row(t)), 'should be listed: ' + t
+    assert sciad_private(row('Incident-6.PNG', 'govrecord', ('DHS Records',))), 'state portal screenshots stay out'
+    assert not sciad_private(row('Notice of Non-Compliance 05-04-2018.TIF', 'govrecord', ('DHS Records',))), 'scanned state notices stay'
+    assert sciad_drive_url('https://drive.google.com/file/d/1e-bkBuDKecWt2NhJpuQwbnfSzBMSBDKz/view?usp=sharing')[1] == \
+        'https://drive.google.com/file/d/1e-bkBuDKecWt2NhJpuQwbnfSzBMSBDKz/view'
+    assert all(t[0] in 'fo' and t[1:].isdigit() for ts in SCIAD_RULES.values() for t in ts)
+    print('selftest passed: %d private and %d kept samples, %d court titles' % (len(must), len(keep), len(court)))
+
+
+# ---- SCIAD NET -------------------------------------------------------------------
+# SCIAD NET (https://api.zotero.org/groups/4552235) is a Zotero library kept by WWASP
+# Survivor Truth; three quarters of its items are Google Drive files. It is not crawled:
+# the survey (docs/PLAN.md 3.10 step 3, tmp/sciad/survey.md) fetched every item, and its
+# analysis writes what the build reads:
+#   tmp/sciad/items.jsonl    one row per item: title, url, date, category, privacy class,
+#                            SCIAD subcollections, program collections
+#   tmp/sciad/programs.json  each program collection -> the KOP record its name matches exactly
+#   tmp/sciad/4552235/items/ the raw pages, for the tags
+# Only Drive files are listed (news links go to the review queue, part B). Drive gives
+# no md5 without an API key, so what KOP already has is found by name:
+#   - a distinctive file name (>= 12 characters) that Unsilenced also has
+#     (tmp/unsilenced/files.jsonl): the two archives are copies of one collection
+#     (owner decision 2026-10-01); a short name counts when Unsilenced has it in the same
+#     program's folder, as many times as it has it there;
+#   - a distinctive name in KOP's media library;
+#   - a dated state record KOP holds for the same program on the same date.
+# The record is the program collection's exact match (programs.json) or SCIAD_RULES
+# below, never a near match; the tags only when the collection matches nothing, and only
+# when they name exactly one record in its state. Groups are SCIAD's categories.
+# Privacy: every private class stays out (survivor stories, photos and event media, police
+# records, juvenile/custody files, intake/medical/school records, yearbooks, letters,
+# forum posts, blogs, videos); court records are listed under titles made only from the
+# kind of document, the court, the year and the case or docket number, never a name; no
+# abstract, creator, tag or Zotero user is ever written out.
+
+SCIAD_DIR = os.path.join(ROOT, 'tmp', 'sciad')
+UNSILENCED_FILES = os.path.join(ROOT, 'tmp', 'unsilenced', 'files.jsonl')
+
+DEVEREUX, SEQUEL = 'o8', 'o20'
+# SCIAD program collection key -> KOP records, where the exact name match fails or finds
+# two records: HQ collections, renamed programs, a chain's campuses KOP has no record of
+# (their parent company's page), and KOP's own duplicates (the record under that name).
+SCIAD_RULES = {
+    'P8TRWRKL': [WWASP],                # UT WWASP HQ
+    'Q286RXE6': [SEQUEL],               # AL Sequel Services HQ
+    # Sequel and Devereux campuses with no KOP record: the parent company's page.
+    '32CPBKVL': [SEQUEL], 'FHI74F3A': [SEQUEL], 'FYLLWVMD': [SEQUEL], 'KBD3G7RG': [SEQUEL], 'GG7SNQAI': [SEQUEL],
+    'RU3IXN88': [SEQUEL], 'WCYQB7QA': [SEQUEL], 'CELBXJ4P': [SEQUEL], 'W8ZZEK78': [SEQUEL], '6NI2MI7I': [SEQUEL],
+    'NPVKKB2E': [SEQUEL],
+    'QI4G8FL3': [DEVEREUX], 'U226WRSM': [DEVEREUX], 'GICE27RR': [DEVEREUX], 'QBE945IA': [DEVEREUX], 'P453NUES': [DEVEREUX],
+    'RV4LV5IW': [DEVEREUX], '2SVW4AA2': [DEVEREUX], 'EZAAIQ4X': [DEVEREUX], '68J68QZZ': [DEVEREUX], 'X6EJTMN6': [DEVEREUX],
+    'A5R867G3': [DEVEREUX], '795TJSC6': [DEVEREUX], '78TGVVXC': [DEVEREUX], 'GYZ79JMM': [DEVEREUX], 'WWPE7GPC': [DEVEREUX],
+    'IN6TKSPF': [DEVEREUX], 'C68BEEGU': [DEVEREUX],
+    # Same program under another name or spelling.
+    'EKPJ5WLC': ['f12729'],             # MT Spring Creek Lodge = Spring Creek Lodge Academy
+    'RGCFMLFL': ['f11122'],             # FL Sandy Pines = SandyPines RTC
+    'LAD7RB2N': ['f12293'],             # AZ Spring Ridge Academy - New Day Rising
+    'DCZIFWVK': ['f10375'],             # UT Majestic Ranch = Old West Academy (past name Majestic Ranch Academy)
+    'CHM2ICJ2': ['f10412'],             # UT Center For Change
+    'VXQEGVAA': ['f13431'],             # WY Red Top Meadows Residential Treatment Center
+    'KN3ESNK6': ['f10858'],             # TX Pegasus Schools, Inc = Pegasus School
+    'KVMN8FGU': ['f10779'],             # TX High Frontier = High Frontier RTC
+    '8PKN8YGV': ['f10871'],             # TX Resolution Ranch = Resolution Ranch Academy
+    'XAC94R69': ['f10740'],             # TX Freedom Place = Freedom Place RTC
+    'A2CRWSGY': ['f12341'],             # OR Catherine Freer Wilderness
+    '7HI35GBV': ['f14033'],             # WV Greenbrier Academy = Greenbrier Academy for Girls
+    'QVGSYP6A': ['f12031'],             # NY Aurora Concepts Inc
+    'VYARTTYX': ['f13241'],             # OH Cornell Abraxas
+    'RL44ULBE': ['f10554'],             # UT Turning Point Family Care
+    'GYA7VFF4': ['f10649'],             # TX Azleway Valley View
+    'HLENZVP7': ['f13151'],             # MI Holy Cross Services - St Vincent Home (of Saginaw)
+    'IY32N7TT': ['f10665'],             # TX Boysville Inc = Boysville Texas GRO
+    'GQBMWJXN': ['f13417'],             # WY Cathedral Home for Children = Cathedral Home for Youth (Laramie)
+    'IKLDGG4R': ['f13414'],             # WY Big Horn Basin Association Adolescent Program
+    'WXWP4A2Q': ['f12204'],             # AZ Cottonwood de Tucson
+    'BEYZV8XF': ['f100006'],            # CO Cedar Springs Behavioral Health Systems = The Brown Schools at Cedar Springs
+    '3XDDW2SB': ['f11429'],             # MO Mountain Park Boarding Academy = Mountain Park Baptist Boarding Academy
+    'SNCM94N2': ['f12652'], 'QAD2XHCJ': ['f12652'],   # Open Sky Wilderness (SCIAD files it under UT; it is in Durango, CO)
+    # One name, two KOP records: the record that carries the name now; "A/B" names both.
+    'CLVLWGI2': ['f100076'],            # AL Sequel TSI Madison
+    '2G4AHYMS': ['f12155', 'f12161'],   # AZ Copper Canyon Academy/Sedona Sky Academy
+    'CBTJ6S7C': ['o5418'],              # AZ Four Directions (two facility records; the operator record)
+    'JRVCENTB': ['o5454'],              # AZ New Hope of Arizona, Inc (six facility records; the operator record)
+    'EPJX7U6L': ['f11468'],             # AR Teen Challenge Adventure Ranch
+    'NPQ32K6U': ['f9814'],              # CA Bell Academy
+    'ZRKZ7I9T': ['f11092'],             # FL Charles Britt Academy
+    'EGRGHSMN': ['f11095'],             # FL Marion Youth Academy
+    '7RH9DFKR': ['f11201'],             # FL Okeechobee Youth Development Center
+    'ILI2WUHQ': ['f11098'],             # FL St. John's Youth Academy
+    '4V3ZI32N': ['f13746', 'f13795'],   # LA Red River Academy/US Youth Services
+    'W4CQ36EQ': ['f12713'],             # MT Montana Academy
+    'HXLEFUSU': ['f100097'],            # NV Horizon Academy
+    'FY6XCXGK': ['f14109', 'f14111'],   # Academy at Dundee Ranch/Pillars of Hope (Costa Rica)
+    'AIYHFX4W': ['f14116', 'f100025'],  # The Academy/Coral Island Academy
+    'XET6N3QH': ['f11638'],             # PA South Mountain Secure Treatment Unit
+    'E65JETCB': ['f13983'],             # SC Carolina Springs Academy
+    'REUV2EU4': ['f10618'],             # TX San Marcos Treatment Center
+    'W85F8LN5': ['f10943'],             # TX Texas NeuroRehab Center
+    'QGAJ2PKA': ['f10346'],             # UT Aspen Institute for Behavioral Assessment
+    'S8CUAG7R': ['f10425'],             # UT Diamond Ranch Academy
+    '4H86CTRT': ['f100193'],            # UT Zion Hills Academy
+    'WHISADZK': ['f10644'],             # TX Austin Oaks Hospital
+    'DSPI2UYF': ['f9637'],              # NC Auldern Academy
+    '75LX3GL7': ['f11653'],             # NC Stone Mountain School
+    '2SSZQQU8': ['f11249'],             # TN Oak Plains Academy
+    'LNEMBR7N': ['f11101'],             # FL Anderson Academy
+    '9CD3HQJP': ['f13884', 'f13885'],   # KY Bellewood and Brooklawn
+    'YIBC6525': ['f12685'],             # MT Embark at Flathead Valley
+    'X6WEXUDR': ['f11145'],             # FL Brooksville Youth Academy
+    'HZG3P572': ['f11572'],             # PA Embark at the Poconos
+}
+
+# SCIAD subcollection -> the group the page shows, in this order.
+SCIAD_GOV_GROUP = {'DHS Records': 'DHS Records', 'DHS Record': 'DHS Records', 'DHS Reports': 'DHS Records',
+                   'Oregon DHS Records': 'DHS Records', 'Public Records': 'Public Records', 'Public Record': 'Public Records',
+                   'Public Documents': 'Public Records', 'Reports': 'Public Records', 'Government': 'Public Records',
+                   'Hospital Inspections': 'Hospital Inspections', 'State Cables': 'State Cables',
+                   'Financials': 'Financials', 'Workforce Unemployment': 'Workforce Unemployment'}
+SCIAD_CAT_GROUP = {'legal': 'Court records', 'programdoc': 'Program Documents', 'programinfo': 'Program Info',
+                   'news': 'News clippings', 'media': 'Media', 'research': 'Research', 'other': 'Other documents'}
+SCIAD_GROUP_ORDER = ['DHS Records', 'Public Records', 'Hospital Inspections', 'State Cables', 'Financials',
+                     'Workforce Unemployment', 'Court records', 'Program Documents', 'Newsletters', 'Program Info',
+                     'News clippings', 'Media', 'Research', 'Other documents']
+# What a document with a name that says nothing ("4557397.pdf", "Incident-6.PNG") is called.
+SCIAD_SINGULAR = {'DHS Records': 'State record', 'Public Records': 'Public record', 'Hospital Inspections': 'Hospital inspection',
+                  'State Cables': 'State cable', 'Financials': 'Financial record', 'Workforce Unemployment': 'Unemployment record',
+                  'Program Documents': 'Program document', 'Newsletters': 'Newsletter', 'Program Info': 'Program information',
+                  'News clippings': 'News clipping', 'Media': 'Media file', 'Research': 'Paper', 'Other documents': 'Document'}
+
+# Leave out (reason, pattern, categories it applies to or None for all), on the item's title.
+AGENCY = (r'(department|dept\b|\bdhs\b|dcfs|\bdcs\b|dshs|licens|state of|attorney general|governor|senat|congress|'
+          r'commission|\bboard\b|division|agency|office of|ombuds|inspector|deficienc|citation|corrective|'
+          r'compliance|violation|survey|of (concern|warning|intent|findings|determination|revocation|suspension|'
+          r'probation|approval|denial|reprimand|censure)|warning letter|demand letter|closure letter|'
+          r'determination letter|accreditation|county|city of|school district|irs\b|internal revenue)')
+SCIAD_PRIVATE = [
+    ('video or audio recording', r'\.(avi|mp4|m4v|mov|wmv|mpe?g|3gp|flv|webm|ram|rm|mp3|m4a|wav|wma|aac|ogg|05m)$', None),
+    # Screenshots of a state portal (Texas CCL's compliance history, which KOP's TX inspection pages
+    # already carry): no date or name says which report; the rest are photos. Scanned state notices (.tif) stay.
+    ('state portal screenshot (KOP has the state record)', r'\.(jpe?g|png|gif|bmp|webp)$', {'govrecord'}),
+    ('photo or image', r'\.(jpe?g|png|gif|heic|bmp|webp)$', None),
+    ('photo or image', r'\.tiff?$', {'programdoc', 'programinfo', 'other', 'media', 'news', 'research'}),
+    ('juvenile, custody or guardianship file',
+     r'\b(juvenile court|custody|guardian(ship)?|divorce|dependency|adoption|parental rights|protective order|'
+     r'restraining order|probate|conservator(ship)?|delinquen\w*|in re\b|in the (matter|interest) of|minor child|'
+     r'estate of)', None),
+    ('police record', r'\b(police|sheriff\W?s? (report|call|record)|arrest(ed)? report|booking|mug ?shot|911 call|cad report|'
+                      r'offense report|case report)\b', None),
+    ('special education case about a student', r'\b(due process (hearing|decision|complaint)|special ed(ucation)? '
+                                               r'(case|hearing|decision)|\biep\b)', None),
+    ('client, student or medical record',
+     r'(intake|admissions? (form|packet|papers|paperwork|agreement|application)|medical (history|record|form|file)|'
+     r'health (history|information|record|form)|release of (medical )?information|authori[sz]ation (to|for) '
+     r'(release|disclose|treat)|consent (form|to treat)|home ?pass|progress (report|note)s?|treatment plan|'
+     r'discharge|psych(ological|iatric)? (eval|assessment|report)|evaluation (of|for)\b|report card|grade report|'
+     r'transcripts? of grades|school (record|transcript)|student (file|record|transcript)|case (file|notes?)|'
+     r'clinical (notes?|records?)|level (sheet|chart|card)|point sheet|behavior (contract|log)|'
+     r'enrollment (form|application|agreement|contract)|application for (admission|enrollment)|'
+     r'parent choose ?outs?|family history|social history|sibling|contract (with|for) (parents?|student))', None),
+    ('client, student or medical record', r'\bincident (report|log)', {'programdoc', 'programinfo', 'other', 'media', 'news', 'research'}),
+    # A program's papers that are filled in for one young person, family or employee (read title by
+    # title in the 2026-10-01 review): face sheets, medical and consent forms, logs and notes, surveys,
+    # applications, payroll and payment papers. Blank forms and templates stay.
+    ('client, student or medical record',
+     r'^(?!.*\b(blank|template)\b).*(face ?sheet|admissions? record|merit sheet|permission slip|medical (information|memo|report)|'
+     r'immuni[sz]ation|physical exam|medication|phone (logs?|contact)|skills development report|psycho ?social|'
+     r'shift (leader )?notes|\bnotes?\b.*redacted|random notes|relapse prevention plan|\bicpc\b|insurance verification|'
+     r'\bvob\b|what state did youth|acceptance list|rep assignments|\bsurveys?\b|completion checklist|'
+     r'information worksheet|referral (form|information)|registration|release[\s_-]+(form|of[\s_-]+information)|'
+     r'authori[sz]ation to (use|disclose)|receipt[\s_-]+of[\s_-]+privacy|consent|life contract|coming home contract|'
+     r'foster parent contract|certification|recording sheet|activity log|school-?forms|fep-reg)',
+     {'programdoc', 'programinfo', 'other'}),
+    ('personal financial or employment record',
+     r'^(?!.*\b(blank|template)\b).*(\bw-?9\b|eligibility verification|\bwages\b|allowance|credit card|payment authori|'
+     r'financial sponsor|\bloans?\b|sallie mae|slm financial|personal monthly budget)', {'programdoc', 'programinfo', 'other'}),
+    ('application filled in by a family or applicant',
+     r'^(?!.*\b(procedure|checklist|information|requirements|instructions|process|guide|blank|template)\b).*(\bapplication\b|\bapp\b)',
+     {'programdoc', 'programinfo', 'other'}),
+    ('form filled in for one person', r'^(?!.*\b(blank|template)\b).*\bform\b', {'programdoc'}),
+    ('survivor story, testimony or blog',
+     r'(my story|story of|testimon|journal entr|diary|\bblog|poem|essay|memoir|survivor|interview with|'
+     r'what happened to me|own words|my (son|daughter|child|time|experience))', {'programdoc', 'programinfo', 'other', 'media', 'news', 'research', 'govrecord'}),
+    ('yearbook, photos or event media', r'\b(yearbooks?|photos?|pictures?|album|scrapbook|graduation|prom|reunion|'
+                                        r'protest|rally|vigil|slideshow|video)\b', None),
+    ('obituary or memorial', r'(obituar|memorial|funeral|in memory)', None),
+    ('forum or social post', r'\b(facebook|reddit|fornits|forum|tweets?|instagram|tiktok|message board|chat log|'
+                             r'text messages?|screen ?shots?)\b', None),
+]
+SCIAD_PRIVATE_RE = [(why, re.compile(p, re.I), cats) for why, p, cats in SCIAD_PRIVATE]
+LETTER_RE = re.compile(r'\b(letters?|e-?mails?|correspondence|note (to|from)|card (to|from))\b', re.I)
+AGENCY_RE = re.compile(AGENCY, re.I)
+SCIAD_CLASS = {'survivor': 'survivor story or forum post', 'photo': 'photo or event media', 'police': 'police record'}
+
+
+def sciad_private(row):
+    """Why a SCIAD Drive file stays out, or ''."""
+    title, cat, subcats = row['title'], row['cat'], set(row['subcats'])
+    if row['privacy'] == 'private':
+        return SCIAD_CLASS.get(cat) or ('juvenile, custody or guardianship file' if cat == 'legal' else 'private record (title)')
+    if 'State Special Ed Cases' in subcats:
+        return 'special education case about a student'
+    for why, rx, cats in SCIAD_PRIVATE_RE:
+        if (cats is None or cat in cats) and rx.search(title):
+            return why
+    if cat != 'legal' and LETTER_RE.search(title) and not AGENCY_RE.search(title):
+        return 'personal letter'
+    why = private_reason(title)
+    return why
+
+
+def name_key(s):
+    """As tmp/sciad/common.py: lowercase ascii letters and digits, '&' = and, no 'the', no Inc/LLC."""
+    s = unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode().lower().replace('&', ' and ')
+    s = re.sub(r"['`]", '', s)
+    s = re.sub(r'\([^)]*\)', ' ', s)
+    s = re.sub(r'[^a-z0-9]+', ' ', s).strip()
+    s = re.sub(r'^the ', '', s)
+    s = re.sub(r' (inc|llc|ltd|corp|co|lp|pllc|incorporated)$', '', s)
+    return s.replace(' ', '')
+
+
+def paren_names(s):
+    out = [s]
+    for m in re.findall(r'\(([^)]*)\)', s or ''):
+        out.append(re.sub(r'^(formerly|fka|f/k/a|aka|a\.k\.a\.|now|previously|later|also)\s+', '', m.strip(), flags=re.I))
+    base = re.sub(r'\([^)]*\)', '', s or '')
+    out += re.split(r'\s*/\s*|\s+aka\s+|\s+a\.k\.a\.\s+|\s+fka\s+|\s+-\s+formerly\s+', base, flags=re.I)
+    return [x for x in dict.fromkeys(o.strip() for o in out) if x]
+
+
+DRIVE_FILE = re.compile(r'drive\.google\.com/(?:a/[^/]+/)?(?:file/d/|open\?(?:.*&)?id=|uc\?(?:.*&)?id=)([A-Za-z0-9_-]{20,})')
+GOOGLE_DOC = re.compile(r'docs\.google\.com/(document|spreadsheets|presentation)/d/([A-Za-z0-9_-]{20,})')
+
+
+def sciad_drive_url(url):
+    """(file id, the Drive view url) for a Drive file or Google Doc, else (None, None)."""
+    m = DRIVE_FILE.search(url or '')
+    if m:
+        return m.group(1), 'https://drive.google.com/file/d/%s/view' % m.group(1)
+    m = GOOGLE_DOC.search(url or '')
+    if m:
+        return m.group(2), 'https://docs.google.com/%s/d/%s/edit?usp=sharing' % (m.group(1), m.group(2))
+    return None, None
+
+
+def sciad_date(row):
+    """YYYY, YYYY-MM or YYYY-MM-DD from the item's date, else from its title, else ''."""
+    for t in (row.get('date') or '', row['title']):
+        m = re.search(r'\b((?:19|20)\d\d)(?:[-_ /](\d\d)(?:[-_ /](\d\d))?)?\b', t)
+        if m:
+            y, mo, d = m.groups()
+            if mo and not 1 <= int(mo) <= 12:
+                mo = d = None
+            if d and not 1 <= int(d) <= 31:
+                d = None
+            return '-'.join(x for x in (y, mo, d) if x)
+    return ''
+
+
+COURT_KIND = [
+    (r'\bexhibit|\battachment', 'Exhibit'),
+    (r'minute (entry|order)|\bminutes\b', 'Minutes'),
+    (r'amended complaint', 'Amended complaint'),
+    (r'\bcomplaint', 'Complaint'), (r'counter-?claim', 'Counterclaim'),
+    (r'\bmotion', 'Motion'), (r'memorand', 'Memorandum'), (r'\b(order|ruling)\b', 'Order'),
+    (r'\bopinion', 'Opinion'), (r'judg(e)?ment', 'Judgment'), (r'\bverdict', 'Verdict'),
+    (r'\bdeposition|\bdepo\b', 'Deposition'), (r'transcript', 'Transcript'), (r'affidavit', 'Affidavit'),
+    (r'declaration', 'Declaration'), (r'\bbrief\b', 'Brief'), (r'petition', 'Petition'), (r'subpoena', 'Subpoena'),
+    (r'stipulat', 'Stipulation'), (r'settlement', 'Settlement'), (r'indictment', 'Indictment'),
+    (r'\bplea\b', 'Plea'), (r'sentenc', 'Sentencing record'), (r'interrogator', 'Interrogatories'),
+    (r'docket', 'Docket'), (r'summons', 'Summons'), (r'\banswer', 'Answer'), (r'\bnotice', 'Notice'),
+    (r'\b(response|reply|opposition|objection|surreply)', 'Response'), (r'\bappeal', 'Appeal'), (r'hearing', 'Hearing record'),
+    (r'warrant', 'Warrant'), (r'consent decree', 'Consent decree'), (r'\bappearance', 'Appearance'),
+    (r'\bwithdraw', 'Withdrawal'), (r'\bletter', 'Letter'), (r'e-?mails?\b', 'Email'),
+    (r'\bcharg', 'Charging document'), (r'\breport\b', 'Report'), (r'\bdiscovery\b|request for production|admissions\b', 'Discovery'),
+]
+COURT_KIND_RE = [(re.compile(p, re.I), k) for p, k in COURT_KIND]
+COURT_NAME = [
+    (r'u\.?\s?s\.? district court|united states district court|federal (district )?court|\bd\. ?(utah|mont|idaho)', 'U.S. District Court'),
+    (r'court of appeals|appellate court|\bcir(cuit)?\.? court of appeals', 'Court of Appeals'),
+    (r'supreme court', 'Supreme Court'), (r'bankruptcy', 'Bankruptcy Court'), (r'superior court', 'Superior Court'),
+    (r'circuit court', 'Circuit Court'), (r'district court', 'District Court'), (r'court of common pleas', 'Court of Common Pleas'),
+    (r'chancery', 'Chancery Court'), (r'tax court', 'Tax Court'),
+]
+COURT_NAME_RE = [(re.compile(p, re.I), k) for p, k in COURT_NAME]
+CASE_NO_RE = [re.compile(r'\b(\d:\d{2}-?[a-z]{2}-?\d{3,6})(?:-[a-z]{2,4})?\b', re.I),
+              re.compile(r'\b(?:case|civil action|cause|docket)\s*(?:no\.?|number|#)?\s*:?\s*([A-Z0-9]{0,4}[-:]?\d{2,}[-:A-Z0-9]*\d)\b', re.I),
+              re.compile(r'\bno\.\s*([A-Z0-9]{0,4}[-:]?\d{2,}[-:A-Z0-9]*\d)\b', re.I)]
+
+
+def sciad_court_title(row, state):
+    """A court record's title from the kind of document, the court, the year and the case or
+    docket number alone: never a party, parent, witness or minor name."""
+    t = row['title']
+    # The kind word that comes first: "Motion for Order of Compliance" is a motion,
+    # "Order Granting ... Motion" an order, "Answer ... to Complaint" an answer.
+    hits = [(m.start(), n, k) for n, (rx, k) in enumerate(COURT_KIND_RE) for m in [rx.search(t)] if m]
+    kind = min(hits)[2] if hits else 'Court record'
+    court = next((k for rx, k in COURT_NAME_RE if rx.search(t)), '')
+    parts = [kind]
+    if court:
+        parts.append(court + (' (%s)' % state if state and court != 'U.S. Supreme Court' else ''))
+    year = (sciad_date(row) or '')[:4]
+    if year:
+        parts.append(year)
+    case = next((m.group(1) for rx in CASE_NO_RE for m in [rx.search(t)] if m), '')
+    if case and sum(c.isdigit() for c in case) >= 3:
+        parts.append('case ' + case)
+    m = re.fullmatch(r'\s*(\d{1,4})(?:[-_ ](\d{1,3}|main))?(?:\.pdf)?\s*', t, re.I)
+    if m:
+        parts.append('docket entry ' + m.group(1) + ('-' + m.group(2) if m.group(2) and m.group(2) != 'main' else ''))
+    m = re.search(r'\bexhibit\s+([A-Z]{1,3}|\d{1,3})\b', t, re.I)
+    if m and kind == 'Exhibit':
+        parts[0] = 'Exhibit ' + m.group(1).upper()
+    return ', '.join(parts)
+
+
+MEDIA_EXT = re.compile(r'\.(pdf|docx?|odt|rtf|txt|xlsx?|pptx?|jpe?g|png|gif|tiff?|html?)$', re.I)
+
+
+def sciad_title(row, group):
+    """The title shown: the item's own, tidied, or the group and date when it says nothing."""
+    t = MEDIA_EXT.sub('', row['title'].strip())
+    t = t.replace('___', ', ').replace('_', ' ')
+    t = re.sub(r'\b((?:19|20)\d\d) (\d\d) (\d\d)\b', r'\1-\2-\3', t)
+    t = re.sub(r'\s+', ' ', t).strip(' ,-')
+    if len(t) > 180:
+        t = t[:177].rsplit(' ', 1)[0] + '...'
+    if len(file_key(row['title'])) < 12:
+        date = sciad_date(row)
+        lead = SCIAD_SINGULAR.get(group, 'Document')
+        return ('%s, %s (%s)' % (lead, date, t)) if date else ('%s (%s)' % (lead, t)) if t else lead
+    return t
+
+
+def sciad_group(row):
+    if row['cat'] == 'govrecord':
+        return next((SCIAD_GOV_GROUP[c] for c in row['subcats'] if c in SCIAD_GOV_GROUP), 'Public Records')
+    if row['cat'] == 'programdoc' and set(row['subcats']) & {'Newsletters', 'Newsletter', 'Cross Creek Chronicles', 'Dundee Update'}:
+        return 'Newsletters'
+    return SCIAD_CAT_GROUP.get(row['cat'], 'Other documents')
+
+
+def build_sciad(db, privacy, kop_names, report):
+    """SCIAD NET's Drive files -> (lists, stats, unmatched, documents), or None without the survey."""
+    items_path, programs_path = os.path.join(SCIAD_DIR, 'items.jsonl'), os.path.join(SCIAD_DIR, 'programs.json')
+    if not (os.path.exists(items_path) and os.path.exists(programs_path) and os.path.exists(UNSILENCED_FILES)):
+        return None
+    programs = json.load(open(programs_path, encoding='utf8'))
+    rows = [json.loads(l) for l in open(items_path, encoding='utf8') if l.strip()]
+
+    # Unsilenced's names: every distinctive one, and each short one by the program folder it sits in.
+    uns_names, uns_folder = set(), collections.Counter()
+    for line in open(UNSILENCED_FILES, encoding='utf8'):
+        if not line.strip():
+            continue
+        r = json.loads(line)
+        k = file_key(r.get('name', ''))
+        if len(k) >= 12:
+            uns_names.add(k)
+        elif k:
+            for seg in (r.get('path') or [])[1:]:
+                uns_folder[(name_key(seg), k)] += 1
+    used_folder = collections.Counter()
+
+    # Tags, for items in a collection that matches no record (never written out).
+    tags, item_cols = {}, {}
+    for f in sorted(os.listdir(os.path.join(SCIAD_DIR, '4552235', 'items'))):
+        if f.endswith('.json'):
+            for it in json.load(open(os.path.join(SCIAD_DIR, '4552235', 'items', f), encoding='utf8')):
+                tags[it['key']] = [t['tag'] for t in it['data'].get('tags', [])]
+                item_cols[it['key']] = it['data'].get('collections', [])
+    # Court records sit in one subcollection per case, Programs / <state> / <program> / Legal / <case>:
+    # the page groups them by case, under a label made from the case number or years, never its name.
+    cols = {}
+    for f in sorted(os.listdir(os.path.join(SCIAD_DIR, '4552235', 'collections'))):
+        if f.endswith('.json'):
+            for c in json.load(open(os.path.join(SCIAD_DIR, '4552235', 'collections', f), encoding='utf8')):
+                cols[c['key']] = (c['data']['name'], c['data'].get('parentCollection') or None)
+
+    def case_of(item_key):
+        for ck in item_cols.get(item_key, []):
+            chain, k = [], ck
+            while k and k in cols and len(chain) < 20:
+                chain.insert(0, k)
+                k = cols[k][1]
+            names = [cols[k][0] for k in chain]
+            if len(chain) >= 5 and names[0] == 'Programs' and names[3] == 'Legal':
+                return chain[4]
+        return None
+    fac_keys = collections.defaultdict(set)
+    fac_names = {}
+    for fid, name, state, js in db.execute('SELECT id, name, state, json_data FROM facilities_v2'):
+        ident = (json.loads(js or '{}') or {}).get('identification') or {}
+        fac_names[fid] = name or ''
+        for n in [name, ident.get('name'), ident.get('currentName')] + list(ident.get('pastNames') or []) + list(ident.get('otherNames') or []):
+            if isinstance(n, dict):
+                n = n.get('name') or ''
+            if isinstance(n, str) and len(name_key(n)) >= 5:
+                fac_keys[name_key(n)].add((fid, (state or '').upper()))
+    state_names = {k.lower() for k in ('Alabama Alaska Arizona Arkansas California Colorado Connecticut Delaware Florida Georgia '
+                                       'Hawaii Idaho Illinois Indiana Iowa Kansas Kentucky Louisiana Maine Maryland Massachusetts '
+                                       'Michigan Minnesota Mississippi Missouri Montana Nebraska Nevada Ohio Oklahoma Oregon '
+                                       'Pennsylvania Tennessee Texas Utah Vermont Virginia Washington Wisconsin Wyoming').split()}
+
+    def tag_target(key, state):
+        ids = set()
+        for t in tags.get(key, []):
+            if t.lower() in state_names or len(name_key(t)) < 5:
+                continue
+            ids |= {fid for fid, st in fac_keys.get(name_key(t), ()) if st == state}
+        return {'f%d' % ids.pop()} if len(ids) == 1 else set()
+
+    # KOP's own state inspection reports: (state, program name key) -> dates.
+    insp = collections.defaultdict(set)
+    for st, fname, pname, rdate in db.execute(
+            'SELECT f.state, f.facility_name, f.program_name, r.report_date FROM inspection_reports r '
+            'JOIN inspection_facilities f ON f.id = r.facility_id'):
+        m = re.match(r'(\d{1,2})/(\d{1,2})/(\d{4})', rdate or '')
+        d8 = '%s-%02d-%02d' % (m.group(3), int(m.group(1)), int(m.group(2))) if m else (rdate or '')[:10]
+        for n in (fname, pname):
+            if n:
+                insp[((st or '').upper(), name_key(n))].add(d8)
+
+    def kop_has_report(row, targets):
+        m = re.search(r'((?:19|20)\d\d)-?(\d\d)-?(\d\d)', row['title'])
+        if not m:
+            return False
+        d8 = '%s-%s-%s' % m.groups()
+        for pk in row['programs']:
+            p = programs.get(pk) or {}
+            keys = {name_key(v) for v in paren_names(p.get('name', ''))}
+            keys |= {name_key(fac_names.get(int(t[1:]), '')) for t in targets if t[0] == 'f'}
+            if any(d8 in insp.get((p.get('state', ''), k), ()) for k in keys):
+                return True
+        return False
+
+    stats, unmatched = collections.Counter(), collections.Counter()
+    placed = collections.OrderedDict()     # drive id -> {row, targets, url, group, name, programs}
+    seen_ids = set()
+    review = []
+    for row in rows:
+        did, url = sciad_drive_url(row.get('url'))
+        if not did:
+            continue
+        if did in seen_ids:
+            # The same Drive file filed twice: add the other collection's records to the first.
+            if did in placed:
+                for pk in row['programs']:
+                    if pk not in placed[did]['row']['programs']:
+                        placed[did]['row']['programs'].append(pk)
+            stats['the same Drive file filed twice'] += 1
+            continue
+        seen_ids.add(did)
+        k = file_key(row['title'])
+        if len(k) >= 12 and k in uns_names:
+            stats['held: Unsilenced has a file of the same name'] += 1
+            continue
+        if len(k) < 12 and k:
+            hit = None
+            for pk in row['programs']:
+                for v in paren_names((programs.get(pk) or {}).get('name', '')):
+                    fk = (name_key(v), k)
+                    if uns_folder[fk] > used_folder[fk]:
+                        hit = fk
+                        break
+                if hit:
+                    break
+            if hit:
+                used_folder[hit] += 1
+                stats['held: Unsilenced has a file of the same short name for the program'] += 1
+                continue
+        if len(k) >= 12 and kop_names.get(k):
+            stats['held: KOP has a copy under the same name'] += 1
+            continue
+        # What KOP already has goes first, so the private counts are what privacy alone keeps out.
+        h = url_hash(url)
+        why = 'private: reviewed (privacy.json)' if h in privacy['exclude'] else ''
+        if not why and h not in privacy['include']:
+            why = sciad_private(row)
+            why = 'private: ' + why if why else ''
+        if why:
+            stats[why] += 1
+            continue
+        placed[did] = {'row': row, 'url': url}
+
+    lists = {'f': collections.defaultdict(list), 'o': collections.defaultdict(list)}
+    for did, d in placed.items():
+        row, url = d['row'], d['url']
+        targets, by, states, prefix = set(), collections.Counter(), set(), {}
+        open_progs = []
+        for pk in row['programs']:
+            p = programs.get(pk) or {}
+            ts = set()
+            if pk in SCIAD_RULES:
+                ts = set(SCIAD_RULES[pk])
+                by['rule'] += 1
+            elif p.get('result') == 'facility':
+                ts = {'f%d' % i for i in p['facilities']}
+            elif p.get('result') == 'operator':
+                ts = {'o%d' % i for i in p['operators']}
+            elif p.get('result') == 'unmatched':
+                open_progs.append(p)
+            for t in ts:
+                # On a parent company's page a campus's documents say which campus.
+                if t[0] == 'o' and not re.search(r'\b(HQ|Headquarters)$', p.get('name', '')) and p.get('result') != 'operator':
+                    prefix[t] = p['name']
+            targets |= ts
+            if p.get('state'):
+                states.add(p['state'])
+        how = 'collection'
+        if not targets and open_progs and len({p['state'] for p in open_progs}) == 1 and open_progs[0]['state']:
+            targets = tag_target(row['key'], open_progs[0]['state'])
+            how = 'tags'
+        if not targets:
+            stats['no KOP record: ' + ('program collection matches none' if row['programs'] else 'not in a program collection')] += 1
+            for pk in row['programs']:
+                p = programs.get(pk) or {}
+                unmatched['%s (%s, %s)' % (p.get('name', pk), p.get('state') or 'non-US', p.get('result', '?'))] += 1
+            if not row['programs']:
+                unmatched['(%s)' % ', '.join(row['subcats'][:2] or ['no collection'])] += 1
+            continue
+        if row['cat'] == 'govrecord' and kop_has_report(row, targets):
+            stats['held: KOP has the state report for that program and date'] += 1
+            continue
+        group = sciad_group(row)
+        state = next(iter(states)) if len(states) == 1 else ''
+        name = sciad_court_title(row, state) if row['cat'] == 'legal' else sciad_title(row, group)
+        name = privacy['titles'].get(url_hash(url), name)
+        stats['listed'] += 1
+        stats['listed, tied by ' + how] += 1
+        case = case_of(row['key']) if row['cat'] == 'legal' else None
+        for t in sorted(targets):
+            lists[t[0]][int(t[1:])].append({'url': url, 'name': name, 'group': group, '_prefix': prefix.get(t, ''),
+                                            '_case': case, '_date': sciad_date(row) or '9999'})
+        review.append((url_hash(url), row['cat'], group, ' '.join(sorted(targets)), name, row['title'], row.get('date') or ''))
+
+    # A case's label: its number when the collection name holds one, else the years its records span.
+    case_years = collections.defaultdict(set)
+    for kind in lists:
+        for entries in lists[kind].values():
+            for e in entries:
+                if e['_case'] and e['_date'] != '9999':
+                    case_years[e['_case']].add(e['_date'][:4])
+
+    def case_label(case, n):
+        """'case 2:03-cv-00123' when the collection name holds a number, else 'case 2 (2002-2004)'."""
+        no = next((m.group(1) for rx in CASE_NO_RE for m in [rx.search(cols[case][0])] if m), '')
+        if no and sum(ch.isdigit() for ch in no) >= 3:
+            return 'case ' + no
+        ys = sorted(case_years.get(case, ()))
+        span = (ys[0] if ys[0] == ys[-1] else ys[0] + '-' + ys[-1]) if ys else ''
+        return 'case %d' % n + (' (%s)' % span if span else '')
+
+    # Each record: groups in SCIAD_GROUP_ORDER (court records by case), dated documents in date
+    # order; a title shown twice in a group gets its date, then a number.
+    for kind in lists:
+        for i, entries in lists[kind].items():
+            cases = sorted({e['_case'] for e in entries if e['_case']},
+                           key=lambda c: (min(case_years.get(c) or {'9999'}), c))
+            labels = {c: case_label(c, n) for n, c in enumerate(cases, 1)}
+            for e in entries:
+                base = e['group']
+                g = base + (': ' + labels[e['_case']] if e['_case'] and len(cases) > 1 else '')
+                g = (e['_prefix'] + ': ' + g) if e['_prefix'] else g
+                e['group'] = privacy['groups'].get(url_hash(g), g)
+                e['_order'] = (e['_prefix'], SCIAD_GROUP_ORDER.index(base), cases.index(e['_case']) if e['_case'] in labels else -1,
+                               e['group'], e['_date'], e['name'])
+            entries.sort(key=lambda e: e['_order'])
+            count = collections.Counter((e['group'], e['name']) for e in entries)
+            for e in entries:
+                if count[(e['group'], e['name'])] > 1 and e['_date'] != '9999' and e['_date'] not in e['name']:
+                    e['name'] = '%s, %s' % (e['name'], e['_date'])
+            count = collections.Counter((e['group'], e['name']) for e in entries)
+            n = collections.Counter()
+            for e in entries:
+                for k in ('_order', '_prefix', '_case', '_date'):
+                    del e[k]
+                key = (e['group'], e['name'])
+                if count[key] > 1:
+                    n[key] += 1
+                    e['name'] = '%s (%d)' % (e['name'], n[key])
+    os.makedirs(WORK, exist_ok=True)
+    with open(os.path.join(WORK, 'sciad-review.tsv'), 'w', encoding='utf8', newline='\n') as fh:
+        fh.write('sha1\tcategory\tgroup\trecords\tshown as\tSCIAD title\tdate\n')
+        for r in sorted(review, key=lambda r: (r[1], r[2], r[5])):
+            fh.write('\t'.join(re.sub(r'\s', ' ', x) for x in r) + '\n')
+    report += ['SCIAD NET: the review list of every listed document (sha1, shown title, SCIAD title) is '
+               'tmp/survivor-archives/sciad-review.tsv (gitignored: it holds the original titles).', '']
+    return lists, stats, unmatched, len(seen_ids)
+
+
+def build_crawled(site, meta, privacy, md5s, kop_names, seen_md5):
+    """A crawled site (fetch): its links and their md5s -> (lists, stats, unmatched, documents)."""
+    links_path = os.path.join(WORK, site, 'links.json')
+    files_path = os.path.join(WORK, site, 'files.jsonl')
+    if not os.path.exists(links_path) or not os.path.exists(files_path):
+        sys.exit('Missing %s; run: python scripts/survivor-archives.py fetch --site %s' % (links_path, site))
+    # Each site serves its documents over one scheme (thestraights.net has no https); some pages link the other.
+    scheme = meta['url'].split(':')[0]
+    https = lambda u: re.sub(r'^https?://', scheme + '://', u)
+    links = json.load(open(links_path, encoding='utf8'))
+    for l in links:
+        l['url'] = https(l['url'])
+    hashed = {}
+    for line in open(files_path, encoding='utf8'):
+        if line.strip():
+            r = json.loads(line)
+            hashed[https(r['url'])] = r
+    site_names = collections.Counter(file_key(file_name(u)) for u in {l['url'] for l in links})
+
+    # One entry per document: the targets of every page linking it.
+    docs = collections.OrderedDict()
+    for l in links:
+        t, how = targets_for(site, l)
+        d = docs.setdefault(l['url'], {'link': l, 'targets': set(), 'unruled': True, 'how': set()})
+        if t is not None:
+            d['unruled'] = False
+            d['targets'] |= set(t)
+            d['how'].add(how)
+
+    stats = collections.Counter()
+    unmatched = collections.Counter()
+    lists = {'f': collections.defaultdict(list), 'o': collections.defaultdict(list)}
+    for url, d in docs.items():
+        l = d['link']
+        h = hashed.get(url) or {}
+        if not h.get('md5'):
+            stats['not downloadable (%s)' % (h.get('status') or 'not fetched')] += 1
+            continue
+        if h.get('size', 0) < 1024 or 'text/html' in (h.get('type') or ''):
+            stats['not a document (error page)'] += 1
+            continue
+        name_ = display_name(l, site)
+        group_ = group_label(site, l)
+        why = 'private: reviewed (privacy.json)' if url_hash(url) in privacy['exclude'] else ''
+        if not why and url_hash(url) not in privacy['include']:
+            why = private_reason(file_name(url), urllib.parse.unquote(urllib.parse.urlsplit(url).path), l['name'], l['section'],
+                                wide=(l['page_title'], l['page'], group_))
+            why = 'private: ' + why if why else ''
+        if why:
+            stats[why] += 1
+            continue
+        if not d['targets']:
+            stats['about no program KOP has a record of' if not d['unruled'] else 'no rule ties it to a record'] += 1
+            unmatched[group_label(site, l)] += 1
+            continue
+        if h['md5'] in md5s:
+            stats['KOP has the same file'] += 1
+            continue
+        k = file_key(file_name(url))
+        if len(k) >= 12 and kop_names.get(k, 0) >= 1 and site_names[k] <= 2:
+            stats['KOP has a copy under the same name'] += 1
+            continue
+        entry = {'url': url, 'name': privacy['titles'].get(url_hash(url), name_),
+                 'group': privacy['groups'].get(url_hash(group_), group_)}
+        placed = 0
+        for t in sorted(d['targets']):
+            # The same bytes uploaded twice, or listed by an earlier site, list once per record.
+            if h['md5'] in seen_md5[t]:
+                continue
+            seen_md5[t].add(h['md5'])
+            lists[t[0]][int(t[1:])].append(entry)
+            placed += 1
+        stats['listed' if placed else 'same file already listed for the record'] += 1
+    return lists, stats, unmatched, len(docs)
 
 
 def cmd_build(args):
@@ -588,7 +1288,7 @@ def cmd_build(args):
                 kop_names[k] += 1
 
     # Every target must still be a record: a merged or deleted id is a rule to fix.
-    bad = sorted({t for rules in RULES.values() for _, _, ts in rules for t in ts
+    bad = sorted({t for ts in [ts for rules in RULES.values() for _, _, ts in rules] + list(SCIAD_RULES.values()) for t in ts
                   if not ((t[0] == 'f' and int(t[1:]) in facility_ids) or (t[0] == 'o' and int(t[1:]) in operator_ids))})
     if bad:
         sys.exit('RULES name records that no longer exist: %s' % ', '.join(bad))
@@ -598,78 +1298,14 @@ def cmd_build(args):
     privacy = load_privacy()
     seen_md5 = collections.defaultdict(set)   # record -> md5s already listed, across sites in SITES order
     for site, meta in SITES.items():
-        links_path = os.path.join(WORK, site, 'links.json')
-        files_path = os.path.join(WORK, site, 'files.jsonl')
-        if not os.path.exists(links_path) or not os.path.exists(files_path):
-            sys.exit('Missing %s; run: python scripts/survivor-archives.py fetch --site %s' % (links_path, site))
-        # Each site serves its documents over one scheme (thestraights.net has no https); some pages link the other.
-        scheme = meta['url'].split(':')[0]
-        https = lambda u: re.sub(r'^https?://', scheme + '://', u)
-        links = json.load(open(links_path, encoding='utf8'))
-        for l in links:
-            l['url'] = https(l['url'])
-        hashed = {}
-        for line in open(files_path, encoding='utf8'):
-            if line.strip():
-                r = json.loads(line)
-                hashed[https(r['url'])] = r
-        site_names = collections.Counter(file_key(file_name(u)) for u in {l['url'] for l in links})
-
-        # One entry per document: the targets of every page linking it.
-        docs = collections.OrderedDict()
-        for l in links:
-            t, how = targets_for(site, l)
-            d = docs.setdefault(l['url'], {'link': l, 'targets': set(), 'unruled': True, 'how': set()})
-            if t is not None:
-                d['unruled'] = False
-                d['targets'] |= set(t)
-                d['how'].add(how)
-
-        stats = collections.Counter()
-        unmatched = collections.Counter()
-        lists = {'f': collections.defaultdict(list), 'o': collections.defaultdict(list)}
-        for url, d in docs.items():
-            l = d['link']
-            h = hashed.get(url) or {}
-            if not h.get('md5'):
-                stats['not downloadable (%s)' % (h.get('status') or 'not fetched')] += 1
+        if site == 'sciad':
+            built = build_sciad(db, privacy, kop_names, report)
+            if built is None:
+                print('sciad: no survey in tmp/sciad/ (items.jsonl, programs.json); its build is left as it is')
                 continue
-            if h.get('size', 0) < 1024 or 'text/html' in (h.get('type') or ''):
-                stats['not a document (error page)'] += 1
-                continue
-            name_ = display_name(l, site)
-            group_ = group_label(site, l)
-            why = 'private: reviewed (privacy.json)' if url_hash(url) in privacy['exclude'] else ''
-            if not why:
-                why = private_reason(file_name(url), urllib.parse.unquote(urllib.parse.urlsplit(url).path), l['name'], l['section'],
-                                    wide=(l['page_title'], l['page'], group_))
-                why = 'private: ' + why if why else ''
-            if why:
-                stats[why] += 1
-                continue
-            if not d['targets']:
-                stats['about no program KOP has a record of' if not d['unruled'] else 'no rule ties it to a record'] += 1
-                unmatched[group_label(site, l)] += 1
-                continue
-            if h['md5'] in md5s:
-                stats['KOP has the same file'] += 1
-                continue
-            k = file_key(file_name(url))
-            if len(k) >= 12 and kop_names.get(k, 0) >= 1 and site_names[k] <= 2:
-                stats['KOP has a copy under the same name'] += 1
-                continue
-            entry = {'url': url, 'name': privacy['titles'].get(url_hash(url), name_),
-                     'group': privacy['groups'].get(url_hash(group_), group_)}
-            placed = 0
-            for t in sorted(d['targets']):
-                # The same bytes uploaded twice, or listed by an earlier site, list once per record.
-                if h['md5'] in seen_md5[t]:
-                    continue
-                seen_md5[t].add(h['md5'])
-                lists[t[0]][int(t[1:])].append(entry)
-                placed += 1
-            stats['listed' if placed else 'same file already listed for the record'] += 1
-
+            lists, stats, unmatched, ndocs = built
+        else:
+            lists, stats, unmatched, ndocs = build_crawled(site, meta, privacy, md5s, kop_names, seen_md5)
         site_out = os.path.join(OUT, site)
         index = {'built': datetime.date.today().isoformat(), 'label': meta['label'], 'url': meta['url'],
                  'facilities': {}, 'operators': {}}
@@ -694,7 +1330,7 @@ def cmd_build(args):
         for i, n in index['operators'].items():
             r = db.execute('SELECT name FROM wpdl_kop_operators WHERE id = ?', (int(i),)).fetchone()
             names['o' + i] = ('%s (parent company)' % r[0], n)
-        report += ['## %s' % meta['label'], '', '%d documents linked from its pages.' % len(docs), '',
+        report += ['## %s' % meta['label'], '', '%d documents %s.' % (ndocs, 'in its Drive files' if site == 'sciad' else 'linked from its pages'), '',
                    '| Outcome | Documents |', '|---|---:|'] + \
                   ['| %s | %d |' % (k, v) for k, v in stats.most_common()] + \
                   ['', '### Listed on', ''] + \

@@ -857,7 +857,7 @@ Owner decisions in Waiting on the owner item 18.
    never a name; the repo is public). `python scripts/survivor-archives.py
    privacy-review` writes `tmp/survivor-archives/privacy-review.md` (every
    listed document with its hashes) for a reviewer to fill privacy.json,
-   which is still empty: that name-by-name pass is open. `selftest` checks
+   (filled for SCIAD NET in 4A; the other sites' name-by-name pass is still open). `selftest` checks
    the patterns. Automatic exclusions so far: ssi 1, wwasp 5 (the Ben
    Trane "Part 6 - Victim statements" group, which also holds two non-victim
    exhibits), straights 2, nhym 10.
@@ -881,6 +881,43 @@ Owner decisions in Waiting on the owner item 18.
    no md5 without a key); archived articles and clippings into a review
    screen like KOP Tools > Drive Docs, through `kop_ext_find_duplicates()`,
    never published on their own. Credit per decision 18.
+   - **Part A built 2026-10-01** (not committed yet). Site `sciad` in
+     `scripts/survivor-archives.py` (`build_sciad()`): no fetch, the build
+     reads the survey (`tmp/sciad/items.jsonl`, `programs.json`, the raw
+     pages for tags and the Legal case subcollections) and
+     `tmp/unsilenced/files.jsonl`. Of 76,769 distinct Drive files: 64,804
+     dropped because Unsilenced has a file of the same distinctive name, 4,301
+     a short name Unsilenced has in the same program's folder (as many times
+     as it has it there), 8 a name in the media library, 0 a state report KOP
+     holds for the same date (the survey's 625 were all Unsilenced names);
+     2,554 private (1,634 photos and event media, 466 Texas CCL portal
+     screenshots, 150 client/student/medical papers, 47 filled-in
+     applications, 42 police, 40 juvenile/custody, 29 personal letters, 39
+     survivor stories and blogs, 19 payroll and payment papers, 15 videos,
+     18 by reviewed hash, the rest by title words); 1,618 on no KOP record.
+     **3,484 listed on 232 facility and 12 operator pages** (WWASP o29 349,
+     UHS o25 306, Devereux o8 191, Teen Challenge o22 178, Trinity Teen
+     Solutions 148, Triangle Cross 128), 572 KB in
+     `js/data/survivor-archives/sciad/`. Records: the program collection's
+     exact match, or `SCIAD_RULES` (86 collections: WWASP HQ, Sequel Services
+     HQ, Sequel and Devereux campuses KOP has no record of on the parent
+     company, renamed programs, and for KOP's duplicate records the record
+     that carries the name now); tags only for an unmatched collection (1
+     item). Groups are SCIAD's categories (DHS Records, Public Records,
+     Court records, Program Documents, News clippings ...), court records
+     split by case as "Court records: case 2 (2010-2021)"; a campus's
+     documents on a parent company say which campus. Court titles are made
+     from the kind of filing, court, year and case or docket number only;
+     a court record named for a party is never shown under that name.
+     `inc/survivor-archives.php` accepts drive.google.com and
+     docs.google.com for this site only (`kop_survivor_archives_hosts()`),
+     and the block's heading is "From SCIAD NET, the WWASP Survivor Truth
+     archive" linked to its program-archive page. Every listed title was
+     read (`tmp/survivor-archives/sciad-review.tsv`, gitignored);
+     `privacy.json` gained 18 exclusions, 5 neutral titles and an `include`
+     list (the two WWASP Survivors exhibits the victim-statement page title
+     had dropped: an admissions-criteria sheet and a redacted DHS affidavit
+     attachment, both read first; wwasp now lists 144).
    - **Part B built 2026-10-01.**
      `scripts/sciad-links.py` writes `tmp/sciad/sciad-links.json` (and
      `sciad-links-report.md`) in the Drive Docs row format from the survey's

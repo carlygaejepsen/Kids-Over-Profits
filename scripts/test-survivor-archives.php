@@ -115,6 +115,65 @@ foreach (array('straights/f/9.json', 'straights/index.json', 'nhym/f/9.json', 'n
 foreach (array('straights/f', 'straights/o', 'nhym/f', 'nhym/o', 'straights', 'nhym') as $d) @rmdir($fixture . '/' . $d);
 kop_survivor_archives_index(true);
 
+// ---- SCIAD NET: Google Drive and Docs links, for that site alone; credit on its block ----
+$check('hosts: drive and docs for sciad alone',
+    kop_survivor_archives_hosts('sciad') === array('drive.google.com', 'docs.google.com')
+    && kop_survivor_archives_hosts('ssi') === array('survivingstraightinc.com') && kop_survivor_archives_hosts('nope') === array());
+mkdir($fixture . '/sciad/f', 0777, true);
+mkdir($fixture . '/sciad/o', 0777, true);
+$D = 'https://drive.google.com/file/d/';
+$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET, the WWASP Survivor Truth archive',
+    'url' => 'https://evil.example/', 'facilities' => array('7' => 6), 'operators' => array('3' => 1)));
+$put('sciad/f/7.json', array('files' => array(
+    array('url' => $D . 'AAAAAAAAAAAAAAAAAAAAAAAAA/view', 'name' => 'State record, 2019-02-26', 'group' => 'DHS Records'),
+    array('url' => 'https://docs.google.com/document/d/BBBBBBBBBBBBBBBBBBBBBBBBB/edit?usp=sharing', 'name' => 'Program brochure', 'group' => 'Program Documents'),
+    array('url' => 'http://drive.google.com/file/d/CCCCCCCCCCCCCCCCCCCCCCCCC/view', 'name' => 'Over http', 'group' => 'DHS Records'),
+    array('url' => 'https://drive.google.com.evil.example/file/d/x/view', 'name' => 'Look-alike host', 'group' => 'DHS Records'),
+    array('url' => 'https://survivingstraightinc.com/a.pdf', 'name' => 'Another site', 'group' => 'DHS Records'),
+    array('url' => $D . 'AAAAAAAAAAAAAAAAAAAAAAAAA/view', 'name' => 'Same file again', 'group' => 'Court records'),
+)));
+$put('sciad/o/3.json', array('files' => array(array('url' => $D . 'DDDDDDDDDDDDDDDDDDDDDDDDD/view', 'name' => 'Complaint, 2004', 'group' => 'Court records'))));
+// A Drive link in another site's shard is off that site.
+$put('ssi/f/8.json', array('files' => array(array('url' => $D . 'EEEEEEEEEEEEEEEEEEEEEEEEE/view', 'name' => 'Drive on ssi', 'group' => ''))));
+$put('ssi/index.json', array('built' => '2026-10-01', 'label' => 'Surviving Straight Inc.',
+    'facilities' => array('7' => 4, '8' => 1), 'operators' => array()));
+kop_survivor_archives_index(true);
+$check('sciad index url is the archive page, not the build', kop_survivor_archives_index()['sciad']['url'] === 'https://wwaspsurvivorstruth.com/program-archive/');
+$check('another site keeps its home page', kop_survivor_archives_index()['ssi']['url'] === 'https://survivingstraightinc.com/');
+$check('a Drive link on another site is dropped', kop_survivor_archives('f', 8) === array());
+$a = kop_survivor_archives('f', 7);
+$sc = null;
+foreach ($a as $b) if ($b['site'] === 'sciad') $sc = $b;
+$check('sciad lists its https Drive and Docs links once each', $sc && $sc['count'] === 2
+    && array_column($sc['groups'], 'group') === array('DHS Records', 'Program Documents'), $sc ? $sc['count'] . ' files' : 'none');
+$html = kop_survivor_archives_render($a, 'Program & Co');
+$check('sciad block credits the archive, linked',
+    strpos($html, '<h3 class="kop-fp-subhead">From <a href="https://wwaspsurvivorstruth.com/program-archive/" target="_blank" rel="noopener">SCIAD NET, the WWASP Survivor Truth archive</a></h3>') !== false
+    && strpos($html, '2 documents about Program &amp; Co that Kids Over Profits does not hold a copy of. SCIAD NET keeps them on Google Drive') !== false);
+$check('the other sites keep their own heading', strpos($html, '<h3 class="kop-fp-subhead">From Surviving Straight Inc.</h3>') !== false
+    && strpos($html, 'Surviving Straight Inc. published and Kids Over Profits') !== false);
+$check('sciad documents link to Drive', strpos($html, 'href="' . $D . 'AAAAAAAAAAAAAAAAAAAAAAAAA/view"') !== false
+    && strpos($html, 'CCCCCCCCCCCCCCCCCCCCCCCCC') === false && strpos($html, 'evil.example') === false);
+$o = array_values(array_filter(kop_survivor_archives('o', 3), function ($b) { return $b['site'] === 'sciad'; }));
+$check('sciad lists an operator', $o && $o[0]['count'] === 1);
+// A record with hundreds of documents: every group folds, each file listed once.
+$many = array();
+for ($i = 0; $i < 600; $i++) {
+    $many[] = array('url' => $D . sprintf('F%024d', $i) . '/view', 'name' => 'Doc ' . $i, 'group' => $i % 2 ? 'Court records' : 'DHS Records');
+}
+$put('sciad/f/7.json', array('files' => $many));
+$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET, the WWASP Survivor Truth archive', 'facilities' => array('7' => 600), 'operators' => array()));
+kop_survivor_archives_index(true);
+$t0 = microtime(true);
+$a = kop_survivor_archives('f', 7);
+$html = kop_survivor_archives_render($a, 'Big');
+$ms = (microtime(true) - $t0) * 1000;
+$check('600 documents: two folded groups, 600 links, fast', substr_count($html, '<details class="kop-unsilenced-group">') >= 2
+    && substr_count($html, 'drive.google.com/file/d/F') === 600 && $ms < 500, sprintf('%.0f ms', $ms));
+foreach (array('sciad/f/7.json', 'sciad/o/3.json', 'sciad/index.json', 'ssi/f/8.json') as $p) @unlink($fixture . '/' . $p);
+foreach (array('sciad/f', 'sciad/o', 'sciad') as $d) @rmdir($fixture . '/' . $d);
+kop_survivor_archives_index(true);
+
 // ---- The real build, when present --------------------------------------------
 $real = dirname(__DIR__) . '/js/data/survivor-archives';
 foreach (kop_survivor_archives_sites() as $site => $host) {
@@ -125,19 +184,24 @@ foreach (kop_survivor_archives_sites() as $site => $host) {
     $raw = json_decode((string) file_get_contents("{$real}/{$site}/index.json"), true);
     $bad = array();
     $off = array();
+    $named = array();
     foreach (array('facilities' => 'f', 'operators' => 'o') as $k => $dir) {
         foreach ((array) ($raw[$k] ?? array()) as $id => $n) {
             $shard = json_decode((string) @file_get_contents("{$real}/{$site}/{$dir}/{$id}.json"), true);
             if (!is_array($shard) || count($shard['files'] ?? array()) !== (int) $n) $bad[] = "{$dir}/{$id}";
             foreach ((array) ($shard['files'] ?? array()) as $f) {
-                if (preg_replace('/^www\./', '', strtolower((string) parse_url($f['url'] ?? '', PHP_URL_HOST))) !== $host
+                if (!in_array(preg_replace('/^www\./', '', strtolower((string) parse_url($f['url'] ?? '', PHP_URL_HOST))), kop_survivor_archives_hosts($site), true)
                     || strtolower((string) parse_url($f['url'], PHP_URL_SCHEME)) !== kop_survivor_archives_scheme($site)) $off[] = $f['url'] ?? '?';
+                // SCIAD court records carry made-up neutral titles: never a case name ("X v. Y").
+                if ($site === 'sciad' && substr((string) ($f['group'] ?? ''), -13) === 'Court records'
+                    && preg_match('/\b(v\.?|vs\.?|versus)\s/i', (string) ($f['name'] ?? ''))) $named[] = $dir . '/' . $id;
             }
         }
     }
     $check("build {$site}: every indexed shard is there with its count", !$bad,
         $bad ? implode(', ', array_slice($bad, 0, 5)) : count($raw['facilities']) . ' facilities, ' . count($raw['operators']) . ' operators');
-    $check("build {$site}: every link is on {$host}", !$off, $off ? implode(', ', array_slice($off, 0, 3)) : '');
+    $check("build {$site}: every link is on " . implode(' or ', kop_survivor_archives_hosts($site)), !$off, $off ? implode(', ', array_slice($off, 0, 3)) : '');
+    if ($site === 'sciad') $check('build sciad: no title or group reads like a case name', !$named, implode(', ', array_slice(array_unique($named), 0, 5)));
 }
 
 // Clean up the fixture.
