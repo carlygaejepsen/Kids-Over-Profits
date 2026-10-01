@@ -570,12 +570,15 @@ In order:
    original fields. No change since `js/data-form/testimony.js:194-208`.
    Reproduce in the approval editor first; the cause may be the
    submission's stored data or the notes cache rather than the move.
-4. **Per-file retry in the report backup** (Haiku 4.5, Tools repo).
-   `migrate_pair` in `backup_reports.py` counts a file as failed when
-   OneDrive or Drive drops partway through. Use the existing
-   `kop_paths.ensure_onedrive()` / `ensure_google_drive()` Retry box and
-   redo that file. Three stray files are left: two in `.nc_ocr_cache`,
-   `dra-media-19342.pdf` in `.ar_pdf_cache`.
+4. **Per-file retry in the report backup** (Done 2026-09-30 in
+   [5f98a09f](https://github.com/carlygaejepsen/Kids-Over-Profits-Tools/commit/5f98a09fae021b528ad327201d3679433ae7dc7d)).
+   `migrate_pair` in `backup_reports.py` now asks to retry when OneDrive or
+   Drive drops partway through, using the existing `kop_paths.ask_retry()`
+   prompt. Only cloud-provider errors (WinError 362, 404) trigger the prompt;
+   other errors keep the current behaviour. No files are deleted unless the
+   upload is verified. Three stray files remain in the `.nc_ocr_cache` and
+   `.ar_pdf_cache` local caches; they will be picked up on the next migration
+   attempt with the new retry logic.
 5. **Guided tours for the newer admin screens** (Sonnet 5). Screens built
    after 2026-09-03 have no tutorial: Map Years, Map Renames, Woodbury
    Facts, Woodbury Reports, Closure Reports, Facilities from News and the
