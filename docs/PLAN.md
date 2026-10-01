@@ -512,3 +512,110 @@ Next, in order:
    was deleted 2026-09-30).
 
 ---
+
+### 3.8 Follow-through (session review, 2026-09-30)
+
+A read of every session since 2026-09-02 for requests that were started and
+not finished, checked against git, the code and the mirror. Everything else
+asked for in that time shipped or is already listed above.
+
+Each item names the model to run it with:
+
+- **Opus 5.5** for open-ended work: a bug with no known cause, anything
+  that deletes or rewrites production data, matching rules that need
+  judgement, and writing in the owner's voice.
+- **Sonnet 5** for a scoped change with a known cause and a test to run,
+  and for web research that ends in data entry.
+- **Haiku 4.5** for small mechanical edits that follow an existing pattern.
+
+In order:
+
+1. **Home page lawsuit and legislation previews** (Sonnet 5). Probably
+   blank on the live site. `templates/page-home.php` reads `legislation`
+   and `lawsuits` through `$wpdb`, but those tables are in the records
+   database, so `$wpdb` finds nothing and the empty cards hide. Read them
+   through `kop_seed_pdo()` (`inc/admin.php`), as the legal-document page
+   fix did (c3a7c02d04f72c1cea4c22c81bbfba0cfb66e95a). Done when the
+   home page HTML on the live site shows three bills and three lawsuits.
+2. **Site search finds past and other names** (Sonnet 5). Since the v2
+   switch, `kop_v2_search()` (`inc/facility-v2-readers.php`) matches only
+   `name`, `name_key` and `unique_name`, so the header dropdown and global
+   search miss a past name. The program index and the wiki picker still
+   find them. Match `identification.otherNames` / `pastNames` too: a
+   generated names column on `facilities_v2`, or a LIKE on `json_data`
+   (4,700 rows), and show "formerly X" on the result. Done when searching
+   "Copper Canyon" finds Sedona Sky Academy.
+3. **Moved testimony still shows in the normal sections** (Opus 5.5).
+   Reported 2026-09-30 on the Billings Clinic Psychiatric Center provider
+   submission: notes moved into survivor testimony also stay in the
+   original fields. No change since `js/data-form/testimony.js:194-208`.
+   Reproduce in the approval editor first; the cause may be the
+   submission's stored data or the notes cache rather than the move.
+4. **Per-file retry in the report backup** (Haiku 4.5, Tools repo).
+   `migrate_pair` in `backup_reports.py` counts a file as failed when
+   OneDrive or Drive drops partway through. Use the existing
+   `kop_paths.ensure_onedrive()` / `ensure_google_drive()` Retry box and
+   redo that file. Three stray files are left: two in `.nc_ocr_cache`,
+   `dra-media-19342.pdf` in `.ar_pdf_cache`.
+5. **Guided tours for the newer admin screens** (Sonnet 5). Screens built
+   after 2026-09-03 have no tutorial: Map Years, Map Renames, Woodbury
+   Facts, Woodbury Reports, Closure Reports, Facilities from News and the
+   Industry PR tab. Follow the existing tours in `js/tutorial-overlay.js`.
+6. **Research tag proposals from document text** (Opus 5.5). Asked
+   2026-09-29: read the contents of documents with no tagged facility and
+   propose facilities and operators. Today's
+   `api/propose-research-facility-tags.php` proposes facilities only and
+   is reviewed as a JSON file. Build a one-page review screen (the owner's
+   rule) and guard acronyms and short names against over-matching.
+   Replaces owner item 5.
+7. **Rest of the old /lawsuits/ page** (Sonnet 5). The 2026-09-03 import
+   brought in ten cases. Still missing: the Dimple Dell canyon suit
+   (DocumentCloud) and the cases behind two Salt Lake Tribune lawsuit
+   stories on revision 926 of the old page. Add them through the lawsuit
+   form path so facility links and folders follow.
+8. **Renaissance Center, Fresno** (Sonnet 5). Record 100134 has no
+   sources, no FileBird folder and status Unknown; the other three
+   facilities submitted on 2026-09-21 got theirs. Find public sources,
+   file them, and set the status. Empty duplicate folders 7765 and 7766
+   under parent 1692 can go.
+9. **Advocacy History and Survivors hub writing** (Opus 5.5, owner
+   review). Advocacy History's "Key Milestones" list and "Submit your
+   story" call to action, beside 18A above. 18D, the Survivors hub (a
+   thesis line, a description under each link, icons), fell off this list
+   when the handoffs were merged; it is back here. Draft in the page body
+   (owner rule: never post meta, ACF or a table) and leave it for the
+   owner to read.
+10. **Data model phase 5** (Opus 5.5, owner go-ahead first). Not started
+    (`docs/DATA-MODEL-MIGRATION.md`, "Phase 5: Remove the old model").
+    The legacy tables are frozen; the dual write
+    (`inc/facility-store.php`), `kop_unwrap_project_payload()`,
+    `api/promote-facilities-to-rows.php` and the `_bak_20260916` tables
+    remain. Ask the owner whether the bake is over before deleting
+    anything, back up first, and do one step per commit.
+
+Owner:
+
+- **Read and publish the FAQ** (draft, 15 questions, KOP Tools > Page
+  Text; `js/data/pages/faq.json`).
+- **Provo Canyon School profile** (draft,
+  [post 10796](https://kidsoverprofits.org/wp-admin/post.php?post=10796&action=edit)):
+  the text says suspended, the record (10371) says Closed. Say which,
+  then publish.
+- **Document finder retries.** `.tti_doc_finder_state.json` holds 1,783
+  uploads that failed before the OneDrive fix, plus 383 waiting for
+  review: `py tti_doc_finder.py upload --retry-failed`, or tick "retry the
+  ones that failed" in its window.
+- **Industry PR refiling.** 148 rejected news items to sort through
+  (4 refiled so far).
+- **Midday news discovery cron.** The code and
+  `docs/news-processor/README.md` support a second, `--no-facilities`
+  run; confirm the line is in cPanel > Cron Jobs.
+- **Scraper launcher window** (Tools 4a0df69): open it and confirm the
+  size and Output pane look right.
+- **Pushing local database changes to prod** (asked 2026-09-17).
+  `scripts/local-db.pyw` only pulls. Recommendation: do not build a
+  general push. Schema changes ship through `api/update-schema.php` and
+  data changes through a seed or an admin tool, both reviewed, so the
+  shared live database never takes an unreviewed bulk write.
+
+---
