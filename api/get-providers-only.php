@@ -69,6 +69,25 @@ try {
                     '_sourceTable' => 'providers'
                 ];
             }
+            // A public directory: only survivor testimony ticked "OK to
+            // publish" leaves the server, for every viewer, admins included
+            // (inc/facility-store.php). Without that file nothing is sent.
+            $store = dirname(__DIR__) . '/inc/facility-store.php';
+            if (file_exists($store)) require_once $store;
+            if (function_exists('kop_facility_testimony_redact')) {
+                $results = kop_facility_testimony_redact($results);
+            } else {
+                $strip = function ($value) use (&$strip) {
+                    if (!is_array($value)) return $value;
+                    foreach ($value as $key => $child) {
+                        if ($key === 'survivorTestimony') $value[$key] = array();
+                        elseif (is_array($child)) $value[$key] = $strip($child);
+                    }
+                    return $value;
+                };
+                $results = $strip($results);
+            }
+
             $response['success'] = true;
             $response['projects'] = $results;
             unset($response['error']); // Clear default error

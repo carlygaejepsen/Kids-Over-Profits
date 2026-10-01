@@ -266,6 +266,45 @@
     text-decoration: underline;
 }
 
+/* --- Survivor testimony (js/provider-index.js renderTestimony) --- */
+.provider-directory-container .provider-testimony-note {
+    margin: 0 0 8px;
+    font-size: 0.85rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.provider-directory-container details.provider-testimony {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+}
+
+.provider-directory-container details.provider-testimony summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+    background: transparent;
+}
+
+.provider-directory-container details.provider-testimony blockquote {
+    margin: 10px 0 2px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--kop-text-primary, #1A202C);
+    font-style: normal;
+    font-size: 0.95rem;
+    line-height: 1.55;
+}
+
+.provider-directory-container details.provider-testimony blockquote p {
+    margin: 0 0 10px;
+    color: var(--kop-text-primary, #1A202C);
+}
+
 /* --- List Sections --- */
 .provider-directory-container .list-section {
     margin-top: 15px;

@@ -145,6 +145,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return `<div class="list-section"><div class="section-label">${esc(label)}</div>${items.map(t => `<div class="data-value">${esc(t)}</div>`).join('')}</div>`;
     }
 
+    /**
+     * Published survivor testimony (the API drops the rest), each account
+     * folded under its caption: "Submitted by a survivor" for an account from
+     * a submission, as on /facility/ pages.
+     */
+    function renderTestimony(list) {
+        const entries = (Array.isArray(list) ? list : [])
+            .filter(e => e && e.publish === true && clean(e.text));
+        if (!entries.length) return '';
+        const month = (date) => {
+            const m = String(date || '').match(/^(\d{4})-(\d{2})/);
+            if (!m) return '';
+            const names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            return `${names[parseInt(m[2], 10) - 1] || ''} ${m[1]}`.trim();
+        };
+        const accounts = entries.map(e => {
+            const submitted = /^(Submitted by a survivor|Submission #\d+)/i.test(String(e.source || '').trim());
+            const when = month(e.date);
+            const caption = (submitted ? 'Submitted by a survivor' : 'Survivor account') + (when ? `, shared ${when}` : '');
+            const paras = String(e.text).split(/\n\s*\n/).map(t => t.trim()).filter(Boolean)
+                .map(t => `<p>${esc(t)}</p>`).join('');
+            return `<details class="provider-testimony"><summary>${esc(caption)}</summary><blockquote>${paras}</blockquote></details>`;
+        }).join('');
+        return `<div class="list-section"><div class="section-label">Survivor testimony</div>`
+            + `<p class="provider-testimony-note">First-person accounts from people who were here, published with their permission.</p>${accounts}</div>`;
+    }
+
     function renderSite(s, p, showName) {
         const d = s.providerDetails || {};
         const type = clean(s.facilityDetails && s.facilityDetails.type);
@@ -160,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ${renderArrayList('TTI affiliations', d.ttiAffiliations)}
                 ${renderNotes('Referral notes', d.referralNotes)}
                 ${renderNotes('Notes', s.notes)}
+                ${renderTestimony(s.survivorTestimony)}
                 ${renderField('Website', s.website || (s.identification && s.identification.website))}
             </div>`;
     }
