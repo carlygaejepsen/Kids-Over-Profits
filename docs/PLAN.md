@@ -530,13 +530,19 @@ Each item names the model to run it with:
 
 In order:
 
-1. **Home page lawsuit and legislation previews** (Sonnet 5). Probably
-   blank on the live site. `templates/page-home.php` reads `legislation`
-   and `lawsuits` through `$wpdb`, but those tables are in the records
-   database, so `$wpdb` finds nothing and the empty cards hide. Read them
-   through `kop_seed_pdo()` (`inc/admin.php`), as the legal-document page
-   fix did (c3a7c02d04f72c1cea4c22c81bbfba0cfb66e95a). Done when the
-   home page HTML on the live site shows three bills and three lawsuits.
+1. **Home page lawsuit and legislation previews** (Sonnet 5). Done
+   2026-09-30 in
+   [e169c90f](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/e169c90f20ae8ae77ad68e24732d089cc2d92f5f).
+   `templates/page-home.php` now reads `legislation` and `lawsuits`
+   through `kop_seed_pdo()`, as the legal-document page fix did
+   (c3a7c02d04f72c1cea4c22c81bbfba0cfb66e95a); a null handle or a failed
+   query still just hides the card, never fatals. The `inspection_reports`
+   / `inspection_facilities` / `facilities_master` counts further down the
+   same file stayed on `$wpdb`: they are WordPress-side tables, confirmed
+   working that way elsewhere (`inc/facility-pages.php`,
+   `inc/global-search.php`). Verified live at
+   [kidsoverprofits.org](https://kidsoverprofits.org/): both cards render,
+   three bills and three lawsuits.
 2. **Site search finds past and other names** (Sonnet 5). Since the v2
    switch, `kop_v2_search()` (`inc/facility-v2-readers.php`) matches only
    `name`, `name_key` and `unique_name`, so the header dropdown and global
