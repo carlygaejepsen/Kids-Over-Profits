@@ -413,6 +413,31 @@ updated.
    "Cookson Hills Christian Ministries". Owner: run the scraper **at
    least monthly** (Oklahoma in `scraper_launcher.py`; owner runs it by
    hand). Severe findings: scanner version 6, see item 3.
+   **Pennsylvania live 2026-10-01 (2019 on), older years posting:**
+   `pa_scraper.py` (Tools repo), `js/inspections/states/pa.js`,
+   `/pa-reports/` created on deploy. DHS Licensing Inspection Summaries per
+   licensed unit (595 units: residential incl. PRTFs, transitional living,
+   secure detention and care, outdoor, mobile). 2019 on, posted: 529
+   units, 3,947 documents (446 citation, 846 plan-of-correction
+   follow-ups, 31 licence actions incl. the 2019-20 ChildFirst
+   non-renewals and Cove Prep's 2026 provisional licence, 1,615 clean, 998
+   licences), 4,647 citations, 1,249 counted as violations; 11 documents
+   unclassified, 18 cited ones without a parsed list (full text shown).
+   Follow-ups count unless the inspection's citation document is listed
+   (the state usually replaces it: 772 of 846). Scans (before mid-2019 and
+   many single pages since) are OCR'd; 2009-12 tables give regulation
+   numbers only. Long citation text rides in `categories.detail`, sent with
+   the report text on open: the list is 3.8 MB (0.36 MB gzipped). The
+   pre-2019 pass (about 6,000 mostly scanned documents) was started
+   2026-10-01 00:35 and posts as it goes; if it stopped, run `python
+   pa_scraper.py` again (seen reports skip, extractions are cached). Names:
+   only 5 of 90 `facilities_v2` records match by name (the state lists
+   buildings, the records campuses); **owner: KOP Tools > Inspection
+   Links** has 30 records with suggested links, 48 same-town pairs ticked:
+   check them and Save (`php scripts/test-inspection-links.php
+   --file=<pa --out json>` prints the list). Then the severe finding
+   extractor (plan step 11: each citation's description of violation;
+   follow-ups that repeat a counted citation document skipped).
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

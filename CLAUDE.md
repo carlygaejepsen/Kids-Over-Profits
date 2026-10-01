@@ -64,6 +64,8 @@ php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / 
 # Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
 php scripts/test-facility-pages.php
 php scripts/test-operator-pages.php               # renders every /operator/<slug>/ page to tmp/operator-pages/
+# Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
+php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
