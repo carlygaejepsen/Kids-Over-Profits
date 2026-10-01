@@ -309,6 +309,19 @@ $check('a corrected owner keeps its date', kop_wbf_label_for($owner, 'Universal 
 $check('plain text drops the date and citation',
     kop_wbf_plain_text('2006-09-12: Injury: A boy was hurt. (Woodbury Reports, October 2006, p. 29)') === 'Injury: A boy was hurt.');
 
+echo "-- Another source: HEAL's archived pages --\n";
+$heal_ev = array(array('issue' => 'heal-tcut', 'label' => 'staff list for Teen Challenge of Utah', 'number' => '', 'issue_id' => 0, 'page' => 1,
+    'url' => 'https://web.archive.org/web/20120517072958/http://www.heal-online.org/tcut.htm', 'quote' => 'Ken Summers | Executive Director',
+    'found' => true, 'pub' => 'HEAL', 'cite' => 'HEAL, staff list for Teen Challenge of Utah (archived 2012-05-17)', 'date' => '2012-05'));
+$heal_row = array('label' => 'Ken Summers, Executive Director (2012, HEAL)', 'evidence' => json_encode($heal_ev));
+$check('a HEAL item cites HEAL and its archived copy', kop_wbf_cite($heal_row)
+    === 'HEAL, staff list for Teen Challenge of Utah (archived 2012-05-17): https://web.archive.org/web/20120517072958/http://www.heal-online.org/tcut.htm');
+$check('the screen names the archived copy, not a page number', kop_wbf_ev_label($heal_ev[0]) === 'HEAL, staff list for Teen Challenge of Utah (archived 2012-05-17)');
+$hsrc = kop_wbf_create_source($heal_ev);
+$check('a record created from it names HEAL', ($hsrc['cite'] ?? '') === $heal_ev[0]['cite'] && ($hsrc['url'] ?? '') === $heal_ev[0]['url']);
+$check('plain text drops a HEAL citation',
+    kop_wbf_plain_text('Owner: Teen Challenge (HEAL, staff list for X (archived 2012-05-17))') === 'Owner: Teen Challenge');
+
 echo "-- Another person in the same words --\n";
 // The AJAX handlers keep a field's case: "pastJobs", "endYear" once came through as "pastjobs".
 $posted = array();

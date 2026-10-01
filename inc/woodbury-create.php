@@ -100,6 +100,10 @@ function kop_wbc_prefill(array $r) {
 
 /** One line naming the Woodbury issue, for the record's notes. */
 function kop_wbc_source_note(array $r) {
+    // Another source read the same way (HEAL's archived site) brings its own citation.
+    if (!empty($r['cite'])) {
+        return 'Added ' . gmdate('Y-m-d') . ' from ' . $r['cite'] . (!empty($r['url']) ? ': ' . $r['url'] : '');
+    }
     $issue_url = $r['issue_id'] ? (string) wp_get_attachment_url((int) $r['issue_id']) : '';
     return 'Added ' . gmdate('Y-m-d') . ' from Woodbury Reports, ' . $r['issue_label']
         . ($r['issue_number'] !== '' ? ' (' . $r['issue_number'] . ')' : '')

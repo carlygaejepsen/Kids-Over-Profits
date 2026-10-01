@@ -336,7 +336,7 @@ function kop_ya_fact_from_note($line, $key) {
 
 /** A staff entry's words: "Name, Role. Earlier: past jobs". */
 function kop_ya_staff_label(array $s) {
-    $role = trim(preg_replace('/,? Woodbury Reports\)/', ')', (string) ($s['role'] ?? '')));
+    $role = trim(preg_replace('/,? (?:Woodbury Reports|HEAL)\)/', ')', (string) ($s['role'] ?? '')));
     $label = trim((string) ($s['name'] ?? '')) . ($role !== '' ? ', ' . $role : '');
     return $label . (trim((string) ($s['pastJobs'] ?? '')) !== '' ? '. Earlier: ' . trim($s['pastJobs']) : '');
 }
@@ -645,7 +645,7 @@ function kop_ya_region_label(array $p) {
 /** A fact's words as the page shows them: no review-screen wording. */
 function kop_ya_fact_text($label) {
     $label = preg_replace('/ \(sets [^()]*\)$/', '', (string) $label);
-    return preg_replace('/\s*\(Woodbury Reports[^()]*\)\s*$/', '', $label);
+    return preg_replace('/\s*\((?:Woodbury Reports|HEAL)[^()]*(?:\([^()]*\)[^()]*)?\)\s*$/', '', $label);
 }
 
 /** The approved programs, by state or country, each with its facts and their sources. */
@@ -716,7 +716,7 @@ function kop_ya_render_public() {
                     echo '<li>' . $e(kop_ya_fact_text($f['label'] ?? ''));
                     $cites = array();
                     foreach (array_slice((array) ($f['cites'] ?? array()), 0, 3) as $c) {
-                        $text = 'Woodbury Reports, ' . $c['label'] . ', p. ' . (int) $c['page'];
+                        $text = !empty($c['cite']) ? (string) $c['cite'] : 'Woodbury Reports, ' . $c['label'] . ', p. ' . (int) $c['page'];
                         $cites[] = preg_match('#^https?://#i', (string) ($c['url'] ?? '')) ? '<a href="' . $e($c['url']) . '">' . $e($text) . '</a>' : $e($text);
                     }
                     if ($cites) {

@@ -231,8 +231,31 @@ function kop_wbf_cite(array $r) {
         return 'Woodbury Reports';
     }
     $first = $e[0];
+    if (!empty($first['cite'])) {
+        return $first['cite'] . ': ' . $first['url'];
+    }
     return 'Woodbury Reports, ' . $first['label'] . (!empty($first['number']) ? ' (' . $first['number'] . ')' : '')
         . ', p. ' . (int) $first['page'] . ': ' . $first['url'];
+}
+
+/**
+ * One piece of evidence as the screen names it: "May 2007, p. 20", or another
+ * source's own citation ("HEAL, staff list for X (archived 2012-05-17)").
+ */
+function kop_wbf_ev_label(array $e) {
+    return !empty($e['cite']) ? (string) $e['cite'] : $e['label'] . ', p. ' . (int) $e['page'];
+}
+
+/** The source a record created from these items names (kop_wbc_source_note()). */
+function kop_wbf_create_source(array $e) {
+    $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
+    $s = array('issue_id' => (int) ($first['issue_id'] ?? 0), 'issue_label' => (string) $first['label'],
+        'issue_number' => (string) ($first['number'] ?? ''), 'pages' => (string) (int) $first['page']);
+    if (!empty($first['cite'])) {
+        $s['cite'] = (string) $first['cite'];
+        $s['url'] = (string) $first['url'];
+    }
+    return $s;
 }
 
 /** The line a structured change leaves in the notes, so the record says where it came from. */
@@ -525,7 +548,8 @@ function kop_wbf_ya_override($program, $on) {
 function kop_wbf_ya_fact(array $r) {
     $cites = array();
     foreach (array_slice(kop_wbf_evidence($r), 0, 3) as $e) {
-        $cites[] = array('label' => $e['label'], 'number' => $e['number'] ?? '', 'page' => (int) $e['page'], 'url' => $e['url']);
+        $cites[] = array('label' => $e['label'], 'number' => $e['number'] ?? '', 'page' => (int) $e['page'], 'url' => $e['url'])
+            + (!empty($e['cite']) ? array('cite' => $e['cite']) : array());
     }
     $v = kop_wbf_row_value($r);
     $label = $r['label'];
@@ -646,11 +670,8 @@ function kop_wbf_file_items(array $rows, $kind, array $f, $reviewer) {
     if (!$rows) {
         throw new RuntimeException('Tick at least one waiting item.');
     }
-    $e = kop_wbf_evidence($rows[0]);
-    $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
-    $source = array('issue_id' => (int) $first['issue_id'], 'issue_label' => (string) $first['label'],
-        'issue_number' => (string) $first['number'], 'pages' => (string) (int) $first['page']);
-    $f['kind'] = $kind === 'person' ? 'consultant' : $kind;
+    $source = kop_wbf_create_source(kop_wbf_evidence($rows[0]));
+    $f['kind'] =$kind === 'person' ? 'consultant' : $kind;
     $f['who'] = $kind === 'person' ? 'person' : 'firm';
     $f['notes'] = array_map('kop_wbf_source_line', $rows);
     $target = kop_wbc_create($source, $f);
@@ -840,12 +861,9 @@ function kop_wbf_consultant_apply(array $r) {
         if (!function_exists('kop_wbc_create_consultant')) {
             throw new RuntimeException('Record creation is not available.');
         }
-        $e = kop_wbf_evidence($r);
-        $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
         $state = ($v['state'] ?? '') !== '' ? (string) kop_facility_state_code($v['state']) : '';
         $made = kop_wbc_create_consultant(
-            array('issue_id' => (int) $first['issue_id'], 'issue_label' => (string) $first['label'],
-                'issue_number' => (string) $first['number'], 'pages' => (string) (int) $first['page']),
+            kop_wbf_create_source(kop_wbf_evidence($r)),
             array('name' => $v['name'], 'who' => 'person', 'city' => (string) ($v['city'] ?? ''), 'state' => $state, 'country' => ''),
             $pdo
         );
@@ -955,7 +973,7 @@ function kop_wbf_consultant_undo(array $r) {
 
 /** "Owner: ... (Woodbury Reports, May 2007, p. 20)" -> "Owner: ...": the words a list item shows, without its date and citation. */
 function kop_wbf_plain_text($text) {
-    $text = preg_replace('/\s*\(Woodbury Reports[^()]*\)\s*$/', '', trim((string) $text));
+    $text = preg_replace('/\s*\((?:Woodbury Reports|HEAL)[^()]*(?:\([^()]*\)[^()]*)?\)\s*$/', '', trim((string) $text));
     return trim(preg_replace('/^(\d{4}(-\d\d){0,2}|Reported [A-Z][a-z]+ \d{4}):\s*/', '', $text));
 }
 
@@ -1411,7 +1429,8 @@ add_action('wp_ajax_kop_wbf_act', function () {
                     $f[$k] = sanitize_text_field(wp_unslash($_POST[$k] ?? ''));
                 }
                 $e = kop_wbf_evidence($rows[0]);
-                $f['source'] = 'Woodbury Reports' . ($e ? ', ' . $e[0]['label'] . ', p. ' . (int) $e[0]['page'] : '');
+                $f['source'] = !empty($e[0]['cite']) ? (string) $e[0]['cite']
+                    : 'Woodbury Reports' . ($e ? ', ' . $e[0]['label'] . ', p. ' . (int) $e[0]['page'] : '');
                 $f['review'] = 'approved';
                 $yid = kop_ya_save($pdo, $f, 0, $user);
             } else {
@@ -1442,10 +1461,7 @@ add_action('wp_ajax_kop_wbf_act', function () {
                 if (!function_exists('kop_wbc_create_facility')) {
                     throw new RuntimeException('Record creation is not available.');
                 }
-                $e = kop_wbf_evidence($rows[0]);
-                $first = $e ? $e[0] : array('issue_id' => 0, 'label' => '', 'number' => '', 'page' => 0);
-                $source = array('issue_id' => (int) $first['issue_id'], 'issue_label' => (string) $first['label'],
-                    'issue_number' => (string) $first['number'], 'pages' => (string) (int) $first['page']);
+                $source = kop_wbf_create_source(kop_wbf_evidence($rows[0]));
                 $f = array(
                     'name'  => trim(preg_replace('/\s+/', ' ', sanitize_text_field(wp_unslash($_POST['name'] ?? '')))),
                     'city'  => sanitize_text_field(wp_unslash($_POST['city'] ?? '')),
@@ -1837,19 +1853,19 @@ function kop_wbf_render_row(array $r, $tab) {
     echo '</td><td class="kop-wbf-ev">';
     $ev = kop_wbf_evidence($r);
     foreach (array_slice($ev, 0, 3) as $e) {
-        echo '<div class="kop-wbf-src"><a href="' . esc_url($e['url']) . '" target="_blank" rel="noopener">' . esc_html($e['label'] . ', p. ' . (int) $e['page']) . '</a>';
+        echo '<div class="kop-wbf-src"><a href="' . esc_url($e['url']) . '" target="_blank" rel="noopener">' . esc_html(kop_wbf_ev_label($e)) . '</a>';
         if ($e['quote'] !== '') {
             echo '<blockquote class="' . ($e['found'] ? '' : 'kop-wbf-unfound') . '">' . esc_html($e['quote']) . '</blockquote>';
         }
         if (!$e['found']) {
-            echo '<div class="kop-wbf-warn">These words were not found in the issue text: check the page before adding.</div>';
+            echo '<div class="kop-wbf-warn">These words were not found in the ' . (!empty($e['pub']) ? 'archived page' : 'issue text') . ': check the page before adding.</div>';
         }
         echo '</div>';
     }
     if (count($ev) > 3) {
         echo '<details><summary>' . (count($ev) - 3) . ' more</summary>';
         foreach (array_slice($ev, 3) as $e) {
-            echo '<div class="kop-wbf-src"><a href="' . esc_url($e['url']) . '" target="_blank" rel="noopener">' . esc_html($e['label'] . ', p. ' . (int) $e['page']) . '</a>'
+            echo '<div class="kop-wbf-src"><a href="' . esc_url($e['url']) . '" target="_blank" rel="noopener">' . esc_html(kop_wbf_ev_label($e)) . '</a>'
                 . ($e['quote'] !== '' ? '<blockquote>' . esc_html($e['quote']) . '</blockquote>' : '') . '</div>';
         }
         echo '</details>';

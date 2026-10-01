@@ -147,6 +147,12 @@ php scripts/test-woodbury-mentions.php            # "File under" facilities and 
 # copied to ~/kop-import/woodbury/; owner adds them at KOP Tools > Woodbury Facts (live at once, Undo)
 python scripts/woodbury-facts.py
 php scripts/test-woodbury-facts.php               # applies every proposal to the real docs, validator, exact undo
+# HEAL's archived site (heal-online.org, gone; Wayback copies) into tmp/heal/: staff lists and program pages are read
+# like Woodbury issues (tmp/heal/INSTRUCTIONS.md -> facts/), PDFs one by one (DOCS-INSTRUCTIONS.md -> docs/).
+# Fetch is resumable and slow (the Archive refuses connections past ~15 requests a minute)
+python scripts/heal-archive.py fetch && python scripts/heal-archive.py text && python scripts/heal-batches.py
+python scripts/woodbury-facts.py --also tmp/heal   # HEAL facts join Woodbury Facts, cited to the archived copy, never auto-added
+python scripts/heal-docs.py                         # tmp/heal/heal-links.json -> ~/kop-import/gdocs/, reviewed at Drive Docs
 # Links from the owner's Google Docs and Sheets (docs/PLAN.md 3.9): tmp/gdocs/export.gs (from scripts/gdocs-select.py)
 # exports them to G:/My Drive/KOP Doc Export; the links pass ties each link to a facility and drops what is on file ->
 # tmp/gdocs/links.json, copied to ~/kop-import/gdocs/; reviewed at KOP Tools > Drive Docs (inc/drive-docs.php): news,

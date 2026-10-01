@@ -147,6 +147,35 @@ def load_pages(path):
     return pages
 
 
+def src(iss):
+    """The publication: Woodbury Reports, or another source read the same way (HEAL's archived site)."""
+    return iss.get('pub') or 'Woodbury Reports'
+
+
+def cite_at(iss, page):
+    """"Woodbury Reports, May 2007, p. 20" / "HEAL, staff list for X (archived 2012-05-17)"."""
+    if iss.get('page_dates'):
+        return '%s, %s (archived %s)' % (src(iss), iss['label'], iss['page_dates'].get(str(page), ''))
+    return '%s, %s, p. %d' % (src(iss), iss['label'], page)
+
+
+def page_url(iss, page):
+    if iss.get('page_urls'):
+        return iss['page_urls'].get(str(page)) or iss['url']
+    return iss['url'] + '#page=%d' % page
+
+
+def page_year(iss, page):
+    """The year a page speaks for: an archived page's own date, else the issue's."""
+    y = (iss.get('page_years') or {}).get(str(page))
+    return int(y) if y else int(iss['date'][:4])
+
+
+def page_month(iss, page):
+    d = (iss.get('page_dates') or {}).get(str(page))
+    return d[:7] if d else iss['date'][:7]
+
+
 def find_quote(quote, page, pages):
     """(found, page): the page the quote is on, the stated one first."""
     q = flat(quote).strip(' .…"\'')
@@ -287,7 +316,7 @@ def consultant_proposals(args, issues, items, recs, match, prog_name, proposals,
     def ev(date, page, quote, found):
         iss = issues[date]
         return {'issue': date, 'label': iss['label'], 'number': iss['number'], 'issue_id': iss['id'], 'page': page,
-                'url': iss['url'] + '#page=%d' % page, 'quote': re.sub(r'\s+', ' ', quote or '').strip()[:600], 'found': found}
+                'url': page_url(iss, page), 'quote': re.sub(r'\s+', ' ', quote or '').strip()[:600], 'found': found}
 
     people = {}
 
@@ -528,7 +557,7 @@ def auto_ok(p):
             return said(v['raw']) and any(MOVE_WORDS.search(q) for q in quotes)
         if p['path'] == 'notes':
             # "Membership: NATSAP (Woodbury Reports, ...)": the part between the label and the citation.
-            m = re.match(r'^[^:]{2,30}:\s*(.+?)\s*\(Woodbury Reports', v)
+            m = re.match(r'^[^:]{2,30}:\s*(.+?)\s*\((?:Woodbury Reports|HEAL)', v)
             return bool(m) and said(m.group(1))
     return False
 
@@ -537,40 +566,49 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', default=os.path.join(ROOT, 'tmp', 'woodbury-extract'))
     ap.add_argument('--out', default='C:/tmp/kop-woodbury/pending/facts.json')
+    # Other sources read the same way, each a folder with issues.json, text/ and
+    # facts/ (HEAL's archived site: scripts/heal-archive.py, tmp/heal/). Their
+    # proposals share the review screen; none is ever added without review.
+    ap.add_argument('--also', action='append', default=[])
     args = ap.parse_args()
 
-    issues = {x['date']: x for x in json.load(open(os.path.join(args.dir, 'issues.json'), encoding='utf-8'))}
+    issues = {x['date']: dict(x, dir=args.dir) for x in json.load(open(os.path.join(args.dir, 'issues.json'), encoding='utf-8'))}
+    for d in args.also:
+        for x in json.load(open(os.path.join(d, 'issues.json'), encoding='utf-8')):
+            issues[x['date']] = dict(x, dir=d)
     con = sqlite3.connect(ws.DB)
     names, past = ws.load_facilities(con)
     recs = load_records(con)
 
     stats = collections.Counter()
     items = []
-    for fn in sorted(os.listdir(os.path.join(args.dir, 'facts'))):
-        if not fn.endswith('.json'):
-            continue
-        date = fn[:7]
-        iss = issues.get(date)
-        if not iss:
-            print('no issue for', fn, file=sys.stderr)
-            continue
-        try:
-            data = json.load(open(os.path.join(args.dir, 'facts', fn), encoding='utf-8'))
-        except Exception as e:  # noqa: BLE001
-            print('bad json', fn, e, file=sys.stderr)
-            continue
-        pages = load_pages(os.path.join(args.dir, 'text', iss['file']))
-        for it in data.get('items') or []:
-            if not isinstance(it, dict) or not (it.get('program') or '').strip():
-                stats['no_program'] += 1
+    for d in [args.dir] + args.also:
+        for fn in sorted(os.listdir(os.path.join(d, 'facts'))):
+            if not fn.endswith('.json'):
                 continue
-            found, pg = find_quote(it.get('quote') or '', int(it.get('page') or 0), pages)
-            stats['quote_found' if found else 'quote_missing'] += 1
-            it['found'] = found
-            it['page'] = pg
-            it['issue'] = date
-            it['issue_year'] = int(date[:4])
-            items.append(it)
+            # Woodbury files are "<YYYY-MM>[-part].json"; other sources name the issue key in full.
+            date = fn[:-5] if fn[:-5] in issues else fn[:7]
+            iss = issues.get(date)
+            if not iss or iss['dir'] != d:
+                print('no issue for', fn, file=sys.stderr)
+                continue
+            try:
+                data = json.load(open(os.path.join(d, 'facts', fn), encoding='utf-8'))
+            except Exception as e:  # noqa: BLE001
+                print('bad json', fn, e, file=sys.stderr)
+                continue
+            pages = load_pages(os.path.join(d, 'text', iss['file']))
+            for it in data.get('items') or []:
+                if not isinstance(it, dict) or not (it.get('program') or '').strip():
+                    stats['no_program'] += 1
+                    continue
+                found, pg = find_quote(it.get('quote') or '', int(it.get('page') or 0), pages)
+                stats['quote_found' if found else 'quote_missing'] += 1
+                it['found'] = found
+                it['page'] = pg
+                it['issue'] = date
+                it['issue_year'] = page_year(iss, pg)
+                items.append(it)
     print('%d items (%s)' % (len(items), dict(stats)))
 
     # ---- Programs -> records -------------------------------------------
@@ -631,17 +669,15 @@ def main():
 
     def evidence(it):
         iss = issues[it['issue']]
-        return {'issue': it['issue'], 'label': iss['label'], 'number': iss['number'], 'issue_id': iss['id'],
-                'page': it['page'], 'url': iss['url'] + '#page=%d' % it['page'],
-                'quote': re.sub(r'\s+', ' ', it.get('quote') or '').strip()[:600], 'found': it['found']}
+        e = {'issue': it['issue'], 'label': iss['label'], 'number': iss['number'], 'issue_id': iss['id'],
+             'page': it['page'], 'url': page_url(iss, it['page']),
+             'quote': re.sub(r'\s+', ' ', it.get('quote') or '').strip()[:600], 'found': it['found']}
+        if iss.get('pub'):
+            e.update({'pub': src(iss), 'cite': cite_at(iss, it['page']), 'date': page_month(iss, it['page'])})
+        return e
 
-    def cite(evs):
-        evs = sorted(evs, key=lambda e: (e['issue'], e['page']))
-        parts = []
-        for e in evs[:4]:
-            parts.append('%s, p. %d' % (e['label'], e['page']))
-        more = ' and %d more' % (len(evs) - 4) if len(evs) > 4 else ''
-        return 'Woodbury Reports, ' + '; '.join(parts) + more
+    def cite_of(it):
+        return cite_at(issues[it['issue']], it['page'])
 
     def prog_name(it):
         if it['fid']:
@@ -704,7 +740,7 @@ def main():
             else:
                 pos['years'].append(position_year(it))
             if ev in ('joined', 'left', 'promoted', 'founded', 'owns', 'retired', 'died'):
-                pos['events'].append('%s %s' % (ev, it.get('date') or it['issue'][:4]))
+                pos['events'].append('%s %s' % (ev, it.get('date') or str(it['issue_year'])))
             pos['items'].append(it)
             fp = (it.get('from_program') or '').strip()
             if fp:
@@ -745,10 +781,11 @@ def main():
             role = ', '.join(pos['roles']) or 'Staff'
             when = years_label(pos['years'])
             former = bool(pos['before']) and not pos['years']
+            pub = src(issues[pos['items'][0]['issue']])
             if former:
-                role = 'Former ' + role + ' (before %d, Woodbury Reports)' % pos['before']
+                role = 'Former ' + role + ' (before %d, %s)' % (pos['before'], pub)
             else:
-                role += ' (%sWoodbury Reports)' % (when + ', ' if when else '')
+                role += ' (%s%s)' % (when + ', ' if when else '', pub)
             if any(e.startswith(('left', 'retired')) for e in pos['events']):
                 role += ', left'
             died = [e for e in pos['events'] if e.startswith('died')]
@@ -790,9 +827,8 @@ def main():
             stats['incident_staff_death'] += 1
             continue
         when = it.get('date') or ''
-        line = '%s: %s: %s (%s, p. %d)' % (when or 'Reported %s' % issues[it['issue']]['label'],
-                                           INCIDENT_LABELS.get(cat, 'Incident'), summary.rstrip('.') + '.',
-                                           'Woodbury Reports, ' + issues[it['issue']]['label'], it['page'])
+        line = '%s: %s: %s (%s)' % (when or 'Reported %s' % (issues[it['issue']]['label'] if not issues[it['issue']].get('pub') else page_month(issues[it['issue']], it['page'])),
+                                    INCIDENT_LABELS.get(cat, 'Incident'), summary.rstrip('.') + '.', cite_of(it))
         vkey = cat + '|' + (when if when else summary.lower()[:80])
         if it['fid'] and flat(summary)[:60] in recs[it['fid']]['blob']:
             stats['incident_already'] += 1
@@ -802,7 +838,7 @@ def main():
 
     # ---- Program facts -------------------------------------------------
     def note(it, field, value):
-        text = '%s: %s (%s, p. %d)' % (NOTE_LABELS.get(field, 'Note'), value, 'Woodbury Reports, ' + issues[it['issue']]['label'], it['page'])
+        text = '%s: %s (%s)' % (NOTE_LABELS.get(field, 'Note'), value, cite_of(it))
         vkey = field + '|' + flat(value)
         if it['fid'] and len(flat(value)) >= 4 and flat(value) in recs[it['fid']]['blob']:
             stats['note_already'] += 1
@@ -830,7 +866,7 @@ def main():
                 stats['already'] += 1
             elif have:
                 propose([it], 'history', 'add_list', 'notes',
-                        'Opened: %d per %s, p. %d (the record says %s)' % (y, 'Woodbury Reports, ' + issues[it['issue']]['label'], it['page'], have),
+                        'Opened: %d per %s (the record says %s)' % (y, cite_of(it), have),
                         'Opened in %d (the record says %s)' % (y, have), 'opened-conflict|%d' % y,
                         conflict='The record has start year %s' % have)
             else:
@@ -891,8 +927,8 @@ def main():
                     stats['already'] += 1
                     continue
                 p = propose([it], 'history', 'add_list', 'identification.pastOperators', company,
-                            'Operator/owner: ' + company + (' (%s)' % (it.get('date') or it['issue'][:4])), 'op|' + ws.key(company))
-                p['note_line'] = '%s: %s (%s, p. %d)' % (NOTE_LABELS.get(field), value, 'Woodbury Reports, ' + issues[it['issue']]['label'], it['page'])
+                            'Operator/owner: ' + company + (' (%s)' % (it.get('date') or str(it['issue_year']))), 'op|' + ws.key(company))
+                p['note_line'] = '%s: %s (%s)' % (NOTE_LABELS.get(field), value, cite_of(it))
                 continue
             note(it, field, value)
             continue
@@ -914,7 +950,7 @@ def main():
             m = re.search(r'\b(\d{1,4})\b', value)
             if m and rec and det.get('capacity') is None:
                 propose([it], 'details', 'set_if_empty', 'facilityDetails.capacity', int(m.group(1)),
-                        'Capacity: %s (as of %s)' % (m.group(1), it['issue'][:4]), 'cap|' + m.group(1))
+                        'Capacity: %s (as of %s)' % (m.group(1), str(it['issue_year'])), 'cap|' + m.group(1))
                 continue
             if rec and det.get('capacity') is not None and m and int(m.group(1)) == det.get('capacity'):
                 stats['already'] += 1
@@ -973,13 +1009,17 @@ def main():
             p['op'], p['path'] = 'add_list', 'notes'
             p['conflict'] = 'Another issue gives %s; this one is kept as a note' % json.dumps(keep['value'])
             e = p['evidence'][0]
-            p['value'] = '%s (Woodbury Reports, %s, p. %d)' % (p['label'], e['label'], e['page'])
+            p['value'] = '%s (%s)' % (p['label'], e.get('cite') or 'Woodbury Reports, %s, p. %d' % (e['label'], e['page']))
     out = sorted(proposals.values(), key=lambda p: (p['facility_id'] == 0, p['program'].lower(), p['group'], p['label']))
     for p in out:
-        p['evidence'].sort(key=lambda e: (e['issue'], e['page']))
-        p['issue_date'] = p['evidence'][0]['issue']
+        p['evidence'].sort(key=lambda e: (e.get('date') or e['issue'], e['page']))
+        p['issue_date'] = p['evidence'][0].get('date') or p['evidence'][0]['issue']
         p['preselect'] = bool(p['found'] and p['match'] in ('exact', 'consultant') and not p['conflict'])
-        p['auto'] = auto_ok(p)
+        # Another source's proposals are always reviewed by hand.
+        p['auto'] = auto_ok(p) and not any(e.get('pub') for e in p['evidence'])
+        sources = sorted({e.get('pub') or 'Woodbury Reports' for e in p['evidence']})
+        if sources != ['Woodbury Reports']:
+            p['sources'] = sources
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
     json.dump({'built': 'woodbury-facts', 'proposals': out}, open(args.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 

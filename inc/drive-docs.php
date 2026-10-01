@@ -78,6 +78,20 @@ function kop_gdl_path() {
     return $dir . '/links.json';
 }
 
+/**
+ * Every links file the screen reads: the Google Docs pass, and the documents
+ * from HEAL's archived site (scripts/heal-docs.py), which sit beside it.
+ */
+function kop_gdl_paths() {
+    $paths = array();
+    foreach (array(kop_gdl_path(), dirname(kop_gdl_path()) . '/heal-links.json') as $p) {
+        if (is_readable($p)) {
+            $paths[] = $p;
+        }
+    }
+    return $paths;
+}
+
 /** The build's kinds, as the review screen names them. */
 function kop_gdl_kinds() {
     return array(
@@ -133,17 +147,21 @@ function kop_gdl_pkey($key) {
  * longer offers (now on file, or gone from the docs) are marked 'gone'.
  */
 function kop_gdl_sync($force = false) {
-    $path = kop_gdl_path();
-    if (!is_readable($path)) {
+    $paths = kop_gdl_paths();
+    if (!$paths) {
         return null;
     }
-    $md5 = md5_file($path);
+    $md5 = md5(implode('|', array_map('md5_file', $paths)));
     if (!$force && get_option('kop_gdoc_links_md5') === $md5) {
         return null;
     }
-    $items = json_decode((string) file_get_contents($path), true);
-    if (!is_array($items)) {
-        return null;
+    $items = array();
+    foreach ($paths as $path) {
+        $list = json_decode((string) file_get_contents($path), true);
+        if (!is_array($list)) {
+            return null; // A half-copied file: nothing is marked gone until it reads.
+        }
+        $items = array_merge($items, $list);
     }
     global $wpdb;
     $table = kop_gdl_table();
@@ -245,7 +263,8 @@ function kop_gdl_url_key($url) {
 /** The words that say where a link came from, for the record and the queues. */
 function kop_gdl_source_line(array $r) {
     $doc = $r['source_doc'] !== '' ? $r['source_doc'] : 'a Google Doc';
-    return 'Google Doc: ' . $doc;
+    // HEAL's documents name their own source ("HEAL archive: heal-online.org/x.pdf, saved 2009").
+    return strpos($doc, 'HEAL archive') === 0 ? $doc : 'Google Doc: ' . $doc;
 }
 
 /**
@@ -588,11 +607,12 @@ function kop_render_drive_docs_page() {
         echo '<div class="notice notice-info"><p>Loaded a new build: ' . (int) $sync['added'] . ' new, ' . (int) $sync['updated']
             . ' updated, ' . (int) $sync['gone'] . ' no longer offered.</p></div>';
     }
-    if (!is_readable(kop_gdl_path())) {
+    if (!kop_gdl_paths()) {
         echo '<div class="notice notice-warning"><p>No links uploaded yet. Run <code>python scripts/gdocs-extract.py</code> and copy '
             . '<code>tmp/gdocs/links.json</code> to <code>' . esc_html(dirname(kop_gdl_path())) . '</code>.</p></div>';
     }
-    echo '<p>Links from your Google Docs and Sheets that the database does not have yet, one card per facility. '
+    echo '<p>Links from your Google Docs and Sheets, and documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine), '
+        . 'that the database does not have yet, one card per facility. '
         . 'Each shows the doc it came from and the words around it.</p>'
         . '<ol class="kop-gdl-how"><li><strong>Read down a card.</strong> Links whose facility is a sure match start ticked; untick anything that is not about this place.</li>'
         . '<li><strong>Check <em>Goes to</em>.</strong> News goes to the news queue, court records and bills to their queues, the program\'s own site to its website links, '
