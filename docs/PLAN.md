@@ -438,6 +438,17 @@ updated.
    --file=<pa --out json>` prints the list). Then the severe finding
    extractor (plan step 11: each citation's description of violation;
    follow-ups that repeat a counted citation document skipped).
+6. **Second round of state scrapers** (researched 2026-10-01; every state
+   and DC has now been checked). Ten build plans in
+   `docs/state-inspection-reports/plans/`, in build order: New Hampshire
+   and Wyoming first (New Hampshire shows only three years; Wyoming removes
+   a provider's documents when it leaves the list), then Virginia, Ohio,
+   Idaho, Iowa, West Virginia, Maine, South Dakota, Maryland. `research-log.md`
+   there lists what each state publishes and which publish nothing, so the
+   research is not repeated. Owner items per
+   state: approve the first production post; West Virginia and Maine also need their
+   scope tables settled, and New Hampshire, Wyoming and Ohio need a monthly
+   run.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

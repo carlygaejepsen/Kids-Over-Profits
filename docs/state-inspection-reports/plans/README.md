@@ -1,8 +1,33 @@
 # New state scraper plans: shared ground rules
 
-Three plans live in this folder, one per state. Each is written to be handed
-to an agent that has not seen the research. Read this file first, then the
-state plan.
+One plan per state lives in this folder. Each is written to be handed to an
+agent that has not seen the research. Read this file first, then the state
+plan.
+
+**Built and live (2026-09-30):** Michigan, Oklahoma, Pennsylvania. Their plans
+stay here as the record of how each was built, and their scrapers and adapters
+(`mi`, `ok`, `pa`) are the closest working examples for a new state.
+
+**Ready to build (researched 2026-10-01).** Ten plans, in the order to
+build them: the first two lose data while they wait.
+
+| Plan | State | Source | Size | Why it matters |
+|---|---|---|---|---|
+| [new-hampshire.md](new-hampshire.md) | NH | Child care licensing search (Salesforce Visualforce, HTML) | 24 programs, 146 visits | Complaint visits with observations and corrective plans; the state shows only three years |
+| [wyoming.md](wyoming.md) | WY | Family Services findings page (Google Drive PDFs, scanned) plus health department surveys (JSON + PDF) | 24 providers, about 420 documents | Notices of non-compliance; documents vanish with their provider |
+| [virginia.md](virginia.md) | VA | Two agencies: behavioral health provider search (form posts + PDF, needs a browser once per run) and social services facility search (plain HTML) | about 140 + 19 facilities | Largest uncovered state (139 tracked) |
+| [ohio.md](ohio.md) | OH | Children and Youth agency search (Salesforce Aura + PDF) | 159 agencies, about 500 PDFs | 63 tracked; reports begin July 2025 and keep coming |
+| [idaho.md](idaho.md) | ID | Health and Welfare public document folders (JSON + PDF) | 40 facilities, about 156 PDFs | Core state for the industry; small and quick |
+| [iowa.md](iowa.md) | IA | Inspections department health facilities database (JSON + PDF) | 46 institutions, 240 PDFs | Federal surveys with complaints; closed institutions kept |
+| [west-virginia.md](west-virginia.md) | WV | Health facility licensure lookup (JSON + generated PDF) | about 80 records, about 540 surveys | History back to 2001; scope and PDF text need care |
+| [maine.md](maine.md) | ME | State licence lookup (form posts + PDF) | about 13 youth operators | Complaint surveys and deficiencies since late 2024; scope is an operator allowlist |
+| [south-dakota.md](south-dakota.md) | SD | Licensing portal (HTML + PDF) | 27 providers, about 150 PDFs | Small and easy |
+| [maryland.md](maryland.md) | MD | Human Services report folders (HTML listing + PDF) | 32 providers, 174 PDFs | Summaries only |
+
+[research-log.md](research-log.md) records what every state publishes,
+including the ones with nothing online, so the research is not repeated.
+
+**First round:**
 
 | Plan | State | Source | Size | Why it matters |
 |---|---|---|---|---|
@@ -10,16 +35,14 @@ state plan.
 | [pennsylvania.md](pennsylvania.md) | PA | DHS Human Services Provider Directory (HTML + PDF) | about 595 licensed units, about 7,600 PDFs | Deepest history (2010 onward), plans of correction included |
 | [oklahoma.md](oklahoma.md) | OK | OKDHS residential locator (HTML only) | 93 programs | Smallest build; the source shows a rolling 36 months, so every month not scraped is lost |
 
-All facts in the plans were checked against the live sites on 2026-09-30 from
-a residential IP with plain `requests`. Probe scripts and sample responses are
+All facts in a plan were checked against the live site on the date the plan
+gives, from a residential IP with plain `requests` unless it says otherwise. Probe scripts and sample responses are
 in `tmp/scraper-research/<state>/` in this repo (gitignored, this machine only).
 If that folder is missing, the plans carry enough to rebuild the probes.
 
-The three builds are independent. Oklahoma is the quickest and the only one
-losing data with time, so if only one agent is available do Oklahoma first,
-then Michigan, then Pennsylvania. If several agents work at once, the
-registration edits in step 4 below touch the same few lines in shared files:
-pull before editing them and keep those commits small.
+The builds are independent. If several agents work at once, the registration
+edits in step 4 below touch the same few lines in shared files: pull before
+editing them and keep those commits small.
 
 ## The two repos
 
@@ -63,11 +86,11 @@ the API key.
      the sentence above it. `AGENTS.md` lists the adapters and slugs too.
    - PDF states only: the Drive folder in `$FOLDERS` in
      `api/sync-inspection-archive.php`, and `archiveState` in the adapter.
-5. **The page** `/xx-reports/`: an ordinary WordPress page with the State
-   Reports template (`templates/page-state-reports.php`). Earlier states were
-   created by hand in wp-admin. Do not invent a new mechanism; add the page
-   creation to the owner's queue in `docs/PLAN.md` unless the owner says
-   otherwise.
+5. **The page** `/xx-reports/`: created on deploy by an entry in
+   `kop_tool_page_specs()` in `inc/admin.php` with the State Reports template
+   and `'shared' => true`, as the Oklahoma and Pennsylvania entries do. Its
+   `content` is one short paragraph saying which agency the reports come
+   from, with a link to the source, and what the source leaves out.
 6. **Severe findings** (second phase, after the data is live): an extractor in
    `kop_ih_extract()` in `inc/inspection-highlights.php`, the state in
    `kop_ih_supported_states()`, a bump of `kop_ih_scanner_version()`, and cases
@@ -87,8 +110,11 @@ the API key.
 - `facility_name` is what the generated `/facility/<slug>/` pages match on
   (`kop_facility_pages_inspections()` in `inc/facility-pages.php`, by name key
   within the state). Use the name the public knows, not an internal code. After
-  the first `--out` run, report how many of the state's `facilities_v2` rows in
-  `tmp/prod.sqlite` match by name, and list the near misses.
+  the first `--out` run, run
+  `php scripts/match-inspection-names.php --state=XX --file=<out.json>`: it
+  prints which records the names reach and the near misses. Do not rename
+  records to force a match; the owner links leftovers at KOP Tools >
+  Inspection Links (`inc/inspection-links.php`).
 - `report_date` must parse with JavaScript `new Date()`; send ISO
   `YYYY-MM-DD`.
 - Put everything the page needs at list time into `categories`. Then the page
@@ -99,6 +125,25 @@ the API key.
   needed when the page reads the text itself, which these plans avoid.
 - `raw_content` still carries the full text: site search and the severe
   finding scan read it.
+
+## Only licensing reports are posted
+
+State document stores hold things that are not licensing reports. Michigan's
+held a seclusion sheet naming a detained youth, and it was posted before
+anyone noticed. Every scraper therefore decides what a document is before it
+goes in the payload: a document that is not one of the report kinds the plan
+names is logged, left out, and listed in the run report for the owner
+(`mi_scraper.py` counts these as `not_a_report`). Extracted text is also
+checked for things that must not be public (a date of birth, a named child, a
+record number); a hit holds the report back the same way.
+
+## Reading PDF tables
+
+Statements of deficiencies are usually tables with a rule, a finding and a
+plan side by side. `pdfplumber`'s `extract_text()` interleaves the columns
+line by line, which cannot be undone afterwards (this is why Washington is
+out of the severe-finding scan). Use `page.extract_tables()`, or crop by
+column positions, and check on real samples that each cell comes out whole.
 
 ## Posting to production
 
@@ -118,6 +163,7 @@ harness used for the state hubs, or Playwright with a route intercept on
 `https://kidsoverprofits.org/ga-reports/` with the local adapter and
 `report-page.js` swapped in. Look at screenshots at 390, 768 and 1440 px.
 Then, once live: `python scripts/check-bare-text.py`,
+`python -u scripts/check-contrast.py /xx-reports/`,
 `node scripts/test-severe-flags.js`, PHP lint with Local's bundled `php.exe`
 (`-n -l`; there is no `php` on PATH), and `gh run list --workflow=deploy.yml`
 to confirm the deploy.
