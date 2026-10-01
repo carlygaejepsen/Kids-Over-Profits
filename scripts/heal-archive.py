@@ -29,6 +29,7 @@ committed. Fetching is resumable and slow on purpose (the Archive throttles).
 """
 
 import argparse
+import gzip
 import json
 import os
 import re
@@ -53,9 +54,18 @@ def get(url, binary=False, tries=10):
     wait = 30
     for _ in range(tries):
         try:
-            r = requests.get(url, headers=UA, timeout=90)
-            if r.status_code == 200 and b'Temporarily Offline' not in r.content[:3000]:
-                return r.content if binary else r.text
+            r = requests.get(url, headers=UA, timeout=90, stream=True)
+            # The Archive replays the original headers: a page saved with
+            # "Content-Encoding: gzip" may not be gzip at all, so read the
+            # bytes as they are and unpack only real gzip.
+            body = r.raw.read(decode_content=False)
+            if body[:2] == b'\x1f\x8b':
+                try:
+                    body = gzip.decompress(body)
+                except OSError:
+                    pass
+            if r.status_code == 200 and b'Temporarily Offline' not in body[:3000]:
+                return body if binary else body.decode('utf-8', 'replace')
             if r.status_code in (404, 403):
                 return None
             if r.status_code == 429:
@@ -118,7 +128,9 @@ def looks_heal(data, is_pdf):
     if any(w in low for w in (b'404.0 - not found', b'detailed error', b'<title>404', b'page not found',
                               b'<title>object moved', b'automatically redirect', b'automatically re-direct',
                               # The parked domain after HEAL let it go.
-                              b'sedoparking', b'data-adblockkey', b'resources and information.</title>')):
+                              b'sedoparking', b'data-adblockkey', b'resources and information.</title>',
+                              # Gambling spam on the squatted domain.
+                              b'envato', b'slot gacor', b'slot online', b'judi online', b'situs slot')):
         return False
     # A parked or reused domain has none of HEAL's own words.
     return any(w in low for w in (b'heal', b'abuse', b'program', b'teen'))
