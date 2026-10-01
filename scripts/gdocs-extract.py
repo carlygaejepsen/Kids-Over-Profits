@@ -72,8 +72,17 @@ PEOPLE = {'linkedin.com', 'indeed.com', 'glassdoor.com', 'findagrave.com', 'lega
 REFERENCE = {'en.wikipedia.org', 'wikipedia.org', 'unsilenced.org', 'splcenter.org',
              'disabilityrightsohio.org', 'ndrn.org', 'autisticadvocacy.org', 'breakingcodesilence.org',
              'documentcloud.org', 'change.org', 'crunchbase.com', 'yelp.com'}
-# Where programs advertise: Woodbury Reports (strugglingteens.com), paid directories, press releases.
-ADVERTISING = {'strugglingteens.com', 'allkindsoftherapy.com', 'psychologytoday.com', 'prweb.com'}
+# Where programs advertise: Woodbury Reports (strugglingteens.com), paid directories, press releases,
+# and the referral/lead-generation sites that sell placements to parents (The Envoy Group's network,
+# Craig Rogers' sites, WWASP's Teen Help) rather than run a program themselves.
+ADVERTISING = {'strugglingteens.com', 'allkindsoftherapy.com', 'psychologytoday.com', 'prweb.com',
+               'theenvoygroup.com', 'bestchristianboardingschools.com', 'besttherapeuticboardingschools.com',
+               'besttherapeuticschools.com', 'schoolsfortroubledteens.org', 'troubledteenschools.us',
+               'therapeuticboardingschools.org', 'usboardingschools.com', 'helpmyboy.com', 'militaryschoolforgirls.org',
+               'residentialtreatmentforteens.com', 'christianboardingschools.com', 'aspergersboardingschools.com',
+               'wehelptroubledteens.com', 'solutionsfortroubledteens.com', 'restoretroubledteens.com',
+               'troubledteenministries.com', 'troubledteenprograms.org', 'teenprogram.info', 'familyhelpcenter.org',
+               'teenhelponline.com', 'parenthelpcenter.com'}
 # Never a program's own site, even when a record's links name it.
 NOT_PROGRAM_SITE = re.compile(r'wordpress\.com|blogspot\.|wixsite\.|weebly\.|squarespace\.|google\.|yelp\.|'
                               r'patch\.com|psychologytoday\.|guidestar\.|charitynavigator\.|natsap\.org', re.I)
