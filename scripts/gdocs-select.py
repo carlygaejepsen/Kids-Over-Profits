@@ -46,7 +46,6 @@ FILES = {
     "My Drive/Ohio", "My Drive/Educational Consultants", "My Drive/RCR HEAL",
     "My Drive/WR Youth Health Associates Report", "My Drive/Troubled Teens Wiki  Missing Entries",
     "My Drive/Troubled Teen Wiki Updates", "My Drive/people_jobs2", "My Drive/Seq Timeline Draft",
-    "My Drive/FileBird Cloud - kidsoverprofits.org/NWBHS/HEAL INFO NWBHS",
     # Shared with ttiresearch.dani from other Drives (no My Drive path).
     "AZ Facilities", "AZ Residential Behavioral Health Facilities for Children",
     "Andrew Erkis Public Buisness Affiliations", "Aurora Center for Healing ",

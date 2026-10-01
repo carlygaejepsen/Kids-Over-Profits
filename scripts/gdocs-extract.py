@@ -332,6 +332,7 @@ GENERIC_WORDS = {'juvenile', 'detention', 'youth', 'boy', 'girl', 'children', 'c
                  'counseling', 'service', 'east', 'west', 'north', 'south', 'central', 'valley'}
 SEARCH_PAGE = re.compile(r'linkedin\.com/search/|google\.[a-z.]+/search|facebook\.com/search|bing\.com/search|'
                          r'duckduckgo\.com/\?|/search\?q=|youtube\.com/results', re.I)
+WEBSITE_COLUMN = re.compile(r'^\s*(?:web ?site|website url|url|homepage|home page|site)s?\s*$', re.I)
 STATE_FOLDERS = {v.lower(): k for k, v in ws.STATES.items()}
 PLACES = {ws.key(v) for v in ws.STATES.values()} | {'israel', 'canada', 'mexico', 'jamaica', 'costa rica', 'samoa',
                                                      'massachusettes', 'new england', 'mid atlantic', 'midwest',
@@ -515,6 +516,9 @@ def main():
                 continue
             n_links += 1
             cat = classify(orig or url, dom, news_domains, program_domains)
+            # A sheet's "Website" column holds the program's own site.
+            if cat == 'other' and tab and WEBSITE_COLUMN.search(heading or ''):
+                cat = 'program_site'
             if orig and cat not in ('internal',):
                 cat_note = 'archive of ' + CATEGORY_LABEL.get(cat, cat).lower()
             else:
