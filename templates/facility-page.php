@@ -48,8 +48,16 @@ $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
 $kop_fp_sources = static function ($sources, $tag = 'dd') {
     if (!$sources) return;
     $links = array();
+    // Two sources with the same name and date ("Woodbury Reports, May 2007" twice) are told apart by page, else by number.
+    $counts = array_count_values(array_column($sources, 'source'));
+    $nth = array();
     foreach ($sources as $src) {
-        $name = esc_html($src['source']);
+        $label = $src['source'];
+        if ($counts[$label] > 1) {
+            $nth[$label] = ($nth[$label] ?? 0) + 1;
+            $label .= preg_match('/\bp\. ?(\d+)/', $src['cite'], $pm) ? ', p. ' . $pm[1] : ' (' . $nth[$label] . ')';
+        }
+        $name = esc_html($label);
         $links[] = $src['url'] !== ''
             ? '<a href="' . esc_url($src['url']) . '" title="' . esc_attr($src['cite']) . '" rel="nofollow noopener" target="_blank">' . $name . '</a>'
             : '<span title="' . esc_attr($src['cite']) . '">' . $name . '</span>';

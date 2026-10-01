@@ -818,14 +818,34 @@ if (!function_exists('kop_facility_pages_clean_notes')) {
 }
 
 if (!function_exists('kop_facility_pages_source_label')) {
-    /** "r/troubledteens wiki, page "X" (as of 2025-12-18)" -> "r/troubledteens wiki": the publication a link names. */
+    /**
+     * The publication and its date, as a link names a source:
+     * "Woodbury Reports, October 2010, p. 2" -> "Woodbury Reports, Oct 2010";
+     * "r/troubledteens wiki, page "X" (as of 2025-12-18)" -> "r/troubledteens wiki, as of Dec 2025";
+     * "HEAL, staff list for X (archived 2012-05-17)" -> "HEAL, archived May 2012";
+     * "Fornits forum, post by X, March 2005" -> "Fornits, Mar 2005".
+     */
     function kop_facility_pages_source_label($cite) {
         $cite = trim((string) $cite);
-        foreach (array('Woodbury Reports', 'HEAL', 'r/troubledteens wiki', 'Fornits') as $pub) {
-            if (stripos($cite, $pub) === 0) return $pub;
+        $pub = '';
+        foreach (array('Woodbury Reports', 'HEAL', 'r/troubledteens wiki', 'Fornits') as $p) {
+            if (stripos($cite, $p) === 0) { $pub = $p; break; }
         }
-        $first = trim(strtok($cite, ',('));
-        return $first !== '' ? $first : 'Source';
+        if ($pub === '') {
+            $pub = trim(strtok($cite, ',('));
+            if ($pub === '') $pub = 'Source';
+        }
+        $months = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+        $when = '';
+        if (preg_match('/\b(\d{4})-(\d{2})(?:-\d{2})?\b/', $cite, $m) && (int) $m[2] >= 1 && (int) $m[2] <= 12) {
+            $when = substr($months[(int) $m[2] - 1], 0, 3) . ' ' . $m[1];
+        } elseif (preg_match('/\b(' . implode('|', $months) . ')\s+(\d{4})\b/', $cite, $m)) {
+            $when = substr($m[1], 0, 3) . ' ' . $m[2];
+        } elseif (preg_match('/\b(1[89]\d{2}|20\d{2})\b/', $cite, $m)) {
+            $when = $m[1];
+        }
+        if ($when !== '' && preg_match('/\b(as of|archived)\b/i', $cite, $w)) $when = strtolower($w[1]) . ' ' . $when;
+        return $when !== '' ? $pub . ', ' . $when : $pub;
     }
 }
 

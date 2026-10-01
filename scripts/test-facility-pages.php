@@ -412,7 +412,7 @@ $src_doc_staff = array('notableStaff' => array(
     array('name' => 'John Roe', 'role' => 'Therapist', 'pastJobs' => ''),
 ));
 $src_items = kop_facility_pages_staff_items(kop_facility_normalize(array('staff' => $src_doc_staff))['staff']);
-$check('a staff entry keeps its source through the normalizer', ($src_items['notableStaff'][0]['source'] ?? '') === 'r/troubledteens wiki'
+$check('a staff entry keeps its source through the normalizer', ($src_items['notableStaff'][0]['source'] ?? '') === 'r/troubledteens wiki, as of Dec 2025'
     && ($src_items['notableStaff'][0]['url'] ?? '') === 'https://www.reddit.com/r/troubledteens/wiki/index/test' && ($src_items['notableStaff'][1]['source'] ?? 'x') === '',
     wp_json_encode($src_items));
 $src_notes = kop_facility_pages_note_sources(array(
@@ -421,9 +421,9 @@ $src_notes = kop_facility_pages_note_sources(array(
     'Past name: Old Name (HEAL, staff list for X (archived 2012-05-17)) https://web.archive.org/web/2012/x.htm',
     'An unrelated note (Woodbury Reports, May 2007, p. 3: https://example.org/a)',
 ));
-$check('the notes give each fact its source', ($src_notes['Capacity'][0]['source'] ?? '') === 'r/troubledteens wiki'
+$check('the notes give each fact its dated source', ($src_notes['Capacity'][0]['source'] ?? '') === 'r/troubledteens wiki, as of Dec 2025'
     && ($src_notes['Capacity'][0]['url'] ?? '') === 'https://www.reddit.com/r/troubledteens/wiki/index/test'
-    && ($src_notes['Operated'][0]['source'] ?? '') === 'Woodbury Reports' && strpos($src_notes['Operated'][0]['url'] ?? '', '#page=20') !== false
+    && ($src_notes['Operated'][0]['source'] ?? '') === 'Woodbury Reports, May 2007' && ($src_notes['formerly'][0]['source'] ?? '') === 'HEAL, archived May 2012' &&strpos($src_notes['Operated'][0]['url'] ?? '', '#page=20') !== false
     && ($src_notes['formerly'][0]['url'] ?? '') === 'https://web.archive.org/web/2012/x.htm' && count($src_notes) === 3,
     wp_json_encode($src_notes));
 if ($picks) {
@@ -438,7 +438,25 @@ if ($picks) {
     $check('the page links a staff entry and a fact to their sources',
         preg_match('#Jane Doe \(Clinical Director[^<]*<span class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
         && preg_match('#<dd class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
-        && strpos($html, 'John Roe (Therapist)</li>') !== false);
+        && strpos($html, 'John Roe (Therapist)</li>') !== false
+        && strpos($html, '>r/troubledteens wiki, as of Dec 2025</a>') !== false);
+    // Two citations of one issue are told apart by page; of one date with no page, by number.
+    $data['fact_sources']['Capacity'] = kop_facility_pages_note_sources(array(
+        'Capacity: 35 (Woodbury Reports, May 2007 (#153), p. 20: https://example.org/w.pdf#page=20)',
+        'Capacity: 40 (Woodbury Reports, May 2007 (#153), p. 31: https://example.org/w.pdf#page=31)',
+    ))['Capacity'];
+    $data['fact_sources']['Operated'] = array(
+        array('source' => 'Fornits, Mar 2005', 'cite' => 'Fornits forum, post by a, March 2005', 'url' => 'https://example.org/1'),
+        array('source' => 'Fornits, Mar 2005', 'cite' => 'Fornits forum, post by b, March 2005', 'url' => 'https://example.org/2'),
+    );
+    $data['facts'][] = array('label' => 'Operated', 'value' => '1998');
+    $GLOBALS['kop_facility_page'] = $data;
+    ob_start();
+    include dirname(__DIR__) . '/templates/facility-page.php';
+    $html = ob_get_clean();
+    $check('two sources of one name and date look different',
+        strpos($html, '>Woodbury Reports, May 2007, p. 20</a>, <a') !== false && strpos($html, '>Woodbury Reports, May 2007, p. 31</a>') !== false
+        && strpos($html, '>Fornits, Mar 2005 (1)</a>, <a') !== false && strpos($html, '>Fornits, Mar 2005 (2)</a>') !== false);
 }
 
 // Sitemap entries
