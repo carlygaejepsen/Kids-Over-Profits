@@ -27,6 +27,7 @@
  *   referrer:5:all|raw      a referrer / educational consultant record (referrers_master)
  *   row:memorial:4          a row of a table with no other editor (kop_ie_row_tables())
  *   ya:2                    a young adult program (inc/young-adult-programs.php)
+ *   doc:812                 a document's title, caption, description, alt text
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
  * POST kop/v1/inline-edit           payload (a JSON file part: the host firewall
@@ -174,6 +175,7 @@ function kop_ie_sources() {
         'referrer' => array('load' => 'kop_ie_referrer_load', 'save' => 'kop_ie_referrer_save'),
         'row'      => array('load' => 'kop_ie_row_load', 'save' => 'kop_ie_row_save'),
         'ya'       => array('load' => 'kop_ie_ya_load', 'save' => 'kop_ie_ya_save'),
+        'doc'      => array('load' => 'kop_ie_doc_load', 'save' => 'kop_ie_doc_save'),
     ));
 }
 
@@ -1598,6 +1600,52 @@ function kop_ie_ya_save(array $p, array $v) {
     if ($page) {
         kop_ie_purge_post($page->ID);
     }
+    return array('message' => 'Saved.');
+}
+
+/* ---- Documents in the media library (every document tile) ---------------------- */
+
+function kop_ie_doc_get($id) {
+    $post = get_post((int) $id);
+    if (!$post || $post->post_type !== 'attachment' || !current_user_can('edit_post', $post->ID)) {
+        throw new RuntimeException('That document cannot be edited here.');
+    }
+    return $post;
+}
+
+function kop_ie_doc_load(array $p) {
+    $post = kop_ie_doc_get($p[0] ?? 0);
+    return array(
+        'title'  => 'Document: ' . $post->post_title,
+        'help'   => 'The title shows on every tile and list of this document across the site.',
+        'fields' => array(
+            kop_ie_field('title', 'Title', 'text', $post->post_title),
+            kop_ie_field('caption', 'Caption (credit or source line)', 'textarea', $post->post_excerpt),
+            kop_ie_field('description', 'Description', 'textarea', $post->post_content),
+            kop_ie_field('alt', 'Alt text (what an image shows, for screen readers)', 'text', (string) get_post_meta($post->ID, '_wp_attachment_image_alt', true)),
+        ),
+    );
+}
+
+function kop_ie_doc_save(array $p, array $v) {
+    $post = kop_ie_doc_get($p[0] ?? 0);
+    $title = trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v['title'] ?? $post->post_title)));
+    if ($title === '') {
+        throw new RuntimeException('The title cannot be empty.');
+    }
+    $result = wp_update_post(wp_slash(array(
+        'ID'           => $post->ID,
+        'post_title'   => $title,
+        'post_excerpt' => kop_ie_clean_text($v['caption'] ?? $post->post_excerpt),
+        'post_content' => kop_ie_clean_text($v['description'] ?? $post->post_content),
+    )), true);
+    if (is_wp_error($result)) {
+        throw new RuntimeException($result->get_error_message());
+    }
+    if (array_key_exists('alt', $v)) {
+        update_post_meta($post->ID, '_wp_attachment_image_alt', wp_slash(trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v['alt'])))));
+    }
+    do_action('litespeed_purge_all');
     return array('message' => 'Saved.');
 }
 

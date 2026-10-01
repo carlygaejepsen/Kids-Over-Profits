@@ -840,7 +840,7 @@ function kop_filebird_library_shortcode($atts) {
                                     ? kop_title_case($attachment->post_title)
                                     : $attachment->post_title;
                                 ?>
-                                <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
+                                <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('doc:' . (int) $attachment->ID, $display_title) : ''; ?>>
                                     <a href="<?php echo esc_url($file_url); ?>"
                                        class="doc-link nofancybox"
                                        target="_blank"
@@ -934,7 +934,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
         return ob_get_clean();
     }
     ?>
-    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
+    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('doc:' . (int) $attachment->ID, $display_title) : ''; ?>>
         <a href="<?php echo esc_url($file_url); ?>"
            class="doc-link nofancybox"
            target="_blank"
