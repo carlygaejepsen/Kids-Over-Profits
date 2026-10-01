@@ -1000,6 +1000,8 @@ function kop_seed_posts() {
         'history/tti-history-part-one.json',
         // Links page: one link card's image pointed at a deleted attachment (2026-09-25).
         'links.json',
+        // Investigatory Spotlight on how the industry manages its reputation online, a draft (2026-10-01).
+        'reputation-management.json',
     );
 }
 
@@ -2111,7 +2113,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '68';
+    $version = '69';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
