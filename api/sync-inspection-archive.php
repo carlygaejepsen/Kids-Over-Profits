@@ -50,6 +50,7 @@ $FOLDERS = array(
     'pa_pdfs'       => 'pa',
     'ut_checklists' => 'ut',
     'wa_pdfs'       => 'wa',
+    'wy_pdfs'       => 'wy',
 );
 
 $lock = fopen(sys_get_temp_dir() . '/kop-sync-inspection-archive.lock', 'c');

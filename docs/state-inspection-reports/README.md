@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Eighteen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's and New Hampshire's are linked once the owner creates the page, see below):
+Nineteen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's and Wyoming's are linked once the owner creates the page, see below):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -25,9 +25,10 @@ Eighteen tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's
 | Pennsylvania (`PA`) | `pa-reports` | shared engine | API (`pa_scraper.py`; PDFs archived to the Drive folder `pa_pdfs/`, scans before mid-2019 read by OCR) |
 | Texas (`TX`) | `tx-reports` | `js/inspections/tx_reports.js` (legacy) | API |
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
+| Wyoming (`WY`) | `wy-reports` | shared engine | API (`wy_scraper.py`; Family Services notices of non-compliance (OCR) and handwritten facility visits (documents only), plus health department PRTF surveys; PDFs archived to the Drive folder `wy_pdfs/`) |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania, New Hampshire): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 

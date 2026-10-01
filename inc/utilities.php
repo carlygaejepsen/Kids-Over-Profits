@@ -341,7 +341,7 @@ function kop_report_state_links() {
             'Michigan' => 'mi-reports', 'Minnesota' => 'mn-reports', 'Montana' => 'mt-reports', 'Nevada' => 'nv-reports',
             'North Carolina' => 'nc-reports', 'Oklahoma' => 'ok-reports', 'Oregon' => 'or-reports', 'Pennsylvania' => 'pa-reports', 'Texas' => 'tx-reports',
             'Utah' => 'ut-reports', 'Washington' => 'wa-reports',
-            'New Hampshire' => 'nh-reports',
+            'New Hampshire' => 'nh-reports', 'Wyoming' => 'wy-reports',
         );
 
     $links = array();

@@ -481,6 +481,28 @@ updated.
    `facilities_v2` record; the seven Mount Prospect Academy sites and the
    Nashua Children's Home names are for KOP Tools > Inspection Links.
    Owner: approve the first post, then run it monthly from the launcher.
+   **Wyoming built 2026-10-01, waiting for the owner's word to post:**
+   `wy_scraper.py` (Tools repo), `js/inspections/states/wy.js`,
+   `/wy-reports/` created on deploy. A full `--no-post` run: 26
+   facilities (24 Family Services providers, 2 of them with no documents;
+   2 health department PRTFs), 413 documents: 88 notices of
+   non-compliance, 313 handwritten facility visits (shown as documents
+   only, never transcribed, always neutral), 5 corrective action plans and
+   recertifications, 7 federal surveys (3 with deficiencies). 69 flagged
+   (66 notices where the evidence supports non-compliance, 3 surveys),
+   2019-09-05 to 2026-08-12. Notices are scans read by OCR: 16 lack a
+   readable allegation or finding (listed in the run log; a notice with no
+   finding read shows neutral, never clean). Visit photos (JPEG) are
+   wrapped as one-page PDFs so the archive sync picks them up; every
+   document goes to the Drive folder `wy_pdfs/`, since the state removes a
+   provider's documents when it leaves the list. One notice (Meadowlark,
+   2024-04-04) is held by the privacy check, a false positive on "calling
+   a youth Miley Cyrus": **owner** to decide; one (Cathedral Home,
+   2024-01-29) is not shared by the state (Drive asks for a sign-in). 9
+   of 26 names reach a `facilities_v2` record; Cathedral Home, VOA
+   Milestone and the Fremont County group homes are near misses for KOP
+   Tools > Inspection Links. Owner: approve the first post, then run it
+   monthly from the launcher.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
