@@ -548,6 +548,84 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
     return $results;
 }
 
+/**
+ * Staff added before entries kept their source (Woodbury Facts and Fornits
+ * staff applied before 2026-10-01): give each its source and link from the
+ * row that added it, and record in the row that Undo takes them off again.
+ * $apply false only counts. Returns {rows, facilities, sourced, already, missing}.
+ */
+function kop_wbf_backfill_staff_sources($apply = false) {
+    global $wpdb;
+    $todo = array();
+    foreach ((array) $wpdb->get_results('SELECT pkey, evidence, applied, applied_fid FROM ' . kop_wbf_table()
+        . " WHERE op = 'add_staff' AND status = 'applied' AND applied_fid > 0", ARRAY_A) as $r) {
+        $todo[(int) $r['applied_fid']][] = array('table' => kop_wbf_table(), 'pkey' => $r['pkey'], 'evidence' => $r['evidence'], 'applied' => $r['applied']);
+    }
+    if (function_exists('kop_fornits_items_table') && function_exists('kop_fornits_post_url')) {
+        foreach ((array) $wpdb->get_results('SELECT pkey, topic_id, post_n, author, post_date, applied, applied_fid FROM ' . kop_fornits_items_table()
+            . " WHERE kind = 'staff' AND status = 'applied' AND applied_fid > 0", ARRAY_A) as $r) {
+            // The citation kop_fornits_doc_apply() hands Woodbury Facts.
+            $evidence = wp_json_encode(array(array('cite' => 'Fornits forum, post by ' . ($r['author'] !== '' ? $r['author'] : 'a member')
+                . (kop_fornits_month($r['post_date']) ? ', ' . kop_fornits_month($r['post_date']) : ''),
+                'url' => kop_fornits_post_url($r['topic_id'], $r['post_n']))));
+            $todo[(int) $r['applied_fid']][] = array('table' => kop_fornits_items_table(), 'pkey' => $r['pkey'], 'evidence' => $evidence, 'applied' => $r['applied']);
+        }
+    }
+    $stats = array('rows' => 0, 'facilities' => 0, 'sourced' => 0, 'already' => 0, 'missing' => 0);
+    $opts = kop_wbf_opts();
+    foreach ($todo as $fid => $rows) {
+        $stats['rows'] += count($rows);
+        $work = function () use ($fid, $rows, $opts, $apply, &$stats, $wpdb) {
+            $stored = kop_facility_load($fid, $opts);
+            if (!$stored) {
+                $stats['missing'] += count($rows);
+                return;
+            }
+            $doc = $stored['doc'];
+            $changed = array();
+            foreach ($rows as $row) {
+                $done = json_decode((string) $row['applied'], true);
+                $at = (string) ($done['at'] ?? '');
+                $key = kop_wbf_person_key($done['name'] ?? '');
+                $list = &kop_wbf_ref($doc, $at);
+                $found = false;
+                foreach ((array) $list as $i => $s) {
+                    if (!is_array($s) || $key === '' || kop_wbf_person_key($s['name'] ?? '') !== $key) {
+                        continue;
+                    }
+                    $found = true;
+                    if (!empty($s['source'])) {
+                        $stats['already']++;
+                    } else {
+                        $list[$i] = array_merge($s, kop_wbf_source_ref(array('evidence' => $row['evidence'])));
+                        if (($done['mode'] ?? '') === 'merged') {
+                            $done['before'] += array('source' => null, 'sourceUrl' => null);
+                        }
+                        $changed[] = array($row, $done);
+                        $stats['sourced']++;
+                    }
+                    break;
+                }
+                unset($list);
+                if (!$found) {
+                    $stats['missing']++;
+                }
+            }
+            if ($changed && $apply) {
+                kop_wbf_save($doc, $opts);
+                foreach ($changed as list($row, $done)) {
+                    $wpdb->update($row['table'], array('applied' => wp_json_encode($done)), array('pkey' => $row['pkey']));
+                }
+            }
+            if ($changed) {
+                $stats['facilities']++;
+            }
+        };
+        $apply ? kop_v2_with_write_lock($opts['pdo'], $work) : $work();
+    }
+    return $stats;
+}
+
 /* ---- Young adult programs (inc/young-adult-programs.php) ----------------- */
 
 /** Programs moved into or out of the young adult tab by hand: program => 1 or 0. */
