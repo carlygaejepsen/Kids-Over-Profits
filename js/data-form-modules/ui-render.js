@@ -3,6 +3,93 @@
     // Prevent double initialization
     if (window.KOP_UI_Render && window.KOP_UI_Render._initialized) return;
 
+    /**
+     * A facility-list entry holding a pasted comma list ("Adlebrook, Bancroft,
+     * Cedar Crest, ..."): two or more commas, split on them. Same rule as the
+     * directory (js/provider-index.js splitNames, kop_facility_link_split_list).
+     * Anything else is one name: null.
+     */
+    function facilityRefSplit(value) {
+        const text = String(value || '').trim();
+        if ((text.match(/,/g) || []).length < 2) return null;
+        const names = text.split(/\s*,\s*/).map(s => s.replace(/\s+/g, ' ').trim()).filter(Boolean);
+        return names.length > 1 ? names : null;
+    }
+
+    // name -> linked / ambiguous / nopage / unmatched, from kop/v1/facility-links.
+    const facilityRefStatus = new Map();
+
+    function facilityLinksEndpoint() {
+        const config = window.KOP_DATA_FORM_CONFIG || window.dataFormConfig || {};
+        const base = (config.restUrl || (window.location.origin + '/wp-json/kop/v1/')).replace(/\/?$/, '/');
+        return base + 'facility-links';
+    }
+
+    /** One line under a row saying what to do about its name, or nothing. */
+    function facilityRefHint(name, status) {
+        const words = name.split(/\s+/).length;
+        if (/[.!?]$/.test(name) && words >= 6) return 'This reads as a note, not a program. Move it to the notes, or delete it.';
+        if (status === 'ambiguous') return 'Matches more than one facility. Pick the right one from the suggestions.';
+        if (status === 'unmatched') return 'No exact facility match. Pick it from the suggestions, or keep it as typed.';
+        return '';
+    }
+
+    /**
+     * Mark each name in a facility list that will not link to a facility page:
+     * one request for the names not yet checked, then a hint under the row.
+     */
+    function markFacilityRefMatches(container) {
+        const rows = Array.from(container.querySelectorAll('.array-item'));
+        const inputOf = row => row.querySelector('textarea, input');
+        const nameOf = row => {
+            const inp = inputOf(row);
+            return inp ? inp.value.replace(/\s+/g, ' ').trim() : '';
+        };
+        const paintRow = row => {
+            const old = row.querySelector('.kop-facility-ref-hint');
+            if (old) old.remove();
+            const name = nameOf(row);
+            if (!row.isConnected || !name || facilityRefSplit(name) || !facilityRefStatus.has(name)) return;
+            const hint = facilityRefHint(name, facilityRefStatus.get(name));
+            if (!hint) return;
+            const note = document.createElement('div');
+            note.className = 'kop-facility-ref-hint';
+            note.textContent = hint;
+            row.appendChild(note);
+        };
+        const check = (targetRows) => {
+            const unknown = Array.from(new Set(targetRows.map(nameOf)))
+                .filter(name => name && !facilityRefSplit(name) && !facilityRefStatus.has(name));
+            if (!unknown.length) { targetRows.forEach(paintRow); return; }
+            fetch(facilityLinksEndpoint(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ names: unknown.slice(0, 300) })
+            })
+                .then(r => (r.ok ? r.json() : null))
+                .then(j => {
+                    const statuses = j && j.statuses && typeof j.statuses === 'object' ? j.statuses : null;
+                    if (!statuses) return;
+                    unknown.forEach(name => { if (statuses[name]) facilityRefStatus.set(name, statuses[name]); });
+                    targetRows.forEach(paintRow);
+                })
+                .catch(() => {});
+        };
+        // Typing clears a row's hint; leaving the box (or picking a
+        // suggestion) checks the new name.
+        rows.forEach(row => {
+            const inp = inputOf(row);
+            if (!inp) return;
+            inp.addEventListener('input', () => {
+                const old = row.querySelector('.kop-facility-ref-hint');
+                if (old) old.remove();
+            });
+            inp.addEventListener('blur', () => setTimeout(() => check([row]), 250));
+            inp.addEventListener('change', () => check([row]));
+        });
+        check(rows);
+    }
+
     const KOP_UI_Render = {
         _initialized: true,
 
@@ -908,6 +995,41 @@
                         }
                     };
                     row.appendChild(inp);
+
+                    // Facility lists: a pasted comma list becomes one entry per
+                    // name (on paste, or with the Split button for one already
+                    // saved), each then checked against the facility records.
+                    if (defaultCategory === 'facilityref') {
+                        const splitInto = (names, keepCurrent) => {
+                            flushInputsToArray();
+                            const liveArray = resolveLiveArray() || data;
+                            const current = String(liveArray[index] || '').trim();
+                            const replacement = keepCurrent && current ? [current].concat(names) : names;
+                            liveArray.splice(index, 1, ...replacement);
+                            this.renderArray(container, path, liveArray);
+                            if (window.updateJSON) window.updateJSON();
+                            if (window.autoSave) window.autoSave();
+                            if (typeof window.showUploadStatus === 'function') {
+                                window.showUploadStatus(`Split into ${names.length} entries. Names with no exact facility match are marked below; pick those from the suggestions.`, 'success');
+                            }
+                        };
+                        const listed = facilityRefSplit(item);
+                        if (listed) {
+                            const split = document.createElement('button');
+                            split.type = 'button';
+                            split.className = 'kop-split-list-btn';
+                            split.textContent = `Split into ${listed.length} entries`;
+                            split.onclick = () => splitInto(listed, false);
+                            row.appendChild(split);
+                        }
+                        inp.addEventListener('paste', (e) => {
+                            const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+                            const names = facilityRefSplit(text);
+                            if (!names) return;
+                            e.preventDefault();
+                            splitInto(names, true);
+                        });
+                    }
                 }
 
                 const delBtn = document.createElement('button');
@@ -925,6 +1047,8 @@
                 row.appendChild(delBtn);
                 container.appendChild(row);
             });
+
+            if (defaultCategory === 'facilityref') markFacilityRefMatches(container);
 
             // Always re-resolve the live array from formData rather than trusting the
             // closure `data` ref, which can become stale after autosave/normalization replaces it.
@@ -1119,4 +1243,6 @@
     };
 
     window.KOP_UI_Render = KOP_UI_Render;
+    // For scripts/test-facility-ref-split.js.
+    window.KOP_FacilityRef = { split: facilityRefSplit, hint: facilityRefHint };
 })();

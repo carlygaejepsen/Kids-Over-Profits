@@ -216,9 +216,13 @@ if (!function_exists('kop_facility_links_rest')) {
         $body = $request->get_json_params();
         $names = is_array($body) && isset($body['names']) && is_array($body['names']) ? $body['names'] : array();
         $links = array();
+        // Every name's status too (linked / ambiguous / nopage / unmatched):
+        // the data forms mark names to re-pick from the suggestions.
+        $statuses = array();
         foreach (kop_facility_link_resolve($names) as $name => $r) {
             if ($r['status'] === 'linked') $links[$name] = $r['url'];
+            $statuses[$name] = $r['status'];
         }
-        return new WP_REST_Response(array('links' => (object) $links), 200);
+        return new WP_REST_Response(array('links' => (object) $links, 'statuses' => (object) $statuses), 200);
     }
 }

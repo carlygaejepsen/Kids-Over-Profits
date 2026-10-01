@@ -111,6 +111,7 @@ php scripts/test-search-aliases.php               # against tmp/prod.sqlite
 # 'facilityref' autocomplete (ttiReferrals, knownReferrals, facilitiesReferred; reuses kop_v2_search); kop/v1/facility-links
 # resolves names to /facility/<slug>/ for "Refers young people to" on /mental-health-providers/ (one batch, ambiguous never links)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-links.php   # prints the Billings list's linked/ambiguous/unmatched names
+node scripts/test-facility-ref-split.js           # the forms split a pasted comma list into entries and mark names that will not link
 # "Send to KOP" Chrome extension (browser-extension/send-to-kop/, loaded unpacked, not deployed) posts to
 # kop/v1/extension/* (inc/source-submissions.php): articles -> news_submissions, lawsuits, legislation,
 # anything else -> KOP Tools > Websites Sent In; same duplicate rules as the public forms

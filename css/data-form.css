@@ -4822,3 +4822,40 @@ body.page-template-page-admin-data article > .entry-header {
 .kop-modal .kop-btn {
     min-width: 80px;
 }
+
+
+/* Facility lists ("Refers young people to", facilities referred): the Split
+   button for a pasted comma list and the hint under a name that will not link
+   to a facility page (js/data-form-modules/ui-render.js). */
+button.kop-split-list-btn,
+button.kop-split-list-btn:hover,
+button.kop-split-list-btn:focus,
+button.kop-split-list-btn:active {
+    background: var(--kop-navy, #000080);
+    color: var(--kop-white, #fff);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+button.kop-split-list-btn:hover,
+button.kop-split-list-btn:focus {
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+    outline: 2px solid var(--kop-teal, #33A7B5);
+    outline-offset: 2px;
+}
+.array-item:has(.kop-facility-ref-hint) {
+    flex-wrap: wrap;
+}
+.array-item .kop-facility-ref-hint {
+    flex: 1 0 100%;
+    grid-column: 1 / -1;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--kop-orange-ink, #A3570D);
+    background: transparent;
+}
