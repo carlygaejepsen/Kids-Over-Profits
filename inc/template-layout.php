@@ -35,6 +35,9 @@ function kop_template_layout_current_template() {
     if (function_exists('kop_operator_pages_is_page') && kop_operator_pages_is_page()) {
         return 'templates/operator-page.php';
     }
+    if (function_exists('kop_operator_pages_is_index') && kop_operator_pages_is_index()) {
+        return 'templates/operator-index.php';
+    }
     // Pages and posts alike: a post can carry a "Template Post Type: post"
     // template (templates/single-facility-profile.php) via the same meta.
     if (!is_singular()) {
@@ -57,6 +60,7 @@ function kop_template_layout_normal_width() {
         'templates/single-person-profile.php',
         'templates/facility-page.php',
         'templates/operator-page.php',
+        'templates/operator-index.php',
     ));
 }
 
