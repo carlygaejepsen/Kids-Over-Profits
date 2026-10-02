@@ -2163,7 +2163,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '91';
+    $version = '92';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
