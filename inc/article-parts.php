@@ -117,6 +117,10 @@ function kop_article_hub_slugs() {
  * Title and URL for a slug, or null when no published page has it. Looked up
  * once per request per slug: a trail asks for three or four of these and the
  * footer for two more, and get_page_by_path() is a query each time.
+ *
+ * Someone who can edit an unpublished page gets it too, linked to its
+ * preview, so a draft series shows its own trail and reading order while it
+ * is being reviewed. Readers never see a draft in a trail.
  */
 function kop_article_page($slug) {
     static $cache = array();
@@ -124,9 +128,13 @@ function kop_article_page($slug) {
         return $cache[$slug];
     }
     $page = get_page_by_path($slug);
-    $cache[$slug] = ($page && $page->post_status === 'publish')
-        ? array('slug' => $slug, 'title' => get_the_title($page), 'url' => get_permalink($page))
-        : null;
+    $cache[$slug] = null;
+    if ($page && $page->post_status === 'publish') {
+        $cache[$slug] = array('slug' => $slug, 'title' => get_the_title($page), 'url' => get_permalink($page));
+    } elseif ($page && in_array($page->post_status, array('draft', 'pending', 'future', 'private'), true)
+        && current_user_can('edit_post', $page->ID)) {
+        $cache[$slug] = array('slug' => $slug, 'title' => get_the_title($page), 'url' => get_preview_post_link($page));
+    }
     return $cache[$slug];
 }
 
@@ -186,7 +194,11 @@ function kop_article_trail($slug) {
         if ($page) {
             array_unshift($trail, $page);
         }
-        if (isset($hubs[$at])) {
+        // Stop at the first hub a reader can open. A hub that is not
+        // published yet is skipped, so its articles still lead up to the
+        // hub above it (a published article under a draft series hub reads
+        // Home > Investigatory Spotlight > the article).
+        if (isset($hubs[$at]) && $page) {
             break;
         }
         $at = isset($parents[$at]) ? $parents[$at] : '';
