@@ -496,11 +496,30 @@ $career = kop_facility_pages_person_career('Nobody Atall', 'Admissions Director 
 $check('past jobs split into place, role and years',
     count($career) === 2 && $career[0]['place'] === 'Sunrise Academy' && $career[0]['role'] === 'Admissions Director' && $career[0]['years'] === '2007'
     && $career[1]['place'] === 'Cinnamon Hills Youth Crisis Center', wp_json_encode($career));
-$people = kop_facility_pages_people_index();
+$check('nicknames fold into one person', kop_facility_pages_person_key('Steve Roach') === kop_facility_pages_person_key('Steven Roach')
+    && kop_facility_pages_person_key('Clint Dorny') === kop_facility_pages_person_key('Clinton Dorny')
+    && kop_facility_pages_person_key('Jack Williams') !== kop_facility_pages_person_key('John Williams'));
+// Everyone at two or more places, staff lists and the network map together.
+$places = array();
+foreach (kop_facility_pages_people_index() as $key => $hits) foreach ($hits as $h) $places[$key]['f' . $h[0]] = true;
+foreach (kop_facility_pages_map_people() as $key => $hits) foreach ($hits as $h) $places[$key][$h[2] ? 'f' . $h[2] : 'n' . $h[0]] = true;
 $multi = 0;
-foreach ($people as $hits) if (count(array_unique(array_column($hits, 0))) > 1) $multi++;
-printf("  people on staff lists: %d, on more than one record: %d\n", count($people), $multi);
-$check('staff lists name people who also worked elsewhere', $multi > 0);
+foreach ($places as $p) if (count($p) > 1) $multi++;
+printf("  people: %d on staff lists, %d on the network map, %d in all; at two or more places: %d\n",
+    count(kop_facility_pages_people_index()), count(kop_facility_pages_map_people()), count($places), $multi);
+$check('hundreds of people worked at more than one place', $multi > 500, (string) $multi);
+$trails = kop_facility_page_data(11660);
+$jj = null;
+$map_only = array();
+foreach (array('administrator', 'notableStaff') as $k) foreach ($trails['staff'][$k] ?? array() as $p) {
+    if (($p['name'] ?? '') === 'Jeff Johnson') $jj = $p;
+    if (!empty($p['from_map']) && !empty($p['career'])) $map_only[] = $p['name'];
+}
+$check('Jeff Johnson at Trails Carolina carries his other programs', $jj && count($jj['career']) >= 5, $jj ? count($jj['career']) . ' other places' : 'not found');
+$check('people only the network map ties to a program get staff cards with their careers', count($map_only) > 0, implode(', ', array_slice($map_only, 0, 6)));
+$people_in_network = 0;
+foreach ($trails['network']['groups'] ?? array() as $g) foreach ($g['items'] as $it) if ($it['name'] === 'Jeff Johnson') $people_in_network++;
+$check('the Network section no longer repeats the people', $people_in_network === 0);
 $prov = kop_facility_page_data(10371);
 if ($prov) {
     $with_career = 0;

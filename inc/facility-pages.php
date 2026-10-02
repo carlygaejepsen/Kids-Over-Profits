@@ -946,6 +946,60 @@ if (!function_exists('kop_facility_pages_incidents')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_add_map_people')) {
+    /**
+     * Everyone the network map ties to this program who is not already on
+     * its staff lists, as staff cards with their careers: leadership and
+     * corporate roles under 'administrator', the rest under 'notableStaff'.
+     * Their source is the map (the page's Network section then lists only
+     * companies and programs, kop_facility_pages_network()).
+     */
+    function kop_facility_pages_add_map_people(array $staff, $facility_id) {
+        if (!function_exists('kop_network_map_facility_connections')) return $staff;
+        $entry = kop_network_map_facility_connections()[(int) $facility_id] ?? null;
+        if (!$entry || empty($entry['links'])) return $staff;
+        $have = array();
+        foreach (array('administrator', 'notableStaff') as $k) {
+            foreach ($staff[$k] ?? array() as $p) {
+                $key = kop_facility_pages_person_key($p['name'] ?? $p['text']);
+                if ($key !== '') $have[$key] = true;
+            }
+        }
+        $people = array();
+        foreach ($entry['links'] as $link) {
+            if (($link['kind'] ?? '') !== 'person' || ($link['relation'] ?? '') !== '') continue;
+            $key = kop_facility_pages_person_key($link['name']);
+            if ($key === '' || isset($have[$key])) continue;
+            $group = in_array($link['category'], array('leadership', 'corporate'), true) ? 'administrator' : 'notableStaff';
+            if (!isset($people[$key])) {
+                $people[$key] = array('name' => (string) $link['name'], 'roles' => array(), 'group' => $group, 'node' => (string) $link['node']);
+            } elseif ($group === 'administrator') {
+                $people[$key]['group'] = 'administrator';
+            }
+            foreach (explode(' / ', (string) $link['role']) as $r) {
+                $r = trim($r);
+                if ($r !== '' && strcasecmp($r, 'staff') !== 0 && !in_array($r, $people[$key]['roles'], true)) $people[$key]['roles'][] = $r;
+            }
+        }
+        uasort($people, static function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+        $map_url = kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/');
+        foreach ($people as $p) {
+            $role = $p['roles'] ? ucfirst(implode(', ', $p['roles'])) : '';
+            $staff[$p['group']][] = array(
+                'text'   => $p['name'] . ($role !== '' ? ' (' . $role . ')' : ''),
+                'source' => 'Network map',
+                'cite'   => 'Kids Over Profits network map',
+                'url'    => $map_url . '#open=' . rawurlencode($p['node']),
+                'name'   => $p['name'],
+                'role'   => $role,
+                'career' => kop_facility_pages_person_career($p['name'], '', (int) $facility_id),
+                'from_map' => true,
+            );
+        }
+        return $staff;
+    }
+}
+
 if (!function_exists('kop_facility_pages_person_key')) {
     /**
      * A person's name reduced to "first last" for matching across records:
@@ -965,7 +1019,26 @@ if (!function_exists('kop_facility_pages_person_key')) {
             return strlen(trim($t, "'")) > 1 && !in_array($t, $drop, true);
         }));
         if (count($tokens) < 2) return '';
-        return $tokens[0] . ' ' . $tokens[count($tokens) - 1];
+        // "Steve Roach" and "Steven Roach" are one person. Only names that
+        // cannot belong to someone else are folded (not Jack/John, Sam, Pat).
+        static $nick = array(
+            'steve' => 'steven', 'stephen' => 'steven', 'clint' => 'clinton', 'liz' => 'elizabeth', 'beth' => 'elizabeth',
+            'bill' => 'william', 'billy' => 'william', 'will' => 'william', 'bob' => 'robert', 'bobby' => 'robert', 'rob' => 'robert',
+            'jim' => 'james', 'jimmy' => 'james', 'mike' => 'michael', 'dave' => 'david', 'dan' => 'daniel', 'danny' => 'daniel',
+            'tom' => 'thomas', 'tommy' => 'thomas', 'tony' => 'anthony', 'jeff' => 'jeffrey', 'geoff' => 'jeffrey', 'jerry' => 'gerald',
+            'joe' => 'joseph', 'chris' => 'christopher', 'matt' => 'matthew', 'andy' => 'andrew', 'nick' => 'nicholas',
+            'ken' => 'kenneth', 'kenny' => 'kenneth', 'larry' => 'lawrence', 'ron' => 'ronald', 'ronnie' => 'ronald',
+            'don' => 'donald', 'greg' => 'gregory', 'tim' => 'timothy', 'ben' => 'benjamin', 'kathy' => 'kathleen',
+            'katie' => 'katherine', 'kate' => 'katherine', 'sue' => 'susan', 'jenny' => 'jennifer', 'jen' => 'jennifer',
+            'becky' => 'rebecca', 'debbie' => 'deborah', 'deb' => 'deborah', 'pam' => 'pamela', 'patty' => 'patricia',
+            'trish' => 'patricia', 'barb' => 'barbara', 'vicki' => 'victoria', 'mandy' => 'amanda', 'abby' => 'abigail',
+            'fred' => 'frederick', 'rick' => 'richard', 'rich' => 'richard', 'dick' => 'richard', 'doug' => 'douglas',
+            'josh' => 'joshua', 'zach' => 'zachary', 'ed' => 'edward', 'eddie' => 'edward', 'jon' => 'jonathan',
+            'cindy' => 'cynthia', 'sandy' => 'sandra', 'terri' => 'teresa', 'terry' => 'terrence', 'randy' => 'randall',
+            'brad' => 'bradley', 'phil' => 'phillip', 'philip' => 'phillip', 'walt' => 'walter',
+        );
+        $first = $nick[$tokens[0]] ?? $tokens[0];
+        return $first . ' ' . $tokens[count($tokens) - 1];
     }
 }
 
@@ -2168,7 +2241,7 @@ if (!function_exists('kop_facility_page_data')) {
             if ($items) $practices[] = array('label' => $label, 'items' => $items);
         }
         $incidents = kop_facility_pages_incidents(kop_facility_pages_checklist_items($doc['criticalIncidents'] ?? null, 'criticalIncidents'));
-        $staff = kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id);
+        $staff = kop_facility_pages_add_map_people(kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id), $facility_id);
         $notes = array_merge(kop_facility_pages_clean_notes($doc['notes'] ?? null), kop_facility_pages_clean_notes($op['notes'] ?? null));
         $fact_sources = kop_facility_pages_note_sources($notes);
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
@@ -2877,6 +2950,8 @@ if (!function_exists('kop_facility_pages_network')) {
 
         $groups = array();
         foreach ($entry['links'] as $link) {
+            // People are on the page as staff cards (kop_facility_pages_add_map_people()).
+            if (($link['kind'] ?? '') === 'person' && ($link['relation'] ?? '') === '') continue;
             if ($link['relation'] === 'became' || $link['relation'] === 'formerly') {
                 $label = 'Names';
             } elseif ($link['relation'] !== '') {
