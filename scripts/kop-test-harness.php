@@ -199,6 +199,7 @@ class wpdb {
     public $queries = 0;
     private $pdo;
     public function __construct(PDO $pdo) { $this->pdo = $pdo; }
+    public function suppress_errors($suppress = true) { return false; }
     public function prepare($query, ...$args) {
         if (count($args) === 1 && is_array($args[0])) $args = array_values($args[0]);
         $i = 0;
@@ -254,6 +255,11 @@ require_once dirname(__DIR__) . '/inc/rest-api.php';
 require_once dirname(__DIR__) . '/inc/country-rest-api.php';
 require_once dirname(__DIR__) . '/inc/unsilenced-archive.php';
 require_once dirname(__DIR__) . '/inc/survivor-archives.php';
+if (!function_exists('wp_upload_dir')) {
+    function wp_upload_dir($time = null, $create = true) { return array('basedir' => sys_get_temp_dir() . '/kop-uploads', 'baseurl' => 'https://example.test/wp-content/uploads'); }
+}
+require_once dirname(__DIR__) . '/inc/inspection-highlights.php';
+require_once dirname(__DIR__) . '/inc/news-images.php';
 require_once dirname(__DIR__) . '/inc/facility-pages.php';
 require_once dirname(__DIR__) . '/inc/operator-pages.php';
 // Loaded before the index is built: a facility the network map draws

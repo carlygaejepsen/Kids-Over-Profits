@@ -453,9 +453,9 @@ if ($picks) {
     include dirname(__DIR__) . '/templates/facility-page.php';
     $html = ob_get_clean();
     $check('the page links a staff entry and a fact to their sources',
-        preg_match('#Jane Doe \(Clinical Director[^<]*<span class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
         && preg_match('#<dd class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
-        && strpos($html, 'John Roe (Therapist)</li>') !== false
+        && preg_match('#kop-fp-person-name">John Roe</p>\s*<p class="kop-fp-person-role">Therapist</p>#', $html)
         && strpos($html, '>r/troubledteens wiki, as of Dec 2025</a>') !== false);
     // Two citations of one issue are told apart by page; of one date with no page, by number.
     $data['fact_sources']['Capacity'] = kop_facility_pages_note_sources(array(
@@ -475,6 +475,48 @@ if ($picks) {
         strpos($html, '>Woodbury Reports, May 2007, p. 20</a>, <a') !== false && strpos($html, '>Woodbury Reports, May 2007, p. 31</a>') !== false
         && strpos($html, '>Fornits, Mar 2005 (1)</a>, <a') !== false && strpos($html, '>Fornits, Mar 2005 (2)</a>') !== false);
 }
+
+// The livelier sections: incidents as a timeline, people across records, serious findings, news pictures.
+echo "-- Highlights --\n";
+$inc = kop_facility_pages_incidents(array(
+    'September 2024: staff member arrested for striking a 15-year-old during a restraint',
+    'Reported April 2004: Abuse: Former students report physical abuse including forced drugging. (Fornits forum, post by cherish wisdom, April 2004: https://www.fornits.com/phpbb/index.php?topic=5238.0)',
+    '1974: shut down over child abuse and neglect allegations',
+    'Something with no date at all',
+));
+$check('incidents read as a dated timeline, oldest first, citation split off',
+    count($inc) === 4 && $inc[0]['when'] === '1974' && $inc[1]['when'] === 'Reported April 2004' && $inc[1]['kind'] === 'Abuse'
+    && strpos($inc[1]['text'], 'Former students') === 0 && $inc[1]['url'] === 'https://www.fornits.com/phpbb/index.php?topic=5238.0'
+    && $inc[1]['source'] !== '' && $inc[2]['when'] === 'September 2024' && $inc[3]['when'] === '' && $inc[0]['text'] === 'Shut down over child abuse and neglect allegations',
+    wp_json_encode($inc));
+$check('one person, however the records spell them',
+    kop_facility_pages_person_key('Dr. Robert H. Crist, MD') === 'robert crist' && kop_facility_pages_person_key('Admissions: Jane Doe') === 'jane doe'
+    && kop_facility_pages_person_key('Gerald "Jerry" Rushing') === 'gerald rushing' && kop_facility_pages_person_key('Cher') === '');
+$career = kop_facility_pages_person_career('Nobody Atall', 'Admissions Director - Sunrise Academy (2007); Staff - Cinnamon Hills Youth Crisis Center (2001) [joined 2001-03]', 0);
+$check('past jobs split into place, role and years',
+    count($career) === 2 && $career[0]['place'] === 'Sunrise Academy' && $career[0]['role'] === 'Admissions Director' && $career[0]['years'] === '2007'
+    && $career[1]['place'] === 'Cinnamon Hills Youth Crisis Center', wp_json_encode($career));
+$people = kop_facility_pages_people_index();
+$multi = 0;
+foreach ($people as $hits) if (count(array_unique(array_column($hits, 0))) > 1) $multi++;
+printf("  people on staff lists: %d, on more than one record: %d\n", count($people), $multi);
+$check('staff lists name people who also worked elsewhere', $multi > 0);
+$prov = kop_facility_page_data(10371);
+if ($prov) {
+    $with_career = 0;
+    foreach (array('administrator', 'notableStaff') as $k) foreach ($prov['staff'][$k] ?? array() as $p) if (!empty($p['career'])) $with_career++;
+    $check('Provo Canyon School: staff carry their other roles', $with_career > 0, $with_career . ' people');
+    $v = $prov['inspections']['violations'] ?? array();
+    $check('Provo Canyon School: approved serious findings, no markup in the words', count($v) > 0 && strpos(implode(' ', array_column($v, 'excerpt')), '<br') === false, count($v) . ' findings');
+}
+$parsed = kop_news_images_parse('<html><head><meta content="/img/a.jpg" property="og:image"><meta name="twitter:image" content="https://cdn.example.org/b.jpg">'
+    . '<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png"><link rel="icon" href="/favicon.svg">'
+    . '<script type="application/ld+json">{"@type":"NewsArticle","image":{"@type":"ImageObject","url":"https://cdn.example.org/c.jpg"},"publisher":{"@type":"Organization","logo":{"url":"https://cdn.example.org/logo.png"}}}</script></head></html>',
+    'https://news.example.org/story/1');
+$check('news page pictures: share image first, publisher logo and touch icon as logos',
+    ($parsed['photo'][0] ?? '') === 'https://news.example.org/img/a.jpg' && in_array('https://cdn.example.org/c.jpg', $parsed['photo'], true)
+    && ($parsed['logo'][0] ?? '') === 'https://cdn.example.org/logo.png' && in_array('https://news.example.org/icon-180.png', $parsed['logo'], true)
+    && !in_array('https://cdn.example.org/logo.png', $parsed['photo'], true), wp_json_encode($parsed));
 
 // Sitemap entries
 $entries = kop_facility_pages_sitemap_entries();

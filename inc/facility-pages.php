@@ -854,7 +854,14 @@ if (!function_exists('kop_facility_pages_staff_items')) {
      * The staff lists as the page shows them: {text, source, url} per entry,
      * the source being where the entry came from (Woodbury Facts, Fornits).
      */
-    function kop_facility_pages_staff_items($staff) {
+    /**
+     * The staff lists as display items. A person ({name, role, pastJobs}) also
+     * carries 'name', 'role' and 'career': the other places in the industry
+     * they worked, read from their pastJobs, the staff lists of the other
+     * records and the network map (kop_facility_pages_person_career()).
+     * $facility_id leaves this program out of the career.
+     */
+    function kop_facility_pages_staff_items($staff, $facility_id = 0) {
         $out = array();
         if (!is_array($staff)) return $out;
         foreach (array('administrator', 'notableStaff', 'pastTTIJobs') as $k) {
@@ -864,12 +871,259 @@ if (!function_exists('kop_facility_pages_staff_items')) {
                 if (!$text) continue;
                 $cite = is_array($item) ? trim((string) ($item['source'] ?? '')) : '';
                 $url = is_array($item) ? trim((string) ($item['sourceUrl'] ?? '')) : '';
-                $items[] = array('text' => $text[0], 'source' => $cite !== '' ? kop_facility_pages_source_label($cite) : '',
+                $entry = array('text' => $text[0], 'source' => $cite !== '' ? kop_facility_pages_source_label($cite) : '',
                     'cite' => $cite, 'url' => preg_match('#^https?://#i', $url) ? $url : '');
+                if ($k !== 'pastTTIJobs' && is_array($item) && trim((string) ($item['name'] ?? '')) !== '') {
+                    $name = trim((string) $item['name']);
+                    // "Admissions: Jane Doe" from the old forms: the label is her role.
+                    $role = trim((string) ($item['role'] ?? ''));
+                    if (preg_match('/^([A-Za-z][A-Za-z &\/-]{2,40}):\s*(\S.*)$/', $name, $m)) {
+                        $name = $m[2];
+                        if ($role === '') $role = $m[1];
+                    }
+                    $entry['name'] = $name;
+                    $entry['role'] = $role;
+                    $entry['career'] = kop_facility_pages_person_career($name, (string) ($item['pastJobs'] ?? ''), (int) $facility_id);
+                }
+                $items[] = $entry;
             }
             if ($items) $out[$k] = $items;
         }
         return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_incidents')) {
+    /**
+     * The criticalIncidents lines as a timeline, oldest first:
+     * [{when, year, kind, text, source, cite, url}]. A line reads
+     * "[Reported] <date>: [<Kind>:] text [(<citation>: url)]"; anything that
+     * does not is kept whole, undated, at the end.
+     */
+    function kop_facility_pages_incidents(array $lines) {
+        $out = array();
+        foreach ($lines as $i => $line) {
+            $text = trim((string) $line);
+            if ($text === '') continue;
+            $cite = '';
+            $url = '';
+            if (preg_match('#\s*\(((?:Fornits|Woodbury Reports|HEAL|r/troubledteens wiki)[^()]*(?:\([^()]*\)[^()]*)?)\)\s*\.?$#', $text, $m)) {
+                $text = trim(substr($text, 0, -strlen($m[0])));
+                if (preg_match('#:?\s*(https?://\S+)$#', $m[1], $u)) {
+                    $url = rtrim($u[1], ').');
+                    $cite = trim(substr($m[1], 0, -strlen($u[0])));
+                } else {
+                    $cite = trim($m[1]);
+                }
+            }
+            $when = '';
+            $reported = false;
+            $months = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
+            if (preg_match('/^(Reported\s+)?((?:(?:' . $months . ')\.?\s+(?:\d{1,2},?\s+)?)?\d{4}(?:\s*(?:-|to|\x{2013})\s*\d{2,4})?)\s*:\s*/u', $text, $m)) {
+                $reported = $m[1] !== '';
+                $when = trim($m[2]);
+                $text = substr($text, strlen($m[0]));
+            }
+            $kind = '';
+            if (preg_match('/^([A-Z][a-z]+(?:\s[a-z]+){0,2}):\s+(?=\S)/', $text, $m)) {
+                $kind = $m[1];
+                $text = substr($text, strlen($m[0]));
+            }
+            $year = preg_match('/\d{4}/', $when, $y) ? (int) $y[0] : 9999;
+            $out[] = array(
+                'when'   => $when !== '' ? ($reported ? 'Reported ' . $when : $when) : '',
+                'year'   => $year,
+                'kind'   => $kind,
+                'text'   => function_exists('mb_strtoupper') ? mb_strtoupper(mb_substr($text, 0, 1)) . mb_substr($text, 1) : ucfirst($text),
+                'source' => $cite !== '' ? kop_facility_pages_source_label($cite) : '',
+                'cite'   => $cite,
+                'url'    => $url,
+                'i'      => $i,
+            );
+        }
+        usort($out, static function ($a, $b) { return ($a['year'] <=> $b['year']) ?: ($a['i'] <=> $b['i']); });
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_person_key')) {
+    /**
+     * A person's name reduced to "first last" for matching across records:
+     * "Dr. Robert H. Crist, MD" and "Robert Crist" are one key; nicknames in
+     * quotes, initials, titles and credentials are dropped. '' when fewer than
+     * two names remain.
+     */
+    function kop_facility_pages_person_key($name) {
+        $name = (string) $name;
+        $name = preg_replace('/^[A-Za-z][A-Za-z &\/-]{2,40}:\s*/', '', $name);
+        $name = preg_replace('/["\x{201C}\x{201D}][^"\x{201C}\x{201D}]*["\x{201C}\x{201D}]|\([^)]*\)/u', ' ', $name);
+        $name = preg_replace('/,.*$/', '', $name);
+        $name = function_exists('remove_accents') ? remove_accents($name) : $name;
+        $tokens = preg_split('/[^a-z\']+/', strtolower($name), -1, PREG_SPLIT_NO_EMPTY);
+        $drop = array('dr', 'mr', 'mrs', 'ms', 'rev', 'jr', 'sr', 'ii', 'iii', 'iv', 'phd', 'md', 'psyd', 'lcsw', 'lpc', 'lmft', 'rn', 'ma', 'ms', 'msw', 'edd');
+        $tokens = array_values(array_filter($tokens, static function ($t) use ($drop) {
+            return strlen(trim($t, "'")) > 1 && !in_array($t, $drop, true);
+        }));
+        if (count($tokens) < 2) return '';
+        return $tokens[0] . ' ' . $tokens[count($tokens) - 1];
+    }
+}
+
+if (!function_exists('kop_facility_pages_people_index')) {
+    /**
+     * person key => [[facility id, facility name, role], ...] from the staff
+     * lists of every facility record. Cached with the page index's
+     * fingerprint, so an edit to any record rebuilds it.
+     */
+    function kop_facility_pages_people_index() {
+        global $wpdb;
+        static $memo = null;
+        if ($memo !== null) return $memo;
+        $index = kop_facility_pages_index();
+        $fingerprint = (string) ($index['fingerprint'] ?? '');
+        $cached = get_transient('kop_facility_pages_people');
+        if ($fingerprint !== '' && is_array($cached) && ($cached['fingerprint'] ?? '') === $fingerprint) {
+            return $memo = $cached['people'];
+        }
+        $people = array();
+        $rows = $wpdb->get_results("SELECT id, name, json_data FROM facilities_v2 WHERE json_data LIKE '%\"name\"%'", ARRAY_A);
+        foreach ((array) $rows as $row) {
+            $doc = json_decode((string) $row['json_data'], true);
+            if (!is_array($doc) || empty($doc['staff']) || !is_array($doc['staff'])) continue;
+            foreach (array('administrator', 'notableStaff') as $k) {
+                foreach ((array) ($doc['staff'][$k] ?? array()) as $person) {
+                    if (!is_array($person)) continue;
+                    $key = kop_facility_pages_person_key($person['name'] ?? '');
+                    if ($key === '') continue;
+                    $role = trim((string) ($person['role'] ?? ''));
+                    $people[$key][] = array((int) $row['id'], (string) $row['name'], $role);
+                }
+            }
+        }
+        if ($fingerprint !== '') set_transient('kop_facility_pages_people', array('fingerprint' => $fingerprint, 'people' => $people), DAY_IN_SECONDS);
+        return $memo = $people;
+    }
+}
+
+if (!function_exists('kop_facility_pages_map_people')) {
+    /**
+     * person key => [[place name, role, facility id, kind], ...] from the
+     * network map's person nodes and their lines to programs and companies.
+     */
+    function kop_facility_pages_map_people() {
+        static $memo = null;
+        if ($memo !== null) return $memo;
+        $memo = array();
+        $graph = function_exists('kop_network_map_graph') ? kop_network_map_graph() : null;
+        if (!$graph) return $memo;
+        $nodes = array();
+        foreach ($graph['nodes'] as $node) $nodes[(string) $node['id']] = $node;
+        foreach ((array) ($graph['edges'] ?? array()) as $edge) {
+            foreach (array('source', 'target') as $end) {
+                $person = $nodes[(string) $edge[$end]] ?? null;
+                $place = $nodes[(string) $edge[$end === 'source' ? 'target' : 'source']] ?? null;
+                if (!$person || !$place || ($person['kind'] ?? '') !== 'person' || ($place['kind'] ?? '') === 'person') continue;
+                $roles = array_filter(array_map('trim', array_map('strval', (array) ($edge['roles'] ?? array()))), static function ($r) {
+                    return $r !== '' && strcasecmp($r, 'affiliated') !== 0 && strcasecmp($r, 'staff') !== 0;
+                });
+                $names = array_merge(array((string) $person['name']), array_map('strval', (array) ($person['aliases'] ?? array())));
+                foreach (array_unique(array_filter(array_map('kop_facility_pages_person_key', $names))) as $key) {
+                    $memo[$key][] = array((string) $place['name'], implode(', ', $roles), (int) ($place['facilityId'] ?? 0), (string) ($place['kind'] ?? ''));
+                }
+            }
+        }
+        return $memo;
+    }
+}
+
+if (!function_exists('kop_facility_pages_facility_url_by_name')) {
+    /** The facility page for a program named in free text, or ''. One lookup table per request. */
+    function kop_facility_pages_facility_url_by_name($name) {
+        static $exact = null, $loose = null;
+        if ($exact === null) {
+            $exact = $loose = array();
+            foreach (kop_facility_pages_index()['ids'] ?? array() as $id => $entry) {
+                $n = (string) $entry['name'];
+                $exact[strtolower($n)] = $exact[strtolower($n)] ?? (int) $id;
+                $k = kop_facility_pages_name_key($n);
+                if ($k !== '' && !isset($loose[$k])) $loose[$k] = (int) $id;
+            }
+        }
+        $name = trim((string) $name);
+        if ($name === '') return '';
+        $id = $exact[strtolower($name)] ?? ($loose[kop_facility_pages_name_key($name)] ?? 0);
+        return $id ? kop_facility_page_url($id) : '';
+    }
+}
+
+if (!function_exists('kop_facility_pages_person_career')) {
+    /**
+     * Where else in the industry a person worked: [{role, place, years, url}],
+     * one entry per place. Their own pastJobs text ("Role - Place (years);
+     * ...") comes first, then the other records that list them as staff and
+     * the network map. This program ($facility_id) is left out.
+     */
+    function kop_facility_pages_person_career($name, $past_jobs, $facility_id) {
+        $key = kop_facility_pages_person_key($name);
+        $here = (int) $facility_id;
+        $index_ids = kop_facility_pages_index()['ids'] ?? array();
+        $here_names = array();
+        if ($here && isset($index_ids[$here])) $here_names[] = kop_facility_pages_name_key($index_ids[$here]['name']);
+        $out = array();
+        $add = static function ($place, $role, $years, $url) use (&$out, $here_names) {
+            $place = trim((string) $place);
+            if ($place === '') return;
+            $pk = kop_facility_pages_name_key($place);
+            if ($pk === '' || in_array($pk, $here_names, true)) return;
+            if (isset($out[$pk])) {
+                if ($out[$pk]['role'] === '' && $role !== '') $out[$pk]['role'] = $role;
+                if ($out[$pk]['url'] === '' && $url !== '') $out[$pk]['url'] = $url;
+                return;
+            }
+            $out[$pk] = array('role' => trim((string) $role), 'place' => $place, 'years' => trim((string) $years), 'url' => $url);
+        };
+
+        foreach (preg_split('/\s*;\s*/', trim((string) $past_jobs), -1, PREG_SPLIT_NO_EMPTY) as $job) {
+            $job = trim(preg_replace('/\s*\[[^\]]*\]\s*/', ' ', $job));
+            $job = preg_replace('/^(?:later|then|now|previously|formerly)\s+/i', '', $job);
+            $role = '';
+            $place = $job;
+            $pos = strrpos($job, ' - ');
+            if ($pos !== false) {
+                $role = trim(substr($job, 0, $pos));
+                $place = trim(substr($job, $pos + 3));
+            }
+            $years = '';
+            if (preg_match('/\s*\(([^)]*\d{4}[^)]*)\)\s*$/', $place, $m)) {
+                $years = $m[1];
+                $place = trim(substr($place, 0, -strlen($m[0])));
+            }
+            $add($place, $role, $years, kop_facility_pages_facility_url_by_name($place));
+        }
+        if ($key === '') return array_values($out);
+
+        foreach (kop_facility_pages_people_index()[$key] ?? array() as $hit) {
+            list($fid, $fname, $role) = $hit;
+            if ($fid === $here) continue;
+            // "Director (2008, Woodbury Reports), left": the year stays, the citation goes.
+            $role = trim(preg_replace_callback('/\s*\(([^()]*)\)/', static function ($m) {
+                if (!preg_match('/Woodbury|HEAL|wiki|Fornits/i', $m[1])) return $m[0];
+                return preg_match('/\d{4}(?:-\d{4})?/', $m[1], $y) ? ' (' . $y[0] . ')' : '';
+            }, $role), ' ,');
+            $add($fname, $role, '', isset($index_ids[$fid]) ? kop_facility_page_url($fid) : '');
+        }
+        foreach (kop_facility_pages_map_people()[$key] ?? array() as $hit) {
+            list($place, $role, $fid, $kind) = $hit;
+            if ($fid && $fid === $here) continue;
+            $url = '';
+            if ($fid && isset($index_ids[$fid])) {
+                $url = kop_facility_page_url($fid);
+            } elseif ($kind === 'parent' && function_exists('kop_operator_page_url_for_name')) {
+                $url = (string) kop_operator_page_url_for_name($place);
+            }
+            $add($place, $role, '', $url);
+        }
+        return array_values($out);
     }
 }
 
@@ -1909,11 +2163,12 @@ if (!function_exists('kop_facility_page_data')) {
 
         // ---- Practices, staff, notes, links --------------------------------------
         $practices = array();
-        foreach (array('treatmentTypes' => 'Treatment methods', 'philosophy' => 'Program philosophy', 'conditions' => 'Conditions treated', 'criticalIncidents' => 'Critical incidents on record') as $k => $label) {
+        foreach (array('treatmentTypes' => 'Treatment methods', 'philosophy' => 'Program philosophy', 'conditions' => 'Conditions treated') as $k => $label) {
             $items = kop_facility_pages_checklist_items($doc[$k] ?? null, $k);
             if ($items) $practices[] = array('label' => $label, 'items' => $items);
         }
-        $staff = kop_facility_pages_staff_items($doc['staff'] ?? null);
+        $incidents = kop_facility_pages_incidents(kop_facility_pages_checklist_items($doc['criticalIncidents'] ?? null, 'criticalIncidents'));
+        $staff = kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id);
         $notes = array_merge(kop_facility_pages_clean_notes($doc['notes'] ?? null), kop_facility_pages_clean_notes($op['notes'] ?? null));
         $fact_sources = kop_facility_pages_note_sources($notes);
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
@@ -1999,6 +2254,7 @@ if (!function_exists('kop_facility_page_data')) {
             'facts'         => $facts,
             'fact_sources'  => $fact_sources,
             'practices'     => $practices,
+            'incidents'     => $incidents,
             'staff'         => $staff,
             'notes'         => $notes,
             'field_notes'   => $field_notes,
@@ -2163,6 +2419,7 @@ if (!function_exists('kop_facility_pages_news')) {
                 'type'      => trim((string) $r['article_type']),
                 'summary'   => trim((string) $r['summary']),
                 'link_type' => (string) $r['link_type'],
+                'image'     => function_exists('kop_news_image') ? kop_news_image((int) $r['id'], (string) $r['article_url']) : null,
             );
         }
         return $out;
@@ -2402,12 +2659,74 @@ if (!function_exists('kop_facility_pages_inspections')) {
         }
 
         return array(
-            'summary'   => $summary,
-            'reports'   => $reports,
-            'total'     => $total,
-            'page_urls' => $page_urls,
-            'page_url'  => $page_urls ? array_key_first($page_urls) : '',
+            'summary'    => $summary,
+            'reports'    => $reports,
+            'total'      => $total,
+            'violations' => kop_facility_pages_violations(array_keys($matched)),
+            'page_urls'  => $page_urls,
+            'page_url'   => $page_urls ? array_key_first($page_urls) : '',
         );
+    }
+}
+
+if (!function_exists('kop_facility_pages_violations')) {
+    /**
+     * The serious findings state inspectors confirmed at this facility's
+     * licensed rows: the inspection_highlights an admin approved
+     * (inc/inspection-highlights.php), the worst kinds of harm first and the
+     * newest first within them. Pending and rejected rows never show. The
+     * scrapers sometimes store one report twice, so a finding text is shown once.
+     */
+    function kop_facility_pages_violations(array $inspection_ids) {
+        global $wpdb;
+        $inspection_ids = array_values(array_filter(array_map('intval', $inspection_ids)));
+        if (!$inspection_ids || !kop_facility_pages_table_exists('inspection_highlights') || !function_exists('kop_ih_categories')) return array();
+        $placeholders = implode(',', array_fill(0, count($inspection_ids), '%d'));
+        $suppress = $wpdb->suppress_errors(true);
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT h.id, h.state, h.category, h.categories, h.score, h.finding_date, h.excerpt, h.state_label, h.text_hash,
+                    r.report_date, r.report_url, r.report_id AS source_report_id
+               FROM inspection_highlights h
+               JOIN inspection_reports r ON r.id = h.report_id
+              WHERE h.facility_id IN ($placeholders) AND h.status = 'approved' AND h.score >= " . (int) kop_ih_min_score(),
+            $inspection_ids
+        ), ARRAY_A);
+        $wpdb->suppress_errors($suppress);
+        $categories = kop_ih_categories();
+        $severe = kop_ih_severe_score();
+        $out = array();
+        foreach ((array) $rows as $r) {
+            $hash = (string) $r['text_hash'];
+            if ($hash !== '' && isset($out[$hash])) continue;
+            $kinds = array();
+            foreach (array_unique(array_filter(array_map('trim', explode(',', (string) $r['categories'])))) as $kind) {
+                if (isset($categories[$kind])) $kinds[] = $categories[$kind]['label'];
+            }
+            $date = (string) $r['finding_date'];
+            // Some states' text carries their markup ("<br/>"); a line break is all it means.
+            $excerpt = trim(strip_tags(preg_replace('#<br\s*/?>#i', "\n", (string) $r['excerpt'])));
+            $out[$hash !== '' ? $hash : 'id' . $r['id']] = array(
+                'id'         => (int) $r['id'],
+                'state'      => strtoupper((string) $r['state']),
+                'category'   => (string) $r['category'],
+                'label'      => $categories[$r['category']]['label'] ?? 'Serious finding',
+                'kinds'      => $kinds,
+                'weight'     => (int) ($categories[$r['category']]['weight'] ?? 0),
+                'severe'     => (int) $r['score'] >= $severe,
+                'date'       => $date,
+                'date_label' => $date !== '' ? kop_facility_pages_date_label($date) : trim((string) $r['report_date']),
+                'excerpt'    => $excerpt,
+                'short'      => kop_ih_card_excerpt($excerpt, 360),
+                'state_label' => trim((string) $r['state_label']),
+                'source_url' => kop_ih_source_url($r),
+                'full_url'   => function_exists('kop_ih_severe_page_url') ? kop_ih_severe_page_url((int) $r['id']) : '',
+            );
+        }
+        $out = array_values($out);
+        usort($out, static function ($a, $b) {
+            return ($b['severe'] <=> $a['severe']) ?: ($b['weight'] <=> $a['weight']) ?: strcmp($b['date'], $a['date']) ?: ($b['id'] <=> $a['id']);
+        });
+        return $out;
     }
 }
 

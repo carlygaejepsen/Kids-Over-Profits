@@ -65,6 +65,75 @@ $kop_fp_sources = static function ($sources, $tag = 'dd') {
     echo '<' . $tag . ' class="kop-fp-src">Source: ' . implode(', ', $links) . '</' . $tag . '>';
 };
 
+// A section heading's icon (inc/icons.php), drawn in the heading's colour.
+$kop_fp_icon = static function ($name) {
+    return function_exists('kop_icon') ? kop_icon($name, array('class' => 'kop-fp-h-icon')) : '';
+};
+
+// One serious finding (kop_facility_pages_violations()): the kind of harm, the date, the state's words.
+$kop_fp_violation_card = static function (array $v) {
+    $long = $v['short'] !== $v['excerpt'];
+    $tone = in_array($v['category'], array('death', 'sexual_abuse'), true) ? 'grave' : ($v['severe'] ? 'severe' : 'serious');
+    ?>
+    <article class="kop-fp-vcard kop-fp-vcard--<?php echo esc_attr($tone); ?>" id="finding-<?php echo (int) $v['id']; ?>">
+        <p class="kop-fp-vcard-head">
+            <span class="kop-fp-vtag"><?php echo esc_html($v['label']); ?></span>
+            <?php if ($v['date_label'] !== '') : ?><span class="kop-fp-vdate">Inspected <?php echo esc_html($v['date_label']); ?></span><?php endif; ?>
+        </p>
+        <blockquote class="kop-fp-vquote"><?php echo function_exists('kop_ih_excerpt_html') ? kop_ih_excerpt_html($v['short']) : '<p>' . esc_html($v['short']) . '</p>'; ?></blockquote>
+        <?php if ($long) : ?>
+            <details class="kop-fp-vfull">
+                <summary>Read the whole finding</summary>
+                <blockquote class="kop-fp-vquote"><?php echo function_exists('kop_ih_excerpt_html') ? kop_ih_excerpt_html($v['excerpt']) : '<p>' . esc_html($v['excerpt']) . '</p>'; ?></blockquote>
+            </details>
+        <?php endif; ?>
+        <p class="kop-fp-vfoot">
+            <span><?php echo esc_html(trim('From the ' . $v['state'] . ' inspection report' . ($v['state_label'] !== '' ? '. ' . $v['state_label'] : ''))); ?></span>
+            <?php if (count($v['kinds']) > 1) : ?><span>Also: <?php echo esc_html(implode(', ', array_diff($v['kinds'], array($v['label'])))); ?></span><?php endif; ?>
+            <?php if ($v['source_url'] !== '' && preg_match('#^https?://#i', $v['source_url'])) : ?>
+                <a href="<?php echo esc_url($v['source_url']); ?>" target="_blank" rel="noopener">State's report</a>
+            <?php endif; ?>
+        </p>
+    </article>
+    <?php
+};
+
+// One news article: its picture (the article's own, else the publication's logo, else the outlet's initial), then the words.
+$kop_fp_news_card = static function (array $n) {
+    $has_url = $n['url'] !== '' && preg_match('#^https?://#i', $n['url']);
+    $img = $n['image'] ?? null;
+    $kind = is_array($img) ? $img['kind'] : 'none';
+    $outlet = $n['outlet'] !== '' ? $n['outlet'] : (string) preg_replace('/^www\./', '', (string) wp_parse_url($n['url'], PHP_URL_HOST));
+    $initial = $outlet !== '' ? strtoupper(mb_substr(preg_replace('/^(?:The|A)\s+/i', '', $outlet), 0, 1)) : '';
+    $tag = $has_url ? 'a' : 'span';
+    ?>
+    <li class="kop-fp-news-item"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $n['id'], 'this article') : ''; ?>>
+        <<?php echo $tag; ?> class="kop-fp-news-thumb kop-fp-news-thumb--<?php echo esc_attr($kind); ?>"<?php echo $has_url ? ' href="' . esc_url($n['url']) . '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"' : ' aria-hidden="true"'; ?>>
+            <?php if (is_array($img)) : ?>
+                <img src="<?php echo esc_url($img['src']); ?>" alt="" loading="lazy" decoding="async"<?php echo $kind === 'photo' ? ' width="640" height="360"' : ' width="160" height="160"'; ?>>
+            <?php else : ?>
+                <span class="kop-fp-news-initial"><?php echo esc_html($initial); ?></span>
+            <?php endif; ?>
+        </<?php echo $tag; ?>>
+        <div class="kop-fp-news-body">
+            <p class="kop-fp-news-meta">
+                <?php if ($outlet !== '') : ?><span class="kop-fp-news-outlet"><?php echo esc_html($outlet); ?></span><?php endif; ?>
+                <?php if ($n['date_label'] !== '') : ?><span><?php echo esc_html($n['date_label']); ?></span><?php endif; ?>
+                <?php if ($n['type'] !== '') : ?><span class="kop-fp-news-type"><?php echo esc_html(ucfirst($n['type'])); ?></span><?php endif; ?>
+            </p>
+            <h3 class="kop-fp-news-title">
+                <?php if ($has_url) : ?>
+                    <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
+                <?php else : ?>
+                    <?php echo esc_html($n['title']); ?>
+                <?php endif; ?>
+            </h3>
+            <?php if ($n['summary'] !== '') : ?><p class="kop-fp-news-summary"><?php echo esc_html($n['summary']); ?></p><?php endif; ?>
+        </div>
+    </li>
+    <?php
+};
+
 $kop_fp_sections = array();
 $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
@@ -83,12 +152,18 @@ $kop_fp_has_siblings = !empty($page['siblings']);
 $kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']) || !empty($page['resource_links']);
 $kop_fp_has_network = !empty($page['network']['groups']);
 
-if ($kop_fp_has_inspections) $kop_fp_sections['inspections'] = 'Licensing and inspections';
-if ($kop_fp_has_news) $kop_fp_sections['news'] = 'News coverage';
-if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
+$kop_fp_violations = $kop_fp_has_inspections ? (array) ($page['inspections']['violations'] ?? array()) : array();
+$kop_fp_has_violations = !empty($kop_fp_violations);
+$kop_fp_has_incidents = !empty($page['incidents']);
+
 if ($kop_fp_has_memorials) $kop_fp_sections['memorials'] = 'Deaths on record';
-if ($kop_fp_has_practices) $kop_fp_sections['practices'] = 'Reported practices';
+if ($kop_fp_has_violations) $kop_fp_sections['violations'] = 'Serious violations';
+if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
+if ($kop_fp_has_incidents) $kop_fp_sections['incidents'] = 'Incidents';
+if ($kop_fp_has_news) $kop_fp_sections['news'] = 'News coverage';
 if ($kop_fp_has_staff) $kop_fp_sections['staff'] = 'Staff';
+if ($kop_fp_has_practices) $kop_fp_sections['practices'] = 'Reported practices';
+if ($kop_fp_has_inspections) $kop_fp_sections['inspections'] = 'Licensing';
 if ($kop_fp_has_network) $kop_fp_sections['network'] = 'Network';
 if ($kop_fp_has_docs) $kop_fp_sections['documents'] = 'Documents';
 if ($kop_fp_has_testimony) $kop_fp_sections['testimony'] = 'Survivor testimony';
@@ -193,6 +268,33 @@ get_header();
 
             <p class="kop-fp-summary"<?php echo $kop_fp_edit('all', 'every field of this facility'); ?>><?php echo esc_html($page['summary']); ?></p>
 
+            <?php
+            // The record in numbers, worst first; each tile jumps to its section.
+            $kop_fp_people = 0;
+            foreach (array('administrator', 'notableStaff') as $k) $kop_fp_people += count($page['staff'][$k] ?? array());
+            $kop_fp_tiles = array(
+                array('memorials', 'candle', count($page['memorials'] ?? array()), 'death on record', 'deaths on record', 'grave'),
+                array('violations', 'alert-triangle', count($kop_fp_violations), 'serious violation confirmed by inspectors', 'serious violations confirmed by inspectors', 'grave'),
+                array('lawsuits', 'scale', count($page['lawsuits'] ?? array()), 'lawsuit', 'lawsuits', 'warn'),
+                array('incidents', 'siren', count($page['incidents'] ?? array()), 'incident on record', 'incidents on record', 'warn'),
+                array('news', 'newspaper', count($page['news'] ?? array()), 'news article', 'news articles', 'info'),
+                array('staff', 'users', $kop_fp_people, 'staff member named', 'staff members named', 'info'),
+            );
+            $kop_fp_tiles = array_values(array_filter($kop_fp_tiles, static function ($t) { return $t[2] > 0; }));
+            if (count($kop_fp_tiles) >= 2) : ?>
+            <ul class="kop-fp-stats" aria-label="This record in numbers">
+                <?php foreach ($kop_fp_tiles as $t) : ?>
+                    <li class="kop-fp-stat kop-fp-stat--<?php echo esc_attr($t[5]); ?>">
+                        <a href="#<?php echo esc_attr($t[0]); ?>">
+                            <?php echo $kop_fp_icon($t[1]); ?>
+                            <span class="kop-fp-stat-n"><?php echo (int) $t[2]; ?></span>
+                            <span class="kop-fp-stat-label"><?php echo esc_html($t[2] === 1 ? $t[3] : $t[4]); ?></span>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <?php endif; ?>
+
             <?php if (count($kop_fp_sections) > 1) : ?>
             <nav class="kop-fp-jump" aria-label="On this page">
                 <?php foreach ($kop_fp_sections as $anchor => $label) : ?>
@@ -201,12 +303,181 @@ get_header();
             </nav>
             <?php endif; ?>
 
+            <?php if ($kop_fp_has_memorials) : ?>
+            <section class="kop-fp-section" id="memorials">
+                <h2><?php echo $kop_fp_icon('candle'); ?>Deaths on record</h2>
+                <ul class="kop-fp-records kop-fp-deaths">
+                    <?php foreach ($page['memorials'] as $m) :
+                        $bits = array_filter(array($m['age'] !== '' ? 'age ' . $m['age'] : '', $m['date_label'], $m['cause']), 'strlen');
+                        ?>
+                        <li>
+                            <?php if ($m['kop_url'] !== '' && preg_match('#^https?://#i', $m['kop_url'])) : ?>
+                                <a href="<?php echo esc_url($m['kop_url']); ?>"><?php echo esc_html($m['name']); ?></a>
+                            <?php else : ?>
+                                <a href="<?php echo esc_url($page['memorial_url']); ?>"><?php echo esc_html($m['name']); ?></a>
+                            <?php endif; ?>
+                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                            <?php if ($m['source_url'] !== '' && preg_match('#^https?://#i', $m['source_url'])) : ?>
+                                <span class="meta"><a href="<?php echo esc_url($m['source_url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($m['source_name'] !== '' ? $m['source_name'] : 'Source'); ?></a></span>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <p class="kop-fp-count"><a href="<?php echo esc_url($page['memorial_url']); ?>">The memorial</a></p>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_violations) :
+                $kop_fp_v_first = array_slice($kop_fp_violations, 0, 4);
+                $kop_fp_v_rest = array_slice($kop_fp_violations, 4);
+                ?>
+            <section class="kop-fp-section kop-fp-violations" id="violations">
+                <h2><?php echo $kop_fp_icon('alert-triangle'); ?>Serious violations</h2>
+                <p class="kop-fp-count">What state inspectors found and confirmed here, in their own words. Each finding was picked out of the inspection reports and checked by our team before it was listed.</p>
+                <div class="kop-fp-vcards">
+                    <?php foreach ($kop_fp_v_first as $v) $kop_fp_violation_card($v); ?>
+                </div>
+                <?php if ($kop_fp_v_rest) : ?>
+                    <details class="kop-fp-more">
+                        <summary><?php echo count($kop_fp_v_rest); ?> more serious <?php echo count($kop_fp_v_rest) === 1 ? 'finding' : 'findings'; ?></summary>
+                        <div class="kop-fp-vcards">
+                            <?php foreach ($kop_fp_v_rest as $v) $kop_fp_violation_card($v); ?>
+                        </div>
+                    </details>
+                <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_lawsuits) : ?>
+            <section class="kop-fp-section" id="lawsuits">
+                <h2><?php echo $kop_fp_icon('scale'); ?>Lawsuits</h2>
+                <ul class="kop-fp-records kop-fp-cases">
+                    <?php foreach ($page['lawsuits'] as $l) :
+                        $bits = array_filter(array($l['year'], $l['status'], $l['court'], $l['case_number']), 'strlen');
+                        ?>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:lawsuit:' . (int) $l['id'], 'this lawsuit') : ''; ?>>
+                            <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
+                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                            <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
+                            <?php if ($l['outcome'] !== '') : ?><p class="kop-fp-record-summary"><strong>Outcome:</strong> <?php echo esc_html($l['outcome']); ?></p><?php endif; ?>
+                            <?php if ($l['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($l['summary']); ?></p><?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <p class="kop-fp-count"><a href="<?php echo esc_url($page['lawsuits_url']); ?>">Every case in the lawsuit directory</a></p>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_incidents) : ?>
+            <section class="kop-fp-section" id="incidents"<?php echo $kop_fp_edit('practices', 'critical incidents'); ?>>
+                <h2><?php echo $kop_fp_icon('siren'); ?>Incidents on record</h2>
+                <ol class="kop-fp-timeline">
+                    <?php foreach ($page['incidents'] as $inc) : ?>
+                        <li>
+                            <?php if ($inc['when'] !== '' || $inc['kind'] !== '') : ?>
+                                <p class="kop-fp-tl-head">
+                                    <?php if ($inc['when'] !== '') : ?><span class="kop-fp-tl-when"><?php echo esc_html($inc['when']); ?></span><?php endif; ?>
+                                    <?php if ($inc['kind'] !== '') : ?><span class="kop-fp-tl-kind"><?php echo esc_html($inc['kind']); ?></span><?php endif; ?>
+                                </p>
+                            <?php endif; ?>
+                            <p class="kop-fp-tl-text"><?php echo esc_html($inc['text']); ?><?php if ($inc['source'] !== '') $kop_fp_sources(array($inc), 'span'); ?></p>
+                        </li>
+                    <?php endforeach; ?>
+                </ol>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_news) :
+                $kop_fp_n_first = array_slice($page['news'], 0, 6);
+                $kop_fp_n_rest = array_slice($page['news'], 6);
+                ?>
+            <section class="kop-fp-section" id="news">
+                <h2><?php echo $kop_fp_icon('newspaper'); ?>News coverage</h2>
+                <ul class="kop-fp-news">
+                    <?php foreach ($kop_fp_n_first as $n) $kop_fp_news_card($n); ?>
+                </ul>
+                <?php if ($kop_fp_n_rest) : ?>
+                    <details class="kop-fp-more">
+                        <summary><?php echo count($kop_fp_n_rest); ?> more <?php echo count($kop_fp_n_rest) === 1 ? 'article' : 'articles'; ?></summary>
+                        <ul class="kop-fp-news">
+                            <?php foreach ($kop_fp_n_rest as $n) $kop_fp_news_card($n); ?>
+                        </ul>
+                    </details>
+                <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_staff) :
+                $staff_labels = array('administrator' => 'Administration', 'notableStaff' => 'Notable staff', 'pastTTIJobs' => 'Staff who came from other programs');
+                ?>
+            <section class="kop-fp-section" id="staff"<?php echo $kop_fp_edit('staff', 'staff'); ?>>
+                <h2><?php echo $kop_fp_icon('users'); ?>Staff</h2>
+                <?php foreach ($staff_labels as $key => $label) :
+                    if (empty($page['staff'][$key])) continue;
+                    ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($label); ?></h3>
+                    <?php if ($key === 'pastTTIJobs') : ?>
+                        <ul class="kop-fp-people">
+                            <?php foreach ($page['staff'][$key] as $person) : ?>
+                                <li><?php echo esc_html($person['text']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else : ?>
+                        <ul class="kop-fp-staff">
+                            <?php foreach ($page['staff'][$key] as $person) : ?>
+                                <li class="kop-fp-person<?php echo !empty($person['career']) ? ' kop-fp-person--career' : ''; ?>">
+                                    <?php if (isset($person['name'])) : ?>
+                                        <p class="kop-fp-person-name"><?php echo esc_html($person['name']); ?></p>
+                                        <?php if ($person['role'] !== '' || $person['source'] !== '') : ?>
+                                            <p class="kop-fp-person-role"><?php echo esc_html($person['role']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></p>
+                                        <?php endif; ?>
+                                        <?php if (!empty($person['career'])) : ?>
+                                            <div class="kop-fp-career">
+                                                <p class="kop-fp-career-label">Elsewhere in the industry</p>
+                                                <ul>
+                                                    <?php foreach ($person['career'] as $job) :
+                                                        $job_meta = trim($job['role'] . ($job['years'] !== '' ? ($job['role'] !== '' ? ', ' : '') . $job['years'] : ''));
+                                                        ?>
+                                                        <li>
+                                                            <?php if ($job['url'] !== '') : ?>
+                                                                <a href="<?php echo esc_url($job['url']); ?>"><?php echo esc_html($job['place']); ?></a>
+                                                            <?php else : ?>
+                                                                <span class="kop-fp-career-place"><?php echo esc_html($job['place']); ?></span>
+                                                            <?php endif; ?>
+                                                            <?php if ($job_meta !== '') : ?><span class="kop-fp-career-role"><?php echo esc_html($job_meta); ?></span><?php endif; ?>
+                                                        </li>
+                                                    <?php endforeach; ?>
+                                                </ul>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php else : ?>
+                                        <p class="kop-fp-person-name"><?php echo esc_html($person['text']); ?></p>
+                                        <?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_practices) : ?>
+            <section class="kop-fp-section" id="practices"<?php echo $kop_fp_edit('practices', 'reported practices'); ?>>
+                <h2>Reported practices</h2>
+                <?php foreach ($page['practices'] as $group) : ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
+                    <?php $kop_fp_list($group['items'], 'kop-fp-chips'); ?>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
+
             <?php if ($kop_fp_has_inspections) :
                 $insp = $page['inspections'];
                 $sum = $insp['summary'];
                 ?>
             <section class="kop-fp-section" id="inspections">
-                <h2>Licensing and inspections</h2>
+                <h2><?php echo $kop_fp_icon('clipboard'); ?>Licensing and inspections</h2>
                 <dl class="kop-fp-inline-facts">
                     <?php if ($sum['licensed_names'] && (count($sum['licensed_names']) > 1 || strcasecmp($sum['licensed_names'][0], $page['name']) !== 0)) : ?>
                         <div><dt>Licensed as</dt><dd><?php echo esc_html(implode('; ', $sum['licensed_names'])); ?></dd></div>
@@ -241,131 +512,41 @@ get_header();
                 </dl>
                 <?php if ($insp['total'] > 0) : ?>
                     <p class="kop-fp-count">
-                        <?php echo (int) $insp['total']; ?> inspection <?php echo $insp['total'] === 1 ? 'report' : 'reports'; ?> on file<?php echo count($insp['reports']) < $insp['total'] ? ', newest ' . count($insp['reports']) . ' shown' : ''; ?>.
+                        <?php echo (int) $insp['total']; ?> inspection <?php echo $insp['total'] === 1 ? 'report' : 'reports'; ?> on file<?php echo $kop_fp_has_violations ? '; the serious findings in them are listed above' : ''; ?>.
                         <?php foreach ($insp['page_urls'] as $url => $sname) : ?>
                             <a href="<?php echo esc_url($url); ?>">Search all <?php echo esc_html($sname); ?> reports</a>
                         <?php endforeach; ?>
                     </p>
-                    <ol class="kop-fp-reports">
-                        <?php foreach ($insp['reports'] as $r) : ?>
-                            <li>
-                                <span class="kop-fp-report-date"><?php echo esc_html($r['date_label'] !== '' ? $r['date_label'] : 'Undated'); ?></span>
-                                <?php if ($r['summary'] !== '') : ?>
-                                    <span class="kop-fp-report-summary"><?php echo esc_html($r['summary']); ?></span>
-                                <?php endif; ?>
-                                <?php if ($r['url'] !== '' && preg_match('#^https?://#i', $r['url'])) : ?>
-                                    <a class="kop-fp-report-link" href="<?php echo esc_url($r['url']); ?>" target="_blank" rel="noopener">Open report</a>
-                                <?php endif; ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ol>
+                    <details class="kop-fp-more">
+                        <summary><?php echo count($insp['reports']) < $insp['total'] ? 'The newest ' . count($insp['reports']) . ' reports' : 'Every report'; ?>, by date</summary>
+                        <ol class="kop-fp-reports">
+                            <?php foreach ($insp['reports'] as $r) : ?>
+                                <li>
+                                    <span class="kop-fp-report-date"><?php echo esc_html($r['date_label'] !== '' ? $r['date_label'] : 'Undated'); ?></span>
+                                    <?php if ($r['summary'] !== '') : ?>
+                                        <span class="kop-fp-report-summary"><?php echo esc_html($r['summary']); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($r['url'] !== '' && preg_match('#^https?://#i', $r['url'])) : ?>
+                                        <a class="kop-fp-report-link" href="<?php echo esc_url($r['url']); ?>" target="_blank" rel="noopener">Open report</a>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ol>
+                    </details>
                 <?php elseif ($insp['page_url'] !== '') : ?>
                     <p class="kop-fp-count">A licensing record is on file. <a href="<?php echo esc_url($insp['page_url']); ?>">Search the state's inspection reports</a>.</p>
                 <?php endif; ?>
             </section>
             <?php endif; ?>
 
-            <?php if ($kop_fp_has_news) : ?>
-            <section class="kop-fp-section" id="news">
-                <h2>News coverage</h2>
-                <ul class="kop-fp-records">
-                    <?php foreach ($page['news'] as $n) :
-                        $bits = array_filter(array($n['outlet'], $n['date_label'], $n['type']), 'strlen');
-                        ?>
-                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $n['id'], 'this article') : ''; ?>>
-                            <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
-                                <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
-                            <?php else : ?>
-                                <span><?php echo esc_html($n['title']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($n['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($n['summary']); ?></p><?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </section>
-            <?php endif; ?>
-
-            <?php if ($kop_fp_has_lawsuits) : ?>
-            <section class="kop-fp-section" id="lawsuits">
-                <h2>Lawsuits</h2>
-                <ul class="kop-fp-records">
-                    <?php foreach ($page['lawsuits'] as $l) :
-                        $bits = array_filter(array($l['year'], $l['status'], $l['court'], $l['case_number']), 'strlen');
-                        ?>
-                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:lawsuit:' . (int) $l['id'], 'this lawsuit') : ''; ?>>
-                            <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
-                            <?php if ($l['outcome'] !== '') : ?><p class="kop-fp-record-summary"><strong>Outcome:</strong> <?php echo esc_html($l['outcome']); ?></p><?php endif; ?>
-                            <?php if ($l['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($l['summary']); ?></p><?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-                <p class="kop-fp-count"><a href="<?php echo esc_url($page['lawsuits_url']); ?>">Every case in the lawsuit directory</a></p>
-            </section>
-            <?php endif; ?>
-
-            <?php if ($kop_fp_has_memorials) : ?>
-            <section class="kop-fp-section" id="memorials">
-                <h2>Deaths on record</h2>
-                <ul class="kop-fp-records">
-                    <?php foreach ($page['memorials'] as $m) :
-                        $bits = array_filter(array($m['age'] !== '' ? 'age ' . $m['age'] : '', $m['date_label'], $m['cause']), 'strlen');
-                        ?>
-                        <li>
-                            <?php if ($m['kop_url'] !== '' && preg_match('#^https?://#i', $m['kop_url'])) : ?>
-                                <a href="<?php echo esc_url($m['kop_url']); ?>"><?php echo esc_html($m['name']); ?></a>
-                            <?php else : ?>
-                                <a href="<?php echo esc_url($page['memorial_url']); ?>"><?php echo esc_html($m['name']); ?></a>
-                            <?php endif; ?>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($m['source_url'] !== '' && preg_match('#^https?://#i', $m['source_url'])) : ?>
-                                <span class="meta"><a href="<?php echo esc_url($m['source_url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($m['source_name'] !== '' ? $m['source_name'] : 'Source'); ?></a></span>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-                <p class="kop-fp-count"><a href="<?php echo esc_url($page['memorial_url']); ?>">The memorial</a></p>
-            </section>
-            <?php endif; ?>
-
-            <?php if ($kop_fp_has_practices) : ?>
-            <section class="kop-fp-section" id="practices"<?php echo $kop_fp_edit('practices', 'reported practices'); ?>>
-                <h2>Reported practices</h2>
-                <?php foreach ($page['practices'] as $group) : ?>
-                    <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
-                    <?php $kop_fp_list($group['items'], 'kop-fp-chips'); ?>
-                <?php endforeach; ?>
-            </section>
-            <?php endif; ?>
-
-            <?php if ($kop_fp_has_staff) :
-                $staff_labels = array('administrator' => 'Administration', 'notableStaff' => 'Notable staff', 'pastTTIJobs' => 'Staff who came from other programs');
-                ?>
-            <section class="kop-fp-section" id="staff"<?php echo $kop_fp_edit('staff', 'staff'); ?>>
-                <h2>Staff</h2>
-                <?php foreach ($staff_labels as $key => $label) :
-                    if (empty($page['staff'][$key])) continue;
-                    ?>
-                    <h3 class="kop-fp-subhead"><?php echo esc_html($label); ?></h3>
-                    <ul class="kop-fp-people">
-                        <?php foreach ($page['staff'][$key] as $person) : ?>
-                            <li><?php echo esc_html($person['text']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endforeach; ?>
-            </section>
-            <?php endif; ?>
-
             <?php if ($kop_fp_has_network) : ?>
             <section class="kop-fp-section" id="network">
-                <h2>Connections on the network map</h2>
+                <h2><?php echo $kop_fp_icon('shuffle'); ?>Connections on the network map</h2>
                 <p class="kop-fp-count">The companies, people and programs our research map ties to this program. <a href="<?php echo esc_url($page['network']['map_url']); ?>">Open it on the network map</a>.</p>
                 <?php echo function_exists('kop_network_map_embed_html') ? kop_network_map_embed_html((int) $page['id']) : ''; ?>
                 <?php foreach ($page['network']['groups'] as $group) : ?>
                     <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
-                    <ul class="kop-fp-records">
+                    <ul class="kop-fp-records kop-fp-connections">
                         <?php foreach ($group['items'] as $item) : ?>
                             <li>
                                 <?php if ($item['url'] !== '') : ?>
