@@ -586,16 +586,28 @@ if (!function_exists('kop_operator_page_data')) {
         $open = 0;
         if (kop_facility_pages_table_exists($ofc)) {
             $frows = $wpdb->get_results(
-                "SELECT DISTINCT f.id, f.name, f.city, f.state, f.country, f.status, f.start_year, f.end_year
+                "SELECT DISTINCT f.id, f.name, f.city, f.state, f.country, f.status, f.start_year, f.end_year, f.json_data
                    FROM `{$ofc}` ofc JOIN facilities_v2 f ON f.id = ofc.facility_id
                   WHERE ofc.operator_id IN ({$in})
                   ORDER BY f.name, f.id",
                 ARRAY_A
             );
+            $founded_year = preg_match('/\b(1[89]\d\d|20\d\d)\b/', (string) ($op['founded'] ?? ''), $fy) ? (int) $fy[1] : 0;
             foreach ((array) $frows as $r) {
                 $fid = (int) $r['id'];
                 if (isset($facility_ids[$fid])) continue;
                 $facility_ids[$fid] = true;
+                // The program's own years are the company's only when it ran the
+                // program from the start: no earlier operator on record, this
+                // company the current one, opened in or after its founding year.
+                // Otherwise they may predate an acquisition (UHS bought hospitals
+                // that opened decades before it existed).
+                $fdoc = json_decode((string) $r['json_data'], true);
+                $ident = is_array($fdoc['identification'] ?? null) ? $fdoc['identification'] : array();
+                $past_ops = array_filter(array_map('trim', array_map('strval', (array) ($ident['pastOperators'] ?? array()))), 'strlen');
+                $current_op = kop_facility_pages_name_key((string) ($ident['currentOperator'] ?? ''));
+                $own_years = !$past_ops && $current_op !== '' && isset($my_keys[$current_op])
+                    && $founded_year > 0 && (int) $r['start_year'] >= $founded_year;
                 $state = ($r['state'] && function_exists('kop_state_canonical_name')) ? (string) kop_state_canonical_name($r['state']) : (string) $r['state'];
                 $country = (string) $r['country'];
                 $place = trim(($r['city'] ? $r['city'] . ', ' : '') . ($state !== '' ? $state : ($country !== '' && $country !== 'United States' ? $country : '')), ', ');
@@ -618,6 +630,7 @@ if (!function_exists('kop_operator_page_data')) {
                     'has_page' => $url !== '',
                     'start_year' => (int) $r['start_year'],
                     'end_year'   => (int) $r['end_year'],
+                    'own_years'  => $own_years,
                 );
             }
         }
@@ -675,8 +688,8 @@ if (!function_exists('kop_operator_page_data')) {
             $linked = array();
             if ($facility_ids && kop_facility_pages_table_exists('lawsuit_facility_links')) {
                 $fin = implode(',', array_keys($facility_ids));
-                foreach ((array) $wpdb->get_col("SELECT lawsuit_id FROM lawsuit_facility_links WHERE facility_id IN ({$fin})") as $lid) {
-                    $linked[(int) $lid] = true;
+                foreach ((array) $wpdb->get_results("SELECT lawsuit_id, facility_id FROM lawsuit_facility_links WHERE facility_id IN ({$fin})", ARRAY_A) as $lr) {
+                    $linked[(int) $lr['lawsuit_id']][] = (int) $lr['facility_id'];
                 }
             }
             $lrows = $wpdb->get_results(
@@ -686,15 +699,17 @@ if (!function_exists('kop_operator_page_data')) {
                 ARRAY_A
             );
             foreach ((array) $lrows as $r) {
-                $hit = isset($linked[(int) $r['id']]);
-                if (!$hit) {
-                    foreach (array('defendants', 'organizations_mentioned') as $col) {
-                        foreach (kop_facility_pages_mentioned_names($r[$col]) as $n) {
-                            if (isset($my_keys[kop_facility_pages_name_key($n)])) { $hit = true; break 2; }
+                $by_name = false;
+                $defendant = false;
+                foreach (array('defendants', 'organizations_mentioned') as $col) {
+                    foreach (kop_facility_pages_mentioned_names($r[$col]) as $n) {
+                        if (isset($my_keys[kop_facility_pages_name_key($n)])) {
+                            $by_name = true;
+                            if ($col === 'defendants') $defendant = true;
                         }
                     }
                 }
-                if (!$hit) continue;
+                if (!$by_name && !isset($linked[(int) $r['id']])) continue;
                 $lawsuits[] = array(
                     'case_name'   => trim((string) $r['case_name']),
                     'case_number' => trim((string) $r['case_number']),
@@ -703,6 +718,9 @@ if (!function_exists('kop_operator_page_data')) {
                     'status'      => ucfirst(str_replace('_', ' ', trim((string) $r['status']))),
                     'outcome'     => trim((string) $r['outcome']),
                     'summary'     => trim((string) $r['summary']),
+                    // Names the company itself, or only its programs (by id).
+                    'by_name'     => $defendant,
+                    'facility_ids' => $linked[(int) $r['id']] ?? array(),
                 );
             }
         }
@@ -711,7 +729,11 @@ if (!function_exists('kop_operator_page_data')) {
         $memorials = array();
         if ($facilities && kop_facility_pages_table_exists('memorial_victims')) {
             $fkeys = array();
-            foreach ($facilities as $f) $fkeys[kop_facility_pages_name_key($f['name'])] = $f['name'];
+            $fids_by_key = array();
+            foreach ($facilities as $f) {
+                $fkeys[kop_facility_pages_name_key($f['name'])] = $f['name'];
+                $fids_by_key[kop_facility_pages_name_key($f['name'])] = (int) $f['id'];
+            }
             $mrows = $wpdb->get_results(
                 "SELECT id, name, age, program, date_of_death, date_precision, cause_of_death, kop_url
                    FROM memorial_victims WHERE publication_status = 'published'
@@ -732,6 +754,7 @@ if (!function_exists('kop_operator_page_data')) {
                     'date_label' => $label,
                     'cause'      => trim((string) $r['cause_of_death']),
                     'kop_url'    => trim((string) $r['kop_url']),
+                    'facility_id' => $fids_by_key[$rk],
                 );
             }
         }

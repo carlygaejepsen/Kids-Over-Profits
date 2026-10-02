@@ -106,21 +106,27 @@ if (!function_exists('kop_operator_history_timeline')) {
      */
     function kop_operator_history_timeline(array $ctx) {
         $events = array();
-        $add = static function ($year, $kind, $text, $item = null) use (&$events) {
+        $now = (int) gmdate('Y');
+        // Nothing before the company existed.
+        $founded = preg_match('/\b(1[89]\d\d|20\d\d)\b/', (string) ($ctx['founded'] ?? ''), $fm) ? (int) $fm[1] : 0;
+        $add = static function ($year, $kind, $text, $item = null) use (&$events, $founded, $now) {
             $year = (int) $year;
-            if ($year < 1800 || $year > (int) gmdate('Y') + 1) return;
+            if ($year < 1800 || $year > $now + 1) return;
+            if ($founded && $year < $founded) return;
             if (!isset($events[$year][$kind])) $events[$year][$kind] = array('kind' => $kind, 'text' => $text, 'items' => array());
             if ($item) $events[$year][$kind]['items'][kop_facility_pages_name_key($item['name']) . '|' . count($events[$year][$kind]['items'])] = $item;
         };
 
-        if (preg_match('/\b(1[89]\d\d|20\d\d)\b/', (string) ($ctx['founded'] ?? ''), $m)) {
-            $add($m[1], 'founded', 'Founded');
-        }
+        if ($founded) $add($founded, 'founded', 'Founded');
 
-        // The years the map gives for each program it ran win over the
-        // program's own years, which can predate the company.
+        // Facility id => [from, to] the company is known to have run it: the
+        // map's "operated 2009-2021", else the program's own years when the
+        // company ran it from the start (own_years, set in operator-pages.php).
+        // A program with neither has no dated events here: its opening, a death
+        // or a lawsuit there may come from before the company owned it.
         $by_key = array();
         foreach ((array) ($ctx['facilities'] ?? array()) as $f) $by_key[kop_facility_pages_name_key($f['name'])] = $f;
+        $spans = array();
         $map_years = array();
         foreach ((array) ($ctx['links'] ?? array()) as $l) {
             if ($l['category'] !== 'corporate' || ($l['node']['kind'] ?? '') !== 'facility') continue;
@@ -129,7 +135,12 @@ if (!function_exists('kop_operator_history_timeline')) {
             $fid = (int) ($l['node']['facilityId'] ?? 0);
             $url = $fid > 0 && function_exists('kop_facility_page_url') ? kop_facility_page_url($fid) : '';
             $item = array('name' => $name, 'url' => $url);
-            $map_years[kop_facility_pages_name_key($name)] = true;
+            $nk = kop_facility_pages_name_key($name);
+            $map_years[$nk] = true;
+            if ($from) {
+                $span_id = isset($by_key[$nk]) ? (int) $by_key[$nk]['id'] : $fid;
+                if ($span_id > 0) $spans[$span_id] = array($from, $to ?: $now);
+            }
             if ($l['direction'] === 'acquirer') {
                 if ($from) $add($from, 'acquired', 'Acquired', $item);
                 continue;
@@ -139,17 +150,31 @@ if (!function_exists('kop_operator_history_timeline')) {
             if ($to) $add($to, 'ended', 'Stopped running', $item);
         }
         foreach ($by_key as $k => $f) {
-            if (isset($map_years[$k])) continue;
+            if (isset($map_years[$k]) || empty($f['own_years'])) continue;
             $item = array('name' => $f['name'], 'url' => $f['has_page'] ? $f['url'] : '');
             if (!empty($f['start_year'])) $add($f['start_year'], 'opened', 'Opened', $item);
             if (!empty($f['end_year'])) $add($f['end_year'], 'closed', 'Closed', $item);
+            if (!empty($f['start_year']) && !isset($spans[(int) $f['id']])) {
+                $spans[(int) $f['id']] = array((int) $f['start_year'], (int) $f['end_year'] ?: $now);
+            }
         }
+        $in_span = static function (array $fids, $year) use ($spans) {
+            foreach ($fids as $fid) {
+                if (isset($spans[(int) $fid]) && $year >= $spans[(int) $fid][0] && $year <= $spans[(int) $fid][1]) return true;
+            }
+            return false;
+        };
 
         foreach ((array) ($ctx['lawsuits'] ?? array()) as $l) {
-            if ($l['year'] !== '') $add($l['year'], 'lawsuit', 'Sued', array('name' => $l['case_name'], 'url' => $ctx['lawsuits_url'] ?? ''));
+            if ($l['year'] === '') continue;
+            // A suit naming the company as a defendant is its own; one about a program counts
+            // only inside the years the company is known to have run it.
+            if (empty($l['by_name']) && !$in_span((array) ($l['facility_ids'] ?? array()), (int) $l['year'])) continue;
+            $add($l['year'], 'lawsuit', 'Sued', array('name' => $l['case_name'], 'url' => $ctx['lawsuits_url'] ?? ''));
         }
         foreach ((array) ($ctx['memorials'] ?? array()) as $m) {
             if (preg_match('/\b(1[89]\d\d|20\d\d)\b/', $m['date_label'], $y)) {
+                if (!$in_span(array((int) ($m['facility_id'] ?? 0)), (int) $y[1])) continue;
                 $who = $m['name'] . ($m['age'] !== '' ? ', ' . $m['age'] : '') . ', at ' . $m['program'];
                 $add($y[1], 'death', 'Died', array('name' => $who, 'url' => $m['kop_url']));
             }
@@ -178,6 +203,8 @@ if (!function_exists('kop_operator_history_timeline')) {
             }
             $out[] = array('year' => (int) $year, 'events' => $rows);
         }
+        // The founding year alone is already in the facts.
+        if (count($out) === 1 && count($out[0]['events']) === 1 && $out[0]['events'][0]['kind'] === 'founded') return array();
         return $out;
     }
 }

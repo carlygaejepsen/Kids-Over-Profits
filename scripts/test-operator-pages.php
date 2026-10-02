@@ -153,6 +153,13 @@ foreach ($index['ids'] as $id => $e) {
     }
     if ($data['network_url'] !== '') $with['network']++;
     if (!empty($data['timeline'])) $with['timeline']++;
+    if ($e['slug'] === 'universal-health-services') {
+        // UHS bought hospitals that opened decades before it: none of their
+        // openings, closings or deaths may land on its timeline.
+        $kinds = array();
+        foreach ($data['timeline'] as $y) foreach ($y['events'] as $ev) $kinds[$ev['kind']] = true;
+        $check('the UHS timeline has no program years from before it owned them', !isset($kinds['opened']) && !isset($kinds['closed']) && !isset($kinds['death']), implode(',', array_keys($kinds)));
+    }
     if (!empty($data['people']['leaders'])) $with['people']++;
     if (!empty($data['program_docs']['programs'])) $with['program_docs']++;
     foreach ($data['facilities'] as $f) {

@@ -172,7 +172,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <?php endif; ?>
                 <?php if (!empty($page['timeline'])) : ?>
                     <h3 class="kop-fp-subhead">Year by year</h3>
-                    <p class="kop-fp-count">From the records: the years it ran each program (from the network map, else the program's own opening and closing), lawsuits filed and deaths on record.</p>
+                    <p class="kop-fp-count">From the records: the years it ran each program, and lawsuits and deaths on record from those years. A program it took over appears only once the records say when it did.</p>
                     <?php
                     $kop_op_tl_first = array_slice($page['timeline'], 0, 12);
                     $kop_op_tl_rest = array_slice($page['timeline'], 12);
