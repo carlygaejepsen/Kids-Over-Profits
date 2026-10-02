@@ -3,7 +3,7 @@
   "slug": "the-brochure-and-the-record",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "reputation/the-brochure-and-the-record.html",
   "excerpt": "What program websites promise parents about length of stay, inspections and research, and what government investigators found in the records.",
   "template": "page-article.php"
