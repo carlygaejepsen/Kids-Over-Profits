@@ -98,7 +98,7 @@ class KOP_News_Reel_Widget extends WP_Widget {
             $wpdb->prepare(
                 "SELECT article_title, alternate_title, article_url, publication_name, publication_date
                  FROM news_submissions
-                 WHERE status IN ('approved', 'published')
+                 WHERE status IN ('approved', 'published')" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "
                  ORDER BY publication_date DESC, created_at DESC
                  LIMIT %d",
                 $limit

@@ -5573,7 +5573,7 @@ function kop_state_collect_news($state_name) {
                    article_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
             FROM news_submissions
             WHERE status IN ('approved','published')
-              AND (article_location LIKE %s OR tags LIKE %s)
+              AND (article_location LIKE %s OR tags LIKE %s)" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "
             ORDER BY publication_date DESC, created_at DESC
             LIMIT 200";
 
@@ -5698,6 +5698,8 @@ function kop_state_feed_fingerprint() {
         $row = $wpdb->get_row("SELECT COUNT(*), MAX(updated_at) FROM `{$table}`", ARRAY_N);
         $parts[] = $table . ':' . (is_array($row) ? implode('|', array_map('strval', $row)) : '-');
     }
+    // Filing an article under an Indian boarding school takes it off the hubs.
+    $parts[] = 'ischools:' . (function_exists('kop_ischools_news_ids') ? md5(implode(',', kop_ischools_news_ids())) : '-');
     $parts[] = 'writes:' . (function_exists('kop_v2_writes_on') && kop_v2_writes_on() ? 'v2' : 'legacy');
     $dir = get_stylesheet_directory();
     $newest = 0;

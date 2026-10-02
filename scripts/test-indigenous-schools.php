@@ -209,6 +209,14 @@ if (getenv('KOP_DUMP')) {
 }
 check(strpos($html3, 'Genoa, NE · 1884 to 1934') !== false && strpos($html3, '&lt;b&gt;BIA&lt;/b&gt;') !== false, 'once approved it is listed, and its text is escaped');
 
+/* ---- Kept out of the regular news ------------------------------------ */
+
+echo "News feeds
+";
+$linked = array_map('intval', $pdo->query('SELECT DISTINCT news_id FROM indigenous_school_news')->fetchAll(PDO::FETCH_COLUMN));
+$feed = array_map('intval', $pdo->query("SELECT id FROM news_submissions WHERE status IN ('approved','published')" . kop_ischools_news_exclude_sql())->fetchAll(PDO::FETCH_COLUMN));
+check($linked && !array_intersect($linked, $feed) && $feed, 'articles filed under a school are left out of the news feed query (' . count($linked) . ' articles)');
+
 /* ---- The admin screen ---------------------------------------------------- */
 
 echo "Admin screen\n";

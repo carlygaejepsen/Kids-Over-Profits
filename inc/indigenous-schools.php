@@ -193,6 +193,36 @@ function kop_ischools_news(PDO $pdo, $all = false) {
     return $out;
 }
 
+/**
+ * Ids of every article filed under a school (or the schools in general).
+ * Those articles belong on /indian-boarding-schools/ only, so the news feed,
+ * the Latest News widget and the state/country hub news leave them out.
+ * Read once per request; empty when the tables are not there yet.
+ */
+function kop_ischools_news_ids() {
+    static $ids = null;
+    if ($ids !== null) {
+        return $ids;
+    }
+    $ids = array();
+    $pdo = kop_ischools_pdo();
+    if (!$pdo || !kop_ischools_ready($pdo)) {
+        return $ids;
+    }
+    try {
+        $ids = array_map('intval', $pdo->query('SELECT DISTINCT news_id FROM indigenous_school_news')->fetchAll(PDO::FETCH_COLUMN));
+    } catch (PDOException $e) {
+        $ids = array();
+    }
+    return $ids;
+}
+
+/** " AND <col> NOT IN (...)" for a news_submissions query, or '' when there are none. */
+function kop_ischools_news_exclude_sql($col = 'id') {
+    $ids = kop_ischools_news_ids();
+    return $ids ? " AND $col NOT IN (" . implode(',', $ids) . ')' : '';
+}
+
 /* ---- Writing --------------------------------------------------------- */
 
 /**

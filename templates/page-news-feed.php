@@ -37,7 +37,9 @@ $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
 
 try {
     // Build WHERE clause
-    $where = "status IN ($placeholders)";
+    // Indian boarding school articles are listed on their own page only.
+    $ischools_exclude = function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '';
+    $where = "status IN ($placeholders)" . $ischools_exclude;
     $params = $status_filter;
 
     if ($archive_month && preg_match('/^\d{4}-\d{2}$/', $archive_month)) {
@@ -111,7 +113,7 @@ try {
         $cov_sql = "SELECT id, article_title, alternate_title, publication_name,
                            publication_date, article_url, story_group_id
                     FROM news_submissions
-                    WHERE story_group_id IN ($gid_ph) AND status IN ($placeholders)
+                    WHERE story_group_id IN ($gid_ph) AND status IN ($placeholders)$ischools_exclude
                     ORDER BY publication_date DESC, id DESC";
         $cov_stmt = $pdo->prepare($cov_sql);
         $cov_stmt->execute(array_merge(array_keys($page_gids), $status_filter));
@@ -129,7 +131,7 @@ try {
                            DATE_FORMAT(publication_date, '%M %Y') AS month_label,
                            COUNT(*) AS cnt
                     FROM news_submissions
-                    WHERE status IN ($placeholders) AND publication_date IS NOT NULL
+                    WHERE status IN ($placeholders) AND publication_date IS NOT NULL$ischools_exclude
                     GROUP BY month_key, month_label
                     ORDER BY month_key DESC";
     $archive_stmt = $pdo->prepare($archive_sql);

@@ -215,7 +215,7 @@ function kop_country_collect_news($country_name) {
                    article_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
             FROM news_submissions
             WHERE status IN ('approved','published')
-              AND (article_location LIKE %s OR tags LIKE %s)
+              AND (article_location LIKE %s OR tags LIKE %s)" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "
             ORDER BY publication_date DESC, created_at DESC
             LIMIT 200";
 
