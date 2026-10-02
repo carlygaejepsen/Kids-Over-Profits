@@ -763,6 +763,7 @@ function kop_template_assignments() {
         'new-names-same-programs' => 'page-article.php',
         'silencing-critics-and-survivors' => 'page-article.php',
         'the-brochure-and-the-record' => 'page-article.php',
+        'natsap-reputation-plans' => 'page-article.php',
         'advocacy-history'                                             => 'page-article.php',
         'antiquity'                                                    => 'page-article.php',
         'birth-of-the-tti'                                             => 'page-article.php',
@@ -1026,6 +1027,7 @@ function kop_seed_posts() {
         'reputation/new-names-same-programs.json',
         'reputation/silencing-critics-and-survivors.json',
         'reputation/the-brochure-and-the-record.json',
+        'reputation/natsap-reputation-plans.json',
     );
 }
 
@@ -2147,7 +2149,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '76';
+    $version = '77';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

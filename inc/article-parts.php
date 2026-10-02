@@ -83,6 +83,7 @@ function kop_article_parents() {
         'how-troubled-teen-programs-market-themselves-online' => 'reputation-management',
         'new-names-same-programs' => 'reputation-management',
         'silencing-critics-and-survivors' => 'reputation-management',
+        'natsap-reputation-plans' => 'reputation-management',
         'the-brochure-and-the-record' => 'reputation-management',
     ));
 }
