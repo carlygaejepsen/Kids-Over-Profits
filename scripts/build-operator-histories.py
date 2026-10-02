@@ -13,6 +13,7 @@ source list. Prints reviewer notes so they can be read before committing.
     python scripts/build-operator-histories.py [--dir tmp/operator-histories]
 """
 import argparse
+import hashlib
 import glob
 import json
 import os
@@ -47,10 +48,23 @@ def check(d):
     return problems
 
 
+def seed_hash(paragraphs):
+    """kop_operator_history_hash() in inc/operator-history.php."""
+    return hashlib.md5('\n\n'.join(p.strip() for p in paragraphs).encode('utf-8')).hexdigest()
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--dir', default=os.path.join(ROOT, 'tmp', 'operator-histories'))
     args = ap.parse_args()
+    out = os.path.join(ROOT, 'seeds', 'operator-histories.json')
+    # Fingerprints of every history an earlier seed wrote, so the site can
+    # replace a draft nobody has edited since (and only that).
+    previous = {}
+    if os.path.exists(out):
+        with open(out, encoding='utf-8') as f:
+            for c in json.load(f).get('companies', []):
+                previous[c['name']] = set(c.get('previous_hashes', [])) | {seed_hash(c['history'])}
     companies = []
     bad = 0
     for path in sorted(glob.glob(os.path.join(args.dir, '*.json'))):
@@ -71,7 +85,9 @@ def main():
             'sources': [{'label': s.get('label', '').strip(), 'url': s.get('url', '').strip()} for s in d.get('sources', [])],
             'reviewer_notes': d.get('reviewer_notes', ''),
         })
-    out = os.path.join(ROOT, 'seeds', 'operator-histories.json')
+        prev = previous.get(d['name'], set()) - {seed_hash(companies[-1]['history'])}
+        if prev:
+            companies[-1]['previous_hashes'] = sorted(prev)
     with open(out, 'w', encoding='utf-8', newline='\n') as f:
         json.dump({'about': 'Draft parent company histories; applied as drafts by inc/operator-history.php. '
                             'Rebuilt by scripts/build-operator-histories.py.',

@@ -74,6 +74,9 @@ php scripts/test-operator-pages.php               # renders every /operator/<slu
 # a large map node); each page has a written history (operator.history, draft = admins only, published with the pencil;
 # drafts come from seeds/operator-histories.json, which fills only empty records), a year-by-year timeline from the map's
 # "operated" years + programs' years + lawsuits + deaths, the map's people, and the documents filed under its programs
+python scripts/build-operator-histories.py      # tmp/operator-histories/*.json -> seeds/operator-histories.json; bump
+                                                # KOP_OPERATOR_HISTORY_SEED_VERSION to apply (replaces only drafts nobody edited)
+php scripts/test-operator-history-seed.php      # fill, replace untouched drafts, keep edited/published, on a temp copy
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
 # Duplicate facility records (KOP Tools > Merge Duplicates, inc/facility-merge.php + facility-merge-match.php): pairs found

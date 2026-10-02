@@ -391,10 +391,18 @@ if (!function_exists('kop_operator_history_paragraph_html')) {
 // Drafts from seeds/operator-histories.json
 // ---------------------------------------------------------------------------
 
+if (!function_exists('kop_operator_history_hash')) {
+    /** Fingerprint of a history as the seed wrote it. */
+    function kop_operator_history_hash($paragraphs) {
+        return md5(implode("\n\n", array_map('trim', array_map('strval', (array) $paragraphs))));
+    }
+}
+
 if (!function_exists('kop_operator_history_apply_seed')) {
     /**
      * Fills the history of each company named in the seed whose record has
-     * none, as a draft. Returns [name => 'filled'|'kept'|'not found'].
+     * none, as a draft, or replaces a seeded draft nobody has edited. Returns
+     * [name => 'filled'|'replaced'|'same'|'kept'|'not found'].
      */
     function kop_operator_history_apply_seed($path = '') {
         global $wpdb;
@@ -412,7 +420,15 @@ if (!function_exists('kop_operator_history_apply_seed')) {
             if (!is_array($json) || !is_array($json['operator'] ?? null)) { $report[$name] = 'not found'; continue; }
             $op = $json['operator'];
             $has = array_filter(array_map('trim', array_map('strval', (array) ($op['history'] ?? array()))), 'strlen');
-            if ($has || trim((string) ($op['historyStatus'] ?? '')) !== '') { $report[$name] = 'kept'; continue; }
+            // A draft the seed wrote and nobody has edited since may be replaced
+            // by a newer seed; anything a person wrote, edited or published stays.
+            $untouched = $has && strtolower(trim((string) ($op['historyStatus'] ?? ''))) === 'draft'
+                && in_array(kop_operator_history_hash($op['history']), array_merge(
+                    array((string) ($op['historySeedHash'] ?? '')),
+                    array_map('strval', (array) ($c['previous_hashes'] ?? array()))   // drafts from an older seed
+                ), true);
+            if (!$untouched && ($has || trim((string) ($op['historyStatus'] ?? '')) !== '')) { $report[$name] = 'kept'; continue; }
+            if ($untouched && kop_operator_history_hash($op['history']) === kop_operator_history_hash((array) $c['history'])) { $report[$name] = 'same'; continue; }
             $op['history'] = array_values(array_map('strval', (array) $c['history']));
             $op['historySources'] = array();
             foreach ((array) ($c['sources'] ?? array()) as $s) {
@@ -421,9 +437,10 @@ if (!function_exists('kop_operator_history_apply_seed')) {
             $op['historyStatus'] = 'draft';
             // What the drafter could not source or found conflicting; shown to admins beside the draft.
             $op['historyReviewNotes'] = trim((string) ($c['reviewer_notes'] ?? ''));
+            $op['historySeedHash'] = kop_operator_history_hash($op['history']);
             $json['operator'] = $op;
             $wpdb->update($table, array('json_data' => json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)), array('id' => $id));
-            $report[$name] = 'filled';
+            $report[$name] = $untouched ? 'replaced' : 'filled';
         }
         if (function_exists('kop_operator_pages_flush_index')) kop_operator_pages_flush_index();
         return $report;
