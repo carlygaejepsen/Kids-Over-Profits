@@ -148,6 +148,12 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                     <div class="kop-op-history-text"<?php echo $kop_op_history_edit; ?>>
                         <?php if ($page['history']['status'] === 'draft') : ?>
                             <p class="kop-op-draft"><strong>Draft.</strong> Only admins see this history. Check it against its sources, then use the pencil to correct it and set it to Published.</p>
+                            <?php if (!empty($page['history']['notes'])) : ?>
+                                <details class="kop-op-review-notes" open>
+                                    <summary>What to check before publishing</summary>
+                                    <p><?php echo esc_html($page['history']['notes']); ?></p>
+                                </details>
+                            <?php endif; ?>
                         <?php endif; ?>
                         <?php foreach ($page['history']['paragraphs'] as $kop_op_para) : ?>
                             <p><?php echo kop_operator_history_paragraph_html($kop_op_para); // Escaped inside. ?></p>

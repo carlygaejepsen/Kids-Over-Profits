@@ -262,6 +262,19 @@ The date is when each was last confirmed open.
     - SCIAD NET is credited on every block it fills, linked to WWASP Survivor
       Truth's archive page.
 
+19. **Parent company histories** (2026-10-02). 35 drafted histories sit on
+    their [/operator/](https://kidsoverprofits.org/operator/) pages as drafts only
+    admins see, each with "What to check before publishing" (conflicting dates,
+    claims resting on KOP rows or the wiki alone). Read each against its
+    sources, fix it with the pencil and set it to Published. Record questions the
+    drafts raised: Kaizen Academy filed under CERTS (the Utah licence names
+    Heritage Youth Services, a different company from the California operator of
+    that name); PACE's homes may be adult; Vivant still listed in Alabama after the
+    Senate report says it divested there; Wayne Halfway House's Florida sites
+    listed open (Tampa Bay Times 2026 says it left Florida); TrueCore's lost state
+    contract dated 2023 on the timeline, 2024 in the news; The Brown Schools page
+    mixes in later UHS programs; Rite of Passage has two records (18, 832).
+
 ### Unconfirmed settings
 
 19. Which mode production's `kop_data_model` / `kop_data_model_areas`

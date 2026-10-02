@@ -1059,6 +1059,7 @@ function kop_ie_operator_fields() {
         array('History', array(
             array('history', 'Written history, one paragraph a box', 'items', array('help' => 'Link a source inside the text as [words](https://...).')),
             array('historySources', 'Sources, one a line: title | address', 'lines'),
+            array('historyReviewNotes', 'What to check before publishing (admins only)', 'text'),
             array('historyStatus', 'History is', 'select', array('options' => array(
                 array('value' => '', 'label' => 'Not written'),
                 array('value' => 'draft', 'label' => 'Draft (admins only)'),

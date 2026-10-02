@@ -336,7 +336,8 @@ if (!function_exists('kop_operator_history_written')) {
             if ($label === '' && $url === '') continue;
             $sources[] = array('label' => $label !== '' ? $label : $url, 'url' => preg_match('#^(https?://|/)#i', $url) ? $url : '');
         }
-        return array('status' => $status, 'paragraphs' => $paras, 'sources' => $sources);
+        $notes = $status === 'draft' ? trim((string) ($op['historyReviewNotes'] ?? '')) : '';
+        return array('status' => $status, 'paragraphs' => $paras, 'sources' => $sources, 'notes' => $notes);
     }
 }
 
@@ -391,6 +392,8 @@ if (!function_exists('kop_operator_history_apply_seed')) {
                 $op['historySources'][] = trim((string) ($s['label'] ?? '')) . ' | ' . trim((string) ($s['url'] ?? ''));
             }
             $op['historyStatus'] = 'draft';
+            // What the drafter could not source or found conflicting; shown to admins beside the draft.
+            $op['historyReviewNotes'] = trim((string) ($c['reviewer_notes'] ?? ''));
             $json['operator'] = $op;
             $wpdb->update($table, array('json_data' => json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)), array('id' => $id));
             $report[$name] = 'filled';

@@ -1507,3 +1507,21 @@ p.kop-op-draft {
     color: var(--kop-midnight-blue, #000435);
 }
 
+.kop-op-review-notes {
+    margin: 0 0 1rem;
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-op-review-notes summary {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.kop-op-review-notes p {
+    margin: 0.4rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}

@@ -123,6 +123,13 @@ $published = $draft; $published['historyStatus'] = 'published';
 $check('a published history is shown to readers', kop_operator_history_written($published, false) !== null);
 $html = kop_operator_history_paragraph_html($draft['history'][0]);
 $check('history text is escaped and its links kept', strpos($html, '&lt;b&gt;') !== false && strpos($html, '<a href="https://example.org/a"') !== false, $html);
+$kop_seed = json_decode((string) file_get_contents(dirname(__DIR__) . '/seeds/operator-histories.json'), true);
+$kop_seed_missing = array();
+foreach ((array) ($kop_seed['companies'] ?? array()) as $c) {
+    if (!isset($index['names'][kop_facility_pages_name_key($c['name'])])) $kop_seed_missing[] = $c['name'];
+}
+$check('every drafted history names a company with a page', $kop_seed && !$kop_seed_missing, implode(' | ', $kop_seed_missing));
+$check('a draft carries its review notes for admins', ($w['notes'] ?? null) === '' && kop_operator_history_written($draft + array('historyReviewNotes' => 'x'), true)['notes'] === 'x');
 $check('a javascript: link stays text', strpos(kop_operator_history_paragraph_html('[x](javascript:alert(1))'), '<a') === false);
 foreach ($index['alias_of'] as $dup => $lead) {
     $check("duplicate record $dup redirects to the canonical page", strpos($route((string) $dup), 'redirect 301 ' . home_url('/operator/' . $index['ids'][$lead]['slug'] . '/')) === 0);
