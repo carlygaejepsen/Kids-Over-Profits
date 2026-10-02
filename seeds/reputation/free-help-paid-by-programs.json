@@ -3,7 +3,7 @@
   "slug": "free-help-paid-by-programs",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 1,
+  "seed_version": 2,
   "content_file": "reputation/free-help-paid-by-programs.html",
   "excerpt": "Help lines, \"parent advocates,\" directories and referral networks that tell parents their help is free, and the programs that pay them.",
   "template": "page-article.php"
