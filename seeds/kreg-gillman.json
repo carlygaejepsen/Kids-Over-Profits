@@ -1,0 +1,22 @@
+{
+  "title": "Kreg Gillman, PhD",
+  "slug": "kreg-gillman",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "kreg-gillman.html",
+  "excerpt": "Editorial research draft about Kreg Gillman, who moved between Aspen, UHS and independent Utah programs. His main interview source ran as a paid advertisement; role dates need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Program executive and clinician across Aspen Education Group, UHS and independent Utah programs",
+    "person_active_years": "1993-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Provo Canyon School", "Aspen Achievement Academy", "Aspen Ranch", "SunHawk Academy", "Silverado", "Salt Lake Behavioral Health (UHS)", "RedCliff Ascent", "WayPoint Academy"],
+    "person_notable_work": ["Ran Aspen Ranch and SunHawk Academy for Aspen, then Provo Canyon School for UHS", "Co-founded Silverado with Provo Canyon co-founder Robert Crist"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 2, 4],
+    "person_notable_work_sources": [1, 2]
+  }
+}

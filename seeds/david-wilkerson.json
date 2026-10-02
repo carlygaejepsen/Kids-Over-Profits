@@ -1,0 +1,22 @@
+{
+  "title": "David Wilkerson",
+  "slug": "david-wilkerson",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "david-wilkerson.html",
+  "excerpt": "Editorial research draft about David Wilkerson and Teen Challenge. Documented harms postdate his 2011 death and are attributed to the organization; center counts and Texas audit details need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Pentecostal preacher; founder of Teen Challenge",
+    "person_active_years": "1958-2011"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Teen Challenge", "World Challenge", "Times Square Church"],
+    "person_notable_work": ["Founded Teen Challenge in 1958, now the largest faith-based residential program network in the world", "Co-wrote The Cross and the Switchblade", "The Texas fight over Teen Challenge produced the modern faith-based licensing exemption"],
+    "person_role_sources": [2, 3],
+    "person_active_years_sources": [1, 2, 3],
+    "person_organizations_sources": [2, 3, 4],
+    "person_notable_work_sources": [2, 3, 4]
+  }
+}

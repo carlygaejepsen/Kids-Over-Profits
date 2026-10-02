@@ -1,0 +1,22 @@
+{
+  "title": "Jack Eckerd",
+  "slug": "jack-eckerd",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "jack-eckerd.html",
+  "excerpt": "Editorial research draft about Jack Eckerd and Eckerd Youth Alternatives. Most documented harms postdate his 1998 stroke or 2004 death and are attributed to the organization.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Drugstore magnate and Republican politician; founder of Eckerd Youth Alternatives",
+    "person_active_years": "1952-2004"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Eckerd drugstore chain", "Eckerd Youth Alternatives (later Eckerd Kids, then Eckerd Connects)", "Florida PRIDE"],
+    "person_notable_work": ["Founded Eckerd Youth Alternatives in 1968", "In 1982, Florida made his organization the state's first private juvenile justice provider"],
+    "person_role_sources": [1, 5],
+    "person_active_years_sources": [1, 5],
+    "person_organizations_sources": [1, 2, 5],
+    "person_notable_work_sources": [2, 3, 4]
+  }
+}

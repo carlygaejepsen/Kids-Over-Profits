@@ -1,0 +1,22 @@
+{
+  "title": "Lon Woodbury",
+  "slug": "lon-woodbury",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "lon-woodbury.html",
+  "excerpt": "Editorial research draft about Lon Woodbury, the CEDU/RMA admissions director who founded the Woodbury Reports newsletter. The newsletter's paid placements and abuse-coverage balance need archive verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Educational consultant; publisher of Woodbury Reports and strugglingteens.com; former CEDU/RMA admissions director",
+    "person_active_years": "1984-2017 (publishing)"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Rocky Mountain Academy (CEDU)", "Places for Struggling Teens", "Woodbury Reports", "strugglingteens.com"],
+    "person_notable_work": ["Published the industry's main newsletter and directory for nearly three decades", "One of the industry's first independent educational consultants, from 1989"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 3],
+    "person_notable_work_sources": [1, 2, 5]
+  }
+}

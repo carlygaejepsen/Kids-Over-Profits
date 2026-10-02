@@ -1,0 +1,22 @@
+{
+  "title": "Ken Huey, PhD",
+  "slug": "ken-huey",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "ken-huey.html",
+  "excerpt": "Editorial research draft about Ken Huey, Calo and the adoptee program niche. The 2026 AP findings postdate his 2015 sale and must be attributed to Calo, not to him.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Calo (Change Academy Lake of the Ozarks); CEO of the HOPE Group",
+    "person_active_years": "1994-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["West Ridge Academy", "Provo Canyon School", "Calo", "HOPE Group (Havenwood Academy, Zion Hills Academy, Eagle's Rest Ranch)", "Kokua Recovery", "Red Mountain Colorado", "Attachment & Trauma Network (board)"],
+    "person_notable_work": ["Built the adoptee niche in the modern TTI through Calo's trauma and attachment marketing", "Calo later became the platform for Embark Behavioral Health"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 4],
+    "person_notable_work_sources": [1, 5, 6]
+  }
+}

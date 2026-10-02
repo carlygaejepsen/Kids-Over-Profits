@@ -1,0 +1,22 @@
+{
+  "title": "The Argiros Family",
+  "slug": "argiros-family",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "argiros-family.html",
+  "excerpt": "Editorial research draft about the Argiros family and the Family Foundation School / Allynwood Academy. The lawsuits describe allegations; the family has admitted no wrongdoing. Founding year and business links need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founders and operators of the Family Foundation School (later Allynwood Academy), Hancock, NY",
+    "person_active_years": "1984-2014"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Family Foundation School", "Allynwood Academy", "Hancock Partners", "East Ridge Recovery Center"],
+    "person_notable_work": ["Founded the Family Foundation School in 1984, built on AA's 12 steps", "At least ten Child Victims Act suits allege abuse at the school"],
+    "person_role_sources": [1, 3],
+    "person_active_years_sources": [1, 3],
+    "person_organizations_sources": [1, 3],
+    "person_notable_work_sources": [1, 3, 4]
+  }
+}

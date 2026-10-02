@@ -1,0 +1,22 @@
+{
+  "title": "Charles E. \"Chuck\" Dederich",
+  "slug": "chuck-dederich",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "chuck-dederich.html",
+  "excerpt": "Editorial research draft about Chuck Dederich and Synanon. Lineage claims to descendant programs need primary sources before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and leader of Synanon",
+    "person_active_years": "1958-1980"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Synanon Foundation", "Alcoholics Anonymous (member)"],
+    "person_notable_work": ["Created the Game, the confrontation method copied across the TTI", "Pleaded no contest in 1980 to conspiracy in the rattlesnake attack on lawyer Paul Morantz"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

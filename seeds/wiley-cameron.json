@@ -1,0 +1,22 @@
+{
+  "title": "Wiley Cameron",
+  "slug": "wiley-cameron",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "wiley-cameron.html",
+  "excerpt": "Editorial research draft about Wiley Cameron, Lester Roloff's successor at the Roloff Homes and a drafter of Texas's 1997 faith-based licensing exemption. The post-2001 New Beginnings claims are unconfirmed.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Successor to Lester Roloff as head of the Roloff Homes",
+    "person_active_years": "1982-2001"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Roloff Homes", "Rebekah Home for Girls", "TACCCA (Texas faith-based accrediting body)"],
+    "person_notable_work": ["Kept the Roloff Homes running across state lines when Texas shut them down", "Helped draft and lobby for Texas HB 2482 (1997), the faith-based accreditation law"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 3],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

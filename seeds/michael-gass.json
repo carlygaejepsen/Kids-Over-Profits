@@ -1,0 +1,21 @@
+{
+  "title": "Michael Gass, PhD, LMFT",
+  "slug": "michael-gass",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "michael-gass.html",
+  "excerpt": "Editorial research draft about Michael Gass, the Outdoor Behavioral Healthcare Center and industry-funded research. He is an academic validator, not an operator; funding details and trial outcomes need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "University of New Hampshire professor; director of the Outdoor Behavioral Healthcare Center and NATSAP's Practice Research Network database",
+    "person_active_years": "Ongoing"
+  },
+  "meta_arrays": {
+    "person_organizations": ["University of New Hampshire", "Outdoor Behavioral Healthcare Center", "NATSAP Practice Research Network", "Outdoor Behavioral Healthcare Council"],
+    "person_notable_work": ["Co-wrote Adventure Therapy: Theory, Research, and Practice, the field's best-selling textbook", "Directs the research the wilderness industry cites on safety, outcomes and cost"],
+    "person_role_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 6],
+    "person_notable_work_sources": [2, 4, 5]
+  }
+}

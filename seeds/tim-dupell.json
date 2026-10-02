@@ -1,0 +1,22 @@
+{
+  "title": "Tim Dupell",
+  "slug": "tim-dupell",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "tim-dupell.html",
+  "excerpt": "Editorial research draft about Tim Dupell, Aspen Education Group and Family Help & Wellness. A Wikipedia claim about criminal convictions must not be published without court records.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Family Help & Wellness; former CFO of Aspen Education Group",
+    "person_active_years": "1999-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Aspen Education Group", "Family Help & Wellness", "Opal Creek Capital LLC", "WTC Holdco LLC"],
+    "person_notable_work": ["Founded Family Help & Wellness in 2008, which grew by taking over programs other companies closed or sold", "Money-side architect of the post-Aspen wilderness industry"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [2, 3],
+    "person_organizations_sources": [2, 3, 4, 5],
+    "person_notable_work_sources": [2, 4]
+  }
+}

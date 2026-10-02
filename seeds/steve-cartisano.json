@@ -1,0 +1,22 @@
+{
+  "title": "Steve Cartisano",
+  "slug": "steve-cartisano",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "steve-cartisano.html",
+  "excerpt": "Editorial research draft about Steve Cartisano and the Challenger Foundation. He was acquitted in 1992; offshore program details and the WWASPS map filing need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of the Challenger Foundation; later ran offshore teen programs",
+    "person_active_years": "1988-2019"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Challenger Foundation", "Challenger Utah", "Challenger Hawaii", "New Hope Academy (Samoa)", "Pacific Coast Academy (Samoa)", "Chilanko Lodge (British Columbia)"],
+    "person_notable_work": ["Founded the forced-march Challenger Foundation, where Kristen Chase died in 1990", "Acquitted of negligent homicide in 1992, then kept opening programs offshore", "Subject of Netflix's Hell Camp (2023)"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2, 6],
+    "person_organizations_sources": [1, 4, 5, 7],
+    "person_notable_work_sources": [1, 2, 4]
+  }
+}

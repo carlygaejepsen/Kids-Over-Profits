@@ -1,0 +1,22 @@
+{
+  "title": "Brad M. Reedy, PhD",
+  "slug": "brad-reedy",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "brad-reedy.html",
+  "excerpt": "Editorial research draft about Brad Reedy, Second Nature, Evoke and the wilderness industry's public face. No source found ties a specific incident to him personally; keep harms attributed to programs.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Wilderness therapy clinician; co-owner of Second Nature and co-founder of Evoke Therapy Programs; author and podcast host",
+    "person_active_years": "1990s-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Aspen Achievement Academy", "Aspen Ranch", "Second Nature Wilderness", "Evoke Therapy Programs", "Finding You Therapy Program", "NATSAP (board)", "Utah Board of Child and Family Services"],
+    "person_notable_work": ["Wrote The Journey of the Heroic Parent, the foundation of Evoke's model", "One of the industry's most visible public voices through books, a podcast and Psychology Today"],
+    "person_role_sources": [1, 2, 4],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 3, 4],
+    "person_notable_work_sources": [3, 4, 5]
+  }
+}

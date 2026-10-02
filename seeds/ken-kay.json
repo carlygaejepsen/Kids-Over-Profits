@@ -1,0 +1,22 @@
+{
+  "title": "Ken Kay",
+  "slug": "ken-kay",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "ken-kay.html",
+  "excerpt": "Editorial research draft about Ken Kay, WWASPS president and public defender of the network. His exact leadership years and quotes need primary sources before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "President and public voice of WWASPS; earlier director of Brightway Adolescent Hospital",
+    "person_active_years": "Through 1998 to the late 2000s"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Brightway Adolescent Hospital", "WWASPS", "Cross Creek Programs", "Browning Distance Learning Academy"],
+    "person_notable_work": ["Publicly defended WWASPS against abuse lawsuits through its collapse", "Later superintendent of Robert Lichfield's Browning Distance Learning Academy"],
+    "person_role_sources": [1, 3],
+    "person_active_years_sources": [1, 3],
+    "person_organizations_sources": [1, 3, 7],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

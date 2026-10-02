@@ -1,0 +1,22 @@
+{
+  "title": "Shayne and Sheri Gallagher",
+  "slug": "shayne-and-sheri-gallagher",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "shayne-and-sheri-gallagher.html",
+  "excerpt": "Editorial research draft about Shayne and Sheri Gallagher and WinGate Wilderness Therapy. Their pre-WinGate careers and the FHW relationship need verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Married couple who co-founded WinGate Wilderness Therapy",
+    "person_active_years": "~1990-2023"
+  },
+  "meta_arrays": {
+    "person_organizations": ["WinGate Wilderness Therapy", "Outback Therapeutic Expeditions (Sheri)", "Family Help & Wellness (backing)"],
+    "person_notable_work": ["Co-founded WinGate Wilderness Therapy around 2008 and ran it until its September 2023 closure"],
+    "person_role_sources": [1, 2, 3],
+    "person_active_years_sources": [2, 3],
+    "person_organizations_sources": [1, 2, 3],
+    "person_notable_work_sources": [1, 3]
+  }
+}

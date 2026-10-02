@@ -1,0 +1,22 @@
+{
+  "title": "Don Vardell",
+  "slug": "don-vardell",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "don-vardell.html",
+  "excerpt": "Editorial research draft about Don Vardell, a career program executive moved from program to program, mostly by Aspen Education Group. No incident has been tied to his tenures; dates need verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Career program executive, mostly for Aspen Education Group",
+    "person_active_years": "Before 2004-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Peninsula Village", "Academy at Swift River", "Excel Academy", "Island View RTC", "Shortridge Academy", "Mountain Valley Treatment Center", "Aspen Institute for Behavioral Assessment"],
+    "person_notable_work": ["Ran at least six programs in five states, most of them for Aspen Education Group"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2, 3],
+    "person_organizations_sources": [1, 2, 3, 4],
+    "person_notable_work_sources": [1, 2, 4]
+  }
+}

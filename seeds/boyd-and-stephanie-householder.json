@@ -1,0 +1,22 @@
+{
+  "title": "Boyd and Stephanie Householder",
+  "slug": "boyd-and-stephanie-householder",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "boyd-and-stephanie-householder.html",
+  "excerpt": "Editorial research draft about Boyd and Stephanie Householder and Circle of Hope Girls' Ranch. Criminal charges and the 2025 guilty plea are documented; remaining details need primary sources.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Married couple who co-founded Circle of Hope Girls' Ranch in Missouri",
+    "person_active_years": "2006-2020 (program operation)"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Agape Boarding School (Boyd, prior employer)", "Circle of Hope Girls' Ranch"],
+    "person_notable_work": ["Ran Circle of Hope unlicensed under Missouri's religious exemption from 2006 until the 2020 removals", "Charged with nearly 100 counts between them in 2021; Stephanie pleaded guilty in 2025"],
+    "person_role_sources": [1, 4],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [2, 3, 4]
+  }
+}

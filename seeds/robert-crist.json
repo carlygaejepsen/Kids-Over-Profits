@@ -1,0 +1,22 @@
+{
+  "title": "Robert H. Crist, MD",
+  "slug": "robert-crist",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "robert-crist.html",
+  "excerpt": "Editorial research draft about psychiatrist Robert Crist, Provo Canyon School and its offshoots. The 1979 injunction's case name and terms need the actual court record before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Psychiatrist; co-founder and medical director of Provo Canyon School",
+    "person_active_years": "1971-2000s"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Provo Canyon School", "Discovery Academy", "Logan River Academy", "Silverado"],
+    "person_notable_work": ["Co-founded Provo Canyon School in 1971 and served as its medical director", "A federal court permanently enjoined him and the school in 1979", "Co-founded or served as medical director at Discovery Academy, Logan River Academy and Silverado"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2, 3, 4],
+    "person_organizations_sources": [1, 2, 3, 4],
+    "person_notable_work_sources": [1, 2, 3, 4]
+  }
+}

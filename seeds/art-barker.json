@@ -1,0 +1,22 @@
+{
+  "title": "Arthur Robert \"Art\" Barker",
+  "slug": "art-barker",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "art-barker.html",
+  "excerpt": "Editorial research draft about Art Barker and The Seed. Some colorful biographical details come from an unpublished dissertation draft shared privately; cite its underlying newspaper sources or get permission before publishing.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of The Seed, the federally funded teen program modeled on Synanon",
+    "person_active_years": "1970-2001"
+  },
+  "meta_arrays": {
+    "person_organizations": ["The Seed Inc."],
+    "person_notable_work": ["Built The Seed on Synanon's attack-therapy model", "The Seed became the direct predecessor of Straight Inc."],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 3],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

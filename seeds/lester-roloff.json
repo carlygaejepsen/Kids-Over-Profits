@@ -3,7 +3,7 @@
   "slug": "lester-roloff",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 3,
+  "seed_version": 4,
   "content_file": "lester-roloff.html",
   "excerpt": "Editorial research draft about Lester Roloff and his faith-based residential homes. Accounts of discipline, state intervention and program history are attributed to the sources reviewed and require primary-record citations.",
   "template": "single-person-profile.php",
@@ -14,9 +14,9 @@
   "meta_arrays": {
     "person_organizations": ["Roloff Evangelistic Enterprises", "The Family Altar", "Lighthouse for Boys", "Anchor Home for Boys", "Rebekah Home for Girls", "City of Refuge", "Jubilee Ladies Home"],
     "person_notable_work": ["Founded and operated faith-based homes for youth", "Radio preaching and fundraising through The Family Altar"],
-    "person_role_sources": [1, 2],
-    "person_active_years_sources": [1, 2],
-    "person_organizations_sources": [1, 2, 3],
-    "person_notable_work_sources": [1, 2]
+    "person_role_sources": [1, 2, 9],
+    "person_active_years_sources": [1, 2, 9, 10],
+    "person_organizations_sources": [1, 2, 3, 9],
+    "person_notable_work_sources": [1, 2, 9]
   }
 }

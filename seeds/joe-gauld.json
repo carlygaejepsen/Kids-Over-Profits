@@ -1,0 +1,22 @@
+{
+  "title": "Joseph W. \"Joe\" Gauld",
+  "slug": "joe-gauld",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "joe-gauld.html",
+  "excerpt": "Editorial research draft about Joe Gauld and Hyde School. His methods are documented largely in his own words; the 2025 lawsuit allegations and the case number need PACER verification before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Hyde School; headmaster and later president",
+    "person_active_years": "1966-2023"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Hyde School", "Hyde-branded public and charter schools"],
+    "person_notable_work": ["Founded Hyde School in 1966", "Published Character First: The Hyde School Difference in 1993", "Pushed the Hyde model into public education"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}
