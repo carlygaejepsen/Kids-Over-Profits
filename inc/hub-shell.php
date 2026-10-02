@@ -98,6 +98,7 @@ function kop_hub_config($slug) {
             'actions'    => array(
                 array('label' => 'Start with 1919 to 1969', 'slug' => 'tti-history-part-one'),
                 array('label' => 'In loving memory', 'slug' => 'in-loving-memory'),
+                array('label' => 'The companies behind the programs', 'url' => home_url('/operator/')),
                 array('label' => 'Network map', 'slug' => 'network-map'),
             ),
         ),
@@ -155,6 +156,7 @@ function kop_hub_config($slug) {
             'standfirst' => 'Troubled teen programs state by state and country by country, with the inspection reports each state publishes.',
             'actions'    => array(
                 array('label' => 'Facility directory', 'template' => 'page-tti-program-index.php', 'path' => '/tti-program-index/'),
+                array('label' => 'Parent companies', 'url' => home_url('/operator/')),
                 array('label' => 'Network map', 'slug' => 'network-map'),
                 array('label' => 'Severe inspection reports', 'template' => 'page-severe-reports.php', 'path' => '/severe-reports/'),
             ),

@@ -70,6 +70,10 @@ php scripts/test-facility-pages.php
 php scripts/test-news-images.php [--live=20]      # parser fixture; --live fetches real articles (needs -d extension=curl)
 php api/fetch-news-images.php apply --limit=400 --minutes=25   # on the server (ea-php82): fill the backlog now
 php scripts/test-operator-pages.php               # renders every /operator/<slug>/ page to tmp/operator-pages/
+# Operator hubs (inc/operator-history.php): /operator/ lists every company (major = 5+ programs, a published history or
+# a large map node); each page has a written history (operator.history, draft = admins only, published with the pencil;
+# drafts come from seeds/operator-histories.json, which fills only empty records), a year-by-year timeline from the map's
+# "operated" years + programs' years + lawsuits + deaths, the map's people, and the documents filed under its programs
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)

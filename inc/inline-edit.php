@@ -1055,6 +1055,16 @@ function kop_ie_operator_fields() {
             array('notes', 'Research notes', 'items'),
             array('websites', 'Websites (one address a line)', 'lines'),
         )),
+        // Shown on the /operator/ page (inc/operator-history.php); a draft is seen by admins only.
+        array('History', array(
+            array('history', 'Written history, one paragraph a box', 'items', array('help' => 'Link a source inside the text as [words](https://...).')),
+            array('historySources', 'Sources, one a line: title | address', 'lines'),
+            array('historyStatus', 'History is', 'select', array('options' => array(
+                array('value' => '', 'label' => 'Not written'),
+                array('value' => 'draft', 'label' => 'Draft (admins only)'),
+                array('value' => 'published', 'label' => 'Published'),
+            ))),
+        )),
     );
 }
 
@@ -1103,6 +1113,17 @@ function kop_ie_operator_load(array $p) {
             'title'  => $row['name'] . ': whole record',
             'help'   => 'Every field this company holds, as stored. Keep the structure; change the values.',
             'fields' => array(kop_ie_field('json', 'Record', 'code', wp_json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), array('rows' => 30))),
+        );
+    }
+    if (($p[1] ?? 'all') === 'history') {
+        $fields = array_values(array_filter(kop_ie_operator_form($json['operator']), static function ($f) {
+            return $f['section'] === 'History';
+        }));
+        return array(
+            'title'  => $row['name'] . ': history',
+            'help'   => 'A draft is seen by admins only. Check every sentence against its sources before setting it to Published.',
+            'fields' => $fields,
+            'alt'    => array('ref' => 'operator:' . (int) $row['id'] . ':all', 'label' => 'Every field'),
         );
     }
     return array(

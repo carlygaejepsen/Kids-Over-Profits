@@ -52,6 +52,7 @@ require_once get_stylesheet_directory() . '/inc/survivor-archives.php';
 require_once get_stylesheet_directory() . '/inc/news-images.php';
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
 require_once get_stylesheet_directory() . '/inc/operator-pages.php';
+require_once get_stylesheet_directory() . '/inc/operator-history.php';
 
 // Inspection highlights: the reviewed severe findings the home page and the
 // inspection reports hub show, most recent first

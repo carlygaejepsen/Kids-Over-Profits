@@ -28,6 +28,7 @@ if (!is_dir($out_dir)) mkdir($out_dir, 0777, true);
 
 require __DIR__ . '/kop-test-harness.php';
 require_once dirname(__DIR__) . '/inc/operator-pages.php';
+require_once dirname(__DIR__) . '/inc/operator-history.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -99,6 +100,30 @@ $first = array_key_first($index['ids']);
 $check('a slug renders', $route($index['ids'][$first]['slug']) === 'page 200');
 $check('an id redirects to its slug', strpos($route((string) $first), 'redirect 301') === 0);
 $check('an unknown slug is a 404', $route('no-such-company') === '404');
+$GLOBALS['kop_test_query_vars'] = array('kop_operator' => KOP_OPERATOR_INDEX_VAR);
+$GLOBALS['kop_operator_index'] = null;
+kop_operator_pages_route();
+$check('/operator/ is the index of every company', kop_operator_pages_is_index() && count($GLOBALS['kop_operator_index']['rows']) === count($index['ids']));
+$kop_majors = array_values(array_filter($GLOBALS['kop_operator_index']['rows'], function ($r) { return $r['major']; }));
+printf("  index: %d companies, %d major
+", count($GLOBALS['kop_operator_index']['rows']), count($kop_majors));
+ob_start();
+include dirname(__DIR__) . '/templates/operator-index.php';
+$kop_index_html = ob_get_clean();
+file_put_contents($out_dir . '/_index.html', $kop_index_html);
+$check('the index prints a card per major company', substr_count($kop_index_html, 'class="kop-oi-card"') === count($kop_majors));
+$GLOBALS['kop_operator_index'] = null;
+
+// Written history: drafts for admins only, links made safe.
+$draft = array('history' => array('Founded in [1990](https://example.org/a) by <b>X</b>.'), 'historyStatus' => 'draft', 'historySources' => array('A source | https://example.org/s'));
+$check('a draft is hidden from readers', kop_operator_history_written($draft, false) === null);
+$w = kop_operator_history_written($draft, true);
+$check('a draft is shown to admins', $w && $w['status'] === 'draft' && $w['sources'][0]['url'] === 'https://example.org/s');
+$published = $draft; $published['historyStatus'] = 'published';
+$check('a published history is shown to readers', kop_operator_history_written($published, false) !== null);
+$html = kop_operator_history_paragraph_html($draft['history'][0]);
+$check('history text is escaped and its links kept', strpos($html, '&lt;b&gt;') !== false && strpos($html, '<a href="https://example.org/a"') !== false, $html);
+$check('a javascript: link stays text', strpos(kop_operator_history_paragraph_html('[x](javascript:alert(1))'), '<a') === false);
 foreach ($index['alias_of'] as $dup => $lead) {
     $check("duplicate record $dup redirects to the canonical page", strpos($route((string) $dup), 'redirect 301 ' . home_url('/operator/' . $index['ids'][$lead]['slug'] . '/')) === 0);
 }
@@ -109,7 +134,7 @@ foreach ($index['alias_of'] as $dup => $lead) {
 
 echo "\n-- Pages --\n";
 $template = dirname(__DIR__) . '/templates/operator-page.php';
-$with = array('facilities' => 0, 'news' => 0, 'lawsuits' => 0, 'memorials' => 0, 'network' => 0, 'parents' => 0, 'subsidiaries' => 0);
+$with = array('timeline' => 0, 'people' => 0, 'program_docs' => 0, 'facilities' => 0, 'news' => 0, 'lawsuits' => 0, 'memorials' => 0, 'network' => 0, 'parents' => 0, 'subsidiaries' => 0);
 $facility_links = 0;
 $facility_pages = 0;
 foreach ($index['ids'] as $id => $e) {
@@ -120,6 +145,9 @@ foreach ($index['ids'] as $id => $e) {
         if (!empty($data[$k])) $with[$k]++;
     }
     if ($data['network_url'] !== '') $with['network']++;
+    if (!empty($data['timeline'])) $with['timeline']++;
+    if (!empty($data['people']['leaders'])) $with['people']++;
+    if (!empty($data['program_docs']['programs'])) $with['program_docs']++;
     foreach ($data['facilities'] as $f) {
         $facility_links++;
         if ($f['has_page']) $facility_pages++;
@@ -136,6 +164,8 @@ foreach ($index['ids'] as $id => $e) {
 }
 printf("  pages with programs: %d, news: %d, lawsuits: %d, deaths on record: %d, parents: %d, subsidiaries: %d, on the network map: %d\n",
     $with['facilities'], $with['news'], $with['lawsuits'], $with['memorials'], $with['parents'], $with['subsidiaries'], $with['network']);
+printf("  pages with a timeline: %d, people: %d, program documents: %d
+", $with['timeline'], $with['people'], $with['program_docs']);
 printf("  program links: %d, of which to a facility page: %d\n", $facility_links, $facility_pages);
 echo "  rendered to $out_dir\n";
 

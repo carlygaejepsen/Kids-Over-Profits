@@ -29,8 +29,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// The query var value for /operator/ itself, the index of every company.
+if (!defined('KOP_OPERATOR_INDEX_VAR')) {
+    define('KOP_OPERATOR_INDEX_VAR', '_index');
+}
+
 if (!defined('KOP_OPERATOR_PAGES_REWRITE_VERSION')) {
-    define('KOP_OPERATOR_PAGES_REWRITE_VERSION', '1');
+    define('KOP_OPERATOR_PAGES_REWRITE_VERSION', '2');
 }
 
 // ---------------------------------------------------------------------------
@@ -46,6 +51,7 @@ if (!function_exists('kop_operator_pages_base')) {
 if (!function_exists('kop_operator_pages_register_rewrite')) {
     function kop_operator_pages_register_rewrite() {
         $base = kop_operator_pages_base();
+        add_rewrite_rule('^' . preg_quote($base, '#') . '/?$', 'index.php?kop_operator=' . KOP_OPERATOR_INDEX_VAR, 'top');
         add_rewrite_rule('^' . preg_quote($base, '#') . '/([^/]+)/?$', 'index.php?kop_operator=$matches[1]', 'top');
         if (get_option('kop_operator_pages_rewrite') !== KOP_OPERATOR_PAGES_REWRITE_VERSION) {
             flush_rewrite_rules(false);
@@ -75,6 +81,13 @@ if (!function_exists('kop_operator_pages_is_page')) {
     /** True while an operator page is being rendered. */
     function kop_operator_pages_is_page() {
         return !empty($GLOBALS['kop_operator_page']) && is_array($GLOBALS['kop_operator_page']);
+    }
+}
+
+if (!function_exists('kop_operator_pages_is_index')) {
+    /** True while /operator/ (every company) is being rendered. */
+    function kop_operator_pages_is_index() {
+        return !empty($GLOBALS['kop_operator_index']) && is_array($GLOBALS['kop_operator_index']);
     }
 }
 
@@ -114,6 +127,18 @@ if (!function_exists('kop_operator_pages_route')) {
         $slug = kop_operator_pages_requested_slug();
         if ($slug === '') return;
 
+        if ($slug === KOP_OPERATOR_INDEX_VAR && function_exists('kop_operator_history_index_rows')) {
+            $GLOBALS['kop_operator_index'] = array(
+                'rows'  => kop_operator_history_index_rows(),
+                'url'   => kop_operator_history_index_url(),
+                'title' => 'Parent companies',
+                'seo_title' => 'Parent companies behind troubled teen programs | Kids Over Profits',
+                'summary'   => 'The companies that own and run troubled teen industry programs: what each has run, where, its history, and the documents on file.',
+            );
+            status_header(200);
+            return;
+        }
+
         $index = kop_operator_pages_index();
         $key = strtolower($slug);
         $id = 0;
@@ -150,6 +175,10 @@ if (!function_exists('kop_operator_pages_route')) {
 
 if (!function_exists('kop_operator_pages_template_include')) {
     function kop_operator_pages_template_include($template) {
+        if (kop_operator_pages_is_index()) {
+            $own = get_stylesheet_directory() . '/templates/operator-index.php';
+            return file_exists($own) ? $own : $template;
+        }
         if (!kop_operator_pages_is_page()) return $template;
         $own = get_stylesheet_directory() . '/templates/operator-page.php';
         return file_exists($own) ? $own : $template;
@@ -159,7 +188,7 @@ if (!function_exists('kop_operator_pages_template_include')) {
 
 if (!function_exists('kop_operator_pages_body_class')) {
     function kop_operator_pages_body_class($classes) {
-        if (kop_operator_pages_is_page()) $classes[] = 'kop-operator-page';
+        if (kop_operator_pages_is_page() || kop_operator_pages_is_index()) $classes[] = 'kop-operator-page';
         return $classes;
     }
     add_filter('body_class', 'kop_operator_pages_body_class');
@@ -168,7 +197,7 @@ if (!function_exists('kop_operator_pages_body_class')) {
 if (!function_exists('kop_operator_pages_enqueue')) {
     /** The facility profile stylesheet: the operator page uses its classes. */
     function kop_operator_pages_enqueue() {
-        if (!kop_operator_pages_is_page()) return;
+        if (!kop_operator_pages_is_page() && !kop_operator_pages_is_index()) return;
         $theme_dir = get_stylesheet_directory();
         $theme_uri = get_stylesheet_directory_uri();
         if (function_exists('kop_enqueue_shared_facility_ui')) {
@@ -192,6 +221,7 @@ if (!function_exists('kop_operator_pages_enqueue')) {
 
 if (!function_exists('kop_operator_pages_document_title')) {
     function kop_operator_pages_document_title($title) {
+        if (kop_operator_pages_is_index()) return $GLOBALS['kop_operator_index']['seo_title'];
         return kop_operator_pages_is_page() ? $GLOBALS['kop_operator_page']['seo_title'] : $title;
     }
     add_filter('pre_get_document_title', 'kop_operator_pages_document_title', 20);
@@ -201,6 +231,7 @@ if (!function_exists('kop_operator_pages_document_title')) {
 
 if (!function_exists('kop_operator_pages_meta_description')) {
     function kop_operator_pages_meta_description($desc) {
+        if (kop_operator_pages_is_index()) return $GLOBALS['kop_operator_index']['summary'];
         return kop_operator_pages_is_page() ? $GLOBALS['kop_operator_page']['summary'] : $desc;
     }
     add_filter('wpseo_metadesc', 'kop_operator_pages_meta_description', 20);
@@ -209,6 +240,7 @@ if (!function_exists('kop_operator_pages_meta_description')) {
 
 if (!function_exists('kop_operator_pages_canonical')) {
     function kop_operator_pages_canonical($url) {
+        if (kop_operator_pages_is_index()) return $GLOBALS['kop_operator_index']['url'];
         return kop_operator_pages_is_page() ? $GLOBALS['kop_operator_page']['url'] : $url;
     }
     add_filter('wpseo_canonical', 'kop_operator_pages_canonical', 20);
@@ -217,7 +249,7 @@ if (!function_exists('kop_operator_pages_canonical')) {
 
 if (!function_exists('kop_operator_pages_robots')) {
     function kop_operator_pages_robots($robots) {
-        return kop_operator_pages_is_page() ? 'index, follow, max-image-preview:large' : $robots;
+        return kop_operator_pages_is_page() || kop_operator_pages_is_index() ? 'index, follow, max-image-preview:large' : $robots;
     }
     add_filter('wpseo_robots', 'kop_operator_pages_robots', 20);
 }
@@ -584,6 +616,8 @@ if (!function_exists('kop_operator_page_data')) {
                     'years'  => $years,
                     'url'    => $url !== '' ? $url : kop_facility_pages_location_search_url((string) $r['name']),
                     'has_page' => $url !== '',
+                    'start_year' => (int) $r['start_year'],
+                    'end_year'   => (int) $r['end_year'],
                 );
             }
         }
@@ -719,6 +753,28 @@ if (!function_exists('kop_operator_page_data')) {
         $research = kop_operator_pages_research($members);
         $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('o', $members) : null;
         $survivor_sites = function_exists('kop_survivor_archives') ? kop_survivor_archives('o', $members) : array();
+        $program_docs = function_exists('kop_operator_history_program_documents')
+            ? kop_operator_history_program_documents($facilities, $documents['folder_id'])
+            : array('programs' => array(), 'total' => 0);
+
+        // ---- History (inc/operator-history.php) ------------------------------
+        $lawsuits_url = kop_facility_pages_page_url_by_template('page-lawsuits.php', '/lawsuits/');
+        $map_node = function_exists('kop_operator_history_map_node')
+            ? kop_operator_history_map_node(array_merge(array($entry['name'], $name, $abbr), $aka))
+            : null;
+        $map_links = $map_node ? kop_operator_history_map_links((string) $map_node['id']) : array();
+        $timeline = function_exists('kop_operator_history_timeline') ? kop_operator_history_timeline(array(
+            'founded'      => $op['founded'] ?? '',
+            'facilities'   => $facilities,
+            'links'        => $map_links,
+            'lawsuits'     => $lawsuits,
+            'memorials'    => $memorials,
+            'lawsuits_url' => $lawsuits_url,
+        )) : array();
+        $people = function_exists('kop_operator_history_people')
+            ? kop_operator_history_people($map_links, $my_keys)
+            : array('leaders' => array(), 'others' => array());
+        $history = function_exists('kop_operator_history_written') ? kop_operator_history_written($op) : null;
 
         // ---- Summary ---------------------------------------------------------
         $n = count($facilities);
@@ -762,11 +818,16 @@ if (!function_exists('kop_operator_page_data')) {
             'research'      => $research,
             'unsilenced'    => $unsilenced,
             'survivor_sites' => $survivor_sites,
+            'program_docs'  => $program_docs,
+            'history'       => $history,
+            'timeline'      => $timeline,
+            'people'        => $people,
+            'index_url'     => function_exists('kop_operator_history_index_url') ? kop_operator_history_index_url() : '',
             'network_url'   => kop_operator_pages_network_url(array_merge(array($entry['name'], $name, $abbr), $aka)),
             'summary'       => $summary,
             'seo_title'     => $name . ' | Parent company profile | Kids Over Profits',
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',
-            'lawsuits_url'  => kop_facility_pages_page_url_by_template('page-lawsuits.php', '/lawsuits/'),
+            'lawsuits_url'  => $lawsuits_url,
             'submit_url'    => home_url('/tti-data-submission/'),
         );
     }

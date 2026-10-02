@@ -22,7 +22,13 @@ if (!$page) {
 }
 
 $kop_op_sections = array();
+$kop_op_history_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) $page['id'] . ':history', 'its history') : '';
+$kop_op_has_history = !empty($page['history']) || !empty($page['timeline']) || $kop_op_history_edit !== '';
+$kop_op_people = $page['people'] ?? array('leaders' => array(), 'others' => array());
+$kop_op_has_people = !empty($kop_op_people['leaders']) || !empty($kop_op_people['others']);
+if ($kop_op_has_history) $kop_op_sections['history'] = 'History';
 if ($page['facilities']) $kop_op_sections['programs'] = 'Programs';
+if ($kop_op_has_people) $kop_op_sections['people'] = 'People';
 if ($page['parents'] || $page['subsidiaries']) $kop_op_sections['ownership'] = 'Ownership';
 if ($page['news']) $kop_op_sections['news'] = 'News coverage';
 if ($page['lawsuits']) $kop_op_sections['lawsuits'] = 'Lawsuits';
@@ -30,7 +36,8 @@ if ($page['memorials']) $kop_op_sections['memorials'] = 'Deaths on record';
 $kop_op_has_research = !empty($page['research']);
 $kop_op_has_unsilenced = !empty($page['unsilenced']['groups']);
 $kop_op_has_survivor_sites = !empty($page['survivor_sites']);
-$kop_op_has_docs = !empty($page['documents']['html']) || $kop_op_has_research || $kop_op_has_unsilenced || $kop_op_has_survivor_sites;
+$kop_op_has_program_docs = !empty($page['program_docs']['programs']);
+$kop_op_has_docs = !empty($page['documents']['html']) || $kop_op_has_program_docs || $kop_op_has_research || $kop_op_has_unsilenced || $kop_op_has_survivor_sites;
 if ($kop_op_has_docs) $kop_op_sections['documents'] = 'Documents';
 if ($page['notes']) $kop_op_sections['notes'] = 'Research notes';
 if ($page['websites']) $kop_op_sections['links'] = 'Websites';
@@ -104,12 +111,15 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <?php endif; ?>
             </dl>
 
-            <?php if ($page['network_url'] !== '') : ?>
-                <h2>Also see</h2>
-                <ul class="kop-fp-list">
+            <h2>Also see</h2>
+            <ul class="kop-fp-list">
+                <?php if ($page['network_url'] !== '') : ?>
                     <li><a href="<?php echo esc_url($page['network_url']); ?>">On the network map</a><span class="meta">Its programs, people and owners</span></li>
-                </ul>
-            <?php endif; ?>
+                <?php endif; ?>
+                <?php if (!empty($page['index_url'])) : ?>
+                    <li><a href="<?php echo esc_url($page['index_url']); ?>">Every parent company</a><span class="meta">The companies behind the programs</span></li>
+                <?php endif; ?>
+            </ul>
 
             <h2>Know something we do not?</h2>
             <p class="kop-fp-rail-text">Corrections, documents and first-hand accounts go into the review queue and are checked before they are published.</p>
@@ -131,6 +141,70 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
             </nav>
             <?php endif; ?>
 
+            <?php if ($kop_op_has_history) : ?>
+            <section class="kop-fp-section kop-op-history" id="history">
+                <h2>History</h2>
+                <?php if (!empty($page['history'])) : ?>
+                    <div class="kop-op-history-text"<?php echo $kop_op_history_edit; ?>>
+                        <?php if ($page['history']['status'] === 'draft') : ?>
+                            <p class="kop-op-draft"><strong>Draft.</strong> Only admins see this history. Check it against its sources, then use the pencil to correct it and set it to Published.</p>
+                        <?php endif; ?>
+                        <?php foreach ($page['history']['paragraphs'] as $kop_op_para) : ?>
+                            <p><?php echo kop_operator_history_paragraph_html($kop_op_para); // Escaped inside. ?></p>
+                        <?php endforeach; ?>
+                        <?php if ($page['history']['sources']) : ?>
+                            <h3 class="kop-fp-subhead">Sources</h3>
+                            <ol class="kop-op-sources">
+                                <?php foreach ($page['history']['sources'] as $kop_op_src) : ?>
+                                    <li><?php if ($kop_op_src['url'] !== '') : ?><a href="<?php echo esc_url($kop_op_src['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_op_src['label']); ?></a><?php else : ?><?php echo esc_html($kop_op_src['label']); ?><?php endif; ?></li>
+                                <?php endforeach; ?>
+                            </ol>
+                        <?php endif; ?>
+                    </div>
+                <?php elseif ($kop_op_history_edit !== '') : ?>
+                    <p class="kop-op-draft"<?php echo $kop_op_history_edit; ?>>No written history yet. Use the pencil to add one; it stays a draft, seen only by admins, until it is set to Published.</p>
+                <?php endif; ?>
+                <?php if (!empty($page['timeline'])) : ?>
+                    <h3 class="kop-fp-subhead">Year by year</h3>
+                    <p class="kop-fp-count">From the records: the years it ran each program (from the network map, else the program's own opening and closing), lawsuits filed and deaths on record.</p>
+                    <?php
+                    $kop_op_tl_first = array_slice($page['timeline'], 0, 12);
+                    $kop_op_tl_rest = array_slice($page['timeline'], 12);
+                    $kop_op_tl_print = static function (array $years) {
+                        foreach ($years as $y) {
+                            echo '<li><p class="kop-fp-tl-head"><span class="kop-fp-tl-when">' . (int) $y['year'] . '</span></p>';
+                            foreach ($y['events'] as $e) {
+                                echo '<p class="kop-fp-tl-text"><strong>' . esc_html($e['text']) . '</strong>';
+                                if ($e['items']) {
+                                    $links = array();
+                                    foreach ($e['items'] as $it) {
+                                        $links[] = $it['url'] !== ''
+                                            ? '<a href="' . esc_url($it['url']) . '">' . esc_html($it['name']) . '</a>'
+                                            : esc_html($it['name']);
+                                    }
+                                    echo ': ' . implode('; ', $links);
+                                }
+                                echo '</p>';
+                            }
+                            echo '</li>';
+                        }
+                    };
+                    ?>
+                    <ol class="kop-fp-timeline">
+                        <?php $kop_op_tl_print($kop_op_tl_first); ?>
+                    </ol>
+                    <?php if ($kop_op_tl_rest) : ?>
+                        <details class="kop-fp-more">
+                            <summary><?php echo esc_html(count($kop_op_tl_rest) . ' more ' . (count($kop_op_tl_rest) === 1 ? 'year' : 'years')); ?></summary>
+                            <ol class="kop-fp-timeline">
+                                <?php $kop_op_tl_print($kop_op_tl_rest); ?>
+                            </ol>
+                        </details>
+                    <?php endif; ?>
+                <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
             <?php if ($page['facilities']) : ?>
             <section class="kop-fp-section" id="programs">
                 <h2>Programs it has run</h2>
@@ -145,6 +219,52 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                         </li>
                     <?php endforeach; ?>
                 </ul>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_op_has_people) : ?>
+            <section class="kop-fp-section" id="people">
+                <h2>People</h2>
+                <p class="kop-fp-count">The people the network map ties to the company, with their other jobs in the industry.</p>
+                <?php if ($kop_op_people['leaders']) : ?>
+                    <ul class="kop-fp-staff">
+                        <?php foreach ($kop_op_people['leaders'] as $person) : ?>
+                            <li class="kop-fp-person<?php echo !empty($person['career']) ? ' kop-fp-person--career' : ''; ?>">
+                                <p class="kop-fp-person-name"><?php echo esc_html($person['name']); ?></p>
+                                <?php if ($person['role'] !== '') : ?><p class="kop-fp-person-role"><?php echo esc_html($person['role']); ?></p><?php endif; ?>
+                                <?php if (!empty($person['career'])) : ?>
+                                    <div class="kop-fp-career">
+                                        <p class="kop-fp-career-label">Elsewhere in the industry</p>
+                                        <ul>
+                                            <?php foreach ($person['career'] as $job) :
+                                                $job_meta = trim($job['role'] . ($job['years'] !== '' ? ($job['role'] !== '' ? ', ' : '') . $job['years'] : ''));
+                                                ?>
+                                                <li>
+                                                    <?php if ($job['url'] !== '') : ?>
+                                                        <a href="<?php echo esc_url($job['url']); ?>"><?php echo esc_html($job['place']); ?></a>
+                                                    <?php else : ?>
+                                                        <span class="kop-fp-career-place"><?php echo esc_html($job['place']); ?></span>
+                                                    <?php endif; ?>
+                                                    <?php if ($job_meta !== '') : ?><span class="kop-fp-career-role"><?php echo esc_html($job_meta); ?></span><?php endif; ?>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                <?php if ($kop_op_people['others']) : ?>
+                    <details class="kop-fp-more">
+                        <summary><?php echo esc_html(count($kop_op_people['others']) . ' other staff on record'); ?></summary>
+                        <ul class="kop-fp-people">
+                            <?php foreach ($kop_op_people['others'] as $person) : ?>
+                                <li><?php echo esc_html($person['name'] . ($person['role'] !== '' ? ', ' . $person['role'] : '')); ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </details>
+                <?php endif; ?>
             </section>
             <?php endif; ?>
 
@@ -229,6 +349,18 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <h2>Documents</h2>
                 <?php if (!empty($page['documents']['html'])) : ?>
                     <?php echo $page['documents']['html']; // FileBird shortcode output. ?>
+                <?php endif; ?>
+                <?php if ($kop_op_has_program_docs) :
+                    $kop_op_pd_total = (int) $page['program_docs']['total'];
+                    $kop_op_pd_n = count($page['program_docs']['programs']);
+                    ?>
+                    <h3 class="kop-fp-subhead">Filed under its programs</h3>
+                    <p class="kop-fp-count"><?php echo esc_html(number_format($kop_op_pd_total) . ' ' . ($kop_op_pd_total === 1 ? 'document' : 'documents') . ' across ' . $kop_op_pd_n . ' ' . ($kop_op_pd_n === 1 ? 'program' : 'programs') . ': inspection reports, court records, clippings and more, each on its program page.'); ?></p>
+                    <ul class="kop-fp-records kop-op-program-docs">
+                        <?php foreach ($page['program_docs']['programs'] as $kop_op_pd) : ?>
+                            <li><a href="<?php echo esc_url($kop_op_pd['url']); ?>"><?php echo esc_html($kop_op_pd['name']); ?></a><span class="meta"><?php echo esc_html(number_format($kop_op_pd['count']) . ' ' . ($kop_op_pd['count'] === 1 ? 'document' : 'documents')); ?></span></li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endif; ?>
                 <?php if ($kop_op_has_research) : ?>
                     <h3 class="kop-fp-subhead">Research that mentions this company</h3>
