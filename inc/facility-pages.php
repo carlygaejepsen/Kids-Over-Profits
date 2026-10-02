@@ -742,6 +742,21 @@ if (!function_exists('kop_facility_profile_items')) {
     }
 }
 
+if (!function_exists('kop_facility_profile_render')) {
+    /**
+     * One piece of a profile post through the_content (blocks, shortcodes,
+     * embeds, typography), without the AddToAny share bar that filter adds
+     * to the end of every call: the page is printed in a dozen pieces.
+     */
+    function kop_facility_profile_render($raw) {
+        $share = function_exists('has_filter') ? has_filter('the_content', 'A2A_SHARE_SAVE_add_to_content') : false;
+        if ($share !== false) remove_filter('the_content', 'A2A_SHARE_SAVE_add_to_content', $share);
+        $html = apply_filters('the_content', (string) $raw);
+        if ($share !== false) add_filter('the_content', 'A2A_SHARE_SAVE_add_to_content', $share);
+        return $html;
+    }
+}
+
 if (!function_exists('kop_facility_profile_parts')) {
     /**
      * A Facility Profile post's content cut into the parts the facility page

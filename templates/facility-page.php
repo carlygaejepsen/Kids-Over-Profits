@@ -207,7 +207,7 @@ $kop_fp_render_items = static function (array $items) use ($kop_fp_news_card) {
             continue;
         }
         $flush();
-        echo apply_filters('the_content', $it['raw']);
+        echo kop_facility_profile_render($it['raw']);
     }
     $flush();
 };
@@ -410,7 +410,7 @@ get_header();
                         <?php echo get_the_post_thumbnail($kop_fp_profile, 'full'); ?>
                     </figure>
                 <?php endif;
-                foreach ($kop_fp_parts['lead'] as $kop_fp_b) echo apply_filters('the_content', $kop_fp_b['raw']);
+                foreach ($kop_fp_parts['lead'] as $kop_fp_b) echo kop_facility_profile_render($kop_fp_b['raw']);
                 foreach ($kop_fp_prose as $kop_fp_s) $kop_fp_profile_section($kop_fp_s);
             elseif ($kop_fp_profile) :
                 // A post with no h2 to cut at: printed whole.
