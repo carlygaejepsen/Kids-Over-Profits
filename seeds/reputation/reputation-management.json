@@ -3,7 +3,7 @@
   "slug": "reputation-management",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 4,
+  "seed_version": 5,
   "content_file": "reputation/reputation-management.html",
   "excerpt": "How troubled teen programs control what a parent finds online, from instructions written for AI chatbots to directories run by their own marketer.",
   "template": "page-hub.php"

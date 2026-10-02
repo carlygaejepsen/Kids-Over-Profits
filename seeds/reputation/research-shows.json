@@ -3,7 +3,7 @@
   "slug": "research-shows",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "reputation/research-shows.html",
   "excerpt": "Who pays for the studies troubled teen programs cite, who publishes them, and what their own tables show.",
   "template": "page-article.php"
