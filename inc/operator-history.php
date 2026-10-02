@@ -229,7 +229,7 @@ if (!function_exists('kop_operator_history_people')) {
             $role = $l['role'];
             $is_leader = $l['category'] === 'leadership'
                 || preg_match('/\b(founder|co-?founder|owner|ceo|cfo|coo|chief|president|chair|director)\b/i', $role);
-            $row = array('name' => $name, 'role' => $role, 'career' => array());
+            $row = array('name' => $name, 'role' => $role, 'career' => array(), 'personId' => (int) ($l['node']['personId'] ?? 0));
             if ($is_leader) {
                 $leaders[] = $row;
             } else {
@@ -253,7 +253,7 @@ if (!function_exists('kop_operator_history_people')) {
         if (function_exists('kop_facility_pages_person_career')) {
             foreach ($leaders as &$p) {
                 $jobs = array();
-                foreach (kop_facility_pages_person_career($p['name'], '', 0) as $job) {
+                foreach (kop_facility_pages_person_career($p['name'], '', 0, (int) ($p['personId'] ?? 0)) as $job) {
                     if (isset($my_keys[kop_facility_pages_name_key($job['place'])])) continue;
                     $jobs[] = $job;
                 }

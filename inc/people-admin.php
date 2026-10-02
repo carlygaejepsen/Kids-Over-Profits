@@ -55,8 +55,12 @@ function kop_people_admin_handle() {
     if ($do === 'merge' && $id > 0) {
         $into = kop_people_admin_find(sanitize_text_field(wp_unslash($_POST['into'] ?? '')), $id);
         if (is_string($into)) return $into;
-        if (!kop_people_merge($id, $into)) return 'Nothing to merge.';
-        kop_people_sync();
+        $user = wp_get_current_user();
+        try {
+            kop_pmerge_do_merge($into, $id, $user ? $user->user_login : '');
+        } catch (Throwable $e) {
+            return $e->getMessage();
+        }
         wp_safe_redirect(kop_people_admin_url(array('person' => $into, 'merged' => $id)));
         exit;
     }
@@ -92,6 +96,10 @@ function kop_people_admin_record($kind, $id) {
     $k = $kind . $id;
     if (isset($names[$k])) return $names[$k];
     $id = (int) $id;
+    if ($kind === 'map') {
+        $map = function_exists('kop_facility_pages_page_url_by_template') ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/') : '';
+        return $names[$k] = array('name' => 'Network map', 'url' => $map);
+    }
     if ($kind === 'operator') {
         $rows = kop_facility_db_rows('SELECT name FROM ' . kop_facility_table('operators') . ' WHERE id = ?', array($id));
         return $names[$k] = array('name' => $rows ? (string) $rows[0]['name'] : 'Operator #' . $id, 'url' => '');
@@ -207,7 +215,7 @@ function kop_people_admin_person($id) {
     }
     $p = $state['rows'][$id];
     $roles = kop_people_roles_of($id);
-    $labels = array('administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO');
+    $labels = array('administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO', 'map' => 'Person on the map');
     // Others with the same last name: the likely "same person" picks.
     $parts = explode(' ', $p['name_key']);
     $last = end($parts);
@@ -228,10 +236,14 @@ function kop_people_admin_person($id) {
     <table class="widefat striped">
         <thead><tr><th>Record</th><th>List</th><th>Written as</th><th>Role</th><th></th></tr></thead>
         <tbody>
-        <?php foreach ($roles as $r) : $rec = kop_people_admin_record($r['record_kind'], $r['record_id']); ?>
+        <?php foreach ($roles as $r) :
+            $rec = kop_people_admin_record($r['record_kind'], $r['record_id']);
+            $is_map = $r['record_kind'] === 'map';
+            if ($is_map && $rec['url'] !== '') $rec['url'] .= '#open=' . rawurlencode((string) $r['ref']);
+            $what = $is_map ? 'node ' . $r['ref'] : ($r['record_kind'] === 'operator' ? 'company #' : 'facility #') . $r['record_id']; ?>
             <tr>
                 <td><?php echo $rec['url'] !== '' ? '<a href="' . esc_url($rec['url']) . '">' . esc_html($rec['name']) . '</a>' : esc_html($rec['name']); ?>
-                    <span class="kop-people__muted"><?php echo esc_html(($r['record_kind'] === 'operator' ? 'company #' : 'facility #') . $r['record_id']); ?></span></td>
+                    <span class="kop-people__muted"><?php echo esc_html($what); ?></span></td>
                 <td><?php echo esc_html($labels[$r['list']] ?? $r['list']); ?></td>
                 <td><?php echo esc_html($r['name']); ?></td>
                 <td><?php echo esc_html($r['role']); ?></td>
@@ -251,7 +263,8 @@ function kop_people_admin_person($id) {
     <?php endif; ?>
 
     <h2>Same person as</h2>
-    <p>If this person already has another id (a nickname, a maiden name, a misspelling), join this id into it. This id then forwards there.</p>
+    <p>If this person already has another id (a nickname, a maiden name, a misspelling), join this id into it. This id then forwards there.
+        Every merge can be undone from <a href="<?php echo esc_url(admin_url('admin.php?page=kop-merge-people')); ?>">Merge People</a>, which also lists the likely pairs.</p>
     <?php foreach ($similar as $o) : ?>
         <form method="post" class="kop-people__bar">
             <?php kop_people_admin_hidden('merge', $id); ?>

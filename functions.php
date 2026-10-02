@@ -141,6 +141,7 @@ require_once get_stylesheet_directory() . '/inc/facility-merge.php';
 // A person id for everyone on a staff list, stamped as personId by an hourly sync (KOP Tools > People)
 require_once get_stylesheet_directory() . '/inc/people.php';
 require_once get_stylesheet_directory() . '/inc/people-admin.php';
+require_once get_stylesheet_directory() . '/inc/people-merge.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 // Woodbury Reports pages about a program, cut by scripts/woodbury-scan.py, reviewed and filed in its doc library

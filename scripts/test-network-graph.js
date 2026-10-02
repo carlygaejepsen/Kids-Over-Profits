@@ -15,7 +15,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const GRAPH_FILE = path.join(ROOT, 'js', 'data', 'network', 'graph.json');
+const GRAPH_FILE = process.env.KOP_NETWORK_GRAPH_OUT || path.join(ROOT, 'js', 'data', 'network', 'graph.json');
 const SQLITE_FILE = path.join(ROOT, 'tmp', 'prod.sqlite');
 
 /* Floors, not targets. The board only ever grows; a build that comes in under

@@ -126,9 +126,13 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-placement.php
 # moved note can be cleared ("Remove copy"), moved text leaves the fields the public pages list
 node scripts/test-testimony-move.js
 # Person ids (inc/people.php, KOP Tools > People): everyone on a facility staff list (administrator, notableStaff) gets a
-# {prefix}kop_people id, stamped into the entry as personId by an hourly sync (same name key = same id; operators linked by name
-# only); {prefix}kop_person_roles is rebuilt from the records. "Same person as" joins two ids, "Separate" splits one name
-php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list]   # first sync, idempotence, merge/separate, on an in-memory copy
+# {prefix}kop_people id, stamped into the entry as personId by an hourly sync (same name key = same id); operators and network
+# map people are linked by name, each map node keeps its own id (two board people with one name stay two until merged);
+# {prefix}kop_person_roles is rebuilt from the records. The map build reads both tables (readPeople: personId on every person
+# node, a merged person drawn as one node). Facility/company careers group by kop_people_group_key(). "Separate" splits one name.
+# KOP Tools > Merge People (inc/people-merge.php): pairs found automatically (short first name, maiden/married name, one letter
+# apart, swapped, same initial at one program, same name under two ids), one-click merge, exact Undo from the Merged tab
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list] [--no-build]   # sync, pairs, merge+undo, PHP/JS key parity, a map build into tmp/
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # Facility directory (/tti-program-index/, both tabs) loads in steps: lists from kop/v1/facilities?view=index (each facility

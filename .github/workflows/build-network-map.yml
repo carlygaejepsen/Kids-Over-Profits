@@ -3,9 +3,9 @@ name: Build network map
 # Rebuilds js/data/network/graph.json from the live records and deploys it.
 # Started by the site itself (inc/network-rebuild.php checks hourly and asks
 # for a run when the staff, owners, names, years or status the map reads have
-# changed), or by hand from the Actions tab / KOP Tools > Map Rebuild.
+# changed, or people were merged), or by hand from the Actions tab / KOP Tools > Map Rebuild.
 #
-# The server has no Node, so the build runs here: copy the five tables the
+# The server has no Node, so the build runs here: copy the tables the
 # build reads over SSH (scripts/sync-prod-sqlite.py reads the database login
 # from wp-config.php on the server, so no DB secret is needed), build, test,
 # commit graph.json when it changed, then start the deploy.
@@ -60,7 +60,7 @@ jobs:
           fi
 
       - name: Copy the map's tables from the live database
-        run: python scripts/sync-prod-sqlite.py --tables "facilities_v2,wpdl_kop_operators,wpdl_kop_operator_facilities,memorial_victims,referrers_master"
+        run: python scripts/sync-prod-sqlite.py --tables "facilities_v2,wpdl_kop_operators,wpdl_kop_operator_facilities,memorial_victims,referrers_master,wpdl_kop_people,wpdl_kop_person_roles"
 
       - name: Build
         run: node scripts/build-network-graph.js

@@ -1191,7 +1191,8 @@ if (!function_exists('kop_facility_pages_staff_items')) {
                     }
                     $entry['name'] = $name;
                     $entry['role'] = $role;
-                    $entry['career'] = kop_facility_pages_person_career($name, (string) ($item['pastJobs'] ?? ''), (int) $facility_id);
+                    $entry['personId'] = (int) ($item['personId'] ?? 0);
+                    $entry['career'] = kop_facility_pages_person_career($name, (string) ($item['pastJobs'] ?? ''), (int) $facility_id, $entry['personId']);
                 }
                 $items[] = $entry;
             }
@@ -1269,18 +1270,19 @@ if (!function_exists('kop_facility_pages_add_map_people')) {
         $have = array();
         foreach (array('administrator', 'notableStaff') as $k) {
             foreach ($staff[$k] ?? array() as $p) {
-                $key = kop_facility_pages_person_key($p['name'] ?? $p['text']);
+                $key = kop_facility_pages_group_key($p['name'] ?? $p['text'], (int) ($p['personId'] ?? 0));
                 if ($key !== '') $have[$key] = true;
             }
         }
         $people = array();
         foreach ($entry['links'] as $link) {
             if (($link['kind'] ?? '') !== 'person' || ($link['relation'] ?? '') !== '') continue;
-            $key = kop_facility_pages_person_key($link['name']);
+            $node_pid = kop_facility_pages_map_person_ids()[(string) $link['node']] ?? 0;
+            $key = kop_facility_pages_group_key($link['name'], $node_pid);
             if ($key === '' || isset($have[$key])) continue;
             $group = in_array($link['category'], array('leadership', 'corporate'), true) ? 'administrator' : 'notableStaff';
             if (!isset($people[$key])) {
-                $people[$key] = array('name' => (string) $link['name'], 'roles' => array(), 'group' => $group, 'node' => (string) $link['node']);
+                $people[$key] = array('name' => (string) $link['name'], 'roles' => array(), 'group' => $group, 'node' => (string) $link['node'], 'personId' => $node_pid);
             } elseif ($group === 'administrator') {
                 $people[$key]['group'] = 'administrator';
             }
@@ -1300,7 +1302,7 @@ if (!function_exists('kop_facility_pages_add_map_people')) {
                 'url'    => $map_url . '#open=' . rawurlencode($p['node']),
                 'name'   => $p['name'],
                 'role'   => $role,
-                'career' => kop_facility_pages_person_career($p['name'], '', (int) $facility_id),
+                'career' => kop_facility_pages_person_career($p['name'], '', (int) $facility_id, (int) $p['personId']),
                 'from_map' => true,
             );
         }
@@ -1350,6 +1352,31 @@ if (!function_exists('kop_facility_pages_person_key')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_group_key')) {
+    /**
+     * What one person's records are grouped by: their person id when the
+     * people table knows them (inc/people.php kop_people_group_key: merged
+     * names join, separated namesakes split), else the name key.
+     */
+    function kop_facility_pages_group_key($name, $person_id = 0) {
+        return function_exists('kop_people_group_key') ? kop_people_group_key($name, (int) $person_id) : kop_facility_pages_person_key($name);
+    }
+}
+
+if (!function_exists('kop_facility_pages_map_person_ids')) {
+    /** Map node id => personId (stamped by the map build), for the map's person nodes. */
+    function kop_facility_pages_map_person_ids() {
+        static $memo = null;
+        if ($memo !== null) return $memo;
+        $memo = array();
+        $graph = function_exists('kop_network_map_graph') ? kop_network_map_graph() : null;
+        foreach ((array) ($graph['nodes'] ?? array()) as $node) {
+            if (($node['kind'] ?? '') === 'person' && !empty($node['personId'])) $memo[(string) $node['id']] = (int) $node['personId'];
+        }
+        return $memo;
+    }
+}
+
 if (!function_exists('kop_facility_pages_people_index')) {
     /**
      * person key => [[facility id, facility name, role], ...] from the staff
@@ -1362,6 +1389,8 @@ if (!function_exists('kop_facility_pages_people_index')) {
         if ($memo !== null) return $memo;
         $index = kop_facility_pages_index();
         $fingerprint = (string) ($index['fingerprint'] ?? '');
+        // A merge or a separation of people (inc/people.php) regroups them.
+        if ($fingerprint !== '') $fingerprint .= '|' . (string) get_option('kop_people_version', '');
         $cached = get_transient('kop_facility_pages_people');
         if ($fingerprint !== '' && is_array($cached) && ($cached['fingerprint'] ?? '') === $fingerprint) {
             return $memo = $cached['people'];
@@ -1374,7 +1403,7 @@ if (!function_exists('kop_facility_pages_people_index')) {
             foreach (array('administrator', 'notableStaff') as $k) {
                 foreach ((array) ($doc['staff'][$k] ?? array()) as $person) {
                     if (!is_array($person)) continue;
-                    $key = kop_facility_pages_person_key($person['name'] ?? '');
+                    $key = kop_facility_pages_group_key($person['name'] ?? '', (int) ($person['personId'] ?? 0));
                     if ($key === '') continue;
                     $role = trim((string) ($person['role'] ?? ''));
                     $people[$key][] = array((int) $row['id'], (string) $row['name'], $role);
@@ -1408,7 +1437,10 @@ if (!function_exists('kop_facility_pages_map_people')) {
                     return $r !== '' && strcasecmp($r, 'affiliated') !== 0 && strcasecmp($r, 'staff') !== 0;
                 });
                 $names = array_merge(array((string) $person['name']), array_map('strval', (array) ($person['aliases'] ?? array())));
-                foreach (array_unique(array_filter(array_map('kop_facility_pages_person_key', $names))) as $key) {
+                $pid = (int) ($person['personId'] ?? 0);
+                $keys = array();
+                foreach ($names as $n) $keys[] = kop_facility_pages_group_key($n, $pid);
+                foreach (array_unique(array_filter($keys)) as $key) {
                     $memo[$key][] = array((string) $place['name'], implode(', ', $roles), (int) ($place['facilityId'] ?? 0), (string) ($place['kind'] ?? ''));
                 }
             }
@@ -1440,12 +1472,13 @@ if (!function_exists('kop_facility_pages_facility_url_by_name')) {
 if (!function_exists('kop_facility_pages_person_career')) {
     /**
      * Where else in the industry a person worked: [{role, place, years, url}],
-     * one entry per place. Their own pastJobs text ("Role - Place (years);
+     * one entry per place, grouped by the person ($person_id, the entry's
+     * personId) when the people table knows them, else by the name. Their own pastJobs text ("Role - Place (years);
      * ...") comes first, then the other records that list them as staff and
      * the network map. This program ($facility_id) is left out.
      */
-    function kop_facility_pages_person_career($name, $past_jobs, $facility_id) {
-        $key = kop_facility_pages_person_key($name);
+    function kop_facility_pages_person_career($name, $past_jobs, $facility_id, $person_id = 0) {
+        $key = kop_facility_pages_group_key($name, $person_id);
         $here = (int) $facility_id;
         $index_ids = kop_facility_pages_index()['ids'] ?? array();
         $here_names = array();

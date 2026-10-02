@@ -69,6 +69,13 @@ if (!function_exists('kop_network_rebuild_fingerprint')) {
                 hash_update($ctx, json_encode(array_values($row)) . "\n");
             }
         }
+        // Person ids (inc/people.php): a merge draws two people as one. Absent before the table exists.
+        try {
+            $people = $query("SELECT id, name, name_key, aliases, merged_into FROM {$prefix}kop_people ORDER BY id");
+            hash_update($ctx, "#people\n");
+            foreach ($people as $row) hash_update($ctx, json_encode(array_values($row)) . "\n");
+        } catch (Throwable $e) {
+        }
         return hash_final($ctx);
     }
 }

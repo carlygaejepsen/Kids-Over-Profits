@@ -29,7 +29,8 @@ const DATA_DIR = path.join(ROOT, 'js', 'data', 'network');
 const NODES_CSV = path.join(DATA_DIR, 'tti_nodes.csv');
 const EDGES_CSV = path.join(DATA_DIR, 'tti_edges.csv');
 const OVERRIDES_FILE = path.join(DATA_DIR, 'network-overrides.json');
-const OUTPUT_FILE = path.join(DATA_DIR, 'graph.json');
+/* KOP_NETWORK_GRAPH_OUT / KOP_NETWORK_QA_OUT / KOP_NETWORK_SQLITE: a test build (scripts/test-people.php) elsewhere. */
+const OUTPUT_FILE = process.env.KOP_NETWORK_GRAPH_OUT || path.join(DATA_DIR, 'graph.json');
 /* Reviewed rows from scripts/extract-staff-movement.js (2b.11). */
 const STAFF_MOVEMENT_CSV = path.join(DATA_DIR, 'staff-movement.csv');
 /* The owner's staff list, parsed by scripts/parse-staff-list.js. A backup. */
@@ -55,8 +56,8 @@ function readStaffLists() {
     });
     return rows;
 }
-const QA_FILE = path.join(ROOT, 'tmp', 'network-qa.md');
-const SQLITE_FILE = path.join(ROOT, 'tmp', 'prod.sqlite');
+const QA_FILE = process.env.KOP_NETWORK_QA_OUT || path.join(ROOT, 'tmp', 'network-qa.md');
+const SQLITE_FILE = process.env.KOP_NETWORK_SQLITE || path.join(ROOT, 'tmp', 'prod.sqlite');
 const PROGRAMS_FILE = path.join(ROOT, 'js', 'data', 'reddit-wiki', 'programs-array.json');
 
 /* Frames that are legend swatches, not entities. */
@@ -80,7 +81,7 @@ const qa = {
     droppedRows: [], chainInferred: [], missingHeadline: [], missingViewNames: [],
     rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
     profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: [],
-    staffListEdges: [], staffListUnresolved: [], addedPeople: []
+    staffListEdges: [], staffListUnresolved: [], addedPeople: [], foldedPeople: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -1139,17 +1140,217 @@ function addPersonShortNames(nodes) {
     });
 }
 
-function addPeople(nodes, nodeById, claims, overrides) {
+/* ---- Person ids (inc/people.php) ----------------------------------------
+ * Every person in the records has an id in wpdl_kop_people; one person under
+ * two names is one id once merged (KOP Tools > Merge People). The build reads
+ * the table from the mirror, stamps each person node with its personId, gives
+ * the node the person's other names, and draws everyone one id covers as one
+ * node. Without the table (an old mirror) nothing changes. */
+
+const PERSON_DROP = new Set(['dr', 'mr', 'mrs', 'ms', 'rev', 'jr', 'sr', 'ii', 'iii', 'iv', 'phd', 'md', 'psyd', 'lcsw', 'lpc',
+    'lmft', 'rn', 'ma', 'msw', 'edd']);
+const PERSON_NICK = {
+    steve: 'steven', stephen: 'steven', clint: 'clinton', liz: 'elizabeth', beth: 'elizabeth',
+    bill: 'william', billy: 'william', will: 'william', bob: 'robert', bobby: 'robert', rob: 'robert',
+    jim: 'james', jimmy: 'james', mike: 'michael', dave: 'david', dan: 'daniel', danny: 'daniel',
+    tom: 'thomas', tommy: 'thomas', tony: 'anthony', jeff: 'jeffrey', geoff: 'jeffrey', jerry: 'gerald',
+    joe: 'joseph', chris: 'christopher', matt: 'matthew', andy: 'andrew', nick: 'nicholas',
+    ken: 'kenneth', kenny: 'kenneth', larry: 'lawrence', ron: 'ronald', ronnie: 'ronald',
+    don: 'donald', greg: 'gregory', tim: 'timothy', ben: 'benjamin', kathy: 'kathleen',
+    katie: 'katherine', kate: 'katherine', sue: 'susan', jenny: 'jennifer', jen: 'jennifer',
+    becky: 'rebecca', debbie: 'deborah', deb: 'deborah', pam: 'pamela', patty: 'patricia',
+    trish: 'patricia', barb: 'barbara', vicki: 'victoria', mandy: 'amanda', abby: 'abigail',
+    fred: 'frederick', rick: 'richard', rich: 'richard', dick: 'richard', doug: 'douglas',
+    josh: 'joshua', zach: 'zachary', ed: 'edward', eddie: 'edward', jon: 'jonathan',
+    cindy: 'cynthia', sandy: 'sandra', terri: 'teresa', terry: 'terrence', randy: 'randall',
+    brad: 'bradley', phil: 'phillip', philip: 'phillip', walt: 'walter'
+};
+
+/** Port of kop_facility_pages_person_key() (inc/facility-pages.php): "first last", '' under two words.
+ * scripts/test-people.php checks the two agree on every name in the mirror. */
+function personKey(raw) {
+    let name = String(raw || '');
+    name = name.replace(/^[A-Za-z][A-Za-z &\/-]{2,40}:\s*/, '');
+    name = name.replace(/["\u201C\u201D][^"\u201C\u201D]*["\u201C\u201D]|\([^)]*\)/g, ' ');
+    name = name.replace(/,.*$/, '');
+    name = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const tokens = name.toLowerCase().split(/[^a-z']+/).filter(function (t) {
+        return t !== '' && t.replace(/^'+|'+$/g, '').length > 1 && !PERSON_DROP.has(t);
+    });
+    if (tokens.length < 2) return '';
+    return (PERSON_NICK[tokens[0]] || tokens[0]) + ' ' + tokens[tokens.length - 1];
+}
+
+/** {byKey: key -> person id (lowest, merges followed), names: id -> [every name]} or null. */
+function readPeople() {
+    if (!fs.existsSync(SQLITE_FILE)) return null;
+    let rows, refs;
+    try {
+        const { DatabaseSync } = require('node:sqlite');
+        const db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
+        const has = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wpdl_kop_people'").get();
+        rows = has ? db.prepare('SELECT id, name, name_key, aliases, merged_into FROM wpdl_kop_people ORDER BY id').all() : null;
+        /* The id the sync gave each node last time: two board nodes with one name stay two people. */
+        const hasRoles = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wpdl_kop_person_roles'").get();
+        refs = hasRoles ? db.prepare("SELECT ref, person_id FROM wpdl_kop_person_roles WHERE record_kind = 'map'").all() : [];
+        db.close();
+    } catch (err) {
+        console.warn('  ! could not read person ids: ' + err.message);
+        return null;
+    }
+    if (!rows) return null;
+    const byId = new Map(rows.map(function (r) { return [Number(r.id), r]; }));
+    const live = function (id) {
+        const seen = new Set();
+        while (byId.has(id) && Number(byId.get(id).merged_into) > 0 && !seen.has(id)) {
+            seen.add(id);
+            id = Number(byId.get(id).merged_into);
+        }
+        return byId.has(id) ? id : 0;
+    };
+    const byKey = new Map();
+    const names = new Map();
+    /* The kept person's own name: in a fold, the node written that way stays. */
+    const mainKey = new Map();
+    /* Ids someone merged another id into (KOP Tools > Merge People): only
+     * these draw two spellings as one; everyone else is grouped as before. */
+    const merged = new Set();
+    rows.forEach(function (r) {
+        const id = live(Number(r.id));
+        if (!id) return;
+        if (id === Number(r.id)) mainKey.set(id, personKey(r.name));
+        else merged.add(id);
+        const aliases = String(r.aliases || '').split(/\r\n|\r|\n/).map(function (n) { return n.trim(); }).filter(Boolean);
+        const all = [String(r.name)].concat(aliases);
+        if (!names.has(id)) names.set(id, []);
+        /* Names a node takes on: the other names someone typed or merged in,
+         * never a mere same-key spelling ("Brent R. Hall" is not "Brent
+         * Charles Hall" just because both are "brent hall"). */
+        (id === Number(r.id) ? aliases : all).forEach(function (n) {
+            if (names.get(id).indexOf(n) === -1) names.get(id).push(n);
+        });
+        all.forEach(function (n) {
+            const k = personKey(n);
+            /* A key two people share (two namesakes) goes to the lower id, as in the sync. */
+            if (k && (!byKey.has(k) || byKey.get(k) > id)) byKey.set(k, id);
+        });
+        if (r.name_key && (!byKey.has(r.name_key) || byKey.get(r.name_key) > id)) byKey.set(r.name_key, id);
+    });
+    const byRef = new Map();
+    refs.forEach(function (r) {
+        const id = live(Number(r.person_id));
+        if (id) byRef.set(String(r.ref), id);
+    });
+    return { byKey: byKey, names: names, mainKey: mainKey, byRef: byRef, merged: merged };
+}
+
+function personIdOf(people, names) {
+    if (!people) return 0;
+    for (let i = 0; i < names.length; i++) {
+        const k = personKey(names[i]);
+        if (k && people.byKey.has(k)) return people.byKey.get(k);
+    }
+    return 0;
+}
+
+/* Each person node gets its personId and the person's other names, where no
+ * other node answers to that name already. */
+function applyPersonIds(nodes, people) {
+    if (!people) return;
+    const taken = new Map();
+    nodes.forEach(function (n) {
+        [n.name].concat(n.aliases || []).forEach(function (name) { taken.set(nameKey(name), n); });
+    });
+    /* A node the sync has not seen yet goes by name, unless that id is another
+     * node's: then it waits for its own id (next sync) rather than fold into it. */
+    const held = new Map();
+    nodes.forEach(function (n) {
+        if (n.kind === 'person' && people.byRef.has(n.id)) held.set(people.byRef.get(n.id), n.id);
+    });
+    nodes.forEach(function (n) {
+        if (n.kind !== 'person') return;
+        let pid = people.byRef.get(n.id);
+        if (!pid) {
+            pid = personIdOf(people, [n.name].concat(n.aliases || []));
+            if (pid && held.has(pid) && held.get(pid) !== n.id) pid = 0;
+        }
+        if (!pid) return;
+        n.personId = pid;
+        (people.names.get(pid) || []).forEach(function (name) {
+            const k = nameKey(name);
+            if (!k || k.split(' ').length < 2 || taken.has(k)) return;
+            taken.set(k, n);
+            n.aliases.push(name);
+        });
+    });
+}
+
+/* Two person nodes with one personId after a merge (two board spellings of
+ * one person, joined on KOP Tools > Merge People) become one: the node written with the
+ * kept person's own name (else the first) takes the other's lines and names. */
+function foldSamePeople(nodes, nodeById, edges, people) {
+    const groups = new Map();
+    nodes.forEach(function (n) {
+        if (n.kind !== 'person' || !n.personId) return;
+        if (!groups.has(n.personId)) groups.set(n.personId, []);
+        groups.get(n.personId).push(n);
+    });
+    const gone = new Map();
+    groups.forEach(function (list, pid) {
+        if (list.length < 2 || !people.merged.has(pid)) return;
+        const main = people && people.mainKey ? people.mainKey.get(pid) : '';
+        const keep = list.find(function (n) { return main && personKey(n.name) === main; }) || list[0];
+        list.forEach(function (n) {
+            if (n === keep) return;
+            [n.name].concat(n.aliases || []).forEach(function (name) {
+                if (name !== keep.name && keep.aliases.indexOf(name) === -1) keep.aliases.push(name);
+            });
+            if (n.edCon) keep.edCon = true;
+            gone.set(n.id, keep.id);
+            qa.foldedPeople.push(n.name + ' -> ' + keep.name + ' (person #' + pid + ')');
+        });
+    });
+    if (!gone.size) return 0;
+    const seen = new Set();
+    for (let i = edges.length - 1; i >= 0; i--) {
+        const e = edges[i];
+        if (gone.has(e.source)) e.source = gone.get(e.source);
+        if (gone.has(e.target)) e.target = gone.get(e.target);
+    }
+    const kept = edges.filter(function (e) {
+        if (e.source === e.target) return false;
+        const k = [e.source, e.target, e.category, e.raw].join('|');
+        if (seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    });
+    edges.length = 0;
+    kept.forEach(function (e) { edges.push(e); });
+    for (let i = nodes.length - 1; i >= 0; i--) {
+        if (gone.has(nodes[i].id)) {
+            nodeById.delete(nodes[i].id);
+            nodes.splice(i, 1);
+        }
+    }
+    return gone.size;
+}
+
+function addPeople(nodes, nodeById, claims, overrides, people) {
     addPersonShortNames(nodes);
+    applyPersonIds(nodes, people);
     const resolve = profileResolver(nodes, overrides);
-    const people = new Map();
+    const registry = people;
+    const found = new Map();
     const note = function (rawName, place, role, from) {
         if (!place || place.kind === 'person') return;
         const name = cleanPersonName(rawName);
         const key = nameKey(name);
         if (!key || resolve(name)) return;
-        if (!people.has(key)) people.set(key, { name: name, places: new Map(), leads: false, edCon: false, from: new Set() });
-        const p = people.get(key);
+        /* A merged person is one node, whichever name a record uses. */
+        const pid = personIdOf(registry, [name]);
+        const group = pid && registry.merged.has(pid) ? 'p' + pid : key;
+        if (!found.has(group)) found.set(group, { name: name, places: new Map(), leads: false, edCon: false, from: new Set(), personId: pid });
+        const p = found.get(group);
         p.places.set(place.id, place);
         if (LEADS.test(role || '')) p.leads = true;
         p.from.add(from);
@@ -1186,7 +1387,7 @@ function addPeople(nodes, nodeById, claims, overrides) {
     nodes.forEach(function (n) { if (n.kind === 'person') lookalike.set(shape(n.name), n.name); });
 
     let added = 0;
-    Array.from(people.values()).sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (p) {
+    Array.from(found.values()).sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (p) {
         const places = Array.from(p.places.values());
         if (places.length < 2 && !p.leads && !p.edCon) return;
         let id = slugify(p.name), n = 2;
@@ -1216,6 +1417,9 @@ function addPeople(nodes, nodeById, claims, overrides) {
             addedFrom: Array.from(p.from).sort()
         };
         if (p.edCon) node.edCon = true;
+        /* The id the sync gave this node last time, else the name's. */
+        const pid = (registry && registry.byRef.get(id)) || p.personId;
+        if (pid) node.personId = pid;
         nodes.push(node);
         nodeById.set(id, node);
         added++;
@@ -1857,10 +2061,12 @@ function build() {
     /* --- 7c. connections the facility profiles record ------------- */
     const claims = readProfileClaims(nodes, overrides);
     applyFormerNameOverrides(nodes, overrides);
-    const people = addPeople(nodes, nodeById, claims, overrides);
+    const registry = readPeople();
+    const people = addPeople(nodes, nodeById, claims, overrides, registry);
+    const folded = foldSamePeople(nodes, nodeById, edges, registry);
     const added = addProfileEdges(nodes, edges, claims, overrides) + addStaffMovement(nodes, edges) +
         addStaffList(nodes, edges);
-    if (added || people) {
+    if (added || people || folded) {
         /* The profile edges change who connects to whom, so the counts are
          * taken again from scratch rather than patched. */
         nodes.forEach(function (node) { node.degree = 0; node.degreeByCategory = {}; });
@@ -1888,7 +2094,8 @@ function build() {
         profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length,
         staffMovementEdges: edges.filter(function (e) { return e.provenance === 'staff-movement'; }).length,
         staffListEdges: edges.filter(function (e) { return e.provenance === 'staff-list'; }).length,
-        addedPeople: nodes.filter(function (n) { return n.addedFrom; }).length
+        addedPeople: nodes.filter(function (n) { return n.addedFrom; }).length,
+        withPersonId: nodes.filter(function (n) { return n.personId; }).length
     };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
@@ -2243,6 +2450,9 @@ function writeQaReport(graph) {
         'the board has someone with the same surname and initial: if it is the same person, add the ' +
         'spelling under `aliases` against the board name.');
 
+    section(lines, 'People drawn as one (one person id)', qa.foldedPeople, function (item) { return item; },
+        'Two person nodes the people table says are one person (KOP Tools > Merge People): the second is drawn as the first.');
+
     section(lines, 'Connections added from the staff list', qa.staffListEdges, function (item) { return item; },
         'Drawn from staff-list.csv where the map had no line between the two. ' + staffListAlreadyShown +
         ' more pairs were already connected and were left alone. Correct a row in staff-list.txt and rerun ' +
@@ -2290,4 +2500,4 @@ if (require.main === module) {
     }
 }
 
-module.exports = { build: build, parseCsv: parseCsv, nameKey: nameKey, slugify: slugify };
+module.exports = { build: build, parseCsv: parseCsv, nameKey: nameKey, slugify: slugify, personKey: personKey };
