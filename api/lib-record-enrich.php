@@ -53,6 +53,21 @@ function kop_enrich_clear_failed($key) {
     }
 }
 
+/**
+ * Is a row with this failure entry worth another try? Twice is enough for
+ * most failures. A page that could not be read (archive.today's CAPTCHA, the
+ * Wayback Machine rate-limiting the server) may read fine another day, so it
+ * is tried once a day, up to five times.
+ */
+function kop_enrich_due($entry) {
+    $n = (int) ($entry['n'] ?? 0);
+    if ($n < 2) {
+        return true;
+    }
+    $unreadable = preg_match('/could not fetch|no article text|readable text/i', (string) ($entry['why'] ?? ''));
+    return $unreadable && $n < 5 && strtotime((string) ($entry['at'] ?? '')) < time() - DAY_IN_SECONDS;
+}
+
 function kop_enrich_rate_limited($why) {
     return (bool) preg_match('/rate limit|429|too many requests/i', (string) $why);
 }
@@ -129,7 +144,7 @@ function kop_enrich_pick_ids(array $found, array $fornits, $prefix, $limit, arra
     $failed = kop_enrich_failed();
     $out = array();
     foreach (array_unique(array_merge(array_map('intval', $fornits), array_map('intval', $found))) as $id) {
-        if (($failed[$prefix . $id]['n'] ?? 0) < 2 || $ids) {
+        if (kop_enrich_due($failed[$prefix . $id] ?? null) || $ids) {
             $out[] = $id;
         }
         if (count($out) >= $limit) {
@@ -153,7 +168,8 @@ function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
         $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
         $params = array_map('intval', $ids);
     }
-    $st = $pdo->prepare($sql . ' ORDER BY id LIMIT ' . (int) $limit * 4);
+    // No LIMIT: rows waiting out a failure would fill it and starve the rest.
+    $st = $pdo->prepare($sql . ' ORDER BY id');
     $st->execute($params);
     return kop_enrich_pick_ids($st->fetchAll(PDO::FETCH_COLUMN),
         kop_enrich_fornits_ids($pdo, 'news_submissions', 'article_title', 'news', $ids), 'news:', $limit, $ids);
@@ -300,7 +316,8 @@ function kop_enrich_lawsuit_ids(PDO $pdo, $limit, array $ids = array()) {
         $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
         $params = array_map('intval', $ids);
     }
-    $st = $pdo->prepare($sql . ' ORDER BY id LIMIT ' . (int) $limit * 4);
+    // No LIMIT: rows waiting out a failure would fill it and starve the rest.
+    $st = $pdo->prepare($sql . ' ORDER BY id');
     $st->execute($params);
     return kop_enrich_pick_ids($st->fetchAll(PDO::FETCH_COLUMN),
         kop_enrich_fornits_ids($pdo, 'lawsuits', 'case_name', 'lawsuit', $ids), 'lawsuit:', $limit, $ids);
