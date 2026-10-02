@@ -11,6 +11,9 @@
  *
  * The hand-written Facility Profile posts (templates/single-facility-profile.php)
  * stay the canonical page for their facility: the generated URL 301s to them.
+ * The ones in kop_facility_pages_merged_profiles() are the other way round:
+ * the generated page prints the post's content as it stands and the post
+ * 301s to it.
  *
  * Pieces, in file order:
  *   routing      rewrite rule, query var, the template_redirect handler
@@ -170,6 +173,51 @@ if (!function_exists('kop_facility_pages_route')) {
         nocache_headers();
     }
     add_action('template_redirect', 'kop_facility_pages_route', 0);
+}
+
+if (!function_exists('kop_facility_pages_merged_profile_redirect')) {
+    /**
+     * A merged profile post (kop_facility_pages_merged_profiles()) sends its
+     * readers to the facility page that now prints its content. Previews
+     * still show the post, so an editor can check a change before saving.
+     */
+    function kop_facility_pages_merged_profile_redirect() {
+        if (is_admin() || is_preview() || !is_singular()) return;
+        $post = get_queried_object();
+        if (!is_object($post) || empty($post->ID)) return;
+        if (!in_array((string) $post->post_name, kop_facility_pages_merged_profiles(), true)) return;
+        $url = kop_facility_pages_merged_profile_url((int) $post->ID);
+        if ($url !== '') {
+            wp_safe_redirect($url, 301);
+            exit;
+        }
+    }
+    add_action('template_redirect', 'kop_facility_pages_merged_profile_redirect', 1);
+}
+
+if (!function_exists('kop_facility_pages_merged_profile_url')) {
+    /** The facility page a merged profile post now lives on, or ''. */
+    function kop_facility_pages_merged_profile_url($post_id) {
+        $index = kop_facility_pages_index();
+        foreach ($index['ids'] as $e) {
+            if ((int) ($e['profile_post'] ?? 0) === (int) $post_id) {
+                return kop_facility_pages_url_for_slug($e['slug']);
+            }
+        }
+        return '';
+    }
+}
+
+if (!function_exists('kop_facility_pages_merged_profile_sitemap')) {
+    /** The merged posts leave Yoast's post sitemap; their facility page is listed instead. */
+    function kop_facility_pages_merged_profile_sitemap($ids) {
+        $index = kop_facility_pages_index();
+        foreach ($index['ids'] as $e) {
+            if (!empty($e['profile_post'])) $ids[] = (int) $e['profile_post'];
+        }
+        return $ids;
+    }
+    add_filter('wpseo_exclude_from_sitemap_by_post_ids', 'kop_facility_pages_merged_profile_sitemap');
 }
 
 if (!function_exists('kop_facility_pages_template_include')) {
@@ -338,7 +386,9 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'survivor-sites:' . (function_exists('kop_survivor_archives_cache_key') ? kop_survivor_archives_cache_key() : '-');
         // Approved record <-> inspection row links (inc/inspection-links.php).
         $parts[] = 'inspection-links:' . (function_exists('kop_inspection_links_cache_key') ? kop_inspection_links_cache_key() : '-');
-        $parts[] = 'v:4';
+        // Which profile posts print on their facility page instead of redirecting.
+        $parts[] = 'merged:' . implode(',', kop_facility_pages_merged_profiles());
+        $parts[] = 'v:5';
         return md5(implode(';', $parts));
     }
 }
@@ -411,6 +461,7 @@ if (!function_exists('kop_facility_pages_build_index')) {
         $rows = $wpdb->get_results("SELECT id, unique_name, name, state, city, country, updated_at, json_data FROM facilities_v2 ORDER BY id", ARRAY_A);
         $links = kop_facility_pages_link_sets();
         $editorial = kop_facility_pages_editorial_map();
+        $merged = kop_facility_pages_merged_profile_posts();
 
         $entries = array();
         $groups = array();
@@ -438,6 +489,7 @@ if (!function_exists('kop_facility_pages_build_index')) {
                 'city'      => trim((string) $row['city']),
                 'updated'   => (string) $row['updated_at'],
                 'editorial' => isset($editorial[$id]) ? $editorial[$id] : '',
+                'profile_post' => isset($merged[$id]) ? $merged[$id] : 0,
                 'folder'    => $folder,
                 'signals'   => kop_facility_page_signals($doc, $id, $links, (string) $row['unique_name']),
             );
@@ -464,7 +516,7 @@ if (!function_exists('kop_facility_pages_build_index')) {
         $ids = array();
         $slugs = array();
         foreach ($entries as $id => $e) {
-            if (empty($e['signals']) && $e['editorial'] === '') continue;
+            if (empty($e['signals']) && $e['editorial'] === '' && !$e['profile_post']) continue;
             $slug = $e['slug'];
             if (isset($slugs[$slug])) $slug .= '-' . $id;
             $slugs[$slug] = $id;
@@ -473,6 +525,7 @@ if (!function_exists('kop_facility_pages_build_index')) {
                 'name'      => $e['name'],
                 'updated'   => $e['updated'],
                 'editorial' => $e['editorial'],
+                'profile_post' => $e['profile_post'],
                 'folder'    => $e['folder'],
                 'signals'   => count($e['signals']),
             );
@@ -494,15 +547,58 @@ if (!function_exists('kop_facility_profile_record_names')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_merged_profiles')) {
+    /**
+     * Slugs of the Facility Profile posts moved onto the generated facility
+     * page: the page prints the post's content unchanged inside its own
+     * layout, and the post 301s there. The post stays the place its words
+     * are edited.
+     */
+    function kop_facility_pages_merged_profiles() {
+        return array_values(array_unique(array_map('strval', (array) apply_filters('kop_facility_pages_merged_profiles', array(
+            'hyde',
+        )))));
+    }
+}
+
+if (!function_exists('kop_facility_pages_merged_profile_posts')) {
+    /** facilities_v2 id => post ID, for the merged profiles only. */
+    function kop_facility_pages_merged_profile_posts() {
+        $map = array();
+        foreach (kop_facility_pages_profile_posts() as $id => $p) {
+            if ($p['merged']) $map[$id] = $p['post_id'];
+        }
+        return $map;
+    }
+}
+
 if (!function_exists('kop_facility_pages_editorial_map')) {
     /**
      * facilities_v2 id => permalink of the published post or page that uses
-     * the hand-written Facility Profile template for that facility.
+     * the hand-written Facility Profile template for that facility (except the
+     * merged ones, which do not take over the facility's URL).
      */
     function kop_facility_pages_editorial_map() {
+        $map = array();
+        foreach (kop_facility_pages_profile_posts() as $id => $p) {
+            if (!$p['merged']) $map[$id] = $p['url'];
+        }
+        return $map;
+    }
+}
+
+if (!function_exists('kop_facility_pages_profile_posts')) {
+    /**
+     * facilities_v2 id => {post_id, url, merged} for every published post or
+     * page on the Facility Profile template.
+     */
+    function kop_facility_pages_profile_posts() {
         global $wpdb;
+        static $cache = null;
+        if ($cache !== null) return $cache;
         $map = array();
         if (!function_exists('get_posts')) return $map;
+        $merged = kop_facility_pages_merged_profiles();
         $posts = get_posts(array(
             'post_type'      => array('post', 'page'),
             'post_status'    => 'publish',
@@ -525,10 +621,14 @@ if (!function_exists('kop_facility_pages_editorial_map')) {
                 $id = (int) $wpdb->get_var($wpdb->prepare('SELECT id FROM facilities_v2 WHERE name = %s ORDER BY id LIMIT 1', $name));
             }
             if ($id > 0 && !isset($map[$id])) {
-                $map[$id] = get_permalink($post);
+                $map[$id] = array(
+                    'post_id' => (int) $post->ID,
+                    'url'     => get_permalink($post),
+                    'merged'  => in_array((string) $post->post_name, $merged, true),
+                );
             }
         }
-        return $map;
+        return $cache = $map;
     }
 }
 
@@ -2289,6 +2389,12 @@ if (!function_exists('kop_facility_page_data')) {
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
         $seo_title = $name . ($place !== '' ? ' (' . $place . ')' : '') . ' | Kids Over Profits';
         $seo_description = $summary;
+        // A merged profile post's content is printed on the page; its excerpt is the description it had.
+        $profile_post = $entry ? (int) ($entry['profile_post'] ?? 0) : 0;
+        $profile = $profile_post > 0 && function_exists('get_post') ? get_post($profile_post) : null;
+        if ($profile && trim((string) $profile->post_excerpt) !== '') {
+            $seo_description = trim((string) $profile->post_excerpt);
+        }
         if (mb_strlen($seo_description) > 155) {
             $seo_description = rtrim(mb_substr($seo_description, 0, 152), " ,;:") . '...';
         }
@@ -2355,6 +2461,7 @@ if (!function_exists('kop_facility_page_data')) {
             'submit_url'    => home_url('/tti-data-submission/'),
             'seo_title'     => $seo_title,
             'seo_description' => $seo_description,
+            'profile_post'  => $profile ? $profile_post : 0,
             'doc'           => $doc,
         );
     }

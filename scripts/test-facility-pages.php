@@ -537,6 +537,33 @@ $check('news page pictures: share image first, publisher logo and touch icon as 
     && ($parsed['logo'][0] ?? '') === 'https://cdn.example.org/logo.png' && in_array('https://news.example.org/icon-180.png', $parsed['logo'], true)
     && !in_array('https://cdn.example.org/logo.png', $parsed['photo'], true), wp_json_encode($parsed));
 
+// A merged Facility Profile (kop_facility_pages_merged_profiles()): Hyde School's
+// post prints on its facility page, unchanged, and the post 301s there.
+echo "\n-- Merged profile (Hyde School) --\n";
+$hyde_post = (int) $wpdb->get_var("SELECT ID FROM wpdl_posts WHERE post_name = 'hyde' AND post_status = 'publish' AND post_type = 'post'");
+$hyde_id = 0;
+foreach ($index['ids'] as $id => $e) if ((int) ($e['profile_post'] ?? 0) === $hyde_post) $hyde_id = $id;
+$check('Hyde School record carries its profile post and no editorial redirect', $hyde_post > 0 && $hyde_id > 0 && $index['ids'][$hyde_id]['editorial'] === '', "post $hyde_post, record $hyde_id");
+if ($hyde_id > 0) {
+    $r = $route($index['ids'][$hyde_id]['slug']);
+    $check('Hyde School facility page renders instead of redirecting', isset($r['page']) && $r['status'] === 200, json_encode($r));
+    $check('the post now 301s to the facility page', kop_facility_pages_merged_profile_url($hyde_post) === kop_facility_pages_url_for_slug($index['ids'][$hyde_id]['slug']));
+    $check('kop_facility_page_url() points at the facility page', kop_facility_page_url($hyde_id) === kop_facility_pages_url_for_slug($index['ids'][$hyde_id]['slug']));
+    $data = kop_facility_page_data($hyde_id);
+    $GLOBALS['kop_facility_page'] = $data;
+    ob_start();
+    include dirname(__DIR__) . '/templates/facility-page.php';
+    $html = ob_get_clean();
+    file_put_contents($out_dir . '/' . $data['slug'] . '.html', $html);
+    $content = (string) $wpdb->get_var($wpdb->prepare('SELECT post_content FROM wpdl_posts WHERE ID = %d', $hyde_post));
+    $check('the post content is printed whole and unchanged', $content !== '' && strpos($html, $content) !== false, strlen($content) . ' bytes');
+    $check('the description is the post excerpt', $data['seo_description'] !== $data['summary']);
+    preg_match_all('/\sid="([^"]+)"/', $html, $m);
+    $dupes = array_keys(array_filter(array_count_values($m[1]), static function ($n) { return $n > 1; }));
+    $check('no id is used twice (the post\'s #news/#lawsuits/#related vs the record sections)', !$dupes, implode(', ', $dupes));
+    $check('the record sections follow the profile', strpos($html, 'id="profile"') < strpos($html, 'id="record-'), '');
+}
+
 // Sitemap entries
 $entries = kop_facility_pages_sitemap_entries();
 $operator_pages = function_exists('kop_operator_pages_index') ? count(kop_operator_pages_index()['ids']) : 0;

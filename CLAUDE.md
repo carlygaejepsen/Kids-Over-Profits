@@ -62,6 +62,7 @@ php scripts/test-glossary-build.php             # PHP build == glossary.json, ed
 node scripts/test-inspection-text-signals.js --php=<Local php.exe>
 php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / ?text= against tmp/prod.sqlite
 # Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
+# Facility Profile posts listed in kop_facility_pages_merged_profiles() (hyde) print unchanged on their /facility/ page, the post 301s there
 php scripts/test-facility-pages.php
 # Facility pages show approved serious findings (inspection_highlights), staff with their other industry roles
 # (other records' staff lists + network map), incidents as a timeline, and news cards with pictures:

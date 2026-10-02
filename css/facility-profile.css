@@ -915,8 +915,15 @@
 }
 
 .kop-fp-generated-body .kop-fp-violations h2 .kop-fp-h-icon,
-.kop-fp-generated-body #memorials h2 .kop-fp-h-icon {
+.kop-fp-generated-body :is(#memorials, #record-memorials) h2 .kop-fp-h-icon {
     color: var(--kop-coral-pink-ink, #D9020F);
+}
+
+/* A merged Facility Profile post printed on its facility page: the post's
+   own block markup, then a gap before the record's sections. */
+.kop-fp-generated-body > .kop-fp-profile {
+    margin: 0 0 2.5rem;
+    scroll-margin-top: 6rem;
 }
 
 .kop-fp-generated-body > .kop-fp-stats {

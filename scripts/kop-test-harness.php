@@ -154,8 +154,20 @@ function get_post_meta($id, $key = '', $single = false) {
 }
 function get_post($id) {
     global $wpdb;
-    return $wpdb->get_row($wpdb->prepare('SELECT ID, post_title, post_excerpt, post_name FROM wpdl_posts WHERE ID = %d', $id)) ?: null;
+    return $wpdb->get_row($wpdb->prepare('SELECT ID, post_title, post_excerpt, post_name, post_content, post_modified FROM wpdl_posts WHERE ID = %d', $id)) ?: null;
 }
+// A post printed inside another template (a merged Facility Profile on its facility page).
+if (!function_exists('setup_postdata')) { function setup_postdata($post) { $GLOBALS['post'] = $post; return true; } }
+if (!function_exists('wp_reset_postdata')) { function wp_reset_postdata() {} }
+if (!function_exists('the_content')) { function the_content() { echo isset($GLOBALS['post']->post_content) ? $GLOBALS['post']->post_content : ''; } }
+if (!function_exists('get_the_post_thumbnail')) { function get_the_post_thumbnail() { return ''; } }
+if (!function_exists('get_the_modified_date')) {
+function get_the_modified_date($format = '', $post = null) {
+    $t = strtotime((string) ($post->post_modified ?? '')) ?: time();
+    return date($format === 'c' ? 'c' : 'F j, Y', $t);
+}
+}
+if (!function_exists('edit_post_link')) { function edit_post_link() {} }
 function _prime_post_caches() {}
 function wp_get_attachment_url($id) {
     $file = get_post_meta($id, '_wp_attached_file', true);
