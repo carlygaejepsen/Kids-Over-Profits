@@ -33,6 +33,11 @@ if (!function_exists('fetchArticleContent')) {
                 error_log(sprintf("archive.org returned %d chars (vs %d original) for %s", strlen($archived), strlen($originalText), $url));
                 return $archived;
             }
+            // A CAPTCHA or block page is not the article: handing it on let
+            // the AI write a summary from the headline alone.
+            if (kopLooksBotWalled($originalText, $original['httpCode'])) {
+                return '';
+            }
         }
 
         return $originalText;
@@ -54,6 +59,11 @@ if (!function_exists('fetchUrlAsText')) {
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($ch, CURLOPT_ENCODING, ''); // accept and unpack gzip/br: Wayback serves id_ snapshots compressed
+        // CBS and others answer 406 to a request with no Accept header.
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language: en-US,en;q=0.9',
+        ]);
 
         $html = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -129,8 +139,9 @@ if (!function_exists('looksPaywalled')) {
      * producing useless extractions.
      */
     function looksPaywalled($text, $httpCode) {
-        if (in_array((int)$httpCode, [401, 402, 403, 451], true)) return true;
+        if (in_array((int)$httpCode, [401, 402, 403, 429, 451], true)) return true;
         if (empty($text) || strlen($text) < 500) return true;
+        if (kopLooksBotWalled($text, $httpCode)) return true;
 
         $lower = strtolower(substr($text, 0, 5000));
         $signals = [
@@ -154,6 +165,24 @@ if (!function_exists('looksPaywalled')) {
             'support local journalism',          // common upsell stub
             'enable javascript to view',
             'please enable javascript',
+        ];
+        foreach ($signals as $needle) {
+            if (strpos($lower, $needle) !== false) return true;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('kopLooksBotWalled')) {
+    /**
+     * True for a block or CAPTCHA page (Cloudflare, archive.today's "One more
+     * step"), which holds nothing of the article, unlike a paywall stub that
+     * still carries its opening paragraphs.
+     */
+    function kopLooksBotWalled($text, $httpCode) {
+        if (in_array((int)$httpCode, [401, 403, 429, 451], true)) return true;
+        $lower = strtolower(substr((string) $text, 0, 5000));
+        $signals = [
             // Bot walls (Cloudflare and the like) answer 200 with a challenge page.
             'just a moment...',
             'attention required!',
@@ -161,7 +190,9 @@ if (!function_exists('looksPaywalled')) {
             'checking your browser',
             'access denied',
             'request blocked',
-            'are you a robot'
+            'are you a robot',
+            'complete the security check',
+            'completing the captcha proves',
         ];
         foreach ($signals as $needle) {
             if (strpos($lower, $needle) !== false) return true;
