@@ -72,7 +72,7 @@
 
         const title = link.dataset && link.dataset.title
             ? link.dataset.title
-            : (link.querySelector('.doc-title') ? link.querySelector('.doc-title').textContent.trim() : 'Document');
+            : (link.querySelector('.doc-title') ? link.querySelector('.doc-title').textContent.trim() : (link.textContent.trim().slice(0, 140) || 'Document'));
         const mime = link.dataset && link.dataset.mime ? link.dataset.mime : '';
         const thumb = link.dataset && link.dataset.thumb
             ? link.dataset.thumb
@@ -99,11 +99,27 @@
             const viewer = document.createElement('div');
             viewer.className = 'kop-doc-modal__viewer';
 
-            if (isPdf) {
+            if (isPdf && navigator.pdfViewerEnabled === false) {
+                viewer.classList.add('kop-doc-modal__viewer--nopdf');
+                // Most phones cannot draw a PDF inside a page: the frame stays
+                // blank. Show the cover and point at the buttons instead.
+                if (thumb) {
+                    const img = document.createElement('img');
+                    img.src = thumb;
+                    img.alt = title || 'Document preview';
+                    viewer.appendChild(img);
+                }
+                const note = document.createElement('div');
+                note.className = 'kop-doc-modal__placeholder';
+                note.textContent = 'This browser cannot show the PDF here. Use "Open in new tab" or "Download" below.';
+                viewer.appendChild(note);
+            } else if (isPdf) {
+                // Not loading="lazy": the frame is built before the modal is
+                // shown, and a lazy frame in a hidden box can wait for a scroll
+                // that never comes.
                 const iframe = document.createElement('iframe');
                 iframe.src = url;
                 iframe.setAttribute('title', title || 'PDF preview');
-                iframe.setAttribute('loading', 'lazy');
                 viewer.appendChild(iframe);
             } else if (isImage) {
                 const img = document.createElement('img');
@@ -155,6 +171,30 @@
             event.preventDefault();
             openDocModalFromLink(link);
         });
+
+        // Facility and operator pages: their own PDF links (Woodbury pages,
+        // reports, cited documents) open here too. Easy FancyBox claims every
+        // .pdf link and shows it as a 300x150 sliver, so this listens in the
+        // capture phase and stops the click before FancyBox's handler sees it.
+        document.addEventListener('click', event => {
+            const link = event.target && event.target.closest
+                ? event.target.closest('.kop-facility-profile a[href]')
+                : null;
+            if (!link || link.matches('.doc-link, .kop-rl-doc')) return;
+            if (link.dataset && link.dataset.kopNoModal === 'true') return;
+            if (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1) return;
+            let parsed;
+            try {
+                parsed = new URL(link.href, window.location.href);
+            } catch (e) {
+                return;
+            }
+            if (parsed.origin !== window.location.origin || getFileExtension(parsed.pathname) !== 'pdf') return;
+
+            event.preventDefault();
+            event.stopPropagation();
+            openDocModalFromLink(link);
+        }, true);
     }
 
     $(document).ready(function() {

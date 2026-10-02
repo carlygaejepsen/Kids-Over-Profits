@@ -95,3 +95,11 @@ html body .addtoany_list a:focus span {
 html body .comment-form .required {
     color: #D9020F;
 }
+
+/* Easy FancyBox shows a PDF as an <object> with no size inside its sized box,
+   so it draws at the browser default 300x150 in the corner. Fill the box. */
+html body #fancybox-content object[type="application/pdf"] {
+    display: block;
+    width: 100%;
+    height: 100%;
+}

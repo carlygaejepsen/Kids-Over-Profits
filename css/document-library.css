@@ -739,6 +739,18 @@
     color: var(--kop-text-secondary);
 }
 
+/* No in-page PDF viewer (most phones): the cover above a note. */
+.kop-doc-modal__viewer--nopdf {
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.kop-doc-modal__viewer--nopdf img {
+    max-height: 50vh;
+}
+
 .kop-doc-modal__footer {
     display: flex;
     align-items: center;

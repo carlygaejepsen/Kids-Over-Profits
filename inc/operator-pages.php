@@ -207,9 +207,15 @@ if (!function_exists('kop_operator_pages_enqueue')) {
         if (file_exists($css)) {
             wp_enqueue_style('kop-facility-profile', $theme_uri . '/css/facility-profile.css', array('kop-colors'), filemtime($css));
         }
+        // The document viewer, for the library's tiles and the page's other
+        // PDF links (as on facility pages).
         $doc_css = $theme_dir . '/css/document-library.css';
-        if (file_exists($doc_css) && !empty($GLOBALS['kop_operator_page']['documents']['html'])) {
+        if (file_exists($doc_css)) {
             wp_enqueue_style('kop-document-library-style', $theme_uri . '/css/document-library.css', array('kop-colors'), filemtime($doc_css));
+        }
+        $doc_js = $theme_dir . '/js/document-library.js';
+        if (file_exists($doc_js)) {
+            wp_enqueue_script('kop-document-library-script', $theme_uri . '/js/document-library.js', array('jquery'), filemtime($doc_js), true);
         }
         $js = $theme_dir . '/js/submit-info.js';
         if (file_exists($js)) {

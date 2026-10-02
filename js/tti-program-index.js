@@ -2464,11 +2464,25 @@ function openDocumentModalFromLink(link) {
         const viewer = document.createElement('div');
         viewer.className = 'kop-doc-modal__viewer';
 
-        if (isPdf) {
+        if (isPdf && navigator.pdfViewerEnabled === false) {
+            viewer.classList.add('kop-doc-modal__viewer--nopdf');
+            // Same as js/document-library.js: no in-page PDF viewer (most
+            // phones), so the cover and a pointer to the buttons.
+            if (thumb) {
+                const img = document.createElement('img');
+                img.src = thumb;
+                img.alt = title || 'Document preview';
+                viewer.appendChild(img);
+            }
+            const note = document.createElement('div');
+            note.className = 'kop-doc-modal__placeholder';
+            note.textContent = 'This browser cannot show the PDF here. Use "Open in new tab" or "Download" below.';
+            viewer.appendChild(note);
+        } else if (isPdf) {
+            // Not lazy: built before the modal is shown (js/document-library.js).
             const iframe = document.createElement('iframe');
             iframe.src = url;
             iframe.setAttribute('title', title || 'PDF preview');
-            iframe.setAttribute('loading', 'lazy');
             viewer.appendChild(iframe);
         } else if (isImage) {
             const img = document.createElement('img');
