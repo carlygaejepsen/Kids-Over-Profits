@@ -29,7 +29,8 @@ function kop_directory_feed_wanted($project) {
  * Moves when anything the feed shows changes: the state feed's fingerprint
  * (facilities, links, news, lawsuits, memorials, inspections, theme files)
  * plus the operator records and the legacy tables the feed still reads.
- * The hour is part of it so anything it misses is at most an hour stale.
+ * A build older than KOP_DIRECTORY_FEED_MAX_AGE is made again anyway, for
+ * anything it misses.
  */
 function kop_directory_feed_fingerprint() {
     static $key = null;
@@ -41,7 +42,6 @@ function kop_directory_feed_fingerprint() {
         $parts[] = $table . ':' . (is_array($row) ? implode('|', array_map('strval', $row)) : '-');
     }
     $parts[] = 'v2:' . ((function_exists('kop_v2_active') && kop_v2_active('program_index')) ? '1' : '0');
-    $parts[] = 'h:' . gmdate('YmdH');
     $parts[] = 'v:1';
     return $key = substr(md5(implode(';', $parts)), 0, 16);
 }
@@ -50,6 +50,10 @@ function kop_directory_feed_cache_dir() {
     $uploads = function_exists('wp_upload_dir') ? wp_upload_dir(null, false) : array();
     $base = !empty($uploads['basedir']) ? $uploads['basedir'] : (WP_CONTENT_DIR . '/uploads');
     return rtrim($base, '/\\') . '/kop-cache/directory';
+}
+
+if (!defined('KOP_DIRECTORY_FEED_MAX_AGE')) {
+    define('KOP_DIRECTORY_FEED_MAX_AGE', 6 * 3600);
 }
 
 /** File name for one project's full record. */
@@ -144,7 +148,9 @@ function kop_directory_feed_build_full() {
 function kop_directory_feed_ensure() {
     $root = kop_directory_feed_cache_dir();
     $dir = $root . '/' . kop_directory_feed_fingerprint();
-    if (is_readable($dir . '/index.json')) return $dir;
+    if (is_readable($dir . '/index.json') && (int) @filemtime($dir . '/index.json') > time() - KOP_DIRECTORY_FEED_MAX_AGE) {
+        return $dir;
+    }
 
     $full = kop_directory_feed_build_full();
     if (is_wp_error($full)) return $full;
@@ -212,4 +218,20 @@ function kop_directory_feed_response($view, array $keys) {
         if (is_array($project)) $out[$key] = $project;
     }
     return array('view' => 'detail', 'projects' => (object) $out);
+}
+
+// Built hourly by WP-Cron, so a visitor rarely waits the ~7 s a build takes
+// after the records change.
+if (function_exists('add_action')) {
+    add_action('init', static function () {
+        if (function_exists('wp_next_scheduled') && !wp_next_scheduled('kop_directory_feed_hourly')) {
+            wp_schedule_event(time() + 600, 'hourly', 'kop_directory_feed_hourly');
+        }
+    });
+    add_action('kop_directory_feed_hourly', static function () {
+        if (get_transient('kop_directory_feed_lock')) return;
+        set_transient('kop_directory_feed_lock', 1, 10 * MINUTE_IN_SECONDS);
+        kop_directory_feed_ensure();
+        delete_transient('kop_directory_feed_lock');
+    });
 }
