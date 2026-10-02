@@ -1,9 +1,9 @@
 {
   "title": "Robert B. Lichfield",
   "slug": "robert-lichfield",
-  "post_type": "post",
+  "post_type": "page",
   "status": "draft",
-  "seed_version": 5,
+  "seed_version": 6,
   "content_file": "robert-lichfield.html",
   "excerpt": "Editorial research draft about Robert B. Lichfield, Cross Creek and WWASP. Program affiliations, corporate control, allegations and legal outcomes require case-by-case source verification.",
   "template": "single-person-profile.php",

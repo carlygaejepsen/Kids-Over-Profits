@@ -1,9 +1,9 @@
 {
   "title": "Matthew Lewis Israel",
   "slug": "matthew-israel",
-  "post_type": "post",
+  "post_type": "page",
   "status": "draft",
-  "seed_version": 4,
+  "seed_version": 5,
   "content_file": "matthew-israel.html",
   "excerpt": "Editorial research draft about Matthew Israel and the Judge Rotenberg Center. Claims and legal history require source verification before publication.",
   "template": "single-person-profile.php",

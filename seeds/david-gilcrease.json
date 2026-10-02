@@ -1,9 +1,9 @@
 {
   "title": "David Gilcrease",
   "slug": "david-gilcrease",
-  "post_type": "post",
+  "post_type": "page",
   "status": "draft",
-  "seed_version": 4,
+  "seed_version": 5,
   "content_file": "david-gilcrease.html",
   "excerpt": "Editorial research draft about David Gilcrease and seminars associated with WWASP. Claims about seminar practices and coercion require source verification before publication.",
   "template": "single-person-profile.php",

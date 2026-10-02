@@ -1,7 +1,7 @@
 {
   "title": "Joe Ricci",
   "slug": "joe-ricci",
-  "post_type": "post",
+  "post_type": "page",
   "status": "draft",
   "seed_version": 3,
   "content_file": "joe-ricci.html",

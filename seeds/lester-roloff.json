@@ -1,9 +1,9 @@
 {
   "title": "Lester Roloff",
   "slug": "lester-roloff",
-  "post_type": "post",
+  "post_type": "page",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "lester-roloff.html",
   "excerpt": "Editorial research draft about Lester Roloff and his faith-based residential homes. Accounts of discipline, state intervention and program history are attributed to the sources reviewed and require primary-record citations.",
   "template": "single-person-profile.php",
