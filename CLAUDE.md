@@ -207,6 +207,8 @@ php scripts/test-survivor-archives.php
 # the hourly Windows task "KOP Fornits" ties new topics to facilities and uploads them to ~/kop-import/fornits/; on the
 # server an hourly read, Groq and Gemini free tiers in turn (daily caps KOP_FORNITS_GEMINI_CALLS / KOP_FORNITS_DAILY_CALLS),
 # proposes staff, incidents, survivor accounts (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo.
+# Each read thread gets a headline from its summary (20 a call) that replaces the forum title on its links, on records too unless
+# a person changed the label; a lead sent to News/Lawsuits is retitled from the article by the hourly enrich (api/lib-record-enrich.php)
 # "Check AI keys" there sends one request per provider through the site's own code (keys never shown)
 python scripts/test-gemini.py                     # is a Gemini key usable? lists its models, names the fix
 python scripts/fornits-crawl.py                   # resumable, one request per 3 s

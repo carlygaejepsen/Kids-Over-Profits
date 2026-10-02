@@ -11,9 +11,11 @@
  * note) go on a sample of them. Each document then goes through the save's
  * normalize step and must pass the validator with the addition still there;
  * adding it again is refused; Undo gives back the document exactly as it was;
- * and a survivor account never reaches a public payload. Also the quote check,
- * the reading chunks and the prompt. The MySQL tables, locks, queues and Groq
- * are not exercised here.
+ * and a survivor account never reaches a public payload. A headline then
+ * replaces each link's thread title on the record, and Undo still works. Also
+ * the quote check, the reading chunks, the prompts and the news/lawsuit rows
+ * still titled with a lead (api/lib-record-enrich.php). The MySQL tables,
+ * locks, queues and Groq are not exercised here.
  */
 
 if (PHP_SAPI !== 'cli') {
@@ -35,6 +37,7 @@ require_once dirname(__DIR__) . '/inc/facility-finder.php';
 require_once dirname(__DIR__) . '/inc/woodbury-facts.php';
 require_once dirname(__DIR__) . '/inc/drive-docs.php';
 require_once dirname(__DIR__) . '/inc/fornits.php';
+require_once dirname(__DIR__) . '/api/lib-record-enrich.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -94,6 +97,25 @@ $label = kop_fornits_link_label(array('label' => 'Fornits: Thayer (2004-2006, 12
 $check('the record\'s link says what the thread says, kept short', strpos($label, 'Fornits: Thayer (2004-2006, 12 posts). xxx') === 0 && mb_strlen($label) < 360);
 $check('an unread thread keeps its plain label', kop_fornits_link_label(array('label' => 'Fornits: T', 'summary' => '')) === 'Fornits: T');
 
+echo "-- Headlines --\n";
+$check('a headline replaces the thread title and keeps years and posts',
+    kop_fornits_headline_label('Fornits: Re: help (2004-2006, 12 posts)', 'Re: help', 'Survivor describes restraints at Thayer (2004)')
+    === 'Fornits: Survivor describes restraints at Thayer (2004) (2004-2006, 12 posts)');
+$check('a label a person changed is left alone', kop_fornits_headline_label('My own words', 'Re: help', 'X') === null);
+$check('a headline loses quotes and its full stop', kop_fornits_clean_headline(' "Parent account of Thayer (2003)." ') === 'Parent account of Thayer (2003)');
+$tp = kop_fornits_title_prompt(array(array('topic_id' => 7, 'title' => 'anyone?', 'board_name' => 'Thayer', 'summary' => 'A survivor describes 2004.',
+    'started' => '2004-01-02', 'last_post' => '2006-03-01')));
+$check('the headline prompt lists each thread with its id, years and summary', strpos($tp, '- id 7 | board: Thayer | thread title: "anyone?" | 2004-2006') !== false
+    && strpos($tp, 'summary: A survivor describes 2004.') !== false && strpos($tp, "poster's name") !== false);
+$check('the review screen shows a headline, not a placeholder', kop_fornits_has_headline(array('topic_headline' => 'Survivor on Thayer', 'topic_title' => 'anyone?'))
+    && !kop_fornits_has_headline(array('topic_headline' => '-', 'topic_title' => 'anyone?'))
+    && !kop_fornits_has_headline(array('topic_headline' => 'anyone?', 'topic_title' => 'anyone?')));
+$leads = array(714 => 'Teen Advocates USA article on Lester Roloff and Rebekah Home for Girls.');
+$check('a news row still titled with its lead is read again for its headline',
+    kop_enrich_fornits_title("Teen Advocates USA article on Lester Roloff and  Rebekah Home for Girls. ", 714, $leads));
+$check('a row a person retitled, or another row, keeps its title',
+    !kop_enrich_fornits_title('Roloff homes: the girls who ran', 714, $leads) && !kop_enrich_fornits_title($leads[714], 715, $leads));
+
 echo "-- Lead targets --\n";
 $check('a news story with its link goes to the news queue', kop_fornits_lead_target(array('type' => 'news', 'url' => 'https://x.org/a')) === 'news');
 $check('a news story without a link is a note', kop_fornits_lead_target(array('type' => 'news', 'url' => '')) === 'note');
@@ -109,7 +131,7 @@ while (($line = gzgets($fh)) !== false) {
         $first = $t['posts'][0];
         $by[(int) $f['id']][] = array(
             'pkey' => 'x', 'kind' => 'link', 'topic_id' => $t['topic'], 'post_n' => 0, 'author' => $first['author'], 'post_date' => $first['date'],
-            'label' => 'Fornits: ' . $t['title'], 'summary' => 'Survivors describe restraints and a death in 2004.', 'quote' => '', 'value' => json_encode(array('url' => $t['url'], 'board' => $t['board_name'])),
+            'label' => 'Fornits: ' . $t['title'] . ' (2004, 3 posts)', 'title' => $t['title'], 'summary' => 'Survivors describe restraints and a death in 2004.', 'quote' => '', 'value' => json_encode(array('url' => $t['url'], 'board' => $t['board_name'])),
         );
     }
 }
@@ -117,7 +139,7 @@ gzclose($fh);
 printf("  %d links on %d records (%s)\n", array_sum(array_map('count', $by)), count($by), basename($batch));
 
 $stmt = $pdo->prepare('SELECT json_data FROM facilities_v2 WHERE id = ?');
-$added = $invalid = $lost = $twice_bad = $undo_bad = $missing = 0;
+$added = $invalid = $lost = $twice_bad = $undo_bad = $missing = $retitle_bad = 0;
 $examples = array();
 $sample = array();
 foreach ($by as $fid => $rows) {
@@ -171,12 +193,37 @@ foreach ($by as $fid => $rows) {
         $undo_bad++;
         if (count($examples) < 12) $examples[] = "#$fid undo differs";
     }
+    // The headline pass: each link's label changes once, the record stays valid, Undo still takes it off.
+    $titled = $saved;
+    foreach ($done as list($r, $d)) {
+        $new = $r;
+        $new['label'] = kop_fornits_headline_label($r['label'], $r['title'], 'Survivor describes restraints (2004)');
+        $url = json_decode($r['value'], true)['url'];
+        if ($new['label'] === null || !kop_fornits_relabel_doc($titled, $url, kop_fornits_link_label($r), kop_fornits_link_label($new))
+            || kop_fornits_relabel_doc($titled, $url, kop_fornits_link_label($r), 'again')) {
+            $retitle_bad++;
+        }
+    }
+    $titled = $normalize($titled);
+    $relabelled = array_filter($titled['resourceLinks'] ?? array(), function ($l) { return strpos((string) $l['label'], 'Fornits: Survivor describes restraints (2004) (2004, 3 posts)') === 0; });
+    if (count($relabelled) !== count($done) || array_filter(kop_facility_validate($titled), function ($v) { return $v['severity'] === 'error'; })) {
+        $retitle_bad++;
+        if (count($examples) < 12) $examples[] = "#$fid headline: " . count($relabelled) . ' of ' . count($done) . ' relabelled';
+    }
+    foreach ($done as list($r, $d)) {
+        kop_fornits_doc_undo($titled, $d);
+    }
+    if ($normalize($titled) != $base) {
+        $retitle_bad++;
+        if (count($examples) < 12) $examples[] = "#$fid undo after headline differs";
+    }
 }
 $check("every link added ($added)", $added > 0 && !$missing, $missing ? "$missing records missing" : '');
 $check('every document still valid', !$invalid, $invalid . ' invalid');
 $check('every link kept by the save, as a survivor discussion citing Fornits', !$lost, $lost . ' lost');
 $check('adding one again is refused', !$twice_bad, $twice_bad . ' added twice');
 $check('Undo gives the document back exactly', !$undo_bad, $undo_bad . ' differ');
+$check('a headline relabels each link once, stays valid, and Undo still takes it off', !$retitle_bad, $retitle_bad . ' bad');
 
 echo "-- Staff, incidents, survivor accounts and leads on " . count($sample) . " records --\n";
 $kinds = array(

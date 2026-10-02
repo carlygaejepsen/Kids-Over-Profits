@@ -29,7 +29,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_FORNITS_DB_VERSION', '2');
+define('KOP_FORNITS_DB_VERSION', '3');
 
 function kop_fornits_topics_table() {
     global $wpdb;
@@ -66,6 +66,7 @@ function kop_fornits_ensure_tables() {
         read_status VARCHAR(12) NOT NULL DEFAULT 'pending',
         read_note TEXT NULL,
         summary TEXT NULL,
+        headline VARCHAR(200) NOT NULL DEFAULT '',
         categories VARCHAR(255) NOT NULL DEFAULT '',
         importance TINYINT UNSIGNED NOT NULL DEFAULT 0,
         tries TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -319,6 +320,7 @@ function kop_fornits_add_link_item(array $t, array $f, $now) {
     $also = array_values(array_filter((array) ($f['also'] ?? array()), 'is_array'));
     $posts = (array) ($t['posts'] ?? array());
     $years = array_unique(array_filter(array(substr((string) ($t['started'] ?? ''), 0, 4), substr((string) ($t['last'] ?? ''), 0, 4))));
+    // The thread's own title until kop_fornits_title_batch() gives it a headline.
     $label = 'Fornits: ' . trim((string) ($t['title'] ?? '')) . ' (' . implode('-', $years) . ', '
         . count($posts) . ' post' . (count($posts) === 1 ? '' : 's') . ')';
     $first = $posts[0] ?? array();
@@ -741,12 +743,155 @@ function kop_fornits_cron() {
     try {
         kop_fornits_sync(60);
         $c = kop_fornits_read_batch(30, 150);
+        $c['titled'] = kop_fornits_title_batch(5);
         update_option('kop_fornits_last_run', array('at' => current_time('mysql', true)) + $c, false);
     } catch (Throwable $e) {
         error_log('kop fornits: ' . $e->getMessage());
     } finally {
         delete_transient('kop_fornits_lock');
     }
+}
+
+/* ---- Headlines ------------------------------------------------------------ */
+
+/**
+ * Forum thread titles ("Re: anyone?", "HELP!!!", "my story") say nothing on a
+ * facility page, so each read topic gets a plain headline written from its
+ * summary, twenty topics to a request (no posts are read again). The
+ * discussion links take it: pending proposals at once, and a link already on
+ * a record when its label there is still the one Fornits put (a label a
+ * person changed is kept). Returns the number of topics titled.
+ */
+function kop_fornits_title_batch($max_calls = 5, $per_call = 20) {
+    global $wpdb;
+    kop_fornits_ensure_tables();
+    require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    $topics = kop_fornits_topics_table();
+    $done = 0;
+    for ($call = 0; $call < $max_calls; $call++) {
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT topic_id, title, board_name, summary, started, last_post FROM {$topics}
+            WHERE read_status = 'read' AND headline = '' AND summary IS NOT NULL AND summary <> ''
+            ORDER BY importance DESC, topic_id LIMIT %d", $per_call), ARRAY_A);
+        if (!$rows) {
+            break;
+        }
+        try {
+            $reply = kop_fornits_ask(kop_fornits_title_prompt($rows));
+        } catch (Throwable $e) {
+            break; // rate limit or both providers down: the next run goes on
+        }
+        $data = kop_ai_extract_json((string) $reply);
+        $got = array();
+        foreach ((array) ($data['titles'] ?? array()) as $t) {
+            if (is_array($t) && (int) ($t['id'] ?? 0) > 0) {
+                $got[(int) $t['id']] = kop_fornits_clean_headline((string) ($t['title'] ?? ''));
+            }
+        }
+        if (!$got) {
+            break; // an unreadable reply: try again next run rather than mark the topics titled
+        }
+        foreach ($rows as $r) {
+            $tid = (int) $r['topic_id'];
+            $own = mb_substr(trim((string) $r['title']), 0, 200);
+            // A topic the reply left out keeps its own title, so it is not asked for again.
+            $headline = ($got[$tid] ?? '') !== '' ? $got[$tid] : $own;
+            $wpdb->update($topics, array('headline' => $headline !== '' ? $headline : '-'), array('topic_id' => $tid));
+            if ($headline !== '' && $headline !== $own) {
+                kop_fornits_retitle_links($r, $headline);
+                $done++;
+            }
+        }
+    }
+    return $done;
+}
+
+function kop_fornits_title_prompt(array $rows) {
+    $list = '';
+    foreach ($rows as $r) {
+        $years = array_unique(array_filter(array(substr((string) $r['started'], 0, 4), substr((string) $r['last_post'], 0, 4))));
+        $list .= '- id ' . (int) $r['topic_id'] . ' | board: ' . $r['board_name'] . ' | thread title: "' . trim((string) $r['title'])
+            . '" | ' . implode('-', $years) . "\n  summary: " . trim((string) $r['summary']) . "\n";
+    }
+    return "These are threads from Fornits, a forum where survivors of troubled-teen programs, their parents and researchers "
+        . "have posted since 2001. Their own titles are often useless (\"Re: help\", \"anyone?\"). Write a plain headline for each, "
+        . "for a list of sources on a program's page.\n\n"
+        . "Rules:\n"
+        . "- Under 90 characters. Say who is posting (survivor, parent, former staff, program defender) when the summary says, "
+        . "the program by name, and what the thread is about, with the year or years if the summary gives them. "
+        . "Example: \"Former student describes isolation room at Cross Creek Manor (2003)\".\n"
+        . "- Only what the summary says. Never a poster's name or username, never the name of a young person.\n"
+        . "- When the thread is only chatter, say so: \"Forum chatter about <program>\".\n"
+        . "- No quotation marks, no ending full stop, no emojis.\n\n"
+        . "Return JSON only: {\"titles\":[{\"id\":0,\"title\":\"\"}]}\n\n"
+        . "Threads:\n" . $list;
+}
+
+function kop_fornits_clean_headline($s) {
+    $s = trim(preg_replace('/\s+/u', ' ', strip_tags($s)), " \t\"'\u{201C}\u{201D}");
+    return mb_substr(rtrim($s, '.'), 0, 200);
+}
+
+/** A review row whose topic has a headline of its own (not its thread title, not the '-' placeholder). */
+function kop_fornits_has_headline(array $r) {
+    $h = (string) ($r['topic_headline'] ?? '');
+    return $h !== '' && $h !== '-' && $h !== trim((string) ($r['topic_title'] ?? ''));
+}
+
+/** Put a topic's headline on its discussion links, in the queue and on the records. */
+function kop_fornits_retitle_links(array $topic, $headline) {
+    global $wpdb;
+    $items = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . kop_fornits_items_table() . " WHERE topic_id = %d AND kind = 'link'",
+        (int) $topic['topic_id']), ARRAY_A);
+    foreach ((array) $items as $r) {
+        $new = $r;
+        $new['label'] = kop_fornits_headline_label((string) $r['label'], (string) $topic['title'], $headline);
+        if ($new['label'] === null) {
+            continue;
+        }
+        $done = json_decode((string) $r['applied'], true);
+        if ($r['status'] === 'applied' && ($done['via'] ?? '') === 'link' && (int) $r['applied_fid'] > 0) {
+            try {
+                kop_fornits_relabel_record_link((int) $r['applied_fid'], (string) $done['url'], kop_fornits_link_label($r), kop_fornits_link_label($new));
+            } catch (Throwable $e) {
+                error_log('kop fornits retitle #' . (int) $r['applied_fid'] . ': ' . $e->getMessage());
+                continue;
+            }
+        }
+        $wpdb->update(kop_fornits_items_table(), array('label' => $new['label']), array('pkey' => $r['pkey']));
+    }
+}
+
+/** "Fornits: <thread title> (2004, 3 posts)..." with the headline in place of the title; null when the label is not that. */
+function kop_fornits_headline_label($label, $title, $headline) {
+    $old = 'Fornits: ' . trim((string) $title) . ' (';
+    return strpos((string) $label, $old) === 0 ? 'Fornits: ' . $headline . ' (' . substr((string) $label, strlen($old)) : null;
+}
+
+/** Swap the label of the link to $url in a document, only while it is still $from. True when changed. */
+function kop_fornits_relabel_doc(array &$doc, $url, $from, $to) {
+    $key = kop_gdl_url_key($url);
+    $changed = false;
+    foreach ((array) ($doc['resourceLinks'] ?? array()) as $i => $l) {
+        if (is_array($l) && kop_gdl_url_key($l['url'] ?? '') === $key && (string) ($l['label'] ?? '') === $from) {
+            $doc['resourceLinks'][$i]['label'] = $to;
+            $changed = true;
+        }
+    }
+    return $changed;
+}
+
+function kop_fornits_relabel_record_link($fid, $url, $from, $to) {
+    $opts = kop_wbf_opts();
+    kop_v2_with_write_lock($opts['pdo'], function () use ($fid, $url, $from, $to, $opts) {
+        $stored = kop_facility_load($fid, $opts);
+        if (!$stored) {
+            return;
+        }
+        $doc = $stored['doc'];
+        if (kop_fornits_relabel_doc($doc, $url, $from, $to)) {
+            kop_wbf_save($doc, $opts);
+        }
+    });
 }
 
 /* ---- Changing a record --------------------------------------------------- */
@@ -758,7 +903,7 @@ function kop_fornits_rows(array $pkeys) {
         return array();
     }
     $in = implode(',', array_fill(0, count($pkeys), '%s'));
-    return (array) $wpdb->get_results($wpdb->prepare('SELECT i.*, t.title AS topic_title, t.url AS topic_url, t.board_name FROM '
+    return (array) $wpdb->get_results($wpdb->prepare('SELECT i.*, t.title AS topic_title, t.headline AS topic_headline, t.url AS topic_url, t.board_name FROM '
         . kop_fornits_items_table() . ' i LEFT JOIN ' . kop_fornits_topics_table() . " t ON t.topic_id = i.topic_id WHERE i.pkey IN ({$in})", $pkeys), ARRAY_A);
 }
 
@@ -1194,7 +1339,7 @@ function kop_render_fornits_page() {
         return;
     }
     $in = implode(',', array_map('intval', $cards));
-    $rows = $wpdb->get_results("SELECT i.*, t.title AS topic_title, t.url AS topic_url, t.board_name, t.summary AS topic_summary, t.read_status
+    $rows = $wpdb->get_results("SELECT i.*, t.title AS topic_title, t.headline AS topic_headline, t.url AS topic_url, t.board_name, t.summary AS topic_summary, t.read_status
         FROM {$items} i LEFT JOIN {$topics} t ON t.topic_id = i.topic_id
         WHERE {$where} AND i.{$card} IN ({$in}) ORDER BY i.importance DESC, i.preselect DESC, i.post_date", ARRAY_A);
     $by = array();
@@ -1267,7 +1412,9 @@ function kop_fornits_render_row(array $r, $pending) {
         echo '<div class="kop-fn-muted">Board: ' . esc_html($r['board_name']) . ' &middot; matched by ' . esc_html($r['how']) . '</div>';
     } else {
         echo '<strong>' . esc_html($r['label']) . '</strong>'
-            . '<div class="kop-fn-muted">In <a href="' . esc_url($r['topic_url']) . '" target="_blank" rel="noopener noreferrer nofollow">' . esc_html($r['topic_title']) . '</a></div>';
+            . '<div class="kop-fn-muted">In <a href="' . esc_url($r['topic_url']) . '" target="_blank" rel="noopener noreferrer nofollow">'
+                . esc_html(kop_fornits_has_headline($r) ? $r['topic_headline'] : $r['topic_title']) . '</a>'
+                . (kop_fornits_has_headline($r) ? ' (thread "' . esc_html($r['topic_title']) . '")' : '') . '</div>';
     }
     kop_fornits_render_tags((string) $r['categories']);
     if ($also) {

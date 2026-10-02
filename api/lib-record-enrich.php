@@ -69,6 +69,76 @@ function kop_enrich_domain_name($name) {
     return (bool) preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(?: \(archived\))?$/i', trim((string) $name));
 }
 
+/**
+ * Queue rows a Fornits lead sent ('news' or 'lawsuit'): [row id => the lead's
+ * summary the row was titled with]. That summary says what the forum post
+ * said about the link ("Poster links a Tribune story on the 2005 death"),
+ * never the article's headline, so while the row still carries it the reading
+ * replaces it as it would a bare address. A title a person changed is kept.
+ */
+function kop_enrich_fornits_titles($target) {
+    global $wpdb;
+    if (!isset($wpdb) || !function_exists('kop_fornits_items_table') || !get_option('kop_fornits_db')) {
+        return array();
+    }
+    $out = array();
+    $rows = $wpdb->get_results('SELECT value, applied FROM ' . kop_fornits_items_table()
+        . " WHERE kind = 'lead' AND status = 'applied' AND applied LIKE '%\"via\":\"queue\"%'", ARRAY_A);
+    foreach ((array) $rows as $r) {
+        $a = json_decode((string) $r['applied'], true);
+        $v = json_decode((string) $r['value'], true);
+        if (is_array($a) && ($a['target'] ?? '') === $target && (int) ($a['id'] ?? 0) > 0 && trim((string) ($v['summary'] ?? '')) !== '') {
+            $out[(int) $a['id']] = (string) $v['summary'];
+        }
+    }
+    return $out;
+}
+
+/** Is $title still the Fornits lead summary row $id was sent with? */
+function kop_enrich_fornits_title($title, $id, array $leads) {
+    $norm = function ($s) { return mb_strtolower(trim(preg_replace('/\s+/u', ' ', (string) $s))); };
+    return isset($leads[(int) $id]) && $norm($title) === $norm(mb_substr($leads[(int) $id], 0, 500));
+}
+
+/**
+ * Rows still titled with their Fornits lead summary, read again for their
+ * headline even when the rest is filled. $col is the title column.
+ */
+function kop_enrich_fornits_ids(PDO $pdo, $table, $col, $target, array $ids) {
+    $leads = kop_enrich_fornits_titles($target);
+    if ($ids) {
+        $leads = array_intersect_key($leads, array_flip(array_map('intval', $ids)));
+    }
+    if (!$leads) {
+        return array();
+    }
+    $st = $pdo->prepare("SELECT id, `{$col}` FROM {$table} WHERE id IN (" . implode(',', array_fill(0, count($leads), '?')) . ')'
+        . ($table === 'lawsuits' ? '' : " AND status <> 'deleted'"));
+    $st->execute(array_keys($leads));
+    $out = array();
+    foreach ($st->fetchAll(PDO::FETCH_NUM) as $r) {
+        if (kop_enrich_fornits_title($r[1], $r[0], $leads)) {
+            $out[] = (int) $r[0];
+        }
+    }
+    return $out;
+}
+
+/** The ids query's rows plus the Fornits-titled ones, without those failed twice. */
+function kop_enrich_pick_ids(array $found, array $fornits, $prefix, $limit, array $ids) {
+    $failed = kop_enrich_failed();
+    $out = array();
+    foreach (array_unique(array_merge(array_map('intval', $fornits), array_map('intval', $found))) as $id) {
+        if (($failed[$prefix . $id]['n'] ?? 0) < 2 || $ids) {
+            $out[] = $id;
+        }
+        if (count($out) >= $limit) {
+            break;
+        }
+    }
+    return $out;
+}
+
 /* ---- News ---------------------------------------------------------------- */
 
 /**
@@ -85,17 +155,8 @@ function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
     }
     $st = $pdo->prepare($sql . ' ORDER BY id LIMIT ' . (int) $limit * 4);
     $st->execute($params);
-    $failed = kop_enrich_failed();
-    $out = array();
-    foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $id) {
-        if (($failed['news:' . $id]['n'] ?? 0) < 2 || $ids) {
-            $out[] = (int) $id;
-        }
-        if (count($out) >= $limit) {
-            break;
-        }
-    }
-    return $out;
+    return kop_enrich_pick_ids($st->fetchAll(PDO::FETCH_COLUMN),
+        kop_enrich_fornits_ids($pdo, 'news_submissions', 'article_title', 'news', $ids), 'news:', $limit, $ids);
 }
 
 function kop_enrich_post_json($url, array $body, $timeout) {
@@ -160,10 +221,14 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
     };
 
     $title = $row['article_title'];
-    if (kop_enrich_placeholder_title($title, $row['article_url']) && trim((string) ($d['title'] ?? '')) !== '') {
+    $from_lead = kop_enrich_fornits_title($title, $id, kop_enrich_fornits_titles('news'));
+    if ((kop_enrich_placeholder_title($title, $row['article_url']) || $from_lead) && trim((string) ($d['title'] ?? '')) !== '') {
         $title = trim($d['title']);
         $filled[] = 'title';
     }
+    // Still titled with the lead: the rest is saved, but the row is counted as
+    // failed, or it comes back every hour for a headline it never gets.
+    $headless = $from_lead && !in_array('title', $filled, true) ? 'the article gave no headline; retitle it in the News Processor' : '';
     $outlet = $row['publication_name'];
     if ((trim((string) $outlet) === '' || kop_enrich_domain_name($outlet)) && trim((string) ($d['publicationName'] ?? '')) !== '') {
         $outlet = trim($d['publicationName']);
@@ -207,13 +272,18 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
     ));
     $filled = array_values(array_unique($filled));
     if (!$apply) {
-        return array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
+        return $headless !== '' ? array('ok' => false, 'id' => $id, 'error' => $headless, 'filled' => $filled)
+            : array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
     }
     $saved = kop_enrich_post_json($api . 'save-news-submission.php', $payload, 60);
     if (!$saved['ok'] || empty($saved['body']['success'])) {
         $why = (string) ($saved['body']['error'] ?? ('HTTP ' . $saved['status']));
         kop_enrich_mark_failed('news:' . $id, 'save: ' . $why);
         return array('ok' => false, 'id' => $id, 'error' => 'save: ' . mb_substr($why, 0, 200));
+    }
+    if ($headless !== '') {
+        kop_enrich_mark_failed('news:' . $id, $headless);
+        return array('ok' => false, 'id' => $id, 'error' => $headless, 'filled' => $filled);
     }
     kop_enrich_clear_failed('news:' . $id);
     return array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
@@ -232,17 +302,8 @@ function kop_enrich_lawsuit_ids(PDO $pdo, $limit, array $ids = array()) {
     }
     $st = $pdo->prepare($sql . ' ORDER BY id LIMIT ' . (int) $limit * 4);
     $st->execute($params);
-    $failed = kop_enrich_failed();
-    $out = array();
-    foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $id) {
-        if (($failed['lawsuit:' . $id]['n'] ?? 0) < 2 || $ids) {
-            $out[] = (int) $id;
-        }
-        if (count($out) >= $limit) {
-            break;
-        }
-    }
-    return $out;
+    return kop_enrich_pick_ids($st->fetchAll(PDO::FETCH_COLUMN),
+        kop_enrich_fornits_ids($pdo, 'lawsuits', 'case_name', 'lawsuit', $ids), 'lawsuit:', $limit, $ids);
 }
 
 /** A page or PDF as plain text ('' when nothing readable came back). */
@@ -324,10 +385,12 @@ function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
 
     $set = array();
     $filled = array();
-    if (kop_enrich_placeholder_title($row['case_name'], $url) && $x['case_name'] !== '') {
+    $from_lead = kop_enrich_fornits_title($row['case_name'], $id, kop_enrich_fornits_titles('lawsuit'));
+    if ((kop_enrich_placeholder_title($row['case_name'], $url) || $from_lead) && $x['case_name'] !== '') {
         $set['case_name'] = mb_substr($x['case_name'], 0, 500);
         $filled[] = 'case name';
     }
+    $headless = $from_lead && !isset($set['case_name']) ? 'the document gave no case name; retitle it in the lawsuits editor' : '';
     foreach (array('case_number', 'court', 'jurisdiction', 'summary', 'outcome', 'settlement_amount') as $f) {
         if (trim((string) $row[$f]) === '' && $x[$f] !== '') {
             $set[$f] = $x[$f];
@@ -353,6 +416,9 @@ function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
         if (isset($set['facilities_mentioned']) && function_exists('kop_sync_lawsuit_facility_links')) {
             kop_sync_lawsuit_facility_links($pdo, (int) $id, $set['facilities_mentioned'], 'enrich');
         }
+    }
+    if ($headless !== '') {
+        return $fail($headless) + array('filled' => $filled);
     }
     if ($apply) {
         kop_enrich_clear_failed('lawsuit:' . $id);
