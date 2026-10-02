@@ -321,7 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Select the real news columns (the JS card reads article_title,
         // publication_name, author, article_type, and the duplicate map needs
         // article_url) plus the generic aliases shared with wiki/data rows.
-        $sql = "SELECT id, article_title, publication_name, author, article_type, article_url,
+        $sql = "SELECT id, article_title, publication_name, author, article_type, article_url, facilities_mentioned,
                        article_title as program_name, publication_name as organization,
                        article_type as program_type, author as submitted_by,
                        publication_date as years_active, status, created_at, updated_at, json_data
@@ -753,7 +753,9 @@ try {
             } catch (Throwable $e) {
                 error_log("manage-submissions news lawsuit-link sync (id $nid) failed: " . $e->getMessage());
             }
-            echo json_encode(['success' => true, 'message' => $message, 'affected' => 1]);
+            // The card in the queue updates from this without reloading the list.
+            echo json_encode(['success' => true, 'message' => $message, 'affected' => 1,
+                'status' => $action === 'refile' ? 'rejected' : 'submitted', 'movedTo' => $json['movedTo'] ?? null]);
             break;
 
         case 'delete':

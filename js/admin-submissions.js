@@ -357,12 +357,134 @@ document.addEventListener('DOMContentLoaded', () => {
     // Quick approve / reject / publish buttons and the select boxes live on
     // every card, so one delegated listener covers them all across re-renders.
     submissionsList.addEventListener('click', (e) => {
+        const move = e.target.closest('.btn-quick-move[data-move], .btn-quick-unmove');
+        if (move && !move.disabled) {
+            const card = move.closest('.submission-card');
+            if (!card) return;
+            if (move.dataset.move) {
+                toggleCardMove(card, move.dataset.move);
+            } else if (confirm('Take the link off the facility record and put the article back in the news queue?')) {
+                cardMove(card, 'unrefile');
+            }
+            return;
+        }
         const btn = e.target.closest('.btn-quick[data-action]');
         if (!btn || btn.disabled) return;
         const card = btn.closest('.submission-card');
         if (!card) return;
         quickAction(btn.dataset.action, card.dataset.id, card);
     });
+
+    /*
+     * The card's own "move to facility record" panel: the facility finder,
+     * the article's mentions one click away (the first is searched at once),
+     * and for a resource its kind. Same refile action as the detail panel.
+     */
+    function toggleCardMove(card, target) {
+        let panel = card.querySelector(':scope > .card-move');
+        if (panel && panel.dataset.target === target) {
+            panel.remove();
+            return;
+        }
+        if (panel) panel.remove();
+        const submission = allSubmissions.find(s => String(s.id) === String(card.dataset.id));
+        if (!submission) return;
+        panel = document.createElement('div');
+        panel.className = 'card-move';
+        panel.dataset.target = target;
+        const kinds = refileKind ? refileKind.innerHTML : '<option value="other">Other links</option>';
+        panel.innerHTML = `
+            <span class="card-move-title">${target === 'website' ? 'Program website of' : 'Resource for'}</span>
+            <input type="number" min="1" class="card-move-fid" data-kop-facility-finder="1" placeholder="id" aria-label="Facility id">
+            ${target === 'resource' ? `<label class="card-move-kind">Kind <select>${kinds}</select></label>` : ''}
+            <button type="button" class="btn-quick btn-quick-move-go">Move</button>
+            <span class="card-move-status" aria-live="polite"></span>
+            <div class="card-move-mentions"></div>`;
+        card.querySelector(':scope > .submission-footer').insertAdjacentElement('afterend', panel);
+        const fid = panel.querySelector('.card-move-fid');
+        if (window.kopFacilityFinderAttach) window.kopFacilityFinderAttach(fid);
+        const q = panel.querySelector('.kop-ff-q');
+        const search = (name) => {
+            if (!q) return;
+            q.value = name;
+            q.dispatchEvent(new Event('input', { bubbles: true }));
+            q.focus();
+        };
+        const names = coerceList(submission.facilities_mentioned || (submission.json_data && submission.json_data.facilities));
+        const mentions = panel.querySelector('.card-move-mentions');
+        if (names.length) {
+            mentions.appendChild(document.createTextNode('Mentions: '));
+            names.slice(0, 8).forEach(name => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'btn-refile-mention';
+                b.textContent = name;
+                b.addEventListener('click', () => search(name));
+                mentions.appendChild(b);
+            });
+            search(names[0]);
+        } else if (q) {
+            q.focus();
+        }
+        panel.querySelector('.btn-quick-move-go').addEventListener('click', () => cardMove(card, 'refile'));
+    }
+
+    async function cardMove(card, action) {
+        const submission = allSubmissions.find(s => String(s.id) === String(card.dataset.id));
+        if (!submission) return;
+        const panel = card.querySelector(':scope > .card-move');
+        const body = {
+            action: action,
+            type: 'news',
+            ids: [submission.id],
+            reviewedBy: (reviewerEmail && reviewerEmail.value.trim()) || REVIEWER || localStorage.getItem('adminEmail') || ''
+        };
+        const say = (cls, text) => {
+            const el = panel ? panel.querySelector('.card-move-status') : card.querySelector('.card-action-status');
+            if (el) { el.className = (panel ? 'card-move-status ' : 'card-action-status ') + cls; el.textContent = text; }
+        };
+        if (action === 'refile') {
+            body.target = panel.dataset.target;
+            body.facilityId = parseInt(panel.querySelector('.card-move-fid').value, 10) || 0;
+            const kind = panel.querySelector('.card-move-kind select');
+            body.resourceKind = kind ? kind.value : 'other';
+            if (!body.facilityId) {
+                say('error', 'Pick the facility first.');
+                return;
+            }
+        }
+        card.querySelectorAll('.btn-quick').forEach(b => { b.disabled = true; });
+        say('loading', 'Working...');
+        try {
+            const res = await fetch(MANAGE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const result = await res.json();
+            if (!result.success) {
+                card.querySelectorAll('.btn-quick').forEach(b => { b.disabled = false; });
+                say('error', result.error || 'Move failed');
+                return;
+            }
+            submission.status = result.status || (action === 'refile' ? 'rejected' : 'submitted');
+            submission.json_data = Object.assign({}, submission.json_data || {}, { movedTo: result.movedTo || null });
+            if (!result.movedTo) delete submission.json_data.movedTo;
+            if (panel) panel.remove();
+            refreshCard(card, submission);
+            const fresh = card.querySelector('.card-action-status');
+            if (fresh) { fresh.className = 'card-action-status success'; fresh.textContent = action === 'refile' ? 'moved' : 'back in queue'; }
+            if (currentSubmission && String(currentSubmission.id) === String(submission.id)) {
+                viewSubmission(submission.id);
+            }
+            loadStats();
+            updateSelectionState();
+        } catch (error) {
+            console.error('Move failed:', error);
+            card.querySelectorAll('.btn-quick').forEach(b => { b.disabled = false; });
+            say('error', 'Network error');
+        }
+    }
     submissionsList.addEventListener('change', (e) => {
         if (e.target.classList && e.target.classList.contains('card-select')) {
             updateSelectionState();
@@ -629,6 +751,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const canPublish = currentType !== 'data' && status === 'approved';
         const canPromo = currentType === 'news' && status !== 'promotional';
         const selectable = pending || status === 'rejected';
+        // News that is really a program's own site or a resource for its page:
+        // put it on the facility record straight from the card.
+        const moved = currentType === 'news' && submission.json_data && submission.json_data.movedTo;
+        const canMove = currentType === 'news' && !moved && /^https?:\/\//i.test(submission.article_url || '');
+        const moveHtml = moved
+            ? `<span class="card-moved">On ${escapeHtml(moved.facility_name || 'facility #' + moved.facility_id)} as ${moved.target === 'website' ? 'its website' : 'a resource'}</span>
+               <button type="button" class="btn-quick btn-quick-unmove" data-unmove="1">Undo move</button>`
+            : (canMove ? `<button type="button" class="btn-quick btn-quick-move" data-move="website" title="Put the link on a facility record as the program's website">${kopIcon('globe')} Website</button>
+               <button type="button" class="btn-quick btn-quick-move" data-move="resource" title="Put the link on a facility record under Materials and links">${kopIcon('link')} Resource</button>` : '');
         return `
             <div class="submission-footer">
                 <label class="card-select-wrap">
@@ -641,6 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${canPublish ? `<button type="button" class="btn-quick btn-quick-publish" data-action="publish">${kopIcon('upload')} Publish</button>` : ''}
                     <button type="button" class="btn-quick btn-quick-reject" data-action="reject" ${canReject ? '' : 'disabled'}>${kopIcon('x')} Reject</button>
                     ${canPromo ? `<button type="button" class="btn-quick btn-quick-promo" data-action="promo" title="File as industry PR: internal index, never public">${kopIcon('megaphone')} PR</button>` : ''}
+                    ${moveHtml}
                     <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
                 </div>
             </div>`;

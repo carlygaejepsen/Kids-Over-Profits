@@ -390,6 +390,44 @@
 .btn-quick-promo:focus, .btn-quick-promo:active, .btn-quick-promo:hover { background: var(--kop-navy); color: var(--kop-white); }
 
 
+button.btn-quick-move, button.btn-quick-move:hover, button.btn-quick-move:focus, button.btn-quick-move:active,
+button.btn-quick-move-go, button.btn-quick-move-go:hover, button.btn-quick-move-go:focus, button.btn-quick-move-go:active {
+    background: var(--kop-teal-fill, #1F6E78);
+    color: var(--kop-white);
+}
+
+button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:focus, button.btn-quick-unmove:active {
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
+    border-color: var(--kop-midnight-blue);
+}
+
+.card-moved {
+    font-size: 13px;
+    color: var(--kop-text-muted);
+}
+
+/* The card's own "move to facility record" panel (js/admin-submissions.js toggleCardMove). */
+.card-move {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--kop-sand);
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
+}
+.card-move-title { font-weight: 700; }
+.card-move-kind { font-weight: 600; }
+.card-move-kind select { color: var(--kop-midnight-blue); background: var(--kop-white); }
+.card-move .kop-ff-q { color: var(--kop-midnight-blue); background: var(--kop-white); }
+.card-move-mentions { flex-basis: 100%; color: var(--kop-text-muted); font-size: 0.9em; }
+.card-move-status { font-size: 13px; font-weight: 700; }
+.card-move-status.loading { color: var(--kop-teal-ink, #24757F); }
+.card-move-status.error { color: #c0392b; }
+
 .btn-quick:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0, 4, 53, 0.18);

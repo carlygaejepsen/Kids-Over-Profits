@@ -295,6 +295,8 @@ function kop_facility_finder_print_assets() {
         }
 
         document.querySelectorAll('input[data-kop-facility-finder]').forEach(attach);
+        // For boxes a screen builds later (the submissions queue's cards).
+        window.kopFacilityFinderAttach = attach;
     })();
     </script>
     <?php
