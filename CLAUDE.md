@@ -219,6 +219,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-fornits.php   # e
 php api/sync-inspection-archive.php apply --limit=2000 --minutes=25
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
+# Program websites scanned for instructions to AI (llms.txt/ai.txt, the copy Exceed's plugin hides in every page: sources
+# to ignore, critics framed, AI-only notes), AI crawler rules, city doorway pages and pages answering critics. Domains from
+# facilities_v2 profileLinks, tmp/gdocs/links.json program sites and the reputation series; resumable, one request a second
+# per site -> tmp/seo-scan/report.html (filterable), report.csv, raw/<domain>/ copies of everything quoted
+python scripts/seo-scan.py [--limit N] [--domains a.com b.org] [--refresh] [--no-sitemaps] [--report]
 ```
 
 ### Reporting directory data
