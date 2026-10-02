@@ -151,6 +151,43 @@ function facilityInspectionReportCount(facility) {
     return (stats && typeof stats === 'object') ? (Number(stats.report_count) || 0) : 0;
 }
 
+// One entry per company section, filled by displayFacilities (see there).
+let directorySections = [];
+
+// A company's contents are built from its full record the first time its
+// section is opened; the list itself only holds the closed headers. Resolves
+// once the cards are in the section.
+function ensureOperatorBody(section) {
+    const entry = directorySections[Number(section.dataset.section)];
+    if (!entry) return Promise.resolve();
+    if (entry.body) return entry.body;
+
+    const old = section.querySelector(':scope > .operator-body-status');
+    if (old) old.remove();
+    const status = document.createElement('p');
+    status.className = 'operator-body-status';
+    status.setAttribute('role', 'status');
+    status.textContent = 'Loading facilities...';
+    section.appendChild(status);
+
+    entry.body = window.kopDirectoryDetail([entry.key]).then(projects => {
+        const project = entry.key && projects ? projects[entry.key] : null;
+        const group = (project && entry.toGroup(project)) || entry.group;
+        const html = entry.renderBody(group) || '';
+        status.remove();
+        section.insertAdjacentHTML('beforeend', html);
+        attachDocumentButtons(section);
+        // The search, status and violations filters apply to the new cards.
+        filterFacilities();
+    }).catch(error => {
+        entry.body = null;
+        console.error('Facilities script: could not load', entry.key, error);
+        status.textContent = 'Could not load these facilities. Close and reopen to try again.';
+        throw error;
+    });
+    return entry.body;
+}
+
 function displayFacilities(facilitiesData, containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -697,78 +734,88 @@ function displayFacilities(facilitiesData, containerId) {
 
     let html = '<div class="facilities-database">';
 
+    // One company project -> the group the sections render, or null when it
+    // is not a parent company (no operator name, or fewer than 2 named
+    // facilities: single-program records, address-keyed location clusters,
+    // operator-less brand records). The list runs it on the index feed; an
+    // opened section runs it again on that company's full record.
+    const projectToGroup = (project, key, locationFacilitiesById) => {
+        if (!project || typeof project !== 'object') return null;
+
+        let projectData = (project.data && typeof project.data === 'object') ? project.data : project;
+        let unwrapGuard = 0;
+        while (projectData
+            && typeof projectData === 'object'
+            && !projectData.operator
+            && !projectData.facilities
+            && projectData.data
+            && typeof projectData.data === 'object'
+            && unwrapGuard < 2
+        ) {
+            projectData = projectData.data;
+            unwrapGuard += 1;
+        }
+        const operator = projectData.operator || {};
+        const facilities = mergeAndDedupeFacilities(
+            projectData.facilities,
+            locationFacilitiesById
+        );
+
+        const operatorHasName = !!(cleanText(operator.name) || cleanText(operator.currentName));
+        if (!operatorHasName) return null;
+        const namedFacilityCount = facilities.reduce((sum, f) => {
+            const name = getFacilityDisplayName(f);
+            return name && name.trim() ? sum + 1 : sum;
+        }, 0);
+        if (namedFacilityCount < 2) return null;
+
+        return {
+            key,
+            operator,
+            facilities,
+            name: cleanText(project.name),
+            // Explicit document-library folder ID (set via the wiki program
+            // picker). Preferred over fuzzy folder-name matching when present.
+            documentFolderId: projectData.documentFolderId || project.documentFolderId || null,
+            linked_news: Array.isArray(project.linked_news) ? project.linked_news : [],
+            linked_lawsuits: Array.isArray(project.linked_lawsuits) ? project.linked_lawsuits : [],
+            research: Array.isArray(project.research) ? project.research : []
+        };
+    };
+
+    // A company's full record (ensureOperatorBody) is merged with itself for
+    // the facilities that also sit under a place: the list merges those with
+    // that copy, which is the same record, and merging folds the lists some
+    // records hold twice (staff, names) into one, as the list's copy did.
+    let locationFacilitiesById = new Map();
+    const selfMergeMap = project => {
+        const projectData = getProjectData(project) || {};
+        const linked = toArray(projectData.facilities)
+            .filter(f => f && locationFacilitiesById.has(mergeApi.getFacilityId(f)));
+        return mergeApi.buildCategoryFacilityMapById([{ data: { facilities: linked } }], () => true);
+    };
+
     // Convert the new JSON structure to work with existing code
     let operatorGroups = [];
     if (facilitiesData && facilitiesData.projects) {
-        // Handle new JSON structure
-        const allProjects = Object.values(facilitiesData.projects)
-            .filter(project => project && typeof project === 'object');
-        const locationFacilitiesById = buildLocationFacilityMap(allProjects);
-        const operatorProjects = allProjects.filter(isOperatorCategory);
+        const projectEntries = Object.entries(facilitiesData.projects)
+            .filter(([, project]) => project && typeof project === 'object');
+        const allProjects = projectEntries.map(([, project]) => project);
+        locationFacilitiesById = buildLocationFacilityMap(allProjects);
 
         const seenOperatorKeys = new Set();
+        projectEntries.forEach(([key, project]) => {
+            if (!isOperatorCategory(project)) return;
+            const group = projectToGroup(project, key, locationFacilitiesById);
+            if (!group) return;
 
-                operatorProjects.forEach(project => {
-            if (!project || typeof project !== 'object') {
-                return;
-            }
-
-            let projectData = (project.data && typeof project.data === 'object') ? project.data : project;
-            let unwrapGuard = 0;
-            while (projectData
-                && typeof projectData === 'object'
-                && !projectData.operator
-                && !projectData.facilities
-                && projectData.data
-                && typeof projectData.data === 'object'
-                && unwrapGuard < 2
-            ) {
-                projectData = projectData.data;
-                unwrapGuard += 1;
-            }
-            const operator = projectData.operator || {};
-            const facilities = mergeAndDedupeFacilities(
-                projectData.facilities,
-                locationFacilitiesById
-            );
-
-            // Corporate-chain filter: a parent company is identified by
-            //   (1) a populated operator name, AND
-            //   (2) at least 2 named facilities.
-            // Drops single-program records, address-keyed location clusters,
-            // and operator-less brand records.
-            const operatorHasName = !!(cleanText(operator.name) || cleanText(operator.currentName));
-            if (!operatorHasName) {
-                return;
-            }
-            const namedFacilityCount = facilities.reduce((sum, f) => {
-                const name = getFacilityDisplayName(f);
-                return name && name.trim() ? sum + 1 : sum;
-            }, 0);
-            if (namedFacilityCount < 2) {
-                return;
-            }
-
-            const operatorNameKeySource = cleanText(operator.name) || cleanText(operator.currentName) || cleanText(project.name);
+            const operatorNameKeySource = cleanText(group.operator.name) || cleanText(group.operator.currentName) || group.name;
             const operatorKey = operatorNameKeySource ? operatorNameKeySource.toLowerCase() : '';
             if (operatorKey) {
-                if (seenOperatorKeys.has(operatorKey)) {
-                    return;
-                }
+                if (seenOperatorKeys.has(operatorKey)) return;
                 seenOperatorKeys.add(operatorKey);
             }
-
-            operatorGroups.push({
-                operator,
-                facilities,
-                name: cleanText(project.name),
-                // Explicit document-library folder ID (set via the wiki program
-                // picker). Preferred over fuzzy folder-name matching when present.
-                documentFolderId: projectData.documentFolderId || project.documentFolderId || null,
-                linked_news: Array.isArray(project.linked_news) ? project.linked_news : [],
-                linked_lawsuits: Array.isArray(project.linked_lawsuits) ? project.linked_lawsuits : [],
-                research: Array.isArray(project.research) ? project.research : []
-            });
+            operatorGroups.push(group);
         });
     } else if (Array.isArray(facilitiesData)) {
         // Handle old structure (fallback)
@@ -791,6 +838,146 @@ function displayFacilities(facilitiesData, containerId) {
         return compareDisplayText(nameA, nameB);
     });
 
+    // A facility's former names, aliases, owners and current operator, read
+    // the same way for the card's header lines, the list search and the
+    // old-name rows.
+    const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
+    // Source data frequently stores historical markers ("Previously X",
+    // "Formerly Y") inside fields that are rendered as present-tense
+    // (operator, owner, alias). These helpers detect and strip those markers
+    // so each value lands in the right line ("Formerly:" / "Previously owned
+    // by:") and reads grammatically instead of e.g. "Operated by: Previously…".
+    const HISTORICAL_PREFIX_RE = /^\s*(?:previously|formerly|former|prior(?:\s+to)?)\b[\s:;,.\-–—]*/i;
+    const isHistoricalText = value => /\b(?:previously|former(?:ly)?|prior)\b/i.test(cleanText(value));
+    const stripHistoricalPrefix = value => cleanHeaderText(value).replace(HISTORICAL_PREFIX_RE, '').trim();
+    // Some records pack several names into one string ("A, B, C" or "A; B"),
+    // and merged cards combine name lists from multiple source records. Split
+    // them into individual names so they can be de-duplicated against each
+    // other and across the Formerly / Also-known-as lines. Bare corporate
+    // suffixes (Inc, LLC, …) are re-attached so "Foo, Inc." is not split.
+    const CORP_SUFFIX_RE = /^(?:inc|llc|l\.l\.c|ltd|co|corp|corporation|company|llp|lp|plc|pllc|pc|p\.c|n\.a)\.?$/i;
+    const splitNameList = value => {
+        const out = [];
+        cleanText(value).split(/\s*[;,]\s*/).map(part => part.trim()).filter(Boolean).forEach(part => {
+            if (out.length && CORP_SUFFIX_RE.test(part)) {
+                out[out.length - 1] = `${out[out.length - 1]}, ${part}`;
+            } else {
+                out.push(part);
+            }
+        });
+        return out;
+    };
+    const expandNames = raw => (Array.isArray(raw) ? raw : (raw ? [raw] : [])).flatMap(splitNameList);
+
+    const facilityNameInfo = (facility, facilityHeaderRaw) => {
+        const formerNames = collectUniqueTexts(
+            expandNames(getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames']))
+        );
+        // Aliases that are really historical ("Previously X") belong under
+        // "Formerly", not "Also known as" — reclassify them.
+        const rawOtherNames = collectUniqueTexts(
+            expandNames(getValueFromKeys(facility, ['identification.otherNames', 'otherNames']))
+        ).map(cleanHeaderText);
+        const historicalOtherNames = rawOtherNames.filter(isHistoricalText).map(stripHistoricalPrefix);
+        const normalizedFormerNames = collectUniqueTexts(
+            formerNames.map(stripHistoricalPrefix),
+            historicalOtherNames
+        );
+        const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
+        // Drop anything already shown as a former name, plus the facility's own
+        // display name (the card header already shows it), from the alias line.
+        const selfNameKey = normalizeTextKey(facilityHeaderRaw || '');
+        const otherNames = rawOtherNames
+            .filter(name => !isHistoricalText(name))
+            .filter(name => !formerNameKeys.has(normalizeTextKey(name)))
+            .filter(name => normalizeTextKey(name) !== selfNameKey);
+        const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
+        // Current owner(s) — privately-owned facilities store this instead of a
+        // corporate operator. These keys are suppressed from "More details", so
+        // surface them here or the owner info would be hidden entirely.
+        const currentOwners = collectUniqueTexts(
+            getValueFromKeys(facility, ['identification.currentOwners', 'currentOwners', 'current_owners', 'identification.currentOwner', 'currentOwner', 'current_owner'])
+        );
+        const previousOwners = collectUniqueTexts(
+            getValueFromKeys(facility, ['identification.previousOwners', 'previousOwners', 'previous_owners', 'identification.previousOwner', 'previousOwner', 'previous_owner', 'identification.formerOwners', 'formerOwners', 'former_owners', 'identification.formerOwner', 'formerOwner', 'former_owner'])
+        );
+
+        // Some datasets place historical ownership strings in current-owner
+        // fields (e.g. "Previously Stone Mountain School"). Reclassify those
+        // entries so card copy reflects temporal context accurately.
+        const currentOwnerList = [];
+        const previousOwnerList = [...previousOwners];
+        const legalNameAliases = [];
+        currentOwners.forEach(owner => {
+            const ownerText = cleanText(owner);
+            if (!ownerText) return;
+            const legalNameMatch = ownerText.match(/\b(?:new\s+)?legal\s+name\b[\s:;,-]*(.+)$/i);
+            if (legalNameMatch) {
+                const alias = cleanHeaderText(legalNameMatch[1]);
+                if (alias) legalNameAliases.push(alias);
+                return;
+            }
+            if (isHistoricalText(ownerText)) {
+                    previousOwnerList.push(stripHistoricalPrefix(ownerText) || ownerText);
+            } else {
+                currentOwnerList.push(ownerText);
+            }
+        });
+        return {
+            formerNames,
+            normalizedFormerNames,
+            otherNames,
+            aliasNames: collectUniqueTexts(otherNames, legalNameAliases),
+            currentOp,
+            currentOwnerList,
+            previousOwnerList
+        };
+    };
+
+    // What the closed list knows about one facility: the name its card is
+    // matched by (data-facility), the text the search box reads, the status
+    // filter, the violations filter and sort, and its old-name rows. Read from
+    // the index feed for the list and from the full record for the card, so
+    // both agree.
+    const facilityListMeta = (facility, operatorName) => {
+        const identification = facility && facility.identification ? facility.identification : {};
+        const operatingPeriod = facility && facility.operatingPeriod ? facility.operatingPeriod : {};
+        const facilityHeaderRaw = getFacilityDisplayName(facility);
+        const names = facilityNameInfo(facility, facilityHeaderRaw);
+        const name = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
+
+        // Searchable text: facility name + former names + aliases + location
+        const searchParts = [name];
+        names.formerNames.forEach(n => searchParts.push(n));
+        names.otherNames.forEach(n => searchParts.push(n));
+        const facLocation = getMergedLocation(facility);
+        if (facLocation) searchParts.push(facLocation);
+
+        // Cross-reference rows for this facility's past/alternate names,
+        // pointing back to its card inside this operator's section. The
+        // facility's previous operators/owners ride along — the old name
+        // is usually remembered together with who ran it at the time.
+        // (The data doesn't record which owner goes with which name, so
+        // the tile lists them jointly.)
+        const aliasPastOperators = collectUniqueTexts(names.previousOwnerList)
+            .filter(op => normalizeTextKey(op) !== normalizeTextKey(operatorName))
+            .slice(0, 3);
+        const aliases = [];
+        collectUniqueTexts(names.normalizedFormerNames, names.aliasNames).forEach(alias => {
+            if (normalizeTextKey(alias) === normalizeTextKey(name)) return;
+            aliases.push({ alias, target: operatorName, facility: name, pastOperators: aliasPastOperators });
+        });
+
+        return {
+            name,
+            search: searchParts.join(' | '),
+            status: (cleanText(operatingPeriod.status) || 'Unknown').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+            violations: facilityHasViolationsFlag(facility),
+            reports: facilityInspectionReportCount(facility),
+            aliases
+        };
+    };
+
     // Generate operator sections
     // Cross-reference rows: every past/alternate name becomes its own index
     // entry linking to the current profile ("Island View RTC — see Elevations
@@ -798,7 +985,11 @@ function displayFacilities(facilitiesData, containerId) {
     const aliasEntries = [];
     const renderedOperatorKeys = new Set();
 
-    operatorGroups.forEach(operatorGroup => {
+    // A section is drawn in two steps. 'list' gives the closed section: its
+    // header, and the facts the search, filters, sort and old-name rows read
+    // (facilityListMeta). 'body' gives its contents, built from the company's
+    // full record the first time it is opened (ensureOperatorBody).
+    const renderOperator = (operatorGroup, mode, sectionIndex) => {
         const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
         const rawFacilities = toArray(operatorGroup && operatorGroup.facilities).slice();
 
@@ -854,7 +1045,7 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Do not display operators with an unknown name.
         if (operatorName === 'Unknown Parent Company') {
-            return;
+            return null;
         }
 
         // Operator-level searchable text: display name + the organization's
@@ -878,10 +1069,12 @@ function displayFacilities(facilitiesData, containerId) {
             [cleanText(operatorGroup && operatorGroup.name) || '']
         ).join(' | ');
 
-        renderedOperatorKeys.add(normalizeTextKey(operatorName));
-        operatorAltNames.forEach(alias => {
-            aliasEntries.push({ alias, target: operatorName, facility: '' });
-        });
+        if (mode === 'list') {
+            renderedOperatorKeys.add(normalizeTextKey(operatorName));
+            operatorAltNames.forEach(alias => {
+                aliasEntries.push({ alias, target: operatorName, facility: '' });
+            });
+        }
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
@@ -918,6 +1111,23 @@ function displayFacilities(facilitiesData, containerId) {
 
         if (locationLines.length > 0) {
             locationYearsLine = `<span class="operator-location">${locationLines.join('')}</span>`;
+        }
+
+        if (mode === 'list') {
+            const facilityMeta = facilities.map(facility => facilityListMeta(facility, operatorName));
+            facilityMeta.forEach(meta => meta.aliases.forEach(entry => aliasEntries.push(entry)));
+            // Aggregates read by handleSort / filterFacilities.
+            const operatorViolationFacilities = facilityMeta.filter(meta => meta.violations).length;
+            const operatorReportCount = facilityMeta.reduce((sum, meta) => sum + meta.reports, 0);
+            return {
+                facilities: facilityMeta,
+                html: '<details class="operator-section" data-section="' + sectionIndex + '" data-operator="' + escapeAttribute(operatorName) + '" data-operator-search="' + escapeAttribute(operatorSearchText) + '" data-violation-facilities="' + operatorViolationFacilities + '" data-report-count="' + operatorReportCount + '" data-kop-bug-feature="program-index/operator-card" data-kop-bug-label="Operator: ' + escapeAttribute(operatorName) + '">' +
+                    '<summary class="operator-header">' +
+                        operatorHeader +
+                        locationYearsLine +
+                    '</summary>' +
+                '</details>'
+            };
         }
 
         const operatorFieldKeys = {
@@ -1326,16 +1536,7 @@ function displayFacilities(facilitiesData, containerId) {
             ? `<div class="operator-details">${operatorSectionsHtml}</div>`
             : '';
 
-        // Aggregates read by handleSort / filterFacilities.
-        const operatorViolationFacilities = facilities.filter(facilityHasViolationsFlag).length;
-        const operatorReportCount = facilities.reduce((sum, f) => sum + facilityInspectionReportCount(f), 0);
-
-        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '" data-operator-search="' + escapeAttribute(operatorSearchText) + '" data-violation-facilities="' + operatorViolationFacilities + '" data-report-count="' + operatorReportCount + '" data-kop-bug-feature="program-index/operator-card" data-kop-bug-label="Operator: ' + escapeAttribute(operatorName) + '">' +
-                '<summary class="operator-header">' +
-                    operatorHeader +
-                    locationYearsLine +
-                '</summary>' +
-                '<div class="operator-content-scrollable">' +
+        let html = '<div class="operator-content-scrollable">' +
                     operatorLatestNewsHtml +
                     operatorLawsuitBits.strip +
                     operatorDetailsDiv +
@@ -1382,88 +1583,12 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             }
 
-            // Subtext for former names, aliases, and current operator
-            const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
-            // Source data frequently stores historical markers ("Previously X",
-            // "Formerly Y") inside fields that are rendered as present-tense
-            // (operator, owner, alias). These helpers detect and strip those markers
-            // so each value lands in the right line ("Formerly:" / "Previously owned
-            // by:") and reads grammatically instead of e.g. "Operated by: Previously…".
-            const HISTORICAL_PREFIX_RE = /^\s*(?:previously|formerly|former|prior(?:\s+to)?)\b[\s:;,.\-–—]*/i;
-            const isHistoricalText = value => /\b(?:previously|former(?:ly)?|prior)\b/i.test(cleanText(value));
-            const stripHistoricalPrefix = value => cleanHeaderText(value).replace(HISTORICAL_PREFIX_RE, '').trim();
-            // Some records pack several names into one string ("A, B, C" or "A; B"),
-            // and merged cards combine name lists from multiple source records. Split
-            // them into individual names so they can be de-duplicated against each
-            // other and across the Formerly / Also-known-as lines. Bare corporate
-            // suffixes (Inc, LLC, …) are re-attached so "Foo, Inc." is not split.
-            const CORP_SUFFIX_RE = /^(?:inc|llc|l\.l\.c|ltd|co|corp|corporation|company|llp|lp|plc|pllc|pc|p\.c|n\.a)\.?$/i;
-            const splitNameList = value => {
-                const out = [];
-                cleanText(value).split(/\s*[;,]\s*/).map(part => part.trim()).filter(Boolean).forEach(part => {
-                    if (out.length && CORP_SUFFIX_RE.test(part)) {
-                        out[out.length - 1] = `${out[out.length - 1]}, ${part}`;
-                    } else {
-                        out.push(part);
-                    }
-                });
-                return out;
-            };
-            const expandNames = raw => (Array.isArray(raw) ? raw : (raw ? [raw] : [])).flatMap(splitNameList);
-
-            const formerNames = collectUniqueTexts(
-                expandNames(getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames']))
-            );
-            // Aliases that are really historical ("Previously X") belong under
-            // "Formerly", not "Also known as" — reclassify them.
-            const rawOtherNames = collectUniqueTexts(
-                expandNames(getValueFromKeys(facility, ['identification.otherNames', 'otherNames']))
-            ).map(cleanHeaderText);
-            const historicalOtherNames = rawOtherNames.filter(isHistoricalText).map(stripHistoricalPrefix);
-            const normalizedFormerNames = collectUniqueTexts(
-                formerNames.map(stripHistoricalPrefix),
-                historicalOtherNames
-            );
-            const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
-            // Drop anything already shown as a former name, plus the facility's own
-            // display name (the card header already shows it), from the alias line.
-            const selfNameKey = normalizeTextKey(facilityHeaderRaw || '');
-            const otherNames = rawOtherNames
-                .filter(name => !isHistoricalText(name))
-                .filter(name => !formerNameKeys.has(normalizeTextKey(name)))
-                .filter(name => normalizeTextKey(name) !== selfNameKey);
-            const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
-            // Current owner(s) — privately-owned facilities store this instead of a
-            // corporate operator. These keys are suppressed from "More details", so
-            // surface them here or the owner info would be hidden entirely.
-            const currentOwners = collectUniqueTexts(
-                getValueFromKeys(facility, ['identification.currentOwners', 'currentOwners', 'current_owners', 'identification.currentOwner', 'currentOwner', 'current_owner'])
-            );
-            const previousOwners = collectUniqueTexts(
-                getValueFromKeys(facility, ['identification.previousOwners', 'previousOwners', 'previous_owners', 'identification.previousOwner', 'previousOwner', 'previous_owner', 'identification.formerOwners', 'formerOwners', 'former_owners', 'identification.formerOwner', 'formerOwner', 'former_owner'])
-            );
-
-            // Some datasets place historical ownership strings in current-owner
-            // fields (e.g. "Previously Stone Mountain School"). Reclassify those
-            // entries so card copy reflects temporal context accurately.
-            const currentOwnerList = [];
-            const previousOwnerList = [...previousOwners];
-            const legalNameAliases = [];
-            currentOwners.forEach(owner => {
-                const ownerText = cleanText(owner);
-                if (!ownerText) return;
-                const legalNameMatch = ownerText.match(/\b(?:new\s+)?legal\s+name\b[\s:;,-]*(.+)$/i);
-                if (legalNameMatch) {
-                    const alias = cleanHeaderText(legalNameMatch[1]);
-                    if (alias) legalNameAliases.push(alias);
-                    return;
-                }
-                if (isHistoricalText(ownerText)) {
-                        previousOwnerList.push(stripHistoricalPrefix(ownerText) || ownerText);
-                } else {
-                    currentOwnerList.push(ownerText);
-                }
-            });
+            // Former names, aliases and owners (facilityNameInfo, shared with
+            // the list's search and old-name rows).
+            const {
+                normalizedFormerNames, aliasNames,
+                currentOp, currentOwnerList, previousOwnerList
+            } = facilityNameInfo(facility, facilityHeaderRaw);
 
             let subtextParts = [];
 
@@ -1471,7 +1596,6 @@ function displayFacilities(facilitiesData, containerId) {
                 subtextParts.push(`Formerly: ${escapeHtml(normalizedFormerNames.join(', '))}`);
             }
 
-            const aliasNames = collectUniqueTexts(otherNames, legalNameAliases);
             if (aliasNames.length > 0) {
                 subtextParts.push(`Also known as: ${escapeHtml(aliasNames.join(', '))}`);
             }
@@ -2019,35 +2143,10 @@ function displayFacilities(facilitiesData, containerId) {
             // Deaths on record, same treatment.
             const facilityMemorialBits = renderMemorialBits(facility.memorials);
 
-            const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
+            const listMeta = facilityListMeta(facility, operatorName);
+            const facilityDatasetNameRaw = listMeta.name;
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
-
-            // Build searchable text: facility name + former names + aliases + location
-            const searchParts = [facilityDatasetNameRaw];
-            formerNames.forEach(n => searchParts.push(n));
-            otherNames.forEach(n => searchParts.push(n));
-            const facLocation = getMergedLocation(facility);
-            if (facLocation) searchParts.push(facLocation);
-            const facilitySearchText = escapeAttribute(searchParts.join(' | '));
-
-            // Cross-reference rows for this facility's past/alternate names,
-            // pointing back to its card inside this operator's section. The
-            // facility's previous operators/owners ride along — the old name
-            // is usually remembered together with who ran it at the time.
-            // (The data doesn't record which owner goes with which name, so
-            // the tile lists them jointly.)
-            const aliasPastOperators = collectUniqueTexts(previousOwnerList)
-                .filter(op => normalizeTextKey(op) !== normalizeTextKey(operatorName))
-                .slice(0, 3);
-            collectUniqueTexts(normalizedFormerNames, aliasNames).forEach(alias => {
-                if (normalizeTextKey(alias) === normalizeTextKey(facilityDatasetNameRaw)) return;
-                aliasEntries.push({
-                    alias,
-                    target: operatorName,
-                    facility: facilityDatasetNameRaw,
-                    pastOperators: aliasPastOperators
-                });
-            });
+            const facilitySearchText = escapeAttribute(listMeta.search);
 
             // Only render the "Learn more" disclosure when there's actually
             // expanded content — otherwise empty facility cards show a button
@@ -2094,8 +2193,27 @@ function displayFacilities(facilitiesData, containerId) {
                 </div>`;
         });
 
-        html += '</div>' +
-            '</details>';
+        html += '</div>';
+        return html;
+    };
+
+    // The closed sections. Each company's entry in directorySections carries
+    // what filterFacilities reads and what ensureOperatorBody needs to build
+    // its contents later (data-section is the index).
+    directorySections = [];
+    operatorGroups.forEach(operatorGroup => {
+        const sectionIndex = directorySections.length;
+        const listed = renderOperator(operatorGroup, 'list', sectionIndex);
+        if (!listed) return;
+        directorySections.push({
+            key: operatorGroup.key || '',
+            group: operatorGroup,
+            facilities: listed.facilities,
+            toGroup: project => projectToGroup(project, operatorGroup.key, selfMergeMap(project)),
+            renderBody: group => renderOperator(group, 'body', sectionIndex),
+            body: null
+        });
+        html += listed.html;
     });
 
     // Emit the cross-reference rows. They share .operator-section and
@@ -2133,11 +2251,21 @@ function displayFacilities(facilitiesData, containerId) {
             </div>`;
     });
 
-    html += '</div>';        container.innerHTML = html;
-
-        attachDocumentButtons(container);
+    html += '</div>';
+        container.innerHTML = html;
 
         attachAliasEntryLinks(container);
+
+        if (container.dataset.lazySectionsBound !== 'true') {
+            container.dataset.lazySectionsBound = 'true';
+            // toggle does not bubble; a capturing listener still sees it.
+            container.addEventListener('toggle', event => {
+                const section = event.target;
+                if (section && section.open && section.matches && section.matches('details.operator-section[data-section]')) {
+                    ensureOperatorBody(section);
+                }
+            }, true);
+        }
 
         if (container.dataset.lazyDetailsBound !== 'true') {
             container.dataset.lazyDetailsBound = 'true';
@@ -2178,18 +2306,21 @@ function attachAliasEntryLinks(container) {
             target.style.display = 'block';
             target.open = true;
 
-            let scrollEl = target;
-            if (facilityName) {
-                target.querySelectorAll('.facility-card').forEach(card => {
-                    if (scrollEl === target && card.dataset.facility === facilityName) {
-                        card.style.display = 'block';
-                        scrollEl = card;
-                    }
-                });
-            }
-            scrollEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            scrollEl.classList.add('alias-jump-highlight');
-            setTimeout(() => scrollEl.classList.remove('alias-jump-highlight'), 2200);
+            const jump = () => {
+                let scrollEl = target;
+                if (facilityName) {
+                    target.querySelectorAll('.facility-card').forEach(card => {
+                        if (scrollEl === target && card.dataset.facility === facilityName) {
+                            card.style.display = 'block';
+                            scrollEl = card;
+                        }
+                    });
+                }
+                scrollEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                scrollEl.classList.add('alias-jump-highlight');
+                setTimeout(() => scrollEl.classList.remove('alias-jump-highlight'), 2200);
+            };
+            ensureOperatorBody(target).then(jump, jump);
         });
     });
 }
@@ -2227,37 +2358,31 @@ function filterFacilities() {
         // Includes the organization's alternate/past names, not just the
         // display name, so old org names still match.
         const operatorSearch = (section.dataset.operatorSearch || section.dataset.operator || '').toLowerCase();
-        const facilityCards = section.querySelectorAll('.facility-card');
-        let visibleFacilities = 0;
+        const entry = directorySections[Number(section.dataset.section)];
+        const facilities = entry ? entry.facilities : [];
 
         // Alphabet filter matches on the FIRST letter of the operator name —
         // substring matching showed every record merely containing the letter.
         const matchesLetter = !letterFilter || operatorName.startsWith(letterFilter);
 
-        facilityCards.forEach(card => {
-            const facilitySearch = (card.dataset.search || card.dataset.facility || '').toLowerCase();
-            const facilityStatus = card.dataset.status;
-
-            const matchesSearch = operatorSearch.includes(searchTerm) || facilitySearch.includes(searchTerm);
-            const matchesStatus = !statusFilter || facilityStatus === statusFilter;
-            const matchesViolations = !violationsOnly || card.dataset.hasViolations === '1';
-
+        // Matched on the list's facts, so a section whose cards are not built
+        // yet filters the same as an open one.
+        const visibleNames = new Set();
+        facilities.forEach(facility => {
+            const matchesSearch = operatorSearch.includes(searchTerm) || (facility.searchLower || (facility.searchLower = facility.search.toLowerCase())).includes(searchTerm);
+            const matchesStatus = !statusFilter || facility.status === statusFilter;
+            const matchesViolations = !violationsOnly || facility.violations;
             if (matchesLetter && matchesSearch && matchesStatus && matchesViolations) {
-                card.style.display = 'block';
-                visibleFacilities++;
-            } else {
-                card.style.display = 'none';
+                visibleNames.add(facility.name);
             }
         });
 
-        // Hide operator section if no facilities match        
-        section.style.display = visibleFacilities > 0 ? 'block' : 'none';
+        section.querySelectorAll('.facility-card').forEach(card => {
+            card.style.display = visibleNames.has(card.dataset.facility || '') ? 'block' : 'none';
+        });
 
-        // Update facility count
-        const countSpan = section.querySelector('.facility-count');
-        if (countSpan) {
-            countSpan.textContent = `(${visibleFacilities} facilities)`;
-        }
+        // Hide operator section if no facilities match
+        section.style.display = visibleNames.size > 0 ? 'block' : 'none';
     });
 }
 
@@ -2745,66 +2870,120 @@ function toggleAllFacilityDetails(button) {
     button.textContent = isExpanding ? 'Collapse All Facility Details' : 'Expand All Facility Details';
 }
 
-// One load of the facility feed and the FileBird folders for the whole
-// directory page. The location tab (js/location-index.js) reads the same
-// promise, so the ~1 MB feed is fetched and parsed once however many tabs
-// are opened.
+// The directory page loads in steps, each only what the next screen needs:
+//   kopDirectoryData()        the index feed: every company and place with
+//                             each facility cut to what the lists show and
+//                             search (kop/v1/facilities?view=index), once for
+//                             both tabs.
+//   kopDirectoryDetail(keys)  the full records of the companies or places a
+//                             visitor opens (?view=detail&key[]=), and the
+//                             FileBird folder list their document buttons
+//                             match against, fetched with the first one.
+// When the REST feed fails, api/get-master-data.php (the whole feed at once)
+// stands in, and kopDirectoryDetail reads from it.
+const withQuery = (url, params) => {
+    try {
+        const out = new URL(url, window.location.href);
+        params.forEach(([k, v]) => out.searchParams.append(k, v));
+        return out.toString();
+    } catch (e) {
+        const query = params.map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&');
+        return url + (url.indexOf('?') === -1 ? '?' : '&') + query;
+    }
+};
+
+const fetchJson = async url => {
+    const response = await fetch(url, { credentials: 'same-origin' });
+    if (!response.ok) throw new Error('HTTP ' + response.status + ' ' + response.statusText);
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch (parseError) {
+        throw new Error('Invalid JSON (' + parseError.message + ')');
+    }
+};
+
 let directoryDataPromise = null;
+let directoryFull = null;
 window.kopDirectoryData = function() {
     if (directoryDataPromise) return directoryDataPromise;
 
     const facilitiesConfig = window.facilitiesConfig || {};
+    const restUrl = typeof facilitiesConfig.jsonDataUrl === 'string' ? facilitiesConfig.jsonDataUrl.trim() : '';
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
-    // The REST feed, then api/get-master-data.php (inc/enqueue.php). There is
-    // no static copy: js/data/facilities_master.json never existed, so a
-    // default pointing at it could only ever 404.
-    const datasetCandidates = Array.from(new Set([
-        facilitiesConfig.jsonDataUrl,
-        ...configUrls
-    ].filter(url => typeof url === 'string' && url.trim().length > 0)));
+    // The REST index first, then the whole feed from the other sources
+    // (inc/enqueue.php, the template). There is no static copy:
+    // js/data/facilities_master.json never existed.
+    const candidates = [];
+    if (restUrl) candidates.push({ url: withQuery(restUrl, [['view', 'index']]), index: true });
+    configUrls.forEach(url => {
+        if (typeof url === 'string' && url.trim() && url.trim() !== restUrl) candidates.push({ url: url.trim(), index: false });
+    });
 
-    const loadFolders = fetch(`${getRestBase()}folders`, { credentials: 'same-origin' })
-        .then(response => response.ok ? response.json() : null)
-        .then(folders => {
-            if (folders) {
-                window.filebirdFolders = dropEmptyFolders(folders);
-                window.filebirdFolderMap = null;
-            }
-        })
-        .catch(e => console.warn('Facilities script: failed to load FileBird folders', e));
-
-    const loadDataset = (async () => {
-        if (!datasetCandidates.length) {
-            throw new Error('no dataset URL is configured.');
-        }
+    directoryDataPromise = (async () => {
+        if (!candidates.length) throw new Error('no dataset URL is configured.');
         const failureSummaries = [];
-        for (const candidateUrl of datasetCandidates) {
+        for (const candidate of candidates) {
             try {
-                const response = await fetch(candidateUrl, { credentials: 'same-origin' });
-                if (!response.ok) {
-                    throw new Error('HTTP ' + response.status + ' ' + response.statusText);
-                }
-                const text = await response.text();
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (parseError) {
-                    throw new Error('Invalid JSON (' + parseError.message + ')');
-                }
+                const data = await fetchJson(candidate.url);
                 if (!data || !data.projects) throw new Error('No projects in response');
+                // An older server ignores ?view=index and sends everything.
+                if (data.view !== 'index') directoryFull = data;
                 return data;
             } catch (candidateError) {
-                console.warn('Facilities script: failed to load dataset from', candidateUrl, candidateError);
-                failureSummaries.push(candidateUrl + ' → ' + candidateError.message);
+                console.warn('Facilities script: failed to load dataset from', candidate.url, candidateError);
+                failureSummaries.push(candidate.url + ' → ' + candidateError.message);
             }
         }
         throw new Error('Tried ' + failureSummaries.length + ' URL(s): ' + failureSummaries.join('; '));
     })();
-
-    // Folders and the feed download side by side; cards need both.
-    directoryDataPromise = Promise.all([loadDataset, loadFolders]).then(([data]) => data);
     directoryDataPromise.catch(() => { directoryDataPromise = null; });
     return directoryDataPromise;
+};
+
+let foldersPromise = null;
+const loadFolders = () => {
+    if (!foldersPromise) {
+        foldersPromise = fetch(`${getRestBase()}folders`, { credentials: 'same-origin' })
+            .then(response => response.ok ? response.json() : null)
+            .then(folders => {
+                if (folders) {
+                    window.filebirdFolders = dropEmptyFolders(folders);
+                    window.filebirdFolderMap = null;
+                }
+            })
+            .catch(e => console.warn('Facilities script: failed to load FileBird folders', e));
+    }
+    return foldersPromise;
+};
+
+const detailCache = new Map();
+// Resolves to { key: full project } for the keys asked for (keys the feed
+// does not have are left out). Each key is fetched once.
+window.kopDirectoryDetail = function(keys) {
+    const wanted = Array.from(new Set((keys || []).filter(Boolean)));
+    const collect = () => {
+        const out = {};
+        wanted.forEach(key => {
+            const project = detailCache.get(key);
+            if (project) out[key] = project;
+        });
+        return out;
+    };
+
+    return Promise.all([window.kopDirectoryData(), loadFolders()]).then(async () => {
+        const missing = wanted.filter(key => !detailCache.has(key));
+        if (!missing.length) return collect();
+        if (directoryFull) {
+            missing.forEach(key => detailCache.set(key, directoryFull.projects[key] || null));
+            return collect();
+        }
+        const restUrl = (window.facilitiesConfig || {}).jsonDataUrl;
+        const data = await fetchJson(withQuery(restUrl, [['view', 'detail']].concat(missing.map(key => ['key[]', key]))));
+        const projects = (data && data.projects) || {};
+        missing.forEach(key => detailCache.set(key, projects[key] || null));
+        return collect();
+    });
 };
 
 // The parent company tab renders the first time it is shown: on load when it

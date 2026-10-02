@@ -579,6 +579,8 @@ function initLocationIndex() {
         processData(projects);
     }
 
+    let operatorFacilitiesById = new Map();
+
     function processData(projects) {
         // Merge duplicate location projects (e.g. a "Utah" row in locations_master
         // plus a "Utah" aggregate derived from facilities_master) into a single
@@ -586,10 +588,10 @@ function initLocationIndex() {
         // facility_id merge logic from KOPFacilityMerge.
         const locationMap = new Map();
         const projectList = Object.values(projects).filter(project => project && typeof project === 'object');
-        const operatorFacilitiesById = buildCategoryFacilityMapById(projectList, isOperatorCategory);
+        operatorFacilitiesById = buildCategoryFacilityMapById(projectList, isOperatorCategory);
 
-        projectList.forEach(project => {
-            if (!project || !project.name) return;
+        Object.entries(projects).forEach(([projectKey, project]) => {
+            if (!project || typeof project !== 'object' || !project.name) return;
             let isLocation = isLocationCategory(project);
             if (!isLocation && US_STATES.has(project.name.toUpperCase())) isLocation = true;
             if (!isLocation) return;
@@ -604,11 +606,13 @@ function initLocationIndex() {
             if (locationMap.has(mergeKey)) {
                 const existing = locationMap.get(mergeKey);
                 existing.facilities = existing.facilities.concat(facilities);
+                existing.projectKeys.push(projectKey);
             } else {
                 locationMap.set(mergeKey, {
                     name: project.name,
                     type: US_STATES.has(project.name.toUpperCase()) ? 'state' : 'country',
-                    facilities: facilities.slice()
+                    facilities: facilities.slice(),
+                    projectKeys: [projectKey]
                 });
             }
         });
@@ -616,6 +620,7 @@ function initLocationIndex() {
         allLocations = Array.from(locationMap.values()).map(loc => ({
             name: loc.name,
             type: loc.type,
+            projectKeys: loc.projectKeys,
             facilities: sortFacilitiesAlphabetically(
                 mergeAndDedupeFacilities(loc.facilities, operatorFacilitiesById)
             )
@@ -671,7 +676,7 @@ function initLocationIndex() {
             });
 
             if (matchingFacilities.length > 0) {
-                return { ...loc, facilities: matchingFacilities };
+                return { ...loc, base: loc, facilities: matchingFacilities };
             }
             return null;
         }).filter(l => l !== null);
@@ -721,14 +726,63 @@ function initLocationIndex() {
             const fill = () => {
                 if (details.dataset.filled === 'true') return;
                 details.dataset.filled = 'true';
-                details.insertAdjacentHTML('beforeend', renderLocationContent(loc));
-                attachDocumentButtons(details);
+                const old = details.querySelector(':scope > .operator-body-status');
+                if (old) old.remove();
+                const status = document.createElement('p');
+                status.className = 'operator-body-status';
+                status.setAttribute('role', 'status');
+                status.textContent = 'Loading facilities...';
+                details.appendChild(status);
+                fullFacilitiesFor(loc).then(facilities => {
+                    status.remove();
+                    details.insertAdjacentHTML('beforeend', renderLocationContent({ ...loc, facilities }));
+                    attachDocumentButtons(details);
+                }).catch(error => {
+                    console.error('Location index: could not load', loc.name, error);
+                    details.dataset.filled = '';
+                    status.textContent = 'Could not load these facilities. Close and reopen to try again.';
+                });
             };
             if (details.open) fill();
             else details.addEventListener('toggle', () => { if (details.open) fill(); });
         });
 
         container.appendChild(grid);
+    }
+
+    // The list is drawn from the index feed (each facility cut to its names,
+    // place and status); a place's full records are fetched the first time it
+    // is opened (window.kopDirectoryDetail in js/tti-program-index.js). A
+    // search-narrowed place shows the same facilities from the full records.
+    const facilityKey = facility => mergeApi.getFacilityId(facility)
+        || ('name:' + normalizeTextKey(getFacilityDisplayName(facility)));
+    function fullFacilitiesFor(loc) {
+        const base = loc.base || loc;
+        if (typeof window.kopDirectoryDetail !== 'function' || !Array.isArray(base.projectKeys)) {
+            return Promise.resolve(loc.facilities);
+        }
+        if (!base.fullFacilities) {
+            base.fullFacilities = window.kopDirectoryDetail(base.projectKeys).then(found => {
+                const facilities = [];
+                base.projectKeys.forEach(key => {
+                    if (found[key]) facilities.push(...toArray(getProjectData(found[key]).facilities));
+                });
+                // The list merges each facility with its copy under a company,
+                // which is the same record; merging the full one with itself
+                // folds the lists some records hold twice the same way.
+                const linked = facilities.filter(f => operatorFacilitiesById.has(mergeApi.getFacilityId(f)));
+                const selfMap = buildCategoryFacilityMapById([{ data: { facilities: linked } }], () => true);
+                return facilities.length
+                    ? sortFacilitiesAlphabetically(mergeAndDedupeFacilities(facilities, selfMap))
+                    : base.facilities;
+            });
+            base.fullFacilities.catch(() => { base.fullFacilities = null; });
+        }
+        return base.fullFacilities.then(full => {
+            if (loc === base) return full;
+            const shown = new Set(loc.facilities.map(facilityKey));
+            return full.filter(facility => shown.has(facilityKey(facility)));
+        });
     }
 
     function renderLocationContent(loc) {

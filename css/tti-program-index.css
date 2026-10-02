@@ -473,6 +473,15 @@ details.operator-section[open] .operator-header {
     flex-shrink: 0;
 }
 
+/* Shown while an opened section's facilities load (js/tti-program-index.js
+   ensureOperatorBody, js/location-index.js fullFacilitiesFor). */
+details.operator-section > .operator-body-status {
+    margin: 0;
+    padding: 16px 20px;
+    color: var(--kop-text-muted, #4A5568);
+    background: #fff;
+}
+
 details.operator-section[open] .operator-content-scrollable {
     height: auto;
     max-height: 800px;

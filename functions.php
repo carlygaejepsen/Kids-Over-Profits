@@ -35,6 +35,7 @@ require_once get_stylesheet_directory() . '/inc/facility-v2-sync.php';
 
 // REST API Registration & Callbacks
 require_once get_stylesheet_directory() . '/inc/rest-api.php';
+require_once get_stylesheet_directory() . '/inc/directory-feed.php';
 require_once get_stylesheet_directory() . '/inc/country-rest-api.php';
 
 // Admin Menu & Page Rendering

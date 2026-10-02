@@ -127,6 +127,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-placement.php
 node scripts/test-testimony-move.js
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
+# Facility directory (/tti-program-index/, both tabs) loads in steps: lists from kop/v1/facilities?view=index (each facility
+# cut to names/place/years/status/report counts by kop_directory_feed_slim_facility()), a company's or place's full records when
+# opened (?view=detail&key[]=), file cached in uploads/kop-cache/directory/<fingerprint>/ (inc/directory-feed.php). A field the
+# closed lists read goes in kop_directory_feed_slim_facility()
+python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws the same page as the whole feed, timings
 # Header search dropdown and the site-wide search widget (kop_v2_search() in inc/facility-v2-readers.php, read by
 # inc/ajax-search-lite.php, inc/global-search.php, search.php): also matches identification.pastNames/otherNames,
 # shown as "Formerly X" / "Also known as X", current-name hits ranked first

@@ -37,7 +37,17 @@ function kop_register_facilities_rest_routes() {
         '/facilities',
         array(
             'methods' => WP_REST_Server::READABLE,
-            'callback' => function () {
+            'callback' => function ($request) {
+                // The facility directory reads it in two steps, ?view=index
+                // then ?view=detail&key[]= per opened company or place
+                // (inc/directory-feed.php, file cached).
+                $view = (string) $request->get_param('view');
+                if (($view === 'index' || $view === 'detail') && function_exists('kop_directory_feed_response')) {
+                    $keys = array_values(array_filter(array_map('strval', (array) $request->get_param('key')), 'strlen'));
+                    $out = kop_directory_feed_response($view, $keys);
+                    return is_wp_error($out) ? $out : rest_ensure_response($out);
+                }
+
                 // Public directory feed. The admin form loads kop/v1/projects,
                 // which stays on the legacy tables it edits.
                 $data = (function_exists('kop_v2_active') && kop_v2_active('program_index'))
