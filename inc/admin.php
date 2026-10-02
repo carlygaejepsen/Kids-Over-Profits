@@ -743,6 +743,8 @@ function kop_template_assignments() {
         // the posts list is inc/hub-posts.php.
         'editorials'              => 'page-hub.php',
         'investigatory-spotlight' => 'page-hub.php',
+        // How the industry manages its reputation (2026-10-02): the series' articles are below.
+        'reputation-management'   => 'page-hub.php',
 
         // The library's front door (2026-09-25): inc/document-archive.php.
         'document-archive'        => 'page-document-archive.php',
@@ -757,6 +759,10 @@ function kop_template_assignments() {
         'richardson-v-elevations-rtc-prelitigation-panel-opinion' => 'page-legal-document.php',
 
         // Long-form articles, timelines and case analyses (phase 6): reading layout only.
+        'how-troubled-teen-programs-market-themselves-online' => 'page-article.php',
+        'new-names-same-programs' => 'page-article.php',
+        'silencing-critics-and-survivors' => 'page-article.php',
+        'the-brochure-and-the-record' => 'page-article.php',
         'advocacy-history'                                             => 'page-article.php',
         'antiquity'                                                    => 'page-article.php',
         'birth-of-the-tti'                                             => 'page-article.php',
@@ -848,6 +854,10 @@ function kop_pages_to_trash() {
         'shiver-v-southstone-motion-for-default-judgement'                              => 'page',
         'trinity-teen-solutions-trinity-cross-ranch'                                    => 'page',
         'trinity-teen-trinity-cross-complaint'                                          => 'page',
+
+        // 2026-10-02: the one-post draft of the reputation investigation, split into
+        // the /reputation-management/ hub and its four articles.
+        'investigatory-spotlight-reputation-management'                                 => 'post',
     );
 }
 
@@ -1009,8 +1019,13 @@ function kop_seed_posts() {
         'history/tti-history-part-one.json',
         // Links page: one link card's image pointed at a deleted attachment (2026-09-25).
         'links.json',
-        // Investigatory Spotlight on how the industry manages its reputation online, a draft (2026-10-01).
-        'reputation-management.json',
+        // How the industry manages its reputation: a hub and four articles, drafts
+        // until the owner publishes them (2026-10-02; replaces the single post of 2026-10-01).
+        'reputation/reputation-management.json',
+        'reputation/how-troubled-teen-programs-market-themselves-online.json',
+        'reputation/new-names-same-programs.json',
+        'reputation/silencing-critics-and-survivors.json',
+        'reputation/the-brochure-and-the-record.json',
     );
 }
 
@@ -2132,7 +2147,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '73';
+    $version = '74';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

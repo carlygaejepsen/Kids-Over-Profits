@@ -76,6 +76,14 @@ function kop_article_parents() {
         'common-survivor-experiences'                  => 'survivors',
         'spiritual-abuse'                              => 'survivors',
         'survivor-resources-nature'                    => 'survivors',
+
+        // How the industry manages its reputation (2026-10-02). The hub is
+        // listed on Investigatory Spotlight; marketing is read first.
+        'reputation-management'                        => 'investigatory-spotlight',
+        'how-troubled-teen-programs-market-themselves-online' => 'reputation-management',
+        'new-names-same-programs' => 'reputation-management',
+        'silencing-critics-and-survivors' => 'reputation-management',
+        'the-brochure-and-the-record' => 'reputation-management',
     ));
 }
 

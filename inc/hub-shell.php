@@ -204,6 +204,33 @@ function kop_hub_config($slug) {
             ),
         ),
 
+        // How the industry manages its reputation (2026-10-02). The editor text
+        // is the introduction and the call for evidence; the articles list below.
+        'reputation-management' => array(
+            'standfirst' => 'How troubled teen programs control what a worried parent finds online, one tactic at a time, from court records, government reports and published reporting.',
+            'actions'    => array(
+                array('label' => 'Start with marketing', 'slug' => 'how-troubled-teen-programs-market-themselves-online'),
+                array('label' => 'Inspection reports', 'slug' => 'inspection-reports'),
+                array('label' => 'Network map', 'slug' => 'network-map'),
+            ),
+            'reading'    => 'The series',
+            'contribute' => array(
+                'heading' => 'Send us what you have',
+                'links'   => array(
+                    array('label' => 'Contact us', 'slug' => 'contact',
+                          'note' => 'A review request, a contract clause, a takedown notice or an invoice from a reputation firm.'),
+                    array('label' => 'Anonymous document submission', 'slug' => 'anon-submit',
+                          'note' => 'Upload documents without giving your name; what you send is encrypted.'),
+                ),
+            ),
+        ),
+
+        // Multi-part investigations are pages filed under this hub in
+        // kop_article_parents(); the single posts list below them (inc/hub-posts.php).
+        'investigatory-spotlight' => array(
+            'reading' => 'Investigations in several parts',
+        ),
+
         'resources' => array(
             'standfirst' => 'Crisis lines, survivor support groups, advocacy organizations and further reading, grouped by what you need.',
             'actions'    => array(
