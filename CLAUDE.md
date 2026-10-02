@@ -313,6 +313,7 @@ and gives the prompt to the other when one fails. A new AI call goes through it,
 - **Procedural PHP**: API endpoints use procedural style
 - **No build tooling**: Avoid introducing bundlers/transpilers
 - **CSS variables**: Use `var(--kop-*)` from `css/colors.css` for styling
+- **Archive what you cite from the Wayback Machine**: any time a Wayback Machine (or other web archive) copy is used to read or cite something, download it as a PDF (keep the banner with the original URL and capture date) and import it into the media library with `api/import-documents.php` (`source_url` = the archive.org link), then cite our copy beside the archive link. Never rely on archive.org alone; never commit the PDFs (the repo is public)
 
 ## Color Palette (css/colors.css)
 Primary: Midnight Blue (#000435), Navy (#000080), Teal (#33A7B5)
