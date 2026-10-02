@@ -51,7 +51,14 @@ ROOT_FILE = re.compile(r'^org,heal-online\)/([^/?]+\.(?:htm|html|pdf))$', re.I)
 PAUSE = 6  # The Archive allows about 15 requests a minute and refuses connections for a while past that.
 
 
-def get(url, binary=False, tries=10):
+FAILED = []  # URLs given up on this run: not marked "none", so the next run tries them again.
+
+
+def get(url, binary=False, tries=4):
+    """
+    The body, or None. A file that keeps breaking off is given up after a
+    few tries (and left for the next run) instead of holding up the rest.
+    """
     wait = 30
     for _ in range(tries):
         try:
@@ -80,7 +87,9 @@ def get(url, binary=False, tries=10):
             pass
         print(f'  waiting {wait}s ({url[-60:]})', flush=True)
         time.sleep(wait)
-        wait = min(wait * 2, 1200)
+        wait = min(wait * 2, 600)
+    print(f'  gave up for now: {url[-80:]}', flush=True)
+    FAILED.append(url)
     return None
 
 
@@ -174,6 +183,7 @@ def cmd_fetch(limit=0, kind=''):
         if have or os.path.exists(raw_path(name, 'none')):
             continue
         got = []
+        failed_before = len(FAILED)
         # HEAL's own latest copy first: captures before 2023, when HEAL still
         # ran the site (the 2025 re-crawl is mostly duplicates, parking pages
         # and spam, and the Archive refuses it most), then the later ones.
@@ -186,7 +196,8 @@ def cmd_fetch(limit=0, kind=''):
                     f.write(data)
                 got.append(c[0])
                 break
-        if not got:
+        if not got and len(FAILED) == failed_before:
+            # Every copy answered and none is HEAL's: nothing to fetch, ever.
             open(raw_path(name, 'none'), 'w').close()
         elif not is_pdf and caps[0][0] < got[0] and b'staff list' in data[:20000].lower():
             # Staff lists only: the earliest copy adds the staff who had left.
