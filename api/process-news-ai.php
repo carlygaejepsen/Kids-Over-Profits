@@ -74,6 +74,11 @@ try {
         if (empty($content)) {
             throw new Exception('Could not fetch article content from URL');
         }
+        // "Website Disabled", a 404 notice: too little to be the article, and
+        // the AI writes a summary from the headline alone when given it.
+        if (mb_strlen(trim($content)) < 300) {
+            throw new Exception('The page at this URL has no article text (' . mb_strlen(trim($content)) . ' characters); paste the article text instead');
+        }
     }
 
     // Truncate content to ~20,000 bytes to avoid token limits (approx 5k tokens).
