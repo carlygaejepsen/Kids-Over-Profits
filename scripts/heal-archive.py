@@ -383,18 +383,7 @@ def cmd_text():
         is_pdf = name.endswith('.pdf')
         stamps = sorted(files[name], reverse=True)
         if is_pdf:
-            ts = stamps[0]
-            orig = by_ts.get(ts, (ts, 'http://www.heal-online.org/' + name))[1]
-            try:
-                body, ocr, npages = pdf_text(raw_path(name, ts))
-            except Exception as e:  # noqa: BLE001
-                body, ocr, npages = f'(unreadable: {e})', False, 0
-            with open(os.path.join(pdf_dir, base + '.txt'), 'w', encoding='utf-8') as f:
-                f.write(body + '\n')
-            pdfs.append({'name': name, 'file': base + '.txt', 'date': stamp(ts),
-                         'first_capture': stamp(caps[0][0]) if caps else stamp(ts),
-                         'url': f'https://web.archive.org/web/{ts}/{orig}', 'ocr': ocr, 'pages': npages,
-                         'chars': len(body)})
+            pdfs.append(pdf_entry(name, stamps[0], caps))
             continue
         bodies, title = [], ''
         for ts, t, body in texts[name]:
@@ -428,16 +417,98 @@ def cmd_text():
     print(f'{len(issues)} pages -> {TEXT}, {len(pdfs)} PDFs -> {pdf_dir}')
 
 
+def pdf_entry(name, ts, caps):
+    """
+    One PDF's text (OCR'd page by page when it has no text layer) in
+    pdftext/<name>.txt and its details in pdftext/<name>.json. Done once:
+    a PDF already extracted from this copy is read back, not redone.
+    """
+    pdf_dir = os.path.join(OUT, 'pdftext')
+    os.makedirs(pdf_dir, exist_ok=True)
+    base = re.sub(r'\.\w+$', '', name)
+    meta_path = os.path.join(pdf_dir, base + '.json')
+    if os.path.exists(meta_path):
+        with open(meta_path, encoding='utf-8') as f:
+            meta = json.load(f)
+        if meta.get('date') == stamp(ts):
+            return meta
+    by_ts = {c[0]: c for c in caps}
+    orig = by_ts.get(ts, (ts, 'http://www.heal-online.org/' + name))[1]
+    try:
+        body, ocr, npages = pdf_text(raw_path(name, ts))
+    except Exception as e:  # noqa: BLE001
+        body, ocr, npages = f'(unreadable: {e})', False, 0
+    with open(os.path.join(pdf_dir, base + '.txt'), 'w', encoding='utf-8') as f:
+        f.write(body + '\n')
+    meta = {'name': name, 'file': base + '.txt', 'date': stamp(ts),
+            'first_capture': stamp(caps[0][0]) if caps else stamp(ts),
+            'url': f'https://web.archive.org/web/{ts}/{orig}', 'ocr': ocr, 'pages': npages, 'chars': len(body)}
+    with open(meta_path, 'w', encoding='utf-8') as f:
+        json.dump(meta, f, ensure_ascii=False)
+    return meta
+
+
+def cmd_pdfs(watch=False):
+    """
+    Extract every downloaded PDF not extracted yet and rewrite pdfs.json.
+    --watch keeps at it while the fetch runs, so each PDF is read (and
+    OCR'd) as it arrives; it stops once the fetch has ended and nothing is left.
+    """
+    pages = captures()
+    while True:
+        done = 0
+        files = {}
+        for fn in os.listdir(RAW):
+            m = re.match(r'^(.*)@(\d{14})(\.pdf)$', fn, re.I)
+            if m:
+                files.setdefault(m.group(1) + '.pdf', []).append(m.group(2))
+        out = []
+        for name in sorted(files):
+            base = re.sub(r'\.\w+$', '', name)
+            ts = max(files[name])
+            fresh = not os.path.exists(os.path.join(OUT, 'pdftext', base + '.json'))
+            out.append(pdf_entry(name, ts, pages.get(name, [])))
+            if fresh:
+                done += 1
+                print(f'{name}: {out[-1]["pages"]} pages{" (OCR)" if out[-1]["ocr"] else ""}', flush=True)
+        with open(os.path.join(OUT, 'pdfs.json'), 'w', encoding='utf-8') as f:
+            json.dump(out, f, indent=1, ensure_ascii=False)
+        if not watch:
+            print(f'{done} new, {len(out)} PDFs in pdfs.json')
+            return
+        if done == 0:
+            fetching = any('heal-archive.py' in ' '.join(p) and 'fetch' in p for p in _python_cmdlines())
+            if not fetching:
+                print(f'fetch has ended; {len(out)} PDFs in pdfs.json', flush=True)
+                return
+            time.sleep(60)
+
+
+def _python_cmdlines():
+    """The command lines of running python processes (Windows), to see whether the fetch still runs."""
+    import subprocess
+    try:
+        res = subprocess.run(['powershell', '-NoProfile', '-Command',
+                              "Get-CimInstance Win32_Process -Filter \"Name='python.exe'\" | % { $_.CommandLine }"],
+                             capture_output=True, text=True, timeout=60)
+        return [ln.split() for ln in res.stdout.splitlines() if ln.strip()]
+    except Exception:  # noqa: BLE001
+        return [['heal-archive.py', 'fetch']]  # unsure: keep watching
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('cmd', choices=['cdx', 'fetch', 'text', 'clean', 'all'])
+    ap.add_argument('cmd', choices=['cdx', 'fetch', 'text', 'pdfs', 'clean', 'all'])
     ap.add_argument('--limit', type=int, default=0)
     ap.add_argument('--kind', choices=['html', 'pdf'], default='')
+    ap.add_argument('--watch', action='store_true')
     a = ap.parse_args()
     if a.cmd in ('cdx', 'all') or not os.path.exists(CDX):
         cmd_cdx()
     if a.cmd in ('fetch', 'all'):
         cmd_fetch(a.limit, a.kind)
+    if a.cmd == 'pdfs':
+        cmd_pdfs(a.watch)
     if a.cmd == 'clean':
         cmd_clean()
     if a.cmd in ('text', 'all'):
