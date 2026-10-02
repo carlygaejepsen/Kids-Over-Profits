@@ -37,6 +37,7 @@ import sys
 import time
 
 import requests
+import urllib3
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'tmp', 'heal')
@@ -73,7 +74,9 @@ def get(url, binary=False, tries=10):
         except requests.ConnectionError:
             # Refused: this address is blocked for a few minutes.
             wait = max(wait, 300)
-        except requests.RequestException:
+        except (requests.RequestException, urllib3.exceptions.HTTPError, OSError):
+            # A connection cut off partway through a large file (urllib3's
+            # ProtocolError comes through the raw read, not requests).
             pass
         print(f'  waiting {wait}s ({url[-60:]})', flush=True)
         time.sleep(wait)
