@@ -23,9 +23,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/** Rows from these senders are ones that skipped the AI step. */
+/**
+ * Rows from these senders are ones that skipped the AI step: every Drive Docs
+ * source ("admin (Google Docs import)", "admin (SCIAD NET import)", "admin
+ * (Fornits import)", ...) and the extension.
+ */
 function kop_enrich_sender_where($col) {
-    return "({$col} LIKE '%(Google Docs import)%' OR {$col} LIKE '%(browser extension)%')";
+    return "({$col} LIKE '% import)%' OR {$col} LIKE '%(browser extension)%')";
 }
 
 /** Rows tried and failed twice are left for a person: [key => attempts]. */
@@ -60,17 +64,20 @@ function kop_enrich_placeholder_title($title, $url = '') {
         || preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(?::|$)/i', $t);
 }
 
-/** True for a site name that is only a domain ("sltrib.com"). */
+/** True for a site name that is only a domain ("sltrib.com", "archive.ph (archived)"). */
 function kop_enrich_domain_name($name) {
-    return (bool) preg_match('/^[a-z0-9.-]+\.[a-z]{2,}$/i', trim((string) $name));
+    return (bool) preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(?: \(archived\))?$/i', trim((string) $name));
 }
 
 /* ---- News ---------------------------------------------------------------- */
 
-/** News rows with nothing but a title and a link. */
+/**
+ * News rows with nothing but a title and a link (SCIAD NET rows also carry
+ * the date the archive filed them under, so a date does not rule a row out).
+ */
 function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
-    $sql = "SELECT id FROM news_submissions WHERE status <> 'deleted' AND summary = ''
-              AND (author = '' OR author IS NULL) AND publication_date IS NULL AND " . kop_enrich_sender_where('submitted_by');
+    $sql = "SELECT id FROM news_submissions WHERE status <> 'deleted' AND (summary = '' OR summary IS NULL)
+              AND (author = '' OR author IS NULL) AND " . kop_enrich_sender_where('submitted_by');
     $params = array();
     if ($ids) {
         $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
