@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Twenty-one tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's and Maine's are linked once the owner creates the page, see below):
+Twenty-two tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's and Ohio's are linked once the owner creates the page, see below):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -22,6 +22,7 @@ Twenty-one tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma
 | Nevada (`NV`) | `nv-reports` | shared engine | API |
 | New Hampshire (`NH`) | `nh-reports` | shared engine | API (`nh_scraper.py`; every licensing visit with observations and corrective action plans; the state's pages kept in the Drive folder `nh_html/`, statements of findings archived to `nh_pdfs/`; the state shows three years) |
 | North Carolina (`NC`) | `nc-reports` | shared engine | API |
+| Ohio (`OH`) | `oh-reports` | shared engine | API (`oh_scraper.py`; agency compliance review reports since July 2025, one row per agency, from the Department of Children and Youth agency search; PDFs archived to the Drive folder `oh_pdfs/`) |
 | Oklahoma (`OK`) | `ok-reports` | shared engine | API (`ok_scraper.py`; the state's pages are kept in the Drive folder `ok_html/`, no PDFs) |
 | Oregon (`OR`) | `or-reports` | shared engine | API |
 | Pennsylvania (`PA`) | `pa-reports` | shared engine | API (`pa_scraper.py`; PDFs archived to the Drive folder `pa_pdfs/`, scans before mid-2019 read by OCR) |
@@ -30,7 +31,7 @@ Twenty-one tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma
 | Wyoming (`WY`) | `wy-reports` | shared engine | API (`wy_scraper.py`; Family Services notices of non-compliance (OCR) and handwritten facility visits (documents only), plus health department PRTF surveys; PDFs archived to the Drive folder `wy_pdfs/`) |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers whose page the owner creates by hand (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine, Ohio): each joins the map only once its page is published, so no list links a missing page. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 

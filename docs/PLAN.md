@@ -530,6 +530,18 @@ updated.
    Ranch, Summit View), Sweetser, Connections for Kids, Good Will-Hinckley,
    KidsPeace and Aroostook (Calais Children's Residential) are for KOP
    Tools > Inspection Links. Owner: run Maine from the launcher to post.
+   **Ohio built 2026-10-02:** `oh_scraper.py` (Tools repo),
+   `js/inspections/states/oh.js`, `/oh-reports/` created on deploy. One
+   row per agency (owner's question: per-facility rows would reach 5 of our
+   63 records instead of 3 and repeat each agency's reports across 228
+   rows). A full `--no-post` run: 159 agencies in scope (303 residential
+   facilities), 116 with reports, 296 compliance reviews (54 full, 18
+   focused, 224 other), 169 flagged, 747 findings, 963 technical assistance
+   items (never flagged), 2025-07-28 to 2026-09-30. Nothing held. Agency
+   rows reach Christian Children's Home of Ohio, Gateway to Success and
+   Wilson Children's Home; Michael's Resource & Treatment Center, Necco
+   Center and The Buckeye Ranch are for KOP Tools > Inspection Links.
+   Owner: run Ohio from the launcher to post, then monthly.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

@@ -502,6 +502,9 @@ function kop_tool_page_specs() {
         // Maine (owner, 2026-10-02).
         array('template' => 'page-state-reports.php', 'title' => 'Maine Inspection Reports', 'slug' => 'me-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Maine Department of Health and Human Services, Division of Licensing and Certification, which licenses behavioral health organizations and lists every survey in <a href="https://www.pfr.maine.gov/almsonline/almsquery/searchcompany.aspx?board=6706">the state&#8217;s licence lookup</a>: full agency surveys, desk reviews and complaint surveys with their outcome since about 2013, and since late 2024 the documents themselves, with each deficiency and the organization&#8217;s plan of correction. The licence covers a whole organization, not one site, so a survey can concern any of its programs; surveys about adult programs are hidden unless you choose to see them.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Only organizations that run programs for young people are listed here. Maine&#8217;s separate licence for children&#8217;s residential care facilities has nothing online, and a survey listed as having an accepted plan of correction found deficiencies even where its statement is not online.</p><!-- /wp:paragraph -->'),
+        // Ohio (owner, 2026-10-02).
+        array('template' => 'page-state-reports.php', 'title' => 'Ohio Inspection Reports', 'slug' => 'oh-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Ohio Department of Children and Youth, which certifies group homes and children&#8217;s residential centers and, since July 2025, posts each agency&#8217;s compliance review reports in <a href="https://odjfs2.my.site.com/FindFosterCareAdoptionAgencies/s/">its agency search</a>: each rule found not in compliance, with any additional findings. Earlier reports are not online and need a public records request.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>A review belongs to the agency, not to one of its facilities. Where an agency also certifies foster or adoptive homes, those findings appear beside the residential ones, and the report does not say which facility a record came from. Technical assistance the state gives is shown apart and never counted as a finding. Ohio&#8217;s behavioral health licence has no public reports.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -683,7 +686,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '21';
+    $version = '22';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
