@@ -140,6 +140,8 @@ require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-mentions.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-create.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-facts.php';
+// Move or remove a document from the page it shows on (the document tile's pencil)
+require_once get_stylesheet_directory() . '/inc/doc-placement.php';
 // Links from the owner's Google Docs and Sheets (scripts/gdocs-extract.py), reviewed at KOP Tools > Drive Docs
 require_once get_stylesheet_directory() . '/inc/drive-docs.php';
 // What the old Fornits survivor forum says about each facility (scripts/fornits-crawl.py, fornits-process.py), reviewed at KOP Tools > Fornits

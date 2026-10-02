@@ -912,6 +912,10 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
     $display_title = function_exists('kop_title_case')
         ? kop_title_case($attachment->post_title)
         : $attachment->post_title;
+    // The pencil's ref names the folder of the page it is on, so its dialog
+    // can tell which filings put it here (inc/doc-placement.php).
+    $home = function_exists('kop_dp_home') ? kop_dp_home() : 0;
+    $edit_ref = 'doc:' . (int) $attachment->ID . ($home > 0 ? ':h' . $home : '');
 
     ob_start();
 
@@ -919,7 +923,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
         // Nothing to link to. Shown only to users who can edit, so the record
         // can be found and its file restored.
         ?>
-        <li class="doc-item doc-item-missing" data-title="<?php echo esc_attr($display_title); ?>">
+        <li class="doc-item doc-item-missing" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr($edit_ref, $display_title) : ''; ?>>
             <span class="doc-link doc-link-missing">
                 <div class="doc-thumbnail">
                     <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>"><?php echo esc_html($file_ext); ?></span>
@@ -934,7 +938,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
         return ob_get_clean();
     }
     ?>
-    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('doc:' . (int) $attachment->ID, $display_title) : ''; ?>>
+    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr($edit_ref, $display_title) : ''; ?>>
         <a href="<?php echo esc_url($file_url); ?>"
            class="doc-link nofancybox"
            target="_blank"
@@ -1046,11 +1050,17 @@ function kop_filebird_folder_shortcode($atts) {
     if ($atts['merge'] === 'name' && function_exists('kop_get_facility_doc_tree')) {
         $tree = kop_get_facility_doc_tree($atts['folder_id'], true);
         $count = count($tree['files']) + kop_count_facility_doc_tree($tree['subfolders']);
+        if (function_exists('kop_dp_set_home')) {
+            kop_dp_set_home($atts['folder_id']);
+        }
         // Subfolders first, the way a file browser lists them: in a folder
         // with both, the loose files would otherwise push every subfolder
         // below the fold.
         $body = kop_render_doc_subfolders($tree['subfolders'], $atts['layout'])
               . kop_render_doc_file_list($tree['files'], $atts['layout']);
+        if (function_exists('kop_dp_set_home')) {
+            kop_dp_set_home(0);
+        }
     } else {
         $attachments = kop_get_folder_attachments($atts['folder_id']);
         $count = count($attachments);

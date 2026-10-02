@@ -105,6 +105,9 @@ php scripts/test-young-adult-move.php           # the first move of 18+ facility
 # Edit in place (inc/inline-edit.php, js/inline-edit.js): admins get a pencil on every marked element
 # (kop_ie_attr('<source>:<what>')) that saves through the source's own save path; a new page or field gets a marker there
 php scripts/test-inline-edit.php                  # every facility sent back unchanged is unchanged, edits land, against tmp/prod.sqlite
+# A document on the wrong page: its tile's pencil (doc:<id>:h<page folder>) lists where it is filed and moves it to another
+# facility or a folder found by name, takes it off the page, or deletes it (inc/doc-placement.php; move/remove have Undo)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-placement.php   # real moves + undo on TEMP copies of the folder tables
 # Survivor Testimony "Move to testimony" in the admin data form (js/data-form/testimony.js): every copy of a
 # moved note can be cleared ("Remove copy"), moved text leaves the fields the public pages list
 node scripts/test-testimony-move.js

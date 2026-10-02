@@ -16,6 +16,7 @@
 
     var OFF_KEY = 'kopInlineEditOff';
     var SCROLL_KEY = 'kopInlineEditScroll';
+    var UNDO_KEY = 'kopInlineEditUndo';
     var on = true;
     try { on = localStorage.getItem(OFF_KEY) !== '1'; } catch (e) { /* private window */ }
 
@@ -207,6 +208,7 @@
 
         var spec = null;
         var getters = [];
+        var conditional = []; // {node, show_if}
         api('GET', null, ref).then(function (data) {
             spec = data;
             title.textContent = data.title || 'Edit';
@@ -221,8 +223,25 @@
                 }
                 var built = buildField(f);
                 holder.appendChild(built.node);
-                getters.push({ name: f.name, get: built.get });
+                getters.push({ name: f.name, get: built.get, confirm: f.confirm });
+                if (f.show_if) conditional.push({ node: built.node, show_if: f.show_if });
             });
+            // A field with show_if {other: value or [values]} shows only while
+            // the other field holds one of them.
+            function applyConditions() {
+                var now = {};
+                getters.forEach(function (g) { now[g.name] = g.get(); });
+                conditional.forEach(function (c) {
+                    c.node.hidden = !Object.keys(c.show_if).every(function (k) {
+                        var want = c.show_if[k];
+                        return (Array.isArray(want) ? want : [want]).map(String).indexOf(String(now[k])) >= 0;
+                    });
+                });
+            }
+            if (conditional.length) {
+                body.addEventListener('change', applyConditions);
+                applyConditions();
+            }
             if (data.alt && data.alt.ref) {
                 var alt = el('button', { type: 'button', class: 'kop-ie-mini kop-ie-alt', text: data.alt.label || 'More' });
                 alt.addEventListener('click', function () { openEditor(data.alt.ref); });
@@ -241,12 +260,21 @@
             if (!spec) return;
             var values = {};
             getters.forEach(function (g) { values[g.name] = g.get(); });
+            // A select may ask before an option that cannot be undone.
+            for (var i = 0; i < getters.length; i++) {
+                var ask = getters[i].confirm && getters[i].confirm[values[getters[i].name]];
+                if (ask && !window.confirm(ask)) return;
+            }
             save.setAttribute('disabled', '');
             status.textContent = 'Saving...';
             var done = spec.save_via ? saveVia(spec.save_via, values) : api('POST', { ref: ref, values: values });
             done.then(function (res) {
                 status.textContent = (res && res.message) || 'Saved.';
                 try { sessionStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch (err) { /* ignore */ }
+                // A change that can be undone is offered again once the page has reloaded.
+                if (res && (res.undo || res.link)) {
+                    try { sessionStorage.setItem(UNDO_KEY, JSON.stringify({ message: res.message, ref: res.undo || '', link: res.link || '' })); } catch (err) { /* ignore */ }
+                }
                 var here = location.href.split('#')[0];
                 if (res && res.redirect && res.redirect.split('#')[0] !== here && res.redirect.split('#')[0] + '/' !== here) {
                     location.href = res.redirect;
@@ -303,9 +331,23 @@
                 get = function () { return sel.value; };
                 break;
             }
+            case 'note': {
+                label = el('p', { class: 'kop-ie-label', text: f.label });
+                var notes = el('ul', { class: 'kop-ie-note' });
+                (Array.isArray(v) ? v : [v]).forEach(function (t) { notes.appendChild(el('li', { text: String(t) })); });
+                finish(notes);
+                get = function () { return null; };
+                break;
+            }
+            case 'place': {
+                var picker = buildPlace(id, f);
+                finish(picker.node);
+                get = picker.get;
+                break;
+            }
             case 'checks': {
                 label = el('p', { class: 'kop-ie-label', text: f.label });
-                var list = el('div', { class: 'kop-ie-checks' });
+                var list = el('div', { class: 'kop-ie-checks' + (f.wide ? ' kop-ie-checks--wide' : '') });
                 var boxes = [];
                 var checked = new Set((v || []).map(String));
                 (f.options || []).forEach(function (o) {
@@ -407,6 +449,119 @@
         return { node: wrap, get: get };
     }
 
+    /**
+     * Search box for where to move a document: facilities and folders from
+     * kop/v1/doc-place. The value is the picked row's value ("f:12", "d:34").
+     */
+    function buildPlace(id, f) {
+        var value = f.value || '';
+        var wrap = el('div', { class: 'kop-ie-place' });
+        var q = el('input', { type: 'search', id: id, class: 'kop-ie-input', placeholder: 'Facility or folder name', autocomplete: 'off',
+            role: 'combobox', 'aria-expanded': 'false', 'aria-autocomplete': 'list' });
+        var list = el('ul', { class: 'kop-ie-place-list', role: 'listbox', hidden: '' });
+        var picked = el('p', { class: 'kop-ie-place-picked', 'aria-live': 'polite' });
+        wrap.appendChild(q);
+        wrap.appendChild(list);
+        wrap.appendChild(picked);
+        var results = [], active = -1, timer = null, seq = 0;
+
+        function close() { list.hidden = true; active = -1; q.setAttribute('aria-expanded', 'false'); }
+        function choose(r) {
+            value = r.value;
+            picked.textContent = '';
+            picked.appendChild(el('strong', { text: r.kind + ': ' }));
+            picked.appendChild(document.createTextNode(r.label + (r.meta ? ' (' + r.meta + ')' : '')));
+            q.value = '';
+            close();
+        }
+        function render(note) {
+            list.innerHTML = '';
+            if (note) {
+                list.appendChild(el('li', { class: 'kop-ie-place-note', text: note }));
+            } else {
+                results.forEach(function (r, i) {
+                    var li = el('li', { role: 'option', class: i === active ? 'on' : '', 'aria-selected': i === active ? 'true' : 'false' }, [
+                        el('span', { class: 'kop-ie-place-kind', text: r.kind }),
+                        el('strong', { text: r.label }),
+                        r.meta ? el('span', { class: 'kop-ie-place-meta', text: r.meta }) : null
+                    ]);
+                    li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(r); });
+                    list.appendChild(li);
+                });
+            }
+            list.hidden = false;
+            q.setAttribute('aria-expanded', 'true');
+        }
+        function search() {
+            var term = q.value.trim();
+            if (term.length < 2) { close(); return; }
+            var mine = ++seq;
+            var url = C.placeSearch + (C.placeSearch.indexOf('?') >= 0 ? '&' : '?') + 'q=' + encodeURIComponent(term);
+            fetch(url, { credentials: 'same-origin', headers: { 'X-WP-Nonce': C.nonce } })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (mine !== seq) return;
+                    results = Array.isArray(data) ? data : [];
+                    active = -1;
+                    render(results.length ? '' : 'Nothing matches. Try part of the name.');
+                })
+                .catch(function () { if (mine === seq) render('The search failed. Try again.'); });
+        }
+        q.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(search, 250); });
+        q.addEventListener('blur', function () { setTimeout(close, 150); });
+        q.addEventListener('keydown', function (e) {
+            if (list.hidden || !results.length) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                active = (active + (e.key === 'ArrowDown' ? 1 : results.length - 1)) % results.length;
+                render('');
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                choose(results[active >= 0 ? active : 0]);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                close();
+            }
+        });
+        return { node: wrap, get: function () { return value; } };
+    }
+
+    /** After a reload: what the last change did, with Undo when it can be undone. */
+    function showUndo() {
+        var saved = null;
+        try {
+            saved = JSON.parse(sessionStorage.getItem(UNDO_KEY) || 'null');
+            sessionStorage.removeItem(UNDO_KEY);
+        } catch (e) { saved = null; }
+        if (!saved || !saved.message) return;
+        var text = el('span', { text: saved.message });
+        var note = el('div', { class: 'kop-ie-undo', role: 'status' }, [text]);
+        if (saved.link) {
+            note.appendChild(el('a', { class: 'kop-ie-undo-link', href: saved.link, text: 'Open that page' }));
+        }
+        if (saved.ref) {
+            var undo = el('button', { type: 'button', class: 'kop-ie-mini', text: 'Undo' });
+            undo.addEventListener('click', function () {
+                undo.setAttribute('disabled', '');
+                text.textContent = 'Undoing...';
+                api('POST', { ref: saved.ref, values: {} }).then(function (res) {
+                    text.textContent = (res && res.message) || 'Undone.';
+                    try { sessionStorage.setItem(SCROLL_KEY, String(window.scrollY)); } catch (err) { /* ignore */ }
+                    setTimeout(function () { location.reload(); }, 600);
+                }).catch(function (err) {
+                    undo.removeAttribute('disabled');
+                    text.textContent = 'Not undone: ' + err.message;
+                });
+            });
+            note.appendChild(undo);
+        }
+        var shut = el('button', { type: 'button', class: 'kop-ie-mini', text: 'Close', 'aria-label': 'Close this note' });
+        shut.addEventListener('click', function () { note.remove(); });
+        note.appendChild(shut);
+        document.body.appendChild(note);
+    }
+
     /* ---- Start ------------------------------------------------------------- */
 
     function start() {
@@ -417,6 +572,7 @@
                 window.scrollTo(0, parseInt(y, 10) || 0);
             }
         } catch (e) { /* ignore */ }
+        showUndo();
         refresh();
         window.addEventListener('resize', refresh);
         window.addEventListener('load', refresh);

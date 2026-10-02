@@ -27,7 +27,10 @@
  *   referrer:5:all|raw      a referrer / educational consultant record (referrers_master)
  *   row:memorial:4          a row of a table with no other editor (kop_ie_row_tables())
  *   ya:2                    a young adult program (inc/young-adult-programs.php)
- *   doc:812                 a document's title, caption, description, alt text
+ *   doc:812[:h45]           a document's title, caption, description, alt text, and
+ *                           where it is filed (h45: the folder of the page it is on;
+ *                           move it, take it off or delete it: inc/doc-placement.php)
+ *   docundo:<token>         undo such a move (save only)
  *   rep:ch:<id>|note:<AB>   a reporting directory entry or state note (kop_reporting_edits)
  *
  * GET  kop/v1/inline-edit?ref=...   -> {title, fields: [{name, label, type, value, ...}]}
@@ -177,6 +180,7 @@ function kop_ie_sources() {
         'row'      => array('load' => 'kop_ie_row_load', 'save' => 'kop_ie_row_save'),
         'ya'       => array('load' => 'kop_ie_ya_load', 'save' => 'kop_ie_ya_save'),
         'doc'      => array('load' => 'kop_ie_doc_load', 'save' => 'kop_ie_doc_save'),
+        'docundo'  => array('load' => 'kop_ie_docundo_load', 'save' => 'kop_ie_docundo_save'),
         'rep'      => array('load' => 'kop_ie_rep_load', 'save' => 'kop_ie_rep_save'),
     ));
 }
@@ -1615,17 +1619,31 @@ function kop_ie_doc_get($id) {
     return $post;
 }
 
+/** doc:<id>:h<folder> -> the folder of the page the tile is on, 0 when the ref has none. */
+function kop_ie_doc_home(array $p) {
+    return isset($p[1]) && preg_match('/^h(\d+)$/', (string) $p[1], $m) ? (int) $m[1] : 0;
+}
+
 function kop_ie_doc_load(array $p) {
     $post = kop_ie_doc_get($p[0] ?? 0);
+    $fields = array(
+        kop_ie_field('title', 'Title', 'text', $post->post_title),
+        kop_ie_field('caption', 'Caption (credit or source line)', 'textarea', $post->post_excerpt),
+        kop_ie_field('description', 'Description', 'textarea', $post->post_content),
+        kop_ie_field('alt', 'Alt text (what an image shows, for screen readers)', 'text', (string) get_post_meta($post->ID, '_wp_attachment_image_alt', true)),
+    );
+    // Where it is filed, and moving or removing it (inc/doc-placement.php).
+    if (function_exists('kop_dp_fields')) {
+        foreach ($fields as &$f) {
+            $f['section'] = 'Title and description';
+        }
+        unset($f);
+        $fields = array_merge($fields, kop_dp_fields($post->ID, kop_ie_doc_home($p)));
+    }
     return array(
         'title'  => 'Document: ' . $post->post_title,
         'help'   => 'The title shows on every tile and list of this document across the site.',
-        'fields' => array(
-            kop_ie_field('title', 'Title', 'text', $post->post_title),
-            kop_ie_field('caption', 'Caption (credit or source line)', 'textarea', $post->post_excerpt),
-            kop_ie_field('description', 'Description', 'textarea', $post->post_content),
-            kop_ie_field('alt', 'Alt text (what an image shows, for screen readers)', 'text', (string) get_post_meta($post->ID, '_wp_attachment_image_alt', true)),
-        ),
+        'fields' => $fields,
     );
 }
 
@@ -1648,6 +1666,13 @@ function kop_ie_doc_save(array $p, array $v) {
         update_post_meta($post->ID, '_wp_attachment_image_alt', wp_slash(trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v['alt'])))));
     }
     do_action('litespeed_purge_all');
+    // Then move, remove or delete it, when asked (inc/doc-placement.php).
+    if (function_exists('kop_dp_apply')) {
+        $placed = kop_dp_apply($post->ID, kop_ie_doc_home($p), $v);
+        if ($placed) {
+            return $placed;
+        }
+    }
     return array('message' => 'Saved.');
 }
 
@@ -2036,6 +2061,7 @@ add_action('wp_footer', function () {
         'rest'     => esc_url_raw(rest_url('kop/v1/inline-edit')),
         'nonce'    => wp_create_nonce('wp_rest'),
         'pageRefs' => kop_ie_page_refs(),
+        'placeSearch' => esc_url_raw(rest_url('kop/v1/doc-place')),
     );
     echo '<script>window.KOP_INLINE_EDIT = ' . wp_json_encode($config) . ';</script>' . "\n";
 }, 5);

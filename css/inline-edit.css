@@ -324,3 +324,122 @@ button.kop-ie-save[disabled] {
     opacity: 0.6;
     cursor: default;
 }
+
+/* ---- Where a document is filed (inc/doc-placement.php) ------------------- */
+
+.kop-ie-checks--wide {
+    grid-template-columns: 1fr;
+}
+
+.kop-ie-field[hidden] {
+    display: none;
+}
+
+.kop-ie-dialog ul.kop-ie-note {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14px;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-place {
+    position: relative;
+}
+
+/* In the flow, not absolute: the dialog body scrolls and would clip it. */
+.kop-ie-dialog ul.kop-ie-place-list {
+    max-height: 280px;
+    overflow-y: auto;
+    margin: 2px 0 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(0, 4, 53, 0.2);
+}
+
+.kop-ie-dialog ul.kop-ie-place-list[hidden] {
+    display: none;
+}
+
+.kop-ie-dialog .kop-ie-place-list li {
+    margin: 0;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+    font-size: 14px;
+    line-height: 1.35;
+    cursor: pointer;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+}
+
+.kop-ie-dialog .kop-ie-place-list li.on,
+.kop-ie-dialog .kop-ie-place-list li:hover {
+    color: var(--kop-midnight, #000435);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-ie-dialog .kop-ie-place-list li.kop-ie-place-note {
+    cursor: default;
+    color: var(--kop-text-muted, #4A5568);
+    background: #fff;
+}
+
+.kop-ie-dialog .kop-ie-place-kind {
+    display: inline-block;
+    margin-right: 6px;
+    padding: 0 5px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    background: var(--kop-teal-fill, #1F6F7A);
+}
+
+.kop-ie-dialog .kop-ie-place-meta {
+    display: block;
+    font-size: 12px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-ie-dialog .kop-ie-place-picked {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-ie-undo {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 99990;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    max-width: min(520px, calc(100vw - 24px));
+    padding: 10px 12px;
+    border: 2px solid var(--kop-midnight, #000435);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 4, 53, 0.35);
+}
+
+.kop-ie-undo span {
+    flex: 1 1 220px;
+    color: var(--kop-midnight, #000435);
+}
+
+a.kop-ie-undo-link,
+a.kop-ie-undo-link:hover,
+a.kop-ie-undo-link:focus,
+a.kop-ie-undo-link:active {
+    font-weight: 600;
+    color: var(--kop-midnight, #000435);
+    background: #fff;
+    text-decoration: underline;
+}
