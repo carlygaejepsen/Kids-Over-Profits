@@ -135,6 +135,8 @@ require_once get_stylesheet_directory() . '/inc/facility-suggest.php';
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links)
 require_once get_stylesheet_directory() . '/inc/inspection-links.php';
+// Duplicate facility records found automatically and merged into one, with Undo (KOP Tools > Merge Duplicates)
+require_once get_stylesheet_directory() . '/inc/facility-merge.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 // Woodbury Reports pages about a program, cut by scripts/woodbury-scan.py, reviewed and filed in its doc library

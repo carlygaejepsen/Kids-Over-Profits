@@ -138,6 +138,8 @@ if (!function_exists('kop_survivor_archives')) {
      */
     function kop_survivor_archives($kind, $ids) {
         $kind = $kind === 'o' ? 'o' : 'f';
+        // Lists built for a record since merged into this one (inc/facility-merge.php).
+        if ($kind === 'f' && function_exists('kop_facility_merge_expand_ids')) $ids = kop_facility_merge_expand_ids($ids);
         $out = array();
         foreach (kop_survivor_archives_index() as $site => $entry) {
             $list = $kind === 'o' ? $entry['operators'] : $entry['facilities'];

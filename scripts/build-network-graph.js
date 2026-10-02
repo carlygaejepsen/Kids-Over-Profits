@@ -450,6 +450,20 @@ function loadFacilityIndex() {
             const index = new Map();
             const loose = new Map();
             const byId = new Map();
+            /* KOP Tools > Merge Duplicates folds one record into another and
+             * lists the dropped one under legacy.mergedFacilities: its id and
+             * name still lead to the record that kept it. */
+            const mergedInto = new Map();
+            const mergedNames = [];
+            rows.forEach(function (row) {
+                let doc = null;
+                try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { doc = null; }
+                const merged = doc && doc.legacy && Array.isArray(doc.legacy.mergedFacilities) ? doc.legacy.mergedFacilities : [];
+                merged.forEach(function (m) {
+                    if (m && m.facility_id) mergedInto.set(Number(m.facility_id), row.id);
+                    if (m && m.name) mergedNames.push([m.name, row.id]);
+                });
+            });
             rows.forEach(function (row) {
                 const record = {
                     id: row.id, uniqueName: row.unique_name, name: row.name,
@@ -469,7 +483,13 @@ function loadFacilityIndex() {
                     loose.get(variant).push(record);
                 });
             });
-            return { source: 'facilities_v2', index: index, loose: loose, byId: byId, count: rows.length };
+            mergedNames.forEach(function (pair) {
+                const record = byId.get(pair[1]);
+                const key = nameKey(pair[0]);
+                if (!record || !key || index.has(key)) return;
+                index.set(key, [record]);
+            });
+            return { source: 'facilities_v2', index: index, loose: loose, byId: byId, mergedInto: mergedInto, count: rows.length };
         } catch (err) {
             console.warn('  ! could not read ' + path.basename(SQLITE_FILE) + ': ' + err.message);
         }
@@ -506,7 +526,8 @@ function matchFacility(node, facilities, overrides) {
     if (Object.prototype.hasOwnProperty.call(overrides.facilities, node.name)) {
         const forced = overrides.facilities[node.name];
         if (forced === null) return { match: null, note: 'override: no match' };
-        return { match: { id: forced, uniqueName: null, name: node.name }, note: 'override' };
+        const kept = facilities && facilities.mergedInto && facilities.mergedInto.get(Number(forced));
+        return { match: { id: kept || forced, uniqueName: null, name: node.name }, note: kept ? 'override (merged record)' : 'override' };
     }
     if (!facilities) return { match: null, note: 'no facility source' };
 
@@ -847,8 +868,14 @@ function readProfileClaims(nodes, overrides) {
             profileTexts(ident.knownReferrers).forEach(function (name) { claim(name, node, 'referral', 'referrer', 'facility profile'); });
             profileTexts(staff.administrator).forEach(function (name) { claim(name, node, 'leadership', 'administrator', 'facility profile', true); });
             profileTexts(staff.notableStaff).forEach(function (name) { claim(name, node, 'staff', 'staff', 'facility profile', true); });
+            /* A record merged into this one is the same place, never a rename. */
+            const mergedAway = new Set(((facility.legacy && facility.legacy.mergedFacilities) || []).map(function (m) { return nameKey((m && m.name) || ''); }));
             [['past', ident.pastNames], ['other', ident.otherNames]].forEach(function (list) {
                 profileTexts(list[1]).forEach(function (name) {
+                    if (mergedAway.has(nameKey(name))) {
+                        addOtherName(node, 'otherNames', name);
+                        return;
+                    }
                     const other = resolve(name);
                     if (!other || other.id === node.id) {
                         /* The old name is not itself on the board, so this

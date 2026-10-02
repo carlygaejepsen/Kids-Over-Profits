@@ -69,6 +69,8 @@ if (!function_exists('kop_unsilenced_archive')) {
      */
     function kop_unsilenced_archive($kind, $ids) {
         $kind = $kind === 'o' ? 'o' : 'f';
+        // Lists built for a record since merged into this one (inc/facility-merge.php).
+        if ($kind === 'f' && function_exists('kop_facility_merge_expand_ids')) $ids = kop_facility_merge_expand_ids($ids);
         $index = kop_unsilenced_index();
         $list = $kind === 'o' ? $index['operators'] : $index['facilities'];
 

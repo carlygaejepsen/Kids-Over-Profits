@@ -76,6 +76,12 @@ php scripts/test-operator-pages.php               # renders every /operator/<slu
 # "operated" years + programs' years + lawsuits + deaths, the map's people, and the documents filed under its programs
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
+# Duplicate facility records (KOP Tools > Merge Duplicates, inc/facility-merge.php + facility-merge-match.php): pairs found
+# automatically (same words, one word apart, spelling, company name in front, same street address; renamed programs never),
+# merged with one click: doc fields join, every table/JSON/option pointing at the dropped id moves (kop_fmerge_ref_tables(),
+# kop_fmerge_json_tables()), its FileBird library moves into the kept folder, its page 301s; exact Undo from the Merged tab.
+# A new table holding facility ids goes in kop_fmerge_ref_tables(); files keyed by id read kop_facility_merge_expand_ids()
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.php [--list]   # real merges + undo on an in-memory copy
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
