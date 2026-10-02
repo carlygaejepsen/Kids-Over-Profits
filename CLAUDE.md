@@ -125,6 +125,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-placement.php
 # Survivor Testimony "Move to testimony" in the admin data form (js/data-form/testimony.js): every copy of a
 # moved note can be cleared ("Remove copy"), moved text leaves the fields the public pages list
 node scripts/test-testimony-move.js
+# Person ids (inc/people.php, KOP Tools > People): everyone on a facility staff list (administrator, notableStaff) gets a
+# {prefix}kop_people id, stamped into the entry as personId by an hourly sync (same name key = same id; operators linked by name
+# only); {prefix}kop_person_roles is rebuilt from the records. "Same person as" joins two ids, "Separate" splits one name
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list]   # first sync, idempotence, merge/separate, on an in-memory copy
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # Facility directory (/tti-program-index/, both tabs) loads in steps: lists from kop/v1/facilities?view=index (each facility
@@ -297,6 +301,7 @@ to the program aggregate otherwise.
 - `locations_master` / `referrers_master` - Related data
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
+- `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named on a staff list (`personId` on each `facilities_v2` staff entry) and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
 - `news_facility_candidates` / `news_facility_scans` - Every facility name from the news with no record and what the scan decided (created, matched, possible duplicate, provider, not a facility), one row per name, and which articles it has read (`inc/facility-discovery.php`)

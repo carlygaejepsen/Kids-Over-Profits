@@ -1291,6 +1291,9 @@
                 ['source', 'sourceUrl'].forEach((k) => {
                     if (v2Str(item[k]) !== '') entry[k] = v2Str(item[k]);
                 });
+                // The person's id (inc/people.php): kept only when set.
+                const personId = parseInt(item.personId, 10);
+                if (personId > 0) entry.personId = personId;
             } else {
                 entry = { name: v2Str(item), role: '', pastJobs: '' };
             }

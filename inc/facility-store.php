@@ -1105,7 +1105,8 @@ if (!function_exists('kop_facility_normalize')) {
 if (!function_exists('kop_facility_person_list')) {
     /**
      * Staff and operator people: every entry {name, role, pastJobs}, plus
-     * {source, sourceUrl} when the entry cites where it came from. A bare
+     * {source, sourceUrl} when the entry cites where it came from, and
+     * personId (kop_people id, inc/people.php) once it has one. A bare
      * string is a name; an entry with nothing in it is dropped.
      */
     function kop_facility_person_list($value) {
@@ -1122,6 +1123,8 @@ if (!function_exists('kop_facility_person_list')) {
                 foreach (array('source', 'sourceUrl') as $k) {
                     if (kop_facility_str($item[$k] ?? '') !== '') $entry[$k] = kop_facility_str($item[$k]);
                 }
+                // The person's id (inc/people.php): kept only when set.
+                if ((int) ($item['personId'] ?? 0) > 0) $entry['personId'] = (int) $item['personId'];
             } else {
                 $entry = array('name' => kop_facility_str($item), 'role' => '', 'pastJobs' => '');
             }

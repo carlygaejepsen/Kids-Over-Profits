@@ -145,7 +145,7 @@ a `migration: original status "..."` note.
 
 | Field | Type | Notes |
 |---|---|---|
-| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | `administrator` and `notableStaff` entries are `{name, role, pastJobs}`, plus `{source, sourceUrl}` when the entry was added from a cited source (Woodbury Facts, Fornits: the citation and its link, shown on the facility page; kept only when given); `pastTTIJobs` entries are `{role, organization, employer}`. |
+| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | `administrator` and `notableStaff` entries are `{name, role, pastJobs}`, plus `{source, sourceUrl}` when the entry was added from a cited source (Woodbury Facts, Fornits: the citation and its link, shown on the facility page; kept only when given), and `personId`, the person's id in `{prefix}kop_people` (stamped by the hourly people sync, `inc/people.php`; kept only when set); `pastTTIJobs` entries are `{role, organization, employer}`. |
 | `accreditations` | `{current[], past[]}` | |
 | `memberships`, `certifications`, `licensing`, `notes` | string[] | |
 | `profileLinks` | string[] | URLs. |
