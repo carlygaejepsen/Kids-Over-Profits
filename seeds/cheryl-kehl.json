@@ -1,0 +1,22 @@
+{
+  "title": "Cheryl Kehl",
+  "slug": "cheryl-kehl",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "cheryl-kehl.html",
+  "excerpt": "Editorial research draft about Cheryl Kehl, Second Nature co-founder and Aspen clinical director. Role dates come from the network map and the wilderness timeline; verify the NATSAP secretary year and program allegations.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founder of Second Nature Wilderness; earlier clinical director at Aspen Achievement Academy and Aspen Ranch",
+    "person_active_years": "1990s-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Second Nature Wilderness", "Aspen Achievement Academy", "Aspen Ranch", "NATSAP"],
+    "person_notable_work": ["Co-founded Second Nature in 1998, helping define the modern wilderness therapy format"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [2]
+  }
+}

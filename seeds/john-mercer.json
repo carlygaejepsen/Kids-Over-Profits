@@ -1,0 +1,22 @@
+{
+  "title": "John Mercer",
+  "slug": "john-mercer",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "john-mercer.html",
+  "excerpt": "Editorial research draft about John Mercer, Mission Mountain School and NATSAP's first treasurer. Mission Mountain's documented harms are attributed to the program; his tenure dates there need primary sources.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder/director of Mission Mountain School; NATSAP's first treasurer",
+    "person_active_years": "1990s-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Mission Mountain School", "NATSAP"],
+    "person_notable_work": ["Sat on NATSAP's first Board of Directors as treasurer in 1999", "Ran Mission Mountain School in Montana, the program where survivor Kathryn Whitehead was sent before testifying to Congress"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

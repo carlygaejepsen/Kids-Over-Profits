@@ -1,0 +1,22 @@
+{
+  "title": "Kent Tasso",
+  "slug": "kent-tasso",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "kent-tasso.html",
+  "excerpt": "Editorial research draft about Kent Tasso, founder and owner of CERTS. Program-level abuse allegations are attributed to CERTS programs and noted as not investigated, per the operator history.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and owner of CERTS (Certified Educational, Recreational, and Therapeutic Schools and Programs)",
+    "person_active_years": "2001-present"
+  },
+  "meta_arrays": {
+    "person_organizations": ["CERTS Group", "Kolob Canyon RTC", "Moonridge Academy", "La Europa Academy", "Mountain Springs Preparatory Academy"],
+    "person_notable_work": ["Founded CERTS and grew it to four residential treatment programs for girls in Utah"],
+    "person_role_sources": [1, 2, 3],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 3],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

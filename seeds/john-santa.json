@@ -1,0 +1,22 @@
+{
+  "title": "John L. Santa",
+  "slug": "john-santa",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "john-santa.html",
+  "excerpt": "Editorial research draft about John L. Santa, NATSAP co-founder and first president, Montana Academy co-owner and PAARP. Links to the published KOP Investigatory Spotlight rather than duplicating it.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founder and first president of NATSAP; co-owner of Montana Academy; founder of PAARP",
+    "person_active_years": "1997-2021 documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["NATSAP", "Montana Academy", "PAARP (Parent Alliance for Adolescent and Residential Programs)"],
+    "person_notable_work": ["Co-founded NATSAP in 1999 and served as its first president", "Set out NATSAP's 2006 public-relations strategy against the Miller oversight bill"],
+    "person_role_sources": [1, 3, 5],
+    "person_active_years_sources": [1, 4],
+    "person_organizations_sources": [1, 3, 5],
+    "person_notable_work_sources": [1, 3, 5]
+  }
+}

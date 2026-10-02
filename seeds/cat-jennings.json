@@ -1,0 +1,21 @@
+{
+  "title": "Cat Jennings",
+  "slug": "cat-jennings",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "cat-jennings.html",
+  "excerpt": "Editorial research draft about Cat Jennings, founding executive director of Asheville Academy and Lake House Academy. Program-level harms (including the Asheville Academy suicides) are attributed to the program, not to her.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founding executive director of Asheville Academy for Girls and Lake House Academy",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["Asheville Academy for Girls", "Lake House Academy"],
+    "person_notable_work": ["Founding executive director of two Family Help & Wellness-linked programs in North Carolina"],
+    "person_role_sources": [1],
+    "person_organizations_sources": [1],
+    "person_notable_work_sources": [1]
+  }
+}
