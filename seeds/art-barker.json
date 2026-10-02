@@ -1,0 +1,41 @@
+{
+  "title": "Arthur Robert \"Art\" Barker",
+  "slug": "art-barker",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "art-barker.html",
+  "excerpt": "Editorial research draft about Art Barker, founder of The Seed (1970-2001), the federally funded Fort Lauderdale program that became the direct predecessor of Straight Inc. Funding sources and biographical claims require verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and director of The Seed, Inc. (Fort Lauderdale, Florida)",
+    "person_active_years": "1970-2001"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "The Seed, Inc.",
+      "Straight Inc. (predecessor program)"
+    ],
+    "person_notable_work": [
+      "Founded The Seed on Synanon's attack-therapy model",
+      "The Seed's model was copied by Straight Inc. and its spin-offs",
+      "Criticized in a 1974 U.S. Senate staff report on behavior modification"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1,
+      4
+    ],
+    "person_organizations_sources": [
+      1,
+      4
+    ],
+    "person_notable_work_sources": [
+      1,
+      2,
+      3
+    ]
+  }
+}

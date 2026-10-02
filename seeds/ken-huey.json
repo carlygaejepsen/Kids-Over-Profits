@@ -1,0 +1,47 @@
+{
+  "title": "Ken Huey, PhD",
+  "slug": "ken-huey",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "ken-huey.html",
+  "excerpt": "Editorial research draft about Ken Huey, founder of Calo (Change Academy Lake of the Ozarks) and CEO of the HOPE Group, who built the adoptee niche in the modern industry. The 2026 AP findings largely post-date his 2015 sale and are attributed to Calo.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Calo (Change Academy Lake of the Ozarks); CEO of the HOPE Group (Havenwood Academy)",
+    "person_active_years": "1994 to present"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Calo (Change Academy Lake of the Ozarks)",
+      "HOPE Group",
+      "Havenwood Academy",
+      "West Ridge Academy",
+      "Provo Canyon School",
+      "Attachment & Trauma Network (board)"
+    ],
+    "person_notable_work": [
+      "Built the leading program marketing to adoptive families",
+      "Sat on the board of an adoptive-parent advocacy group while owning a program"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "person_notable_work_sources": [
+      1,
+      4,
+      5
+    ]
+  }
+}

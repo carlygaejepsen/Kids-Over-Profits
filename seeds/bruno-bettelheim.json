@@ -1,0 +1,43 @@
+{
+  "title": "Bruno Bettelheim",
+  "slug": "bruno-bettelheim",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "bruno-bettelheim.html",
+  "excerpt": "Editorial research draft about Bruno Bettelheim (1903-1990), director of the University of Chicago's Orthogenic School, whose residential \"milieu therapy\" and \"refrigerator mother\" theory shaped residential treatment for disturbed children. Accounts of abuse came from former students after his death.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Director of the Sonia Shankman Orthogenic School, University of Chicago; author of The Empty Fortress",
+    "person_active_years": "1944-1990"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Sonia Shankman Orthogenic School",
+      "University of Chicago"
+    ],
+    "person_notable_work": [
+      "Ran a residential school for emotionally disturbed children that separated them from their parents",
+      "Popularized the \"refrigerator mother\" theory of autism in The Empty Fortress (1967)",
+      "Former students and staff described beatings and humiliation after his death"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2
+    ],
+    "person_notable_work_sources": [
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

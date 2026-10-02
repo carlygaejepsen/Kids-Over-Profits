@@ -1,0 +1,44 @@
+{
+  "title": "Robert H. Crist, MD",
+  "slug": "robert-crist",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "robert-crist.html",
+  "excerpt": "Editorial research draft about Robert Crist, psychiatrist, co-founder and medical director of Provo Canyon School, enjoined by a federal court in 1979, and later tied to Discovery Academy, Logan River Academy and Silverado.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Psychiatrist; co-founder, owner and medical director of Provo Canyon School",
+    "person_active_years": "1971 to about 2016"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Provo Canyon School",
+      "Discovery Academy",
+      "Logan River Academy",
+      "Silverado"
+    ],
+    "person_notable_work": [
+      "Co-founded Provo Canyon School, often called the birthplace of WWASPS",
+      "Enjoined with the school by a federal court in 1979",
+      "Medical director responsible for medicating residents"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      2,
+      3,
+      4
+    ],
+    "person_notable_work_sources": [
+      2,
+      3
+    ]
+  }
+}

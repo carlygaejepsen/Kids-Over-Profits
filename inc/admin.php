@@ -976,6 +976,31 @@ function kop_seed_posts() {
         'jan-moss-courtney.json',
         'sue-crowell.json',
         'lester-roloff.json',
+        // TTI figure profiles (founders, executives, operators, validators), research drafts 2026-10-02.
+        'jay-ripley.json',
+        'rosemary-tippett.json',
+        'joe-gauld.json',
+        'chuck-dederich.json',
+        'art-barker.json',
+        'brad-reedy.json',
+        'kimball-delamare.json',
+        'tim-dupell.json',
+        'shayne-and-sheri-gallagher.json',
+        'ken-huey.json',
+        'kreg-gillman.json',
+        'don-vardell.json',
+        'david-lepere.json',
+        'steve-cartisano.json',
+        'ken-kay.json',
+        'robert-crist.json',
+        'jack-eckerd.json',
+        'david-wilkerson.json',
+        'wiley-cameron.json',
+        'boyd-and-stephanie-householder.json',
+        'argiros-family.json',
+        'michael-gass.json',
+        'lon-woodbury.json',
+        'bruno-bettelheim.json',
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
         'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
         'nc-reports.json',           // /nc-reports/ page for the NC adapter, 2026-09-16
@@ -2132,7 +2157,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '72';
+    $version = '73';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -1,0 +1,43 @@
+{
+  "title": "Shayne and Sheri Gallagher",
+  "slug": "shayne-and-sheri-gallagher",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "shayne-and-sheri-gallagher.html",
+  "excerpt": "Editorial research draft about Shayne and Sheri Gallagher, co-founders of WinGate Wilderness Therapy in Kanab, Utah (about 2008-2023). Background claims and WinGate's relationship to Family Help & Wellness require verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founders of WinGate Wilderness Therapy (Kanab, Utah): Shayne as executive director, Sheri as director of operations",
+    "person_active_years": "About 1990-2023"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "WinGate Wilderness Therapy",
+      "Waypoints Wilderness Therapy",
+      "Outback Therapeutic Expeditions",
+      "Family Help & Wellness"
+    ],
+    "person_notable_work": [
+      "Long-serving wilderness operators whose careers reach back to the field's early programs",
+      "Grew WinGate with Family Help & Wellness backing until its 2023 closure"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      2,
+      3
+    ]
+  }
+}

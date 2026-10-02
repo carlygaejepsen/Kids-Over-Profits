@@ -3,19 +3,44 @@
   "slug": "sue-crowell",
   "post_type": "post",
   "status": "draft",
-  "seed_version": 4,
+  "seed_version": 5,
   "content_file": "sue-crowell.html",
-  "excerpt": "Editorial research draft about Sue Crowell, wilderness-therapy leadership roles and a PGO, LLC listing described in the John Doe M.D.Y. v. Trails Academy complaint. Verify the filing and corporate relationships before publication.",
+  "excerpt": "Editorial research draft about Sue Crowell, former SUWS and Aspen Education Group wilderness executive, and a PGO, LLC member listing in the Trails Carolina litigation. LLC membership is not proof of control or responsibility; verify before publication.",
   "template": "single-person-profile.php",
   "meta": {
-    "person_role": "Former wilderness-therapy and Aspen Education Group executive; PGO, LLC member listing attributed to a Trails lawsuit extract (verify)",
-    "person_active_years": ""
+    "person_role": "Former SUWS executive director and Aspen Education Group Senior VP of outdoor programs; PGO, LLC member listing in a Trails lawsuit (verify)",
+    "person_active_years": "About 2004 to present (dates to verify)"
   },
   "meta_arrays": {
-    "person_organizations": ["SUWS Adolescent Program", "SUWS of Idaho", "Aspen Education Group", "Skyterra Wellness Retreat", "PGO, LLC"],
-    "person_notable_work": ["Executive roles in wilderness therapy and youth programs", "Listed in the supplied complaint extract as associated with PGO, LLC and WTCSL, LLC"],
-    "person_role_sources": [1],
-    "person_organizations_sources": [1, 3, 4],
-    "person_notable_work_sources": [1, 2]
+    "person_organizations": [
+      "SUWS Adolescent Program",
+      "SUWS of Idaho",
+      "Aspen Education Group",
+      "Skyterra Wellness Retreat",
+      "PGO, LLC"
+    ],
+    "person_notable_work": [
+      "Oversaw Aspen's wilderness portfolio as Senior VP of outdoor programs",
+      "Listed through PGO, LLC as a member of an entity named in the Trails Carolina suits"
+    ],
+    "person_role_sources": [
+      1,
+      5
+    ],
+    "person_active_years_sources": [
+      1,
+      5
+    ],
+    "person_organizations_sources": [
+      1,
+      3,
+      4,
+      6
+    ],
+    "person_notable_work_sources": [
+      1,
+      2,
+      5
+    ]
   }
 }

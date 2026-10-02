@@ -1,0 +1,41 @@
+{
+  "title": "David LePere",
+  "slug": "david-lepere",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "david-lepere.html",
+  "excerpt": "Editorial research draft about David LePere, who directed the CEDU High and Middle Schools and later ran Wilderness Quest and Cherokee Creek Boys School. His NATSAP presidency and several dates are unconfirmed.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Former director of CEDU High School and CEDU Middle School; former executive director of Wilderness Quest and Cherokee Creek Boys School",
+    "person_active_years": "About 1992 to present"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Mount Bachelor Academy",
+      "CEDU High School",
+      "CEDU Middle School",
+      "Wilderness Quest",
+      "Cherokee Creek Boys School",
+      "NATSAP",
+      "Compass Rose Academy (board)"
+    ],
+    "person_notable_work": [
+      "Carries the CEDU lineage into the post-CEDU industry",
+      "Listed on the KOP map as a NATSAP board president (unconfirmed)"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1
+    ],
+    "person_organizations_sources": [
+      1
+    ],
+    "person_notable_work_sources": [
+      1
+    ]
+  }
+}

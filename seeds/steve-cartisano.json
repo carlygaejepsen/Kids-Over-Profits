@@ -1,0 +1,46 @@
+{
+  "title": "Steve Cartisano",
+  "slug": "steve-cartisano",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "steve-cartisano.html",
+  "excerpt": "Editorial research draft about Steve Cartisano (about 1956-2019), founder of the Challenger Foundation, where Kristen Chase died in 1990, who kept opening programs in Hawaii, Samoa and Canada after Utah barred him. He was acquitted of all charges in 1992.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of the Challenger Foundation; later director of programs in Samoa",
+    "person_active_years": "1988-1999 and later"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Challenger Foundation",
+      "Challenger Hawaii",
+      "New Hope Academy (Samoa)",
+      "Pacific Coast Academy (Samoa)",
+      "Chilanko Lodge (British Columbia)"
+    ],
+    "person_notable_work": [
+      "Ran the forced-march program where Kristen Chase, 16, died of heatstroke in 1990",
+      "Moved operations offshore after Utah barred him from running survival programs"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2,
+      4
+    ],
+    "person_organizations_sources": [
+      1,
+      4,
+      5
+    ],
+    "person_notable_work_sources": [
+      1,
+      2,
+      3
+    ]
+  }
+}

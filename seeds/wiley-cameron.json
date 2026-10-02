@@ -1,0 +1,41 @@
+{
+  "title": "Wiley Cameron",
+  "slug": "wiley-cameron",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "wiley-cameron.html",
+  "excerpt": "Editorial research draft about Wiley Cameron, Lester Roloff's successor at the Roloff Homes, who moved the homes across state lines and helped write the 1997 Texas law that let them return without a state license.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Head of the Roloff Homes and Rebekah Home for Girls after 1982; TACCCA board member",
+    "person_active_years": "1982-2001"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Roloff Homes",
+      "Rebekah Home for Girls",
+      "Texas Association of Christian Child-Care Agencies (TACCCA)"
+    ],
+    "person_notable_work": [
+      "Kept the Roloff Homes running across state lines after Texas shut them",
+      "Helped draft and lobby for Texas HB 2482 (1997)"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2
+    ],
+    "person_notable_work_sources": [
+      1,
+      2,
+      3
+    ]
+  }
+}

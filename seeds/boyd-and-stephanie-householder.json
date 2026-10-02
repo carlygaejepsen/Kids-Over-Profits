@@ -1,0 +1,42 @@
+{
+  "title": "Boyd and Stephanie Householder",
+  "slug": "boyd-and-stephanie-householder",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "boyd-and-stephanie-householder.html",
+  "excerpt": "Editorial research draft about Boyd and Stephanie Householder, founders of Circle of Hope Girls' Ranch in Missouri. Boyd died in 2024 before trial; Stephanie pleaded guilty in 2025 to child abuse or neglect and endangering a child.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founders of Circle of Hope Girls' Ranch (Cedar County, Missouri); Boyd formerly worked at Agape Boarding School",
+    "person_active_years": "2006-2020"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Circle of Hope Girls' Ranch",
+      "Agape Boarding School"
+    ],
+    "person_notable_work": [
+      "Ran an unlicensed religious girls' ranch closed in 2020 after state removals",
+      "Charged with nearly 100 counts between them in 2021",
+      "Their case helped drive Missouri's 2021 oversight law"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2
+    ],
+    "person_notable_work_sources": [
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

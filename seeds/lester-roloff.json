@@ -3,20 +3,48 @@
   "slug": "lester-roloff",
   "post_type": "post",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "lester-roloff.html",
-  "excerpt": "Editorial research draft about Lester Roloff and his faith-based residential homes. Accounts of discipline, state intervention and program history are attributed to the sources reviewed and require primary-record citations.",
+  "excerpt": "Editorial research draft about Lester Roloff (1914-1982), his Rebekah Home for Girls and other South Texas homes, and the licensing fight that built the church-ministry exemption. Allegations are attributed to witnesses and filings.",
   "template": "single-person-profile.php",
   "meta": {
-    "person_role": "Independent Fundamentalist Baptist minister; founder of Roloff Evangelistic Enterprises and several residential homes",
+    "person_role": "Independent Fundamentalist Baptist minister; founder of Roloff Evangelistic Enterprises and the Rebekah Home for Girls",
     "person_active_years": "1944-1982"
   },
   "meta_arrays": {
-    "person_organizations": ["Roloff Evangelistic Enterprises", "The Family Altar", "Lighthouse for Boys", "Anchor Home for Boys", "Rebekah Home for Girls", "City of Refuge", "Jubilee Ladies Home"],
-    "person_notable_work": ["Founded and operated faith-based homes for youth", "Radio preaching and fundraising through The Family Altar"],
-    "person_role_sources": [1, 2],
-    "person_active_years_sources": [1, 2],
-    "person_organizations_sources": [1, 2, 3],
-    "person_notable_work_sources": [1, 2]
+    "person_organizations": [
+      "Roloff Evangelistic Enterprises",
+      "The Family Altar",
+      "People's Baptist Church",
+      "Rebekah Home for Girls",
+      "Lighthouse for Boys",
+      "Anchor Home for Boys",
+      "Bethesda Home for Girls",
+      "City of Refuge",
+      "Jubilee Ladies Home"
+    ],
+    "person_notable_work": [
+      "Founded faith-based homes for youth run on \"Bible discipline\"",
+      "Fought Texas licensing for about a decade, calling it the \"Christian Alamo\"",
+      "Built the church-ministry exemption argument later used by IFB programs"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      3,
+      5,
+      9
+    ]
   }
 }

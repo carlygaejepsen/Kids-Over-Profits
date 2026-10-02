@@ -1,0 +1,51 @@
+{
+  "title": "W. Kimball DeLaMare, LCSW",
+  "slug": "kimball-delamare",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "kimball-delamare.html",
+  "excerpt": "Editorial research draft about Kimball DeLaMare, director of KIDS of Greater Salt Lake in 1989, co-founder of Island View and the Oakley School, and NATSAP's founding president. The 1989 lawsuit and police referral outcomes are not yet known.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founding president of NATSAP; co-founder of Island View RTC and the Oakley School; director of KIDS of Greater Salt Lake (1989)",
+    "person_active_years": "1989 to present"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "KIDS of Greater Salt Lake",
+      "Island View RTC",
+      "The Oakley School",
+      "NATSAP",
+      "Proficio Management Group",
+      "Potomac Programs (Embark)",
+      "Life Launch Centers"
+    ],
+    "person_notable_work": [
+      "Directed a Utah branch of Miller Newton's Straight spin-off KIDS",
+      "First NATSAP president; helped write its Ethical Principles",
+      "Helped craft licensing policy in several states, by his own account"
+    ],
+    "person_role_sources": [
+      1,
+      2,
+      4
+    ],
+    "person_active_years_sources": [
+      1,
+      4
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "person_notable_work_sources": [
+      1,
+      4,
+      5
+    ]
+  }
+}

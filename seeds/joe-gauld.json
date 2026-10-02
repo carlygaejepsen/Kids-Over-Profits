@@ -1,0 +1,44 @@
+{
+  "title": "Joseph W. \"Joe\" Gauld",
+  "slug": "joe-gauld",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "joe-gauld.html",
+  "excerpt": "Editorial research draft about Joseph Gauld (1927-2023), founder of Hyde School. His own 1974 interview and newspaper columns describe the school's physical discipline; the 2025 federal suit's claims are allegations.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder, headmaster and later president of Hyde School, Bath, Maine",
+    "person_active_years": "1966-2023"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Hyde School",
+      "New Hampton School",
+      "Berwick Academy",
+      "Hyde-branded public and charter schools"
+    ],
+    "person_notable_work": [
+      "Founded Hyde School in 1966 and led it until his death",
+      "Described slapping, paddling and self-criticism sessions in a 1974 interview",
+      "Wrote Character First: The Hyde School Difference (1993)"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      2
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      4
+    ],
+    "person_notable_work_sources": [
+      2,
+      3
+    ]
+  }
+}

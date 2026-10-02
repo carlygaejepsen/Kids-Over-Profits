@@ -1,0 +1,41 @@
+{
+  "title": "Lon Woodbury",
+  "slug": "lon-woodbury",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "lon-woodbury.html",
+  "excerpt": "Editorial research draft about Lon Woodbury, former CEDU Rocky Mountain Academy admissions director who became an independent educational consultant and published Woodbury Reports and strugglingteens.com for nearly three decades.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Independent educational consultant; publisher of Woodbury Reports, Places for Struggling Teens and strugglingteens.com",
+    "person_active_years": "1984-2018"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Rocky Mountain Academy (CEDU)",
+      "Woodbury Reports",
+      "Places for Struggling Teens",
+      "strugglingteens.com"
+    ],
+    "person_notable_work": [
+      "Ran the industry's main trade newsletter and directory, which sold paid placements",
+      "Helped build the educational consultant profession while referring families to programs"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1
+    ],
+    "person_organizations_sources": [
+      1,
+      3
+    ],
+    "person_notable_work_sources": [
+      1,
+      4
+    ]
+  }
+}

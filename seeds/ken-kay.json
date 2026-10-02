@@ -1,0 +1,42 @@
+{
+  "title": "Ken Kay",
+  "slug": "ken-kay",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "ken-kay.html",
+  "excerpt": "Editorial research draft about Ken Kay, president and public voice of Robert Lichfield's WWASPS network from 1998 into its collapse. His titles and dates need confirmation; lawsuit claims are allegations.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Former president of WWASPS (World Wide Association of Specialty Programs and Schools); former director of Brightway Adolescent Hospital",
+    "person_active_years": "Before 1998 to after 2007"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Brightway Adolescent Hospital",
+      "WWASPS",
+      "Cross Creek Programs",
+      "Browning Distance Learning Academy"
+    ],
+    "person_notable_work": [
+      "Public defender of WWASPS against abuse lawsuits",
+      "Led the network through its collapse in the late 2000s"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1,
+      3
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      2,
+      3
+    ]
+  }
+}

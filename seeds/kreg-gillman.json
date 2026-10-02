@@ -1,0 +1,44 @@
+{
+  "title": "Kreg Gillman, PhD",
+  "slug": "kreg-gillman",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "kreg-gillman.html",
+  "excerpt": "Editorial research draft about Kreg Gillman, therapist turned executive who led Aspen Ranch, SunHawk Academy and Provo Canyon School and co-founded Silverado. Program histories are attributed to the programs; several roles need confirmation.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Former CEO of Provo Canyon School (UHS); former executive director of Aspen Ranch and SunHawk Academy",
+    "person_active_years": "1993 to present"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Provo Canyon School",
+      "Universal Health Services (UHS)",
+      "Aspen Education Group",
+      "Aspen Ranch",
+      "SunHawk Academy",
+      "Silverado",
+      "Salt Lake Behavioral Health"
+    ],
+    "person_notable_work": [
+      "Links more networks on the KOP map than anyone else: 7 programs across 6 frames",
+      "Shows how leadership circulated between Aspen, UHS and independent Utah programs"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1
+    ],
+    "person_organizations_sources": [
+      1,
+      2
+    ],
+    "person_notable_work_sources": [
+      1,
+      2
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "title": "Rosemary Tippett",
+  "slug": "rosemary-tippett",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "rosemary-tippett.html",
+  "excerpt": "Editorial research draft about Rosemary Tippett, Three Springs, Inc. and NATSAP's public relations and advocacy work against federal oversight in 2006-2007. Her Three Springs title and dates require verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "NATSAP Director of Public Relations (2006); former Three Springs, Inc. representative on the NATSAP board",
+    "person_active_years": "1995-2007 in the sources reviewed"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Three Springs, Inc.",
+      "National Association of Therapeutic Schools and Programs (NATSAP)"
+    ],
+    "person_notable_work": [
+      "Led NATSAP lobbying against Rep. George Miller's federal oversight bill",
+      "Co-led NATSAP Advocacy Day in Washington, 2007"
+    ],
+    "person_role_sources": [
+      3,
+      4
+    ],
+    "person_active_years_sources": [
+      1,
+      2,
+      5
+    ],
+    "person_organizations_sources": [
+      1,
+      2
+    ],
+    "person_notable_work_sources": [
+      3,
+      4,
+      5
+    ]
+  }
+}

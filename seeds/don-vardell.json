@@ -1,0 +1,45 @@
+{
+  "title": "Don Vardell",
+  "slug": "don-vardell",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "don-vardell.html",
+  "excerpt": "Editorial research draft about Don Vardell, a career program executive who ran at least six programs in five states, most for Aspen Education Group. Nothing found so far ties him to a specific harm.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Program executive; former executive director of Academy at Swift River, Excel Academy and Island View RTC",
+    "person_active_years": "Before 2004 to present (dates to verify)"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Peninsula Village (Tennessee)",
+      "Academy at Swift River",
+      "Excel Academy",
+      "Island View RTC",
+      "Shortridge Academy",
+      "Mountain Valley Treatment Center",
+      "Aspen Institute for Behavioral Assessment"
+    ],
+    "person_notable_work": [
+      "Example of the professional administrator that chains move from program to program",
+      "Came from hospital marketing rather than clinical work"
+    ],
+    "person_role_sources": [
+      1
+    ],
+    "person_active_years_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      1
+    ]
+  }
+}

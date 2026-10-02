@@ -1,0 +1,44 @@
+{
+  "title": "Jack Eckerd",
+  "slug": "jack-eckerd",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "jack-eckerd.html",
+  "excerpt": "Editorial research draft about Jack Eckerd (1913-2004), drugstore magnate and founder of Eckerd Youth Alternatives, Florida's first private juvenile justice provider. Most documented harms at Eckerd programs came after his 1998 stroke or his death and are attributed to the organization.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder of Eckerd Youth Alternatives (later Eckerd Kids, Eckerd Connects); founder of the Eckerd drugstore chain",
+    "person_active_years": "1968-2004"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Eckerd Youth Alternatives",
+      "Eckerd Kids / Eckerd Connects",
+      "Camp E-How-Kee",
+      "Florida PRIDE (prison industries)"
+    ],
+    "person_notable_work": [
+      "Opened the door to privatized youth corrections in Florida in 1982",
+      "Built a multi-state network of wilderness camps for delinquent youth"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      3
+    ],
+    "person_organizations_sources": [
+      1,
+      3,
+      5
+    ],
+    "person_notable_work_sources": [
+      2,
+      4,
+      5
+    ]
+  }
+}

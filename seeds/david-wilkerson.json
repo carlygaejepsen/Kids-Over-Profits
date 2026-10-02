@@ -1,0 +1,45 @@
+{
+  "title": "David Wilkerson",
+  "slug": "david-wilkerson",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "david-wilkerson.html",
+  "excerpt": "Editorial research draft about David Wilkerson (1931-2011), founder of Teen Challenge, the largest faith-based residential program network in the world. Harms at Teen Challenge since his death are attributed to Teen Challenge.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Pentecostal preacher; founder of Teen Challenge, World Challenge and Times Square Church",
+    "person_active_years": "1958-2011"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Teen Challenge",
+      "World Challenge",
+      "Times Square Church",
+      "Assemblies of God"
+    ],
+    "person_notable_work": [
+      "Founded the largest single program network in the industry",
+      "Co-wrote The Cross and the Switchblade",
+      "Teen Challenge's 1990s Texas fight produced the modern faith-based licensing exemption"
+    ],
+    "person_role_sources": [
+      1,
+      2
+    ],
+    "person_active_years_sources": [
+      1,
+      3
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      2,
+      4,
+      6
+    ]
+  }
+}

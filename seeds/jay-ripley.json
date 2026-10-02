@@ -1,0 +1,43 @@
+{
+  "title": "John \"Jay\" Ripley",
+  "slug": "jay-ripley",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "jay-ripley.html",
+  "excerpt": "Editorial research draft about Jay Ripley, co-founder of Sequel Youth and Family Services and founder of Vivant Behavioral Healthcare. Harms are attributed to the programs named; ownership claims and dates require primary-record verification.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founder of Sequel Youth and Family Services; founder and CEO of Vivant Behavioral Healthcare",
+    "person_active_years": "Early 1990s to present (dates to verify)"
+  },
+  "meta_arrays": {
+    "person_organizations": [
+      "Youth Services International",
+      "Sequel Youth and Family Services",
+      "Vivant Behavioral Healthcare"
+    ],
+    "person_notable_work": [
+      "Grew Sequel to more than 30 facilities funded by public placements",
+      "Carried Sequel programs into Vivant after Sequel's collapse in 2021"
+    ],
+    "person_role_sources": [
+      1,
+      3
+    ],
+    "person_active_years_sources": [
+      1,
+      3
+    ],
+    "person_organizations_sources": [
+      1,
+      2,
+      3
+    ],
+    "person_notable_work_sources": [
+      1,
+      3,
+      4
+    ]
+  }
+}
