@@ -10071,5 +10071,47 @@
         "knownReferrers": []
       }
     }
+  },
+  {
+    "id": 10425,
+    "unique_name": "Diamond Ranch Academy",
+    "version": 1,
+    "note": "Diamond Ranch moved to 1500 E 2700 S, Hurricane in 2001, the campus later used by Olympus Academy (2013-2017) and Three Points Center (2018-). Source: r/troubledteens wiki, Diamond Ranch Academy, Olympus Academy and Three Points Center pages (https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy); the same address is on the Olympus Academy and Three Points Center records.",
+    "facility": {
+      "locationDetails": {
+        "city": "Hurricane",
+        "state": "UT",
+        "country": "United States",
+        "zip": "84737",
+        "additionalLocations": [],
+        "formerLocations": [
+          {
+            "raw": "1500 E 2700 S, Hurricane, UT 84737",
+            "fromYear": 2001,
+            "toYear": null
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 10545,
+    "unique_name": "Three Points Center, LLC",
+    "version": 2,
+    "note": "Three Points Center moved in 2018 to 1500 E 2700 S, Hurricane, the former campus of Diamond Ranch Academy and Olympus Academy (2013-2017); a program reopening on the same property counts as a rebrand. Only Olympus Academy, the program directly before it there, is listed, so the map draws Diamond Ranch -> Olympus -> Three Points. Source: r/troubledteens wiki, Diamond Ranch Academy, Olympus Academy and Three Points Center pages (https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy); the same address is on the Olympus Academy and Three Points Center records.",
+    "facility": {
+      "identification": {
+        "name": "Three Points Center, LLC",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Olympus Academy"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
   }
 ]
