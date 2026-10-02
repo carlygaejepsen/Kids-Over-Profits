@@ -187,6 +187,15 @@ if ($fid) {
     $out3 = $normalize($apply($doc, 'details', $vals3));
     $check('ownership cleared -> null', $out3['facilityDetails']['isPrivatelyOwned'] === null);
 
+    // "Mark closed" (fstatus:<id>:Closed) posts the status alone: every year and note stays.
+    $doc6 = $doc;
+    $doc6['operatingPeriod'] = array_merge((array) ($doc6['operatingPeriod'] ?? array()), array('status' => 'Open', 'startYear' => 1998, 'endYear' => null, 'yearsOfOperation' => '1998-', 'notes' => array('A note.')));
+    $out6 = $normalize($apply($doc6, 'status', array('operatingPeriod.status' => 'Closed')));
+    $op6 = $out6['operatingPeriod'];
+    $check('Mark closed: status only, years and notes kept', $op6['status'] === 'Closed' && (int) $op6['startYear'] === 1998 && $op6['endYear'] === null
+        && $op6['yearsOfOperation'] === '1998-' && $op6['notes'] === array('A note.'), json_encode($op6));
+    $check('Mark closed: the button ref resolves', kop_ie_resolve('fstatus:' . $fid . ':Closed')[0]['save'] === 'kop_ie_fstatus_save');
+
     // Unticking keeps the key, false.
     $doc4 = $doc;
     $doc4['philosophy'] = array('has12Steps' => true, 'customPhilosophy' => array('Something else'));

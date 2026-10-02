@@ -205,6 +205,10 @@ get_header();
             <?php if ($page['place'] !== '') : ?>
                 <span class="kop-fp-place"><?php echo esc_html($page['place']); ?></span>
             <?php endif; ?>
+            <?php if ($page['status'] !== 'Closed' && function_exists('kop_ie_can') && kop_ie_can()) : ?>
+                <button type="button" class="kop-ie-mini kop-ie-quick" data-kop-quick="fstatus:<?php echo (int) $page['id']; ?>:Closed"
+                    data-kop-quick-confirm="<?php echo esc_attr('Mark ' . $page['name'] . ' closed? Its years stay as they are.'); ?>">Mark closed</button>
+            <?php endif; ?>
         </div>
     </header>
 

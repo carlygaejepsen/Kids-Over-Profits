@@ -15,6 +15,8 @@
  *   gl:<entry id>           a glossary entry (inc/glossary-editor.php's save)
  *   facility:45:staff       a group of a facility's fields (facilities_v2)
  *   facility:45:all|raw     every field, or the whole record as JSON
+ *   fstatus:45:Closed       set a facility's status in one click, years kept (save
+ *                           only; a button with data-kop-quick="<ref>", Undo offered)
  *   rec:lawsuit:9           a lawsuit, legislation or news row (saved by
  *                           api/manage-submissions.php update_fields, which also
  *                           re-syncs the facility links)
@@ -170,7 +172,8 @@ function kop_ie_sources() {
         'pt'       => array('load' => 'kop_ie_pt_load', 'save' => 'kop_ie_pt_save'),
         'gl'       => array('load' => 'kop_ie_gl_load', 'save' => 'kop_ie_gl_save'),
         'facility' => array('load' => 'kop_ie_facility_load', 'save' => 'kop_ie_facility_save'),
-        'rec'      => array('load' => 'kop_ie_rec_load', 'save' => null),
+        'fstatus'  => array('load' => 'kop_ie_fstatus_load', 'save' => 'kop_ie_fstatus_save'),
+        'rec'     => array('load' => 'kop_ie_rec_load', 'save' => null),
         'cfg'      => array('load' => 'kop_ie_cfg_load', 'save' => 'kop_ie_cfg_save'),
         'operator' => array('load' => 'kop_ie_operator_load', 'save' => 'kop_ie_operator_save'),
         'school'   => array('load' => 'kop_ie_ischool_load', 'save' => 'kop_ie_ischool_save'),
@@ -890,6 +893,35 @@ function kop_ie_facility_save(array $p, array $v) {
     $url = function_exists('kop_facility_page_url') ? (string) kop_facility_page_url($fid) : '';
     kop_ie_purge_url($url);
     return array('message' => 'Saved.', 'redirect' => $url);
+}
+
+/**
+ * fstatus:<id>:<Status>, save only: one click sets the facility's status and
+ * leaves its years as they are (a program known to be closed, year unknown).
+ * The answer carries the ref that puts the old status back.
+ */
+function kop_ie_fstatus_load(array $p) {
+    throw new RuntimeException('This button saves at once; there is nothing to open.');
+}
+
+function kop_ie_fstatus_save(array $p, array $v) {
+    $fid = (int) ($p[0] ?? 0);
+    $status = (string) ($p[1] ?? '');
+    if (!in_array($status, array('Open', 'Closed', 'Suspended', 'Transferred', 'Unknown'), true)) {
+        throw new RuntimeException('Unknown status.');
+    }
+    $stored = kop_facility_load($fid, kop_ie_facility_opts());
+    if (!$stored) {
+        throw new RuntimeException("Facility #{$fid} does not exist.");
+    }
+    $previous = (string) ($stored['doc']['operatingPeriod']['status'] ?? '');
+    $previous = $previous !== '' ? $previous : 'Unknown';
+    $out = kop_ie_facility_save(array($fid, 'status'), array('operatingPeriod.status' => $status));
+    $out['message'] = $status === 'Closed' ? 'Marked closed. Add the year with the status pencil when you find it.' : 'Status set to ' . $status . '.';
+    if ($previous !== $status) {
+        $out['undo'] = 'fstatus:' . $fid . ':' . $previous;
+    }
+    return $out;
 }
 
 /* ---- Lawsuits, legislation and news rows ------------------------------------- */

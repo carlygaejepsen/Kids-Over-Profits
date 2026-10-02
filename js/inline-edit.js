@@ -527,6 +527,29 @@
         return { node: wrap, get: function () { return value; } };
     }
 
+    /**
+     * A button with data-kop-quick="<ref>" saves that ref at once, no dialog
+     * (e.g. fstatus:45:Closed), after data-kop-quick-confirm if it has one.
+     */
+    function quickSave(b) {
+        var ask = b.getAttribute('data-kop-quick-confirm');
+        if (ask && !window.confirm(ask)) return;
+        b.setAttribute('disabled', '');
+        var label = b.textContent;
+        b.textContent = 'Saving...';
+        api('POST', { ref: b.getAttribute('data-kop-quick'), values: {} }).then(function (res) {
+            try {
+                sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));
+                if (res && res.undo) sessionStorage.setItem(UNDO_KEY, JSON.stringify({ message: res.message, ref: res.undo, link: '' }));
+            } catch (err) { /* ignore */ }
+            location.reload();
+        }).catch(function (err) {
+            b.removeAttribute('disabled');
+            b.textContent = label;
+            window.alert('Not saved: ' + err.message);
+        });
+    }
+
     /** After a reload: what the last change did, with Undo when it can be undone. */
     function showUndo() {
         var saved = null;
@@ -573,6 +596,10 @@
             }
         } catch (e) { /* ignore */ }
         showUndo();
+        document.addEventListener('click', function (e) {
+            var b = e.target.closest && e.target.closest('button[data-kop-quick]');
+            if (b) { e.preventDefault(); quickSave(b); }
+        });
         refresh();
         window.addEventListener('resize', refresh);
         window.addEventListener('load', refresh);
