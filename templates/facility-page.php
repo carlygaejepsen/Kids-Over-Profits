@@ -319,6 +319,9 @@ get_header();
 
             <?php if ($kop_fp_profile) :
                 // The post's content through the_content(), as its own page printed it.
+                // setup_postdata() sets the globals $page and $pages (the post's page
+                // number), and this template runs in global scope: keep the view model.
+                $kop_fp_page = $page;
                 $GLOBALS['post'] = $kop_fp_profile;
                 setup_postdata($kop_fp_profile);
                 ?>
@@ -332,6 +335,7 @@ get_header();
             </div>
             <?php
                 wp_reset_postdata();
+                $page = $kop_fp_page;
             endif; ?>
 
             <?php if ($kop_fp_has_memorials) : ?>

@@ -562,6 +562,7 @@ if ($hyde_id > 0) {
     $dupes = array_keys(array_filter(array_count_values($m[1]), static function ($n) { return $n > 1; }));
     $check('no id is used twice (the post\'s #news/#lawsuits/#related vs the record sections)', !$dupes, implode(', ', $dupes));
     $check('the record sections follow the profile', strpos($html, 'id="profile"') < strpos($html, 'id="record-'), '');
+    $check('the page renders to the end after the post (setup_postdata() sets the global $page)', strpos($html, 'kop-fp-footer') !== false && strpos($html, 'id="record-news"') !== false);
 }
 
 // Sitemap entries
