@@ -1,0 +1,22 @@
+{
+  "title": "John L. Singleton",
+  "slug": "john-singleton",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "john-singleton.html",
+  "excerpt": "Editorial research draft about John L. Singleton, owner/CEO of Whetstone Academy and Maple Hall Academy and a NATSAP board member, with roles across Aspen and FHW programs.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Owner/CEO of Whetstone Academy and Maple Hall Academy; NATSAP board member",
+    "person_active_years": "2000s-2010s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Whetstone Academy", "Maple Hall Academy", "Stone Mountain School", "New Leaf Academy of North Carolina", "Cedars Academy", "Trails Carolina", "NATSAP"],
+    "person_notable_work": ["Owned and ran Whetstone Academy and Maple Hall Academy while sitting on NATSAP's board"],
+    "person_role_sources": [1],
+    "person_active_years_sources": [1],
+    "person_organizations_sources": [1],
+    "person_notable_work_sources": [1]
+  }
+}

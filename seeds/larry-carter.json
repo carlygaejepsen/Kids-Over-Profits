@@ -1,0 +1,22 @@
+{
+  "title": "Larry Carter",
+  "slug": "larry-carter",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "larry-carter.html",
+  "excerpt": "Editorial research draft about Larry Carter, who moved from 13 years at Provo Canyon School to co-found Logan River Academy and serve as an Aspen Education Group senior vice president.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founder and executive director of Logan River Academy; earlier therapist at Provo Canyon School; Aspen Education Group senior VP",
+    "person_active_years": "1980s-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Provo Canyon School", "Logan River Academy", "Aspen Education Group"],
+    "person_notable_work": ["Co-founded Logan River Academy in 2000 after 13 years at Provo Canyon School"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}

@@ -1026,6 +1026,17 @@ function kop_seed_posts() {
         'cheryl-kehl.json',
         'cat-jennings.json',
         'john-mercer.json',
+        'tim-brace.json',
+        'karr-farnsworth.json',
+        'j-ralph-atkin.json',
+        'larry-carter.json',
+        'jeff-smith.json',
+        'miller-newton.json',
+        'graham-shannonhouse.json',
+        'tammy-behrman-darren-prince.json',
+        'john-singleton.json',
+        'bill-lane.json',
+        'andy-erkis.json',
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
         'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
         'nc-reports.json',           // /nc-reports/ page for the NC adapter, 2026-09-16
@@ -2192,7 +2203,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '99';
+    $version = '100';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

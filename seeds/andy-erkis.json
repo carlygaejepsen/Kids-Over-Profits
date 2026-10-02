@@ -1,0 +1,21 @@
+{
+  "title": "Andrew \"Andy\" Erkis",
+  "slug": "andy-erkis",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "andy-erkis.html",
+  "excerpt": "Editorial research draft about Andrew Andy Erkis, an educational consultant with Stratas Consulting Group in Ohio. He is a referrer, not a program operator; the record is thin and needs primary sources.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Educational consultant, Stratas Consulting Group (Ohio)",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["Stratas Consulting Group"],
+    "person_notable_work": ["Educational consultant referring families to programs"],
+    "person_role_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}

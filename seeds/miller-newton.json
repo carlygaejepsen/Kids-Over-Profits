@@ -1,0 +1,22 @@
+{
+  "title": "Miller Newton",
+  "slug": "miller-newton",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "miller-newton.html",
+  "excerpt": "Editorial research draft about Miller Newton, Straight Inc.'s national clinical director and founder of KIDS Centers of America. Settlements and closures are documented in the operator history; the 1998 award needs the underlying record.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Anthropologist; national clinical director of Straight Inc.; founder of KIDS Centers of America",
+    "person_active_years": "1980s-1990s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Straight Inc.", "KIDS Centers of America", "KIDS of Bergen County / KIDS of North Jersey", "KIDS of Greater Salt Lake", "KIDS of El Paso", "KIDS of Southern California"],
+    "person_notable_work": ["Founded KIDS Centers of America, the Straight spin-off chain, in 1984", "Carried the Straight model into a national chain that closed amid abuse investigations and settlements"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

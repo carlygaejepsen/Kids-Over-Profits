@@ -1,0 +1,22 @@
+{
+  "title": "Bill Lane",
+  "slug": "bill-lane",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "bill-lane.html",
+  "excerpt": "Editorial research draft about Bill Lane, Synanon member, CEDU High School president and owner of the Bill Lane & Associates transport/escort company. Distinct from AA founder Bill Wilson.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "CEDU High School president; owner of Bill Lane & Associates, a transport/escort company",
+    "person_active_years": "1990s onward (transport from 1992)"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Synanon (member)", "CEDU High School", "CEDU Family of Services", "Bill Lane & Associates"],
+    "person_notable_work": ["Ran the CEDU-linked transport company Bill Lane & Associates, moving children to programs from 1992"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}

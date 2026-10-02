@@ -1,0 +1,22 @@
+{
+  "title": "Tim Brace",
+  "slug": "tim-brace",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "tim-brace.html",
+  "excerpt": "Editorial research draft about Tim Brace, who moved through CEDU, Rocky Mountain Academy, Mount Bachelor and Swift River and was NATSAP's first vice president. Role dates come from the map and NATSAP wiki; verify against primary sources.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Program director/headmaster across CEDU-lineage programs; NATSAP's first vice president",
+    "person_active_years": "1980-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["CEDU High School", "Rocky Mountain Academy", "Mount Bachelor Academy", "Academy at Swift River", "Aspen Education Group", "NATSAP"],
+    "person_notable_work": ["Founded the Academy at Swift River", "Served as NATSAP's first vice president in 1999"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}

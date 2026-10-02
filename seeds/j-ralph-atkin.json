@@ -1,0 +1,22 @@
+{
+  "title": "J. Ralph Atkin",
+  "slug": "j-ralph-atkin",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "j-ralph-atkin.html",
+  "excerpt": "Editorial research draft about J. Ralph Atkin, the WWASPS corporate web's registered agent and trustee, drawing on the ISAC corporate-layering analysis and the map.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Registered agent and trustee across the WWASPS-linked corporate network; co-owner of Morava Academy",
+    "person_active_years": "1961-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["WWASPS", "Cross Creek Programs", "Teen Help LLC", "R&B Billing", "Browning Distance Learning Academy", "Red Rock Academy", "Morava Academy"],
+    "person_notable_work": ["Central figure in the WWASPS corporate-layering web: ISAC counted 213 affiliated corporations formed 1996-2003"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [2]
+  }
+}

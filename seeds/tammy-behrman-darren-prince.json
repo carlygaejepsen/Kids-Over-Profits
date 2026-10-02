@@ -1,0 +1,21 @@
+{
+  "title": "Tammy Behrman and Darren Prince",
+  "slug": "tammy-behrman-darren-prince",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "tammy-behrman-darren-prince.html",
+  "excerpt": "Editorial research draft about Tammy Prince Behrman and Darren Prince, co-founders of Copper Canyon Academy and Ashcreek Ranch Academy. Role details come from the map; verify ownership and dates.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Co-founders of Copper Canyon Academy and Ashcreek Ranch Academy",
+    "person_active_years": ""
+  },
+  "meta_arrays": {
+    "person_organizations": ["Copper Canyon Academy", "Ashcreek Ranch Academy", "Sedona Sky Academy", "Spring Ridge Academy", "Cross Creek Programs"],
+    "person_notable_work": ["Founded Copper Canyon Academy and Ashcreek Ranch Academy"],
+    "person_role_sources": [1],
+    "person_organizations_sources": [1],
+    "person_notable_work_sources": [1]
+  }
+}

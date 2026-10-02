@@ -1,0 +1,22 @@
+{
+  "title": "Jeff Smith",
+  "slug": "jeff-smith",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "jeff-smith.html",
+  "excerpt": "Editorial research draft about Jeff Smith, Provo Canyon School CEO and Logan River Academy co-founder. The common name and overlapping roles need careful disambiguation before publication.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Former CEO of Provo Canyon School; co-founder of Logan River Academy",
+    "person_active_years": "1990s-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Provo Canyon School", "Logan River Academy", "Mount Bachelor Academy"],
+    "person_notable_work": ["Co-founded Logan River Academy in 2000 after serving as Provo Canyon School's CEO"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2]
+  }
+}

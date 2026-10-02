@@ -1,0 +1,22 @@
+{
+  "title": "Graham Shannonhouse",
+  "slug": "graham-shannonhouse",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "graham-shannonhouse.html",
+  "excerpt": "Editorial research draft about Graham Shannonhouse, founder and executive director of Trails Carolina. The 2024 death and license revocation are program-level; confirm the correct pronoun/title from primary sources.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "Founder and executive director of Trails Carolina; former program director of SUWS of Idaho",
+    "person_active_years": "2000s-2024 documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["Trails Carolina", "SUWS of Idaho"],
+    "person_notable_work": ["Founded Trails Carolina, the Family Help & Wellness wilderness program where a 12-year-old died in February 2024"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [2, 3],
+    "person_organizations_sources": [1, 2],
+    "person_notable_work_sources": [1, 2, 3]
+  }
+}

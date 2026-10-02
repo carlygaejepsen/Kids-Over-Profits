@@ -1,0 +1,22 @@
+{
+  "title": "Karr Farnsworth",
+  "slug": "karr-farnsworth",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "karr-farnsworth.html",
+  "excerpt": "Editorial research draft about Karr Farnsworth, WWASPS president and Cross Creek owner, from the map and the Wood complaint. Allegations are attributed to the pleading, not treated as findings.",
+  "template": "single-person-profile.php",
+  "meta": {
+    "person_role": "President of WWASPS; director/owner of Cross Creek Programs; trustee of Browning Academy",
+    "person_active_years": "1980s-2000s documented"
+  },
+  "meta_arrays": {
+    "person_organizations": ["WWASPS", "Cross Creek Programs", "Browning Distance Learning Academy", "Provo Canyon School"],
+    "person_notable_work": ["Served as WWASPS president before Ken Kay", "Co-directed Cross Creek Programs"],
+    "person_role_sources": [1, 2],
+    "person_active_years_sources": [1, 2],
+    "person_organizations_sources": [1, 2, 3],
+    "person_notable_work_sources": [1, 2]
+  }
+}
