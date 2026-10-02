@@ -499,6 +499,9 @@ function kop_tool_page_specs() {
         // Idaho (owner, 2026-10-01).
         array('template' => 'page-state-reports.php', 'title' => 'Idaho Inspection Reports', 'slug' => 'id-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Idaho Department of Health and Welfare, Division of Licensing and Certification, which licenses children&#8217;s residential care facilities and outdoor programs and posts every survey in <a href="https://publicdocuments.dhw.idaho.gov/WebLink/Browse.aspx?id=19853&amp;dbid=0&amp;repo=PUBLIC-DOCUMENTS">its public documents library</a>: a statement of deficiencies with each rule broken, what the surveyor found and the facility&#8217;s plan of correction, or a letter saying no deficiencies were found. The state does not say which surveys followed a complaint. Facilities that have left the state&#8217;s provider list keep their reports here.</p><!-- /wp:paragraph -->'),
+        // Maine (owner, 2026-10-02).
+        array('template' => 'page-state-reports.php', 'title' => 'Maine Inspection Reports', 'slug' => 'me-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Maine Department of Health and Human Services, Division of Licensing and Certification, which licenses behavioral health organizations and lists every survey in <a href="https://www.pfr.maine.gov/almsonline/almsquery/searchcompany.aspx?board=6706">the state&#8217;s licence lookup</a>: full agency surveys, desk reviews and complaint surveys with their outcome since about 2013, and since late 2024 the documents themselves, with each deficiency and the organization&#8217;s plan of correction. The licence covers a whole organization, not one site, so a survey can concern any of its programs; surveys about adult programs are hidden unless you choose to see them.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Only organizations that run programs for young people are listed here. Maine&#8217;s separate licence for children&#8217;s residential care facilities has nothing online, and a survey listed as having an accepted plan of correction found deficiencies even where its statement is not online.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -680,7 +683,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '20';
+    $version = '21';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

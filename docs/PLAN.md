@@ -516,6 +516,20 @@ updated.
    records; near misses for KOP Tools > Inspection Links: Hawks Landing,
    Hays Shelter Home, IYR Residential Center, Blue Fire. Owner: approve
    the first post.
+   **Maine built 2026-10-02:** `me_scraper.py` and `me_scope.json` (Tools
+   repo), `js/inspections/states/me.js`, `/me-reports/` created on deploy.
+   Scope settled by the owner 2026-10-01 (16 licences of 11 operators in;
+   Charlie Health, St. Andre, the Collaborative, Little Wanderers,
+   Woodfords and Youth Villages out). A full `--no-post` run: 400 surveys,
+   2013-02-25 to 2026-10-02 (256 desk reviews, 127 full agency surveys,
+   17 waived; 46 complaint surveys), 136 flagged (accepted plan of
+   correction), 69 documents since late 2024 archived to `me_pdfs/`; 3
+   surveys of adult programs hidden by default. Nothing held. Only Day One
+   and Summit Achievement reach a record by name; NFI North (Beacon House,
+   Bridge Crossing, Dirigo Place, Oliver Place, Sidney Riverbend, Stetson
+   Ranch, Summit View), Sweetser, Connections for Kids, Good Will-Hinckley,
+   KidsPeace and Aroostook (Calais Children's Residential) are for KOP
+   Tools > Inspection Links. Owner: run Maine from the launcher to post.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
