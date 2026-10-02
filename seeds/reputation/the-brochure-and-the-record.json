@@ -3,8 +3,8 @@
   "slug": "the-brochure-and-the-record",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 4,
+  "seed_version": 5,
   "content_file": "reputation/the-brochure-and-the-record.html",
-  "excerpt": "What program websites promise parents about length of stay, inspections and research, and what government investigators found in the records.",
+  "excerpt": "Fifty years of troubled teen program ads, brochures and parent packets, and what the records show about the programs that printed them.",
   "template": "page-article.php"
 }

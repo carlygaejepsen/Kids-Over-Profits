@@ -78,14 +78,16 @@ function kop_article_parents() {
         'survivor-resources-nature'                    => 'survivors',
 
         // How the industry manages its reputation (2026-10-02). The hub is
-        // listed on Investigatory Spotlight; marketing is read first.
+        // listed on Investigatory Spotlight; the AI instructions are read first.
         'reputation-management'                        => 'investigatory-spotlight',
         'telling-ai-what-to-say' => 'reputation-management',
         'how-troubled-teen-programs-market-themselves-online' => 'reputation-management',
+        'free-help-paid-by-programs' => 'reputation-management',
+        'the-brochure-and-the-record' => 'reputation-management',
+        'research-shows' => 'reputation-management',
         'silencing-critics-and-survivors' => 'reputation-management',
         'natsap-reputation-plans' => 'reputation-management',
         'new-names-same-programs' => 'reputation-management',
-        'the-brochure-and-the-record' => 'reputation-management',
     ));
 }
 
