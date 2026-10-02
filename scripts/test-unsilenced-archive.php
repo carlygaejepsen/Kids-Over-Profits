@@ -16,6 +16,7 @@ $fixture = sys_get_temp_dir() . '/kop-unsilenced-fixture-' . getmypid();
 define('KOP_UNSILENCED_DIR', $fixture);
 function esc_html($s) { return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8'); }
 function esc_url($s) { return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8'); }
+function esc_attr($s) { return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8'); }
 require dirname(__DIR__) . '/inc/unsilenced-archive.php';
 
 $failures = 0;
@@ -43,7 +44,8 @@ $put('f/7.json', array(
         array('id' => '1Zzzzzzzzzzzzzzzz', 'name' => 'z-report.pdf', 'folder' => 'News'),
         array('id' => '1Aaaaaaaaaaaaaaaa', 'name' => 'Handbook "1998" <b>.pdf', 'folder' => ''),
         array('id' => 'bad id!', 'name' => 'dropped.pdf', 'folder' => ''),
-        array('id' => '1Bbbbbbbbbbbbbbbb', 'name' => 'Brochure.pdf', 'folder' => ''),
+        array('id' => '1Bbbbbbbbbbbbbbbb', 'name' => '0235.pdf', 'folder' => '',
+            'title' => 'Ranch youth <16> injured by dive (Arizona Republic, Sep 9, 1955, p. 6)'),
     ),
 ));
 $put('f/8.json', array('folders' => array(), 'files' => array(array('id' => '1Eeeeeeeeeeeeeeee', 'name' => 'e.pdf', 'folder' => ''))));
@@ -60,6 +62,11 @@ $index = kop_unsilenced_index(true);
 $check('index reads the build', $index['facilities'] === array(7 => 3) && $index['operators'] === array(3 => 2, 4 => 2));
 $check('a zero count is left out', !isset($index['facilities'][8]));
 $check('cache key names the build', strpos(kop_unsilenced_cache_key(), '2026-09-29') === 0);
+$keyBefore = kop_unsilenced_cache_key();
+$put('index.json', array('built' => '2026-09-29', 'md5_checked' => true, 'titled' => 1,
+    'facilities' => array('7' => 3, '8' => 0), 'operators' => array('3' => 2, '4' => 2)));
+kop_unsilenced_index(true);
+$check('cache key moves when only the titles change', kop_unsilenced_cache_key() !== $keyBefore);
 $check('an id missing from the index lists nothing', kop_unsilenced_archive('f', 8) === null);
 
 $a = kop_unsilenced_archive('f', 7);
@@ -77,6 +84,15 @@ $check('render escapes file and folder names',
     && strpos($html, '<b>') === false);
 $check('a subfolder folds away', strpos($html, '<details class="kop-unsilenced-group"><summary>News') !== false);
 $check('short top-level lists print open', strpos($html, '</p><ul class="kop-fp-records') !== false);
+$titled = $a ? $a['groups'][0]['files'][1] : array();
+$check('a title from the content is carried, with the name',
+    ($titled['title'] ?? '') === 'Ranch youth <16> injured by dive (Arizona Republic, Sep 9, 1955, p. 6)'
+    && ($titled['name'] ?? '') === '0235.pdf');
+$check('an untitled file has no title', $a && $a['groups'][0]['files'][0]['title'] === '');
+$check('a titled link shows the title, the name as its tooltip and a muted suffix',
+    strpos($html, 'title="0235.pdf">Ranch youth &lt;16&gt; injured by dive (Arizona Republic, Sep 9, 1955, p. 6)</a>'
+        . '<span class="meta">0235.pdf</span></li>') !== false);
+$check('an untitled link shows the name alone', strpos($html, 'rel="noopener">z-report.pdf</a></li>') !== false);
 
 $o = kop_unsilenced_archive('o', array(3, 4));
 $check('an operator merges its duplicate ids, each file once', $o && $o['count'] === 3, $o ? $o['count'] . ' files' : 'null');
@@ -113,13 +129,23 @@ $real = dirname(__DIR__) . '/js/data/unsilenced';
 if (is_readable($real . '/index.json')) {
     $raw = json_decode((string) file_get_contents($real . '/index.json'), true);
     $bad = array();
+    $titled = 0;
+    $badTitles = array();
     foreach (array('facilities' => 'f', 'operators' => 'o') as $k => $dir) {
         foreach ((array) ($raw[$k] ?? array()) as $id => $n) {
             $shard = json_decode((string) @file_get_contents("{$real}/{$dir}/{$id}.json"), true);
             if (!is_array($shard) || count($shard['files'] ?? array()) !== (int) $n) $bad[] = "{$dir}/{$id}";
+            foreach ((array) ($shard['files'] ?? array()) as $f) {
+                if (!isset($f['title'])) continue;
+                $titled++;
+                $t = (string) $f['title'];
+                if ($t === '' || $t === ($f['name'] ?? '') || mb_strlen($t) > 120) $badTitles[] = "{$dir}/{$id}: {$t}";
+            }
         }
     }
     $check('build: every indexed shard is there with its count', !$bad, $bad ? implode(', ', array_slice($bad, 0, 5)) : count($raw['facilities']) . ' facilities, ' . count($raw['operators']) . ' operators');
+    $check('build: content titles are short and differ from the name', !$badTitles,
+        $badTitles ? implode(' | ', array_slice($badTitles, 0, 3)) : $titled . ' titled files');
     $check('build: checked against md5s', !empty($raw['md5_checked']), 'built from a file list without md5s would list copies KOP holds under other names');
 }
 

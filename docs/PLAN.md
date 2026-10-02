@@ -1002,4 +1002,65 @@ Owner decisions in Waiting on the owner item 18.
    the new block, commit to main, confirm the deploy by fetching
    `js/data/survivor-archives/<site>/index.json` from the live site.
 
+### 3.11 Unsilenced backup and titles (2026-10-02)
+
+The facility and operator pages list 58,924 Unsilenced documents KOP has
+no copy of (117.8 GB), under Unsilenced's file names, a third of which say
+nothing ("0235.pdf", "DocumentInquiry-45.pdf", "Compliance History 38.pdf").
+Owner decisions (2026-10-02):
+
+- Back up Unsilenced's copies of every listed file to the owner's Google
+  Drive (`I:/My Drive/Unsilenced archive backup`, I: being upgraded to
+  2 TB), in Unsilenced's folder layout, each checked against their md5.
+- Retitle the links from the content. No privacy pass on Unsilenced: their
+  names and groups stay as they are. Titles made here never add a personal
+  name: court papers by document type, court, case number and filing date;
+  state reports by report type, program and date (Michigan names only
+  institutions, agencies and county homes, Texas never a foster home);
+  newspaper clippings by headline, paper, date and page (headlines kept).
+  Anything else keeps its name.
+
+Built (`scripts/unsilenced-backup.py`, not committed yet): `run` downloads
+from `drive.usercontent.google.com` without a key (browser User-Agent, no
+email anywhere, 1.75 s between files, the large-file virus-scan page
+confirmed, 5xx retried, backoff on 429 or rate-limit pages), checks the md5,
+keeps the file and writes title evidence (PDF Title, two pages of text, OCR
+of a scan's first page or a small image) to
+`tmp/unsilenced-titles/evidence.jsonl`; resumable from `state.jsonl`
+(a done file is checked on disk by size); pauses while C: has under 4 GB
+(Drive for desktop buffers uploads there) or the destination has under the
+file + 2 GB. Opaque names go first, files over 200 MB last. `titles` writes
+`tmp/unsilenced-titles/titles.json`, which `build-unsilenced-links.py` puts
+in the shards as `title`; the page shows the title with Unsilenced's name
+muted after it (and as the link's tooltip); `index.json` `titled` moves the
+page cache key. Rules: newspapers.com clippings, federal court headers
+(district and appeals), Connecticut Superior Court, state courts, Texas
+compliance histories (with the span of entries), Arizona, Georgia, North
+Carolina and CMS statements of deficiencies, Arkansas DHS reports and DPSQA
+letters, Michigan, Minnesota and Pennsylvania licensing letters, Oregon
+restraint reports, Ohio incident notices, Oklahoma monitoring, Form 990s.
+
+Test batch (300 files into `tmp/unsilenced-titles/test-backup`): 3.3 s a
+file with OCR (2.1 s the download), 300 of 300 md5 verified, 3 Google 503s
+that succeeded on retry, 157 given a title (154 of the 271 opaque names).
+Rebuilt the shards with those titles: 112 shards gained titles only; 7
+shards came or went because `tmp/prod.sqlite` is newer than the last build.
+
+Full run: about 2.5 days and 118 GB on I: (36.9 GB of it 62 videos at the
+end). Owner, once I: has room:
+
+1. Start it detached from Windows PowerShell in the repo (survives the
+   session): `Start-Process python -ArgumentList 'scripts/unsilenced-backup.py','run' -WindowStyle Hidden`.
+   Follow `tmp/unsilenced-titles/run.log`, or
+   `python scripts/unsilenced-backup.py status` (counts, GB, paused or
+   not). Starting it again resumes; a second copy refuses to start.
+2. Keep C: above 4 GB free; the run waits, it does not fail.
+3. Afterwards: `python scripts/unsilenced-backup.py titles`,
+   `python scripts/build-unsilenced-links.py`,
+   `php scripts/test-unsilenced-archive.php`, read
+   `tmp/unsilenced-titles/titles-report.md` (samples per shape), commit
+   `js/data/unsilenced/`. Titles can be rebuilt part way through.
+4. `run --no-keep` reads PDFs and images for titles without keeping copies,
+   if the backup has to wait for storage.
+
 ---

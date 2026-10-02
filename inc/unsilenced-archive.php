@@ -7,12 +7,15 @@
  * KOP's own holdings (media library md5s, the inspection scrapers) and writes,
  * per facility and operator, the ones KOP lacks:
  *
- *   js/data/unsilenced/index.json   {built, md5_checked, facilities: {id: n}, operators: {id: n}}
- *   js/data/unsilenced/f/<id>.json  {folders: [{name, id}], files: [{id, name, folder}]}
+ *   js/data/unsilenced/index.json   {built, md5_checked, titled, facilities: {id: n}, operators: {id: n}}
+ *   js/data/unsilenced/f/<id>.json  {folders: [{name, id}], files: [{id, name, folder, title?}]}
  *   js/data/unsilenced/o/<id>.json  the same for an operator
  *
  * The facility and operator pages list them in their Documents section,
- * linked to Unsilenced's Drive. Nothing is copied to this site.
+ * linked to Unsilenced's Drive. Nothing is copied to this site. A file's
+ * title, when it has one, was read from its content
+ * (scripts/unsilenced-backup.py titles) because Unsilenced's name says
+ * little ("0235.pdf"); the link shows the title, and the name after it.
  */
 
 if (!defined('ABSPATH')) {
@@ -31,12 +34,13 @@ if (!function_exists('kop_unsilenced_index')) {
     function kop_unsilenced_index($reload = false) {
         static $index = null;
         if ($index !== null && !$reload) return $index;
-        $index = array('built' => '', 'facilities' => array(), 'operators' => array());
+        $index = array('built' => '', 'titled' => 0, 'facilities' => array(), 'operators' => array());
         $path = kop_unsilenced_dir() . '/index.json';
         if (!is_readable($path)) return $index;
         $data = json_decode((string) file_get_contents($path), true);
         if (!is_array($data)) return $index;
         $index['built'] = (string) ($data['built'] ?? '');
+        $index['titled'] = (int) ($data['titled'] ?? 0);
         foreach (array('facilities', 'operators') as $k) {
             foreach ((array) ($data[$k] ?? array()) as $id => $n) {
                 if ((int) $n > 0) $index[$k][(int) $id] = (int) $n;
@@ -51,7 +55,7 @@ if (!function_exists('kop_unsilenced_cache_key')) {
     function kop_unsilenced_cache_key() {
         $index = kop_unsilenced_index();
         return $index['built'] . '|' . count($index['facilities']) . '|' . array_sum($index['facilities'])
-            . '|' . count($index['operators']) . '|' . array_sum($index['operators']);
+            . '|' . count($index['operators']) . '|' . array_sum($index['operators']) . '|' . $index['titled'];
     }
 }
 
@@ -59,7 +63,7 @@ if (!function_exists('kop_unsilenced_archive')) {
     /**
      * The documents listed for a facility ('f') or operator ('o'), or for
      * several ids of the same one (an operator page merges its duplicates):
-     * {count, folders: [{name, url}], groups: [{folder, files: [{name, url}]}]},
+     * {count, folders: [{name, url}], groups: [{folder, files: [{name, title, url}]}]},
      * or null when there are none. Files at the top of Unsilenced's program
      * folder come first, then each subfolder in order.
      */
@@ -91,9 +95,12 @@ if (!function_exists('kop_unsilenced_archive')) {
                 if (!preg_match('/^[\w-]{10,}$/', $fid) || isset($seen[$fid])) continue;
                 $seen[$fid] = true;
                 $folder = trim((string) ($f['folder'] ?? ''));
+                $name = (string) ($f['name'] ?? '');
+                $title = trim((string) ($f['title'] ?? ''));
                 $groups[$folder][] = array(
-                    'name' => (string) ($f['name'] ?? ''),
-                    'url'  => 'https://drive.google.com/file/d/' . $fid . '/view',
+                    'name'  => $name,
+                    'title' => $title !== $name ? $title : '',
+                    'url'   => 'https://drive.google.com/file/d/' . $fid . '/view',
                 );
             }
         }
@@ -142,7 +149,14 @@ if (!function_exists('kop_unsilenced_render')) {
             $n = count($g['files']);
             $list = '<ul class="kop-fp-records kop-unsilenced-files">';
             foreach ($g['files'] as $f) {
-                $list .= '<li><a href="' . esc_url($f['url']) . '" target="_blank" rel="noopener">' . esc_html($f['name']) . '</a></li>';
+                if (($f['title'] ?? '') !== '') {
+                    // Titled from the content: Unsilenced's file name follows, muted.
+                    $list .= '<li><a href="' . esc_url($f['url']) . '" target="_blank" rel="noopener" title="'
+                        . esc_attr($f['name']) . '">' . esc_html($f['title']) . '</a><span class="meta">'
+                        . esc_html($f['name']) . '</span></li>';
+                } else {
+                    $list .= '<li><a href="' . esc_url($f['url']) . '" target="_blank" rel="noopener">' . esc_html($f['name']) . '</a></li>';
+                }
             }
             $list .= '</ul>';
             if ($g['folder'] === '' && ($single ? $n <= 25 : $n <= 10)) {

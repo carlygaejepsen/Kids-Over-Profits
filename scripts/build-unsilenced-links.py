@@ -24,6 +24,10 @@ Inputs
                                server: php api/list-unsilenced-files.php
                                (copy ~/kop-import/unsilenced/files.jsonl here)
   tmp/prod.sqlite              scripts/sync-prod-sqlite.py
+  tmp/unsilenced-titles/titles.json
+                               optional {file id: title} from the content
+                               (scripts/unsilenced-backup.py titles); files
+                               without one keep Unsilenced's name
 
 Writes
   js/data/unsilenced/index.json          {facility id: documents listed}
@@ -249,6 +253,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     ap.add_argument('--files', default=os.path.join(ROOT, 'tmp', 'unsilenced', 'files.jsonl'))
     ap.add_argument('--db', default=os.path.join(ROOT, 'tmp', 'prod.sqlite'))
+    ap.add_argument('--titles', default=os.path.join(ROOT, 'tmp', 'unsilenced-titles', 'titles.json'))
     args = ap.parse_args()
     for p in (args.files, args.db):
         if not os.path.exists(p):
@@ -265,6 +270,11 @@ def main():
         seen.add(r['id'])
         rows.append(r)
     no_md5 = sum(1 for r in rows if not r.get('md5'))
+
+    titles = {}
+    if os.path.exists(args.titles):
+        with open(args.titles, encoding='utf8') as fh:
+            titles = {k: v.strip() for k, v in json.load(fh).items() if isinstance(v, str) and v.strip()}
 
     db = sqlite3.connect(args.db)
     facilities, by_words, operators, md5s, kop_names, report_ids, report_dates = load_kop(db)
@@ -322,6 +332,7 @@ def main():
         if len(r['path']) == 2 and r.get('parent'):
             folder_ids[(r['path'][0], r['path'][1])] = r['parent']
     index = {'f': {}, 'o': {}}
+    titled = 0
     for kind in ('f', 'o'):
         shard_dir = os.path.join(OUT, kind)
         os.makedirs(shard_dir, exist_ok=True)
@@ -334,15 +345,21 @@ def main():
                               if m and m[0] == kind and i in m[1]})
             shard = {
                 'folders': [{'name': n, 'id': fid} for n, fid in folders],
-                'files': [{'id': e[0], 'name': e[1], 'folder': e[2]} for e in files],
+                # title: what the document is, read from its content, when
+                # Unsilenced's name says little; the page shows the name too.
+                'files': [dict({'id': e[0], 'name': e[1], 'folder': e[2]},
+                               **({'title': titles[e[0]]} if titles.get(e[0], e[1]) != e[1] else {}))
+                          for e in files],
             }
             with open(os.path.join(shard_dir, '%d.json' % i), 'w', encoding='utf8', newline='\n') as fh:
                 json.dump(shard, fh, ensure_ascii=False, separators=(',', ':'))
             index[kind][str(i)] = len(files)
+            titled += sum(1 for f in shard['files'] if 'title' in f)
     with open(os.path.join(OUT, 'index.json'), 'w', encoding='utf8', newline='\n') as fh:
         # Google Docs have no md5; everything else must have one.
+        # titled moves the pages' cache key when only the titles change.
         json.dump({'built': datetime.date.today().isoformat(), 'md5_checked': no_md5 <= len(rows) // 1000,
-                   'facilities': index['f'], 'operators': index['o']}, fh, separators=(',', ':'))
+                   'titled': titled, 'facilities': index['f'], 'operators': index['o']}, fh, separators=(',', ':'))
 
     how = collections.Counter(m[2] for m in programs.values() if m)
     report = [
@@ -368,6 +385,10 @@ def main():
         print('%8d  %s' % (v, k))
     print('%d facilities, %d operators -> js/data/unsilenced/ (report: tmp/unsilenced/build-report.md)' % (
         len(index['f']), len(index['o'])))
+    if titles:
+        print('%d of the listed files titled from their content (%s)' % (
+            len({e[0] for kind in lists.values() for d in kind.values() for e in d.values() if e[0] in titles}),
+            os.path.relpath(args.titles, ROOT)))
     if no_md5:
         print('WARNING: %d files have no md5, so a copy KOP holds under another name is not recognised.' % no_md5)
 
