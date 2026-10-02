@@ -99,6 +99,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `page-wiki-editor.php` and `page-wiki-feed.php` cover wiki submission and published wiki feed flows.
 - `page-news-processor.php` and `page-news-feed.php` cover news submission and published news feed flows.
 - `[anonymous_doc_portal]` renders the anonymous document portal.
+- `templates/single-person-profile.php` renders seeded personnel-profile drafts from `seeds/<slug>.json` and `seeds/<slug>.html`; these stay unpublished until their claims have traceable sources and editorial review.
 
 ## JavaScript Structure
 

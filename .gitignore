@@ -78,3 +78,5 @@ scripts/history/*.outline.txt
 # must never reach this public repo). The two files committed here before this
 # rule stay tracked.
 /tmp/
+.aider*
+node_modules
