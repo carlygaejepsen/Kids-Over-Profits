@@ -759,6 +759,7 @@ function kop_template_assignments() {
         'richardson-v-elevations-rtc-prelitigation-panel-opinion' => 'page-legal-document.php',
 
         // Long-form articles, timelines and case analyses (phase 6): reading layout only.
+        'telling-ai-what-to-say' => 'page-article.php',
         'how-troubled-teen-programs-market-themselves-online' => 'page-article.php',
         'new-names-same-programs' => 'page-article.php',
         'silencing-critics-and-survivors' => 'page-article.php',
@@ -1023,6 +1024,7 @@ function kop_seed_posts() {
         // How the industry manages its reputation: a hub and four articles, drafts
         // until the owner publishes them (2026-10-02; replaces the single post of 2026-10-01).
         'reputation/reputation-management.json',
+        'reputation/telling-ai-what-to-say.json',
         'reputation/how-troubled-teen-programs-market-themselves-online.json',
         'reputation/new-names-same-programs.json',
         'reputation/silencing-critics-and-survivors.json',
@@ -2149,7 +2151,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '78';
+    $version = '79';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

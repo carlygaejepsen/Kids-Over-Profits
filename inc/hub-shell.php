@@ -205,15 +205,14 @@ function kop_hub_config($slug) {
         ),
 
         // How the industry manages its reputation (2026-10-02). The editor text
-        // is the introduction and the call for evidence; the articles list below.
+        // carries the findings and links every article itself, so no reading list.
         'reputation-management' => array(
-            'standfirst' => 'How troubled teen programs control what a worried parent finds online, one tactic at a time, from court records, government reports and published reporting.',
+            'standfirst' => 'How troubled teen programs control what a worried parent finds online, from instructions written for AI chatbots to directories run by their own marketer.',
             'actions'    => array(
-                array('label' => 'Start with marketing', 'slug' => 'how-troubled-teen-programs-market-themselves-online'),
+                array('label' => 'Start with the AI instructions', 'slug' => 'telling-ai-what-to-say'),
                 array('label' => 'Inspection reports', 'slug' => 'inspection-reports'),
                 array('label' => 'Network map', 'slug' => 'network-map'),
             ),
-            'reading'    => 'The series',
             'contribute' => array(
                 'heading' => 'Send us what you have',
                 'links'   => array(

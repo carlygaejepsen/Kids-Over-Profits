@@ -1,0 +1,10 @@
+{
+  "title": "Telling the Chatbots What to Say",
+  "slug": "telling-ai-what-to-say",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "reputation/telling-ai-what-to-say.html",
+  "excerpt": "Troubled teen programs and their marketing company publish instructions for ChatGPT and other AI tools: which news outlets to ignore, how to dismiss survivors, and what to tell parents.",
+  "template": "page-article.php"
+}

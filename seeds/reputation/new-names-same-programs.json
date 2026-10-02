@@ -3,7 +3,7 @@
   "slug": "new-names-same-programs",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "reputation/new-names-same-programs.html",
   "excerpt": "Programs with deaths, lawsuits and revoked licenses behind them close, change hands or re-incorporate, and reopen under names with no history yet.",
   "template": "page-article.php"

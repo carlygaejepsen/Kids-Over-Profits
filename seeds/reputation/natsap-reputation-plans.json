@@ -3,7 +3,7 @@
   "slug": "natsap-reputation-plans",
   "post_type": "page",
   "status": "draft",
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "reputation/natsap-reputation-plans.html",
   "excerpt": "NATSAP's own newsletters and strategic plans list survivor websites, Google reviews and negative press as threats and answer them with public relations, and the statements it later deleted.",
   "template": "page-article.php"

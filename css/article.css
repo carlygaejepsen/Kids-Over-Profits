@@ -511,3 +511,38 @@ a.kop-article-timeline__mark:focus-visible {
     white-space: nowrap;
     border: 0;
 }
+
+/* "What we found" box at the top of an investigation (core group block with
+ * className kop-key-findings): the findings a reader should leave with even
+ * if they read nothing else. Sand panel, midnight text, teal rule. */
+.kop-article .entry-content .kop-key-findings,
+.kop-hub .entry-content .kop-key-findings,
+.entry-content .kop-key-findings {
+    background: var(--kop-sand, #f2eedf);
+    color: var(--kop-midnight, #000435);
+    border-left: 5px solid var(--kop-teal-ink, #24757f);
+    border-radius: 6px;
+    padding: 1rem 1.25rem 0.5rem;
+    margin: 1.25rem 0 1.75rem;
+}
+.entry-content .kop-key-findings h3 {
+    color: var(--kop-midnight, #000435);
+    margin-top: 0;
+    font-size: 1.15rem;
+}
+.entry-content .kop-key-findings li {
+    margin-bottom: 0.6rem;
+}
+.entry-content .kop-key-findings a {
+    color: var(--kop-navy, #000080);
+}
+
+/* Screenshots of source documents: framed so they read as evidence, not decoration. */
+.kop-article .entry-content figure.wp-block-image img {
+    border: 1px solid var(--kop-text-muted, #4a5568);
+    border-radius: 4px;
+}
+.kop-article .entry-content figure.wp-block-image figcaption {
+    color: var(--kop-text-muted, #4a5568);
+    font-size: 0.9rem;
+}

@@ -80,10 +80,11 @@ function kop_article_parents() {
         // How the industry manages its reputation (2026-10-02). The hub is
         // listed on Investigatory Spotlight; marketing is read first.
         'reputation-management'                        => 'investigatory-spotlight',
+        'telling-ai-what-to-say' => 'reputation-management',
         'how-troubled-teen-programs-market-themselves-online' => 'reputation-management',
-        'new-names-same-programs' => 'reputation-management',
         'silencing-critics-and-survivors' => 'reputation-management',
         'natsap-reputation-plans' => 'reputation-management',
+        'new-names-same-programs' => 'reputation-management',
         'the-brochure-and-the-record' => 'reputation-management',
     ));
 }
