@@ -632,6 +632,192 @@ if (!function_exists('kop_facility_pages_profile_posts')) {
     }
 }
 
+if (!function_exists('kop_facility_profile_split_blocks')) {
+    /**
+     * The top-level blocks of a block-editor string, in order:
+     * [{name, attrs, raw, inner}]. raw is the whole block with its comments,
+     * inner the markup between its opening and closing comment. Text outside
+     * any block (wrapper divs) is skipped.
+     */
+    function kop_facility_profile_split_blocks($content) {
+        $blocks = array();
+        $depth = 0;
+        $start = 0;
+        $inner_start = 0;
+        $name = '';
+        $attrs = array();
+        if (!preg_match_all('/<!--\s+(\/?)wp:([a-z0-9\/-]+)(\s+(\{.*?\}))?\s+(\/?)-->/s', (string) $content, $m, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+            return $blocks;
+        }
+        foreach ($m as $tag) {
+            $closing = $tag[1][0] === '/';
+            $self = isset($tag[5]) && $tag[5][0] === '/';
+            $offset = $tag[0][1];
+            $end = $offset + strlen($tag[0][0]);
+            if ($closing) {
+                $depth--;
+                if ($depth === 0) {
+                    $blocks[] = array(
+                        'name'  => $name,
+                        'attrs' => $attrs,
+                        'raw'   => substr($content, $start, $end - $start),
+                        'inner' => substr($content, $inner_start, $offset - $inner_start),
+                    );
+                }
+                continue;
+            }
+            if ($depth === 0) {
+                $name = $tag[2][0];
+                $decoded = isset($tag[4][0]) && $tag[4][0] !== '' ? json_decode($tag[4][0], true) : array();
+                $attrs = is_array($decoded) ? $decoded : array();
+                $start = $offset;
+                $inner_start = $end;
+                if ($self) {
+                    $blocks[] = array('name' => $name, 'attrs' => $attrs, 'raw' => $tag[0][0], 'inner' => '');
+                    continue;
+                }
+            }
+            if (!$self) $depth++;
+        }
+        return $blocks;
+    }
+}
+
+if (!function_exists('kop_facility_profile_link_card')) {
+    /**
+     * A Visual Link Preview block's link as a card in the facility page's
+     * news-card shape: the title, summary and picture the block stores.
+     */
+    function kop_facility_profile_link_card(array $attrs) {
+        $data = array();
+        if (!empty($attrs['encoded'])) {
+            $decoded = json_decode((string) base64_decode((string) $attrs['encoded'], true), true);
+            if (is_array($decoded)) $data = $decoded;
+        }
+        $url = (string) ($attrs['url'] ?? ($data['url'] ?? ''));
+        $post_id = (int) ($attrs['post'] ?? ($data['post'] ?? 0));
+        if (($attrs['type'] ?? '') === 'internal' && $post_id > 0 && function_exists('get_post')) {
+            $p = get_post($post_id);
+            if ($p) $url = (string) get_permalink($p);
+        }
+        $image = '';
+        $image_id = (int) ($attrs['image_id'] ?? ($data['image_id'] ?? 0));
+        if ($image_id > 0 && function_exists('wp_get_attachment_image_url')) {
+            $image = (string) wp_get_attachment_image_url($image_id, 'medium_large');
+        }
+        if ($image === '' && !empty($data['image_url'])) $image = (string) $data['image_url'];
+        $host = (string) preg_replace('/^www\./', '', (string) wp_parse_url($url, PHP_URL_HOST));
+        $home = (string) preg_replace('/^www\./', '', (string) wp_parse_url(home_url('/'), PHP_URL_HOST));
+        return array(
+            'id'         => 0,
+            'url'        => $url,
+            'title'      => trim((string) ($data['title'] ?? '')),
+            'summary'    => trim((string) ($data['summary'] ?? '')),
+            'outlet'     => ($host === '' || $host === $home) ? 'Kids Over Profits' : $host,
+            'date_label' => '',
+            'type'       => '',
+            'image'      => $image !== '' ? array('src' => $image, 'kind' => 'photo') : null,
+        );
+    }
+}
+
+if (!function_exists('kop_facility_profile_items')) {
+    /**
+     * A section's blocks as items in order: link preview blocks become
+     * {type: card}, every other block {type: html, raw}. Column blocks are
+     * opened so the cards inside them line up with the page's own cards.
+     */
+    function kop_facility_profile_items(array $blocks) {
+        $items = array();
+        foreach ($blocks as $b) {
+            if ($b['name'] === 'visual-link-preview/link') {
+                $items[] = array('type' => 'card', 'card' => kop_facility_profile_link_card($b['attrs']));
+            } elseif ($b['name'] === 'columns' || $b['name'] === 'column') {
+                $items = array_merge($items, kop_facility_profile_items(kop_facility_profile_split_blocks($b['inner'])));
+            } else {
+                $items[] = array('type' => 'html', 'raw' => $b['raw']);
+            }
+        }
+        return $items;
+    }
+}
+
+if (!function_exists('kop_facility_profile_parts')) {
+    /**
+     * A Facility Profile post's content cut into the parts the facility page
+     * template places (templates/facility-page.php), every word kept:
+     *   facts     the columns block before the first heading, one
+     *             {label, lines[]} per paragraph, for the At a glance rail
+     *   nav       the Index box's links, href => label, for the jump links
+     *   lead      other blocks before the first heading
+     *   sections  one per h2: {id, title, kind, blocks, items}; kind is
+     *             lawsuits, news, testimony, documents, videos, related or
+     *             prose, so the template can join a section to its own
+     *   updated   the "Last updated: ..." line
+     * The "Back to index" lines are navigation and are left out; the jump
+     * links take their place. null when the post has no h2 to cut at.
+     */
+    function kop_facility_profile_parts($content) {
+        $parts = array('facts' => array(), 'nav' => array(), 'lead' => array(), 'sections' => array(), 'updated' => '');
+        $kinds = array(
+            'lawsuits' => 'lawsuits', 'news' => 'news', 'survivors' => 'testimony', 'testimony' => 'testimony',
+            'doclibrary' => 'documents', 'documents' => 'documents', 'videoplaylist' => 'videos', 'videos' => 'videos',
+            'related' => 'related',
+        );
+        $current = null;
+        foreach (kop_facility_profile_split_blocks($content) as $b) {
+            $text = trim(html_entity_decode(wp_strip_all_tags($b['raw']), ENT_QUOTES, 'UTF-8'));
+            if ($b['name'] === 'heading' && preg_match('/<h2\b([^>]*)>(.*?)<\/h2>/s', $b['raw'], $h)) {
+                $id = preg_match('/\bid="([^"]+)"/', $h[1], $im) ? $im[1] : sanitize_title(wp_strip_all_tags($h[2]));
+                $title = trim(html_entity_decode(wp_strip_all_tags($h[2]), ENT_QUOTES, 'UTF-8'));
+                $key = strtolower($id);
+                if (!isset($kinds[$key]) && preg_match('/^(lawsuits|news|survivor|document|video|related)/i', $title, $km)) {
+                    $key = array('lawsuits' => 'lawsuits', 'news' => 'news', 'survivor' => 'survivors', 'document' => 'doclibrary', 'video' => 'videoplaylist', 'related' => 'related')[strtolower($km[1])];
+                }
+                $parts['sections'][] = array('id' => $id, 'title' => $title, 'kind' => $kinds[$key] ?? 'prose', 'blocks' => array());
+                $current = count($parts['sections']) - 1;
+                continue;
+            }
+            if ($b['name'] === 'paragraph' && preg_match('/^Back to index$/i', $text)) continue;
+            if ($b['name'] === 'paragraph' && preg_match('/^Last updated:/i', $text)) {
+                $parts['updated'] = $text;
+                continue;
+            }
+            if ($current === null) {
+                if ($b['name'] === 'group' && preg_match('/\bid="index"/', $b['raw'])) {
+                    preg_match_all('/<a href="#([^"]+)">(.*?)<\/a>/s', $b['raw'], $links, PREG_SET_ORDER);
+                    foreach ($links as $l) $parts['nav'][$l[1]] = trim(html_entity_decode(wp_strip_all_tags($l[2]), ENT_QUOTES, 'UTF-8'));
+                    continue;
+                }
+                if ($b['name'] === 'columns' && !$parts['facts']) {
+                    preg_match_all('/<p[^>]*>(.*?)<\/p>/s', $b['raw'], $ps);
+                    foreach ($ps[1] as $p) {
+                        $lines = array_values(array_filter(array_map('trim', preg_split('/<br\s*\/?>/i', $p)), 'strlen'));
+                        $label = '';
+                        if ($lines && preg_match('/^<strong>(.*?)<\/strong>$/s', $lines[0], $sm)) {
+                            $label = trim($sm[1]);
+                            array_shift($lines);
+                        } elseif ($lines && count($lines) > 1 && substr(wp_strip_all_tags($lines[0]), -1) === ':') {
+                            $label = rtrim(trim($lines[0]), ':');
+                            array_shift($lines);
+                        }
+                        if ($lines) $parts['facts'][] = array('label' => $label, 'lines' => $lines);
+                    }
+                    continue;
+                }
+                $parts['lead'][] = $b;
+                continue;
+            }
+            $parts['sections'][$current]['blocks'][] = $b;
+        }
+        if (!$parts['sections']) return null;
+        foreach ($parts['sections'] as $i => $s) {
+            $parts['sections'][$i]['items'] = kop_facility_profile_items($s['blocks']);
+        }
+        return $parts;
+    }
+}
+
 if (!function_exists('kop_facility_pages_name_key')) {
     /** Name key used to match a facility against other tables' free-text names. */
     function kop_facility_pages_name_key($name) {

@@ -919,6 +919,13 @@
     color: var(--kop-coral-pink-ink, #D9020F);
 }
 
+/* A merged Facility Profile post's old anchor (#survivors, #doclibrary) on
+   the section it joined. */
+.kop-fp-anchor {
+    display: block;
+    scroll-margin-top: 6rem;
+}
+
 /* A merged Facility Profile post printed on its facility page: the post's
    own block markup, then a gap before the record's sections. */
 .kop-fp-generated-body > .kop-fp-profile {

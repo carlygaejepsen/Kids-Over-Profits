@@ -556,13 +556,37 @@ if ($hyde_id > 0) {
     $html = ob_get_clean();
     file_put_contents($out_dir . '/' . $data['slug'] . '.html', $html);
     $content = (string) $wpdb->get_var($wpdb->prepare('SELECT post_content FROM wpdl_posts WHERE ID = %d', $hyde_post));
-    $check('the post content is printed whole and unchanged', $content !== '' && strpos($html, $content) !== false, strlen($content) . ' bytes');
+    // Every paragraph, heading and list item of the post is on the page word for word, and every link preview as a card.
+    $norm = static function ($t) { return preg_replace('/\s+/u', '', html_entity_decode(strip_tags((string) $t), ENT_QUOTES, 'UTF-8')); };
+    $page_text = $norm($html);
+    preg_match_all('/<(p|h2|h3|li)\b[^>]*>(.*?)<\/\1>/s', $content, $tm);
+    $missing = array();
+    foreach ($tm[2] as $t) {
+        $n = $norm($t);
+        if ($n === '' || $n === 'Backtoindex' || strpos($n, 'Lastupdated:') === 0) continue;
+        if (strpos($t, 'href="#') !== false && substr_count($t, 'href="#') > 3) continue; // the Index box: the jump links now
+        // A rail fact keeps its words; its label loses the trailing colon ("Partner schools:" is the dt "Partner schools").
+        if (strpos($page_text, $n) === false && strpos($page_text, preg_replace('/^([^:]{3,40}):/u', '$1', $n)) === false) $missing[] = mb_substr(strip_tags($t), 0, 60);
+    }
+    $check('every text block of the post is on the page unchanged', $content !== '' && !$missing, count($tm[2]) . ' blocks; missing: ' . implode(' | ', array_slice($missing, 0, 3)));
+    preg_match_all('/"encoded":"([A-Za-z0-9+\/=]+)"/', $content, $em);
+    $cards_missing = 0;
+    foreach ($em[1] as $enc) {
+        $d = json_decode((string) base64_decode($enc), true);
+        if (!empty($d['title']) && strpos($page_text, $norm($d['title'])) === false) $cards_missing++;
+    }
+    $check('every link preview is a card on the page', count($em[1]) > 0 && $cards_missing === 0, count($em[1]) . ' previews, ' . $cards_missing . ' missing');
+    $check('every video is on the page', substr_count($html, '<iframe') >= substr_count($content, '<iframe'), substr_count($content, '<iframe') . ' videos');
+    $check('the post is not printed as one block any more', strpos($html, 'class="entry-content single-content kop-fp-body kop-fp-profile"') === false);
+    $check('the post facts are in the rail', strpos($html, 'kop-fp-profile-fact') !== false && strpos($html, 'Wilderness properties') < strpos($html, 'kop-fp-generated-body'));
     $check('the description is the post excerpt', $data['seo_description'] !== $data['summary']);
     preg_match_all('/\sid="([^"]+)"/', $html, $m);
     $dupes = array_keys(array_filter(array_count_values($m[1]), static function ($n) { return $n > 1; }));
     $check('no id is used twice (the post\'s #news/#lawsuits/#related vs the record sections)', !$dupes, implode(', ', $dupes));
-    $check('the record sections follow the profile', strpos($html, 'id="profile"') < strpos($html, 'id="record-'), '');
-    $check('the page renders to the end after the post (setup_postdata() sets the global $page)', strpos($html, 'kop-fp-footer') !== false && strpos($html, 'id="record-news"') !== false);
+    $check('the written sections come first, then lawsuits and news joined with the record', strpos($html, 'id="intro"') < strpos($html, 'id="lawsuits"') && strpos($html, 'id="lawsuits"') < strpos($html, 'id="news"'));
+    $check('the jump links name the post\'s sections', strpos($html, 'href="#intro"') !== false && strpos($html, 'href="#news"') !== false);
+    $check('old anchors still land (#survivors, #doclibrary)', strpos($html, 'id="survivors"') !== false && strpos($html, 'id="doclibrary"') !== false);
+    $check('the page renders to the end after the post (setup_postdata() sets the global $page)', strpos($html, 'kop-fp-footer') !== false && strpos($html, 'id="news"') !== false);
 }
 
 // Sitemap entries
