@@ -86,32 +86,40 @@ function kop_submission_types() {
             'template' => 'page-admin-submissions.php',
             'tab'      => 'news',
         ),
+        // Every queue below is a tab of Submissions Review (the review inbox, inc/review-inbox.php).
         'document' => array(
             'label'    => 'anonymous document',
             'template' => 'page-admin-submissions.php',
+            'tab'      => 'anonymous-docs',
         ),
         'lawsuit' => array(
             'label'    => 'lawsuit suggestion',
-            'template' => 'page-admin-lawsuits.php',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'lawsuit',
         ),
         'legislation' => array(
             'label'    => 'legislation suggestion',
-            'template' => 'page-admin-legislation.php',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'legislation',
         ),
         // Found by the hourly news scan (inc/closure-reports.php).
         'closure_report' => array(
-            'label'      => 'facility closure report',
-            'admin_page' => 'kop-closure-reports',
+            'label'    => 'facility closure report',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'closure',
         ),
         // Records the hourly news scan created (inc/facility-discovery.php).
         'new_facility' => array(
-            'label'      => 'facility added from the news',
-            'admin_page' => 'kop-facilities-from-news',
+            'label'    => 'facility added from the news',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'facilities-from-news',
         ),
         // Pages sent from the browser extension that are not an article,
         // lawsuit or bill (inc/source-submissions.php).
         'website' => array(
-            'label' => 'website sent from the browser extension',
+            'label'    => 'website sent from the browser extension',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'websites',
         ),
     );
 }

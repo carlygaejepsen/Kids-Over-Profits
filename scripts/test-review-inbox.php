@@ -71,6 +71,7 @@ foreach (glob(__DIR__ . '/review-inbox-tests/*.php') ?: array() as $f) {
     require_once $f;
 }
 require_once dirname(__DIR__) . '/inc/review-inbox.php';
+require_once dirname(__DIR__) . '/inc/review-inbox-menu.php';
 $GLOBALS['kop_test_options']['kop_review_inbox_db'] = KOP_REVIEW_INBOX_DB_VERSION;
 $pdo->exec("CREATE TABLE IF NOT EXISTS wpdl_kop_review_tags (source TEXT NOT NULL, item_key TEXT NOT NULL, tag TEXT NOT NULL,
     created_by TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL, PRIMARY KEY (source, item_key, tag))");
