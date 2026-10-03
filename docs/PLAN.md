@@ -562,6 +562,14 @@ updated.
    Wilson Children's Home; Michael's Resource & Treatment Center, Necco
    Center and The Buckeye Ranch are for KOP Tools > Inspection Links.
    Owner: run Ohio from the launcher to post, then monthly.
+   **West Virginia prepared:** `wv_scraper.py` and `wv_scope.json` (Tools
+   repo), with the report adapter and `/wv-reports/` page wired in. The scope
+   currently has 66 included, 122 excluded and 16 unsure records; unsure
+   records are not scraped. The Helvetica filter passed 55 varied report
+   samples (35 State, 20 Federal; 2000-2026), with 98.1% mean OCR word recall
+   and a 90.3% minimum; a real 2016 C 173 finding was verified in OCR.
+   Owner: settle the 16 unsure rows, confirm Drive capacity for `wv_pdfs/`
+   (about 1 GB), and approve the first post.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`

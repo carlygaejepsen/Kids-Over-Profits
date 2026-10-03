@@ -50,6 +50,7 @@ $FOLDERS = array(
     'pa_pdfs'       => 'pa',
     'ut_checklists' => 'ut',
     'wa_pdfs'       => 'wa',
+    'wv_pdfs'       => 'wv',
     'wy_pdfs'       => 'wy',
     'id_pdfs'       => 'id',
     'me_pdfs'       => 'me',

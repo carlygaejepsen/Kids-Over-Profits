@@ -8,8 +8,8 @@ production, testing.
 
 Publish West Virginia's health-facility survey reports for youth providers at
 `https://kidsoverprofits.org/wv-reports/`, fed by a new `wv_scraper.py`.
-West Virginia has 40 tracked facilities (38 open). The state posts every
-survey back to 2001, including complaint surveys, as statements of
+West Virginia has 40 tracked facilities (38 open). The state posts surveys
+observed as far back as 2000, including complaint surveys, as statements of
 deficiencies with plans of correction, and keeps closed facilities listed.
 
 **Know the limit before starting.** Two agencies license these programs and
@@ -69,7 +69,7 @@ active, 1 pending, 3 closed); 1,190 Behavioral Health Centers (663 active,
 GET https://ohflac.wvdhhr.org/Apps/Lookup/SurveyHistory/<id>
 ```
 
-Lists surveys by year back to 2001: the date, the survey type
+Lists surveys by year (observed back to 2000): the date, the survey type
 ("Re-Licensure Survey", "Complaint Survey", "Complaint, Follow-up/Revisit",
 ...), and a button per report carrying `data-survid`, `data-survtype`
 (`State` or `Federal`), `data-eventid` and `data-saveas`.
@@ -145,22 +145,25 @@ by character with stale text: on state forms a 2004 deficiency about
 F 156. A scraper that trusts that text will report a deficiency that is not
 in the document. Verified on both samples in `tmp/scraper-research/wv/`.
 
-Two ways through, both tested enough to know they can work:
+Two ways through were considered:
 
-- **OCR of the rendered page** returns only what a reader sees. On the
-  sample (a 2012 survey with no deficiencies) `pytesseract` at 200 dpi gave
-  the correct text and none of the stale text. Slow (540 reports of several
-  pages each) but dependable.
+- **OCR of the rendered page** reads what is visible. On the sample (a 2012
+  survey with no deficiencies) `pytesseract` at 200 dpi recovered the report
+  without the hidden template tags. OCR remains slower than text extraction.
 - **Filter the characters by font.** On the state sample the stale layer was
-  in an embedded `Arial` subset and the real content in `Helvetica`. If that
-  holds across samples, `pdfplumber` can keep only the real characters and
-  run in seconds. It was seen on one file only.
+  in an embedded `Arial` subset and the real content in `Helvetica`.
 
-Decision: use the font filter if it holds on at least 30 varied samples
-(state and federal, 2001 to 2026), and in any case OCR a random 5% and
-compare, so a wrong filter cannot pass unnoticed. Otherwise OCR everything.
-For surveys since October 2023, the inline HTML on the FacilityDetails page
-is a third, clean source and a good cross-check.
+Calibration: 55 varied reports (35 State, 20 Federal; 2000-2026) showed no
+unexpected report fonts. Filtered text averaged 98.1% OCR word recall, with
+a 90.3% minimum. A C 173 citation in a 2016 report was present in the visible
+OCR and is genuine report content, not the hidden template. The scraper uses
+the font filter, OCRs a deterministic 5% sample, holds sampled reports when
+OCR is unavailable or below 90% recall, and holds a C 173/F 156 finding only
+when OCR does not confirm the tag. An offline payload build from the 55
+calibration extracts produced 54 reports and held one by the privacy check;
+there were no unparsed reports, date mismatches or unexpected fonts. For
+surveys since October 2023, the inline HTML on FacilityDetails is a third,
+clean source and a good cross-check.
 
 ## Decisions already made
 
@@ -193,11 +196,9 @@ is a third, clean source and a good cross-check.
 3. **Survey histories** for the scope (500 means none).
 4. **Download** through `extract_with_cache`. The PDFs are generated per
    request; go slowly (one a second).
-5. **Text**: settle the font filter or OCR question first, on 30 samples.
-   Then the tag parser. Print: reports per survey type, tags per report,
-   reports where the stale tag C 173 or F 156 appears as a finding (must be
-   zero unless the survey date matches the template's), and the OCR
-   comparison.
+5. **Text**: the font filter is calibrated on 55 varied samples. Then the tag
+   parser. Print reports per survey type, tags per report, any C 173/F 156
+   tag not confirmed by OCR, and the OCR comparison.
 6. **Payload, state, `--out`**, then
    `php scripts/match-inspection-names.php --state=WV --file=<out.json>`.
 7. **Adapter** `js/inspections/states/wv.js`. Closest model:
