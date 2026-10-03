@@ -35,12 +35,19 @@
  *   'origins'  fn(array $q): [{key, label, count}]   optional; the "Came from"
  *              filter (scraper, import, extension, people...); 'list' then
  *              gets the chosen key as $q['origin']
+ *   'tools'    [{id, label, help, style, confirm, params [field...]}]  optional;
+ *              buttons over the queue that are not about one item (scan now,
+ *              read now, add every sure match for a facility)
+ *   'tool'     fn(string $id, array $params): ['message' => ...]
  *   'tool_url' the queue's full screen, for what this one does not do
  *   'native'   true for the five types the page already draws itself
  *
  * An item: key, title, subtitle, url, text, created, status, status_label,
  * facility {id, name, url}, fields [{name, label, type (text, textarea, list,
- * select, number, facility), value, options {value: label}, category}],
+ * select, number, facility, facilities (several ids), checkbox), value,
+ * options {value: label}, category}], details [{label, value}] (facts shown on
+ * the card), compare {heads: [..], rows: [{label, values: [..]}]} (two records
+ * side by side), preview {label, url} (a PDF or page shown in the card),
  * actions [{id, label, style (approve, reject, neutral, undo), confirm,
  * params [field...]}], moves [{id, label}], links [{label, url}].
  *
@@ -273,7 +280,8 @@ function kop_rinbox_finish_items($source, array $items) {
     $tags = kop_rinbox_tags_for($source, $keys);
     foreach ($items as &$it) {
         $it += array('subtitle' => '', 'url' => '', 'text' => '', 'created' => '', 'status' => '', 'status_label' => '',
-            'facility' => null, 'fields' => array(), 'actions' => array(), 'moves' => array(), 'links' => array());
+            'facility' => null, 'fields' => array(), 'actions' => array(), 'moves' => array(), 'links' => array(),
+            'details' => array(), 'compare' => null, 'preview' => null);
         $it['key'] = (string) $it['key'];
         $it['tags'] = $tags[$it['key']] ?? array();
     }
@@ -426,6 +434,7 @@ add_action('rest_api_init', function () {
         'save'    => array('POST', 'kop_rinbox_rest_save'),
         'tags'    => array('POST', 'kop_rinbox_rest_tags'),
         'ai'      => array('POST', 'kop_rinbox_rest_ai'),
+        'tool'    => array('POST', 'kop_rinbox_rest_tool'),
     );
     foreach ($routes as $path => $r) {
         register_rest_route('kop/v1', '/review-inbox/' . $path, array(
@@ -454,6 +463,7 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
                 'help' => (string) ($src['help'] ?? ''), 'can_save' => !empty($src['save']),
                 'can_ai' => !empty($src['save']) || !empty($src['ai_fill']),
                 'has_origins' => !empty($src['origins']),
+                'tools' => array_values((array) ($src['tools'] ?? array())),
             );
         }
         return array('sources' => $out, 'tags' => kop_rinbox_known_tags());
@@ -528,6 +538,17 @@ function kop_rinbox_rest_act(WP_REST_Request $req) {
         kop_rinbox_flush_counts();
         $res = is_array($res) ? $res : array();
         return $res + array('message' => 'Done.', 'item' => kop_rinbox_after($source, $res['key'] ?? $key));
+    });
+}
+
+function kop_rinbox_rest_tool(WP_REST_Request $req) {
+    return kop_rinbox_rest(function () use ($req) {
+        $src = kop_rinbox_source((string) $req->get_param('source'));
+        if (empty($src['tool'])) throw new RuntimeException('This queue has no tools.');
+        $params = $req->get_param('params');
+        $res = call_user_func($src['tool'], sanitize_key((string) $req->get_param('tool')), is_array($params) ? wp_unslash($params) : array());
+        kop_rinbox_flush_counts();
+        return (is_array($res) ? $res : array()) + array('message' => 'Done.');
     });
 }
 

@@ -184,7 +184,7 @@
 
     /* ---- Panel ------------------------------------------------------------- */
 
-    var listEl, pagerEl, statusEl;
+    var listEl, pagerEl, statusEl, bulkEl;
 
     function renderPanel() {
         var s = state.byKey[state.source];
@@ -218,32 +218,130 @@
             clearTimeout(timer);
             timer = setTimeout(function () { state.search = search.value.trim(); state.offset = 0; loadItems(); }, 350);
         });
-        statusEl = el('p', { class: 'rinbox-status' });
+        var tools = null;
+        if (s.tools && s.tools.length) {
+            tools = el('div', { class: 'rinbox-tools' });
+            s.tools.forEach(function (t) {
+                tools.appendChild(paramButton(t, 'rinbox-tool-', function (params, btn) {
+                    btn.disabled = true;
+                    statusEl.textContent = 'Working…';
+                    api('tool', { source: state.source, tool: t.id, params: params }).then(function (res) {
+                        btn.disabled = false;
+                        loadItems(res.message);
+                        refreshCounts();
+                    }).catch(function (e) {
+                        btn.disabled = false;
+                        statusEl.textContent = e.message;
+                    });
+                }));
+            });
+        }
+        statusEl = el('p', { class: 'rinbox-status', role: 'status' });
+        bulkEl = el('div', { class: 'rinbox-bulk' });
         listEl = el('div', { class: 'rinbox-list' });
         pagerEl = el('div', { class: 'rinbox-pager' });
         panel.appendChild(head);
         panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [views, el('span', { class: 'rinbox-filters' }, [
             origin ? el('label', { class: 'rinbox-quick-field' }, ['Came from ', origin]) : null, search
         ])]));
+        if (tools) {
+            panel.appendChild(tools);
+            if (typeof window.kopFacilityFinderAttach === 'function') {
+                tools.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
+            }
+        }
         panel.appendChild(statusEl);
+        panel.appendChild(bulkEl);
         panel.appendChild(listEl);
         panel.appendChild(pagerEl);
     }
 
-    function loadItems() {
+    function loadItems(note) {
         var src = state.source;
         statusEl.textContent = 'Loading…';
+        bulkEl.innerHTML = '';
         listEl.innerHTML = '';
         pagerEl.innerHTML = '';
         api('items', null, { source: src, view: state.view, search: state.search, origin: state.origin, offset: state.offset, limit: state.limit }).then(function (data) {
             if (state.source !== src) return;
             state.total = data.total || 0;
             var items = data.items || [];
-            statusEl.textContent = state.total ? (state.total + (state.total === 1 ? ' item' : ' items')) : 'Nothing here.';
+            statusEl.textContent = (note ? note + ' ' : '') + (state.total ? (state.total + (state.total === 1 ? ' item' : ' items')) : 'Nothing here.');
             items.forEach(function (it) { listEl.appendChild(card(it)); });
+            renderBulk();
             renderPager();
         }).catch(function (e) {
             statusEl.textContent = 'Could not load this queue: ' + e.message;
+        });
+    }
+
+    /** "Select all" and the buttons every selected card has (those that need no answer, or have one filled in). */
+    function renderBulk() {
+        bulkEl.innerHTML = '';
+        var cards = listEl.querySelectorAll('.rinbox-card');
+        if (cards.length < 2) return;
+        var all = el('input', { type: 'checkbox', 'aria-label': 'Select every item on this page' });
+        var count = el('span', { class: 'rinbox-bulk-count', text: '0 selected' });
+        var buttons = el('span', { class: 'rinbox-bulk-actions' });
+        all.addEventListener('change', function () {
+            listEl.querySelectorAll('.rinbox-select').forEach(function (c) { if (!c.disabled) c.checked = all.checked; });
+            update();
+        });
+        listEl.onchange = function (e) { if (e.target.classList.contains('rinbox-select')) update(); };
+        function selected() {
+            return Array.prototype.filter.call(listEl.querySelectorAll('.rinbox-card'), function (c) {
+                var box = c.querySelector('.rinbox-select');
+                return box && box.checked && c.kopItem;
+            });
+        }
+        function update() {
+            var sel = selected();
+            count.textContent = sel.length + ' selected';
+            buttons.innerHTML = '';
+            if (!sel.length) return;
+            (sel[0].kopItem.actions || []).forEach(function (a) {
+                var ready = function (c) {
+                    var mine = (c.kopItem.actions || []).filter(function (b) { return b.id === a.id; })[0];
+                    return mine && (mine.params || []).every(function (p) { return p.value !== '' && p.value !== null && p.value !== undefined && p.value !== 0; });
+                };
+                if (!sel.every(ready)) return;
+                buttons.appendChild(el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral'), text: a.label + ' (' + sel.length + ')',
+                    onclick: function () { runBulk(sel, a); }
+                }));
+            });
+        }
+        bulkEl.appendChild(el('label', { class: 'rinbox-quick-field' }, [all, ' Select all']));
+        bulkEl.appendChild(count);
+        bulkEl.appendChild(buttons);
+    }
+
+    function runBulk(cards, action) {
+        if (action.confirm && !window.confirm(action.confirm + ' (' + cards.length + ' items)')) return;
+        var s = state.byKey[state.source], src = state.source;
+        var done = 0, failed = 0;
+        statusEl.textContent = 'Working on ' + cards.length + '…';
+        var chain = Promise.resolve();
+        cards.forEach(function (node) {
+            chain = chain.then(function () {
+                var item = node.kopItem;
+                var mine = (item.actions || []).filter(function (b) { return b.id === action.id; })[0] || action;
+                var params = {};
+                (mine.params || []).forEach(function (p) { params[p.name] = p.value; });
+                return api('act', { source: src, key: item.key, action: action.id, params: params }).then(function (res) {
+                    done++;
+                    if (res.item) fillCard(node, res.item, s, src, res.message);
+                    else { node.classList.add('rinbox-gone'); node.innerHTML = ''; node.appendChild(el('p', { class: 'rinbox-message', text: res.message || 'Done.' })); }
+                }).catch(function (e) {
+                    failed++;
+                    fillCard(node, item, s, src, e.message, true);
+                });
+            });
+        });
+        chain.then(function () {
+            statusEl.textContent = action.label + ': ' + done + ' done' + (failed ? ', ' + failed + ' could not be (their cards say why)' : '') + '.';
+            renderBulk();
+            refreshCounts();
         });
     }
 
@@ -286,6 +384,12 @@
         } else if (type === 'facility') {
             input = el('input', { id: id, type: 'number', min: '1', placeholder: 'id', 'data-kop-facility-finder': '1' });
             input.value = f.value ? String(f.value) : '';
+        } else if (type === 'checkbox') {
+            input = el('input', { id: id, type: 'checkbox' });
+            input.checked = !!f.value && f.value !== '0';
+        } else if (type === 'facilities') {
+            // Several records: chips, and the facility finder adds one per pick.
+            input = facilitiesInput(id, f.value);
         } else {
             input = el('input', { id: id, type: type === 'number' ? 'number' : 'text' });
             input.value = f.value === null || f.value === undefined ? '' : String(f.value);
@@ -296,14 +400,66 @@
         return input;
     }
 
+    function facilitiesInput(id, value) {
+        var box = el('span', { id: id, class: 'rinbox-facilities' });
+        var chips = el('span', { class: 'rinbox-facility-chips' });
+        var finder = el('input', { type: 'hidden', 'data-kop-facility-finder': 'multi' });
+        var picked = [];
+        (Array.isArray(value) ? value : (value ? [value] : [])).forEach(function (v) {
+            picked.push(typeof v === 'object' ? { id: String(v.id), name: v.name || ('#' + v.id) } : { id: String(v), name: '#' + v });
+        });
+        function draw() {
+            box.dataset.ids = JSON.stringify(picked.map(function (p) { return p.id; }));
+            chips.innerHTML = '';
+            picked.forEach(function (p) {
+                chips.appendChild(el('span', { class: 'rinbox-tag' }, [p.name, el('button', {
+                    type: 'button', class: 'rinbox-tag-x', 'aria-label': 'Remove ' + p.name, text: '\u00d7',
+                    onclick: function () { picked = picked.filter(function (x) { return x.id !== p.id; }); draw(); }
+                })]));
+            });
+        }
+        box.addEventListener('kop-facility-picked', function (e) {
+            var f = e.detail || {};
+            if (f.id && !picked.some(function (x) { return x.id === String(f.id); })) picked.push({ id: String(f.id), name: f.name || ('#' + f.id) });
+            draw();
+        });
+        box.appendChild(chips);
+        box.appendChild(finder);
+        draw();
+        return box;
+    }
+
     function readInput(input) {
         var kind = input.dataset.kind;
+        if (kind === 'checkbox') return input.checked ? '1' : '';
+        if (kind === 'facilities') { try { return JSON.parse(input.dataset.ids || '[]'); } catch (e) { return []; } }
         if (kind === 'list') return input.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
         if (kind === 'facility' || kind === 'number') return input.value.trim() === '' ? '' : input.value.trim();
         return input.value;
     }
 
     var cardSeq = 0;
+
+    /** A button that may first ask for a few values (a tool, or an action with params). go(params, button) runs it. */
+    function paramButton(def, prefix, go) {
+        var wrap = el('span', { class: 'rinbox-action-group' });
+        var inputs = (def.params || []).map(function (p) {
+            var input = fieldInput(p, prefix + def.id + '-');
+            wrap.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', input]));
+            return input;
+        });
+        var btn = el('button', {
+            type: 'button', class: 'rinbox-btn rinbox-btn-' + (def.style || 'neutral'), text: def.label, title: def.help || null,
+            onclick: function () {
+                if (def.confirm && !window.confirm(def.confirm)) return;
+                var params = {};
+                inputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
+                go(params, btn);
+            }
+        });
+        wrap.appendChild(btn);
+        return wrap;
+    }
 
     /**
      * "Move to…": a destination with params (a facility website or resource
@@ -354,6 +510,7 @@
 
     function fillCard(node, item, s, src, message, isError) {
         node.innerHTML = '';
+        node.kopItem = item;
         var prefix = 'rinbox-' + (++cardSeq) + '-';
         var category = (item.fields || []).filter(function (f) { return f.category; })[0];
 
@@ -374,9 +531,51 @@
             if (safeHref(l.url)) links.appendChild(el('a', { href: l.url, target: '_blank', rel: 'noopener', text: l.label }));
         });
 
-        node.appendChild(el('header', { class: 'rinbox-card-head' }, [title, meta]));
+        var pick = (item.actions || []).length
+            ? el('input', { type: 'checkbox', class: 'rinbox-select', 'aria-label': 'Select ' + (item.title || 'this item') })
+            : null;
+        node.appendChild(el('header', { class: 'rinbox-card-head' }, [pick ? el('span', { class: 'rinbox-title-row' }, [pick, title]) : title, meta]));
         if (links.childNodes.length) node.appendChild(links);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
+        if (item.details && item.details.length) {
+            var dl = el('dl', { class: 'rinbox-details' });
+            item.details.forEach(function (d) {
+                dl.appendChild(el('dt', { text: d.label }));
+                var dd = el('dd');
+                if (d.url && safeHref(d.url)) dd.appendChild(el('a', { href: d.url, target: '_blank', rel: 'noopener', text: d.value || linkLabel(d.url) }));
+                else dd.textContent = Array.isArray(d.value) ? d.value.join(', ') : String(d.value === null || d.value === undefined ? '' : d.value);
+                dl.appendChild(dd);
+            });
+            node.appendChild(dl);
+        }
+        if (item.compare && item.compare.rows && item.compare.rows.length) {
+            var table = el('table', { class: 'rinbox-compare' });
+            var headRow = el('tr', null, [el('th', { scope: 'col', text: '' })]);
+            (item.compare.heads || []).forEach(function (h) { headRow.appendChild(el('th', { scope: 'col', text: h })); });
+            table.appendChild(el('thead', null, [headRow]));
+            var body = el('tbody');
+            item.compare.rows.forEach(function (r) {
+                var tr = el('tr', { class: r.differs ? 'rinbox-differs' : null }, [el('th', { scope: 'row', text: r.label })]);
+                (r.values || []).forEach(function (v) { tr.appendChild(el('td', { text: Array.isArray(v) ? v.join(', ') : String(v === null || v === undefined ? '' : v) })); });
+                body.appendChild(tr);
+            });
+            table.appendChild(body);
+            node.appendChild(el('div', { class: 'rinbox-compare-wrap' }, [table]));
+        }
+        if (item.preview && safeHref(item.preview.url)) {
+            var frameBox = el('div', { class: 'rinbox-preview', hidden: true });
+            var label = item.preview.label || 'Show pages';
+            node.appendChild(el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-undo rinbox-preview-toggle', text: label, 'aria-expanded': 'false',
+                onclick: function (e) {
+                    if (!frameBox.firstChild) frameBox.appendChild(el('iframe', { src: item.preview.url, title: label, loading: 'lazy' }));
+                    frameBox.hidden = !frameBox.hidden;
+                    e.currentTarget.setAttribute('aria-expanded', frameBox.hidden ? 'false' : 'true');
+                    e.currentTarget.textContent = frameBox.hidden ? label : 'Hide';
+                }
+            }));
+            node.appendChild(frameBox);
+        }
 
         // Quick edits: category and tags save as soon as they change.
         var quick = el('div', { class: 'rinbox-quick' });

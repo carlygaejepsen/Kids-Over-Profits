@@ -60,13 +60,13 @@ setTimeout(function () {
 </body></html>""".replace("%REST%", json.dumps(REST))
 
 
-def closure_item(status="pending", stage="closed", name="Sunrise Ranch", message=None):
+def closure_item(status="pending", stage="closed", name="Sunrise Ranch", message=None, key="36"):
     acts = ([{"id": "apply", "label": "Confirm closure", "style": "approve",
               "params": [{"name": "end_year", "label": "End year", "type": "number", "value": "2024"}]},
              {"id": "dismiss", "label": "Dismiss", "style": "reject"}]
             if status == "pending" else [{"id": "undo", "label": "Undo", "style": "undo"}])
     return {
-        "key": "36", "title": name, "subtitle": "Closed, 2024-05-01 · Utah", "created": "2026-09-30 10:00:00",
+        "key": key, "title": name, "subtitle": "Closed, 2024-05-01 · Utah", "created": "2026-09-30 10:00:00",
         "url": "https://www.ksl.com/article/50912345/utah-youth-ranch-closes-after-state-investigation",
         "text": '"The ranch closed its doors on May 1."', "status": status,
         "status_label": "To review" if status == "pending" else "Confirmed",
@@ -80,6 +80,9 @@ def closure_item(status="pending", stage="closed", name="Sunrise Ranch", message
             {"name": "notes", "label": "Notes", "type": "textarea", "value": ""},
         ],
         "actions": acts, "moves": [], "links": [], "tags": ["follow up"],
+        "details": [{"label": "Facility status now", "value": "Open"}],
+        "compare": {"heads": ["This report", "The record"], "rows": [{"label": "Status", "values": ["Closed", "Open"], "differs": True}]},
+        "preview": {"label": "Show the article", "url": "https://inbox.test/preview.html"},
     }
 
 
@@ -99,7 +102,8 @@ SOURCES = {"sources": [
     {"key": "closure", "label": "Closure reports", "group": "Found by the news scans",
      "views": {"pending": "To review", "applied": "Confirmed"}, "count": 6, "native": False,
      "tool_url": "https://inbox.test/wp-admin/admin.php?page=kop-closure-reports",
-     "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True, "has_origins": True},
+     "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True, "has_origins": True,
+     "tools": [{"id": "scan", "label": "Scan the next articles now", "params": [{"name": "count", "label": "How many", "type": "number", "value": 10}]}]},
     {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting"}, "count": 0,
      "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False},
 ], "tags": ["follow up", "needs source", "Neglect"]}
@@ -136,7 +140,7 @@ def main():
                 elif "view=applied" in url:
                     out = {"items": [closure_item("applied")], "total": 1}
                 else:
-                    out = {"items": [closure_item()], "total": 1}
+                    out = {"items": [closure_item(), closure_item(name="Canyon House", key="37")], "total": 2}
             elif path == "save":
                 f = body["fields"]
                 if body["source"] == "news":
@@ -148,16 +152,22 @@ def main():
                 out = {"tags": sorted(body["tags"], key=str.lower), "message": "Tags saved."}
             elif path == "ai":
                 out = {"message": "Filled: Closure date.", "filled": ["closure_date"], "item": closure_item() if body["source"] == "closure" else NEWS}
+            elif path == "tool":
+                out = {"message": "Scanned 10 articles: 1 closure found."}
             elif path == "act":
                 if body["action"] == "apply":
                     out = {"message": "Confirmed. Sunrise Ranch is marked closed.", "item": closure_item("applied")}
                 elif body["action"] == "move":
                     out = {"message": "Moved. It is waiting in Lawsuits as #67.", "item": dict(NEWS, moves=[], actions=[{"id": "unmove", "label": "Undo move to Lawsuits", "style": "undo"}])}
+                elif body["action"] == "dismiss":
+                    out = {"message": "Dismissed.", "item": closure_item("dismissed", key=body["key"])}
                 else:
                     out = {"message": "Done.", "item": closure_item()}
             else:
                 out = {"error": "unknown"}
             return r.fulfill(status=200, content_type="application/json", body=json.dumps(out))
+        if url == BASE + "preview.html":
+            return r.fulfill(status=200, content_type="text/html", body="<p>The article</p>")
         if url == BASE or url.startswith(BASE + "?"):
             return r.fulfill(status=200, content_type="text/html", body=PAGE)
         local = ROOT / url[len(BASE):].split("?")[0]
@@ -213,6 +223,22 @@ def main():
 
             pg.locator(".rinbox-tab", has_text="Closure reports").click()
             pg.wait_for_selector(".rinbox-card")
+            check(pg.locator(".rinbox-card").first.locator(".rinbox-details").inner_text().find("Open") >= 0, f"@{width} facts show on the card")
+            check(pg.locator(".rinbox-card").first.locator(".rinbox-compare tr.rinbox-differs").count() == 1, f"@{width} a comparison marks what differs")
+            pg.locator(".rinbox-card").first.locator(".rinbox-preview-toggle").click()
+            check(pg.locator(".rinbox-card").first.locator(".rinbox-preview iframe").is_visible(), f"@{width} the preview opens inside the card")
+            pg.locator(".rinbox-tools input[data-field='count']").fill("5")
+            pg.locator(".rinbox-tools button").click()
+            pg.wait_for_function("() => /Scanned/.test(document.querySelector('.rinbox-status').textContent)")
+            check(any(c[0] == "tool" and c[1]["tool"] == "scan" and c[1]["params"] == {"count": "5"} for c in calls), f"@{width} a queue tool runs with its value")
+            pg.wait_for_selector(".rinbox-card")
+            pg.locator(".rinbox-bulk input[type='checkbox']").check()
+            pg.locator(".rinbox-bulk button", has_text="Dismiss (2)").click()
+            pg.wait_for_function("() => /Dismiss: 2 done/.test(document.querySelector('.rinbox-status').textContent)")
+            check(sum(1 for c in calls if c[0] == "act" and c[1]["action"] == "dismiss") == 2, f"@{width} a bulk action runs on every selected card")
+            check(pg.locator(".rinbox-bulk button", has_text="Confirm closure").count() == 0, f"@{width} an action that needs a value per item is not offered in bulk unless filled")
+            pg.locator(".rinbox-views button", has_text="To review").click()
+            pg.wait_for_selector(".rinbox-card")
             pg.wait_for_function("() => document.querySelector('.rinbox-origin') && document.querySelector('.rinbox-origin').options.length === 3")
             pg.locator(".rinbox-origin").select_option("sciad")
             pg.wait_for_timeout(300)
@@ -221,42 +247,43 @@ def main():
             pg.wait_for_selector(".rinbox-card")
             check(pg.locator(".submissions-list-container").is_hidden(), f"@{width} the page's own list steps aside")
             check("type=closure" in pg.url, f"@{width} the open queue is in the address", pg.url)
-            link = pg.locator(".rinbox-links a").nth(1)
+            link = pg.locator(".rinbox-card").first.locator(".rinbox-links a").nth(1)
             check("ksl.com" in link.inner_text() and "http" not in link.inner_text(), f"@{width} the article link reads as words", link.inner_text())
 
             pg.locator(".rinbox-card .rinbox-quick select").first.select_option("suspended")
             pg.wait_for_function("() => /Saved/.test(document.querySelector('.rinbox-card .rinbox-message').textContent)")
             check(any(c[0] == "save" and c[1]["fields"] == {"stage": "suspended"} for c in calls), f"@{width} category saves from the card")
 
-            tag = pg.locator(".rinbox-card .rinbox-tag-input")
+            tag = pg.locator(".rinbox-card .rinbox-tag-input").first
             tag.fill("Needs Source")
             tag.press("Enter")
             pg.wait_for_function("() => [...document.querySelectorAll('.rinbox-card .rinbox-tag')].some(t => /Needs Source/.test(t.textContent))")
             check(any(c[0] == "tags" and "Needs Source" in c[1]["tags"] and "follow up" in c[1]["tags"] for c in calls), f"@{width} a tag is added and saved")
-            pg.locator(".rinbox-card .rinbox-tag-x").first.click()
+            pg.locator(".rinbox-card").first.locator(".rinbox-tag-x").first.click()
             pg.wait_for_timeout(200)
             check(calls[-1][0] == "tags" and len(calls[-1][1]["tags"]) == 1, f"@{width} a tag is removed", json.dumps(calls[-1][1]))
 
-            pg.locator(".rinbox-edit-toggle").click()
-            pg.locator(".rinbox-editor input[data-field='program_name']").fill("Sunrise Ranch for Girls")
-            pg.locator(".rinbox-editor button[type='submit']").click()
+            pg.locator(".rinbox-edit-toggle").first.click()
+            pg.locator(".rinbox-editor input[data-field='program_name']").first.fill("Sunrise Ranch for Girls")
+            pg.locator(".rinbox-editor button[type='submit']").first.click()
             pg.wait_for_function("() => /Sunrise Ranch for Girls/.test(document.querySelector('.rinbox-title').textContent)")
             check(any(c[0] == "save" and c[1]["fields"].get("program_name") == "Sunrise Ranch for Girls" for c in calls), f"@{width} Edit details saves every field")
-            pg.locator(".rinbox-edit-toggle").click()
-            pg.locator(".rinbox-card .rinbox-ai").click()
+            pg.locator(".rinbox-edit-toggle").first.click()
+            pg.locator(".rinbox-card .rinbox-ai").first.click()
             pg.wait_for_function("() => /Filled/.test(document.querySelector('.rinbox-card .rinbox-message').textContent)")
             check(any(c[0] == "ai" for c in calls), f"@{width} Fill empty fields with AI runs")
             if width == 1280:
-                pg.locator(".rinbox-edit-toggle").click()
+                pg.locator(".rinbox-edit-toggle").first.click()
                 pg.screenshot(path=str(shots / f"closure-edit-{width}.png"), full_page=True)
-                pg.locator(".rinbox-edit-toggle").click()
+                pg.locator(".rinbox-edit-toggle").first.click()
 
-            pg.locator(".rinbox-card .rinbox-param input").fill("2023")
-            pg.locator(".rinbox-card .rinbox-btn-approve").click()
+            pg.locator(".rinbox-card .rinbox-param input").first.fill("2023")
+            pg.locator(".rinbox-card .rinbox-btn-approve").first.click()
             pg.wait_for_selector(".rinbox-card .rinbox-btn-undo")
             check(any(c[0] == "act" and c[1]["action"] == "apply" and c[1]["params"] == {"end_year": "2023"} for c in calls),
                   f"@{width} an action sends its parameters and shows Undo")
-            check("Confirmed" in pg.locator(".rinbox-card .rinbox-message").inner_text(), f"@{width} the action's message is shown")
+            pg.wait_for_function("() => [...document.querySelectorAll('.rinbox-card .rinbox-message')].some(m => /Confirmed/.test(m.textContent))", timeout=5000)
+            check(True, f"@{width} the action's message is shown")
 
             wide = pg.evaluate("() => document.documentElement.scrollWidth")
             check(wide <= width, f"@{width} nothing is wider than the screen", f"{wide}px")

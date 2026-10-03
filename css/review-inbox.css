@@ -438,3 +438,129 @@ button.rinbox-tag-x:focus-visible {
     gap: 8px 12px;
     align-items: center;
 }
+
+/* Queue tools (scan now, read now...), bulk selection, facts, comparisons, previews. */
+.rinbox-tools,
+.rinbox-bulk {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.rinbox-tools {
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-bulk-count {
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.rinbox-bulk-actions {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.rinbox-title-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.rinbox-title-row input[type="checkbox"],
+.rinbox-bulk input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 3px;
+    flex: none;
+}
+
+.rinbox-details {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 4px 12px;
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-details dt {
+    font-weight: 700;
+}
+
+.rinbox-details dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.rinbox-compare-wrap {
+    overflow-x: auto;
+    margin: 8px 0;
+}
+
+.rinbox-compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-white, #fff);
+}
+
+.rinbox-compare th,
+.rinbox-compare td {
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-compare thead th {
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.rinbox-compare tr.rinbox-differs td {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+.rinbox-preview-toggle {
+    margin: 4px 0;
+}
+
+.rinbox-preview iframe {
+    width: 100%;
+    height: 70vh;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+}
+
+.rinbox-preview[hidden] {
+    display: none;
+}
+
+.rinbox-facilities {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.rinbox-facility-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+@media (max-width: 600px) {
+    .rinbox-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
