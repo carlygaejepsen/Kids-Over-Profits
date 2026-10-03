@@ -1,8 +1,8 @@
 <?php
 /**
- * Every hour, fill in a few news and lawsuit rows that arrived as a bare link
- * from KOP Tools > Drive Docs or the browser extension (api/lib-record-enrich.php).
- * A backlog runs at once with api/enrich-imported-records.php.
+ * Every hour, fill in a few incomplete submitted news rows and lawsuit rows
+ * that arrived as a bare link (api/lib-record-enrich.php). A backlog runs at
+ * once with api/enrich-imported-records.php.
  */
 
 if (!defined('ABSPATH')) {

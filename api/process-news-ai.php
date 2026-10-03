@@ -668,7 +668,7 @@ function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt .= "Article Content:\n$content\n\n";
     $prompt .= "Please analyze this article and extract the following information in JSON format:\n\n";
     $prompt .= "{\n";
-    $prompt .= "  \"title\": \"article title\",\n";
+    $prompt .= "  \"title\": \"the article's headline exactly as published; do not invent or rewrite it\",\n";
     $prompt .= "  \"author\": \"author name\",\n";
     $prompt .= "  \"publicationDate\": \"YYYY-MM-DD format\",\n";
     $prompt .= "  \"publicationName\": \"publication name\",\n";
@@ -691,6 +691,7 @@ function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt .= "IMPORTANT:\n";
     $prompt .= "- Use trauma-sensitive language in the summary\n";
     $prompt .= "- Only include content warnings that are clearly present in the article\n";
+    $prompt .= "- Keep the published headline in title; put any trauma-sensitive alternative in alternateTitle\n";
     $prompt .= "- Detect the article type based on the content\n";
     $prompt .= "- Only fill typeSpecificData for the detected article type\n";
     $prompt .= "- Return ONLY valid JSON, no additional text or markdown formatting\n";

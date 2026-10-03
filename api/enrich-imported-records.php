@@ -1,13 +1,14 @@
 <?php
 /**
- * Fill in news and lawsuit rows that arrived as a bare link (Drive Docs, the
- * browser extension): api/lib-record-enrich.php. The hourly WP-Cron job
- * (inc/record-enrich.php) does a few at a time; this runs a backlog now.
+ * Fill incomplete submitted news rows and imported bare-link lawsuits:
+ * api/lib-record-enrich.php. The hourly WP-Cron job (inc/record-enrich.php)
+ * does a few at a time; this runs a backlog now.
  *
  *   /opt/cpanel/ea-php82/root/usr/bin/php api/enrich-imported-records.php [apply] [--type=news|lawsuit|all]
  *       [--ids=12,13] [--limit=50] [--minutes=25]
  *
  * A dry run (no "apply") reads each article and lists what it would fill.
+ * --ids can be used to deliberately rerun selected submitted news rows.
  */
 
 if (PHP_SAPI !== 'cli') {

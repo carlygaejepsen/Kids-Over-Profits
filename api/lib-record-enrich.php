@@ -1,19 +1,20 @@
 <?php
 /**
- * Fill in queue rows that arrived as a bare link: news and lawsuits sent from
- * KOP Tools > Drive Docs (inc/drive-docs.php) or the "Send to KOP" browser
- * extension (inc/source-submissions.php) carry only a title, the address and
- * the site. Everything else (author, date, summary, tags, facilities, people;
- * parties, court, claims) is filled here the way the rest of the site fills
- * it:
+ * Fill incomplete news submissions and bare-link lawsuits sent from KOP Tools
+ * > Drive Docs (inc/drive-docs.php) or the "Send to KOP" browser extension
+ * (inc/source-submissions.php). News rows are enriched once while submitted;
+ * lawsuits still target imported rows with no parties. Everything else
+ * (author, date, summary, tags, facilities, people; parties, court, claims)
+ * is filled here the way the rest of the site fills it:
  *   - news: api/process-news-ai.php reads the article, as the News Processor
  *     page and the nightly discovery do, and api/save-news-submission.php
  *     saves it by id, which reruns the facility, story, lawsuit and journalist
  *     links;
  *   - lawsuits: the document's text goes through the complaint extractor
  *     (api/lawsuit-extraction-lib.php).
- * Only empty fields are filled: the row keeps its status (an approved article
- * stays approved), who sent it, its notes and anything a person already typed.
+ * Only empty fields are filled, except that the extracted article headline
+ * replaces the title on an incomplete news submission. The row keeps its
+ * status, who sent it, its notes and other information a person already typed.
  *
  * Needs WordPress loaded (kop_seed_pdo, wp_remote_*, options). Used by
  * api/enrich-imported-records.php (CLI) and inc/record-enrich.php (hourly).
@@ -84,6 +85,40 @@ function kop_enrich_domain_name($name) {
     return (bool) preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(?: \(archived\))?$/i', trim((string) $name));
 }
 
+/** Is a submitted news row missing any of the fields the article reader can fill? */
+function kop_enrich_news_needs_backfill(array $row) {
+    if (kop_enrich_placeholder_title($row['article_title'] ?? '', $row['article_url'] ?? '')) {
+        return true;
+    }
+    foreach (array('author', 'publication_name', 'publication_date', 'article_location', 'summary') as $field) {
+        if (trim((string) ($row[$field] ?? '')) === '') {
+            return true;
+        }
+    }
+    if (kop_enrich_domain_name($row['publication_name'] ?? '') || ($row['article_type'] ?? 'general') === 'general') {
+        return true;
+    }
+    foreach (array('tags', 'facilities_mentioned', 'staff_mentioned', 'survivors_mentioned', 'content_warnings') as $field) {
+        $list = json_decode((string) ($row[$field] ?? ''), true);
+        if (!is_array($list) || !$list) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Has the automatic news backfill already read this row? */
+function kop_enrich_news_was_backfilled($json) {
+    $data = json_decode((string) $json, true);
+    return is_array($data) && !empty($data['_kop_ai_backfilled_at']);
+}
+
+/** Prefer the article's extracted headline; retain the existing title if absent. */
+function kop_enrich_news_title($current, $extracted) {
+    $extracted = trim((string) $extracted);
+    return $extracted !== '' ? $extracted : trim((string) $current);
+}
+
 /**
  * Queue rows a Fornits lead sent ('news' or 'lawsuit'): [row id => the lead's
  * summary the row was titled with]. That summary says what the forum post
@@ -128,7 +163,7 @@ function kop_enrich_fornits_ids(PDO $pdo, $table, $col, $target, array $ids) {
         return array();
     }
     $st = $pdo->prepare("SELECT id, `{$col}` FROM {$table} WHERE id IN (" . implode(',', array_fill(0, count($leads), '?')) . ')'
-        . ($table === 'lawsuits' ? '' : " AND status <> 'deleted'"));
+        . ($table === 'lawsuits' ? '' : " AND status = 'submitted'"));
     $st->execute(array_keys($leads));
     $out = array();
     foreach ($st->fetchAll(PDO::FETCH_NUM) as $r) {
@@ -157,22 +192,39 @@ function kop_enrich_pick_ids(array $found, array $fornits, $prefix, $limit, arra
 /* ---- News ---------------------------------------------------------------- */
 
 /**
- * News rows with nothing but a title and a link (SCIAD NET rows also carry
- * the date the archive filed them under, so a date does not rule a row out).
+ * Incomplete news rows awaiting review, plus unprocessed Fornits rows whose
+ * title is still the lead summary. Explicit IDs allow a deliberate rerun.
  */
 function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
-    $sql = "SELECT id FROM news_submissions WHERE status <> 'deleted' AND (summary = '' OR summary IS NULL)
-              AND (author = '' OR author IS NULL) AND " . kop_enrich_sender_where('submitted_by');
+    $sql = "SELECT id, article_title, article_url, author, publication_name, publication_date,
+                   article_type, article_location, tags, facilities_mentioned, staff_mentioned,
+                   survivors_mentioned, content_warnings, summary, json_data
+            FROM news_submissions WHERE status = 'submitted'";
     $params = array();
     if ($ids) {
         $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
         $params = array_map('intval', $ids);
     }
-    // No LIMIT: rows waiting out a failure would fill it and starve the rest.
+    // No LIMIT: rows waiting out a failure or already enriched must not starve
+    // incomplete rows later in the queue.
     $st = $pdo->prepare($sql . ' ORDER BY id');
     $st->execute($params);
-    return kop_enrich_pick_ids($st->fetchAll(PDO::FETCH_COLUMN),
-        kop_enrich_fornits_ids($pdo, 'news_submissions', 'article_title', 'news', $ids), 'news:', $limit, $ids);
+    $found = array();
+    $backfilled = array();
+    foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $id = (int) $row['id'];
+        $backfilled[$id] = kop_enrich_news_was_backfilled($row['json_data'] ?? '');
+        if ($ids || (!$backfilled[$id] && kop_enrich_news_needs_backfill($row))) {
+            $found[] = $id;
+        }
+    }
+    $fornits = kop_enrich_fornits_ids($pdo, 'news_submissions', 'article_title', 'news', $ids);
+    if (!$ids) {
+        $fornits = array_values(array_filter($fornits, function ($id) use ($backfilled) {
+            return empty($backfilled[(int) $id]);
+        }));
+    }
+    return kop_enrich_pick_ids($found, $fornits, 'news:', $limit, $ids);
 }
 
 function kop_enrich_post_json($url, array $body, $timeout) {
@@ -216,6 +268,18 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
         return array('ok' => false, 'id' => $id, 'error' => 'AI: ' . mb_substr($why, 0, 200));
     }
     $d = $ai['body']['data'];
+    if ($apply) {
+        $latestStmt = $pdo->prepare('SELECT * FROM news_submissions WHERE id = ?');
+        $latestStmt->execute(array((int) $id));
+        $latest = $latestStmt->fetch(PDO::FETCH_ASSOC);
+        if (!$latest || $latest['status'] !== 'submitted') {
+            return array('ok' => false, 'id' => $id, 'error' => 'submission is no longer awaiting review');
+        }
+        if ((string) $latest['article_url'] !== (string) $row['article_url']) {
+            return array('ok' => false, 'id' => $id, 'error' => 'article URL changed while AI was reading it; run backfill again');
+        }
+        $row = $latest;
+    }
     $list = function ($v) {
         if (is_string($v)) {
             $v = preg_split('/\r?\n/', $v);
@@ -236,15 +300,11 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
         return $old;
     };
 
-    $title = $row['article_title'];
-    $from_lead = kop_enrich_fornits_title($title, $id, kop_enrich_fornits_titles('news'));
-    if ((kop_enrich_placeholder_title($title, $row['article_url']) || $from_lead) && trim((string) ($d['title'] ?? '')) !== '') {
-        $title = trim($d['title']);
+    $oldTitle = trim((string) $row['article_title']);
+    $title = kop_enrich_news_title($oldTitle, $d['title'] ?? '');
+    if ($title !== $oldTitle) {
         $filled[] = 'title';
     }
-    // Still titled with the lead: the rest is saved, but the row is counted as
-    // failed, or it comes back every hour for a headline it never gets.
-    $headless = $from_lead && !in_array('title', $filled, true) ? 'the article gave no headline; retitle it in the News Processor' : '';
     $outlet = $row['publication_name'];
     if ((trim((string) $outlet) === '' || kop_enrich_domain_name($outlet)) && trim((string) ($d['publicationName'] ?? '')) !== '') {
         $outlet = trim($d['publicationName']);
@@ -286,20 +346,18 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
         'submittedBy'     => $row['submitted_by'],
         'submissionNotes' => $row['submission_notes'],
     ));
+    if ($apply) {
+        $payload['_kop_ai_backfilled_at'] = gmdate('c');
+    }
     $filled = array_values(array_unique($filled));
     if (!$apply) {
-        return $headless !== '' ? array('ok' => false, 'id' => $id, 'error' => $headless, 'filled' => $filled)
-            : array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
+        return array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
     }
     $saved = kop_enrich_post_json($api . 'save-news-submission.php', $payload, 60);
     if (!$saved['ok'] || empty($saved['body']['success'])) {
         $why = (string) ($saved['body']['error'] ?? ('HTTP ' . $saved['status']));
         kop_enrich_mark_failed('news:' . $id, 'save: ' . $why);
         return array('ok' => false, 'id' => $id, 'error' => 'save: ' . mb_substr($why, 0, 200));
-    }
-    if ($headless !== '') {
-        kop_enrich_mark_failed('news:' . $id, $headless);
-        return array('ok' => false, 'id' => $id, 'error' => $headless, 'filled' => $filled);
     }
     kop_enrich_clear_failed('news:' . $id);
     return array('ok' => true, 'id' => $id, 'title' => $title, 'filled' => $filled);
