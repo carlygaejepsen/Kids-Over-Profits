@@ -570,6 +570,34 @@ updated.
    and a 90.3% minimum; a real 2016 C 173 finding was verified in OCR.
    Owner: settle the 16 unsure rows, confirm Drive capacity for `wv_pdfs/`
    (about 1 GB), and approve the first post.
+   **Iowa, Maryland, South Dakota and Virginia built 2026-10-03:**
+   `ia_scraper.py`, `md_scraper.py`, `sd_scraper.py`, `va_scraper.py`
+   (Tools repo, in the launcher and the guide), adapters
+   `js/inspections/states/{ia,md,sd,va}.js`, `/ia-reports/`, `/md-reports/`,
+   `/sd-reports/` and `/va-reports/` created on deploy as drafts, PDFs
+   synced from `ia_pdfs/`, `md_pdfs/`, `sd_pdfs/`, `va_pdfs/`. Full
+   `--no-post` runs: **Iowa** 29 PMICs with visits (46 listed), 242 survey
+   visits 2018-09 to 2026-08, 78 with deficiencies (two visits the state's
+   database counts as 0 are flagged from the published form, which cites 2
+   and 4), nothing held, 2 PDFs the state fails to serve. **Maryland** 20
+   providers, 148 inspection summaries 2019-01 to 2025-05, 114 with
+   citations, 37 with citations that "may present safety risks"; 7 duplicate
+   copies the state posted are skipped; **owner:** 15 summaries are held
+   whole because citation comments carry youths' or staff initials ("(KR)"),
+   most of Jumoke's 2022-2025 reports among them; say whether to post them
+   with the initials cut out. **South Dakota** 25 providers, 118 documents
+   2024-05 to 2026-09 (62 licensing studies, 14 with a section not met; 9
+   corrective action plans; 47 fire and health inspections, 13 with items
+   answered No, 20 scanned forms unread), nothing held. **Virginia** VDSS 19
+   facilities and about 180 inspections (run 2026-10-01; on 2026-10-03 the
+   state's facility pages returned empty inspection lists, so run VDSS again
+   before posting); DBHDS 165 youth service licences, about 5 minutes each
+   (one click per plan), a full run takes 10+ hours: the first was started
+   detached 2026-10-03 into `tmp/scraper-out/va-dbhds.json` with the code from
+   before that day's fixes, so run `va_scraper.py --no-post --source dbhds` once
+   more when it ends (everything comes from cache) to mark "No Violation"
+   plans clean. **Owner:** approve
+   each state's first post (run it from the launcher), then publish its page.
 
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
