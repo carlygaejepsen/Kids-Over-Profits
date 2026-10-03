@@ -58,18 +58,18 @@ function kop_template_layout_normal_width() {
     return apply_filters('kop_template_layout_normal_width', array(
         'templates/single-facility-profile.php',
         'templates/single-person-profile.php',
-        'templates/facility-page.php',
     ));
 }
 
 /**
  * Generated pages that are not posts but should look like the site's pages:
  * Kadence's page layout, content style, vertical padding and title, read
- * from the Customizer's page settings (its own "page" branch). The parent
- * company hubs are hubs, not articles.
+ * from the Customizer's page settings (its own "page" branch). The facility
+ * and parent company pages are reference pages, not articles.
  */
 function kop_template_layout_page_style() {
     return apply_filters('kop_template_layout_page_style', array(
+        'templates/facility-page.php',
         'templates/operator-page.php',
         'templates/operator-index.php',
     ));
