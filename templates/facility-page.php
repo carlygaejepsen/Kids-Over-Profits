@@ -138,7 +138,8 @@ $kop_fp_sections = array();
 $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
 $kop_fp_has_notes = !empty($page['notes']) || !empty($page['field_notes']);
-$kop_fp_has_testimony = !empty($page['testimony']);
+$kop_fp_has_testimony = !empty($page['testimony']) || !empty($page['forum']);
+$kop_fp_has_videos = !empty($page['videos']);
 $kop_fp_has_news = !empty($page['news']);
 $kop_fp_has_lawsuits = !empty($page['lawsuits']);
 $kop_fp_has_memorials = !empty($page['memorials']);
@@ -229,6 +230,7 @@ if ($kop_fp_has_violations) $kop_fp_sections['violations'] = 'Serious violations
 if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
 if ($kop_fp_has_incidents) $kop_fp_sections['incidents'] = 'Incidents';
 if ($kop_fp_has_news) $kop_fp_sections['news'] = 'News coverage';
+if ($kop_fp_has_videos && !isset($kop_fp_psec['videos'])) $kop_fp_sections['videos'] = 'Videos';
 if ($kop_fp_has_staff) $kop_fp_sections['staff'] = 'Staff';
 if ($kop_fp_has_practices) $kop_fp_sections['practices'] = 'Reported practices';
 if ($kop_fp_has_inspections) $kop_fp_sections['inspections'] = 'Licensing';
@@ -357,7 +359,7 @@ get_header();
             </p>
         </aside>
 
-        <div class="kop-fp-body kop-fp-generated-body">
+        <div class="kop-fp-body kop-fp-generated-body<?php echo $kop_fp_parts ? '' : ' kop-fp-reorder'; ?>">
 
             <p class="kop-fp-summary"<?php echo $kop_fp_edit('all', 'every field of this facility'); ?>><?php echo esc_html($page['summary']); ?></p>
 
@@ -547,6 +549,39 @@ get_header();
                         </ul>
                     </details>
                 <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_videos && !isset($kop_fp_psec['videos'])) :
+                $kop_fp_vids = $page['videos'];
+                ?>
+            <section class="kop-fp-section kop-fp-videos" id="videos">
+                <h2><?php echo $kop_fp_icon('tv'); ?>Videos</h2>
+                <div class="kop-vc" data-kop-video-carousel>
+                    <div class="kop-vc-viewport" role="group" aria-roledescription="carousel" aria-label="Videos about <?php echo esc_attr($page['name']); ?>" tabindex="0">
+                        <?php foreach ($kop_fp_vids as $vi => $v) : ?>
+                            <figure class="kop-vc-slide" id="kop-vc-<?php echo (int) $vi; ?>" role="group" aria-roledescription="slide" aria-label="<?php echo (int) $vi + 1; ?> of <?php echo count($kop_fp_vids); ?>">
+                                <div class="kop-vc-frame" data-provider="<?php echo esc_attr($v['provider']); ?>" data-id="<?php echo esc_attr($v['id']); ?>" data-title="<?php echo esc_attr($v['title']); ?>">
+                                    <button type="button" class="kop-vc-play" aria-label="Play video: <?php echo esc_attr($v['title']); ?>">
+                                        <?php if ($v['thumb'] !== '') : ?><img src="<?php echo esc_url($v['thumb']); ?>" alt="" loading="lazy" decoding="async"><?php endif; ?>
+                                        <span class="kop-vc-icon" aria-hidden="true"><?php echo $kop_fp_icon('tv'); ?></span>
+                                    </button>
+                                </div>
+                                <figcaption>
+                                    <span class="kop-vc-title"><?php echo esc_html($v['title']); ?></span>
+                                    <a href="<?php echo esc_url($v['url']); ?>" target="_blank" rel="noopener nofollow">Watch on <?php echo $v['provider'] === 'vimeo' ? 'Vimeo' : 'YouTube'; ?></a>
+                                </figcaption>
+                            </figure>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php if (count($kop_fp_vids) > 1) : ?>
+                    <div class="kop-vc-controls">
+                        <button type="button" class="kop-vc-btn" data-dir="-1" aria-label="Previous video">&larr; Previous</button>
+                        <span class="kop-vc-count" aria-live="polite"><span data-kop-vc-now>1</span> of <?php echo count($kop_fp_vids); ?></span>
+                        <button type="button" class="kop-vc-btn" data-dir="1" aria-label="Next video">Next &rarr;</button>
+                    </div>
+                    <?php endif; ?>
+                </div>
             </section>
             <?php endif; ?>
 
@@ -744,19 +779,43 @@ get_header();
             <?php endif; ?>
 
             <?php if ($kop_fp_has_testimony) : ?>
-            <section class="kop-fp-section" id="<?php echo $kop_fp_id('testimony'); ?>"<?php echo $kop_fp_edit('testimony', 'survivor testimony'); ?>>
+            <section class="kop-fp-section kop-fp-testimony-section" id="<?php echo $kop_fp_id('testimony'); ?>"<?php echo $kop_fp_edit('testimony', 'survivor testimony'); ?>>
                 <?php echo $kop_fp_alias('testimony', 'testimony'); ?>
-                <h2><?php echo esc_html($kop_fp_title('testimony', 'Survivor testimony')); ?></h2>
+                <h2><?php echo $kop_fp_icon('users'); ?><?php echo esc_html($kop_fp_title('testimony', 'Survivor testimony')); ?></h2>
+                <p class="kop-fp-testimony-lead">What people who lived or worked here say happened. Survivors' own words are published with their permission; forum accounts are what was posted publicly and are reported as claims, not findings.</p>
                 <?php if (isset($kop_fp_psec['testimony'])) $kop_fp_render_items($kop_fp_psec['testimony']['items']); ?>
-                <?php if (!empty($page['testimony'])) : ?>
-                <p class="kop-fp-detail">First-person accounts from people who were at this facility, published with their permission.</p>
-                <?php endif; ?>
                 <?php foreach ((array) ($page['testimony'] ?? array()) as $kop_fp_t) : ?>
                     <figure class="kop-fp-testimony">
                         <blockquote><?php foreach (preg_split('/\R\s*\R/', $kop_fp_t['text']) as $kop_fp_para) : ?><p><?php echo nl2br(esc_html(trim($kop_fp_para))); ?></p><?php endforeach; ?></blockquote>
                         <figcaption><?php echo !empty($kop_fp_t['submitted']) ? 'Submitted by a survivor' : 'Survivor account'; ?><?php if ($kop_fp_t['date_label'] !== '') : ?>, shared <?php echo esc_html($kop_fp_t['date_label']); ?><?php endif; ?></figcaption>
                     </figure>
                 <?php endforeach; ?>
+                <?php if (!empty($page['forum'])) : $kop_fp_forum = $page['forum']; ?>
+                    <h3 class="kop-fp-subhead">Reported on survivor forums</h3>
+                    <?php if (!empty($kop_fp_forum['incidents'])) : ?>
+                    <ol class="kop-fp-timeline kop-fp-forum">
+                        <?php foreach ($kop_fp_forum['incidents'] as $inc) : ?>
+                            <li>
+                                <?php if ($inc['when'] !== '' || $inc['kind'] !== '') : ?>
+                                    <p class="kop-fp-tl-head">
+                                        <?php if ($inc['when'] !== '') : ?><span class="kop-fp-tl-when"><?php echo esc_html($inc['when']); ?></span><?php endif; ?>
+                                        <?php if ($inc['kind'] !== '') : ?><span class="kop-fp-tl-kind"><?php echo esc_html($inc['kind']); ?></span><?php endif; ?>
+                                    </p>
+                                <?php endif; ?>
+                                <p class="kop-fp-tl-text"><?php echo esc_html($inc['text']); ?><?php if ($inc['source'] !== '') $kop_fp_sources(array($inc), 'span'); ?></p>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                    <?php endif; ?>
+                    <?php if (!empty($kop_fp_forum['leads'])) $kop_fp_list($kop_fp_forum['leads'], 'kop-fp-notes'); ?>
+                    <?php if (!empty($kop_fp_forum['links'])) : ?>
+                    <ul class="kop-fp-records kop-fp-forum-links">
+                        <?php foreach ($kop_fp_forum['links'] as $kop_fp_fl) : ?>
+                            <li><a href="<?php echo esc_url($kop_fp_fl['url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($kop_fp_fl['label']); ?></a></li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php endif; ?>
+                <?php endif; ?>
             </section>
             <?php endif; ?>
 

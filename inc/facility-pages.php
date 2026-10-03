@@ -271,6 +271,10 @@ if (!function_exists('kop_facility_pages_enqueue')) {
         if (file_exists($js)) {
             wp_enqueue_script('kop-submit-info', $theme_uri . '/js/submit-info.js', array(), filemtime($js), true);
         }
+        $fp_js = $theme_dir . '/js/facility-profile.js';
+        if (file_exists($fp_js)) {
+            wp_enqueue_script('kop-facility-profile', $theme_uri . '/js/facility-profile.js', array(), filemtime($fp_js), true);
+        }
     }
     add_action('wp_enqueue_scripts', 'kop_facility_pages_enqueue', 20);
 }
@@ -2073,7 +2077,7 @@ if (!function_exists('kop_facility_pages_archive_exempt_domains')) {
             'archive.org', 'archive.today', 'archive.ph', 'archive.is',
             'kidsoverprofits.org',
             'reddit.com', 'redd.it', 'wikipedia.org', 'wikimedia.org',
-            'heal-online.org', 'linktr.ee',
+            'linktr.ee',
             'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
             'youtube.com', 'youtu.be', 'linkedin.com',
         );
@@ -2139,6 +2143,59 @@ if (!function_exists('kop_facility_pages_archive_link')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_video_parse')) {
+    /** [provider, id] for a YouTube or Vimeo address, or null. */
+    function kop_facility_pages_video_parse($url) {
+        $url = trim((string) $url);
+        if (preg_match('#^https?://(?:www\.|m\.)?(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:[^\#]*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{11})#i', $url, $m)) {
+            return array('youtube', $m[1]);
+        }
+        if (preg_match('#^https?://(?:www\.)?vimeo\.com/(?:video/)?(\d{6,})#i', $url, $m)) {
+            return array('vimeo', $m[1]);
+        }
+        return null;
+    }
+}
+
+if (!function_exists('kop_facility_pages_videos')) {
+    /**
+     * Videos for a record's video library: the record's "videos" list
+     * ({url, title, source}) plus any YouTube or Vimeo address already in its
+     * resourceLinks or profileLinks. Each: {provider, id, title, url, source,
+     * thumb}. Deduplicated; embeds play only after a click (templates/facility-page.php).
+     */
+    function kop_facility_pages_videos($doc) {
+        $candidates = array();
+        foreach ((array) ($doc['videos'] ?? array()) as $v) {
+            if (is_string($v)) $v = array('url' => $v);
+            if (is_array($v)) $candidates[] = $v;
+        }
+        foreach ((array) ($doc['resourceLinks'] ?? array()) as $v) {
+            if (is_array($v) && stripos((string) ($v['source'] ?? ''), 'Fornits') !== 0) $candidates[] = $v;
+        }
+        foreach ((array) ($doc['profileLinks'] ?? array()) as $v) {
+            $candidates[] = is_array($v) ? $v : array('url' => $v);
+        }
+        $out = array();
+        foreach ($candidates as $c) {
+            $url = trim((string) ($c['url'] ?? ''));
+            $p = kop_facility_pages_video_parse($url);
+            if (!$p || isset($out[$p[0] . $p[1]])) continue;
+            $title = trim((string) ($c['title'] ?? $c['label'] ?? ''));
+            if ($title === '' || preg_match('#^https?://#i', $title)) $title = 'Video';
+            $out[$p[0] . $p[1]] = array(
+                'provider' => $p[0],
+                'id'       => $p[1],
+                'title'    => $title,
+                'url'      => $url,
+                'source'   => trim((string) ($c['source'] ?? '')),
+                'thumb'    => $p[0] === 'youtube' ? 'https://i.ytimg.com/vi/' . $p[1] . '/hqdefault.jpg' : '',
+            );
+        }
+        return array_values($out);
+    }
+}
+
 if (!function_exists('kop_facility_pages_resource_links')) {
     /**
      * A record's resourceLinks, grouped by kind in kop_facility_resource_link_kinds()
@@ -2159,7 +2216,7 @@ if (!function_exists('kop_facility_pages_resource_links')) {
             }
             $link = $l['kind'] === 'other'
                 ? kop_facility_pages_archive_link($l['url'], $label)
-                : array('url' => $l['url'], 'label' => $label, 'live_url' => '', 'go_url' => '');
+                : array('url' => kop_heal_archive_url($l['url']), 'label' => $label, 'live_url' => '', 'go_url' => '');
             $link['credit'] = kop_facility_pages_resource_link_credit($l['source']);
             $by[$l['kind']][] = $link;
         }
@@ -2587,6 +2644,38 @@ if (!function_exists('kop_facility_page_data')) {
         $fact_sources = kop_facility_pages_note_sources($notes);
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
         $testimony = kop_facility_pages_testimony($doc['survivorTestimony'] ?? null);
+        // What survivors and families wrote on the Fornits forum is testimony, not a finding of the record:
+        // its incident lines, leads and discussion links leave their sections and join the survivor testimony.
+        $forum_incidents = array();
+        foreach ($incidents as $i => $inc) {
+            if (stripos((string) $inc['cite'], 'Fornits') === 0) {
+                $forum_incidents[] = $inc;
+                unset($incidents[$i]);
+            }
+        }
+        $incidents = array_values($incidents);
+        $forum_leads = array();
+        foreach ($notes as $i => $note) {
+            if (stripos($note, 'Fornits lead') === 0) {
+                $forum_leads[] = $note;
+                unset($notes[$i]);
+            }
+        }
+        $notes = array_values($notes);
+        $forum_links = array();
+        $other_resource_links = array();
+        if (is_array($doc['resourceLinks'] ?? null) && function_exists('kop_facility_resource_link_list')) {
+            foreach (kop_facility_resource_link_list($doc['resourceLinks']) as $rl) {
+                if (stripos((string) $rl['source'], 'Fornits') === 0) {
+                    $forum_links[] = array('url' => $rl['url'], 'label' => $rl['label'] !== '' ? $rl['label'] : 'Forum thread');
+                } else {
+                    $other_resource_links[] = $rl;
+                }
+            }
+        }
+        $forum = ($forum_incidents || $forum_leads || $forum_links)
+            ? array('incidents' => $forum_incidents, 'leads' => $forum_leads, 'links' => $forum_links)
+            : array();
         $profile_links = array();
         foreach ((array) ($doc['profileLinks'] ?? array()) as $link) {
             $url = '';
@@ -2612,7 +2701,7 @@ if (!function_exists('kop_facility_page_data')) {
             $profile_links[] = kop_facility_pages_archive_link($url, $label);
         }
         $resources = kop_facility_pages_resources_held($doc['resources'] ?? null);
-        $resource_links = kop_facility_pages_resource_links($doc['resourceLinks'] ?? null);
+        $resource_links = kop_facility_pages_resource_links($other_resource_links);
 
         // ---- Linked records ----------------------------------------------------
         $name_keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
@@ -2679,7 +2768,8 @@ if (!function_exists('kop_facility_page_data')) {
             'notes'         => $notes,
             'field_notes'   => $field_notes,
             'testimony'     => $testimony,
-            'profile_links' => $profile_links,
+            'forum'         => $forum,
+            'videos'        => kop_facility_pages_videos($doc),
             'resources'     => $resources,
             'resource_links' => $resource_links,
             'news'          => $news,

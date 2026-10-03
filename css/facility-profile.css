@@ -1532,3 +1532,201 @@ p.kop-op-draft {
     font-size: 0.92rem;
     line-height: 1.5;
 }
+
+/* ---- Survivor testimony: the most prominent block on the page --------- */
+.kop-fp-generated-body.kop-fp-reorder {
+    display: flex;
+    flex-direction: column;
+}
+.kop-fp-generated-body.kop-fp-reorder > * { order: 20; min-width: 0; }
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-summary { order: 0; }
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-stats { order: 1; }
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-jump { order: 2; }
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-expandbar { order: 3; }
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-testimony-section { order: 10; }
+
+.kop-fp-generated-body .kop-fp-testimony-section {
+    padding: 1.1rem 1.25rem 1.25rem;
+    background: var(--kop-soft-pastel-yellow, #fff5cb);
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-left-width: 8px;
+    border-radius: 8px;
+}
+.kop-fp-generated-body .kop-fp-testimony-section h2,
+.kop-fp-generated-body .kop-fp-testimony-section h3 {
+    color: var(--kop-midnight-blue, #000435);
+}
+.kop-fp-generated-body .kop-fp-testimony-section h2 {
+    font-size: 1.6rem;
+    border-bottom-color: var(--kop-midnight-blue, #000435);
+}
+.kop-fp-testimony-lead {
+    margin: 0 0 1rem;
+    color: var(--kop-text-muted, #4a5568);
+    font-size: 0.95rem;
+}
+.kop-fp-generated-body .kop-fp-testimony-section a { color: var(--kop-navy, #000080); text-decoration: underline; }
+.kop-fp-generated-body .kop-fp-testimony-section a:hover,
+.kop-fp-generated-body .kop-fp-testimony-section a:focus { color: var(--kop-midnight-blue, #000435); }
+
+/* ---- Collapsible sections (js/facility-profile.js) -------------------- */
+.kop-fp-generated-body .kop-fp-section h2 { margin-bottom: 0.5rem; }
+.kop-fp-generated-body .kop-fp-toggle,
+.kop-fp-generated-body .kop-fp-toggle:hover,
+.kop-fp-generated-body .kop-fp-toggle:focus,
+.kop-fp-generated-body .kop-fp-toggle:active {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.15rem 0;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    color: var(--kop-midnight-blue, #000435);
+    font: inherit;
+    text-align: left;
+    text-transform: none;
+    letter-spacing: normal;
+    cursor: pointer;
+}
+.kop-fp-generated-body .kop-fp-toggle:hover { color: var(--kop-navy, #000080); }
+.kop-fp-generated-body .kop-fp-toggle:focus-visible {
+    outline: 3px solid var(--kop-teal, #33a7b5);
+    outline-offset: 2px;
+}
+.kop-fp-chev {
+    margin-left: auto;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-right: 3px solid currentColor;
+    border-bottom: 3px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.15s;
+    flex: none;
+}
+.kop-fp-collapsible.is-collapsed .kop-fp-chev { transform: rotate(-45deg); }
+.kop-fp-collapsible.is-collapsed { margin-bottom: 1.1rem; }
+.kop-fp-collapsible.is-collapsed > h2 { border-bottom-color: var(--kop-sand, #f2eedf); }
+
+.kop-fp-expandbar {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin: 0 0 1rem;
+}
+.kop-fp-generated-body button.kop-fp-expand,
+.kop-fp-generated-body button.kop-fp-expand:hover,
+.kop-fp-generated-body button.kop-fp-expand:focus,
+.kop-fp-generated-body button.kop-fp-expand:active {
+    padding: 0.3rem 0.8rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.kop-fp-generated-body button.kop-fp-expand:hover,
+.kop-fp-generated-body button.kop-fp-expand:focus {
+    background: var(--kop-sand, #f2eedf);
+}
+
+/* ---- Video library ----------------------------------------------------- */
+.kop-vc-viewport {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    border-radius: 8px;
+}
+.kop-vc-viewport:focus-visible { outline: 3px solid var(--kop-teal, #33a7b5); outline-offset: 2px; }
+.kop-vc-slide {
+    flex: 0 0 100%;
+    margin: 0;
+    scroll-snap-align: start;
+}
+.kop-vc-frame {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--kop-midnight-blue, #000435);
+    border-radius: 8px;
+    overflow: hidden;
+}
+.kop-vc-frame iframe,
+.kop-vc-frame img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+}
+.kop-vc-frame button.kop-vc-play,
+.kop-vc-frame button.kop-vc-play:hover,
+.kop-vc-frame button.kop-vc-play:focus,
+.kop-vc-frame button.kop-vc-play:active {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0;
+    background: var(--kop-midnight-blue, #000435);
+    border: 0;
+    border-radius: 0;
+    color: var(--kop-white, #fff);
+    cursor: pointer;
+}
+.kop-vc-frame button.kop-vc-play:focus-visible { outline: 4px solid var(--kop-chartreuse, #b2e102); outline-offset: -4px; }
+.kop-vc-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    transform: translate(-50%, -50%);
+    background: var(--kop-midnight-blue, #000435);
+    border: 3px solid var(--kop-white, #fff);
+    border-radius: 50%;
+    color: var(--kop-white, #fff);
+}
+.kop-vc-icon svg { width: 1.6rem; height: 1.6rem; }
+.kop-vc-slide figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    justify-content: space-between;
+    padding: 0.5rem 0.1rem 0;
+    font-size: 0.92rem;
+}
+.kop-vc-title { font-weight: 600; color: var(--kop-midnight-blue, #000435); }
+.kop-vc-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+.kop-vc-count { color: var(--kop-text-muted, #4a5568); font-size: 0.9rem; }
+.kop-vc button.kop-vc-btn,
+.kop-vc button.kop-vc-btn:hover,
+.kop-vc button.kop-vc-btn:focus,
+.kop-vc button.kop-vc-btn:active {
+    padding: 0.4rem 1rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.kop-vc button.kop-vc-btn:hover,
+.kop-vc button.kop-vc-btn:focus { background: var(--kop-sand, #f2eedf); }
+
+@media (prefers-reduced-motion: reduce) {
+    .kop-fp-chev { transition: none; }
+    .kop-vc-viewport { scroll-behavior: auto; }
+}

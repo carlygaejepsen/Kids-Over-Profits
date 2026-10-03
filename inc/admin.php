@@ -709,17 +709,17 @@ function kop_template_assignments() {
     return array(
         // Facility Profile posts (phase 2). Hyde School was the pilot; the
         // rest followed once its render diff against the stock layout passed.
-        'hyde'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'long-creek'                 => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'the-buckeye-ranch'          => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'asheville-academy'          => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'robert-land-academy'        => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'sweetser'                   => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'me-new-horizons'            => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'good-will-hinckley-roundel' => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'elan'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'summit-achievement'         => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
-        'pathway-family-center'      => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'hyde'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'long-creek'                 => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'the-buckeye-ranch'          => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'asheville-academy'          => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'robert-land-academy'        => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'sweetser'                   => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'me-new-horizons'            => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'good-will-hinckley-roundel' => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'elan'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'summit-achievement'         => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'pathway-family-center'      => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
 
         // Hand-written facility pages (phase 4): same profile treatment, content untouched.
         'elevations-rtc'             => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
@@ -2179,6 +2179,18 @@ function kop_apply_template_assignments() {
         $template  = is_array($spec) ? $spec['template'] : $spec;
         $post_type = (is_array($spec) && !empty($spec['post_type'])) ? $spec['post_type'] : 'page';
         $page = get_page_by_path($slug, OBJECT, $post_type);
+        if (!$page && $post_type === 'page') {
+            // Facility profiles were posts; they are pages now. Same ID, slug and content, so the URL stays.
+            $old_post = get_page_by_path($slug, OBJECT, 'post');
+            if ($old_post && $old_post->post_status !== 'trash') {
+                set_post_type($old_post->ID, 'page');
+                wp_set_object_terms($old_post->ID, array(), 'category');
+                wp_set_object_terms($old_post->ID, array(), 'post_tag');
+                clean_post_cache($old_post->ID);
+                $summary['converted'][] = $slug;
+                $page = get_post($old_post->ID);
+            }
+        }
         if (!$page) {
             $summary['missing'][] = $slug;
             continue;
@@ -2203,7 +2215,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '100';
+    $version = '101';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
