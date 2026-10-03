@@ -390,27 +390,42 @@ global $wpdb;
     <?php endif; ?>
 
     <?php
-    $inspection_text_results = function_exists('kop_global_search_inspection_text_matches')
-        ? kop_global_search_inspection_text_matches($search_query, 10)
-        : array();
+    // Inspection report text: a search of every report's full text takes
+    // seconds, so the page prints without it and fetches it afterwards
+    // (kop/v1/global-search?part=reports, cached per phrase).
+    $inspection_text_results = array();
     ?>
-
-    <?php if (!empty($inspection_text_results)): ?>
-    <section class="kop-search-section kop-search-inspection-text">
+    <?php if (strlen(trim((string) $search_query)) >= 4): ?>
+    <section class="kop-search-section kop-search-inspection-text" id="kop-search-report-text"
+             data-endpoint="<?php echo esc_url(rest_url('kop/v1/global-search')); ?>"
+             data-q="<?php echo esc_attr($search_query); ?>">
         <h2 class="kop-search-section-title">Inspection Report Text</h2>
-        <ul class="kop-search-result-list">
-            <?php foreach ($inspection_text_results as $result): ?>
-            <li class="kop-search-result kop-result-inspection">
-                <div class="kop-result-main">
-                    <a class="kop-result-name kop-result-link" href="<?php echo esc_url($result['url']); ?>">
-                        <?php echo esc_html($result['title']); ?>
-                    </a>
-                    <span class="kop-result-meta"><?php echo esc_html($result['meta']); ?></span>
-                </div>
-            </li>
-            <?php endforeach; ?>
-        </ul>
+        <p class="kop-result-meta" aria-live="polite">Searching inspection report text…</p>
+        <ul class="kop-search-result-list" hidden></ul>
     </section>
+    <script>
+    (function () {
+        var box = document.getElementById('kop-search-report-text');
+        if (!box || !window.fetch) return;
+        var note = box.querySelector('p'), list = box.querySelector('ul');
+        var url = box.getAttribute('data-endpoint');
+        url += (url.indexOf('?') === -1 ? '?' : '&') + 'part=reports&q=' + encodeURIComponent(box.getAttribute('data-q'));
+        fetch(url).then(function (r) { return r.ok ? r.json() : null; }).then(function (data) {
+            var items = data && data.groups && data.groups[0] ? data.groups[0].items : [];
+            if (!items.length) { box.parentNode.removeChild(box); return; }
+            items.forEach(function (item) {
+                var li = document.createElement('li'); li.className = 'kop-search-result kop-result-inspection';
+                var main = document.createElement('div'); main.className = 'kop-result-main';
+                var a = document.createElement('a'); a.className = 'kop-result-name kop-result-link';
+                a.href = item.url; a.textContent = item.title;
+                var meta = document.createElement('span'); meta.className = 'kop-result-meta'; meta.textContent = item.meta || '';
+                main.appendChild(a); main.appendChild(meta); li.appendChild(main); list.appendChild(li);
+            });
+            note.parentNode.removeChild(note);
+            list.hidden = false;
+        }).catch(function () { box.parentNode.removeChild(box); });
+    })();
+    </script>
     <?php endif; ?>
 
     <?php

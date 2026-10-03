@@ -170,15 +170,9 @@ function kop_asl_collect_database_matches($phrase) {
         }
     }
 
-    if (function_exists('kop_global_search_inspection_text_matches')) {
-        foreach (kop_global_search_inspection_text_matches($phrase, 3) as $match) {
-            $items[] = array(
-                'title' => $match['title'],
-                'link'  => $match['url'],
-                'meta'  => $match['meta'],
-            );
-        }
-    }
+    // Report text (kop_global_search_inspection_text_matches) is left out of
+    // the as-you-type dropdown: it takes seconds per phrase. The search page
+    // and the search bar load it after their other results.
 
     // --- News submissions --------------------------------------------------
     if (kop_asl_table_exists('news_submissions')) {

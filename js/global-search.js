@@ -191,12 +191,34 @@
                 if (!data) return; // retried without nonce
                 if (input.value.trim() !== q) return; // stale response
                 renderResults(data);
+                if (q.length >= 4) loadReportText(q, opts);
             })
             .catch(function (err) {
                 if (err && err.name === 'AbortError') return;
                 statusEl.textContent = 'Search is unavailable right now. Please try again in a moment.';
                 statusEl.hidden = false;
                 resultsEl.textContent = '';
+            });
+    }
+
+    // Inspection report text is a slow search (every report's full text), so
+    // it is asked for on its own and added below the other results.
+    function loadReportText(q, opts) {
+        var url = ENDPOINT + (ENDPOINT.indexOf('?') === -1 ? '?' : '&') + 'q=' + encodeURIComponent(q) + '&part=reports';
+        var note = el('p', 'kop-global-search__status', 'Searching inspection report text…');
+        resultsEl.appendChild(note);
+        fetch(url, opts)
+            .then(function (res) { return res.ok ? res.json() : null; })
+            .then(function (data) {
+                if (note.parentNode) note.parentNode.removeChild(note);
+                if (!data || input.value.trim() !== q) return;
+                var groups = data.groups || [];
+                if (!groups.length) return;
+                statusEl.hidden = true;
+                groups.forEach(renderGroup);
+            })
+            .catch(function () {
+                if (note.parentNode) note.parentNode.removeChild(note);
             });
     }
 
@@ -227,7 +249,10 @@
 
         statusEl.hidden = true;
 
-        groups.forEach(function (group) {
+        groups.forEach(renderGroup);
+    }
+
+    function renderGroup(group) {
             var section = el('div', 'kop-global-search__group');
             section.appendChild(el('h3', 'kop-global-search__group-label', group.label));
             var list = el('div', 'kop-global-search__group-items');
@@ -247,7 +272,6 @@
             });
             section.appendChild(list);
             resultsEl.appendChild(section);
-        });
     }
 
     // ----------------------------------------------------------- keyboard

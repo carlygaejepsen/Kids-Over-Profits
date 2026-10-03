@@ -34,6 +34,15 @@ add_action('rest_api_init', function () {
                 'type'              => 'string',
                 'sanitize_callback' => 'sanitize_text_field',
             ),
+            // part=reports: only the inspection report text matches. That
+            // search reads every report's full text (seconds, not
+            // milliseconds), so the search bar and search page ask for it
+            // separately and show everything else first.
+            'part' => array(
+                'required'          => false,
+                'type'              => 'string',
+                'sanitize_callback' => 'sanitize_key',
+            ),
         ),
     ));
 });
@@ -49,7 +58,12 @@ function kop_global_search_rest_callback(WP_REST_Request $request) {
         ), 200);
     }
 
-    $groups = kop_global_search_collect($phrase);
+    if ($request->get_param('part') === 'reports') {
+        $items  = kop_global_search_inspection_text_matches($phrase, 10);
+        $groups = $items ? array(array('key' => 'inspection_text', 'label' => 'Inspection report text', 'items' => $items)) : array();
+    } else {
+        $groups = kop_global_search_collect($phrase);
+    }
     $total  = 0;
     foreach ($groups as $group) {
         $total += count($group['items']);
@@ -230,11 +244,8 @@ function kop_global_search_collect($phrase) {
             $groups[] = array('key' => 'inspections', 'label' => 'Inspection records', 'items' => $items);
         }
 
-        // --- Extracted inspection PDF text ------------------------------------
-        $items = kop_global_search_inspection_text_matches($phrase, 5);
-        if ($items) {
-            $groups[] = array('key' => 'inspection_text', 'label' => 'Inspection report text', 'items' => $items);
-        }
+        // Extracted inspection PDF text is not searched here: it is slow, so
+        // callers fetch it on its own (?part=reports on the REST route).
     }
 
     // --- News submissions --------------------------------------------------
@@ -393,12 +404,24 @@ function kop_global_search_collect($phrase) {
     return $groups;
 }
 
-/** Search extracted report text, summaries and structured citation fields. */
+/**
+ * Search extracted report text, summaries and structured citation fields.
+ *
+ * A LIKE over every report's full text (~480 MB) takes about 7 seconds on
+ * the host, so results are cached per phrase for 12 hours (the scrapers add
+ * reports nightly) and the search bar and page load them after the rest.
+ */
 function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
     global $wpdb;
 
     if (strlen(trim((string)$phrase)) < 4 || !kop_asl_table_exists('inspection_reports') || !kop_asl_table_exists('inspection_facilities')) {
         return array();
+    }
+
+    $cache_key = 'kop_gs_reports_' . md5(strtolower(trim((string)$phrase)) . '|' . (int)$limit);
+    $cached = get_transient($cache_key);
+    if (is_array($cached)) {
+        return $cached;
     }
 
     $like = '%' . $wpdb->esc_like(trim((string)$phrase)) . '%';
@@ -425,5 +448,6 @@ function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
         $meta = array_filter(array('Inspection report text', $state, (string)$row['report_date']));
         $items[] = array('title' => $facility, 'url' => $url, 'meta' => implode(' · ', $meta));
     }
+    set_transient($cache_key, $items, 12 * HOUR_IN_SECONDS);
     return $items;
 }
