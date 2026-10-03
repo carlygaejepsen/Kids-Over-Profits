@@ -103,3 +103,63 @@ html body #fancybox-content object[type="application/pdf"] {
     width: 100%;
     height: 100%;
 }
+
+/* Kadence mobile menu drawer (#090c10 panel). Kadence's inline CSS paints the
+   current page's item --global-palette-highlight (navy #000080, 1.2:1 on the
+   drawer), and every other state is inherited. Each state is named here so a
+   tapped link (hover and focus stick on touch screens) stays readable. */
+html body #mobile-drawer .drawer-inner {
+    background: #090c10;
+    color: #ffffff;
+}
+
+html body #mobile-drawer .mobile-navigation ul li > a,
+html body #mobile-drawer .mobile-navigation ul li.menu-item-has-children > .drawer-nav-drop-wrap,
+html body #mobile-drawer .mobile-navigation ul li.menu-item-has-children > .drawer-nav-drop-wrap > a,
+html body #mobile-drawer button.drawer-sub-toggle,
+html body #mobile-drawer button.menu-toggle-close {
+    color: #f7fafc;
+    background: transparent;
+}
+
+html body #mobile-drawer .mobile-navigation ul li > a:hover,
+html body #mobile-drawer .mobile-navigation ul li > a:focus,
+html body #mobile-drawer .mobile-navigation ul li > a:active,
+html body #mobile-drawer .mobile-navigation ul li > .drawer-nav-drop-wrap > a:hover,
+html body #mobile-drawer .mobile-navigation ul li > .drawer-nav-drop-wrap > a:focus,
+html body #mobile-drawer .mobile-navigation ul li > .drawer-nav-drop-wrap > a:active,
+html body #mobile-drawer button.drawer-sub-toggle:hover,
+html body #mobile-drawer button.drawer-sub-toggle:focus,
+html body #mobile-drawer button.drawer-sub-toggle:active,
+html body #mobile-drawer button.menu-toggle-close:hover,
+html body #mobile-drawer button.menu-toggle-close:focus,
+html body #mobile-drawer button.menu-toggle-close:active {
+    color: #ffffff;
+    background: rgba(51, 167, 181, 0.22);
+}
+
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > a,
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > .drawer-nav-drop-wrap,
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > .drawer-nav-drop-wrap > a,
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > a:hover,
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > a:focus,
+html body #mobile-drawer .mobile-navigation ul li.current-menu-item > a:active {
+    color: var(--kop-chartreuse, #B2E102);
+    font-weight: 700;
+}
+
+html body #mobile-drawer .mobile-navigation a:focus-visible,
+html body #mobile-drawer button:focus-visible {
+    outline: 2px solid var(--kop-teal, #33A7B5);
+    outline-offset: -2px;
+}
+
+/* The open-menu button: Kadence's hover is navy on whatever the header
+   behind it is; keep it midnight on the light header in every state. */
+html body .mobile-toggle-open-container button.menu-toggle-open,
+html body .mobile-toggle-open-container button.menu-toggle-open:hover,
+html body .mobile-toggle-open-container button.menu-toggle-open:focus,
+html body .mobile-toggle-open-container button.menu-toggle-open:active {
+    color: var(--kop-midnight-blue, #000435);
+    background: transparent;
+}
