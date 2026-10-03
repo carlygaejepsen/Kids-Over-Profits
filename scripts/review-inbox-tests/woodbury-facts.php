@@ -1,0 +1,115 @@
+<?php
+/**
+ * scripts/test-review-inbox.php checks for the 'woodbury-facts' source
+ * (inc/review-inbox/woodbury-facts.php over inc/woodbury-facts.php), on the
+ * mirror's real proposals. The mirror's copy of the table predates the young
+ * adult columns, so they are added here and one program with no record is
+ * put on the young adult tab. Adding to a facility record, and Undo (which
+ * opens the facility store first), need MySQL and are not run.
+ */
+
+require_once dirname(__DIR__, 2) . '/inc/closure-reports.php';
+require_once dirname(__DIR__, 2) . '/inc/woodbury-facts.php';
+$GLOBALS['kop_test_options']['kop_woodbury_facts_db'] = KOP_WOODBURY_FACTS_DB_VERSION;
+$GLOBALS['kop_test_options']['kop_closure_reports_db'] = KOP_CLOSURE_REPORTS_DB_VERSION;
+
+if (!function_exists('sanitize_key')) {
+    function sanitize_key($s) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $s)); }
+}
+
+(function () {
+    $pdo = $GLOBALS['pdo'];
+    $t = 'wpdl_kop_woodbury_facts';
+    if (!$pdo->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = '$t'")->fetchColumn()) return;
+    $cols = array_column($pdo->query("PRAGMA table_info($t)")->fetchAll(PDO::FETCH_ASSOC), 'name');
+    if (!in_array('ya', $cols, true)) $pdo->exec("ALTER TABLE $t ADD COLUMN ya INTEGER NOT NULL DEFAULT 0");
+    if (!in_array('ya_why', $cols, true)) $pdo->exec("ALTER TABLE $t ADD COLUMN ya_why TEXT NULL");
+    $program = $pdo->query("SELECT program FROM $t WHERE status = 'pending' AND facility_id = 0 AND grp <> 'consultant' ORDER BY program DESC LIMIT 1")->fetchColumn();
+    if ($program !== false && !(int) $pdo->query("SELECT COUNT(*) FROM $t WHERE ya = 1")->fetchColumn()) {
+        $pdo->prepare("UPDATE $t SET ya = 1, ya_why = 'Ages: 18-25' WHERE program = ? AND facility_id = 0 AND status = 'pending'")->execute(array($program));
+    }
+})();
+
+function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check) {
+    $pdo = $GLOBALS['pdo'];
+    $t = 'wpdl_kop_woodbury_facts';
+    $row = function ($k) { return kop_wbf_rows(array($k))[0] ?? null; };
+    $pick = function ($sql) use ($pdo) { return (string) $pdo->query($sql)->fetchColumn(); };
+
+    // A staff item: the List choice is the category; a correction keeps the build's version for Reset.
+    $staff = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND op = 'add_staff' AND path = 'staff.notableStaff' AND facility_id > 0 ORDER BY id LIMIT 1");
+    $before = $row($staff);
+    $it = kop_rinbox_get_item('woodbury-facts', $staff);
+    $cat = array_values(array_filter($it['fields'], function ($f) { return !empty($f['category']); }));
+    $check('woodbury-facts: a staff item\'s list is its category field', count($cat) === 1 && $cat[0]['name'] === 'where' && isset($cat[0]['options']['staff.administrator']));
+    $check('woodbury-facts: a matched item adds to its record', $it['actions'][0]['id'] === 'apply' && (int) $it['actions'][0]['params'][0]['value'] === (int) $before['facility_id']);
+    $v0 = kop_wbf_row_value($before);
+    call_user_func($src['save'], $staff, array('where' => 'staff.administrator'));
+    $r = $row($staff);
+    $v = kop_wbf_row_value($r);
+    $check('woodbury-facts: changing only the list keeps the name and role', $r['path'] === 'staff.administrator' && $v['name'] === $v0['name'] && $v['role'] === $v0['role'], $r['label']);
+    call_user_func($src['save'], $staff, array('role' => 'Clinical Director (test)'));
+    $r = $row($staff);
+    $check('woodbury-facts: save corrects the role and relabels', kop_wbf_row_value($r)['role'] === 'Clinical Director (test)' && strpos($r['label'], 'Clinical Director (test)') !== false, $r['label']);
+    $it = kop_rinbox_get_item('woodbury-facts', $staff);
+    $check('woodbury-facts: a corrected item offers Reset', in_array('reset', array_column($it['actions'], 'id'), true));
+    call_user_func($src['act'], $staff, 'reset', array());
+    $r = $row($staff);
+    $check('woodbury-facts: Reset puts back what Woodbury said', $r['path'] === $before['path'] && $r['label'] === $before['label'] && $r['value'] === $before['value']);
+    try {
+        call_user_func($src['save'], $staff, array('name' => ''));
+        $check('woodbury-facts: an empty name is refused', false);
+    } catch (RuntimeException $e) {
+        $check('woodbury-facts: an empty name is refused', true, $e->getMessage());
+    }
+    $year = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND op = 'set_if_empty' AND path = 'operatingPeriod.startYear' ORDER BY id LIMIT 1");
+    if ($year !== '') {
+        try {
+            call_user_func($src['save'], $year, array('year' => 'nineteen'));
+            $check('woodbury-facts: a start year that is not a year is refused', false);
+        } catch (RuntimeException $e) {
+            $check('woodbury-facts: a start year that is not a year is refused', true, $e->getMessage());
+        }
+    }
+
+    // No record: add needs a record; create and young adult are offered.
+    $none = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND facility_id = 0 AND grp <> 'consultant' AND ya = 0 ORDER BY id LIMIT 1");
+    $it = kop_rinbox_get_item('woodbury-facts', $none);
+    $ids = array_column($it['actions'], 'id');
+    $check('woodbury-facts: a program with no record can be pointed at one, created, or moved to young adult', $ids === array('apply', 'create', 'ya_on', 'reject'), implode(',', $ids));
+    try {
+        call_user_func($src['act'], $none, 'apply', array('facility' => ''));
+        $check('woodbury-facts: adding with no record picked is refused', false);
+    } catch (RuntimeException $e) {
+        $check('woodbury-facts: adding with no record picked is refused', true, $e->getMessage());
+    }
+    $ya = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND ya = 1 ORDER BY id LIMIT 1");
+    $it = kop_rinbox_get_item('woodbury-facts', $ya);
+    $check('woodbury-facts: a young adult item is created or filed as one, never a facility', in_array('ya_create', array_column($it['actions'], 'id'), true)
+        && !in_array('apply', array_column($it['actions'], 'id'), true));
+
+    // Reject; Undo needs the facility store (MySQL), so it is put back by hand here.
+    $m = call_user_func($src['act'], $staff, 'reject', array());
+    $check('woodbury-facts: reject', $row($staff)['status'] === 'rejected', $m['message']);
+    $it = kop_rinbox_get_item('woodbury-facts', $staff);
+    $check('woodbury-facts: a rejected item offers Back to review and no edits', $it['actions'][0]['id'] === 'undo' && !empty($it['fields'][0]['readonly']));
+    try {
+        call_user_func($src['save'], $staff, array('role' => 'x'));
+        $check('woodbury-facts: a rejected item cannot be edited', false);
+    } catch (RuntimeException $e) {
+        $check('woodbury-facts: a rejected item cannot be edited', true, $e->getMessage());
+    }
+    try {
+        $m = call_user_func($src['act'], $staff, 'undo', array());
+        $check('woodbury-facts: back to review', $row($staff)['status'] === 'pending', $m['message']);
+    } catch (RuntimeException $e) {
+        echo '  (Undo not run offline: ' . $e->getMessage() . ")\n";
+    }
+    $pdo->prepare("UPDATE $t SET status = ?, applied = ?, reviewed_by = ?, reviewed_at = ?, extra = ?, auto = ? WHERE pkey = ?")
+        ->execute(array($before['status'], $before['applied'], $before['reviewed_by'], $before['reviewed_at'], $before['extra'], $before['auto'], $staff));
+    $applied = $pick("SELECT pkey FROM $t WHERE status = 'applied' AND applied_fid > 0 ORDER BY id LIMIT 1");
+    if ($applied !== '') {
+        $it = kop_rinbox_get_item('woodbury-facts', $applied);
+        $check('woodbury-facts: an added item offers Undo', array_column($it['actions'], 'id') === array('undo') && $it['facility']['id'] > 0);
+    }
+}
