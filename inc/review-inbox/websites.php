@@ -81,6 +81,8 @@ function kop_rinbox_websites_item($p) {
     if ($p->post_status === 'pending') {
         $actions[] = array('id' => 'publish', 'label' => 'Keep', 'style' => 'approve');
         $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject');
+    } elseif ($p->post_status === 'trash' && get_post_meta($id, '_kop_moved', true)) {
+        $actions[] = array('id' => 'unmove', 'label' => 'Undo move', 'style' => 'undo');
     } elseif ($p->post_status === 'trash') {
         $actions[] = array('id' => 'untrash', 'label' => 'Restore', 'style' => 'undo');
     } else {
@@ -108,6 +110,8 @@ function kop_rinbox_websites_item($p) {
             $field('description', 'textarea'), $field('selection', 'textarea'), $sent_by,
         ),
         'actions'      => $actions,
+        // Reclassify: the news, lawsuit or legislation queue, Industry PR, or a facility's website or resources.
+        'moves'        => $p->post_status === 'pending' && preg_match('#^https?://#i', $meta['url']) ? kop_rdest_moves() : array(),
         'links'        => array(array('label' => 'Edit in WordPress', 'url' => admin_url('post.php?post=' . $id . '&action=edit'))),
     );
 }
@@ -141,6 +145,30 @@ function kop_rinbox_websites_act($key, $action, array $params) {
             kop_rinbox_flush_counts();
             $now = kop_rinbox_websites_post($id);
             return array('message' => 'Restored ' . $name . ($now && $now->post_status === 'publish' ? ' to the Kept tab.' : ' to the waiting list.'));
+        case 'move':
+            if ($p->post_status !== 'pending') throw new RuntimeException('Only a waiting website can move.');
+            $done = kop_rdest_put((string) ($params['to'] ?? ''), array(
+                'url' => (string) get_post_meta($id, '_kop_url', true), 'title' => (string) $p->post_title,
+                'site_name' => (string) get_post_meta($id, '_kop_site_name', true),
+                'published' => (string) get_post_meta($id, '_kop_published', true),
+                'facility' => (string) get_post_meta($id, '_kop_facility', true),
+                'facility_id' => (int) ($params['facility_id'] ?? 0), 'kind' => (string) ($params['kind'] ?? ''),
+                'source_note' => 'Sent in from the browser extension', 'note' => 'Sent in as a website; moved here by ' . kop_rinbox_reviewer() . '.',
+                'via' => 'browser extension',
+            ), kop_rinbox_reviewer());
+            update_post_meta($id, '_kop_moved', wp_json_encode($done));
+            if (!wp_trash_post($id)) throw new RuntimeException('Moved, but WordPress would not take it off this list.');
+            kop_rinbox_flush_counts();
+            return array('message' => $done['message'] . ' It left this list (Trashed tab); Undo move puts it back.');
+        case 'unmove':
+            $done = json_decode((string) get_post_meta($id, '_kop_moved', true), true);
+            if (!is_array($done)) throw new RuntimeException('There is no move to undo.');
+            kop_rdest_take_back($done);
+            delete_post_meta($id, '_kop_moved');
+            $res = wp_update_post(array('ID' => $id, 'post_status' => 'pending'), true);
+            if (is_wp_error($res) || !$res) throw new RuntimeException('Taken back, but WordPress would not put the website back on the list.');
+            kop_rinbox_flush_counts();
+            return array('message' => 'Moved back. ' . $name . ' is waiting for review again.');
     }
     throw new RuntimeException('Unknown action.');
 }

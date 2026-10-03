@@ -674,6 +674,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (status) params.set('status', status);
         if (search) params.set('search', search);
+        // "Came from" (filled by js/review-inbox.js): the scraper, an import, the extension, people.
+        const originFilter = document.getElementById('originFilter');
+        if (originFilter && originFilter.value) params.set('origin', originFilter.value);
 
         loadingMessage.style.display = 'block';
         detachModal();              // restore modal to original parent before wiping list

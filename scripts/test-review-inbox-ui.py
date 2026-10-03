@@ -36,12 +36,15 @@ PAGE = """<!doctype html><html><head><meta charset="utf-8">
       <button type="button" class="submission-tab" data-type="lawsuit">Lawsuits <span class="tab-count" data-count-for="lawsuit"></span></button>
     </div>
   </div>
-  <div class="filter-controls"><div class="submission-tabs status-tabs"><button type="button" class="submission-tab is-active">Pending</button></div></div>
+  <div class="filter-controls"><input type="hidden" id="statusFilter" value="submitted"><div class="submission-tabs status-tabs"><button type="button" class="submission-tab is-active">Pending</button></div>
+    <label for="originFilter">Came from:</label><select id="originFilter" class="origin-filter"><option value="">Everywhere</option></select>
+    <button type="button" id="refreshBtn">Refresh</button></div>
   <div class="bulk-actions"><button type="button">Approve selected</button></div>
 </div>
 <div class="submissions-list-container"><div id="submissionsList" class="submissions-list"></div></div>
 </div></div>
 <script>window.kopReviewInbox = {rest: %REST%, nonce: "n"};</script>
+<script>window.kopRefreshes = 0; document.addEventListener('click', function (e) { if (e.target.id === 'refreshBtn') window.kopRefreshes++; });</script>
 <script src="/js/url-labels.js"></script>
 <script src="/js/review-inbox.js"></script>
 <script>
@@ -85,16 +88,18 @@ NEWS = {
     "fields": [{"name": "article_title", "label": "Title", "type": "text", "value": "Teen dies at ranch"},
                {"name": "article_type", "label": "Category", "type": "select", "category": True, "value": "general",
                 "options": {"general": "General", "closure": "Closure", "lawsuit": "Lawsuit"}}],
-    "moves": [{"id": "lawsuit", "label": "Move to Lawsuits"}], "actions": [], "tags": ["Neglect"], "links": [],
+    "moves": [{"id": "lawsuit", "label": "Move to Lawsuits"},
+              {"id": "website", "label": "Move to Facility website", "params": [{"name": "facility_id", "label": "Facility", "type": "facility", "value": 0}]}],
+    "actions": [], "tags": ["Neglect"], "links": [],
 }
 
 SOURCES = {"sources": [
     {"key": "news", "label": "News", "group": "Submissions", "views": {"pending": "Pending"}, "count": 2, "native": True,
-     "tool_url": "", "help": "", "can_save": True, "can_ai": True},
+     "tool_url": "", "help": "", "can_save": True, "can_ai": True, "has_origins": True},
     {"key": "closure", "label": "Closure reports", "group": "Found by the news scans",
      "views": {"pending": "To review", "applied": "Confirmed"}, "count": 6, "native": False,
      "tool_url": "https://inbox.test/wp-admin/admin.php?page=kop-closure-reports",
-     "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True},
+     "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True, "has_origins": True},
     {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting"}, "count": 0,
      "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False},
 ], "tags": ["follow up", "needs source", "Neglect"]}
@@ -122,6 +127,9 @@ def main():
             calls.append((path, body, url))
             if path == "sources":
                 out = SOURCES
+            elif path == "origins":
+                out = {"origins": [{"key": "scraper-google", "label": "News scraper: Google News", "count": 3},
+                                   {"key": "sciad", "label": "SCIAD NET", "count": 2}]}
             elif path == "items":
                 if "source=news" in url:
                     out = {"items": [NEWS], "total": 1}
@@ -183,6 +191,20 @@ def main():
             pg.locator(".rinbox-native-rename button").click()
             pg.wait_for_function("() => /Utah ranch/.test(document.querySelector('.submission-card h3').textContent)")
             check(True, f"@{width} rename updates the card's heading")
+            pg.wait_for_function("() => document.getElementById('originFilter').options.length === 3")
+            check("SCIAD NET (2)" in pg.locator("#originFilter").inner_text(), f"@{width} Came from lists the page's own origins with counts")
+            pg.locator("#originFilter").select_option("sciad")
+            check(pg.evaluate("window.kopRefreshes") >= 1, f"@{width} choosing an origin reloads the page's own list")
+            pg.locator(".rinbox-native select[aria-label='Move to another queue']").select_option("website")
+            check(pg.locator(".rinbox-native .rinbox-move-form input[data-field='facility_id']").is_visible(), f"@{width} a facility destination asks for the facility first")
+            pg.locator(".rinbox-native .rinbox-move-form input[data-field='facility_id']").fill("12")
+            pg.locator(".rinbox-native .rinbox-move-form button").click()
+            pg.wait_for_function("() => /Moved/.test(document.querySelector('.rinbox-native .rinbox-message').textContent)")
+            check(any(c[0] == "act" and c[1]["params"] == {"to": "website", "facility_id": "12"} for c in calls), f"@{width} the move sends the facility",
+                  json.dumps([c[1] for c in calls if c[0] == "act"]))
+            calls.clear()
+            pg.reload(wait_until="load")
+            pg.wait_for_selector(".submission-card .rinbox-native")
             pg.locator(".rinbox-native select[aria-label='Move to another queue']").select_option("lawsuit")
             pg.wait_for_selector(".rinbox-native button:has-text('Undo move')")
             check(True, f"@{width} move shows its Undo")
@@ -190,6 +212,12 @@ def main():
                 pg.screenshot(path=str(shots / f"native-{width}.png"), full_page=True)
 
             pg.locator(".rinbox-tab", has_text="Closure reports").click()
+            pg.wait_for_selector(".rinbox-card")
+            pg.wait_for_function("() => document.querySelector('.rinbox-origin') && document.querySelector('.rinbox-origin').options.length === 3")
+            pg.locator(".rinbox-origin").select_option("sciad")
+            pg.wait_for_timeout(300)
+            check(any(c[0] == "items" and "origin=sciad" in c[2] for c in calls), f"@{width} a queue filters by where items came from")
+            pg.locator(".rinbox-origin").select_option("")
             pg.wait_for_selector(".rinbox-card")
             check(pg.locator(".submissions-list-container").is_hidden(), f"@{width} the page's own list steps aside")
             check("type=closure" in pg.url, f"@{width} the open queue is in the address", pg.url)

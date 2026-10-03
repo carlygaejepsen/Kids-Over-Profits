@@ -60,6 +60,11 @@ get_header();
                     <button type="button" role="tab" class="submission-tab" data-status="">All</button>
                 </div>
 
+                <label for="originFilter">Came from:</label>
+                <select id="originFilter" class="origin-filter">
+                    <option value="">Everywhere</option>
+                </select>
+
                 <label for="searchFilter">Search:</label>
                 <input type="text" id="searchFilter" placeholder="Program name or location...">
 

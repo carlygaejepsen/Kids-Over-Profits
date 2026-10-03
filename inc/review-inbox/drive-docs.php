@@ -38,6 +38,7 @@ kop_rinbox_register('drive-docs', function () {
             $rows = kop_gdl_rows(array($key));
             return $rows ? kop_rinbox_gdl_item($rows[0]) : null;
         },
+        'origins'  => 'kop_rinbox_gdl_origins',
         'act'      => 'kop_rinbox_gdl_act',
         'save'     => 'kop_rinbox_gdl_save',
     );
@@ -53,6 +54,9 @@ function kop_rinbox_gdl_list(array $q) {
     }
     $tabs = kop_gdl_tabs();
     $where = $q['view'] === 'pending' ? "status = 'pending'" : ($tabs[$q['view']]['where'] ?? "status = 'pending'");
+    if (!empty($q['origin']) && isset(kop_gdl_sources()[$q['origin']])) {
+        $where .= $wpdb->prepare(' AND source = %s', $q['origin']);
+    }
     if ($q['search'] !== '') {
         $like = '%' . $wpdb->esc_like($q['search']) . '%';
         $where .= $wpdb->prepare(' AND (label LIKE %s OR url LIKE %s OR source_doc LIKE %s OR operator_name LIKE %s)', $like, $like, $like, $like);
@@ -64,6 +68,22 @@ function kop_rinbox_gdl_list(array $q) {
         : 'facility_id = 0, facility_id, ' . kop_gdl_kind_order_sql() . ', label, id';
     $rows = (array) $wpdb->get_results("SELECT * FROM {$table} WHERE {$where} ORDER BY {$order} LIMIT " . (int) $q['limit'] . ' OFFSET ' . (int) $q['offset'], ARRAY_A);
     return array('items' => array_map('kop_rinbox_gdl_item', $rows), 'total' => $total);
+}
+
+/** "Came from": Google Docs, HEAL archive, r/troubledteens wiki, SCIAD NET, with counts in the view. */
+function kop_rinbox_gdl_origins(array $q) {
+    global $wpdb;
+    $tabs = kop_gdl_tabs();
+    $where = $q['view'] === 'pending' ? "status = 'pending'" : ($tabs[$q['view']]['where'] ?? "status = 'pending'");
+    $counts = array();
+    foreach ((array) $wpdb->get_results('SELECT source, COUNT(*) AS n FROM ' . kop_gdl_table() . " WHERE {$where} GROUP BY source", ARRAY_A) as $r) {
+        $counts[(string) $r['source']] = (int) $r['n'];
+    }
+    $out = array();
+    foreach (kop_gdl_sources() as $key => $src) {
+        if (!empty($counts[$key])) $out[] = array('key' => $key, 'label' => $src['label'], 'count' => $counts[$key]);
+    }
+    return $out;
 }
 
 function kop_rinbox_gdl_item(array $r) {

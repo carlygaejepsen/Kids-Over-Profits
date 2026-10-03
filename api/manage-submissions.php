@@ -293,6 +293,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 
+    // "Came from": the scraper, an import, the extension, people (inc/review-inbox/native.php).
+    $origin = sanitize_key($_GET['origin'] ?? '');
+    if ($origin !== '' && function_exists('kop_rinbox_native_origin_where')) {
+        $originWhere = kop_rinbox_native_origin_where($type, $origin);
+        if ($originWhere !== '') {
+            $where[] = $originWhere;
+        }
+    }
+
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM $table $whereClause");

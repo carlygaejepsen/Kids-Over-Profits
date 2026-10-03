@@ -36,7 +36,7 @@ function kop_rinbox_native_types() {
                 array('name' => 'publication_date', 'label' => 'Published (YYYY-MM-DD)', 'type' => 'text'),
                 array('name' => 'summary', 'label' => 'Summary', 'type' => 'textarea'),
             ),
-            'url' => 'article_url', 'moves' => array('lawsuit' => 'Lawsuits', 'legislation' => 'Legislation'),
+            'url' => 'article_url', 'moves' => true,
         ),
         'lawsuit' => array(
             'label' => 'Lawsuits', 'table' => 'lawsuits', 'status_col' => 'publication_status', 'pending' => 'pending', 'rejected' => 'rejected',
@@ -52,7 +52,7 @@ function kop_rinbox_native_types() {
                 array('name' => 'summary', 'label' => 'Summary', 'type' => 'textarea'),
                 array('name' => 'outcome', 'label' => 'Outcome', 'type' => 'textarea'),
             ),
-            'url' => 'source_urls', 'moves' => array('news' => 'News'),
+            'url' => 'source_urls', 'moves' => true,
         ),
         'legislation' => array(
             'label' => 'Legislation', 'table' => 'legislation', 'status_col' => 'publication_status', 'pending' => 'pending', 'rejected' => 'rejected',
@@ -73,7 +73,7 @@ function kop_rinbox_native_types() {
                 array('name' => 'last_action_text', 'label' => 'Latest action', 'type' => 'text'),
                 array('name' => 'summary', 'label' => 'Summary', 'type' => 'textarea'),
             ),
-            'url' => 'official_url', 'moves' => array('news' => 'News'),
+            'url' => 'official_url', 'moves' => true,
         ),
         'wiki' => array(
             'label' => 'Wiki', 'table' => 'wiki_submissions', 'status_col' => 'status', 'pending' => 'submitted', 'rejected' => 'rejected',
@@ -85,11 +85,11 @@ function kop_rinbox_native_types() {
                 array('name' => 'city_state', 'label' => 'City, state', 'type' => 'text'),
                 array('name' => 'years_active', 'label' => 'Years active', 'type' => 'text'),
             ),
-            'url' => '', 'moves' => array(),
+            'url' => '', 'moves' => false,
         ),
         'data' => array(
             'label' => 'Data', 'table' => 'suggested_edits', 'status_col' => 'status', 'pending' => 'pending', 'rejected' => 'rejected',
-            'title' => 'master_id', 'tags' => 'shared', 'fields' => array(), 'url' => '', 'moves' => array(),
+            'title' => 'master_id', 'tags' => 'shared', 'fields' => array(), 'url' => '', 'moves' => false,
         ),
     );
 }
@@ -124,6 +124,7 @@ foreach (array_keys(kop_rinbox_native_types()) as $kop_rinbox_native_key) {
                 return kop_rinbox_native_act($type, $key, $action, $params);
             },
         );
+        $spec['origins'] = function (array $q) use ($type) { return kop_rinbox_native_origin_counts($type, $q['status']); };
         if ($t['fields']) {
             $spec['save'] = function ($key, array $fields) use ($type) { return kop_rinbox_native_save($type, $key, $fields); };
         }
@@ -207,11 +208,15 @@ function kop_rinbox_native_item($type, array $r) {
     }
     $moves = array();
     $pending = (string) $r[$t['status_col']] === $t['pending'];
-    if ($pending) foreach ($t['moves'] as $id => $label) $moves[] = array('id' => $id, 'label' => 'Move to ' . $label);
+    if ($pending && $t['moves'] && kop_rinbox_native_url($type, $r) !== '') {
+        // Every other destination: News, Lawsuits, Legislation, Industry PR, facility website or resource.
+        $moves = kop_rdest_moves(array($type));
+    }
     $actions = array();
     $log = kop_rinbox_native_moves()[$type . ':' . (int) $r['id']] ?? null;
     if ($log) {
-        $actions[] = array('id' => 'unmove', 'label' => 'Undo move to ' . (kop_rinbox_native_types()[$log['to']]['label'] ?? $log['to']), 'style' => 'undo');
+        $targets = kop_rdest_targets();
+        $actions[] = array('id' => 'unmove', 'label' => 'Undo move to ' . ($targets[$log['to']]['label'] ?? $log['to']), 'style' => 'undo');
     }
     $title = (string) ($r[$t['title']] ?? '');
     return array(
@@ -224,7 +229,7 @@ function kop_rinbox_native_item($type, array $r) {
         'fields'       => $fields,
         'moves'        => $moves,
         'actions'      => $actions,
-        'moved'        => $log ? array('to' => $log['to'], 'id' => (int) $log['to_id']) : null,
+        'moved'        => $log ? array('to' => $log['to']) : null,
     );
 }
 
@@ -262,57 +267,59 @@ function kop_rinbox_native_save($type, $key, array $fields) {
 }
 
 function kop_rinbox_native_act($type, $key, $action, array $params) {
-    if ($action === 'move') return kop_rinbox_native_move($type, $key, (string) ($params['to'] ?? ''));
+    if ($action === 'move') return kop_rinbox_native_move($type, $key, (string) ($params['to'] ?? ''), $params);
     if ($action === 'unmove') return kop_rinbox_native_unmove($type, $key);
     throw new RuntimeException('Approve and reject this with the buttons on its card.');
 }
 
-function kop_rinbox_native_move($type, $key, $to) {
+function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     $types = kop_rinbox_native_types();
     $t = $types[$type];
-    if (!isset($t['moves'][$to])) throw new RuntimeException('It cannot move there.');
+    $targets = kop_rdest_targets();
+    if (!$t['moves'] || !isset($targets[$to]) || $to === $type) throw new RuntimeException('It cannot move there.');
     $r = kop_rinbox_native_row($type, $key);
     if (!$r) throw new RuntimeException('That submission is gone.');
     if ((string) $r[$t['status_col']] !== $t['pending']) throw new RuntimeException('Only a pending item can move to another queue.');
     $url = kop_rinbox_native_url($type, $r);
-    if ($url === '') throw new RuntimeException('It has no web address to move.');
-    if (!function_exists('kop_ext_insert_news')) throw new RuntimeException('The queue inserts are not loaded.');
-    kop_ext_load_record_libs();
     $pdo = kop_rinbox_pdo();
-    $p = array(
-        'url'       => $url,
-        'title'     => (string) $r[$t['title']],
-        'type'      => array('news' => 'article', 'lawsuit' => 'lawsuit', 'legislation' => 'legislation')[$to],
-        'site_name' => (string) ($r['publication_name'] ?? (parse_url($url, PHP_URL_HOST) ?: '')),
-        'facility'  => '',
-    );
-    if (!empty($r['publication_date'])) $p['published'] = (string) $r['publication_date'];
-    $dupes = kop_ext_find_duplicates($pdo, $p);
-    foreach ($dupes as $d) {
-        // The item itself is a "duplicate" of its own queue; anything else is a real one.
-        if (!($d['type'] === $type && (int) $d['id'] === (int) $r['id'])) {
-            throw new RuntimeException('Already in the ' . $d['type'] . ' records (#' . (int) $d['id'] . ').');
-        }
-    }
     $reviewer = kop_rinbox_reviewer();
-    $note = 'Moved from the ' . $t['label'] . ' queue (#' . (int) $r['id'] . ') by ' . $reviewer . '.';
-    $quiet = function () { return false; };
-    add_filter('kop_notify_admins_enabled', $quiet);
-    try {
-        if ($to === 'news') $new = kop_ext_insert_news($pdo, $p, $reviewer . ' (moved)', $note);
-        elseif ($to === 'lawsuit') $new = kop_ext_insert_lawsuit($pdo, $p, $reviewer . ' (moved)', $note);
-        else $new = kop_ext_insert_legislation($pdo, $p, $reviewer . ' (moved)', $note);
-    } finally {
-        remove_filter('kop_notify_admins_enabled', $quiet);
+    $prev_notes = (string) ($r['reviewer_notes'] ?? '');
+
+    if ($type === 'news' && $to === 'promo') {
+        // An article filed as Industry PR stays this row, in the internal index.
+        kop_rdest_promo_enum_ensure($pdo);
+        $pdo->prepare("UPDATE news_submissions SET status = 'promotional', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?")
+            ->execute(array($reviewer, (int) $r['id']));
+        $done = array('to' => 'promo', 'self' => true);
+        $message = 'Filed as Industry PR (internal index, never public).';
+    } else {
+        $done = kop_rdest_put($to, array(
+            'url' => $url, 'title' => (string) $r[$t['title']],
+            'site_name' => (string) ($r['publication_name'] ?? (parse_url($url, PHP_URL_HOST) ?: '')),
+            'published' => (string) ($r['publication_date'] ?? ''),
+            'facility_id' => (int) ($params['facility_id'] ?? 0), 'kind' => (string) ($params['kind'] ?? ''),
+            'source_note' => 'Sent in as ' . strtolower($t['label']) . ' (#' . (int) $r['id'] . ')',
+            'note' => 'Moved from the ' . $t['label'] . ' queue (#' . (int) $r['id'] . ') by ' . $reviewer . '.',
+            'self' => array($type, (int) $r['id']), 'via' => 'moved',
+        ), $reviewer);
+        $message = $done['message'];
+        $pdo->prepare("UPDATE {$t['table']} SET {$t['status_col']} = ?, reviewer_notes = ? WHERE id = ?")
+            ->execute(array($t['rejected'], trim($prev_notes . "\n" . $message), (int) $r['id']));
+        if ($type === 'news' && in_array($to, array('website', 'resource'), true)) {
+            // The note the page's own "Move to facility record" button leaves, so its card shows the move too.
+            $json = json_decode((string) $r['json_data'], true);
+            $json = is_array($json) ? $json : array();
+            $json['movedTo'] = array('target' => $done['target'], 'facility_id' => $done['facility_id'], 'url' => $done['url'],
+                'kind' => $done['kind'], 'facility_name' => $done['facility_name']);
+            $pdo->prepare('UPDATE news_submissions SET json_data = ? WHERE id = ?')->execute(array(wp_json_encode($json), (int) $r['id']));
+        }
+        $message .= ' Filed here as rejected with a note.';
     }
-    $notes = trim((string) ($r['reviewer_notes'] ?? '') . "\nMoved to " . $types[$to]['label'] . ' #' . (int) $new . '.');
-    $pdo->prepare("UPDATE {$t['table']} SET {$t['status_col']} = ?, reviewer_notes = ? WHERE id = ?")
-        ->execute(array($t['rejected'], $notes, (int) $r['id']));
     $log = kop_rinbox_native_moves();
-    $log[$type . ':' . (int) $r['id']] = array('to' => $to, 'to_id' => (int) $new, 'prev_status' => $t['pending'],
-        'prev_notes' => (string) ($r['reviewer_notes'] ?? ''), 'by' => $reviewer, 'at' => time());
+    $log[$type . ':' . (int) $r['id']] = array('to' => $to, 'done' => $done, 'prev_status' => $t['pending'],
+        'prev_notes' => $prev_notes, 'by' => $reviewer, 'at' => time());
     update_option('kop_review_inbox_moves', $log, false);
-    return array('message' => 'Moved. It is waiting in ' . $types[$to]['label'] . ' as #' . (int) $new . ', and filed here as rejected with a note. Undo moves it back.');
+    return array('message' => $message . ' Undo moves it back.');
 }
 
 function kop_rinbox_native_unmove($type, $key) {
@@ -322,16 +329,19 @@ function kop_rinbox_native_unmove($type, $key) {
     $k = $type . ':' . (int) $key;
     if (empty($log[$k])) throw new RuntimeException('There is no move to undo.');
     $m = $log[$k];
+    $done = $m['done'] ?? array('to' => $m['to'], 'id' => (int) ($m['to_id'] ?? 0));
+    if (empty($done['self'])) kop_rdest_take_back($done);
     $pdo = kop_rinbox_pdo();
-    $to = $types[$m['to']];
-    $st = $pdo->prepare("DELETE FROM {$to['table']} WHERE id = ? AND {$to['status_col']} = ?");
-    $st->execute(array((int) $m['to_id'], $to['pending']));
-    if (!$st->rowCount()) {
-        throw new RuntimeException($to['label'] . ' #' . (int) $m['to_id'] . ' has been reviewed already, so it stays there.');
-    }
-    if ($m['to'] === 'lawsuit') $pdo->prepare('DELETE FROM lawsuit_facility_links WHERE lawsuit_id = ?')->execute(array((int) $m['to_id']));
     $pdo->prepare("UPDATE {$t['table']} SET {$t['status_col']} = ?, reviewer_notes = ? WHERE id = ?")
         ->execute(array($m['prev_status'], $m['prev_notes'] !== '' ? $m['prev_notes'] : null, (int) $key));
+    if ($type === 'news') {
+        $r = kop_rinbox_native_row('news', $key);
+        $json = $r ? json_decode((string) $r['json_data'], true) : null;
+        if (is_array($json) && isset($json['movedTo'])) {
+            unset($json['movedTo']);
+            $pdo->prepare('UPDATE news_submissions SET json_data = ? WHERE id = ?')->execute(array(wp_json_encode($json), (int) $key));
+        }
+    }
     unset($log[$k]);
     update_option('kop_review_inbox_moves', $log, false);
     return array('message' => 'Moved back. It is pending here again.');
@@ -347,4 +357,73 @@ function kop_rinbox_native_ai_enrich($type, $key) {
     return array('filled' => $filled, 'message' => $filled
         ? 'Filled: ' . implode(', ', array_map(function ($f) { return str_replace('_', ' ', $f); }, $filled)) . '.'
         : 'The AI found nothing to add; every field it reads already has something in it.');
+}
+
+/* ---- Where an item came from ("Came from" filter) -------------------------- */
+
+/**
+ * Origins of the page's own types: [key => [label, SQL condition]], read from
+ * who sent it (submitted_by) and the note the scraper or import left
+ * (submission_notes). 'people' is everything else: the public forms and what
+ * an admin typed in. Shared by api/manage-submissions.php (the list) and the
+ * kop/v1/review-inbox/origins route (the counts).
+ */
+function kop_rinbox_native_origins($type) {
+    $by = 'IFNULL(submitted_by, \'\')';
+    $has_notes = in_array($type, array('news', 'wiki'), true);
+    $notes = $has_notes ? 'IFNULL(submission_notes, \'\')' : "''";
+    $all = array(
+        'scraper-google' => array('News scraper: Google News', "$notes LIKE 'auto-discovery via google-news%'"),
+        'scraper-reddit' => array('News scraper: Reddit', "$notes LIKE 'auto-discovery via reddit%'"),
+        'scraper-rescued' => array('News scraper: sent by hand from Scraper finds', "$by LIKE '%(Scraper finds import)%'"),
+        'gdocs'          => array('Your Google Docs', "$by LIKE '%(Google Docs import)%' AND $notes NOT LIKE 'HEAL archive%' AND $notes NOT LIKE 'r/troubledteens wiki%'"),
+        'heal'           => array('HEAL archive', "$by LIKE '%import)%' AND $notes LIKE 'HEAL archive%'"),
+        'wiki'           => array('r/troubledteens wiki', "$by LIKE '%import)%' AND $notes LIKE 'r/troubledteens wiki%'"),
+        'sciad'          => array('SCIAD NET', "$by LIKE '%(SCIAD NET import)%'"),
+        'fornits'        => array('Fornits', "$by LIKE '%(Fornits import)%'"),
+        'extension'      => array('Browser extension', "$by LIKE '%(browser extension)%'"),
+        'moved'          => array('Moved from another queue', "($by LIKE '%(moved)%' OR $by LIKE '%(review inbox)%')"),
+        'claude'         => array('Imported by Claude', "$by LIKE '%import via Claude%'"),
+        'oldsite'        => array('Old site posts', "$by IN ('wp-news-import', 'bulk-upload', 'reimport-regenerated')"),
+    );
+    if (!$has_notes) {
+        unset($all['scraper-google'], $all['scraper-reddit'], $all['heal'], $all['wiki']);
+        $all['gdocs'][1] = "$by LIKE '%(Google Docs import)%'";
+    }
+    if ($type === 'data') return array();
+    $others = array();
+    foreach ($all as $o) $others[] = '(' . $o[1] . ')';
+    $all['people'] = array('People and admins', 'NOT (' . implode(' OR ', $others) . ')');
+    return $all;
+}
+
+/** The SQL condition for one origin, or '' for none / unknown. */
+function kop_rinbox_native_origin_where($type, $origin) {
+    $all = kop_rinbox_native_origins($type);
+    return isset($all[$origin]) ? '(' . $all[$origin][1] . ')' : '';
+}
+
+/** [{key, label, count}] for the origins with something in $status ('' = every status). */
+function kop_rinbox_native_origin_counts($type, $status) {
+    $t = kop_rinbox_native_types()[$type];
+    $all = kop_rinbox_native_origins($type);
+    if (!$all) return array();
+    $cols = array();
+    foreach ($all as $key => $o) $cols[] = 'SUM(CASE WHEN ' . $o[1] . ' THEN 1 ELSE 0 END) AS `' . $key . '`';
+    $where = '';
+    $params = array();
+    if ($status !== '') {
+        if ($status === 'submitted') $status = $t['pending'];
+        $where = "WHERE {$t['status_col']} = ?";
+        $params[] = $status;
+    }
+    $st = kop_rinbox_pdo()->prepare('SELECT ' . implode(', ', $cols) . " FROM {$t['table']} $where");
+    $st->execute($params);
+    $row = $st->fetch(PDO::FETCH_ASSOC) ?: array();
+    $out = array();
+    foreach ($all as $key => $o) {
+        $n = (int) ($row[$key] ?? 0);
+        if ($n > 0) $out[] = array('key' => $key, 'label' => $o[0], 'count' => $n);
+    }
+    return $out;
 }

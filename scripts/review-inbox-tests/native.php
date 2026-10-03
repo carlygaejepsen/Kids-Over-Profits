@@ -46,19 +46,25 @@ function kop_rinbox_test_news(array $src, array $item, callable $check) {
             $res = call_user_func($src['act'], $item['key'], 'move', array('to' => 'lawsuit'));
             $log = kop_rinbox_native_moves()['news:' . (int) $item['key']] ?? null;
             $moved = kop_rinbox_native_row('news', $item['key']);
-            $new = $log ? kop_rinbox_native_row('lawsuit', $log['to_id']) : null;
+            $new = $log ? kop_rinbox_native_row('lawsuit', $log['done']['id']) : null;
             $check('news: move to Lawsuits makes a pending lawsuit and files the article as rejected',
                 $new && $new['publication_status'] === 'pending' && $moved['status'] === 'rejected', $res['message'] ?? '');
             $item_now = kop_rinbox_native_item('news', $moved);
             $check('news: the moved article offers Undo', (bool) array_filter($item_now['actions'], function ($a) { return $a['id'] === 'unmove'; }));
+            $check('news: a pending article offers every other destination', count(kop_rinbox_native_item('news', $before)['moves']) === count(kop_rdest_targets()) - 1);
             call_user_func($src['act'], $item['key'], 'unmove', array());
             $check('news: Undo takes the lawsuit back and the article is pending again',
-                !kop_rinbox_native_row('lawsuit', $log['to_id']) && kop_rinbox_native_row('news', $item['key'])['status'] === 'submitted');
+                !kop_rinbox_native_row('lawsuit', $log['done']['id']) && kop_rinbox_native_row('news', $item['key'])['status'] === 'submitted');
         } catch (RuntimeException $e) {
             // A link already in the lawsuit records cannot move; that refusal is the right answer.
             $check('news: a move that would duplicate is refused with a reason', stripos($e->getMessage(), 'Already in') === 0, $e->getMessage());
         }
     }
+    $pdo->prepare("UPDATE news_submissions SET status = 'submitted' WHERE id = ?")->execute(array((int) $item['key']));
+    call_user_func($src['act'], $item['key'], 'move', array('to' => 'promo'));
+    $check('news: Industry PR files the article itself as promotional', kop_rinbox_native_row('news', $item['key'])['status'] === 'promotional');
+    call_user_func($src['act'], $item['key'], 'unmove', array());
+    $check('news: Undo puts it back in the queue', kop_rinbox_native_row('news', $item['key'])['status'] === 'submitted');
     $pdo->prepare('UPDATE news_submissions SET article_title = ?, article_type = ?, tags = ?, status = ? WHERE id = ?')
         ->execute(array($before['article_title'], $before['article_type'], $before['tags'], $before['status'], (int) $item['key']));
 }

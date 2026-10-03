@@ -400,3 +400,41 @@ button.rinbox-tag-x:focus-visible {
     opacity: 0.6;
     cursor: wait;
 }
+
+/* "Move to…" and the facility form a facility destination opens. */
+.rinbox-move,
+.rinbox-move-form {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.rinbox-move-form[hidden] {
+    display: none;
+}
+
+/* "Came from": the page's own select and the one on other queues. */
+.admin-submissions-page select.origin-filter,
+.rinbox-panel select.rinbox-origin {
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font: inherit;
+    font-size: 14px;
+    max-width: 100%;
+}
+
+.admin-submissions-page select.origin-filter option {
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-filters {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+}

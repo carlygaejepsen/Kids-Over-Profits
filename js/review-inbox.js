@@ -21,7 +21,7 @@
     var page = document.querySelector('.admin-submissions-page');
     if (!page) return;
 
-    var state = { sources: [], byKey: {}, tags: [], source: null, view: '', search: '', offset: 0, limit: 25, total: 0 };
+    var state = { sources: [], byKey: {}, tags: [], source: null, view: '', search: '', origin: '', offset: 0, limit: 25, total: 0 };
 
     function api(path, body, query) {
         var url = cfg.rest + path;
@@ -63,6 +63,25 @@
             node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
         });
         return node;
+    }
+
+    /** Options for a "Came from" select: Everywhere, then each origin with its count. */
+    function fillOrigins(select, origins, keep) {
+        select.innerHTML = '';
+        select.appendChild(el('option', { value: '', text: 'Everywhere' }));
+        var found = false;
+        origins.forEach(function (o) {
+            var opt = el('option', { value: o.key, text: o.label + ' (' + o.count + ')' });
+            if (o.key === keep) { opt.selected = true; found = true; }
+            select.appendChild(opt);
+        });
+        if (keep && !found) {
+            // Still offer the current choice when nothing of it is left in this view.
+            var opt = el('option', { value: keep, text: keep + ' (0)' });
+            opt.selected = true;
+            select.appendChild(opt);
+        }
+        select.disabled = origins.length === 0 && !keep;
     }
 
     function linkLabel(url) {
@@ -149,6 +168,7 @@
         state.source = key;
         state.view = Object.keys(s.views)[0];
         state.search = '';
+        state.origin = '';
         state.offset = 0;
         page.classList.add('rinbox-active');
         page.querySelectorAll('.type-tabs .submission-tab').forEach(function (t) {
@@ -183,6 +203,15 @@
                 onclick: function () { state.view = v; state.offset = 0; renderPanel(); loadItems(); }
             }));
         });
+        var origin = null;
+        if (s.has_origins) {
+            origin = el('select', { class: 'rinbox-origin', 'aria-label': 'Came from' });
+            fillOrigins(origin, [], state.origin);
+            origin.addEventListener('change', function () { state.origin = origin.value; state.offset = 0; loadItems(); });
+            api('origins', null, { source: state.source, view: state.view }).then(function (data) {
+                fillOrigins(origin, data.origins || [], state.origin);
+            }).catch(function () { /* no filter */ });
+        }
         var search = el('input', { type: 'search', class: 'rinbox-search', placeholder: 'Search this queue…', value: state.search, 'aria-label': 'Search this queue' });
         var timer = null;
         search.addEventListener('input', function () {
@@ -193,7 +222,9 @@
         listEl = el('div', { class: 'rinbox-list' });
         pagerEl = el('div', { class: 'rinbox-pager' });
         panel.appendChild(head);
-        panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [views, search]));
+        panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [views, el('span', { class: 'rinbox-filters' }, [
+            origin ? el('label', { class: 'rinbox-quick-field' }, ['Came from ', origin]) : null, search
+        ])]));
         panel.appendChild(statusEl);
         panel.appendChild(listEl);
         panel.appendChild(pagerEl);
@@ -204,7 +235,7 @@
         statusEl.textContent = 'Loading…';
         listEl.innerHTML = '';
         pagerEl.innerHTML = '';
-        api('items', null, { source: src, view: state.view, search: state.search, offset: state.offset, limit: state.limit }).then(function (data) {
+        api('items', null, { source: src, view: state.view, search: state.search, origin: state.origin, offset: state.offset, limit: state.limit }).then(function (data) {
             if (state.source !== src) return;
             state.total = data.total || 0;
             var items = data.items || [];
@@ -274,6 +305,45 @@
 
     var cardSeq = 0;
 
+    /**
+     * "Move to…": a destination with params (a facility website or resource
+     * needs the facility; a resource also its kind) opens a small form first.
+     * go(params) sends the move.
+     */
+    function moveControl(item, prefix, go) {
+        var wrap = el('span', { class: 'rinbox-move' });
+        var mv = el('select', { 'aria-label': 'Move to another queue' }, [el('option', { value: '', text: 'Move to…' })]);
+        (item.moves || []).forEach(function (m) { mv.appendChild(el('option', { value: m.id, text: m.label })); });
+        var form = el('span', { class: 'rinbox-move-form', hidden: true });
+        wrap.appendChild(mv);
+        wrap.appendChild(form);
+        mv.addEventListener('change', function () {
+            form.innerHTML = '';
+            form.hidden = true;
+            var m = (item.moves || []).filter(function (x) { return x.id === mv.value; })[0];
+            if (!m) return;
+            if (!m.params || !m.params.length) { go({ to: m.id }); return; }
+            var inputs = m.params.map(function (p) {
+                var input = fieldInput(p, prefix + 'mv-' + m.id + '-');
+                form.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', input]));
+                return input;
+            });
+            form.appendChild(el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: m.label,
+                onclick: function () {
+                    var params = { to: m.id };
+                    inputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
+                    go(params);
+                }
+            }));
+            form.hidden = false;
+            if (typeof window.kopFacilityFinderAttach === 'function') {
+                form.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
+            }
+        });
+        return wrap;
+    }
+
     function card(item) {
         var src = state.source;
         var s = state.byKey[src];
@@ -321,13 +391,9 @@
         }
         quick.appendChild(tagEditor(item, src, node));
         if (item.moves && item.moves.length) {
-            var mv = el('select', { 'aria-label': 'Move to another queue' }, [el('option', { value: '', text: 'Move to…' })]);
-            item.moves.forEach(function (m) { mv.appendChild(el('option', { value: m.id, text: m.label })); });
-            mv.addEventListener('change', function () {
-                if (!mv.value) return;
-                run(node, item, s, src, 'act', { action: 'move', params: { to: mv.value } });
-            });
-            quick.appendChild(el('label', { class: 'rinbox-quick-field' }, [mv]));
+            quick.appendChild(moveControl(item, prefix, function (params) {
+                run(node, item, s, src, 'act', { action: 'move', params: params });
+            }));
         }
         node.appendChild(quick);
 
@@ -503,6 +569,35 @@
 
     var typeInput = document.getElementById('typeFilter');
     var ownList = document.getElementById('submissionsList');
+    var statusInput = document.getElementById('statusFilter');
+    var originSelect = document.getElementById('originFilter');
+    var originFor = '';
+
+    /** Fill "Came from" for the page's own type and status, keeping the choice. */
+    function refreshOwnOrigins(force) {
+        if (!originSelect || !typeInput) return;
+        var type = typeInput.value, status = statusInput ? statusInput.value : '';
+        var s = state.byKey[type];
+        var wanted = type + '|' + status;
+        if (!force && wanted === originFor) return;
+        originFor = wanted;
+        if (!s || !s.has_origins) { fillOrigins(originSelect, [], ''); return; }
+        api('origins', null, { source: type, status: status }).then(function (data) {
+            fillOrigins(originSelect, data.origins || [], originSelect.value);
+        }).catch(function () { /* the filter stays as it was */ });
+    }
+    if (originSelect) {
+        originSelect.addEventListener('change', function () {
+            var refresh = document.getElementById('refreshBtn');
+            if (refresh) refresh.click();
+        });
+    }
+    // A new type starts from "Everywhere" (capture: before the page's own tab handler loads the list).
+    if (typeTabs) {
+        typeTabs.addEventListener('click', function (e) {
+            if (e.target.closest('[data-type]') && originSelect) { originSelect.value = ''; originFor = ''; }
+        }, true);
+    }
 
     function nativeQuickRow(card, item, src, message, isError) {
         var old = card.querySelector(':scope > .rinbox-native');
@@ -524,6 +619,7 @@
             var view = card.querySelector('.btn-view');
             if (view && /hide/i.test(view.textContent)) { view.click(); setTimeout(function () { view.click(); }, 50); }
             refreshCounts();
+            refreshOwnOrigins(true);
         }
         function go(kind, body, btn) {
             row.querySelectorAll('button, select, input').forEach(function (b) { b.disabled = true; });
@@ -564,12 +660,9 @@
         }
         row.appendChild(tagEditor(item, src, row));
         if (item.moves && item.moves.length) {
-            var mv = el('select', { 'aria-label': 'Move to another queue' }, [el('option', { value: '', text: 'Move to…' })]);
-            item.moves.forEach(function (m) { mv.appendChild(el('option', { value: m.id, text: m.label })); });
-            mv.addEventListener('change', function () {
-                if (mv.value) go('act', { action: 'move', params: { to: mv.value } });
-            });
-            row.appendChild(mv);
+            row.appendChild(moveControl(item, 'rinbox-n' + item.key + '-', function (params) {
+                go('act', { action: 'move', params: params });
+            }));
         }
         (item.actions || []).forEach(function (a) {
             row.appendChild(el('button', {
@@ -597,6 +690,7 @@
     var decorateTimer = null;
     function decorateNative() {
         if (!ownList || !typeInput) return;
+        refreshOwnOrigins(false);
         var src = typeInput.value;
         if (!state.byKey[src] || !state.byKey[src].native) return;
         var cards = Array.prototype.filter.call(ownList.querySelectorAll('.submission-card[data-id]'), function (c) {

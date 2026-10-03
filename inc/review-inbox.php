@@ -32,6 +32,9 @@
  *              its empty editable fields through save
  *   'tags_get' / 'tags_set'  fn(key) / fn(key, tags)   optional; else the
  *              shared {prefix}kop_review_tags table
+ *   'origins'  fn(array $q): [{key, label, count}]   optional; the "Came from"
+ *              filter (scraper, import, extension, people...); 'list' then
+ *              gets the chosen key as $q['origin']
  *   'tool_url' the queue's full screen, for what this one does not do
  *   'native'   true for the five types the page already draws itself
  *
@@ -55,6 +58,9 @@ const KOP_REVIEW_INBOX_DB_VERSION = '1';
 function kop_rinbox_register($key, callable $build) {
     $GLOBALS['kop_rinbox_builders'][$key] = $build;
 }
+
+// Where "Move to" can send an item (news, lawsuits, legislation, Industry PR, a facility's website or resources).
+require_once __DIR__ . '/review-destinations.php';
 
 foreach (glob(__DIR__ . '/review-inbox/*.php') ?: array() as $kop_rinbox_file) {
     require_once $kop_rinbox_file;
@@ -415,6 +421,7 @@ add_action('rest_api_init', function () {
         'sources' => array('GET', 'kop_rinbox_rest_sources'),
         'items'   => array('GET', 'kop_rinbox_rest_items'),
         'item'    => array('GET', 'kop_rinbox_rest_item'),
+        'origins' => array('GET', 'kop_rinbox_rest_origins'),
         'act'     => array('POST', 'kop_rinbox_rest_act'),
         'save'    => array('POST', 'kop_rinbox_rest_save'),
         'tags'    => array('POST', 'kop_rinbox_rest_tags'),
@@ -446,6 +453,7 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
                 'count' => $counts[$key] ?? null, 'native' => (bool) $src['native'], 'tool_url' => (string) $src['tool_url'],
                 'help' => (string) ($src['help'] ?? ''), 'can_save' => !empty($src['save']),
                 'can_ai' => !empty($src['save']) || !empty($src['ai_fill']),
+                'has_origins' => !empty($src['origins']),
             );
         }
         return array('sources' => $out, 'tags' => kop_rinbox_known_tags());
@@ -464,6 +472,7 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
             'search' => trim((string) $req->get_param('search')),
             'offset' => max(0, (int) $req->get_param('offset')),
             'limit'  => max(1, min(100, (int) ($req->get_param('limit') ?: 25))),
+            'origin' => sanitize_key((string) $req->get_param('origin')),
         );
         $keys = $req->get_param('keys');
         if ($keys !== null && $keys !== '') {
@@ -477,6 +486,20 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
         }
         $res = call_user_func($src['list'], $q);
         return array('items' => kop_rinbox_finish_items($source, (array) ($res['items'] ?? array())), 'total' => (int) ($res['total'] ?? 0), 'view' => $view);
+    });
+}
+
+/** "Came from" choices with their counts: [{key, label, count}] (empty when the source has none). */
+function kop_rinbox_rest_origins(WP_REST_Request $req) {
+    return kop_rinbox_rest(function () use ($req) {
+        $src = kop_rinbox_source((string) $req->get_param('source'));
+        if (empty($src['origins'])) return array('origins' => array());
+        $views = array_keys($src['views']);
+        $view = (string) $req->get_param('view');
+        return array('origins' => array_values((array) call_user_func($src['origins'], array(
+            'view' => in_array($view, $views, true) ? $view : $views[0],
+            'status' => sanitize_key((string) $req->get_param('status')),
+        ))));
     });
 }
 

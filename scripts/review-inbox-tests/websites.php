@@ -29,6 +29,12 @@ if (!function_exists('wp_update_post')) {
         return $id;
     }
 }
+if (!function_exists('delete_post_meta')) {
+    function delete_post_meta($id, $key) {
+        $GLOBALS['pdo']->prepare('DELETE FROM wpdl_postmeta WHERE post_id = ? AND meta_key = ?')->execute(array((int) $id, $key));
+        return true;
+    }
+}
 if (!function_exists('wp_trash_post')) {
     function wp_trash_post($id) {
         $status = $GLOBALS['pdo']->query('SELECT post_status FROM wpdl_posts WHERE ID = ' . (int) $id)->fetchColumn();
@@ -92,4 +98,23 @@ function kop_rinbox_test_websites(array $src, array $item, callable $check) {
     $check('websites: a trashed website offers Restore', array_column($trashed['actions'], 'id') === array('untrash'));
     $res = call_user_func($src['act'], $item['key'], 'untrash', array());
     $check('websites: restore puts it back where it was', $status() === 'pending', $res['message']);
+
+    // Reclassify: to Industry PR (a promotional news row), then Undo.
+    $waiting = kop_rinbox_get_item('websites', $item['key']);
+    $check('websites: a waiting website offers every destination', count($waiting['moves']) === count(kop_rdest_targets()), implode(', ', array_column($waiting['moves'], 'id')));
+    $res = call_user_func($src['act'], $item['key'], 'move', array('to' => 'promo'));
+    $done = json_decode((string) get_post_meta((int) $item['key'], '_kop_moved', true), true);
+    $row = $done ? $GLOBALS['pdo']->query('SELECT status FROM news_submissions WHERE id = ' . (int) $done['id'])->fetchColumn() : '';
+    $check('websites: move to Industry PR files a promotional news row and takes it off the list', $row === 'promotional' && $status() === 'trash', $res['message']);
+    $moved = kop_rinbox_get_item('websites', $item['key']);
+    $check('websites: a moved website offers Undo move', array_column($moved['actions'], 'id') === array('unmove'));
+    $res = call_user_func($src['act'], $item['key'], 'unmove', array());
+    $row = $GLOBALS['pdo']->query('SELECT status FROM news_submissions WHERE id = ' . (int) $done['id'])->fetchColumn();
+    $check('websites: Undo move takes the news row back and the website waits again', $row === 'deleted' && $status() === 'pending', $res['message']);
+    try {
+        call_user_func($src['act'], $item['key'], 'move', array('to' => 'website'));
+        $check('websites: a facility destination with no facility is refused', false);
+    } catch (RuntimeException $e) {
+        $check('websites: a facility destination with no facility is refused', $status() === 'pending', $e->getMessage());
+    }
 }
