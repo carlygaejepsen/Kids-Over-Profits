@@ -6,7 +6,7 @@
    "nodes": 1427,
    "edges": 2761,
    "facilityMatches": 536,
-   "withYears": 372,
+   "withYears": 371,
    "withDeaths": 28,
    "rebranded": 91,
    "profileEdges": 444,
@@ -9275,8 +9275,8 @@
     "staff": 1,
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100322,
+   "uniqueName": "Eva Carlston Academy",
    "dates": "",
    "isolated": false,
    "board": {
@@ -10924,15 +10924,14 @@
    "degreeByCategory": {
     "leadership": 4
    },
-   "facilityId": 10366,
-   "uniqueName": "Newport Academy – Oakley",
+   "facilityId": null,
+   "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": 492.19,
     "y": 236.45
-   },
-   "years": "from 2009"
+   }
   },
   {
    "id": "norris-academy",
