@@ -143,6 +143,8 @@ require_once get_stylesheet_directory() . '/inc/facility-suggest.php';
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links)
 require_once get_stylesheet_directory() . '/inc/inspection-links.php';
+// Pictures in editor content fill the text column or sit centred (css/content-images.css)
+require_once get_stylesheet_directory() . '/inc/content-images.php';
 // Duplicate facility records found automatically and merged into one, with Undo (KOP Tools > Merge Duplicates)
 require_once get_stylesheet_directory() . '/inc/facility-merge.php';
 // A person id for everyone on a staff list, stamped as personId by an hourly sync (KOP Tools > People)

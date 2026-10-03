@@ -185,12 +185,17 @@
 /* Grid layout - card-based display */
 .doc-layout-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
     gap: 20px;
 }
 
 .doc-layout-grid .doc-item {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
+}
+
+.doc-layout-grid .doc-info {
+    overflow-wrap: anywhere;
 }
 
 .doc-layout-grid .doc-item:hover {
@@ -425,7 +430,7 @@
 /* Grid layout option */
 .doc-layout-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 20px;
 }
 
@@ -600,8 +605,10 @@
         font-size: 12px;
     }
 
+    /* minmax(0, 1fr): a long file name or a preview image must not widen
+       the one column past the screen (1fr's minimum is the content's). */
     .doc-layout-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .doc-layout-grid .doc-item {

@@ -176,6 +176,9 @@ php scripts/build-open-data.php                   # on the server (ea-php82), re
 # SVG icons that replace emojis (inc/icons.php: kop_icon() / kopIcon(), and the
 # render filter for emojis in post content, widgets and the ACF facility-key field)
 php scripts/test-icons.php
+# Pictures in editor content: 640px+ ones fill the text column (.kop-img-fill from inc/content-images.php), smaller ones
+# are centred, left/right-aligned ones keep their float (css/content-images.css)
+php scripts/test-content-images.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")
