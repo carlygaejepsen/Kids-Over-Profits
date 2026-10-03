@@ -538,6 +538,34 @@ function kop_enqueue_report_scripts() {
             'json_glob'     => '',
             'report_page'   => true,
         ),
+        'ia-reports' => array(
+            'script_handle' => 'ia-reports-script',
+            'script_path'   => '/js/inspections/states/ia.js',
+            'data_object'   => 'iaReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
+        'md-reports' => array(
+            'script_handle' => 'md-reports-script',
+            'script_path'   => '/js/inspections/states/md.js',
+            'data_object'   => 'mdReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
+        'sd-reports' => array(
+            'script_handle' => 'sd-reports-script',
+            'script_path'   => '/js/inspections/states/sd.js',
+            'data_object'   => 'sdReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
+        'va-reports' => array(
+            'script_handle' => 'va-reports-script',
+            'script_path'   => '/js/inspections/states/va.js',
+            'data_object'   => 'vaReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -693,6 +721,7 @@ function kop_state_reports_body_class($classes) {
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
         'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mi-reports', 'mn-reports', 'nc-reports', 'nv-reports', 'ok-reports', 'or-reports', 'pa-reports', 'fl-reports', 'ga-reports',
         'nh-reports', 'wy-reports', 'id-reports', 'me-reports', 'oh-reports', 'wv-reports',
+        'ia-reports', 'md-reports', 'sd-reports', 'va-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {

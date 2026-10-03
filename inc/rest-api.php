@@ -2541,6 +2541,10 @@ function kop_state_inspection_page_map() {
         'Maine' => 'me-reports',
         'Ohio' => 'oh-reports',
         'West Virginia' => 'wv-reports',
+        'Iowa' => 'ia-reports',
+        'Maryland' => 'md-reports',
+        'South Dakota' => 'sd-reports',
+        'Virginia' => 'va-reports',
     );
     foreach ($pending as $state => $slug) {
         $page = function_exists('get_page_by_path') ? get_page_by_path($slug) : null;

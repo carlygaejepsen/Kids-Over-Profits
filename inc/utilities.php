@@ -343,6 +343,7 @@ function kop_report_state_links() {
             'Utah' => 'ut-reports', 'Washington' => 'wa-reports',
             'New Hampshire' => 'nh-reports', 'Wyoming' => 'wy-reports', 'Idaho' => 'id-reports', 'Maine' => 'me-reports', 'Ohio' => 'oh-reports',
             'West Virginia' => 'wv-reports',
+            'Iowa' => 'ia-reports', 'Maryland' => 'md-reports', 'South Dakota' => 'sd-reports', 'Virginia' => 'va-reports',
         );
 
     $links = array();

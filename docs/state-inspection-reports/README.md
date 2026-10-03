@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Twenty-three tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's and West Virginia's are linked only after the owner publishes the page):
+Twenty-seven tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's, West Virginia's, Iowa's, Maryland's, South Dakota's and Virginia's are linked only after the owner publishes the page):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -15,7 +15,9 @@ Twenty-three tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklaho
 | Florida (`FL`) | `fl-reports` | shared engine | API |
 | Georgia (`GA`) | `ga-reports` | shared engine | API |
 | Idaho (`ID`) | `id-reports` | shared engine | API (`id_scraper.py`; statements of deficiencies with plans of correction and no-deficiency letters from the Health and Welfare public documents library; PDFs archived to the Drive folder `id_pdfs/`) |
+| Iowa (`IA`) | `ia-reports` | shared engine | API (`ia_scraper.py`; survey visits to psychiatric medical institutions for children since 2018, CMS-2567 statements of deficiencies with plans of correction, from the DIAL health facilities database; PDFs archived to the Drive folder `ia_pdfs/`) |
 | Maine (`ME`) | `me-reports` | shared engine | API (`me_scraper.py`; behavioral health organization surveys from the state licence lookup, an operator allowlist in `me_scope.json`; documents since late 2024 archived to the Drive folder `me_pdfs/`) |
+| Maryland (`MD`) | `md-reports` | shared engine | API (`md_scraper.py`; residential child care inspection summaries since 2019, one row per provider, citations split by safety risk; PDFs archived to the Drive folder `md_pdfs/`) |
 | Michigan (`MI`) | `mi-reports` | shared engine | API (`mi_scraper.py`; archived PDFs in `uploads/inspection-reports/mi/`) |
 | Minnesota (`MN`) | `mn-reports` | shared engine | API |
 | Montana (`MT`) | `mt-reports` | shared engine | `js/data/mt_reports.json` only (the API has no Montana rows) |
@@ -26,13 +28,15 @@ Twenty-three tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklaho
 | Oklahoma (`OK`) | `ok-reports` | shared engine | API (`ok_scraper.py`; the state's pages are kept in the Drive folder `ok_html/`, no PDFs) |
 | Oregon (`OR`) | `or-reports` | shared engine | API |
 | Pennsylvania (`PA`) | `pa-reports` | shared engine | API (`pa_scraper.py`; PDFs archived to the Drive folder `pa_pdfs/`, scans before mid-2019 read by OCR) |
+| South Dakota (`SD`) | `sd-reports` | shared engine | API (`sd_scraper.py`; youth care provider licensing studies, corrective action plans and fire, health and safety inspections since 2024 from the licensing portal; PDFs archived to the Drive folder `sd_pdfs/`) |
 | Texas (`TX`) | `tx-reports` | `js/inspections/tx_reports.js` (legacy) | API |
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
+| Virginia (`VA`) | `va-reports` | shared engine | API (`va_scraper.py`; two sources: DBHDS licensing inspections and investigations of youth residential services with finalized corrective action plans, and VDSS children's residential facility inspections; PDFs archived to the Drive folder `va_pdfs/`) |
 | West Virginia (`WV`) | `wv-reports` | shared engine | API (`wv_scraper.py`; behavioral-health licence surveys, with reports archived to the Drive folder `wv_pdfs/`) |
 | Wyoming (`WY`) | `wy-reports` | shared engine | API (`wy_scraper.py`; Family Services notices of non-compliance (OCR) and handwritten facility visits (documents only), plus health department PRTF surveys; PDFs archived to the Drive folder `wy_pdfs/`) |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers not yet linked from public state lists (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine, Ohio, West Virginia): each joins the map only once its page is published, so no list links a missing page. The West Virginia page is provisioned as a draft for owner review. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers not yet linked from public state lists (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine, Ohio, West Virginia, Iowa, Maryland, South Dakota, Virginia): each joins the map only once its page is published, so no list links a missing page. The West Virginia, Iowa, Maryland, South Dakota and Virginia pages are provisioned as drafts until the owner approves their first post. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 
