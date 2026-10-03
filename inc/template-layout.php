@@ -59,6 +59,17 @@ function kop_template_layout_normal_width() {
         'templates/single-facility-profile.php',
         'templates/single-person-profile.php',
         'templates/facility-page.php',
+    ));
+}
+
+/**
+ * Generated pages that are not posts but should look like the site's pages:
+ * Kadence's page layout, content style, vertical padding and title, read
+ * from the Customizer's page settings (its own "page" branch). The parent
+ * company hubs are hubs, not articles.
+ */
+function kop_template_layout_page_style() {
+    return apply_filters('kop_template_layout_page_style', array(
         'templates/operator-page.php',
         'templates/operator-index.php',
     ));
@@ -131,7 +142,40 @@ function kop_template_layout_filter_sidebar($layout) {
             $layout['sidebar'] = 'disable';
         }
     }
+    if ($template && in_array($template, kop_template_layout_page_style(), true) && function_exists('Kadence\kadence')) {
+        // Mirror Kadence's singular branch for a page with no per-page meta.
+        $k = \Kadence\kadence();
+        $page_layout = (string) $k->option('page_layout');
+        $layout['layout']  = in_array($page_layout, array('narrow', 'fullwidth'), true) ? $page_layout : 'normal';
+        $layout['sidebar'] = 'disable';
+        if ($page_layout === 'left' || $page_layout === 'right') {
+            $layout['side']    = $page_layout;
+            $layout['sidebar'] = 'enable';
+        }
+        $sidebar_id = (string) $k->option('page_sidebar_id');
+        if ($sidebar_id !== '') $layout['sidebar_id'] = $sidebar_id;
+        $boxed = (string) $k->option('page_content_style');
+        if ($boxed === 'boxed' || $boxed === 'unboxed') $layout['boxed'] = $boxed;
+        $vpadding = (string) $k->option('page_vertical_padding');
+        if (in_array($vpadding, array('show', 'hide', 'top', 'bottom'), true)) $layout['vpadding'] = $vpadding;
+        if ($k->option('page_title') === false) {
+            $layout['title'] = 'hide';
+        } else {
+            $title = (string) $k->option('page_title_layout');
+            if ($title === 'above' || $title === 'normal') $layout['title'] = $title;
+        }
+    }
     return $layout;
+}
+
+/** Pages, not posts: the body class the theme's page rules key on. */
+add_filter('body_class', 'kop_template_layout_page_body_class');
+function kop_template_layout_page_body_class($classes) {
+    $template = kop_template_layout_current_template();
+    if ($template && in_array($template, kop_template_layout_page_style(), true) && !in_array('page', $classes, true)) {
+        $classes[] = 'page';
+    }
+    return $classes;
 }
 
 /** Open the Kadence content wrapper (mirrors template-parts/content/single.php). */
