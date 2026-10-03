@@ -163,3 +163,9 @@ html body .mobile-toggle-open-container button.menu-toggle-open:active {
     color: var(--kop-midnight-blue, #000435);
     background: transparent;
 }
+
+/* Visual Link Preview cards print the page's web address under its title;
+   the title already links there, and addresses are never shown as text. */
+html body .vlp-link-container .vlp-link-url {
+    display: none;
+}

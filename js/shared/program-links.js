@@ -74,11 +74,14 @@
         const options = opts || {};
         if (!isHttp(url)) return escapeHtml(options.label || url || '');
         const clean = String(url).trim();
-        const label = options.label || displayText(clean, options.max);
+        // Words, never the address itself (js/url-labels.js, loaded on every page).
+        const words = !options.label && typeof root.kopUrlLabel === 'function' ? root.kopUrlLabel(clean) : '';
+        const label = options.label || words || displayText(clean, options.max);
         if (isExempt(clean)) {
-            return `<a href="${escapeHtml(clean)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+            return `<a href="${escapeHtml(clean)}" target="_blank" rel="noopener" title="${escapeHtml(clean)}">${escapeHtml(label)}</a>`;
         }
-        return `<a href="${escapeHtml(archiveUrl(clean))}" target="_blank" rel="noopener" title="Archived copy of ${escapeHtml(clean)}">${escapeHtml(label)} (archived)</a>`
+        const archivedLabel = words && /\)$/.test(words) ? words.replace(/\)$/, ', archived)') : label + ' (archived)';
+        return `<a href="${escapeHtml(archiveUrl(clean))}" target="_blank" rel="noopener" title="Archived copy of ${escapeHtml(clean)}">${escapeHtml(archivedLabel)}</a>`
             + ` <a class="kop-live-link" href="${escapeHtml(goUrl(clean))}" target="_blank" rel="nofollow noopener noreferrer">live site</a>`;
     };
 

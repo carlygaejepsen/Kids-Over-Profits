@@ -179,6 +179,10 @@ php scripts/test-icons.php
 # Pictures in editor content: 640px+ ones fill the text column (.kop-img-fill from inc/content-images.php), smaller ones
 # are centred, left/right-aligned ones keep their float (css/content-images.css)
 php scripts/test-content-images.php
+# Links read as words, never as web addresses: kop_url_label() (inc/url-labels.php, a late the_content filter) and
+# kopUrlLabel() (js/url-labels.js, on every page, relabels JS-drawn lists as they appear) must give the same label;
+# a new renderer that prints a link uses one of them for its text. data-kop-keep-url opts an element out
+php -d extension=mbstring scripts/test-url-labels.php    # labels, PHP == JS (needs node), the content filter
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")

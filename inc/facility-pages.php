@@ -2377,7 +2377,8 @@ if (!function_exists('kop_program_links_register_script')) {
         $rel = '/js/shared/program-links.js';
         $path = get_stylesheet_directory() . $rel;
         if (!file_exists($path)) return;
-        wp_register_script('kop-program-links', get_stylesheet_directory_uri() . $rel, array(), filemtime($path), true);
+        // kop-url-labels (inc/url-labels.php) gives the links words instead of addresses.
+        wp_register_script('kop-program-links', get_stylesheet_directory_uri() . $rel, array('kop-url-labels'), filemtime($path), true);
         wp_localize_script('kop-program-links', 'KOP_PROGRAM_LINKS', array(
             'goBase' => home_url('/go/'),
             'exempt' => kop_facility_pages_archive_exempt_domains(),
