@@ -147,6 +147,8 @@ require_once get_stylesheet_directory() . '/inc/inspection-links.php';
 require_once get_stylesheet_directory() . '/inc/content-images.php';
 // Links read as words, never as long web addresses (the_content filter + js/url-labels.js)
 require_once get_stylesheet_directory() . '/inc/url-labels.php';
+// One review inbox for every queue, drawn on the Submissions Review page (inc/review-inbox/ holds a source per queue)
+require_once get_stylesheet_directory() . '/inc/review-inbox.php';
 // Duplicate facility records found automatically and merged into one, with Undo (KOP Tools > Merge Duplicates)
 require_once get_stylesheet_directory() . '/inc/facility-merge.php';
 // A person id for everyone on a staff list, stamped as personId by an hourly sync (KOP Tools > People)

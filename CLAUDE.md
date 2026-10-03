@@ -91,6 +91,12 @@ php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]  
 # kop_fmerge_json_tables()), its FileBird library moves into the kept folder, its page 301s; exact Undo from the Merged tab.
 # A new table holding facility ids goes in kop_fmerge_ref_tables(); files keyed by id read kop_facility_merge_expand_ids()
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.php [--list]   # real merges + undo on an in-memory copy
+# Review inbox: every approval queue on the Submissions Review page (inc/review-inbox.php, js/review-inbox.js). Each queue is
+# a source in inc/review-inbox/<name>.php, registered with kop_rinbox_register(), calling the queue's own apply/undo functions;
+# cards edit name/details, category, tags (shared {prefix}kop_review_tags unless the queue keeps its own), "Move to" another queue,
+# "Fill empty fields with AI" (news/lawsuits: kop_enrich_*_row(), else a generic filler). A new queue gets a source file there
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
+python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite

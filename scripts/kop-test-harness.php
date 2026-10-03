@@ -101,7 +101,8 @@ function get_option($name, $default = false) {
     if ($name === 'date_format') return 'F j, Y';
     return $default;
 }
-function update_option() { return true; }
+// Stored only for a test on a scratch copy (kop_test_wpdb_writes); a no-op everywhere else, as before.
+function update_option($name = '', $value = null) { if (!empty($GLOBALS['kop_test_wpdb_writes'])) $GLOBALS['kop_test_options'][$name] = $value; return true; }
 /* Only the pages the templates actually look up by slug. Returning null for
  * everything used to mean the facility page's "where to report this" callout
  * was never rendered by this harness at all, so a break in it would have gone
@@ -252,6 +253,31 @@ class wpdb {
     public function get_col($sql, $x = 0) { $out = array(); foreach ($this->rows($sql) as $r) { $v = array_values($r); $out[] = $v[$x] ?? null; } return $out; }
     public function esc_like($s) { return addcslashes((string) $s, '_%\\'); }
     public function query($sql) { return 0; }
+    // Writes run only for a test that set $GLOBALS['kop_test_wpdb_writes'] on a scratch copy
+    // (scripts/test-review-inbox.php); everywhere else they do nothing, so tmp/prod.sqlite stays as synced.
+    private function write($sql, array $vals) {
+        if (empty($GLOBALS['kop_test_wpdb_writes'])) return false;
+        try {
+            $st = $this->pdo->prepare($sql);
+            $st->execute($vals);
+            return $st->rowCount();
+        } catch (Throwable $e) {
+            $this->last_error = $e->getMessage();
+            return false;
+        }
+    }
+    public function insert($table, array $data) {
+        return $this->write("INSERT INTO `$table` (`" . implode('`, `', array_keys($data)) . '`) VALUES (' . implode(', ', array_fill(0, count($data), '?')) . ')', array_values($data));
+    }
+    public function update($table, array $data, array $where) {
+        $set = implode(', ', array_map(function ($k) { return "`$k` = ?"; }, array_keys($data)));
+        $w = implode(' AND ', array_map(function ($k) { return "`$k` = ?"; }, array_keys($where)));
+        return $this->write("UPDATE `$table` SET $set WHERE $w", array_merge(array_values($data), array_values($where)));
+    }
+    public function delete($table, array $where) {
+        $w = implode(' AND ', array_map(function ($k) { return "`$k` = ?"; }, array_keys($where)));
+        return $this->write("DELETE FROM `$table` WHERE $w", array_values($where));
+    }
 }
 
 $pdo = new PDO('sqlite:' . $db_path);
