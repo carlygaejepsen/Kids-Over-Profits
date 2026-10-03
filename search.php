@@ -122,8 +122,8 @@ function kop_search_master_table($table, $search_query, $limit = 10, $facility_r
             }
         }
         $profile_url = '';
-        if ($facility_records && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
-            $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+        if ($facility_records && function_exists('kop_search_record_page_url')) {
+            $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
         }
         $results[] = array(
             'name'      => $row['unique_name'],
@@ -225,7 +225,10 @@ global $wpdb;
             <h2 class="kop-search-section-title"><?php echo esc_html($section['title']); ?></h2>
             <ul class="kop-search-result-list">
                 <?php foreach ($section['results'] as $r):
-                    $result_url = !empty($r['url']) ? $r['url'] : '';
+                    // v2 results: their own /facility/ or /operator/ page first.
+                    $result_url = (isset($r['kind']) && function_exists('kop_search_v2_result_url'))
+                        ? kop_search_v2_result_url($r)
+                        : (!empty($r['url']) ? $r['url'] : '');
                     if ($result_url === '' && $section['url']) {
                         $result_url = $section['linkable']
                             ? add_query_arg('search', rawurlencode($r['display']), $section['url'])
@@ -303,7 +306,11 @@ global $wpdb;
         <ul class="kop-search-result-list">
             <?php foreach ($wiki_results as $entry):
                 $name = isset($entry['program_name']) ? $entry['program_name'] : '';
-                $entry_url = ($wiki_url && $name !== '') ? add_query_arg('search', rawurlencode($name), $wiki_url) : $wiki_url;
+                // The program's own page when it has one; else its wiki entry.
+                $entry_url = function_exists('kop_search_record_page_url') ? kop_search_record_page_url($name) : '';
+                if ($entry_url === '') {
+                    $entry_url = ($wiki_url && $name !== '') ? add_query_arg('search', rawurlencode($name), $wiki_url) : $wiki_url;
+                }
                 $meta = array_filter(array(
                     isset($entry['program_type']) ? $entry['program_type'] : '',
                     isset($entry['organization']) ? $entry['organization'] : '',
@@ -339,7 +346,7 @@ global $wpdb;
         $like = '%' . $wpdb->esc_like($search_query) . '%';
         $inspection_results = (array) $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT facility_name, program_name, full_address, state
+                "SELECT id, facility_name, program_name, full_address, state
                  FROM inspection_facilities
                  WHERE facility_name LIKE %s OR program_name LIKE %s OR full_address LIKE %s
                  ORDER BY facility_name
@@ -361,6 +368,13 @@ global $wpdb;
                 $state_url  = $state_page ? get_permalink($state_page) : '';
                 if ($state_url && !empty($fac['facility_name'])) {
                     $state_url = add_query_arg('search', rawurlencode($fac['facility_name']), $state_url);
+                }
+                // The facility's own page when a record matches this row.
+                $profile_url = function_exists('kop_search_inspection_page_url')
+                    ? kop_search_inspection_page_url($fac['id'], $fac['facility_name'], $state)
+                    : '';
+                if ($profile_url !== '') {
+                    $state_url = $profile_url;
                 }
                 $meta       = array_filter(array(
                     isset($fac['program_name']) ? $fac['program_name'] : '',

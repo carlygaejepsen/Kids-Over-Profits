@@ -150,6 +150,10 @@ python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws
 # inc/ajax-search-lite.php, inc/global-search.php, search.php): also matches identification.pastNames/otherNames,
 # shown as "Formerly X" / "Also known as X", current-name hits ranked first
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
+# Search results link to the record's own page (/facility/, /operator/; wiki entries and inspection rows to the matching
+# facility page in the same state), falling back to the state hub or directory search: kop_search_v2_result_url() and
+# kop_search_record_page_url() in inc/ajax-search-lite.php, used by the dropdown, the search bar and search.php
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-search-links.php
 # Facility names in free-text lists (inc/facility-suggest.php): kop/v1/facility-suggest feeds the data forms'
 # 'facilityref' autocomplete (ttiReferrals, knownReferrals, facilitiesReferred; reuses kop_v2_search); kop/v1/facility-links
 # resolves names to /facility/<slug>/ for "Refers young people to" on /mental-health-providers/ (one batch, ambiguous never links)

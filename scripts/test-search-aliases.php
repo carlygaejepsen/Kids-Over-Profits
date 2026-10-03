@@ -164,7 +164,9 @@ if ($report_text_hit) {
     $found = false;
     foreach ($matches as $match) {
         if ($match['title'] === $report_text_hit['facility']) {
-            $found = strpos($match['url'], '/' . $report_text_hit['state'] . '-reports/') !== false;
+            // Its facility page when a record matches the row, else the state report page.
+            $found = strpos($match['url'], '/' . $report_text_hit['state'] . '-reports/') !== false
+                || strpos($match['url'], '/' . kop_facility_pages_base() . '/') !== false;
             break;
         }
     }
@@ -202,8 +204,8 @@ foreach (array(
 }
 $global_search_source = file_get_contents(dirname(__DIR__) . '/inc/global-search.php');
 $check('sitewide search includes extracted inspection report text', strpos($global_search_source, 'r.raw_content LIKE %s') !== false);
-$check('sitewide search resolves eligible legacy facility profile URLs', strpos($global_search_source, 'kop_facility_page_url_for_name') !== false);
-$check('full results resolve eligible legacy facility profile URLs', strpos(file_get_contents(dirname(__DIR__) . '/search.php'), 'kop_facility_page_url_for_name') !== false);
+$check('sitewide search resolves eligible legacy facility profile URLs', strpos($global_search_source, 'kop_search_record_page_url') !== false);
+$check('full results resolve eligible legacy facility profile URLs', strpos(file_get_contents(dirname(__DIR__) . '/search.php'), 'kop_search_record_page_url') !== false);
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);

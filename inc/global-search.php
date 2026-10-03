@@ -105,16 +105,11 @@ function kop_global_search_collect($phrase) {
 
     $v2 = (function_exists('kop_v2_active') && kop_v2_active('search')) ? kop_v2_search($phrase, 6, 3, 4) : null;
     if ($v2 !== null) {
-        $program_index_url  = kop_asl_page_url_by_template('page-tti-program-index.php');
-        $location_index_url = kop_location_index_url();
-        $to_item = function ($r) use ($program_index_url, $location_index_url) {
-            // A facility with a page of its own links there; otherwise its
-            // state hub, then the directory filtered to the name: operators
-            // on the parent company tab, facilities on the location tab.
-            $index_url = $r['kind'] === 'operator' ? $program_index_url : $location_index_url;
-            $url = !empty($r['profile_url']) ? $r['profile_url']
-                : ($r['url'] !== '' ? $r['url']
-                : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : add_query_arg('s', rawurlencode($r['display']), home_url('/'))));
+        $to_item = function ($r) {
+            // Its own /facility/ or /operator/ page; else its state hub, then
+            // the directory filtered to the name (kop_search_v2_result_url()).
+            $url = kop_search_v2_result_url($r);
+            if ($url === '') $url = add_query_arg('s', rawurlencode($r['display']), home_url('/'));
             $meta = $r['kind'] === 'operator'
                 ? ($r['fac_count'] . ' facilit' . ($r['fac_count'] === 1 ? 'y' : 'ies'))
                 : ($r['kind'] === 'place' ? ($r['fac_count'] . ' facilities') : $r['location']);
@@ -173,8 +168,8 @@ function kop_global_search_collect($phrase) {
             }
             $display = $operator !== '' ? $operator : $row['unique_name'];
             $profile_url = '';
-            if ($cfg['key'] === 'facilities' && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
-                $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+            if ($cfg['key'] === 'facilities') {
+                $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
             }
             $items[] = array(
                 'title' => $display,
@@ -202,9 +197,11 @@ function kop_global_search_collect($phrase) {
         );
         $items = array();
         foreach ((array) $rows as $row) {
+            // The program's own page when it has one; else its wiki entry.
+            $profile_url = kop_search_record_page_url($row['program_name']);
             $items[] = array(
                 'title' => $row['program_name'],
-                'url'   => $wiki_url ? add_query_arg('search', rawurlencode($row['program_name']), $wiki_url) : add_query_arg('s', rawurlencode($row['program_name']), home_url('/')),
+                'url'   => $profile_url !== '' ? $profile_url : ($wiki_url ? add_query_arg('search', rawurlencode($row['program_name']), $wiki_url) : add_query_arg('s', rawurlencode($row['program_name']), home_url('/'))),
                 'meta'  => (string) $row['city_state'],
             );
         }
@@ -217,7 +214,7 @@ function kop_global_search_collect($phrase) {
     if (kop_asl_table_exists('inspection_facilities')) {
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT facility_name, state FROM inspection_facilities
+                "SELECT id, facility_name, state FROM inspection_facilities
                  WHERE facility_name LIKE %s OR program_name LIKE %s
                  ORDER BY facility_name LIMIT 8",
                 $like, $like
@@ -230,13 +227,14 @@ function kop_global_search_collect($phrase) {
                 break;
             }
             $state      = strtoupper((string) $row['state']);
+            $profile_url = kop_search_inspection_page_url($row['id'], $row['facility_name'], $state);
             $state_page = $state ? get_page_by_path(strtolower($state) . '-reports') : null;
-            if (!$state_page) {
+            if ($profile_url === '' && !$state_page) {
                 continue; // no public page for this state's reports
             }
             $items[] = array(
                 'title' => $row['facility_name'],
-                'url'   => add_query_arg('search', rawurlencode($row['facility_name']), get_permalink($state_page)),
+                'url'   => $profile_url !== '' ? $profile_url : add_query_arg('search', rawurlencode($row['facility_name']), get_permalink($state_page)),
                 'meta'  => $state,
             );
         }
@@ -332,11 +330,12 @@ function kop_global_search_collect($phrase) {
                 );
             }
             $first_facility = $facilities ? (string) $facilities[0] : '';
+            $profile_url = $first_facility !== '' ? kop_search_record_page_url($first_facility) : '';
             $items[] = array(
                 'title' => $title,
-                'url'   => ($first_facility && $index_url)
+                'url'   => $profile_url !== '' ? $profile_url : (($first_facility && $index_url)
                     ? add_query_arg('search', rawurlencode($first_facility), $index_url)
-                    : add_query_arg('s', rawurlencode($title), home_url('/')),
+                    : add_query_arg('s', rawurlencode($title), home_url('/'))),
                 'meta'  => $facilities ? implode(', ', $facilities) : 'Address record',
             );
         }
@@ -418,7 +417,7 @@ function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
         return array();
     }
 
-    $cache_key = 'kop_gs_reports_' . md5(strtolower(trim((string)$phrase)) . '|' . (int)$limit);
+    $cache_key = 'kop_gs_reports_v2_' . md5(strtolower(trim((string)$phrase)) . '|' . (int)$limit);
     $cached = get_transient($cache_key);
     if (is_array($cached)) {
         return $cached;
@@ -426,7 +425,7 @@ function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
 
     $like = '%' . $wpdb->esc_like(trim((string)$phrase)) . '%';
     $rows = $wpdb->get_results($wpdb->prepare(
-        "SELECT f.facility_name, f.state, r.report_date
+        "SELECT f.id AS inspection_id, f.facility_name, f.state, r.report_date
            FROM inspection_reports r
            JOIN inspection_facilities f ON f.id = r.facility_id
           WHERE r.raw_content LIKE %s OR r.summary LIKE %s OR r.categories_json LIKE %s
@@ -439,9 +438,7 @@ function kop_global_search_inspection_text_matches($phrase, $limit = 5) {
     foreach ((array)$rows as $row) {
         $facility = (string)$row['facility_name'];
         $state = strtoupper((string)$row['state']);
-        $profile_url = function_exists('kop_facility_page_url_for_name')
-            ? kop_facility_page_url_for_name($facility)
-            : '';
+        $profile_url = kop_search_inspection_page_url($row['inspection_id'], $facility, $state);
         $state_page = $state ? get_page_by_path(strtolower($state) . '-reports') : null;
         $url = $profile_url ?: ($state_page ? add_query_arg('search', rawurlencode($facility), get_permalink($state_page)) : '');
         if ($url === '') continue;

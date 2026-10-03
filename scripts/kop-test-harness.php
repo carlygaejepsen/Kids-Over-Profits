@@ -202,7 +202,7 @@ class WP_Error {
     public function get_error_message() { return $this->message; }
 }
 class WP_REST_Server { const READABLE = 'GET'; const CREATABLE = 'POST'; const EDITABLE = 'POST'; const DELETABLE = 'DELETE'; }
-class WP_Query { public $is_404 = false; public function set_404() { $this->is_404 = true; } }
+class WP_Query { public $is_404 = false; public $posts = array(); public function set_404() { $this->is_404 = true; } }
 
 /** $wpdb over PDO/SQLite: WordPress-style prepare(), MySQL SHOW TABLES rewritten. */
 class wpdb {

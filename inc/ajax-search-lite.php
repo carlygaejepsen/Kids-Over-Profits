@@ -71,16 +71,13 @@ function kop_asl_collect_database_matches($phrase) {
 
     if (function_exists('kop_v2_active') && kop_v2_active('search')) {
         $v2 = kop_v2_search($phrase, 4, 2, 2);
-        $program_index_url  = kop_asl_page_url_by_template('page-tti-program-index.php');
-        $location_index_url = kop_location_index_url();
         $labels = array('operator' => 'Company', 'facility' => 'Facility record', 'place' => 'Location');
         foreach (array_merge($v2['operators'], $v2['facilities'], $v2['places']) as $r) {
-            // Operators go to the parent company tab; facilities to the location tab.
-            $index_url = $r['kind'] === 'operator' ? $program_index_url : $location_index_url;
+            $link = kop_search_v2_result_url($r);
             $alias_hint = function_exists('kop_v2_search_alias_hint') ? kop_v2_search_alias_hint($r) : '';
             $items[] = array(
                 'title' => $r['display'],
-                'link'  => !empty($r['profile_url']) ? $r['profile_url'] : ($r['url'] !== '' ? $r['url'] : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : home_url('/?s=' . rawurlencode($phrase)))),
+                'link'  => $link !== '' ? $link : home_url('/?s=' . rawurlencode($phrase)),
                 'meta'  => $labels[$r['kind']] . ($r['location'] !== '' ? ' - ' . $r['location'] : '') . ($alias_hint !== '' ? ' (' . $alias_hint . ')' : ''),
             );
         }
@@ -112,8 +109,8 @@ function kop_asl_collect_database_matches($phrase) {
             $operator = isset($inner['operator']['name']) && is_string($inner['operator']['name']) ? $inner['operator']['name'] : '';
             $display  = $operator !== '' ? $operator : $row['unique_name'];
             $profile_url = '';
-            if ($cfg['table'] === $facilities_table && $operator === '' && function_exists('kop_facility_page_url_for_name')) {
-                $profile_url = kop_facility_page_url_for_name($row['unique_name']);
+            if ($cfg['table'] === $facilities_table) {
+                $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
             }
             $items[] = array(
                 'title' => $display,
@@ -137,9 +134,11 @@ function kop_asl_collect_database_matches($phrase) {
             ARRAY_A
         );
         foreach ((array) $rows as $row) {
+            // The program's own page when it has one; else its wiki entry.
+            $profile_url = kop_search_record_page_url($row['program_name']);
             $items[] = array(
                 'title' => $row['program_name'],
-                'link'  => $wiki_url ? add_query_arg('search', rawurlencode($row['program_name']), $wiki_url) : home_url('/?s=' . rawurlencode($phrase)),
+                'link'  => $profile_url !== '' ? $profile_url : ($wiki_url ? add_query_arg('search', rawurlencode($row['program_name']), $wiki_url) : home_url('/?s=' . rawurlencode($phrase))),
                 'meta'  => trim('Wiki entry' . ($row['city_state'] ? ' · ' . $row['city_state'] : '')),
             );
         }
@@ -149,7 +148,7 @@ function kop_asl_collect_database_matches($phrase) {
     if (kop_asl_table_exists('inspection_facilities')) {
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT facility_name, state FROM inspection_facilities
+                "SELECT id, facility_name, state FROM inspection_facilities
                  WHERE facility_name LIKE %s OR program_name LIKE %s
                  ORDER BY facility_name LIMIT 3",
                 $like, $like
@@ -158,13 +157,14 @@ function kop_asl_collect_database_matches($phrase) {
         );
         foreach ((array) $rows as $row) {
             $state      = strtoupper((string) $row['state']);
+            $profile_url = kop_search_inspection_page_url($row['id'], $row['facility_name'], $state);
             $state_page = $state ? get_page_by_path(strtolower($state) . '-reports') : null;
-            if (!$state_page) {
+            if ($profile_url === '' && !$state_page) {
                 continue; // no public page for this state's reports
             }
             $items[] = array(
                 'title' => $row['facility_name'],
-                'link'  => add_query_arg('search', rawurlencode($row['facility_name']), get_permalink($state_page)),
+                'link'  => $profile_url !== '' ? $profile_url : add_query_arg('search', rawurlencode($row['facility_name']), get_permalink($state_page)),
                 'meta'  => 'Inspection records · ' . $state,
             );
         }
@@ -245,4 +245,74 @@ function kop_location_index_url() {
     $url = kop_asl_page_url_by_template('page-tti-program-index.php');
     if ($url === '') $url = home_url('/tti-program-index/');
     return add_query_arg('view', 'location', $url);
+}
+
+/**
+ * Where a kop_v2_search() facility/operator/place result links: its own
+ * /facility/ or /operator/ page first, then its state page, then the
+ * directory filtered to its name. Shared by the header dropdown, the
+ * search bar (inc/global-search.php) and the results page (search.php).
+ */
+function kop_search_v2_result_url($r) {
+    if (!empty($r['profile_url'])) return $r['profile_url'];
+    if ($r['kind'] === 'operator' && function_exists('kop_operator_page_url_for_name')) {
+        $url = kop_operator_page_url_for_name($r['display']);
+        if ($url !== '') return $url;
+    }
+    if (!empty($r['url'])) return $r['url'];
+    $index_url = $r['kind'] === 'operator' ? kop_asl_page_url_by_template('page-tti-program-index.php') : kop_location_index_url();
+    return $index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : '';
+}
+
+/**
+ * The /facility/ or /operator/ page for a name found in another table (a
+ * wiki entry's program, an inspection row's facility), or ''. With a state
+ * code only a facility page in that state counts, so a group home on a state
+ * report never links to a same-named program elsewhere.
+ */
+function kop_search_record_page_url($name, $state = '') {
+    $name = trim((string) $name);
+    if ($name === '') return '';
+    $state = strtolower(trim((string) $state));
+    if ($state === '') {
+        $url = function_exists('kop_facility_page_url_for_name') ? kop_facility_page_url_for_name($name) : '';
+        if ($url === '' && function_exists('kop_operator_page_url_for_name')) $url = kop_operator_page_url_for_name($name);
+        return $url;
+    }
+    if (!function_exists('kop_facility_pages_index') || !function_exists('kop_facility_pages_name_key')) return '';
+    $key = kop_facility_pages_name_key($name);
+    if ($key === '') return '';
+    $index = kop_facility_pages_index();
+    foreach ((array) $index['ids'] as $id => $entry) {
+        if (kop_facility_pages_name_key($entry['name']) !== $key) continue;
+        // Slugs are "<name>-<state>[-<city>][-<id>]" (kop_facility_page_slug_candidate()).
+        $prefix = sanitize_title($entry['name']) . '-' . $state;
+        $slug = (string) $entry['slug'];
+        if ($slug === $prefix || strpos($slug, $prefix . '-') === 0) return kop_facility_page_url((int) $id);
+    }
+    return '';
+}
+
+/**
+ * The facility page for an inspection_facilities row: a record an admin
+ * linked to it at KOP Tools > Inspection Links, else a record of the same
+ * name in the same state, else ''.
+ */
+function kop_search_inspection_page_url($inspection_id, $facility_name, $state) {
+    static $by_row = null;
+    if ($by_row === null) {
+        $by_row = array();
+        if (function_exists('kop_inspection_links_get')) {
+            $all = kop_inspection_links_get();
+            foreach ($all['links'] as $fid => $rows) {
+                foreach ((array) $rows as $row_id) $by_row[(int) $row_id] = (int) $fid;
+            }
+        }
+    }
+    $inspection_id = (int) $inspection_id;
+    if ($inspection_id > 0 && isset($by_row[$inspection_id]) && function_exists('kop_facility_page_url')) {
+        $url = kop_facility_page_url($by_row[$inspection_id]);
+        if ($url !== '') return $url;
+    }
+    return kop_search_record_page_url($facility_name, $state);
 }
