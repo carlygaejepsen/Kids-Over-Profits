@@ -275,6 +275,20 @@ if (!function_exists('kop_pmerge_do_undo')) {
     }
 }
 
+if (!function_exists('kop_pmerge_set_dismissed')) {
+    /** Mark a pair "not the same" ($dismiss true) or put it back on the list. Returns the message. */
+    function kop_pmerge_set_dismissed($a, $b, $dismiss, $login) {
+        $a = (int) $a;
+        $b = (int) $b;
+        $key = min($a, $b) . ':' . max($a, $b);
+        $dis = kop_pmerge_dismissed();
+        if ($dismiss) $dis[$key] = array('by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
+        else unset($dis[$key]);
+        update_option('kop_people_merge_dismissed', $dis, false);
+        return $dismiss ? 'Marked not the same. This pair will not be offered again.' : 'Back on the list.';
+    }
+}
+
 if (!function_exists('kop_pmerge_ajax')) {
     /**
      * POST action=kop_people_merge, nonce, op:
@@ -302,14 +316,7 @@ if (!function_exists('kop_pmerge_ajax')) {
             } elseif ($op === 'undo') {
                 $note = kop_pmerge_do_undo((string) ($_POST['log'] ?? ''));
             } elseif ($op === 'dismiss' || $op === 'undismiss') {
-                $a = (int) ($_POST['a'] ?? 0);
-                $b = (int) ($_POST['b'] ?? 0);
-                $key = min($a, $b) . ':' . max($a, $b);
-                $dis = kop_pmerge_dismissed();
-                if ($op === 'dismiss') $dis[$key] = array('by' => $login, 'at' => gmdate('Y-m-d H:i:s'));
-                else unset($dis[$key]);
-                update_option('kop_people_merge_dismissed', $dis, false);
-                $note = $op === 'dismiss' ? 'Marked not the same. This pair will not be offered again.' : 'Back on the list.';
+                $note = kop_pmerge_set_dismissed((int) ($_POST['a'] ?? 0), (int) ($_POST['b'] ?? 0), $op === 'dismiss', $login);
             } else {
                 throw new RuntimeException('Unknown action.');
             }

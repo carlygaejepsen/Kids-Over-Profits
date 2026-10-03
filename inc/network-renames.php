@@ -273,10 +273,27 @@ if (!function_exists('kop_network_renames_ajax')) {
             wp_send_json_error(array('message' => 'Nothing to save.'), 400);
         }
         $graph = kop_network_map_graph();
-        $keys = array();
-        foreach (kop_network_renames_list($graph ?: array()) as $r) $keys[$r['key']] = true;
-        $decisions = kop_network_renames_decisions();
         $user = wp_get_current_user();
+        $out = kop_network_renames_decide($items, $user ? $user->user_login : '', $graph ?: array());
+        $decisions = kop_network_renames_decisions();
+        // The years every name now has, for the cards to show.
+        $base = kop_network_renames_base_years($graph ?: array());
+        $applied = kop_network_renames_apply_years($base, $decisions);
+        wp_send_json_success(array('saved' => $out, 'years' => (object) array_merge($base, $applied)));
+    }
+    add_action('wp_ajax_kop_network_renames_decide', 'kop_network_renames_ajax');
+}
+
+if (!function_exists('kop_network_renames_decide')) {
+    /**
+     * Store decisions: $items [{key, decision: save|skip|undo, year, swapped}],
+     * keys as kop_network_renames_list() gives them for $graph. Returns
+     * key => {decision, year, swapped} as stored, or {error} for an item refused.
+     */
+    function kop_network_renames_decide(array $items, $login, array $graph) {
+        $keys = array();
+        foreach (kop_network_renames_list($graph) as $r) $keys[$r['key']] = true;
+        $decisions = kop_network_renames_decisions();
         $this_year = (int) gmdate('Y');
         $out = array();
         foreach ($items as $item) {
@@ -295,22 +312,18 @@ if (!function_exists('kop_network_renames_ajax')) {
                     continue;
                 }
                 $decisions[$key] = array('decision' => 'saved', 'year' => $year, 'swapped' => !empty($item['swapped']),
-                    'by' => $user ? $user->user_login : '', 'at' => gmdate('Y-m-d H:i:s'));
+                    'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
             } elseif ($decision === 'skip') {
                 $decisions[$key] = array('decision' => 'skipped', 'year' => 0, 'swapped' => false,
-                    'by' => $user ? $user->user_login : '', 'at' => gmdate('Y-m-d H:i:s'));
+                    'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
             } else {
                 continue;
             }
             $out[$key] = array('decision' => $decisions[$key]['decision'], 'year' => $decisions[$key]['year'], 'swapped' => $decisions[$key]['swapped']);
         }
         update_option('kop_network_rename_review', $decisions, false);
-        // The years every name now has, for the cards to show.
-        $base = kop_network_renames_base_years($graph ?: array());
-        $applied = kop_network_renames_apply_years($base, $decisions);
-        wp_send_json_success(array('saved' => $out, 'years' => (object) array_merge($base, $applied)));
+        return $out;
     }
-    add_action('wp_ajax_kop_network_renames_decide', 'kop_network_renames_ajax');
 }
 
 /* ---- The review screen ------------------------------------------------ */

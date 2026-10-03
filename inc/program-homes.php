@@ -686,6 +686,26 @@ if (!function_exists('kop_program_homes_opts')) {
     }
 }
 
+if (!function_exists('kop_program_homes_set_dismissed')) {
+    /** Mark a suggestion (its key) "not one program" ($dismiss true), or put it back in the suggestions. */
+    function kop_program_homes_set_dismissed($key, $dismiss) {
+        $d = kop_program_homes_dismissed();
+        if ($dismiss) $d[(string) $key] = time();
+        else unset($d[(string) $key]);
+        update_option('kop_program_homes_dismissed', $d, false);
+        delete_transient('kop_program_homes_suggestions');
+    }
+}
+
+if (!function_exists('kop_program_homes_remove_home')) {
+    /** Take one home out of its program. */
+    function kop_program_homes_remove_home($home_id) {
+        global $wpdb;
+        $wpdb->query($wpdb->prepare('DELETE FROM ' . kop_program_homes_table('homes') . ' WHERE home_id = %d', (int) $home_id));
+        kop_program_homes_after_change();
+    }
+}
+
 if (!function_exists('kop_program_homes_handle_post')) {
     function kop_program_homes_handle_post() {
         if (!current_user_can('manage_options')) wp_die('Not allowed.');
@@ -703,25 +723,14 @@ if (!function_exists('kop_program_homes_handle_post')) {
                 $name = sanitize_text_field(wp_unslash($_POST['program_name'] ?? ''));
                 $pid = kop_program_homes_group($homes, ctype_digit($program) ? (int) $program : 0, $name, kop_program_homes_opts());
                 $msg = 'Grouped ' . count($homes) . ' homes under #' . $pid . ' ' . $name . '.';
-            } elseif ($do === 'dismiss') {
-                $d = kop_program_homes_dismissed();
-                $d[sanitize_text_field(wp_unslash($_POST['key'] ?? ''))] = time();
-                update_option('kop_program_homes_dismissed', $d, false);
-                delete_transient('kop_program_homes_suggestions');
-                $msg = 'Marked as not one program.';
-            } elseif ($do === 'undismiss') {
-                $d = kop_program_homes_dismissed();
-                unset($d[sanitize_text_field(wp_unslash($_POST['key'] ?? ''))]);
-                update_option('kop_program_homes_dismissed', $d, false);
-                delete_transient('kop_program_homes_suggestions');
-                $msg = 'Back in the suggestions.';
+            } elseif ($do === 'dismiss' || $do === 'undismiss') {
+                kop_program_homes_set_dismissed(sanitize_text_field(wp_unslash($_POST['key'] ?? '')), $do === 'dismiss');
+                $msg = $do === 'dismiss' ? 'Marked as not one program.' : 'Back in the suggestions.';
             } elseif ($do === 'undo') {
                 $r = kop_program_homes_undo((int) ($_POST['program_id'] ?? 0));
                 $msg = $r === 'removed' ? 'Undone; the program record this screen made is deleted.' : 'Undone; the program record stays (it was there before, or has been linked or edited since).';
             } elseif ($do === 'remove_home') {
-                global $wpdb;
-                $wpdb->query($wpdb->prepare('DELETE FROM ' . kop_program_homes_table('homes') . ' WHERE home_id = %d', (int) ($_POST['home_id'] ?? 0)));
-                kop_program_homes_after_change();
+                kop_program_homes_remove_home((int) ($_POST['home_id'] ?? 0));
                 $msg = 'Home taken out of the program.';
             }
         } catch (Throwable $e) {

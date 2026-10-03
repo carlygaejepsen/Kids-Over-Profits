@@ -937,6 +937,43 @@ if (!function_exists('kop_fmerge_do_merge')) {
     }
 }
 
+if (!function_exists('kop_fmerge_do_undo')) {
+    /** Undo one merge from the log by its id: the record, its rows and its page come back. Returns the message. */
+    function kop_fmerge_do_undo(PDO $pdo, $prefix, $log_id) {
+        $log = kop_fmerge_log();
+        $found = null;
+        foreach ($log as $i => $e) if (($e['id'] ?? '') === (string) $log_id) $found = $i;
+        if ($found === null) throw new RuntimeException('That merge is not in the log.');
+        $entry = $log[$found];
+        kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $entry) {
+            return kop_fmerge_undo($pdo, $prefix, $entry);
+        });
+        unset($log[$found]['undo']);
+        $log[$found]['undone'] = gmdate('Y-m-d H:i:s');
+        update_option('kop_facility_merge_log', $log, false);
+        $map = kop_facility_merged_into();
+        $drop = (int) $entry['drop']['id'];
+        unset($map['ids'][$drop]);
+        foreach ($map['slugs'] as $s => $v) if ((int) $v === $drop) unset($map['slugs'][$s]);
+        update_option('kop_facility_merged_into', $map, false);
+        return 'Undone: "' . $entry['drop']['name'] . '" is its own record again, with everything it had.';
+    }
+}
+
+if (!function_exists('kop_fmerge_set_dismissed')) {
+    /** Mark a pair "not the same" ($dismiss true) or put it back on the list. Returns the message. */
+    function kop_fmerge_set_dismissed($a, $b, $dismiss, $login) {
+        $a = (int) $a;
+        $b = (int) $b;
+        $key = min($a, $b) . ':' . max($a, $b);
+        $dis = kop_fmerge_dismissed();
+        if ($dismiss) $dis[$key] = array('by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
+        else unset($dis[$key]);
+        update_option('kop_facility_merge_dismissed', $dis, false);
+        return $dismiss ? 'Marked not the same. This pair will not be offered again.' : 'Back on the list.';
+    }
+}
+
 if (!function_exists('kop_fmerge_ajax')) {
     /**
      * POST action=kop_facility_merge, nonce, op:
@@ -962,33 +999,9 @@ if (!function_exists('kop_fmerge_ajax')) {
             if ($op === 'merge') {
                 $note = kop_fmerge_do_merge($pdo, $prefix, (int) ($_POST['keep'] ?? 0), (int) ($_POST['drop'] ?? 0), $login);
             } elseif ($op === 'undo') {
-                $id = (string) ($_POST['log'] ?? '');
-                $log = kop_fmerge_log();
-                $found = null;
-                foreach ($log as $i => $e) if (($e['id'] ?? '') === $id) $found = $i;
-                if ($found === null) throw new RuntimeException('That merge is not in the log.');
-                $entry = $log[$found];
-                kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $entry) {
-                    return kop_fmerge_undo($pdo, $prefix, $entry);
-                });
-                unset($log[$found]['undo']);
-                $log[$found]['undone'] = gmdate('Y-m-d H:i:s');
-                update_option('kop_facility_merge_log', $log, false);
-                $map = kop_facility_merged_into();
-                $drop = (int) $entry['drop']['id'];
-                unset($map['ids'][$drop]);
-                foreach ($map['slugs'] as $s => $v) if ((int) $v === $drop) unset($map['slugs'][$s]);
-                update_option('kop_facility_merged_into', $map, false);
-                $note = 'Undone: "' . $entry['drop']['name'] . '" is its own record again, with everything it had.';
+                $note = kop_fmerge_do_undo($pdo, $prefix, (string) ($_POST['log'] ?? ''));
             } elseif ($op === 'dismiss' || $op === 'undismiss') {
-                $a = (int) ($_POST['a'] ?? 0);
-                $b = (int) ($_POST['b'] ?? 0);
-                $key = min($a, $b) . ':' . max($a, $b);
-                $dis = kop_fmerge_dismissed();
-                if ($op === 'dismiss') $dis[$key] = array('by' => $login, 'at' => gmdate('Y-m-d H:i:s'));
-                else unset($dis[$key]);
-                update_option('kop_facility_merge_dismissed', $dis, false);
-                $note = $op === 'dismiss' ? 'Marked not the same. This pair will not be offered again.' : 'Back on the list.';
+                $note = kop_fmerge_set_dismissed((int) ($_POST['a'] ?? 0), (int) ($_POST['b'] ?? 0), $op === 'dismiss', $login);
             } else {
                 throw new RuntimeException('Unknown action.');
             }

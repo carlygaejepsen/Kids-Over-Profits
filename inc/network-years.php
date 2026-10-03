@@ -109,9 +109,20 @@ if (!function_exists('kop_network_years_ajax')) {
         if (!is_array($items) || !$items) {
             wp_send_json_error(array('message' => 'Nothing to save.'), 400);
         }
+        $user = wp_get_current_user();
+        wp_send_json_success(array('saved' => kop_network_years_decide($items, $user ? $user->user_login : '')));
+    }
+    add_action('wp_ajax_kop_network_years_decide', 'kop_network_years_ajax');
+}
+
+if (!function_exists('kop_network_years_decide')) {
+    /**
+     * Store decisions: $items [{id, decision: accept|reject|undo, start, end}].
+     * Returns id => {decision, years} as stored, or {error} for an item refused.
+     */
+    function kop_network_years_decide(array $items, $login) {
         $candidates = kop_network_years_candidates();
         $decisions = kop_network_years_decisions();
-        $user = wp_get_current_user();
         $out = array();
         $this_year = (int) gmdate('Y');
         foreach ($items as $item) {
@@ -133,19 +144,18 @@ if (!function_exists('kop_network_years_ajax')) {
                     continue;
                 }
                 $decisions[$id] = array('decision' => 'accepted', 'years' => $years,
-                    'by' => $user ? $user->user_login : '', 'at' => gmdate('Y-m-d H:i:s'));
+                    'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
             } elseif ($decision === 'reject') {
                 $decisions[$id] = array('decision' => 'rejected', 'years' => '',
-                    'by' => $user ? $user->user_login : '', 'at' => gmdate('Y-m-d H:i:s'));
+                    'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
             } else {
                 continue;
             }
             $out[$id] = array('decision' => $decisions[$id]['decision'], 'years' => $decisions[$id]['years']);
         }
         update_option('kop_network_years_review', $decisions, false);
-        wp_send_json_success(array('saved' => $out));
+        return $out;
     }
-    add_action('wp_ajax_kop_network_years_decide', 'kop_network_years_ajax');
 }
 
 /* ---- The review screen ------------------------------------------------ */
