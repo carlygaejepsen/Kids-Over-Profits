@@ -3201,6 +3201,7 @@ if (!function_exists('kop_facility_pages_inspections')) {
                 return $b['id'] <=> $a['id'];
             });
             $reports = array_slice($reports, 0, 25);
+            $reports = kop_facility_pages_report_findings($reports, $matched);
         }
 
         return array(
@@ -3211,6 +3212,61 @@ if (!function_exists('kop_facility_pages_inspections')) {
             'page_urls'  => $page_urls,
             'page_url'   => $page_urls ? array_key_first($page_urls) : '',
         );
+    }
+}
+
+if (!function_exists('kop_facility_pages_report_findings')) {
+    /**
+     * What each listed report found, in the state's own words: the
+     * deficiencies, citations, allegations and non-compliances that the
+     * serious-findings scanner reads (kop_ih_extract() in
+     * inc/inspection-highlights.php, for the states it supports). Every
+     * finding is listed, not only the serious ones an admin approved; those
+     * still lead the page under "Serious findings". Adds 'findings' [{text,
+     * standard, label}] to each report; reports from other states get none
+     * and keep their "Open report" link.
+     */
+    function kop_facility_pages_report_findings(array $reports, array $matched) {
+        global $wpdb;
+        if (!$reports || !function_exists('kop_ih_extract') || !function_exists('kop_ih_supported_states')) return $reports;
+        $ids = array_map(function ($r) { return (int) $r['id']; }, $reports);
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        $suppress = $wpdb->suppress_errors(true);
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, facility_id, report_id, report_date, categories_json, raw_content FROM inspection_reports WHERE id IN ($placeholders)",
+            $ids
+        ), ARRAY_A);
+        $wpdb->suppress_errors($suppress);
+        $by_id = array();
+        foreach ((array) $rows as $row) $by_id[(int) $row['id']] = $row;
+        $supported = kop_ih_supported_states();
+        foreach ($reports as &$report) {
+            $report['findings'] = array();
+            $row = $by_id[$report['id']] ?? null;
+            if (!$row) continue;
+            $state = strtoupper(trim((string) ($matched[(int) $row['facility_id']]['state'] ?? '')));
+            if (!in_array($state, $supported, true)) continue;
+            $seen = array();
+            foreach ((array) kop_ih_extract($state, $row) as $f) {
+                $text = trim(strip_tags(preg_replace('#<br\s*/?>#i', "\n", (string) ($f['text'] ?? ''))));
+                if ($text === '') continue;
+                $key = md5(mb_strtolower(preg_replace('/\s+/u', ' ', $text)));
+                if (isset($seen[$key])) continue; // scrapers sometimes store one finding twice
+                $seen[$key] = true;
+                if (mb_strlen($text) > 1500) {
+                    $cut = mb_substr($text, 0, 1500);
+                    $space = mb_strrpos($cut, ' ');
+                    $text = rtrim($space > 1200 ? mb_substr($cut, 0, $space) : $cut, ' ,;:') . ' ...';
+                }
+                $report['findings'][] = array(
+                    'text'     => $text,
+                    'standard' => trim((string) ($f['standard'] ?? '')),
+                    'label'    => trim((string) ($f['state_label'] ?? '')),
+                );
+            }
+        }
+        unset($report);
+        return $reports;
     }
 }
 

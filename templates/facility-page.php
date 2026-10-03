@@ -742,8 +742,21 @@ get_header();
                             <a href="<?php echo esc_url($url); ?>">Search all <?php echo esc_html($sname); ?> reports</a>
                         <?php endforeach; ?>
                     </p>
-                    <details class="kop-fp-more">
-                        <summary><?php echo count($insp['reports']) < $insp['total'] ? 'The newest ' . count($insp['reports']) . ' reports' : 'Every report'; ?>, by date</summary>
+                    <?php
+                    $kop_fp_finding_total = 0;
+                    $kop_fp_reports_with = 0;
+                    foreach ($insp['reports'] as $r) {
+                        $n = count($r['findings'] ?? array());
+                        $kop_fp_finding_total += $n;
+                        if ($n) $kop_fp_reports_with++;
+                    }
+                    ?>
+                    <details class="kop-fp-more"<?php echo $kop_fp_finding_total ? ' open' : ''; ?>>
+                        <summary><?php echo count($insp['reports']) < $insp['total'] ? 'The newest ' . count($insp['reports']) . ' reports' : 'Every report'; ?>, by date<?php
+                            echo $kop_fp_finding_total
+                                ? ': ' . (int) $kop_fp_finding_total . ' ' . ($kop_fp_finding_total === 1 ? 'finding' : 'findings') . ' in ' . (int) $kop_fp_reports_with . ' ' . ($kop_fp_reports_with === 1 ? 'report' : 'reports')
+                                : '';
+                        ?></summary>
                         <ol class="kop-fp-reports">
                             <?php foreach ($insp['reports'] as $r) : ?>
                                 <li>
@@ -753,6 +766,24 @@ get_header();
                                     <?php endif; ?>
                                     <?php if ($r['url'] !== '' && preg_match('#^https?://#i', $r['url'])) : ?>
                                         <a class="kop-fp-report-link" href="<?php echo esc_url($r['url']); ?>" target="_blank" rel="noopener">Open report</a>
+                                    <?php endif; ?>
+                                    <?php if (!empty($r['findings'])) : ?>
+                                        <details class="kop-fp-findings">
+                                            <summary><?php echo count($r['findings']) === 1 ? '1 finding' : count($r['findings']) . ' findings'; ?></summary>
+                                            <ul>
+                                                <?php foreach ($r['findings'] as $f) : ?>
+                                                    <li>
+                                                        <?php if ($f['standard'] !== '' || $f['label'] !== '') : ?>
+                                                            <p class="kop-fp-finding-rule">
+                                                                <?php if ($f['label'] !== '') : ?><strong><?php echo esc_html($f['label']); ?></strong><?php endif; ?>
+                                                                <?php if ($f['standard'] !== '') : ?><span><?php echo esc_html(($f['label'] !== '' ? ': ' : '') . $f['standard']); ?></span><?php endif; ?>
+                                                            </p>
+                                                        <?php endif; ?>
+                                                        <p class="kop-fp-finding-text"><?php echo nl2br(esc_html($f['text'])); ?></p>
+                                                    </li>
+                                                <?php endforeach; ?>
+                                            </ul>
+                                        </details>
                                     <?php endif; ?>
                                 </li>
                             <?php endforeach; ?>

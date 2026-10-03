@@ -567,6 +567,49 @@
     text-decoration: underline;
 }
 
+/* What each report found, under its row (kop_facility_pages_report_findings()). */
+.kop-fp-findings {
+    grid-column: 1 / -1;
+    margin: 0.15rem 0 0.25rem;
+}
+
+.kop-fp-findings > summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--kop-teal-ink, #24757F);
+}
+
+.kop-fp-findings ul {
+    margin: 0.4rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-reports .kop-fp-findings li {
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin: 0 0 0.4rem;
+    border: 0;
+    border-left: 3px solid var(--kop-orange, #EF9034);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-finding-rule {
+    margin: 0 0 0.25rem;
+    font-size: 0.88rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-fp-finding-rule strong {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-finding-text {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
 .kop-fp-records {
     margin: 0;
     padding: 0;
