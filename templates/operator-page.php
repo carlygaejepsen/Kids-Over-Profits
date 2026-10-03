@@ -216,12 +216,27 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <h2>Programs it has run</h2>
                 <p class="kop-fp-count"><?php echo esc_html(count($page['facilities']) . ' on record' . ($page['open_count'] ? ', open ones first' : '') . '.'); ?></p>
                 <ul class="kop-fp-records kop-fp-siblings">
-                    <?php foreach ($page['facilities'] as $f) :
+                    <?php foreach (($page['program_tree'] ?? $page['facilities']) as $f) :
                         $bits = array_filter(array($f['place'], $f['years'], ($f['status'] !== '' && $f['status'] !== 'Unknown') ? $f['status'] : ''), 'strlen');
+                        $kop_op_homes = $f['homes'] ?? array();
                         ?>
                         <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('facility:' . (int) $f['id'] . ':all', $f['name']) : ''; ?>>
                             <a href="<?php echo esc_url($f['url']); ?>"><?php echo esc_html($f['name']); ?></a>
                             <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                            <?php if ($kop_op_homes) :
+                                $kop_op_open_homes = count(array_filter($kop_op_homes, static function ($h) { return strcasecmp($h['status'], 'Open') === 0; }));
+                                ?>
+                                <details class="kop-op-homes">
+                                    <summary><?php echo esc_html(count($kop_op_homes) . ' licensed ' . (count($kop_op_homes) === 1 ? 'home' : 'homes') . ($kop_op_open_homes ? ', ' . $kop_op_open_homes . ' open' : '')); ?></summary>
+                                    <ul>
+                                        <?php foreach ($kop_op_homes as $h) :
+                                            $hbits = array_filter(array($h['place'], $h['years'], ($h['status'] !== '' && $h['status'] !== 'Unknown') ? $h['status'] : ''), 'strlen');
+                                            ?>
+                                            <li><a href="<?php echo esc_url($h['url']); ?>"><?php echo esc_html($h['home_name']); ?></a><?php if ($hbits) : ?> <span class="meta"><?php echo esc_html(implode(' | ', $hbits)); ?></span><?php endif; ?></li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </details>
+                            <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>

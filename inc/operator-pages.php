@@ -641,11 +641,42 @@ if (!function_exists('kop_operator_page_data')) {
             }
         }
         // Open programs first, then the rest; alphabetical within each.
-        usort($facilities, function ($a, $b) {
+        $open_first = function ($a, $b) {
             $ao = strcasecmp($a['status'], 'Open') === 0 ? 0 : 1;
             $bo = strcasecmp($b['status'], 'Open') === 0 ? 0 : 1;
             return $ao - $bo ?: strcasecmp($a['name'], $b['name']);
-        });
+        };
+        usort($facilities, $open_first);
+
+        // Homes of one program fold under it (inc/program-homes.php); a program
+        // record the company is not linked to still heads its homes.
+        $program_tree = array();
+        $phm = function_exists('kop_program_homes_map') ? kop_program_homes_map() : array('homes' => array());
+        $children = array();
+        foreach ($facilities as $f) {
+            if (!isset($phm['homes'][$f['id']])) continue;
+            list($pid, $home_name) = $phm['homes'][$f['id']];
+            $f['home_name'] = $home_name !== '' ? $home_name : $f['name'];
+            $children[$pid][] = $f;
+        }
+        foreach ($facilities as $f) {
+            if (isset($phm['homes'][$f['id']])) continue;
+            $f['homes'] = $children[$f['id']] ?? array();
+            unset($children[$f['id']]);
+            $program_tree[] = $f;
+        }
+        foreach ($children as $pid => $homes) {
+            $p = function_exists('kop_program_homes_home_rows') ? (kop_program_homes_home_rows(array($pid))[0] ?? null) : null;
+            if (!$p) {
+                foreach ($homes as $h) $program_tree[] = $h + array('homes' => array());
+                continue;
+            }
+            $program_tree[] = array(
+                'id' => $pid, 'name' => $p['name'], 'place' => $p['place'], 'status' => $p['status'], 'years' => $p['years'],
+                'url' => $p['url'], 'has_page' => $p['url'] !== '', 'start_year' => 0, 'end_year' => 0, 'own_years' => false, 'homes' => $homes,
+            );
+        }
+        usort($program_tree, $open_first);
 
         // ---- News: linked to the company, or to one of its facilities --------
         $news = array();
@@ -836,6 +867,7 @@ if (!function_exists('kop_operator_page_data')) {
             'parents'       => $parents,
             'subsidiaries'  => $subsidiaries,
             'facilities'    => $facilities,
+            'program_tree'  => $program_tree,
             'open_count'    => $open,
             'place_count'   => $k,
             'news'          => $news,

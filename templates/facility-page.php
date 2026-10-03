@@ -88,6 +88,7 @@ $kop_fp_violation_card = static function (array $v) {
             </details>
         <?php endif; ?>
         <p class="kop-fp-vfoot">
+            <?php if (!empty($v['home'])) : ?><span class="kop-fp-at-home">At <?php echo !empty($v['home_url']) ? '<a href="' . esc_url($v['home_url']) . '">' . esc_html($v['home']) . '</a>' : esc_html($v['home']); ?></span><?php endif; ?>
             <span><?php echo esc_html(trim('From the ' . $v['state'] . ' inspection report' . ($v['state_label'] !== '' ? '. ' . $v['state_label'] : ''))); ?></span>
             <?php if (count($v['kinds']) > 1) : ?><span>Also: <?php echo esc_html(implode(', ', array_diff($v['kinds'], array($v['label'])))); ?></span><?php endif; ?>
             <?php if ($v['source_url'] !== '' && preg_match('#^https?://#i', $v['source_url'])) : ?>
@@ -120,6 +121,7 @@ $kop_fp_news_card = static function (array $n) {
                 <?php if ($outlet !== '') : ?><span class="kop-fp-news-outlet"><?php echo esc_html($outlet); ?></span><?php endif; ?>
                 <?php if ($n['date_label'] !== '') : ?><span><?php echo esc_html($n['date_label']); ?></span><?php endif; ?>
                 <?php if ($n['type'] !== '') : ?><span class="kop-fp-news-type"><?php echo esc_html(ucfirst($n['type'])); ?></span><?php endif; ?>
+                <?php if (!empty($n['home'])) : ?><span class="kop-fp-at-home">About <?php echo esc_html($n['home']); ?></span><?php endif; ?>
             </p>
             <h3 class="kop-fp-news-title">
                 <?php if ($has_url) : ?>
@@ -135,6 +137,10 @@ $kop_fp_news_card = static function (array $n) {
 };
 
 $kop_fp_sections = array();
+// Homes of a program (inc/program-homes.php): a program lists them, a home lists the others.
+$kop_fp_homes = !empty($page['program_homes']['homes']) ? $page['program_homes']['homes'] : (!empty($page['home_of']['others']) ? $page['home_of']['others'] : array());
+$kop_fp_is_program = !empty($page['program_homes']['homes']);
+if ($kop_fp_homes) $kop_fp_sections['homes'] = $kop_fp_is_program ? 'Homes' : 'Other homes';
 $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
 $kop_fp_has_notes = !empty($page['notes']) || !empty($page['field_notes']);
@@ -154,6 +160,13 @@ $kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_link
 $kop_fp_has_network = !empty($page['network']['groups']);
 
 $kop_fp_violations = $kop_fp_has_inspections ? (array) ($page['inspections']['violations'] ?? array()) : array();
+// A program page also shows the findings at its homes, each naming the home.
+if (!empty($page['program_homes']['violations'])) {
+    $kop_fp_violations = array_merge($kop_fp_violations, $page['program_homes']['violations']);
+    usort($kop_fp_violations, static function ($a, $b) {
+        return ($b['severe'] <=> $a['severe']) ?: ($b['weight'] <=> $a['weight']) ?: strcmp((string) $b['date'], (string) $a['date']);
+    });
+}
 $kop_fp_has_violations = !empty($kop_fp_violations);
 $kop_fp_has_incidents = !empty($page['incidents']);
 
@@ -283,6 +296,11 @@ get_header();
         <?php if ($page['aka']) : ?>
             <p class="kop-fp-formerly">Also known as <?php echo esc_html(implode(', ', $page['aka'])); ?></p>
         <?php endif; ?>
+        <?php if (!empty($page['home_of'])) : $kop_fp_ho = $page['home_of']; ?>
+            <p class="kop-fp-formerly kop-fp-home-of">One of <?php echo (int) $kop_fp_ho['count']; ?> homes of <?php echo $kop_fp_ho['program']['url'] !== '' ? '<a href="' . esc_url($kop_fp_ho['program']['url']) . '">' . esc_html($kop_fp_ho['program']['name']) . '</a>' : esc_html($kop_fp_ho['program']['name']); ?></p>
+        <?php elseif ($kop_fp_is_program) : ?>
+            <p class="kop-fp-formerly kop-fp-home-of">A program of <?php echo count($kop_fp_homes); ?> licensed homes</p>
+        <?php endif; ?>
         <div class="kop-fp-badges"<?php echo $kop_fp_edit('status', 'status and years'); ?>>
             <?php if ($page['status'] !== '') : ?>
                 <span class="kop-fp-status kop-fp-status--<?php echo esc_attr($page['status_class']); ?>"><?php echo esc_html($page['status']); ?></span>
@@ -398,6 +416,33 @@ get_header();
             </nav>
             <?php endif; ?>
 
+            <?php if ($kop_fp_homes) : ?>
+            <section class="kop-fp-section kop-fp-homes-section" id="<?php echo $kop_fp_id('homes'); ?>">
+                <?php if ($kop_fp_is_program) : ?>
+                    <h2>Homes</h2>
+                    <p class="kop-fp-count"><?php
+                        $kop_fp_open_homes = count(array_filter($kop_fp_homes, static function ($h) { return strcasecmp($h['status'], 'Open') === 0; }));
+                        echo esc_html('The state licenses this program home by home: ' . count($kop_fp_homes) . ' on record' . ($kop_fp_open_homes ? ', ' . $kop_fp_open_homes . ' open' : '') . (!empty($page['program_homes']['reports']) ? ', with ' . number_format((int) $page['program_homes']['reports']) . ' inspection reports between them' : '') . '. Each has its own page with its licence and reports; their news, lawsuits and serious findings are gathered here too.');
+                    ?></p>
+                <?php else : ?>
+                    <h2>Other homes of <?php echo esc_html($page['home_of']['program']['name']); ?></h2>
+                <?php endif; ?>
+                <ul class="kop-fp-records kop-fp-homes">
+                    <?php foreach ($kop_fp_homes as $h) :
+                        $bits = array_filter(array($h['home_name'] !== $h['name'] ? $h['name'] : '', $h['place'], $h['years'], ($h['status'] !== '' && $h['status'] !== 'Unknown') ? $h['status'] : ''), 'strlen');
+                        ?>
+                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('facility:' . (int) $h['id'] . ':all', $h['name']) : ''; ?>>
+                            <?php if ($h['url'] !== '') : ?><a href="<?php echo esc_url($h['url']); ?>"><?php echo esc_html($h['home_name']); ?></a><?php else : ?><span><?php echo esc_html($h['home_name']); ?></span><?php endif; ?>
+                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php if (!$kop_fp_is_program && $page['home_of']['program']['url'] !== '') : ?>
+                    <p class="kop-fp-count"><a href="<?php echo esc_url($page['home_of']['program']['url']); ?>">The whole program, with every home's news, lawsuits and serious findings</a></p>
+                <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
             <?php if ($kop_fp_parts) :
                 // The post is the global post while its blocks render (embeds, the
                 // FileBird library, link previews). setup_postdata() also sets the
@@ -485,6 +530,7 @@ get_header();
                             <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
                             <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
                             <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
+                            <?php if (!empty($l['home'])) : ?><span class="meta">About <?php echo !empty($l['home_url']) ? '<a href="' . esc_url($l['home_url']) . '">' . esc_html($l['home']) . '</a>' : esc_html($l['home']); ?></span><?php endif; ?>
                             <?php if ($l['outcome'] !== '') : ?><p class="kop-fp-record-summary"><strong>Outcome:</strong> <?php echo esc_html($l['outcome']); ?></p><?php endif; ?>
                             <?php if ($l['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($l['summary']); ?></p><?php endif; ?>
                         </li>

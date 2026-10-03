@@ -399,6 +399,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'inspection-links:' . (function_exists('kop_inspection_links_cache_key') ? kop_inspection_links_cache_key() : '-');
         // Which profile posts print on their facility page instead of redirecting.
         $parts[] = 'merged:' . implode(',', kop_facility_pages_merged_profiles());
+        // Homes grouped under a program record (inc/program-homes.php).
+        $parts[] = 'program-homes:' . (function_exists('kop_program_homes_cache_key') ? kop_program_homes_cache_key() : '-');
         $parts[] = 'v:5';
         return md5(implode(';', $parts));
     }
@@ -2715,6 +2717,35 @@ if (!function_exists('kop_facility_page_data')) {
         $unsilenced = function_exists('kop_unsilenced_archive') ? kop_unsilenced_archive('f', $facility_id) : null;
         $survivor_sites = function_exists('kop_survivor_archives') ? kop_survivor_archives('f', $facility_id) : array();
 
+        // ---- Homes of a program (inc/program-homes.php) ------------------------
+        // A program record lists its homes and takes in their news, lawsuits
+        // and serious findings; a home names its program and the other homes,
+        // which then leave the "Same operator" list.
+        $program_homes = null;
+        $home_of = null;
+        if (function_exists('kop_program_homes_homes_of') && kop_program_homes_homes_of($facility_id)) {
+            $own_findings = array();
+            foreach ((array) ($inspections['violations'] ?? array()) as $v) $own_findings[] = (int) $v['id'];
+            $program_homes = kop_program_homes_rollup($facility_id, $state_code, array(
+                'news'       => array_map(static function ($n) { return (int) $n['id']; }, $news),
+                'lawsuits'   => array_map(static function ($l) { return (int) $l['id']; }, $lawsuits),
+                'violations' => $own_findings,
+            ));
+            $news = array_merge($news, $program_homes['news']);
+            usort($news, static function ($a, $b) { return strcmp((string) $b['date'], (string) $a['date']) ?: $b['id'] - $a['id']; });
+            $lawsuits = array_merge($lawsuits, $program_homes['lawsuits']);
+        } elseif (function_exists('kop_program_homes_for_home')) {
+            $home_of = kop_program_homes_for_home($facility_id);
+        }
+        if ($program_homes || $home_of) {
+            $family = array();
+            foreach (($program_homes ? $program_homes['homes'] : $home_of['others']) as $h) $family[(string) $h['url']] = true;
+            if ($home_of) $family[(string) $home_of['program']['url']] = true;
+            $siblings = array_values(array_filter($siblings, static function ($s) use ($family) {
+                return $s['url'] === '' || !isset($family[(string) $s['url']]);
+            }));
+        }
+
         // ---- Copy ----------------------------------------------------------------
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
         $seo_title = $name . ($place !== '' ? ' (' . $place . ')' : '') . ' | Kids Over Profits';
@@ -2756,6 +2787,8 @@ if (!function_exists('kop_facility_page_data')) {
                 'url'  => kop_facility_pages_operator_url($operator_row, $operator_name),
             ),
             'siblings'      => $siblings,
+            'program_homes' => $program_homes,
+            'home_of'       => $home_of,
             'addresses'     => $addresses,
             'former_locations' => $former,
             'operated'      => $operated,

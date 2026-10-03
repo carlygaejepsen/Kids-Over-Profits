@@ -275,6 +275,13 @@ The date is when each was last confirmed open.
     contract dated 2023 on the timeline, 2024 in the news; The Brown Schools page
     mixes in later UHS programs; Rite of Passage has two records (18, 832).
 
+20. **Program homes** (2026-10-03). [KOP Tools > Program Homes](https://kidsoverprofits.org/wp-admin/admin.php?page=kop-program-homes)
+    suggests 139 programs whose homes or cottages are separate licensed records (Newport Academy CA 34,
+    Muir Wood 18, Grafton 16, Hope Institute 15...). Confirm each (untick a record that is not one of its
+    homes, rename the program), or mark it "Not one program". Groups with a warning start with a company's
+    name (CERTS, Straight, Ascend) and are probably separate programs. Not done yet: the facility directory,
+    the network map and search still list each home on its own.
+
 ### Unconfirmed settings
 
 19. Which mode production's `kop_data_model` / `kop_data_model_areas`

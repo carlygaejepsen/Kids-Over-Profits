@@ -1730,3 +1730,44 @@ p.kop-op-draft {
     .kop-fp-chev { transition: none; }
     .kop-vc-viewport { scroll-behavior: auto; }
 }
+
+/* Homes of a program (inc/program-homes.php) */
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-homes-section { order: 4; }
+
+.kop-fp-home-of {
+    font-style: normal;
+}
+
+.kop-fp-home-of a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+}
+
+.kop-fp-at-home {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-fp-at-home a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-op-homes {
+    margin: 0.35rem 0 0;
+}
+
+.kop-op-homes summary {
+    cursor: pointer;
+    color: var(--kop-navy-blue, #000080);
+    font-size: 0.92rem;
+}
+
+.kop-op-homes ul {
+    margin: 0.35rem 0 0 1.1rem;
+    padding: 0;
+}
+
+.kop-op-homes li {
+    margin: 0.15rem 0;
+    padding: 0;
+    border: 0;
+}
