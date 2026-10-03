@@ -739,6 +739,25 @@
     color: var(--kop-text-secondary);
 }
 
+/* PDF drawn by pdf.js (phones): pages stacked, scrolled inside the viewer. */
+.kop-doc-modal__viewer--drawn {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 8px;
+    padding: 8px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.kop-doc-modal__page {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    background: var(--kop-white);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 /* No in-page PDF viewer (most phones): the cover above a note. */
 .kop-doc-modal__viewer--nopdf {
     flex-direction: column;

@@ -52,6 +52,7 @@
     function closeDocModal(modal) {
         const target = modal || document.getElementById('kop-doc-modal');
         if (!target) return;
+        drawToken++;
         target.classList.remove('is-open');
         target.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('kop-doc-modal-open');
@@ -63,6 +64,62 @@
         const parts = cleaned.split('.');
         if (parts.length < 2) return '';
         return parts.pop().toLowerCase();
+    }
+
+    // True only where an <iframe> really shows a whole PDF. pdfViewerEnabled is
+    // false on mobile Chrome; iOS reports true but frames page one only.
+    function hasNativePdf() {
+        const ios = /iPad|iPhone|iPod/.test(navigator.userAgent || '') ||
+            (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        return !ios && navigator.pdfViewerEnabled !== false;
+    }
+
+    const PDFJS_BASE = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+    let pdfjsReady = null;
+    let drawToken = 0; // bumped per document and on close; a stale draw stops
+
+    function loadPdfJs() {
+        if (pdfjsReady) return pdfjsReady;
+        pdfjsReady = new Promise((resolve, reject) => {
+            const sc = document.createElement('script');
+            sc.src = PDFJS_BASE + 'pdf.min.js';
+            sc.onload = () => {
+                if (!window.pdfjsLib) { reject(new Error('pdf.js missing')); return; }
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_BASE + 'pdf.worker.min.js';
+                resolve(window.pdfjsLib);
+            };
+            sc.onerror = () => { pdfjsReady = null; reject(new Error('pdf.js failed to load')); };
+            document.head.appendChild(sc);
+        });
+        return pdfjsReady;
+    }
+
+    // Draws every page of the PDF into the viewer as canvases, one under
+    // another, at the viewer's width (sharp on high-density screens).
+    function drawPdf(viewer, url, status) {
+        const token = ++drawToken;
+        viewer.dataset.token = String(token);
+        const stale = () => token !== drawToken;
+        return loadPdfJs().then(pdfjs => pdfjs.getDocument({ url: url }).promise).then(async pdf => {
+            if (stale()) return;
+            status.remove();
+            const cssW = Math.max(200, viewer.clientWidth - 16);
+            const ratio = Math.min(window.devicePixelRatio || 1, 2);
+            for (let n = 1; n <= pdf.numPages; n++) {
+                if (stale()) return;
+                const page = await pdf.getPage(n);
+                const base = page.getViewport({ scale: 1 });
+                const vp = page.getViewport({ scale: (cssW / base.width) * ratio });
+                const canvas = document.createElement('canvas');
+                canvas.className = 'kop-doc-modal__page';
+                canvas.width = Math.floor(vp.width);
+                canvas.height = Math.floor(vp.height);
+                canvas.style.width = cssW + 'px';
+                canvas.setAttribute('aria-label', 'Page ' + n + ' of ' + pdf.numPages);
+                viewer.appendChild(canvas);
+                await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+            }
+        });
     }
 
     function openDocModalFromLink(link) {
@@ -99,20 +156,31 @@
             const viewer = document.createElement('div');
             viewer.className = 'kop-doc-modal__viewer';
 
-            if (isPdf && navigator.pdfViewerEnabled === false) {
-                viewer.classList.add('kop-doc-modal__viewer--nopdf');
-                // Most phones cannot draw a PDF inside a page: the frame stays
-                // blank. Show the cover and point at the buttons instead.
-                if (thumb) {
-                    const img = document.createElement('img');
-                    img.src = thumb;
-                    img.alt = title || 'Document preview';
-                    viewer.appendChild(img);
-                }
-                const note = document.createElement('div');
-                note.className = 'kop-doc-modal__placeholder';
-                note.textContent = 'This browser cannot show the PDF here. Use "Open in new tab" or "Download" below.';
-                viewer.appendChild(note);
+            if (isPdf && !hasNativePdf()) {
+                // Most phones cannot draw a PDF inside a page (the frame stays
+                // blank, or iOS shows page one only), so pdf.js draws the pages.
+                // If that fails: the cover and a pointer at the buttons below.
+                viewer.classList.add('kop-doc-modal__viewer--drawn');
+                const status = document.createElement('div');
+                status.className = 'kop-doc-modal__placeholder';
+                status.textContent = 'Loading document...';
+                viewer.appendChild(status);
+                drawPdf(viewer, url, status).catch(() => {
+                    if (viewer.dataset.token !== String(drawToken)) return;
+                    viewer.innerHTML = '';
+                    viewer.classList.remove('kop-doc-modal__viewer--drawn');
+                    viewer.classList.add('kop-doc-modal__viewer--nopdf');
+                    if (thumb) {
+                        const img = document.createElement('img');
+                        img.src = thumb;
+                        img.alt = title || 'Document preview';
+                        viewer.appendChild(img);
+                    }
+                    const note = document.createElement('div');
+                    note.className = 'kop-doc-modal__placeholder';
+                    note.textContent = 'This browser cannot show the PDF here. Use "Open in new tab" or "Download" below.';
+                    viewer.appendChild(note);
+                });
             } else if (isPdf) {
                 // Not loading="lazy": the frame is built before the modal is
                 // shown, and a lazy frame in a hidden box can wait for a scroll
@@ -172,13 +240,13 @@
             openDocModalFromLink(link);
         });
 
-        // Facility and operator pages: their own PDF links (Woodbury pages,
+        // Facility, operator and article pages: their own PDF links (Woodbury pages,
         // reports, cited documents) open here too. Easy FancyBox claims every
         // .pdf link and shows it as a 300x150 sliver, so this listens in the
         // capture phase and stops the click before FancyBox's handler sees it.
         document.addEventListener('click', event => {
             const link = event.target && event.target.closest
-                ? event.target.closest('.kop-facility-profile a[href]')
+                ? event.target.closest('.kop-facility-profile a[href], .kop-article a[href]')
                 : null;
             if (!link || link.matches('.doc-link, .kop-rl-doc')) return;
             if (link.dataset && link.dataset.kopNoModal === 'true') return;

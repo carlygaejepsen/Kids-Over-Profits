@@ -56,6 +56,29 @@ if (file_exists($kop_art_pieces_css_path)) {
     );
 }
 
+// The document viewer: the article's PDF links (captured copies, cited
+// reports) open in its modal instead of Easy FancyBox's frame, which is
+// blank on phones. Phones get the pages drawn by pdf.js.
+$kop_doc_css_path = get_stylesheet_directory() . '/css/document-library.css';
+if (file_exists($kop_doc_css_path)) {
+    wp_enqueue_style(
+        'kop-document-library-style',
+        get_stylesheet_directory_uri() . '/css/document-library.css',
+        array('kop-colors'),
+        filemtime($kop_doc_css_path)
+    );
+}
+$kop_doc_js_path = get_stylesheet_directory() . '/js/document-library.js';
+if (file_exists($kop_doc_js_path)) {
+    wp_enqueue_script(
+        'kop-document-library-script',
+        get_stylesheet_directory_uri() . '/js/document-library.js',
+        array('jquery'),
+        filemtime($kop_doc_js_path),
+        true
+    );
+}
+
 if (!function_exists('kop_article_anchor')) {
     /**
      * The link mark that lets a reader copy the address of one section.
