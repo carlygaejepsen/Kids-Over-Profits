@@ -2418,7 +2418,7 @@ input[type="url"].array-input {
     display: block;
     margin-top: 6px;
     font-size: 11px;
-    color: #d1d5db;
+    color: var(--kop-text-muted, #4A5568);
 }
 
 /* Responsive adjustments for project items */

@@ -478,7 +478,7 @@ details.operator-section[open] .operator-header {
 details.operator-section > .operator-body-status {
     margin: 0;
     padding: 16px 20px;
-    color: var(--kop-text-muted, #4A5568);
+    color: var(--kop-text-muted, #4A5568) !important;
     background: #fff;
 }
 
@@ -1380,6 +1380,21 @@ body.kop-doc-modal-open {
 .operator-section.alias-entry span,
 .operator-section.alias-entry strong {
     color: var(--kop-midnight-blue, #000435) !important;
+}
+
+.operator-section.alias-entry:hover .alias-entry-row,
+.operator-section.alias-entry .alias-entry-row:hover,
+.operator-section.alias-entry .alias-entry-row:focus,
+.operator-section.alias-entry .alias-entry-row:active {
+    background: var(--global-palette-btn-bg-hover, var(--kop-navy-blue, #000080));
+    color: var(--global-palette-btn-hover, var(--kop-white, #FFFFFF));
+}
+
+.operator-section.alias-entry:hover .alias-entry-row *,
+.operator-section.alias-entry .alias-entry-row:hover *,
+.operator-section.alias-entry .alias-entry-row:focus *,
+.operator-section.alias-entry .alias-entry-row:active * {
+    color: var(--global-palette-btn-hover, var(--kop-white, #FFFFFF)) !important;
 }
 
 .alias-entry-row {
