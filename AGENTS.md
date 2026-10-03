@@ -51,6 +51,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `news_submissions` stores news processor submissions.
 - `inspection_facilities` stores inspection-report facility records by state.
 - `inspection_reports` stores the individual inspection and citation records linked to `inspection_facilities`.
+- `{prefix}kop_program_homes` and `{prefix}kop_program_groups` link licensed home records to parent program records; KOP Tools > Program Homes manages reviewed groupings and Undo.
 
 ### API Layer
 - `api/get-master-data.php` and `api/save-master.php` power the admin data form.
@@ -100,6 +101,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `page-news-processor.php` and `page-news-feed.php` cover news submission and published news feed flows.
 - `[anonymous_doc_portal]` renders the anonymous document portal.
 - `templates/single-person-profile.php` renders seeded personnel-profile drafts from `seeds/<slug>.json` and `seeds/<slug>.html`; these stay unpublished until their claims have traceable sources and editorial review.
+- `inc/program-homes.php` groups related licensed homes under their parent program; the rollups appear on facility and operator pages.
 
 ## JavaScript Structure
 
@@ -139,7 +141,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
   - `wa-reports`
   - `ar-reports`
   - `mn-reports`
-  - `mi-reports`, `nc-reports`, `nv-reports`, `ok-reports`, `or-reports`, `pa-reports`, `fl-reports`, `ga-reports`, `nh-reports`, `wy-reports`, `id-reports`, `me-reports`, `oh-reports`
+  - `mi-reports`, `nc-reports`, `nv-reports`, `ok-reports`, `or-reports`, `pa-reports`, `fl-reports`, `ga-reports`, `nh-reports`, `wy-reports`, `id-reports`, `me-reports`, `oh-reports`, `wv-reports`
 - Each slug loads a state-specific renderer from `js/inspections/` plus `css/facility-reports.css`.
 - The primary data source is `api/inspections-read.php?state=XX`.
 - Static JSON files in `js/data/` remain fallback or historical snapshots:
@@ -188,6 +190,7 @@ node scripts/aggregate-all-programs.js
 - `scripts/aggregate-all-programs.js` rebuilds the program datasets used by the auto-linker and directory pages.
 - `scripts/import-location-pages.js`, `scripts/import-location-projects.php`, and `scripts/merge-location-duplicates.php` support the newer location-directory pipeline.
 - `scripts/generate_combined_index.py` and `api/generate-combined-index.php` support combined index generation.
+- `scripts/test-program-homes.php` verifies program-home grouping, facility/operator page rollups, and Undo against a temporary SQLite copy.
 - Keep generated JSON artifacts and their producing scripts in sync when changing these pipelines.
 
 ## Collaboration Preferences

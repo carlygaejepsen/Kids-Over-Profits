@@ -1308,7 +1308,7 @@ td a { color: #000080; }
         <span>Showing <?php echo count($preview); ?> row(s) &middot; <span id="kop-count"></span></span>
         <button type="button" id="kop-tick-all" style="background:#000080">Tick all</button>
         <button type="button" id="kop-untick-all" style="background:#7a7a7a">Untick all</button>
-        <button type="button" id="kop-suggest" style="background:#A3570D">Suggest titles for ticked rows</button>
+        <button type="button" id="kop-suggest" style="background:#A3570D;color:#fff">Suggest titles for ticked rows</button>
         <button type="button" id="kop-apply" style="background:#1b7e3c">Apply titles</button>
         <span id="kop-progress" class="warn"></span>
     </div>

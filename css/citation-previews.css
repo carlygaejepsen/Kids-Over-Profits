@@ -1,0 +1,49 @@
+/*
+ * Source previews use only citation text already present on the page. Links
+ * remain ordinary links; the preview is an optional hover/focus aid.
+ */
+a[data-kop-citation-preview] {
+    position: relative;
+}
+
+a[data-kop-citation-preview]::after {
+    position: absolute;
+    z-index: 10000;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    display: block;
+    width: max-content;
+    max-width: min(26rem, calc(100vw - 2rem));
+    max-height: 12rem;
+    overflow: hidden;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 0.55rem;
+    background: var(--kop-white, #fff);
+    box-shadow: 0 6px 20px rgb(0 4 53 / 18%);
+    color: var(--kop-midnight-blue, #000435);
+    content: attr(data-kop-citation-preview);
+    font-size: 0.88rem;
+    font-weight: 400;
+    line-height: 1.45;
+    text-align: left;
+    text-decoration: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+}
+
+a[data-kop-citation-preview]:hover::after,
+a[data-kop-citation-preview]:focus-visible::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    a[data-kop-citation-preview]::after {
+        transition: none;
+    }
+}

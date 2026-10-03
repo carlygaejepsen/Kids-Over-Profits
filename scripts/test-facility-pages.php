@@ -32,6 +32,7 @@ if (!file_exists($db_path)) {
 if (!is_dir($out_dir)) mkdir($out_dir, 0777, true);
 
 require __DIR__ . '/kop-test-harness.php';
+require_once dirname(__DIR__) . '/inc/citations.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -453,8 +454,8 @@ if ($picks) {
     include dirname(__DIR__) . '/templates/facility-page.php';
     $html = ob_get_clean();
     $check('the page links a staff entry and a fact to their sources',
-        preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
-        && preg_match('#<dd class="kop-fp-src">Source: <a href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src">Source: <a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        && preg_match('#<dd class="kop-fp-src">Source: <a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
         && preg_match('#kop-fp-person-name">John Roe</p>\s*<p class="kop-fp-person-role">Therapist</p>#', $html)
         && strpos($html, '>r/troubledteens wiki, as of Dec 2025</a>') !== false);
     // Two citations of one issue are told apart by page; of one date with no page, by number.

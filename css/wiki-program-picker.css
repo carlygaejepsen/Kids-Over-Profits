@@ -228,7 +228,9 @@
 .kop-pp-cancel { background: #e3ded0; color: var(--kop-midnight, #000435); }
 .kop-pp-cancel:hover { background: #d4ceba; }
 .kop-pp-confirm { background: var(--kop-orange-fill, #A3570D); color: #fff; }
-.kop-pp-confirm:hover { background: var(--kop-navy, #000080); }
+.kop-pp-confirm:hover,
+.kop-pp-confirm:focus,
+.kop-pp-confirm:active { background: var(--kop-navy, #000080); color: #fff; }
 .kop-pp-confirm:disabled { opacity: 0.5; cursor: default; }
 
 @media (max-width: 540px) {

@@ -814,7 +814,7 @@ addresses in the facility form as usual.</p>
     </form>
     <form method="post" style="margin-left:auto">
         <?php wp_nonce_field('kop_ma_apply'); ?>
-        <button type="submit" name="do_seed" value="1" style="background:#A3570D"
+        <button type="submit" name="do_seed" value="1" style="background:#A3570D;color:#fff"
             onclick="return window.confirm('Seed / refresh the address tables?\n\nNew addresses get IDs (existing IDs are kept), and facility-address memberships are rebuilt from the current facility data.');">
             Seed / refresh from facility data</button>
     </form>

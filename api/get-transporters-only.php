@@ -46,11 +46,53 @@ try {
         throw new Exception("Database connection failed. Config not loaded.");
     }
 
-    // 4. QUERY — transporters_master may not exist yet (auto-created on first save)
-    $tableCheck = $pdo->query("SHOW TABLES LIKE 'transporters_master'");
-    if ($tableCheck && $tableCheck->fetchColumn()) {
+    // WordPress installs may prefix custom tables (for example,
+    // wpdl_transporters_master). Prefer the configured prefix, while retaining
+    // compatibility with older installs that used the unprefixed table.
+    $prefix = isset($table_prefix) && is_string($table_prefix) ? $table_prefix : '';
+    $tableCandidates = array_values(array_unique(array_filter([
+        $prefix . 'transporters_master',
+        'transporters_master',
+    ])));
+    $tableName = null;
+    $tableCheck = $pdo->prepare(
+        'SELECT table_name FROM information_schema.tables
+         WHERE table_schema = DATABASE() AND table_name = :table_name'
+    );
+    foreach ($tableCandidates as $candidate) {
+        $tableCheck->execute([':table_name' => $candidate]);
+        if ($tableCheck->fetchColumn()) {
+            $tableName = $candidate;
+            break;
+        }
+    }
+
+    // If the WordPress prefix was unavailable, accept a suffix match only
+    // when it identifies one table. Never guess between multiple installations.
+    if ($tableName === null) {
+        $matchingTables = $pdo->query(
+            "SELECT table_name FROM information_schema.tables
+             WHERE table_schema = DATABASE()
+               AND RIGHT(table_name, CHAR_LENGTH('transporters_master')) = 'transporters_master'
+             ORDER BY table_name"
+        );
+        $fallbackTables = array_values(array_filter(
+            $matchingTables->fetchAll(PDO::FETCH_COLUMN),
+            static function ($candidate) {
+                return is_string($candidate) && preg_match('/^[A-Za-z0-9_]+$/', $candidate);
+            }
+        ));
+        if (count($fallbackTables) === 1) {
+            $tableName = $fallbackTables[0];
+        } elseif (count($fallbackTables) > 1) {
+            throw new RuntimeException('Multiple transporter tables match; configure the WordPress table prefix.');
+        }
+    }
+
+    if ($tableName !== null) {
         $results = [];
-        $stmt = $pdo->query("SELECT * FROM transporters_master");
+        $quotedTableName = '`' . str_replace('`', '``', $tableName) . '`';
+        $stmt = $pdo->query("SELECT * FROM {$quotedTableName}");
 
         if ($stmt) {
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

@@ -40,6 +40,9 @@ function esc_attr($text) {
 function esc_url($url) {
     return htmlspecialchars((string) $url, ENT_QUOTES, 'UTF-8');
 }
+function wp_strip_all_tags($text) {
+    return strip_tags((string) $text);
+}
 function selected($a, $b) {
     if ((string) $a === (string) $b) {
         echo ' selected="selected"';
@@ -79,6 +82,7 @@ function wp_enqueue_style() {}
 function add_action() {}
 function file_exists_stub() {}
 
+require_once $ROOT . '/inc/citations.php';
 require_once $ROOT . '/inc/reporting-directory.php';
 
 /* ---- Arguments --------------------------------------------------------- */

@@ -77,7 +77,7 @@
 
     --kop-button-primary: var(--kop-teal-fill);
     --kop-button-primary-hover: var(--kop-navy-blue);
-    --kop-button-accent: var(--kop-orange-fill);
+    --kop-button-accent: var(--kop-orange);
     --kop-button-success: var(--kop-mint-green);
     --kop-button-danger: var(--kop-coral-pink-fill);
 

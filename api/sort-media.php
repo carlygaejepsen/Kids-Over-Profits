@@ -889,7 +889,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <strong style="font-size:0.85rem"><?php echo kop_icon('plus'); ?> New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
         <button type="button" id="kop-nf-parent" style="background:#7a7a7a"><?php echo kop_icon('folder'); ?> parent: top level</button>
-        <button type="button" id="kop-nf-create" style="background:#A3570D">Create</button>
+        <button type="button" id="kop-nf-create" style="background:#A3570D;color:#fff">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
     <div class="bar" id="kop-working" hidden style="color:#000080;font-weight:600"></div>

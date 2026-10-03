@@ -51,6 +51,7 @@ function shortcode_atts($pairs, $atts, $shortcode = '') {
     return $out;
 }
 
+require ABSPATH . 'inc/citations.php';
 require ABSPATH . 'inc/article-pieces.php';
 
 // --- Harness ----------------------------------------------------------------
@@ -160,7 +161,9 @@ has('sources: auto-numbered by the list itself', $sources, '<ol class="kop-artic
 has('sources: the first item carries an id to link to', $sources, 'id="source-1"');
 has('sources: the second too', $sources, 'id="source-2"');
 has('sources: the third too', $sources, 'id="source-3"');
-has('sources: a title with a URL is linked', $sources, '<a href="https://example.test/a" rel="nofollow noopener">A report on Straight Inc</a>');
+has('sources: a title with a URL is linked', $sources, '<a class="kop-citation-link"');
+has('sources: citation link text stays concise', $sources, '>A report on Straight Inc</a>');
+has('sources: source metadata and notes become the preview', $sources, 'data-kop-citation-preview="A report on Straight Inc · The Salt Lake Tribune · 12 March 2003"');
 has('sources: publisher and date follow the title in one format', $sources, '<span class="kop-article-sources__publisher">, The Salt Lake Tribune</span><span class="kop-article-sources__date">, 12 March 2003</span>');
 has('sources: an item with no URL is printed plain', $sources, '<cite class="kop-article-sources__cite">Hearing transcript</cite>');
 has('sources: a URL anywhere in the line is lifted out', $sources, '>A third thing</a>');
@@ -178,6 +181,16 @@ $arrayed = kop_article_sources(array(
 ));
 has('sources: citation arrays work as well as typed lines', $arrayed, '>Given as data</cite>');
 has('sources: a note is kept', $arrayed, 'Held in the library.');
+$linkedArrayed = kop_article_sources(array(
+    array('title' => 'Given as data', 'publisher' => 'KOP', 'date' => '2026', 'url' => 'https://example.test/source', 'note' => 'Held in the library.'),
+));
+has('sources: stored notes are included in linked source previews', $linkedArrayed, 'data-kop-citation-preview="Given as data · KOP · 2026 · Held in the library."');
+$longTitle = kop_article_sources(array(array(
+    'title' => 'A source title with enough words to make its citation link unnecessarily long',
+    'url' => 'https://example.test/long-title',
+)));
+has('sources: long source titles are shortened only in the link label', $longTitle, '>A source title with enough words to...</a>');
+has('sources: the full title remains available in the preview', $longTitle, 'data-kop-citation-preview="A source title with enough words to make its citation link unnecessarily long"');
 
 check('sources: nothing to cite, nothing printed', kop_article_sources(''), '');
 check('sources: blank lines alone print nothing', kop_article_sources("\n\n  \n"), '');
@@ -294,6 +307,13 @@ has('escaping: a quote in a title cannot close the attribute it sits in', $nasty
 
 $nastyUrl = kop_article_sources(array(array('title' => 'Link', 'url' => 'https://example.test/a"onmouseover="x')));
 hasnt('escaping: a quote cannot break out of an href', $nastyUrl, '"onmouseover="');
+
+$nastyPreview = kop_citation_link('https://example.test/a', 'Filing', 'Quoted "source" text');
+has('escaping: preview text is escaped inside its data attribute', $nastyPreview, 'data-kop-citation-preview="Quoted &quot;source&quot; text"');
+has('citation links: reporting can keep its existing class and new-tab behavior', kop_citation_link('https://example.test/a', 'A statute', 'Section 4', true, 'kop-rep-cite'), 'class="kop-citation-link kop-rep-cite"');
+has('citation links: new-tab behavior stays explicit', kop_citation_link('https://example.test/a', 'A statute', 'Section 4', true), 'rel="noopener" target="_blank"');
+has('citation links: same-tab source policy is preserved', kop_citation_link('https://example.test/a', 'A source'), 'rel="nofollow noopener"');
+has('citation links: facility sources can keep nofollow in a new tab', kop_citation_link('https://example.test/a', 'A source', 'Record title', true, '', true), 'rel="nofollow noopener" target="_blank"');
 
 echo "\n";
 if ($failures) {

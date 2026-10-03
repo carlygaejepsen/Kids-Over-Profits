@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "expo": "^57.0.26",
+    "expo-share-intent": "^8.0.1",
+    "react-native-share-menu": "^6.0.0"
+  }
+}

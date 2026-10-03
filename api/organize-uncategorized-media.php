@@ -360,7 +360,7 @@ td a { color: #000080; }
         <strong style="font-size:0.85rem">New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
         <button type="button" id="kop-nf-parent" style="background:#7a7a7a">parent: top level</button>
-        <button type="button" id="kop-nf-create" style="background:#A3570D">Create</button>
+        <button type="button" id="kop-nf-create" style="background:#A3570D;color:#fff">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
 </div>

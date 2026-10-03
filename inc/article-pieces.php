@@ -229,7 +229,22 @@ function kop_article_source($item, $number, $prefix) {
 
     $cite = esc_html($title);
     if ($url !== '') {
-        $cite = '<a href="' . esc_url($url) . '" rel="nofollow noopener">' . $cite . '</a>';
+        $preview_parts = array($title);
+        if (trim((string) $item['publisher']) !== '') {
+            $preview_parts[] = trim((string) $item['publisher']);
+        }
+        if (trim((string) $item['date']) !== '') {
+            $preview_parts[] = trim((string) $item['date']);
+        }
+        if (trim((string) $item['note']) !== '') {
+            $preview_parts[] = trim(wp_strip_all_tags((string) $item['note']));
+        }
+        $link_title = $title;
+        $words = preg_split('/\s+/u', $title);
+        if (is_array($words) && count($words) > 8) {
+            $link_title = implode(' ', array_slice($words, 0, 7)) . '...';
+        }
+        $cite = kop_citation_link($url, $link_title, implode(' · ', $preview_parts));
     }
 
     $out = '<li class="kop-article-sources__item" id="' . esc_attr($prefix . '-' . $number) . '">';

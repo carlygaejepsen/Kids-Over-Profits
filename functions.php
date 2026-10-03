@@ -21,6 +21,9 @@ require_once get_stylesheet_directory() . '/inc/utilities.php';
 // Inline SVG icons (kop_icon() / kopIcon()), used in place of emojis
 require_once get_stylesheet_directory() . '/inc/icons.php';
 
+// Shared source citation links and previews
+require_once get_stylesheet_directory() . '/inc/citations.php';
+
 // heal-online.org is offline: its links go to the Wayback Machine copy
 require_once get_stylesheet_directory() . '/inc/heal-archive.php';
 

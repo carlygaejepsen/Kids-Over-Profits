@@ -57,10 +57,9 @@ $kop_fp_sources = static function ($sources, $tag = 'dd') {
             $nth[$label] = ($nth[$label] ?? 0) + 1;
             $label .= preg_match('/\bp\. ?(\d+)/', $src['cite'], $pm) ? ', p. ' . $pm[1] : ' (' . $nth[$label] . ')';
         }
-        $name = esc_html($label);
         $links[] = $src['url'] !== ''
-            ? '<a href="' . esc_url($src['url']) . '" title="' . esc_attr($src['cite']) . '" rel="nofollow noopener" target="_blank">' . $name . '</a>'
-            : '<span title="' . esc_attr($src['cite']) . '">' . $name . '</span>';
+            ? kop_citation_link($src['url'], $label, $src['cite'], true, '', true)
+            : '<span title="' . esc_attr($src['cite']) . '">' . esc_html($label) . '</span>';
     }
     echo '<' . $tag . ' class="kop-fp-src">Source: ' . implode(', ', $links) . '</' . $tag . '>';
 };
@@ -92,7 +91,7 @@ $kop_fp_violation_card = static function (array $v) {
             <span><?php echo esc_html(trim('From the ' . $v['state'] . ' inspection report' . ($v['state_label'] !== '' ? '. ' . $v['state_label'] : ''))); ?></span>
             <?php if (count($v['kinds']) > 1) : ?><span>Also: <?php echo esc_html(implode(', ', array_diff($v['kinds'], array($v['label'])))); ?></span><?php endif; ?>
             <?php if ($v['source_url'] !== '' && preg_match('#^https?://#i', $v['source_url'])) : ?>
-                <a href="<?php echo esc_url($v['source_url']); ?>" target="_blank" rel="noopener">State's report</a>
+                <?php echo kop_citation_link($v['source_url'], "State's report", $v['short'], true); ?>
             <?php endif; ?>
         </p>
     </article>
@@ -486,7 +485,7 @@ get_header();
                             <?php endif; ?>
                             <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
                             <?php if ($m['source_url'] !== '' && preg_match('#^https?://#i', $m['source_url'])) : ?>
-                                <span class="meta"><a href="<?php echo esc_url($m['source_url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($m['source_name'] !== '' ? $m['source_name'] : 'Source'); ?></a></span>
+                                <span class="meta"><?php echo kop_citation_link($m['source_url'], $m['source_name'] !== '' ? $m['source_name'] : 'Source', $m['source_name'], true, '', true); ?></span>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>

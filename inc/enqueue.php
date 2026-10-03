@@ -31,6 +31,27 @@ function kadence_child_enqueue_styles() {
         );
     }
 
+    // Citation links use the saved source details for a lightweight preview.
+    $citation_css = get_stylesheet_directory() . '/css/citation-previews.css';
+    if (file_exists($citation_css)) {
+        wp_enqueue_style(
+            'kop-citation-previews',
+            get_stylesheet_directory_uri() . '/css/citation-previews.css',
+            array('kop-colors'),
+            filemtime($citation_css)
+        );
+    }
+    $citation_js = get_stylesheet_directory() . '/js/citation-previews.js';
+    if (file_exists($citation_js)) {
+        wp_enqueue_script(
+            'kop-citation-previews',
+            get_stylesheet_directory_uri() . '/js/citation-previews.js',
+            array(),
+            filemtime($citation_js),
+            true
+        );
+    }
+
     // Primary sidebar tweaks (newsletter embed spacing)
     $sidebar_css = get_stylesheet_directory() . '/css/sidebar.css';
     if (is_active_sidebar('sidebar-primary') && file_exists($sidebar_css)) {
@@ -510,6 +531,13 @@ function kop_enqueue_report_scripts() {
             // and drop this flag.
             'report_page'   => true,
         ),
+        'wv-reports' => array(
+            'script_handle' => 'wv-reports-script',
+            'script_path'   => '/js/inspections/states/wv.js',
+            'data_object'   => 'wvReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -664,7 +692,7 @@ function kop_state_reports_body_class($classes) {
     $state_report_slugs = array(
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
         'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mi-reports', 'mn-reports', 'nc-reports', 'nv-reports', 'ok-reports', 'or-reports', 'pa-reports', 'fl-reports', 'ga-reports',
-        'nh-reports', 'wy-reports', 'id-reports', 'me-reports', 'oh-reports',
+        'nh-reports', 'wy-reports', 'id-reports', 'me-reports', 'oh-reports', 'wv-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {

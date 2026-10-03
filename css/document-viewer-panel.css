@@ -90,7 +90,9 @@ body.admin-bar .kop-dv-panel { top: 32px; }
     font-size: 0.82rem;
     cursor: pointer;
 }
-.kop-dv-browse:hover { background: var(--kop-teal-fill, #24757F); }
+.kop-dv-browse:hover,
+.kop-dv-browse:focus,
+.kop-dv-browse:active { background: var(--kop-teal-fill, #24757F); color: #fff; }
 .kop-dv-close {
     background: none;
     border: none;

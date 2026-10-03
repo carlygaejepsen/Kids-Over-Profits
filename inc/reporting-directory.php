@@ -422,7 +422,7 @@ function kop_reporting_render_deadlines($record) {
                                 <span class="kop-rep-dl-flag">Less certain</span>
                             <?php endif; ?>
                             <?php echo esc_html($item['summary']); ?>
-                            <a class="kop-rep-cite" href="<?php echo esc_url($item['source_url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($item['citation']); ?></a>
+                            <?php echo kop_citation_link($item['source_url'], $item['citation'], $item['citation'], true, 'kop-rep-cite'); ?>
                         </dd>
                     </div>
                 <?php endforeach; ?>
@@ -433,7 +433,7 @@ function kop_reporting_render_deadlines($record) {
                             <?php foreach ($group['csa'] as $line) : ?>
                                 <span class="kop-rep-dl-line"><?php echo esc_html($line); ?></span>
                             <?php endforeach; ?>
-                            <a class="kop-rep-cite" href="<?php echo esc_url($csa['url']); ?>" target="_blank" rel="noopener">CHILD USA's summary</a>
+                            <?php echo kop_citation_link($csa['url'], "CHILD USA's summary", "CHILD USA's summary", true, 'kop-rep-cite'); ?>
                         </dd>
                     </div>
                 <?php endif; ?>
