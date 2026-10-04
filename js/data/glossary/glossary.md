@@ -1,6 +1,6 @@
 # TTI Glossary
 
-updated: 2026-09-28
+updated: 2026-10-04
 
 The Troubled Teen Industry has its own language. Programs rename punishment, isolation, and control as "consequences," "reflection," and "support," and families often learn what the words meant only years later. This glossary collects that language from program handbooks, staff manuals, state records, and survivor accounts.
 
@@ -30,7 +30,7 @@ Each entry ends with the programs where the term appears. *Used at* means it app
 
 **Culture Shock Therapy**: A method developed by Gordon C. Blossom, founder of New Horizons Youth Ministries, in the early 1970s. Teens were sent to foreign or isolated locations with unfamiliar language, customs, and harsh conditions. The goal was to break down resistance by creating disorientation and dependency on the program, not genuine cultural learning. Used at: *Escuela Caribe*
 
-**Equine Therapy**: A therapeutic practice involving caring for or riding horses, intended to build responsibility, trust, and emotional awareness. However, survivors from TTI programs report serious problems, including being given inadequate tools, medication, and training to care for horses. These conditions frequently result in animal injury or death and emotional distress among participants. TTI oversight failures often meant these activities were punitive, risky, and lacked genuine therapeutic support.
+**Equine Therapy**: A therapeutic practice involving caring for or riding horses, intended to build responsibility, trust, and emotional awareness. However, survivors from TTI programs report serious problems, including being given inadequate tools, medication, and training to care for horses. These conditions frequently result in animal injury or death and emotional distress among participants. TTI oversight failures often meant these activities were punitive, risky, and lacked genuine therapeutic support. Reportedly used at: *Three Springs Paint Rock Valley*
 
 **Feedback Group**: see **Attack therapy**
 
@@ -70,7 +70,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Bathroom restriction**: supervised bathroom use, where the student often had to sing, count, or talk the whole time to "prove" they weren't vomiting. Copper Canyon banned bathroom use for 30 minutes after meals. New Haven students on Safety kept the door cracked and counted out loud. Aurora students on lower supervision levels had to "count or say their ABC's out loud." Used at: *Copper Canyon Academy, New Haven, Aurora Center for Healing*; reportedly used at: *Second Nature*
 
-**Big Brother / Big Sister**: an older student assigned to a new arrival. At CEDU, the role lasted until the new student completed the Brother's Keeper Propheet. At Spring Ridge Academy, the big sister stayed on until she herself graduated. At Solstice East, she was expected to "cue" the new girl. Compare **Buddy System**, **H.O.P.E. Buddy**. Used at: *CEDU, Spring Ridge Academy, Auldern Academy, Escuela Caribe, Solstice East*
+**Big Brother / Big Sister**: an older student assigned to a new arrival. At CEDU, the role lasted until the new student completed the Brother's Keeper Propheet. At Spring Ridge Academy, the big sister stayed on until she herself graduated. At Solstice East, she was expected to "cue" the new girl. Compare **Buddy System**, **H.O.P.E. Buddy**. Used at: *CEDU, Spring Ridge Academy, Auldern Academy, Escuela Caribe, Solstice East, Three Springs Paint Rock Valley*
 
 **Booty Juice**: slang for chemical restraint, an intramuscular sedative injection (often a Haldol/Ativan/Benadryl mix) given in the buttocks. See **Restraint**. Reportedly used at: *Provo Canyon School, WWASP programs*
 
@@ -238,7 +238,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **ACE / PACEs** *(Accelerated Christian Education / School of Tomorrow)*: a workbook curriculum used by many Christian programs. Students worked alone at partitioned desks through booklets called PACEs, set daily goals on a "goal card," raised a flag for help, and graded their own work at a "score station." ACE's distance arm, Lighthouse Christian Academy, issued diplomas to students at these programs. Used at: *Agapé Boarding School, Academy at Ivy Ridge (as Switched-On Schoolhouse)*
 
-**Adjudicated program**: a TTI facility that only accepts court-ordered clients through the juvenile justice system.
+**Adjudicated program**: a TTI facility that only accepts court-ordered clients through the juvenile justice system. Reportedly used at: *Three Springs Paint Rock Valley*
 
 **Adult & Teen Challenge** *(formerly Teen Challenge)*: a national Christian "discipleship" network running residential programs for teens and adults, affiliated with the Assemblies of God. See **Discipleship program**, **Religious exemption**.
 
@@ -306,7 +306,7 @@ Terms documented or reported at more than one program, or in wide use across the
 
 **Scooby**: a piece of used toilet paper. Students had to carry their scoobies with the rest of their gear until they could burn them in the campfire at night. Reportedly used at: *Second Nature*
 
-**Solo**: a period of forced isolation outdoors. At Second Nature, students spent a few days at a time alone in a small patch of forest. At New Haven, a "therapeutic assignment" living alone in a small shelter in the back pasture; its handbook called running away "a natural part of this intervention" that parents had to "accept... in full." The Link School's top level required a "3-day fasting" solo. Used at: *New Haven, The Link School*; reportedly used at: *Second Nature*
+**Solo**: a period of forced isolation outdoors. At Second Nature, students spent a few days at a time alone in a small patch of forest. At New Haven, a "therapeutic assignment" living alone in a small shelter in the back pasture; its handbook called running away "a natural part of this intervention" that parents had to "accept... in full." The Link School's top level required a "3-day fasting" solo. Used at: *New Haven, The Link School, Three Springs Inc.*; reportedly used at: *Second Nature*
 
 **Stoker Night**: a night when one assigned student, the "Stoker," must bust a fire for the whole group. If the Stoker succeeds, everyone eats hot; if not, everyone eats cold. See **Bust a fire**, **Eat hot**. Reportedly used at: *Second Nature*
 

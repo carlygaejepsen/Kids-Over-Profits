@@ -1,6 +1,6 @@
 {
  "title": "TTI Glossary",
- "updated": "2026-09-28",
+ "updated": "2026-10-04",
  "intro": [
   "The Troubled Teen Industry has its own language. Programs rename punishment, isolation, and control as \"consequences,\" \"reflection,\" and \"support,\" and families often learn what the words meant only years later. This glossary collects that language from program handbooks, staff manuals, state records, and survivor accounts.",
   "Terms used at more than one program are in **Shared Terms A–Z**. Terms documented at only one program or program family are under **Program Sections**, grouped by lineage. **Treatment Modalities**, **About the Industry**, and **Wilderness Specific** stand on their own.",
@@ -284,9 +284,19 @@
    "count": 11
   },
   {
+   "slug": "three-springs-inc",
+   "name": "Three Springs Inc.",
+   "count": 1
+  },
+  {
    "slug": "three-springs-new-beginnings",
    "name": "Three Springs New Beginnings",
    "count": 10
+  },
+  {
+   "slug": "three-springs-paint-rock-valley",
+   "name": "Three Springs Paint Rock Valley",
+   "count": 3
   },
   {
    "slug": "trails-carolina",
@@ -562,7 +572,12 @@
      "aka": [],
      "text": "A therapeutic practice involving caring for or riding horses, intended to build responsibility, trust, and emotional awareness. However, survivors from TTI programs report serious problems, including being given inadequate tools, medication, and training to care for horses. These conditions frequently result in animal injury or death and emotional distress among participants. TTI oversight failures often meant these activities were punitive, risky, and lacked genuine therapeutic support.",
      "used": [],
-     "reported": [],
+     "reported": [
+      {
+       "program": "Three Springs Paint Rock Valley",
+       "slug": "three-springs-paint-rock-valley"
+      }
+     ],
      "id": "equine-therapy"
     },
     {
@@ -845,6 +860,10 @@
       {
        "program": "Solstice East",
        "slug": "solstice-east"
+      },
+      {
+       "program": "Three Springs Paint Rock Valley",
+       "slug": "three-springs-paint-rock-valley"
       }
      ],
      "reported": [],
@@ -2692,7 +2711,12 @@
      "aka": [],
      "text": "A TTI facility that only accepts court-ordered clients through the juvenile justice system.",
      "used": [],
-     "reported": [],
+     "reported": [
+      {
+       "program": "Three Springs Paint Rock Valley",
+       "slug": "three-springs-paint-rock-valley"
+      }
+     ],
      "id": "adjudicated-program"
     },
     {
@@ -3114,6 +3138,10 @@
       {
        "program": "The Link School",
        "slug": "the-link-school"
+      },
+      {
+       "program": "Three Springs Inc.",
+       "slug": "three-springs-inc"
       }
      ],
      "reported": [
