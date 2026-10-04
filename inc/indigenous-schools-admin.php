@@ -128,27 +128,40 @@ function kop_ischools_admin_handle(PDO $pdo) {
                 $sid = kop_ischools_move_facility($pdo, $fid, $by);
                 return array('Moved out of the facility data. Check the details below and save.', '', array('edit' => $sid));
             case 'add_name':
-                $c = $pdo->prepare('SELECT c.*, n.article_title, n.publication_name, n.publication_date FROM news_facility_candidates c LEFT JOIN news_submissions n ON n.id = c.news_id WHERE c.id = ?');
-                $c->execute(array((int) ($_POST['kop_is_candidate'] ?? 0)));
-                $row = $c->fetch(PDO::FETCH_ASSOC);
-                if (!$row) {
+                $sid = kop_ischools_add_from_candidate($pdo, (int) ($_POST['kop_is_candidate'] ?? 0), $by);
+                if (!$sid) {
                     return array('', 'That name is no longer there.', array());
                 }
-                $detail = json_decode((string) $row['detail'], true) ?: array();
-                $entry = array_merge(array('name' => $row['mention']), $detail['entry'] ?? array());
-                $entry['name'] = $row['mention'];
-                $sid = kop_ischools_from_news($pdo, $entry, array(
-                    'id' => (int) $row['news_id'], 'article_title' => $row['article_title'],
-                    'publication_name' => $row['publication_name'], 'publication_date' => $row['publication_date'],
-                ));
-                $pdo->prepare("UPDATE news_facility_candidates SET decision = 'indigenous_school', reviewed_by = ?, updated_at = ? WHERE id = ?")
-                    ->execute(array($by, kop_ischools_now(), (int) $row['id']));
                 return array('Added, with its article. Check the details below, then save and approve.', '', array('edit' => $sid));
         }
     } catch (Throwable $e) {
         return array('', $e->getMessage(), $id ? array('edit' => $id) : array());
     }
     return array('', 'Unknown action.', array());
+}
+
+/**
+ * "Add as a school" for a name the news scan set aside: a school record made
+ * from what the scan read, with its article, and the name filed as an
+ * Indigenous school. Returns the school id, or 0 when the name is gone.
+ */
+function kop_ischools_add_from_candidate(PDO $pdo, $candidate_id, $by) {
+    $c = $pdo->prepare('SELECT c.*, n.article_title, n.publication_name, n.publication_date FROM news_facility_candidates c LEFT JOIN news_submissions n ON n.id = c.news_id WHERE c.id = ?');
+    $c->execute(array((int) $candidate_id));
+    $row = $c->fetch(PDO::FETCH_ASSOC);
+    if (!$row) {
+        return 0;
+    }
+    $detail = json_decode((string) $row['detail'], true) ?: array();
+    $entry = array_merge(array('name' => $row['mention']), $detail['entry'] ?? array());
+    $entry['name'] = $row['mention'];
+    $sid = kop_ischools_from_news($pdo, $entry, array(
+        'id' => (int) $row['news_id'], 'article_title' => $row['article_title'],
+        'publication_name' => $row['publication_name'], 'publication_date' => $row['publication_date'],
+    ));
+    $pdo->prepare("UPDATE news_facility_candidates SET decision = 'indigenous_school', reviewed_by = ?, updated_at = ? WHERE id = ?")
+        ->execute(array($by, kop_ischools_now(), (int) $row['id']));
+    return (int) $sid;
 }
 
 function kop_ischools_admin_purge() {

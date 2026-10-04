@@ -25,11 +25,87 @@ kop_rinbox_register('people-merge', function () {
         'count'    => function () {
             return count(kop_pmerge_screen_data()['pairs']);
         },
+        'view_counts' => 'kop_rinbox_pmerge_view_counts',
         'list'     => 'kop_rinbox_pmerge_list',
         'get'      => 'kop_rinbox_pmerge_get',
         'act'      => 'kop_rinbox_pmerge_act',
+        'tools'    => kop_rinbox_pmerge_tools(),
+        'tool'     => 'kop_rinbox_pmerge_tool',
+        'lookup'   => 'kop_rinbox_pmerge_lookup',
     );
 });
+
+/** "Merge any two people" (Merge People), "Sync now" (People) and the map rebuild (merged people are drawn as one from it). */
+function kop_rinbox_pmerge_tools() {
+    $last = get_option('kop_people_last_sync', array());
+    $tools = array(
+        array('id' => 'merge_any', 'label' => 'Merge these two people', 'style' => 'approve',
+            'help' => 'Merge any two people, also ones not suggested here. Type a name or #id for each.',
+            'confirm' => 'Make the second person the same as the first? Their entries move to the kept person. You can undo it from the Merged tab.',
+            'params' => array(
+                array('name' => 'keep', 'label' => 'Keep', 'type' => 'text', 'value' => '', 'lookup' => 'person', 'placeholder' => 'Name or #id'),
+                array('name' => 'drop', 'label' => 'Fold in', 'type' => 'text', 'value' => '', 'lookup' => 'person', 'placeholder' => 'Name or #id'),
+            )),
+        array('id' => 'sync', 'label' => 'Give new names an id now', 'style' => 'neutral',
+            'help' => 'New names on the staff lists get a person id within the hour; this does it now (as "Sync now" on KOP Tools > People).'
+                . (is_array($last) && !empty($last['at']) ? ' Last done ' . gmdate('M j, H:i', (int) $last['at']) . ' UTC.' : '')),
+    );
+    if (function_exists('kop_rinbox_map_rebuild_tool') && ($t = kop_rinbox_map_rebuild_tool('A merged person is drawn as one person on the network map from its next build.'))) $tools[] = $t;
+    return $tools;
+}
+
+function kop_rinbox_pmerge_view_counts() {
+    $data = kop_pmerge_screen_data();
+    $counts = array('likely' => 0, 'check' => 0, 'merged' => 0, 'dismissed' => count($data['dismissed']));
+    foreach ($data['pairs'] as $p) if (isset($counts[$p['tab']])) $counts[$p['tab']]++;
+    foreach ($data['merged'] as $m) if (empty($m['undone'])) $counts['merged']++;
+    return $counts;
+}
+
+/** People whose name or other name has $q in it, for the tool's two boxes: [{value: "#id", label}]. */
+function kop_rinbox_pmerge_lookup($name, $q) {
+    if ($name !== 'person' || !function_exists('kop_people_load')) return array();
+    $q = mb_strtolower(trim(ltrim(trim($q), '#')));
+    $out = array();
+    foreach (kop_people_load()['rows'] as $id => $r) {
+        if ($r['merged_into']) continue;
+        if ((string) $id !== $q && mb_strpos(mb_strtolower($r['name'] . "\n" . (string) $r['aliases']), $q) === false) continue;
+        $out[] = array('value' => '#' . $id, 'label' => $r['name'] . ' (#' . $id . ')');
+        if (count($out) >= 20) break;
+    }
+    return $out;
+}
+
+/** "#12", "12" or an exact name -> a person id, as KOP Tools > People reads it; an error message otherwise. */
+function kop_rinbox_pmerge_find($text, $not) {
+    if (!function_exists('kop_people_admin_find')) {
+        $path = get_stylesheet_directory() . '/inc/people-admin.php';
+        if (file_exists($path)) require_once $path;
+    }
+    if (!function_exists('kop_people_admin_find')) throw new RuntimeException('The People screen is not installed here.');
+    return kop_people_admin_find((string) $text, (int) $not);
+}
+
+function kop_rinbox_pmerge_tool($id, array $params) {
+    if (function_exists('kop_people_install')) kop_people_install();
+    if ($id === 'map_rebuild') return kop_rinbox_map_rebuild_run();
+    if ($id === 'sync') {
+        $s = kop_people_sync();
+        delete_transient('kop_pmerge_screen');
+        return array('message' => sprintf('Done: %d new ids, %d entries given an id.', (int) $s['created'], (int) $s['stamped']));
+    }
+    if ($id !== 'merge_any') throw new RuntimeException('Unknown tool.');
+    try {
+        $keep = kop_rinbox_pmerge_find(sanitize_text_field((string) ($params['keep'] ?? '')), 0);
+        if (is_string($keep)) throw new RuntimeException('Keep: ' . $keep);
+        $drop = kop_rinbox_pmerge_find(sanitize_text_field((string) ($params['drop'] ?? '')), 0);
+        if (is_string($drop)) throw new RuntimeException('Fold in: ' . $drop);
+        if ((int) $keep === (int) $drop) throw new RuntimeException('That is the same person.');
+        return array('message' => kop_pmerge_do_merge((int) $keep, (int) $drop, kop_rinbox_reviewer()) . ' Undo is on the Merged tab.');
+    } finally {
+        delete_transient('kop_pmerge_screen');
+    }
+}
 
 function kop_rinbox_pmerge_list(array $q) {
     $data = kop_pmerge_screen_data();
@@ -44,7 +120,7 @@ function kop_rinbox_pmerge_list(array $q) {
     if ($q['search'] !== '') {
         $needle = mb_strtolower($q['search']);
         $items = array_values(array_filter($items, function ($it) use ($needle) {
-            return mb_strpos(mb_strtolower($it['title'] . ' ' . $it['subtitle'] . ' ' . $it['text']), $needle) !== false;
+            return mb_strpos(mb_strtolower($it['title'] . ' ' . $it['subtitle'] . ' ' . $it['text'] . ' ' . ($it['search_text'] ?? '')), $needle) !== false;
         }));
     }
     return array('items' => array_slice($items, (int) $q['offset'], (int) $q['limit']), 'total' => count($items));
@@ -62,15 +138,37 @@ function kop_rinbox_pmerge_get($key) {
     return null;
 }
 
-/** One person of a pair in plain lines: names and where each is named. */
-function kop_rinbox_pmerge_side_text(array $s, $label) {
-    $lines = array($label . ': ' . $s['name'] . ' (person #' . $s['id'] . ')');
-    if (!empty($s['aliases'])) $lines[] = '  Also written: ' . implode('; ', $s['aliases']);
+/** Where a person is named, one line per record. */
+function kop_rinbox_pmerge_named_at(array $s) {
     $recs = array();
     foreach ((array) ($s['records'] ?? array()) as $r) $recs[] = $r['name'] . ($r['role'] !== '' ? ' (' . $r['role'] . ')' : '');
     $n = (int) ($s['n'] ?? count($recs));
-    $lines[] = '  Named at: ' . ($recs ? implode('; ', $recs) . ($n > count($recs) ? '; and ' . ($n - count($recs)) . ' more' : '') : 'nowhere on file');
-    return implode("\n", $lines);
+    if ($n > count($recs)) $recs[] = 'and ' . ($n - count($recs)) . ' more';
+    return $recs ? implode('; ', $recs) : 'nowhere on file';
+}
+
+/** The two people side by side, differences marked. */
+function kop_rinbox_pmerge_compare(array $a, array $b, $keep = 0) {
+    $head = function ($s) use ($keep) {
+        return $s['name'] . ' (#' . $s['id'] . ')' . ($keep && (int) $s['id'] === (int) $keep ? ', suggested to keep' : '');
+    };
+    $kinds = function ($s) {
+        $k = array();
+        foreach ((array) ($s['records'] ?? array()) as $r) $k[$r['kind'] === 'map' ? 'the network map' : ($r['kind'] === 'operator' ? 'company staff' : 'facility staff')] = true;
+        return implode(', ', array_keys($k));
+    };
+    return kop_rinbox_compare_rows(array($head($a), $head($b)), array(
+        'Name'         => array($a['name'], $b['name']),
+        'Also written' => array((array) ($a['aliases'] ?? array()), (array) ($b['aliases'] ?? array())),
+        'Named on'     => array($kinds($a), $kinds($b)),
+        'Named at'     => array(kop_rinbox_pmerge_named_at($a), kop_rinbox_pmerge_named_at($b)),
+        'Entries'      => array((string) (int) ($a['n'] ?? 0), (string) (int) ($b['n'] ?? 0)),
+    ));
+}
+
+/** One person in plain words, for search. */
+function kop_rinbox_pmerge_side_text(array $s) {
+    return $s['name'] . ' #' . $s['id'] . ' ' . implode(' ', (array) ($s['aliases'] ?? array())) . ' ' . kop_rinbox_pmerge_named_at($s);
 }
 
 function kop_rinbox_pmerge_pair_item(array $p, $status) {
@@ -84,6 +182,15 @@ function kop_rinbox_pmerge_pair_item(array $p, $status) {
         if (!empty($s['url'])) $links[] = array('label' => $s['name'] . ' (person #' . $s['id'] . ')', 'url' => $s['url']);
         foreach ((array) ($s['records'] ?? array()) as $r) {
             if (!$facility && $r['kind'] === 'facility') $facility = kop_rinbox_facility($r['id']);
+        }
+    }
+    // Where each is named, as links (a few per person).
+    foreach (array($a, $b) as $s) {
+        $shown = 0;
+        foreach ((array) ($s['records'] ?? array()) as $r) {
+            if ($shown >= 4 || empty($r['url'])) continue;
+            $links[] = array('label' => $r['name'] . ' (' . $s['name'] . ')', 'url' => $r['url']);
+            $shown++;
         }
     }
     if ($status === 'dismissed') {
@@ -105,7 +212,11 @@ function kop_rinbox_pmerge_pair_item(array $p, $status) {
         'key'          => (string) $p['key'],
         'title'        => $a['name'] . '  /  ' . $b['name'],
         'subtitle'     => $why,
-        'text'         => kop_rinbox_pmerge_side_text($a, 'First') . "\n\n" . kop_rinbox_pmerge_side_text($b, 'Second'),
+        'text'         => $status === 'dismissed'
+            ? 'These two were marked as different people, so they are not suggested.'
+            : 'Suggested to keep: person #' . $keep . ' (named in more places). The other id forwards to it and its names become other names of the kept person. Two people who only share a name are split on KOP Tools > People (Separate).',
+        'compare'      => kop_rinbox_pmerge_compare($a, $b, $status === 'dismissed' ? 0 : $keep),
+        'search_text'  => kop_rinbox_pmerge_side_text($a) . ' ' . kop_rinbox_pmerge_side_text($b),
         'status'       => $status,
         'status_label' => $labels[$status] ?? $status,
         'facility'     => $facility,

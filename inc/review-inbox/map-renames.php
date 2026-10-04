@@ -8,7 +8,9 @@
  *
  * Keys: "earlier>later", the line as the board drew it. The year and the
  * direction are set on Save (its params start from the research or the
- * names' own years).
+ * names' own years). Tools: save every rename whose year the research quotes
+ * with high confidence (the Map Renames screen's bulk button), and the map
+ * rebuild of KOP Tools > Map Rebuild.
  */
 
 if (!defined('ABSPATH')) {
@@ -29,6 +31,22 @@ kop_rinbox_register('map-renames', function () {
             foreach (kop_rinbox_mren_rows() as $r) if (!isset($decisions[$r['key']])) $n++;
             return $n;
         },
+        'view_counts' => function () {
+            $decisions = kop_network_renames_decisions();
+            $counts = array('review' => 0, 'saved' => 0, 'skipped' => 0);
+            foreach (kop_rinbox_mren_rows() as $r) {
+                $v = (string) ($decisions[$r['key']]['decision'] ?? '') ?: 'review';
+                if (isset($counts[$v])) $counts[$v]++;
+            }
+            return $counts;
+        },
+        'tools'    => array_values(array_filter(array(
+            array('id' => 'save_sure', 'label' => 'Save every high-confidence year', 'style' => 'approve',
+                'help' => 'Saves, as the research has them, every rename on To review whose year a source states and the research rated high confidence (turned round where the sources say so).',
+                'confirm' => 'Save every high-confidence rename year? Each can be undone on the Saved tab.'),
+            function_exists('kop_rinbox_map_rebuild_tool') ? kop_rinbox_map_rebuild_tool('Saved renames show on the map at once, without a rebuild.') : null,
+        ))),
+        'tool'     => 'kop_rinbox_mren_tool',
         'list'     => 'kop_rinbox_mren_list',
         'get'      => function ($key) {
             foreach (kop_rinbox_mren_rows() as $r) if ($r['key'] === $key) return kop_rinbox_mren_item($r);
@@ -71,47 +89,113 @@ function kop_rinbox_mren_list(array $q) {
     return array('items' => $items, 'total' => count($rows));
 }
 
-function kop_rinbox_mren_side_text(array $s, $label) {
-    $lines = array($label . ': ' . $s['name'] . ($s['years'] !== '' ? ' (' . $s['years'] . ')' : ' (no years on the map)'));
-    if ($s['operators']) $lines[] = '  Run by: ' . implode('; ', $s['operators']);
-    if ($s['status'] !== '') $lines[] = '  Status on the map: ' . $s['status'];
-    return implode("\n", $lines);
+/** Node id => the years the map shows now (accepted Map Years, then saved renames). */
+function kop_rinbox_mren_years_now() {
+    // Worked out again once a decision changes (an item is drawn again right after its save).
+    static $memo = array();
+    $decisions = kop_network_renames_decisions();
+    $k = md5(serialize($decisions));
+    if (!isset($memo[$k])) {
+        $graph = kop_network_map_graph() ?: array();
+        $base = kop_network_renames_base_years($graph);
+        $memo = array($k => array_merge($base, kop_network_renames_apply_years($base, $decisions)));
+    }
+    return $memo[$k];
+}
+
+/** True when the research states the year with high confidence: the bulk save takes these. */
+function kop_rinbox_mren_sure(array $c = null) {
+    return $c && !empty($c['year']) && (!isset($c['yearQuoted']) || !empty($c['yearQuoted'])) && ($c['confidence'] ?? '') === 'high';
+}
+
+function kop_rinbox_mren_tool($id, array $params) {
+    if ($id === 'map_rebuild') return kop_rinbox_map_rebuild_run();
+    if ($id !== 'save_sure') throw new RuntimeException('Unknown tool.');
+    $decisions = kop_network_renames_decisions();
+    $research = kop_network_renames_candidates();
+    $items = array();
+    foreach (kop_rinbox_mren_rows() as $r) {
+        $c = $research[$r['key']] ?? null;
+        if (isset($decisions[$r['key']]) || !kop_rinbox_mren_sure($c)) continue;
+        $items[] = array('key' => $r['key'], 'decision' => 'save', 'year' => (int) $c['year'], 'swapped' => !empty($c['swapped']));
+    }
+    if (!$items) return array('message' => 'No high-confidence rename years are waiting.');
+    $done = 0;
+    $failed = 0;
+    foreach (kop_network_renames_decide($items, kop_rinbox_reviewer(), kop_network_map_graph() ?: array()) as $r) {
+        if (!empty($r['error'])) $failed++;
+        else $done++;
+    }
+    return array('message' => 'Saved ' . $done . ' rename' . ($done === 1 ? '' : 's') . ($failed ? '; ' . $failed . ' could not be (open them to fix the year)' : '') . '. They are on the map now.');
+}
+
+/** "1971-2004" as "1971 to 2004"; '' as "no years". */
+function kop_rinbox_mren_years_text($years) {
+    $years = (string) $years;
+    return $years === '' ? 'no years' : preg_replace('/^(\d{4})-(\d{4})$/', '$1 to $2', $years);
+}
+
+/** The two names side by side, in the order they went (earlier first), differences marked. */
+function kop_rinbox_mren_compare(array $first, array $second) {
+    $now = kop_rinbox_mren_years_now();
+    $page = function ($s) {
+        return $s['facilityId'] ? 'record #' . $s['facilityId'] : 'no record';
+    };
+    return kop_rinbox_compare_rows(array('Earlier name', 'Later name'), array(
+        'Name'                => array($first['name'], $second['name']),
+        'Years on the board'  => array(kop_rinbox_mren_years_text($first['years']), kop_rinbox_mren_years_text($second['years'])),
+        'On the map now'      => array(kop_rinbox_mren_years_text($now[$first['id']] ?? $first['years']), kop_rinbox_mren_years_text($now[$second['id']] ?? $second['years'])),
+        'Run by'              => array($first['operators'] ?: ($first['chain'] !== '' ? $first['chain'] : 'none recorded'), $second['operators'] ?: ($second['chain'] !== '' ? $second['chain'] : 'none recorded')),
+        'Status on the map'   => array($first['status'], $second['status']),
+        'Facility record'     => array($page($first), $page($second)),
+    ));
 }
 
 function kop_rinbox_mren_item(array $r) {
     $d = kop_network_renames_decisions()[$r['key']] ?? array();
     $c = kop_network_renames_candidates()[$r['key']] ?? null;
     $a = kop_network_renames_assess($r);
+    $from_research = false;
     if ($c && !empty($c['year'])) {
         $a['suggest'] = (int) $c['year'];
-        $a['why'] = 'the research below';
+        $a['why'] = 'the research';
+        $from_research = true;
     }
     $view = (string) ($d['decision'] ?? '') ?: 'review';
-    $flags = array('missing' => 'one of the names has no years', 'same' => 'both names have the same years',
-        'overlap' => 'the two names\' years overlap', 'reversed' => 'the line may point the wrong way');
+    // Undecided: the way the research says the names go; decided: as saved.
+    $swapped = $d ? !empty($d['swapped']) : ($c && !empty($c['swapped']));
+    list($first, $second) = $swapped ? array($r['later'], $r['earlier']) : array($r['earlier'], $r['later']);
+    $flags = array('missing' => 'Years missing on one side', 'same' => 'Both names have the same years',
+        'overlap' => 'The later name starts before the earlier one ended',
+        'reversed' => 'Looks reversed: the "later" name ended before the "earlier" one began');
     $problems = array();
     foreach ($a['flags'] as $f) $problems[] = $flags[$f] ?? $f;
 
-    $text = kop_rinbox_mren_side_text($r['earlier'], 'Earlier name') . "\n" . kop_rinbox_mren_side_text($r['later'], 'Later name');
-    if ($problems) $text .= "\n\nLooks wrong: " . implode('; ', $problems) . '.';
-    if ($a['suggest']) $text .= "\nSuggested rename year: " . $a['suggest'] . ' (from ' . $a['why'] . ').';
-    $links = array();
+    $details = array();
+    if ($view === 'review') {
+        foreach ($problems as $p) $details[] = array('label' => 'Looks wrong', 'value' => $p);
+        if ($a['suggest']) $details[] = array('label' => 'Suggested year', 'value' => $a['suggest'] . ' (from ' . $a['why'] . '; check it)');
+        if (in_array('reversed', $a['flags'], true) && !$swapped) $details[] = array('label' => 'Hint', 'value' => 'Probably drawn backwards: choose "the other way round".');
+    }
     if ($c) {
-        if (!empty($c['note'])) $text .= "\n\n" . $c['note'];
-        if (!empty($c['swapped'])) $text .= "\nThe research says the names went the other way round.";
-        foreach ((array) ($c['sources'] ?? array()) as $s) {
-            if (empty($s['url'])) continue;
-            if (!empty($s['quote'])) $text .= "\n\n\"" . $s['quote'] . '"' . "\n(" . $s['url'] . ')';
-            $host = (string) wp_parse_url($s['url'], PHP_URL_HOST);
-            $links[] = array('label' => $host !== '' ? preg_replace('/^www\./', '', $host) : 'Source', 'url' => $s['url']);
+        $details[] = array('label' => 'Research', 'value' => !empty($c['year'])
+            ? 'renamed in ' . (int) $c['year'] . ' (' . ($c['confidence'] ?? 'low') . ' confidence' . (isset($c['yearQuoted']) && empty($c['yearQuoted']) ? '; the year is the source\'s date, not in its words' : '') . ')'
+            : 'no year found');
+        if (!empty($c['swapped'])) $details[] = array('label' => 'Order', 'value' => 'The sources say the board had these the wrong way round, so the order is already turned round.');
+        if (!empty($c['note'])) $details[] = array('label' => 'Note', 'value' => (string) $c['note']);
+        $details = array_merge($details, kop_rinbox_quote_details((array) ($c['sources'] ?? array())));
+    }
+
+    $map = function_exists('kop_network_map_page_url') ? kop_network_map_page_url() : home_url('/network-map/');
+    $links = array();
+    foreach (array($first, $second) as $s) {
+        $links[] = array('label' => $s['name'] . ' on the map', 'url' => $map . '#open=' . rawurlencode($s['id']));
+        if ($s['facilityId'] && function_exists('kop_facility_page_url') && ($u = (string) kop_facility_page_url($s['facilityId'])) !== '') {
+            $links[] = array('label' => $s['name'] . ' page', 'url' => $u);
         }
     }
-    $map = function_exists('kop_network_map_page_url') ? kop_network_map_page_url() : home_url('/network-map/');
-    foreach (array($r['earlier'], $r['later']) as $s) $links[] = array('label' => $s['name'] . ' on the map', 'url' => $map . '#open=' . rawurlencode($s['id']));
 
     if ($view === 'review') {
-        // Undecided: start the way the research says the names go.
-        $swapped = $c && !empty($c['swapped']);
         $actions = array(
             array('id' => 'save', 'label' => 'Save the rename year', 'style' => 'approve', 'params' => array(
                 array('name' => 'year', 'label' => 'Year of the rename', 'type' => 'number', 'value' => $a['suggest'] ? (string) $a['suggest'] : ''),
@@ -132,9 +216,16 @@ function kop_rinbox_mren_item(array $r) {
     $fid = $r['later']['facilityId'] ?: $r['earlier']['facilityId'];
     return array(
         'key'          => $r['key'],
-        'title'        => $r['earlier']['name'] . ' → ' . $r['later']['name'],
-        'subtitle'     => $problems ? 'Looks wrong: ' . implode('; ', $problems) : ($a['suggest'] ? 'Suggested year: ' . $a['suggest'] : ''),
-        'text'         => $text,
+        'title'        => $first['name'] . ' → ' . $second['name'],
+        'subtitle'     => $view === 'review'
+            ? ($problems ? 'Looks wrong: ' . implode('; ', $problems) : ($a['suggest'] ? 'Suggested year: ' . $a['suggest'] . ($from_research ? ' (research)' : '') : ''))
+            : (!empty($d['by']) ? 'by ' . $d['by'] : ''),
+        'text'         => $view === 'saved'
+            ? 'On the map the earlier name ends in ' . (int) $d['year'] . ' and the later one starts then.'
+            : ($view === 'skipped' ? 'Marked not a rename. The map is unchanged.'
+                : 'Each name belongs to its own years. Give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline.'),
+        'compare'      => kop_rinbox_mren_compare($first, $second),
+        'details'      => $details,
         'status'       => $view,
         'status_label' => $label,
         'created'      => (string) ($d['at'] ?? ''),

@@ -104,9 +104,22 @@ SOURCES = {"sources": [
      "tool_url": "https://inbox.test/wp-admin/admin.php?page=kop-closure-reports",
      "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True, "has_origins": True,
      "tools": [{"id": "scan", "label": "Scan the next articles now", "params": [{"name": "count", "label": "How many", "type": "number", "value": 10}]}]},
-    {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting"}, "count": 0,
-     "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False},
+    {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting", "applied": "Added"}, "count": 2,
+     "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False,
+     "filters": [{"name": "kind", "label": "Kind", "options": {"news": "News article", "court": "Court record"}}]},
 ], "tags": ["follow up", "needs source", "Neglect"]}
+
+
+def drive_item(key, sure):
+    """A Drive Docs link: a sure match starts ticked; Add's Record box may stay empty; a company is found by name."""
+    return {
+        "key": key, "title": "Link " + key, "status": "pending", "status_label": "Waiting", "selected": sure,
+        "fields": [], "moves": [], "links": [], "tags": [],
+        "actions": [{"id": "apply", "label": "Add: News queue", "style": "approve",
+                     "params": [{"name": "facility", "label": "Record", "type": "facility", "value": 0, "optional": True}]},
+                    {"id": "file", "label": "File", "style": "neutral",
+                     "params": [{"name": "company", "label": "Company", "type": "text", "value": "", "lookup": "company", "optional": True}]}],
+    }
 
 
 def main():
@@ -134,6 +147,10 @@ def main():
             elif path == "origins":
                 out = {"origins": [{"key": "scraper-google", "label": "News scraper: Google News", "count": 3},
                                    {"key": "sciad", "label": "SCIAD NET", "count": 2}]}
+            elif path == "lookup":
+                out = {"options": [{"value": "c45", "label": "Aspen Education Group · Company (operator)"}]}
+            elif path == "items" and "source=drive" in url:
+                out = {"items": [drive_item("a1", True), drive_item("a2", False)], "total": 2, "view_counts": {"pending": 2, "applied": 7}}
             elif path == "items":
                 if "source=news" in url:
                     out = {"items": [NEWS], "total": 1}
@@ -154,6 +171,8 @@ def main():
                 out = {"message": "Filled: Closure date.", "filled": ["closure_date"], "item": closure_item() if body["source"] == "closure" else NEWS}
             elif path == "tool":
                 out = {"message": "Scanned 10 articles: 1 closure found."}
+            elif path == "act" and body["source"] == "drive":
+                out = {"message": "Added to the news queue.", "item": None}
             elif path == "act":
                 if body["action"] == "apply":
                     out = {"message": "Confirmed. Sunrise Ranch is marked closed.", "item": closure_item("applied")}
@@ -288,6 +307,27 @@ def main():
             wide = pg.evaluate("() => document.documentElement.scrollWidth")
             check(wide <= width, f"@{width} nothing is wider than the screen", f"{wide}px")
             pg.screenshot(path=str(shots / f"closure-{width}.png"), full_page=True)
+
+            # A queue's own dropdowns, tab counts, sure matches ticked, optional values in bulk, names looked up as typed.
+            pg.locator(".rinbox-tab", has_text="Drive Docs").click()
+            pg.wait_for_selector(".rinbox-card[data-key='a2']")
+            check("Added (7)" in pg.locator(".rinbox-views").inner_text(), f"@{width} the view tabs show their counts", pg.locator(".rinbox-views").inner_text())
+            ticked = pg.evaluate("() => [...document.querySelectorAll('.rinbox-card .rinbox-select')].map(c => c.checked)")
+            check(ticked == [True, False], f"@{width} a sure match starts ticked", json.dumps(ticked))
+            check(pg.locator(".rinbox-bulk button", has_text="Add: News queue (1)").count() == 1,
+                  f"@{width} an action whose values may stay empty is offered in bulk")
+            pg.locator(".rinbox-filter").select_option("news")
+            pg.wait_for_timeout(300)
+            check(any(c[0] == "items" and "f_kind=news" in c[2] for c in calls), f"@{width} a queue's own filter reloads its list")
+            pg.wait_for_selector(".rinbox-card[data-key='a2']")
+            look = pg.locator(".rinbox-card[data-key='a2'] input[data-field='company']")
+            look.fill("Aspen")
+            pg.wait_for_function("() => [...document.querySelectorAll('datalist option')].some(o => o.value === 'c45')")
+            check(any(c[0] == "lookup" and "name=company" in c[2] and "q=Aspen" in c[2] for c in calls), f"@{width} a lookup field suggests values as it is typed")
+            pg.locator(".rinbox-bulk button", has_text="Add: News queue (1)").click()
+            pg.wait_for_function("() => /Add: News queue: 1 done/.test(document.querySelector('.rinbox-status').textContent)")
+            check(any(c[0] == "act" and c[1]["source"] == "drive" and c[1]["key"] == "a1" and c[1]["params"] == {"facility": ""} for c in calls),
+                  f"@{width} bulk sends each card's own values", json.dumps([c[1] for c in calls if c[0] == "act" and c[1]["source"] == "drive"]))
 
             pg.locator(".type-tabs [data-type='news']").click()
             check(pg.locator(".rinbox-panel").is_hidden() and pg.locator(".submissions-list-container").is_visible(), f"@{width} the page's own tab brings its list back")

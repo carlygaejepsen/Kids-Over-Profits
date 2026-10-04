@@ -34,11 +34,11 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 }
 
 global $wpdb;
-$fbv = $wpdb->prefix . 'fbv';
-$fbv_rel = $wpdb->prefix . 'fbv_attachment_folder';
-$tags_tbl = $wpdb->prefix . 'kop_media_folder_tags';
-$links_tbl = $wpdb->prefix . 'kop_folder_links';
-$dismissals_tbl = $wpdb->prefix . 'kop_folder_link_dismissals';
+// The link, dismissal and suggestion logic lives in inc/folder-links.php, shared
+// with the review inbox (inc/review-inbox/folder-links.php).
+require_once get_stylesheet_directory() . '/inc/folder-links.php';
+$kop_lf_tables = kop_folder_links_tables();
+$fbv = $kop_lf_tables['fbv'];
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -47,61 +47,25 @@ if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $fbv)) !== $fbv) {
     exit;
 }
 
-// Idempotent. Rows are stored with folder_a < folder_b so a pair can only
-// exist once regardless of the order it was picked in.
-$wpdb->query("CREATE TABLE IF NOT EXISTS {$links_tbl} (
-    folder_a BIGINT UNSIGNED NOT NULL,
-    folder_b BIGINT UNSIGNED NOT NULL,
-    note VARCHAR(255) NOT NULL DEFAULT '',
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (folder_a, folder_b),
-    KEY idx_b (folder_b)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-
-// A dismissal means the pair is a known alternate-name match, but NOT a
-// rebrand or shared facility. It must stay separate from kop_folder_links so
-// it never affects document-feed equivalence.
-$wpdb->query("CREATE TABLE IF NOT EXISTS {$dismissals_tbl} (
-    folder_a BIGINT UNSIGNED NOT NULL,
-    folder_b BIGINT UNSIGNED NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (folder_a, folder_b),
-    KEY idx_b (folder_b)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+kop_folder_links_install();
 
 // ---------------------------------------------------------------------------
 // Folder lookups
 // ---------------------------------------------------------------------------
-$folders = $wpdb->get_results("SELECT id, name, parent FROM {$fbv} WHERE type = 0");
-$by_id = [];
-foreach ($folders as $f) {
-    $by_id[(int)$f->id] = $f;
-}
+$by_id = kop_folder_links_folders();
+$folders = array_values($by_id);
 
 /** Full "Parent / Child" path for a folder id. */
 function kop_lf_path($fid, $by_id, $depth = 0) {
-    if ($depth > 10 || !isset($by_id[(int)$fid])) {
-        return '(deleted folder #' . (int)$fid . ')';
-    }
-    $f = $by_id[(int)$fid];
-    $prefix = ((int)$f->parent !== 0) ? kop_lf_path($f->parent, $by_id, $depth + 1) . ' / ' : '';
-    return $prefix . $f->name;
+    return kop_folder_links_path($fid, $by_id, $depth);
 }
 
 function kop_lf_pair_key($a, $b) {
-    return min((int)$a, (int)$b) . ':' . max((int)$a, (int)$b);
+    return kop_folder_links_pair_key($a, $b);
 }
 
 // Direct file counts (FileBird filings + theme tags) per folder.
-$fcounts = [];
-foreach ($wpdb->get_results("SELECT folder_id, COUNT(*) AS n FROM {$fbv_rel} GROUP BY folder_id") as $r) {
-    $fcounts[(int)$r->folder_id] = (int)$r->n;
-}
-if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tags_tbl)) === $tags_tbl) {
-    foreach ($wpdb->get_results("SELECT folder_id, COUNT(*) AS n FROM {$tags_tbl} GROUP BY folder_id") as $r) {
-        $fcounts[(int)$r->folder_id] = ($fcounts[(int)$r->folder_id] ?? 0) + (int)$r->n;
-    }
-}
+$fcounts = kop_folder_links_file_counts();
 
 // ---------------------------------------------------------------------------
 // Actions
@@ -114,222 +78,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_lf_apply')
     $b = (int)($_POST['folder_b'] ?? 0);
 
     if (isset($_POST['do_link'])) {
-        $note = sanitize_text_field((string)($_POST['note'] ?? ''));
         // Any number of folders (folder_ids[]); the old two-field form still works.
         $picked = array_map('intval', (array)($_POST['folder_ids'] ?? []));
         if (!$picked && $a > 0 && $b > 0) $picked = [$a, $b];
-        $ids = [];
-        $missing = false;
-        foreach ($picked as $fid) {
-            if ($fid <= 0 || !isset($by_id[$fid])) { $missing = true; continue; }
-            $ids[$fid] = $fid;
-        }
-        $ids = array_values($ids);
-        if ($missing || count($ids) < 2) {
-            $log[] = 'Pick at least two different existing folders first.';
-        } else {
-            // Link every folder to the first one. Feeds expand links
-            // transitively, so a star merges the whole set, and unlinking one
-            // leaf later removes only that folder from the group.
-            $hub = $ids[0];
-            $created = 0;
-            $already = 0;
-            $same_name = [];
-            for ($i = 1; $i < count($ids); $i++) {
-                $other = $ids[$i];
-                if (strcasecmp(trim($by_id[$hub]->name), trim($by_id[$other]->name)) === 0) {
-                    $same_name[] = $by_id[$other]->name;
-                    continue;
-                }
-                $ins = $wpdb->query($wpdb->prepare(
-                    "INSERT IGNORE INTO {$links_tbl} (folder_a, folder_b, note) VALUES (%d, %d, %s)",
-                    min($hub, $other), max($hub, $other), $note
-                ));
-                if ($ins) $created++; else $already++;
-            }
-            $names = array_map(static function ($fid) use ($by_id) { return '"' . $by_id[$fid]->name . '"'; }, $ids);
-            $log_ok = $created > 0;
-            if ($created > 0) {
-                $log[] = 'Linked ' . count($ids) . ' folders as the same facility: ' . implode(', ', $names)
-                    . ' — all of them now show the merged contents in facility document feeds.'
-                    . ($already ? " ({$already} pair" . ($already === 1 ? ' was' : 's were') . ' already linked.)' : '');
-            } elseif ($already > 0) {
-                $log[] = 'Those folders are already linked.';
-            } else {
-                $log[] = 'Those folders share the same name — feeds already merge them automatically, no link needed.';
-            }
-            if ($same_name) {
-                $quoted = array_map(static function ($n) { return '"' . $n . '"'; }, $same_name);
-                $log[] = 'Skipped same-name folder' . (count($same_name) === 1 ? '' : 's') . ' ' . implode(', ', $quoted)
-                    . ': feeds already merge folders with identical names.';
-            }
-        }
+        $res = kop_folder_links_link($picked, (string)($_POST['note'] ?? ''), $by_id);
+        $log_ok = $res['ok'];
+        $log = array_merge($log, $res['messages']);
     } elseif (isset($_POST['do_dismiss'])) {
-        if ($a <= 0 || $b <= 0 || !isset($by_id[$a]) || !isset($by_id[$b]) || $a === $b) {
-            $log[] = 'Pick two different existing folders first.';
-        } else {
-            $lo = min($a, $b);
-            $hi = max($a, $b);
-            $ins = $wpdb->query($wpdb->prepare(
-                "INSERT IGNORE INTO {$dismissals_tbl} (folder_a, folder_b) VALUES (%d, %d)",
-                $lo, $hi
-            ));
-            $log_ok = (bool)$ins;
-            $log[] = $ins
-                ? 'Marked "' . $by_id[$a]->name . '" and "' . $by_id[$b]->name . '" as alternate names. They will stay separate and leave the suggestion list.'
-                : 'That pair is already marked as an alternate-name match.';
-        }
+        $res = kop_folder_links_dismiss($a, $b, $by_id);
+        $log_ok = $res['ok'];
+        $log[] = $res['message'];
     } elseif (isset($_POST['do_restore_dismissal'])) {
-        $deleted = $wpdb->delete($dismissals_tbl, [
-            'folder_a' => min($a, $b),
-            'folder_b' => max($a, $b),
-        ], ['%d', '%d']);
-        $log_ok = (bool)$deleted;
-        $log[] = $deleted ? 'Alternate-name dismissal restored to the suggestion list.' : 'That dismissal no longer exists.';
+        $res = kop_folder_links_restore($a, $b);
+        $log_ok = $res['ok'];
+        $log[] = $res['message'];
     } elseif (isset($_POST['do_unlink'])) {
-        $deleted = $wpdb->delete($links_tbl, ['folder_a' => min($a, $b), 'folder_b' => max($a, $b)], ['%d', '%d']);
-        $log_ok = (bool)$deleted;
-        $log[] = $deleted ? 'Link removed.' : 'That link no longer exists.';
+        $res = kop_folder_links_unlink($a, $b);
+        $log_ok = $res['ok'];
+        $log[] = $res['message'];
     }
 }
 
 // ---------------------------------------------------------------------------
 // Current links
 // ---------------------------------------------------------------------------
-$links = $wpdb->get_results("SELECT folder_a, folder_b, note, created_at FROM {$links_tbl} ORDER BY created_at DESC");
-$dismissals = $wpdb->get_results("SELECT folder_a, folder_b, created_at FROM {$dismissals_tbl} ORDER BY created_at DESC");
-$dismissed_pairs = [];
-foreach ($dismissals as $dismissal) {
-    $dismissed_pairs[kop_lf_pair_key($dismissal->folder_a, $dismissal->folder_b)] = true;
-}
+$links = kop_folder_links_rows('links');
+$dismissals = kop_folder_links_rows('dismissals');
 
 // Suggest pairs whose folder names are known names or aliases of one facility.
-$suggestions = [];
-$suggestion_keys = [];
-$linked_groups = [];
-$group_for = static function ($id) use (&$linked_groups, &$group_for) {
-    $id = (int)$id;
-    if (!isset($linked_groups[$id])) $linked_groups[$id] = $id;
-    if ($linked_groups[$id] !== $id) $linked_groups[$id] = $group_for($linked_groups[$id]);
-    return $linked_groups[$id];
-};
-$join_groups = static function ($a, $b) use (&$linked_groups, $group_for) {
-    $ga = $group_for($a);
-    $gb = $group_for($b);
-    if ($ga !== $gb) $linked_groups[$gb] = $ga;
-};
-foreach ($links as $link) $join_groups($link->folder_a, $link->folder_b);
-
-// Same-name folders (different parent trees) already merge in feeds via
-// kop_get_same_name_folder_ids(), so treat them as one group here too.
-// Otherwise linking "Alpha #10" to "Beta #30" leaves "Alpha #20" / "Beta #30"
-// unlinked and the same name pair reappears in the suggestion list.
-$same_name_ids = [];
-foreach ($folders as $folder) {
-    $same_key = strtolower(trim((string)$folder->name));
-    if ($same_key !== '') $same_name_ids[$same_key][] = (int)$folder->id;
-}
-foreach ($same_name_ids as $ids) {
-    for ($i = 1; $i < count($ids); $i++) $join_groups($ids[0], $ids[$i]);
-}
-
-// Dismissals are stored by ID pair, but a dismissal of one ID pair should
-// hide every same-name variant of that name pair as well.
-$dismissed_name_pairs = [];
-foreach ($dismissals as $dismissal) {
-    $da = (int)$dismissal->folder_a;
-    $db = (int)$dismissal->folder_b;
-    if (!isset($by_id[$da]) || !isset($by_id[$db])) continue;
-    $name_keys = [
-        kop_normalize_name_key((string)$by_id[$da]->name),
-        kop_normalize_name_key((string)$by_id[$db]->name),
-    ];
-    sort($name_keys, SORT_STRING);
-    $dismissed_name_pairs[implode(':', $name_keys)] = true;
-}
-
-$folders_by_name = [];
-foreach ($folders as $folder) {
-    $key = kop_normalize_name_key((string)$folder->name);
-    if ($key !== '') $folders_by_name[$key][] = (int)$folder->id;
-}
-
-$known_name_scopes = static function (array $decoded, $unique_name) {
-    $scopes = [[(string)$unique_name]];
-    $scopes[0] = array_merge($scopes[0], kop_collect_self_names($decoded), kop_collect_match_aliases($decoded));
-    $nested = $decoded['data']['facilities'] ?? $decoded['facilities'] ?? [];
-    if (is_array($nested)) {
-        foreach ($nested as $facility) {
-            if (!is_array($facility)) continue;
-            $names = [];
-            $ident = $facility['identification'] ?? [];
-            if (!is_array($ident)) continue;
-            foreach (['name', 'currentName'] as $field) $names[] = (string)($ident[$field] ?? '');
-            foreach (['otherNames', 'pastNames', 'matchAliases'] as $field) {
-                if (is_array($ident[$field] ?? null)) $names = array_merge($names, $ident[$field]);
-            }
-            $scopes[] = $names;
-        }
-    }
-    return array_map(static function ($names) {
-        $out = [];
-        foreach ($names as $name) {
-            $name = trim((string)$name);
-            $key = kop_normalize_name_key($name);
-            if ($key !== '') $out[$key] = $name;
-        }
-        return $out;
-    }, $scopes);
-};
-
-$master_rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master");
-foreach ($master_rows as $row) {
-    $decoded = json_decode((string)$row->json_data, true);
-    if (!is_array($decoded)) continue;
-    foreach ($known_name_scopes($decoded, $row->unique_name) as $scope) {
-        $matched = [];
-        foreach ($scope as $key => $known_name) {
-            foreach ($folders_by_name[$key] ?? [] as $folder_id) $matched[$folder_id] = $known_name;
-        }
-        $matched_ids = array_keys($matched);
-        for ($i = 0; $i < count($matched_ids); $i++) {
-            for ($j = $i + 1; $j < count($matched_ids); $j++) {
-                $a = (int)$matched_ids[$i];
-                $b = (int)$matched_ids[$j];
-                if (kop_normalize_name_key((string)$by_id[$a]->name) === kop_normalize_name_key((string)$by_id[$b]->name)) continue;
-                if ($group_for($a) === $group_for($b)) continue;
-                $lo = min($a, $b);
-                $hi = max($a, $b);
-                // Multiple FileBird folders can represent the same name in
-                // different parent trees. Same-name folders already merge,
-                // so show one suggestion for the name pair, not every ID pair.
-                $id_key = kop_lf_pair_key($lo, $hi);
-                if (isset($dismissed_pairs[$id_key])) continue;
-                $name_keys = [
-                    kop_normalize_name_key((string)$by_id[$a]->name),
-                    kop_normalize_name_key((string)$by_id[$b]->name),
-                ];
-                sort($name_keys, SORT_STRING);
-                $key = implode(':', $name_keys);
-                if (isset($dismissed_name_pairs[$key])) continue;
-                if (isset($suggestion_keys[$key])) continue;
-                $suggestion_keys[$key] = true;
-                $suggestions[] = [
-                    'a' => $lo,
-                    'b' => $hi,
-                    'a_name' => $by_id[$lo]->name ?? ('folder #' . $lo),
-                    'b_name' => $by_id[$hi]->name ?? ('folder #' . $hi),
-                    'basis' => $row->unique_name,
-                    'matched_names' => [$matched[$a], $matched[$b]],
-                ];
-            }
-        }
-    }
-}
-usort($suggestions, static function ($left, $right) {
-    return strcasecmp($left['basis'], $right['basis']);
-});
-$suggestions = array_slice($suggestions, 0, 100);
+$suggestions = kop_folder_links_suggestions($by_id, 100);
 
 /** Total direct files across an equivalence group. */
 function kop_lf_group_count($ids, $fcounts) {

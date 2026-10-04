@@ -7,6 +7,13 @@
 
 kop_require_page_capability('manage_options');
 
+if (!function_exists('kop_submissions_us_states')) {
+    /** The states the old Lawsuit and Legislation pages offered as jurisdictions. */
+    function kop_submissions_us_states() {
+        return array('Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming');
+    }
+}
+
 get_header();
 ?>
 
@@ -56,6 +63,7 @@ get_header();
                     <button type="button" role="tab" class="submission-tab" data-status="approved">Approved</button>
                     <button type="button" role="tab" class="submission-tab" data-status="published">Published</button>
                     <button type="button" role="tab" class="submission-tab" data-status="rejected">Rejected</button>
+                    <button type="button" role="tab" class="submission-tab not-data" data-status="draft" title="Records saved as drafts: not public and not waiting for review">Drafts</button>
                     <button type="button" role="tab" class="submission-tab news-only" data-status="promotional" title="Internal index of articles the facilities or their supporters put out: fundraisers, anniversaries, marketing, expansions. Never shown on the public site." hidden>Industry PR</button>
                     <button type="button" role="tab" class="submission-tab" data-status="">All</button>
                 </div>
@@ -68,7 +76,49 @@ get_header();
                 <label for="searchFilter">Search:</label>
                 <input type="text" id="searchFilter" placeholder="Program name or location...">
 
+                <span class="record-only" hidden>
+                    <label for="jurisdictionFilter">Place:</label>
+                    <select id="jurisdictionFilter" class="origin-filter">
+                        <option value="">Everywhere</option>
+                        <option value="Federal">Federal</option>
+                        <?php foreach (kop_submissions_us_states() as $kop_state) : ?>
+                            <option value="<?php echo esc_attr($kop_state); ?>"><?php echo esc_html($kop_state); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </span>
+                <span class="legislation-only" hidden>
+                    <label for="levelFilter">Level:</label>
+                    <select id="levelFilter" class="origin-filter">
+                        <option value="">State and federal</option>
+                        <option value="state">State only</option>
+                        <option value="federal">Federal only</option>
+                    </select>
+                </span>
+                <span class="dated-only" hidden>
+                    <label for="sortFilter">Order:</label>
+                    <select id="sortFilter" class="origin-filter">
+                        <option value="">Newest added first</option>
+                        <option value="date">By date (filed, introduced or published)</option>
+                    </select>
+                </span>
+
                 <button type="button" id="refreshBtn" class="btn-secondary"><?php echo kop_icon('refresh'); ?> Refresh</button>
+                <button type="button" id="addNewBtn" class="btn-secondary can-add" hidden><?php echo kop_icon('plus'); ?> <span id="addNewLabel">Add new</span></button>
+            </div>
+            <div id="addNewPanel" class="add-new-panel" hidden>
+                <h3 id="addNewTitle">Add new</h3>
+                <p class="add-new-help" id="addNewHelp">Give it a name. It opens in the Pending tab, where you can fill in the rest, use the auto-fill buttons, and approve it.</p>
+                <div class="add-new-fields">
+                    <label for="addNewName" id="addNewNameLabel">Name</label>
+                    <input type="text" id="addNewName">
+                    <label for="addNewUrl" id="addNewUrlLabel">Web address (optional)</label>
+                    <input type="url" id="addNewUrl" placeholder="https://...">
+                </div>
+                <div class="add-new-actions">
+                    <button type="button" id="addNewSaveBtn" class="btn-save-edits">Create</button>
+                    <button type="button" id="addNewCancelBtn" class="btn-secondary">Cancel</button>
+                    <span id="addNewStatus" class="structured-editor-status" aria-live="polite"></span>
+                </div>
             </div>
             <div class="bulk-actions">
                 <label class="bulk-select-all">
@@ -214,6 +264,7 @@ get_header();
                     <div class="form-data-preview">
                         <details>
                             <summary>View Full Form Data (JSON)</summary>
+                            <button type="button" id="downloadJsonBtn" class="btn-secondary"><?php echo kop_icon('download'); ?> Download as JSON</button>
                             <pre id="modalFormData"></pre>
                         </details>
                     </div>
@@ -323,6 +374,17 @@ get_header();
                         <button type="button" id="publishBtn" class="btn-publish"><?php echo kop_icon('upload'); ?> Mark as Published</button>
                         <button type="button" id="deleteBtn" class="btn-delete"><?php echo kop_icon('trash'); ?> Delete</button>
                     </div>
+                    <div class="set-status-row not-data">
+                        <label for="setStatusSelect">Or set the status to:</label>
+                        <select id="setStatusSelect">
+                            <option value="draft">Draft (not public, not waiting)</option>
+                            <option value="submitted">Pending review</option>
+                            <option value="approved">Approved</option>
+                            <option value="published">Published</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <button type="button" id="setStatusBtn" class="btn-secondary">Set status</button>
+                    </div>
                     <div id="actionStatus" class="action-status"></div>
                 </div>
             </div>
@@ -330,6 +392,34 @@ get_header();
     </div>
 </div>
 
+<?php
+// The tools of the old Lawsuit, Legislation and News Processor pages, which this page now offers.
+$kop_api = get_stylesheet_directory_uri() . '/api/';
+?>
+<script>
+window.kopSubmissionsTools = <?php echo wp_json_encode(array(
+    'saveLawsuit'     => $kop_api . 'save-lawsuit.php',
+    'saveLegislation' => $kop_api . 'save-legislation.php',
+    'saveNews'        => $kop_api . 'save-news-submission.php',
+    'fetchLawsuit'    => $kop_api . 'fetch-lawsuit-details.php',
+    'extractLawsuit'  => $kop_api . 'extract-lawsuit-from-document.php',
+    'fetchBill'       => $kop_api . 'fetch-bill-details.php',
+    'billMeta'        => $kop_api . 'list-jurisdiction-meta.php',
+    'checkDuplicate'  => $kop_api . 'check-duplicate-url.php',
+    'newsAi'          => $kop_api . 'process-news-ai.php',
+    'savedValues'     => $kop_api . 'saved-values.php',
+    'folders'         => rest_url('kop/v1/folders'),
+    'mediaAdmin'      => admin_url('upload.php'),
+    'states'          => kop_submissions_us_states(),
+    'contentWarnings' => array('Physical Restraint', 'Chemical Restraint', 'Seclusion', 'Humiliating Punishments',
+        'Child Sexual Abuse', 'Child-on-Child CSA', 'Graphic Descriptions of Assaults or Injuries',
+        'Peer Violence', 'Child Death', 'Suicide', 'Self-harm', 'Substance Abuse',
+        'Victim Blaming', 'Spiritual Abuse', 'Racism', 'Homophobia', 'Transphobia',
+        'Hate Crimes', 'Slurs', 'Autism-Specific Abuse', 'Food Restriction',
+        'Unsanitary Conditions', 'Medical Neglect', 'Eating Disorders', 'Conversion Therapy',
+        'Forced Labor', 'Involuntary Transport', 'Law Enforcement Abuse'),
+)); ?>;
+</script>
 <?php
 // The facility finder prints its script in admin_footer; this page is on the front end.
 add_action('wp_footer', 'kop_facility_finder_print_assets');

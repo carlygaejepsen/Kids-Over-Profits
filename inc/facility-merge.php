@@ -869,16 +869,29 @@ if (!function_exists('kop_fmerge_screen_data')) {
             if ($p['reason']['code'] === 'prefix') {
                 if (mb_strlen($a['name']) < mb_strlen($b['name'])) $sa += 4; else $sb += 4;
             }
+            $tab = $p['reason']['code'] === 'address' ? 'address' : $p['reason']['level'];
+            $reason = $p['reason']['label'];
+            // "Program – Home A" and "Program – Home B": likely two homes of one program, not one place.
+            if (function_exists('kop_program_homes_split_name')) {
+                $xa = kop_program_homes_split_name($a['name']);
+                $xb = kop_program_homes_split_name($b['name']);
+                if ($xa[0] !== '' && $xb[0] !== '' && kop_program_homes_key($xa[0]) === kop_program_homes_key($xb[0])
+                    && kop_program_homes_key($xa[1]) !== kop_program_homes_key($xb[1])) {
+                    $tab = 'homes';
+                    $reason = 'Named like two homes of one program (' . $xa[0] . ')';
+                }
+            }
             $out[] = array(
                 'key'    => $p['a'] . ':' . $p['b'],
-                'tab'    => $p['reason']['code'] === 'address' ? 'address' : $p['reason']['level'],
-                'reason' => $p['reason']['label'],
+                'tab'    => $tab,
+                'reason' => $reason,
                 'a'      => $a,
                 'b'      => $b,
                 'keep'   => $sb > $sa ? $b['id'] : $a['id'],
+                'homes'  => function_exists('kop_fmerge_homes_plan') ? kop_fmerge_homes_plan($a['id'], $a['name'], $b['id'], $b['name']) : null,
             );
         }
-        $rank = array('likely' => 0, 'check' => 1, 'address' => 2);
+        $rank = array('likely' => 0, 'check' => 1, 'address' => 2, 'homes' => 3);
         usort($out, function ($x, $y) use ($rank) {
             return ($rank[$x['tab']] <=> $rank[$y['tab']]) ?: strcasecmp($x['a']['place'], $y['a']['place']) ?: strcasecmp($x['a']['name'], $y['a']['name']);
         });
@@ -889,10 +902,16 @@ if (!function_exists('kop_fmerge_screen_data')) {
                 'report' => $e['report'], 'undone' => !empty($e['undone']), 'canUndo' => empty($e['undone']) && !empty($e['undo']),
                 'page' => function_exists('kop_facility_page_url') ? kop_facility_page_url((int) $e['keep']['id']) : '');
         }
+        // Pairs marked "Homes of one program" (not undone): their Undo is on the Not the same tab.
+        $homes_of = array();
+        foreach (function_exists('kop_fmerge_homes_log') ? kop_fmerge_homes_log() : array() as $h) {
+            $hk = min((int) $h['a'], (int) $h['b']) . ':' . max((int) $h['a'], (int) $h['b']);
+            if (empty($h['undone']) && !isset($homes_of[$hk])) $homes_of[$hk] = array('log' => $h['id'], 'program' => (int) $h['program']);
+        }
         $dis = array();
         foreach ($dismissed as $key => $d) {
             list($x, $y) = array_map('intval', explode(':', $key));
-            $dis[] = array('key' => $key, 'a' => $side($x), 'b' => $side($y), 'by' => $d['by'] ?? '', 'at' => $d['at'] ?? '');
+            $dis[] = array('key' => $key, 'a' => $side($x), 'b' => $side($y), 'by' => $d['by'] ?? '', 'at' => $d['at'] ?? '', 'homes' => $homes_of[$key] ?? null);
         }
         $data = array('pairs' => $out, 'merged' => $merged, 'dismissed' => $dis);
         set_transient('kop_fmerge_screen', $data, HOUR_IN_SECONDS);
@@ -974,6 +993,137 @@ if (!function_exists('kop_fmerge_set_dismissed')) {
     }
 }
 
+/* ---- Homes of one program (not duplicates) ------------------------------- */
+
+if (!function_exists('kop_fmerge_homes_log')) {
+    function kop_fmerge_homes_log() {
+        $v = get_option('kop_facility_merge_homes_log', array());
+        return is_array($v) ? $v : array();
+    }
+}
+
+if (!function_exists('kop_fmerge_homes_plan')) {
+    /**
+     * What "Homes of one program" offers for two records named $name_a and
+     * $name_b: {program_id (a program either is already in, or 0), program_name
+     * (that program's name, else the part both names share: "Newport Academy"
+     * from "Newport Academy – Acre" and "Newport Academy – Aracena"), homes:
+     * {id: home name}}. Null when Program Homes is not installed.
+     */
+    function kop_fmerge_homes_plan($a, $name_a, $b, $name_b) {
+        if (!function_exists('kop_program_homes_group')) return null;
+        $a = (int) $a;
+        $b = (int) $b;
+        $split = array($a => kop_program_homes_split_name($name_a), $b => kop_program_homes_split_name($name_b));
+        $base = '';
+        if ($split[$a][0] !== '' && kop_program_homes_key($split[$a][0]) === kop_program_homes_key($split[$b][0])) {
+            $base = $split[$a][0];
+        } else {
+            // The words both names start with.
+            $wa = preg_split('/\s+/u', trim((string) $name_a));
+            $wb = preg_split('/\s+/u', trim((string) $name_b));
+            $common = array();
+            foreach ($wa as $i => $w) {
+                if (!isset($wb[$i]) || kop_program_homes_key($w) !== kop_program_homes_key($wb[$i])) break;
+                $common[] = $w;
+            }
+            $base = trim(preg_replace('/[\s\x{2013}\x{2014}:-]+$/u', '', implode(' ', $common)));
+        }
+        $homes = array();
+        foreach (array($a => $name_a, $b => $name_b) as $id => $name) {
+            $homes[$id] = $split[$id][1] !== '' && $base !== '' && kop_program_homes_key($split[$id][0]) === kop_program_homes_key($base) ? $split[$id][1] : trim((string) $name);
+        }
+        $program = 0;
+        foreach (array($a, $b) as $id) {
+            $in = kop_program_homes_program_of($id);
+            if ($in) { $program = (int) $in[0]; break; }
+            // One of the two is a program record already: the other becomes its home.
+            if (kop_program_homes_homes_of($id)) { $program = $id; break; }
+        }
+        $program_name = $base;
+        if ($program) {
+            global $wpdb;
+            $program_name = (string) $wpdb->get_var($wpdb->prepare('SELECT name FROM facilities_v2 WHERE id = %d', $program));
+        }
+        return array('program_id' => $program, 'program_name' => $program_name, 'homes' => $homes);
+    }
+}
+
+if (!function_exists('kop_fmerge_make_homes')) {
+    /**
+     * Two records of a Merge Duplicates pair are homes of one program, not one
+     * place: both are tied to a program record through Program Homes
+     * (kop_program_homes_group()) and the pair is marked "not the same". The
+     * program is $program_id (an existing record; a program either home is in
+     * already is the default) or a new record named $program_name. $homes:
+     * {id: home name}; a home whose name is empty keeps its record name.
+     * Logged in kop_facility_merge_homes_log for kop_fmerge_undo_homes().
+     * Returns {message, log}.
+     */
+    function kop_fmerge_make_homes($a, $b, $program_id, $program_name, array $homes, $login) {
+        if (!function_exists('kop_program_homes_group')) throw new RuntimeException('Program Homes is not installed here.');
+        global $wpdb;
+        $a = (int) $a;
+        $b = (int) $b;
+        $program_id = (int) $program_id;
+        $names = array();
+        foreach ((array) $wpdb->get_results('SELECT id, name FROM facilities_v2 WHERE id IN (' . $a . ',' . $b . ')', ARRAY_A) as $r) $names[(int) $r['id']] = (string) $r['name'];
+        if (!isset($names[$a], $names[$b])) throw new RuntimeException('One of these records is no longer on file.');
+        $plan = kop_fmerge_homes_plan($a, $names[$a], $b, $names[$b]);
+        $tie = array();
+        foreach (array($a, $b) as $id) {
+            if ($id === $program_id) continue; // that record is the program itself
+            $n = trim(sanitize_text_field((string) ($homes[$id] ?? $homes[(string) $id] ?? '')));
+            $tie[$id] = $n !== '' ? $n : $plan['homes'][$id];
+        }
+        // How things stood, for Undo.
+        $before = array();
+        foreach (array_keys($tie) as $id) $before[$id] = kop_program_homes_program_of($id);
+        // A new name can still find an existing record (kop_facility_resolve_identity), so look at every group.
+        $groups = array_map('intval', (array) $wpdb->get_col('SELECT program_id FROM ' . kop_program_homes_table('groups')));
+        $name = trim(sanitize_text_field((string) $program_name));
+        if ($program_id <= 0 && $name === '') $name = $plan['program_name'];
+        $pid = kop_program_homes_group($tie, $program_id, $name, kop_program_homes_opts());
+        $had_group = in_array((int) $pid, $groups, true);
+        kop_fmerge_set_dismissed($a, $b, true, $login);
+        $entry = array(
+            'id' => uniqid('fh', true), 'a' => $a, 'b' => $b, 'program' => (int) $pid, 'new_group' => !$had_group,
+            'before' => $before, 'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'),
+        );
+        $log = kop_fmerge_homes_log();
+        array_unshift($log, $entry);
+        update_option('kop_facility_merge_homes_log', array_slice($log, 0, 500), false);
+        $pname = (string) $wpdb->get_var($wpdb->prepare('SELECT name FROM facilities_v2 WHERE id = %d', $pid));
+        return array('log' => $entry['id'], 'program' => (int) $pid,
+            'message' => 'Tied as homes of ' . ($pname !== '' ? $pname : 'program') . ' (record #' . $pid . '). This pair will not be offered as duplicates again.');
+    }
+}
+
+if (!function_exists('kop_fmerge_undo_homes')) {
+    /** Undo kop_fmerge_make_homes() by its log id: the homes as they were, the pair back on the list. Returns the message. */
+    function kop_fmerge_undo_homes($log_id) {
+        $log = kop_fmerge_homes_log();
+        $found = null;
+        foreach ($log as $i => $e) if (($e['id'] ?? '') === (string) $log_id) $found = $i;
+        if ($found === null || !empty($log[$found]['undone'])) throw new RuntimeException('That is not in the log, or was undone already.');
+        $e = $log[$found];
+        if (!empty($e['new_group'])) {
+            // The whole group came from this: untie it (and delete a program record it made, if untouched).
+            kop_program_homes_undo((int) $e['program']);
+        } else {
+            foreach ((array) $e['before'] as $id => $_) kop_program_homes_remove_home((int) $id);
+        }
+        // Homes that were in another program before go back there.
+        foreach ((array) $e['before'] as $id => $was) {
+            if (is_array($was) && !empty($was[0])) kop_program_homes_group(array((int) $id => (string) ($was[1] ?? '')), (int) $was[0], '', kop_program_homes_opts());
+        }
+        kop_fmerge_set_dismissed((int) $e['a'], (int) $e['b'], false, '');
+        $log[$found]['undone'] = gmdate('Y-m-d H:i:s');
+        update_option('kop_facility_merge_homes_log', $log, false);
+        return 'Undone: the two records are no longer homes of that program, and the pair is back on the list.';
+    }
+}
+
 if (!function_exists('kop_fmerge_ajax')) {
     /**
      * POST action=kop_facility_merge, nonce, op:
@@ -981,6 +1131,9 @@ if (!function_exists('kop_fmerge_ajax')) {
      *   dismiss    a, b      (not the same place)
      *   undismiss  a, b
      *   undo       log       (a merge's log id)
+     *   homes      a, b, program (existing record id, or 0 for a new one),
+     *              program_name, home_a, home_b   (homes of one program)
+     *   undo_homes log       (kop_facility_merge_homes_log id)
      * Answers with the screen's data, rebuilt.
      */
     function kop_fmerge_ajax() {
@@ -1002,6 +1155,14 @@ if (!function_exists('kop_fmerge_ajax')) {
                 $note = kop_fmerge_do_undo($pdo, $prefix, (string) ($_POST['log'] ?? ''));
             } elseif ($op === 'dismiss' || $op === 'undismiss') {
                 $note = kop_fmerge_set_dismissed((int) ($_POST['a'] ?? 0), (int) ($_POST['b'] ?? 0), $op === 'dismiss', $login);
+            } elseif ($op === 'homes') {
+                $a = (int) ($_POST['a'] ?? 0);
+                $b = (int) ($_POST['b'] ?? 0);
+                $names = array($a => wp_unslash((string) ($_POST['home_a'] ?? '')), $b => wp_unslash((string) ($_POST['home_b'] ?? '')));
+                $note = kop_fmerge_make_homes($a, $b, (int) ($_POST['program'] ?? 0), wp_unslash((string) ($_POST['program_name'] ?? '')), $names, $login)['message']
+                    . ' Undo is on the Not the same tab.';
+            } elseif ($op === 'undo_homes') {
+                $note = kop_fmerge_undo_homes((string) ($_POST['log'] ?? ''));
             } else {
                 throw new RuntimeException('Unknown action.');
             }
@@ -1042,6 +1203,8 @@ if (!function_exists('kop_fmerge_page')) {
                 Its name is kept as another name and its page forwards to the kept one. Renamed programs
                 (Copper Canyon / Sedona Sky) are never listed: each name stays its own record.
                 Every merge can be undone from the <strong>Merged</strong> tab.
+                Two records that are separate homes or cottages of one program are not duplicates: press
+                <strong>Homes of one program</strong> to list both on the program's page instead (Undo on the <strong>Not the same</strong> tab).
             </p>
             <div class="kop-fm__any">
                 <strong>Merge any two records:</strong>
@@ -1054,6 +1217,7 @@ if (!function_exists('kop_fmerge_page')) {
                     <button type="button" data-tab="likely" aria-selected="true">Likely the same <span></span></button>
                     <button type="button" data-tab="check" aria-selected="false">Worth a look <span></span></button>
                     <button type="button" data-tab="address" aria-selected="false">Same street address <span></span></button>
+                    <button type="button" data-tab="homes" aria-selected="false">Looks like homes of one program <span></span></button>
                     <button type="button" data-tab="dismissed" aria-selected="false">Not the same <span></span></button>
                     <button type="button" data-tab="merged" aria-selected="false">Merged <span></span></button>
                 </div>
@@ -1091,6 +1255,8 @@ if (!function_exists('kop_fmerge_page')) {
             .kop-fm__muted { color: #50575e; }
             .kop-fm__company { font-weight: 600; }
             .kop-fm__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+            .kop-fm__homes { margin-top: 10px; padding: 10px 12px; background: #f6f7f7; border-radius: 6px; }
+            .kop-fm__homes-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 6px 0; }
             .kop-fm__empty { padding: 24px; background: #fff; border: 1px dashed #c3c4c7; border-radius: 6px; text-align: center; }
         </style>
         <script>
@@ -1191,9 +1357,73 @@ if (!function_exists('kop_fmerge_page')) {
                 actions.appendChild(no);
                 var k = keep === p.a.id ? p.a : p.b;
                 var d = keep === p.a.id ? p.b : p.a;
+                if (p.homes) {
+                    var hb = el('button', 'button', 'Homes of one program');
+                    hb.type = 'button';
+                    hb.setAttribute('aria-expanded', 'false');
+                    actions.appendChild(hb);
+                }
                 actions.appendChild(el('span', 'kop-fm__muted', 'Keeps "' + k.name + '"; "' + d.name + '" becomes another name for it.'));
                 c.appendChild(actions);
+                if (p.homes) {
+                    var form = homesForm(p, c);
+                    form.hidden = true;
+                    c.appendChild(form);
+                    hb.addEventListener('click', function () {
+                        form.hidden = !form.hidden;
+                        hb.setAttribute('aria-expanded', form.hidden ? 'false' : 'true');
+                    });
+                }
                 return c;
+            }
+
+            // Two homes of one program, not one place: tie both to a program record (Program Homes).
+            function homesForm(p, c) {
+                var h = p.homes;
+                var f = el('div', 'kop-fm__homes');
+                f.appendChild(el('p', 'kop-fm__line', 'Not one place but two homes or cottages of one program: each keeps its own record and both are listed on the program\'s page. This pair is then not offered again.'));
+                var uid = 'kop-fm-h-' + p.key.replace(/\D/g, '-');
+                var choice = el('div', 'kop-fm__homes-row');
+                function radio(value, text, checked) {
+                    var l = el('label');
+                    var r = el('input'); r.type = 'radio'; r.name = uid + '-prog'; r.value = value; r.checked = !!checked;
+                    l.appendChild(r); l.appendChild(document.createTextNode(' ' + text));
+                    choice.appendChild(l);
+                    return r;
+                }
+                var rIn = h.program_id ? radio('in', 'Add to ' + (h.program_name || ('record #' + h.program_id)) + ' (#' + h.program_id + ')', true) : null;
+                var rNew = radio('new', 'A new program record named', !h.program_id);
+                var name = el('input'); name.type = 'text'; name.value = h.program_id ? '' : (h.program_name || ''); name.setAttribute('aria-label', 'Program name');
+                choice.appendChild(name);
+                var rOther = radio('other', 'Another existing record', false);
+                var other = el('input'); other.type = 'number'; other.min = '1'; other.placeholder = 'id'; other.setAttribute('data-kop-facility-finder', '1');
+                other.setAttribute('aria-label', 'Program record');
+                choice.appendChild(other);
+                f.appendChild(choice);
+                var homes = el('div', 'kop-fm__homes-row');
+                var inputs = {};
+                [p.a, p.b].forEach(function (s) {
+                    var l = el('label', '', 'Home name for ' + s.name + ' ');
+                    var i = el('input'); i.type = 'text'; i.value = (h.homes && h.homes[s.id]) || s.name;
+                    l.appendChild(i);
+                    homes.appendChild(l);
+                    inputs[s.id] = i;
+                });
+                f.appendChild(homes);
+                var go = el('button', 'button button-primary', 'Tie them as homes of the program');
+                go.type = 'button';
+                go.addEventListener('click', function () {
+                    var program = 0;
+                    if (rIn && rIn.checked) program = h.program_id;
+                    else if (rOther.checked) program = Number(other.value) || 0;
+                    if (rOther.checked && !program) { status.className = 'kop-fm__status is-bad'; status.textContent = 'Find the program record first.'; return; }
+                    if (rNew.checked && !name.value.trim()) { status.className = 'kop-fm__status is-bad'; status.textContent = 'Give the new program a name.'; return; }
+                    send({ op: 'homes', a: p.a.id, b: p.b.id, program: program, program_name: rNew.checked ? name.value.trim() : '',
+                        home_a: inputs[p.a.id].value.trim(), home_b: inputs[p.b.id].value.trim() }, c);
+                });
+                f.appendChild(go);
+                if (typeof window.kopFacilityFinderAttach === 'function') window.kopFacilityFinderAttach(other);
+                return f;
             }
 
             function dismissedCard(x) {
@@ -1207,7 +1437,16 @@ if (!function_exists('kop_fmerge_page')) {
                 var back = el('button', 'button', 'Put back on the list');
                 back.type = 'button';
                 back.addEventListener('click', function () { send({ op: 'undismiss', a: x.a.id, b: x.b.id }, c); });
-                actions.appendChild(back);
+                if (x.homes) {
+                    // Tied as homes of one program: Undo unties them and puts the pair back.
+                    c.querySelector('.kop-fm__why').textContent += ' (tied as homes of program #' + x.homes.program + ')';
+                    var uh = el('button', 'button', 'Undo: not homes of one program');
+                    uh.type = 'button';
+                    uh.addEventListener('click', function () { send({ op: 'undo_homes', log: x.homes.log }, c); });
+                    actions.appendChild(uh);
+                } else {
+                    actions.appendChild(back);
+                }
                 c.appendChild(actions);
                 return c;
             }
@@ -1246,7 +1485,7 @@ if (!function_exists('kop_fmerge_page')) {
             }
 
             function render() {
-                var counts = { likely: 0, check: 0, address: 0, dismissed: D.dismissed.length, merged: D.merged.filter(function (m) { return !m.undone; }).length };
+                var counts = { likely: 0, check: 0, address: 0, homes: 0, dismissed: D.dismissed.length, merged: D.merged.filter(function (m) { return !m.undone; }).length };
                 D.pairs.forEach(function (p) { counts[p.tab]++; });
                 document.querySelectorAll('.kop-fm__tabs button').forEach(function (b) {
                     var t = b.getAttribute('data-tab');

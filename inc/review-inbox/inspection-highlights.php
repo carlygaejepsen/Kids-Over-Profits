@@ -14,10 +14,24 @@ if (!defined('ABSPATH')) {
 kop_rinbox_register('inspection-highlights', function () {
     if (!function_exists('kop_ih_merge_same_day')) return null;
     return array(
-        'label'    => 'Inspection highlights',
-        'group'    => 'Found in state records',
-        'help'     => 'Serious findings read out of state inspection reports. Open the state source before approving: the reader cannot tell who did what to whom. Approved findings scoring ' . (int) kop_ih_severe_score() . ' or more show on the home page and the inspection reports hub.',
+        'label'    => 'Serious violations',
+        'group'    => 'Found in state inspection reports',
+        'help'     => 'Serious violations read out of state inspection reports. Open the state source or the full report before approving: the reader cannot tell who did what to whom. Approved serious violations scoring ' . (int) kop_ih_severe_score() . ' or more show on the home page and the inspection reports hub.',
         'views'    => array('pending' => 'To review', 'approved' => 'Approved', 'rejected' => 'Rejected'),
+        'view_counts' => function (array $q = array()) {
+            $out = array('pending' => 0, 'approved' => 0, 'rejected' => 0);
+            foreach (kop_rinbox_pdo()->query('SELECT status, COUNT(*) AS n FROM inspection_highlights GROUP BY status') as $r) {
+                if (isset($out[$r['status']])) $out[$r['status']] = (int) $r['n'];
+            }
+            return $out;
+        },
+        // The old screen's filters; the search also takes a facility name, a state, or finding numbers ("#12, 40").
+        'filters'  => array(
+            array('name' => 'state', 'label' => 'State', 'options' => array('' => 'All states') + array_combine(kop_ih_supported_states(), kop_ih_supported_states())),
+            array('name' => 'category', 'label' => 'Category', 'options' => array('' => 'All categories') + kop_rinbox_ih_category_options()),
+            array('name' => 'min', 'label' => 'Score at least', 'options' => array('' => 'Any score', '50' => '50', '70' => '70', '90' => '90')),
+            array('name' => 'sort', 'label' => 'Order', 'options' => array('' => 'Most recent severe first', 'worst' => 'Worst first')),
+        ),
         'tool_url' => get_stylesheet_directory_uri() . '/api/review-inspection-highlights.php',
         'count'    => function () {
             return (int) kop_rinbox_pdo()->query("SELECT COUNT(*) FROM inspection_highlights WHERE status = 'pending'")->fetchColumn();
@@ -46,7 +60,25 @@ function kop_rinbox_ih_list(array $q) {
     $status = in_array($q['view'], array('pending', 'approved', 'rejected'), true) ? $q['view'] : 'pending';
     $where = 'h.status = ?';
     $params = array($status);
-    if ($q['search'] !== '') {
+    $f = (array) ($q['filters'] ?? array());
+    if (!empty($f['state'])) {
+        $where .= ' AND h.state = ?';
+        $params[] = (string) $f['state'];
+    }
+    if (!empty($f['category'])) {
+        // FIND_IN_SET, written so SQLite reads it too.
+        $where .= ' AND (h.categories = ? OR h.categories LIKE ? OR h.categories LIKE ? OR h.categories LIKE ?)';
+        array_push($params, $f['category'], $f['category'] . ',%', '%,' . $f['category'], '%,' . $f['category'] . ',%');
+    }
+    if (!empty($f['min'])) {
+        $where .= ' AND h.score >= ?';
+        $params[] = (int) $f['min'];
+    }
+    if ($q['search'] !== '' && preg_match('/^[#\d,\s]+$/', $q['search']) && preg_match('/\d/', $q['search'])) {
+        // A hand-picked list of finding numbers, as the old screen's ?ids=12,40.
+        $ids = array_values(array_filter(array_map('intval', preg_split('/[#,\s]+/', $q['search']))));
+        $where .= ' AND h.id IN (' . implode(',', $ids) . ')';
+    } elseif ($q['search'] !== '') {
         // A facility name, or a two-letter state.
         if (preg_match('/^[A-Za-z]{2}$/', $q['search'])) {
             $where .= ' AND (f.facility_name LIKE ? OR h.state = ?)';
@@ -60,7 +92,9 @@ function kop_rinbox_ih_list(array $q) {
     $st->execute($params);
     $total = (int) $st->fetchColumn();
     // Recent severe findings lead, as on the old screen: they are what the site shows.
-    $order = '(h.score >= ' . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC';
+    $order = ($f['sort'] ?? '') === 'worst'
+        ? 'h.score DESC, h.finding_date DESC, h.id DESC'
+        : '(h.score >= ' . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC';
     return array('items' => array_map('kop_rinbox_ih_item', kop_rinbox_ih_rows($where, $params, $order, $q['limit'], $q['offset'])), 'total' => $total);
 }
 
@@ -87,9 +121,11 @@ function kop_rinbox_ih_item(array $r) {
         . ($also ? "\nAlso matched: " . implode(', ', $also) : '')
         . ($r['corrected_on_site'] ? "\nCorrected at the inspection." : '')
         . ($r['status'] !== 'pending' ? "\n" . ucfirst($r['status']) . ' by ' . $r['reviewed_by'] . ', ' . $r['reviewed_at'] . ' UTC' . ($r['review_note'] ? ': ' . $r['review_note'] : '') : '');
+    // The old screen's note box goes with the decision (optional; a bulk decision keeps each card's note).
+    $note = array(array('name' => 'note', 'label' => 'Note', 'type' => 'text', 'value' => (string) $r['review_note'], 'optional' => true));
     $actions = array();
-    if ($r['status'] !== 'approved') $actions[] = array('id' => 'approved', 'label' => 'Approve', 'style' => 'approve');
-    if ($r['status'] !== 'rejected') $actions[] = array('id' => 'rejected', 'label' => 'Reject', 'style' => 'reject');
+    if ($r['status'] !== 'approved') $actions[] = array('id' => 'approved', 'label' => 'Approve', 'style' => 'approve', 'params' => $note);
+    if ($r['status'] !== 'rejected') $actions[] = array('id' => 'rejected', 'label' => 'Reject', 'style' => 'reject', 'params' => $note);
     if ($r['status'] !== 'pending') $actions[] = array('id' => 'pending', 'label' => 'Back to pending', 'style' => 'undo');
     $links = array(array(
         'label' => 'Full report (old screen)',
@@ -110,6 +146,14 @@ function kop_rinbox_ih_item(array $r) {
         ),
         'actions'      => $actions,
         'links'        => $links,
+        'details'      => array(
+            array('label' => 'Violation number', 'value' => '#' . (int) $r['id']),
+            array('label' => 'Categories', 'value' => implode(', ', array_map(function ($k) use ($cats) { return $cats[$k] ?? $k; },
+                array_values(array_filter(array_map('trim', explode(',', (string) $r['categories']))))))),
+        ),
+        // The old screen's "Full report": the scraped report text, read when opened.
+        'preview'      => (int) $r['report_id'] > 0 ? array('label' => 'Full report',
+            'url' => get_stylesheet_directory_uri() . '/api/review-inspection-highlights.php?' . http_build_query(array('report' => (int) $r['report_id'], 'format' => 'text'))) : null,
     );
 }
 

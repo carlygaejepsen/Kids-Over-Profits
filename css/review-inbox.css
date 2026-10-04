@@ -416,7 +416,8 @@ button.rinbox-tag-x:focus-visible {
 
 /* "Came from": the page's own select and the one on other queues. */
 .admin-submissions-page select.origin-filter,
-.rinbox-panel select.rinbox-origin {
+.rinbox-panel select.rinbox-origin,
+.rinbox-panel select.rinbox-filter {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
@@ -427,7 +428,8 @@ button.rinbox-tag-x:focus-visible {
     max-width: 100%;
 }
 
-.admin-submissions-page select.origin-filter option {
+.admin-submissions-page select.origin-filter option,
+.rinbox-panel select.rinbox-filter option {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
 }

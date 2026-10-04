@@ -41,6 +41,15 @@
  *   'tool'     fn(string $id, array $params): ['message' => ...]
  *   'tool_url' the queue's full screen, for what this one does not do
  *   'native'   true for the five types the page already draws itself
+ *   'filters'  [{name, label, options {value: label}}]  optional; more
+ *              dropdowns beside the search (kind, category, importance...);
+ *              'list' gets the chosen values as $q['filters'][name] (only
+ *              values that are one of the options; none chosen: not set)
+ *   'view_counts' fn(array $q): [view => int]   optional; shown on the view
+ *              tabs, read with each page of items ($q as for 'list')
+ *   'lookup'   fn(string $name, string $q): [{value, label}]  optional; a
+ *              text field or param with 'lookup' => name suggests values as
+ *              the reviewer types (a company "c12", a consultant...)
  *
  * An item: key, title, subtitle, url, text, created, status, status_label,
  * facility {id, name, url}, fields [{name, label, type (text, textarea, list,
@@ -49,7 +58,11 @@
  * the card), compare {heads: [..], rows: [{label, values: [..]}]} (two records
  * side by side), preview {label, url} (a PDF or page shown in the card),
  * actions [{id, label, style (approve, reject, neutral, undo), confirm,
- * params [field...]}], moves [{id, label}], links [{label, url}].
+ * params [field...]}], moves [{id, label}], links [{label, url}],
+ * selected (true: the card's "select" box starts ticked, a sure match).
+ * A param with 'optional' => true may be left empty: the action is still
+ * offered for the selected cards, and each card sends what its own inputs
+ * say at the time.
  *
  * REST (manage_options, wp_rest nonce): kop/v1/review-inbox/{sources, items,
  * act, save, tags, ai}. Tested by scripts/test-review-inbox.php.
@@ -281,7 +294,7 @@ function kop_rinbox_finish_items($source, array $items) {
     foreach ($items as &$it) {
         $it += array('subtitle' => '', 'url' => '', 'text' => '', 'created' => '', 'status' => '', 'status_label' => '',
             'facility' => null, 'fields' => array(), 'actions' => array(), 'moves' => array(), 'links' => array(),
-            'details' => array(), 'compare' => null, 'preview' => null);
+            'details' => array(), 'compare' => null, 'preview' => null, 'selected' => false);
         $it['key'] = (string) $it['key'];
         $it['tags'] = $tags[$it['key']] ?? array();
     }
@@ -435,6 +448,7 @@ add_action('rest_api_init', function () {
         'tags'    => array('POST', 'kop_rinbox_rest_tags'),
         'ai'      => array('POST', 'kop_rinbox_rest_ai'),
         'tool'    => array('POST', 'kop_rinbox_rest_tool'),
+        'lookup'  => array('GET', 'kop_rinbox_rest_lookup'),
     );
     foreach ($routes as $path => $r) {
         register_rest_route('kop/v1', '/review-inbox/' . $path, array(
@@ -464,6 +478,7 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
                 'can_ai' => !empty($src['save']) || !empty($src['ai_fill']),
                 'has_origins' => !empty($src['origins']),
                 'tools' => array_values((array) ($src['tools'] ?? array())),
+                'filters' => array_values((array) ($src['filters'] ?? array())),
             );
         }
         return array('sources' => $out, 'tags' => kop_rinbox_known_tags());
@@ -483,6 +498,7 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
             'offset' => max(0, (int) $req->get_param('offset')),
             'limit'  => max(1, min(100, (int) ($req->get_param('limit') ?: 25))),
             'origin' => sanitize_key((string) $req->get_param('origin')),
+            'filters' => kop_rinbox_chosen_filters($src, function ($name) use ($req) { return $req->get_param('f_' . $name); }),
         );
         $keys = $req->get_param('keys');
         if ($keys !== null && $keys !== '') {
@@ -495,7 +511,42 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
             return array('items' => kop_rinbox_finish_items($source, $items), 'total' => count($items), 'view' => $view);
         }
         $res = call_user_func($src['list'], $q);
-        return array('items' => kop_rinbox_finish_items($source, (array) ($res['items'] ?? array())), 'total' => (int) ($res['total'] ?? 0), 'view' => $view);
+        $out = array('items' => kop_rinbox_finish_items($source, (array) ($res['items'] ?? array())), 'total' => (int) ($res['total'] ?? 0), 'view' => $view);
+        if (!empty($src['view_counts'])) {
+            try {
+                $out['view_counts'] = array_map('intval', (array) call_user_func($src['view_counts'], $q));
+            } catch (Throwable $e) {
+                // The tabs just show no counts.
+            }
+        }
+        return $out;
+    });
+}
+
+/** The source's 'filters' values from a request: [name => value], only values that are one of its options. */
+function kop_rinbox_chosen_filters(array $src, callable $param) {
+    $out = array();
+    foreach ((array) ($src['filters'] ?? array()) as $f) {
+        $name = (string) ($f['name'] ?? '');
+        $v = $name !== '' ? (string) call_user_func($param, $name) : '';
+        if ($v !== '' && array_key_exists($v, (array) ($f['options'] ?? array()))) $out[$name] = $v;
+    }
+    return $out;
+}
+
+/** Suggestions for a field with 'lookup': [{value, label}], at most 20. */
+function kop_rinbox_rest_lookup(WP_REST_Request $req) {
+    return kop_rinbox_rest(function () use ($req) {
+        $src = kop_rinbox_source((string) $req->get_param('source'));
+        $q = trim((string) $req->get_param('q'));
+        if (empty($src['lookup']) || mb_strlen($q) < 2) return array('options' => array());
+        $out = array();
+        foreach ((array) call_user_func($src['lookup'], sanitize_key((string) $req->get_param('name')), $q) as $o) {
+            if (isset($o['value']) && (string) $o['value'] !== '') {
+                $out[] = array('value' => (string) $o['value'], 'label' => (string) ($o['label'] ?? $o['value']));
+            }
+        }
+        return array('options' => array_slice($out, 0, 20));
     });
 }
 

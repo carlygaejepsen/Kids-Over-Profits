@@ -36,14 +36,10 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
     exit;
 }
 
-$TABLES = ['legislation' => 'bill_title', 'lawsuits' => 'case_name'];
+require_once __DIR__ . '/lib-publish-approved.php';
 
 // Current counts of approved rows per table.
-$counts = [];
-foreach ($TABLES as $table => $titleCol) {
-    $stmt = $pdo->query("SELECT COUNT(*) FROM `$table` WHERE publication_status = 'approved'");
-    $counts[$table] = (int) $stmt->fetchColumn();
-}
+$counts = kop_publish_approved_counts($pdo);
 $totalApproved = array_sum($counts);
 
 // --- Perform the update (POST + nonce only) --------------------------------
@@ -53,25 +49,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && wp_verify_nonce($_POST['_nonce'] ?? '', 'kop_publish_approved')) {
 
     try {
-        $pdo->beginTransaction();
-        $updated = [];
-        foreach (array_keys($TABLES) as $table) {
-            // COALESCE keeps any existing timestamp; approved rows have none.
-            $stmt = $pdo->prepare(
-                "UPDATE `$table`
-                    SET publication_status = 'published',
-                        published_at = COALESCE(published_at, NOW())
-                  WHERE publication_status = 'approved'"
-            );
-            $stmt->execute();
-            $updated[$table] = $stmt->rowCount();
-        }
-        $pdo->commit();
-        $done = ['updated' => $updated, 'total' => array_sum($updated)];
+        $done = kop_publish_approved_records($pdo);
     } catch (Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
         error_log('publish-approved-records.php error: ' . $e->getMessage());
         http_response_code(500);
         $done = ['error' => 'Update failed and was rolled back: ' . $e->getMessage()];

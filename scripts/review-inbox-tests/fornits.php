@@ -157,4 +157,43 @@ function kop_rinbox_test_fornits(array $src, array $item, callable $check) {
     }
     $applied = kop_rinbox_get_item('fornits', $key('staff', 'applied'));
     $check('fornits: an added item offers Undo', $applied['actions'][0]['id'] === 'undo' && $applied['status_label'] === 'Added');
+
+    // What the old screen also did.
+    $q = function ($view, array $filters) { return array('view' => $view, 'search' => '', 'offset' => 0, 'limit' => 25, 'filters' => $filters); };
+    $n = function ($view, array $filters) use ($src, $q) { return call_user_func($src['list'], $q($view, $filters))['total']; };
+    // The tag checks above changed some items' categories: count from the table, FIND_IN_SET done by hand.
+    $has = function ($cat) use ($pdo) {
+        $c = 0;
+        foreach ($pdo->query("SELECT categories FROM wpdl_kop_fornits_items WHERE status = 'pending'")->fetchAll(PDO::FETCH_COLUMN) as $cats) {
+            $c += in_array($cat, explode(',', (string) $cats), true) ? 1 : 0;
+        }
+        return $c;
+    };
+    $check('fornits: the category filter', $n('pending', array('cat' => 'death')) === $has('death') && $has('death') > 0
+        && $n('pending', array('cat' => 'restraint_seclusion')) === $has('restraint_seclusion') && $n('pending', array('cat' => 'legal')) === 0,
+        $n('pending', array('cat' => 'death')) . '/' . $has('death') . ' ' . $n('pending', array('cat' => 'restraint_seclusion')) . '/' . $has('restraint_seclusion'));
+    $check('fornits: the importance filter', $n('pending', array('min' => '3')) === 3 && $n('pending', array('min' => 'read')) === 5);
+    $check('fornits: the kind filter on the Added tab', $n('applied', array('kind' => 'staff')) === 1 && $n('applied', array('kind' => 'lead')) === 0);
+    $counts = call_user_func($src['view_counts'], $q('pending', array()));
+    $check('fornits: every tab has its count', $counts['pending'] === 5 && $counts['staff'] === 1 && $counts['applied'] === 1 && $counts['rejected'] === 1, json_encode($counts));
+    $it = kop_rinbox_get_item('fornits', $staff);
+    $check('fornits: the most important items start ticked', $it['selected'] === true);
+    $check('fornits: Add has an optional Record box (bulk still works)', ($it['actions'][0]['params'][0]['type'] ?? '') === 'facility' && !empty($it['actions'][0]['params'][0]['optional']));
+    $check('fornits: the whole post and the board show on the card', in_array('Whole post', array_column($it['details'], 'label'), true)
+        && in_array('Board', array_column($it['details'], 'label'), true));
+    $lead_it = kop_rinbox_get_item('fornits', $lead);
+    $note = array_values(array_filter($lead_it['moves'], function ($m) { return $m['id'] === 'note'; }))[0] ?? array();
+    $check('fornits: a lead going on a record asks which record', ($note['params'][0]['type'] ?? '') === 'facility');
+    $fids = $pdo->query("SELECT id FROM facilities_v2 WHERE name <> '' ORDER BY id LIMIT 2")->fetchAll(PDO::FETCH_COLUMN);
+    try {
+        call_user_func($src['act'], $lead, 'apply', array('facility' => (string) $fids[1]));
+        $r = $row($lead);
+        $check('fornits: Add with another record names that record', $r['status'] === 'applied' && (int) $r['applied_fid'] === (int) $fids[1]);
+        call_user_func($src['act'], $lead, 'undo', array());
+    } catch (Throwable $e) {
+        $check('fornits: Add with another record', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $check('fornits: queue tools are Read more, Check AI keys and progress', array_column($src['tools'], 'id') === array('read_now', 'check_ai', 'status'));
+    $m = call_user_func($src['tool'], 'status', array());
+    $check('fornits: the progress line counts the topics', strpos($m['message'], 'Topics loaded: 1') === 0, $m['message']);
 }

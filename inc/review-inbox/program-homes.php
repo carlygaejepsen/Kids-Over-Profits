@@ -4,7 +4,8 @@
  * like the licensed homes of one program (KOP Tools > Program Homes,
  * inc/program-homes.php). Group runs kop_program_homes_group(), Undo
  * kop_program_homes_undo(), "Not one program" kop_program_homes_set_dismissed(),
- * "Take a home out" kop_program_homes_remove_home().
+ * "Take a home out" kop_program_homes_remove_home(). "Group under this record"
+ * groups them under any record found with the facility finder.
  *
  * The program's name and each home's name can be edited before grouping:
  * save keeps the edits in the option kop_rinbox_program_homes_edits, keyed by
@@ -31,6 +32,10 @@ kop_rinbox_register('program-homes', function () {
         'tool_url' => admin_url('admin.php?page=kop-program-homes'),
         'count'    => function () {
             return count(kop_program_homes_suggestions());
+        },
+        'view_counts' => function () {
+            return array('suggested' => count(kop_program_homes_suggestions()), 'grouped' => count(kop_program_homes_map(true)['programs']),
+                'dismissed' => count(kop_program_homes_dismissed()));
         },
         'list'     => 'kop_rinbox_ph_list',
         'get'      => 'kop_rinbox_ph_get',
@@ -65,7 +70,7 @@ function kop_rinbox_ph_list(array $q) {
     if ($q['search'] !== '') {
         $needle = mb_strtolower($q['search']);
         $items = array_values(array_filter($items, function ($it) use ($needle) {
-            return mb_strpos(mb_strtolower($it['title'] . ' ' . $it['subtitle'] . ' ' . $it['text']), $needle) !== false;
+            return mb_strpos(mb_strtolower($it['title'] . ' ' . $it['subtitle'] . ' ' . $it['text'] . ' ' . ($it['search_text'] ?? '')), $needle) !== false;
         }));
     }
     return array('items' => array_slice($items, (int) $q['offset'], (int) $q['limit']), 'total' => count($items));
@@ -96,18 +101,30 @@ function kop_rinbox_ph_names(array $s) {
     return array($name, $homes);
 }
 
+/** A state code as its name ("CA" -> "California"). */
+function kop_rinbox_ph_state_name($code) {
+    $name = $code !== '' && function_exists('kop_state_canonical_name') ? (string) kop_state_canonical_name($code) : '';
+    return $name !== '' ? $name : (string) $code;
+}
+
 function kop_rinbox_ph_item(array $s) {
     list($name, $names) = kop_rinbox_ph_names($s);
-    $lines = array();
+    $state = kop_rinbox_ph_state_name($s['state']);
+    // Every home in a table: the name it gets on the program's page, its town, status and company.
+    $rows = array();
+    $search = array();
     foreach ($s['homes'] as $h) {
-        $bits = array_filter(array($h['city'], $h['status'], $h['operator']));
-        $lines[] = '- ' . $h['name'] . ' (record #' . $h['id'] . ')' . ($bits ? ': ' . implode(' · ', $bits) : '')
-            . ($names[(int) $h['id']] === '' ? '  [left out]' : '');
+        $left = $names[(int) $h['id']] === '';
+        $rows[] = array('label' => $h['name'] . ' (#' . $h['id'] . ')', 'differs' => $left,
+            'values' => array($left ? 'left out' : $names[(int) $h['id']], $h['city'], $h['status'], $h['operator']));
+        $search[] = $h['name'];
     }
-    $text = count($s['homes']) . ' records in ' . $s['state'] . ":\n" . implode("\n", $lines);
-    if ($s['existing']) $text .= "\n\nA record named just \"" . $s['existing']['name'] . '" (#' . $s['existing']['id'] . ') is already there in this state.';
-    if ($s['operator'] !== '') $text .= "\nCompany: " . $s['operator'];
-    foreach ($s['warnings'] as $w) $text .= "\nCheck: " . $w;
+    $compare = array('heads' => array('Name on the program page', 'Town', 'Status', 'Company'), 'rows' => $rows);
+    $text = count($s['homes']) . ' records in ' . $state . ' named "' . $s['program_name'] . ' - ...". Group ties each one to one program record; each keeps its own record, licence and inspection reports.';
+    $details = array();
+    if ($s['existing']) $details[] = array('label' => 'Already on file', 'value' => 'A record named just "' . $s['existing']['name'] . '" (#' . $s['existing']['id'] . ') is in this state: it can be the program.');
+    if ($s['operator'] !== '') $details[] = array('label' => 'Company', 'value' => $s['operator']);
+    foreach ($s['warnings'] as $w) $details[] = array('label' => 'Check', 'value' => $w);
 
     $fields = array(array('name' => 'program_name', 'label' => $s['existing'] ? 'Program name (for a new record; the existing one keeps its name)' : 'Program name', 'type' => 'text', 'value' => $name));
     foreach ($s['homes'] as $h) {
@@ -125,9 +142,12 @@ function kop_rinbox_ph_item(array $s) {
     }
     return array(
         'key'          => (string) $s['key'],
-        'title'        => $name . ' (' . $s['state'] . ')',
+        'title'        => $name . ', ' . $state,
         'subtitle'     => count($s['homes']) . ' homes' . ($s['operator'] !== '' ? ' · ' . $s['operator'] : '') . ($s['warnings'] ? ' · check the note' : ''),
         'text'         => $text,
+        'details'      => $details,
+        'compare'      => $compare,
+        'search_text'  => implode(' ', $search),
         'status'       => 'suggested',
         'status_label' => 'Suggested',
         'facility'     => $s['existing'] ? kop_rinbox_facility($s['existing']['id']) : kop_rinbox_facility($s['homes'][0]['id']),
@@ -137,6 +157,8 @@ function kop_rinbox_ph_item(array $s) {
             array('id' => 'group', 'label' => 'Group under one program', 'style' => 'approve',
                 'params' => array(array('name' => 'program', 'label' => 'Program record', 'type' => 'select',
                     'value' => $s['existing'] ? (string) $s['existing']['id'] : 'new', 'options' => $choices))),
+            array('id' => 'group_other', 'label' => 'Group under this record', 'style' => 'neutral',
+                'params' => array(array('name' => 'program_id', 'label' => 'Or another program record', 'type' => 'facility', 'value' => ''))),
             array('id' => 'dismiss', 'label' => 'Not one program', 'style' => 'reject'),
         ),
     );
@@ -148,18 +170,24 @@ function kop_rinbox_ph_group_item($pid) {
     if (!$homes) return null;
     $name = (string) $wpdb->get_var($wpdb->prepare('SELECT name FROM facilities_v2 WHERE id = %d', $pid));
     $made = (int) $wpdb->get_var($wpdb->prepare('SELECT created_record FROM ' . kop_program_homes_table('groups') . ' WHERE program_id = %d', $pid));
-    $lines = array();
+    $rows = array();
     $options = array();
+    $links = array();
     foreach ($homes as $h) {
-        $lines[] = '- ' . $h['home_name'] . ' (record #' . $h['id'] . ')' . ($h['place'] !== '' ? ': ' . $h['place'] : '') . ($h['status'] !== '' ? ' · ' . $h['status'] : '');
+        $rows[] = array('label' => $h['home_name'] . ' (#' . $h['id'] . ')', 'differs' => false, 'values' => array($h['place'], $h['status']));
         $options[(string) $h['id']] = $h['home_name'] . ' (#' . $h['id'] . ')';
+        $hf = count($links) < 8 ? kop_rinbox_facility($h['id']) : null;
+        if ($hf && $hf['url'] !== '') $links[] = array('label' => $h['home_name'], 'url' => $hf['url']);
     }
     $f = kop_rinbox_facility($pid);
     return array(
         'key'          => 'program:' . $pid,
         'title'        => ($name !== '' ? $name : 'Program #' . $pid),
         'subtitle'     => count($homes) . ' homes · program record #' . $pid . ($made ? ' (made by this review)' : ''),
-        'text'         => implode("\n", $lines),
+        'text'         => 'The program\'s page lists these homes with their news, lawsuits and serious findings; each home\'s page names the program.',
+        'compare'      => array('heads' => array('Place', 'Status'), 'rows' => $rows),
+        'search_text'  => implode(' ', array_column($rows, 'label')),
+        'links'        => $links,
         'status'       => 'grouped',
         'status_label' => 'Grouped',
         'facility'     => $f,
@@ -227,13 +255,21 @@ function kop_rinbox_ph_act($key, $action, array $params) {
     }
     switch ($action) {
         case 'group':
+        case 'group_other':
             $s = kop_rinbox_ph_suggestion($key);
             if (!$s) throw new RuntimeException('That suggestion is gone (it may be grouped already).');
             list($name, $names) = kop_rinbox_ph_names($s);
             $homes = array_filter($names, function ($n) { return $n !== ''; });
-            $program = (string) ($params['program'] ?? 'new');
-            $pid = ctype_digit($program) ? (int) $program : 0;
-            if ($pid > 0 && (!$s['existing'] || (int) $s['existing']['id'] !== $pid)) throw new RuntimeException('Pick the existing record or a new one.');
+            if ($action === 'group_other') {
+                // Any record can be the program: one found with the finder.
+                $pid = (int) ($params['program_id'] ?? 0);
+                if ($pid <= 0) throw new RuntimeException('Find the program record first.');
+                if (isset($homes[$pid])) throw new RuntimeException('That record is one of the homes. Pick the program\'s own record, or clear its name to leave it out.');
+            } else {
+                $program = (string) ($params['program'] ?? 'new');
+                $pid = ctype_digit($program) ? (int) $program : 0;
+                if ($pid > 0 && (!$s['existing'] || (int) $s['existing']['id'] !== $pid)) throw new RuntimeException('Pick the existing record or a new one.');
+            }
             $pid = kop_program_homes_group($homes, $pid, $name, kop_program_homes_opts());
             $all = kop_rinbox_ph_edits();
             if (isset($all[$key])) {

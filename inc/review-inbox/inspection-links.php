@@ -11,7 +11,12 @@
  * (transient kop_rinbox_inspection_links), and pairs decided since are left
  * out as it is read. Removing a link clears it, so the pair can come back.
  *
- * Keys: "<facility id>-<inspection row id>", on both tabs.
+ * As on the Inspection Links screen: a State filter, pairs in the same town
+ * start ticked (select them all and press "Same facility"), and a tool links
+ * every same-town pair of a state at once. "Not this one" can be taken back
+ * from its own tab (kop_inspection_links_save()'s 'unreject').
+ *
+ * Keys: "<facility id>-<inspection row id>", on every tab.
  */
 
 if (!defined('ABSPATH')) {
@@ -24,11 +29,22 @@ kop_rinbox_register('inspection-links', function () {
         'label'    => 'Inspection links',
         'group'    => 'Suggestions to check',
         'help'     => 'A facility record and a state licensing entry whose names differ but may be the same place (states often license each building under its own name). "Same facility" puts that entry\'s inspection reports on the facility\'s page at once; Remove on the Linked tab takes them off again.',
-        'views'    => array('suggested' => 'Suggested', 'linked' => 'Linked'),
+        'views'    => array('suggested' => 'Suggested', 'linked' => 'Linked', 'rejected' => 'Not this one'),
         'tool_url' => admin_url('admin.php?page=kop-inspection-links'),
         'count'    => function () {
             return count(kop_rinbox_ilinks_pairs());
         },
+        'view_counts' => function () {
+            return array('suggested' => count(kop_rinbox_ilinks_pairs()), 'linked' => count(kop_rinbox_ilinks_decided('links')),
+                'rejected' => count(kop_rinbox_ilinks_decided('rejected')));
+        },
+        'filters'  => array(array('name' => 'state', 'label' => 'State', 'options' => kop_rinbox_ilinks_state_options())),
+        'tools'    => array(array('id' => 'link_same_town', 'label' => 'Link every same-town pair', 'style' => 'approve',
+            'help' => 'Links every suggested pair whose licensing entry is in the facility record\'s town (the ones the Inspection Links screen ticks in advance). Each can be removed on the Linked tab.',
+            'confirm' => 'Link every suggested pair in the same town? Each can be removed on the Linked tab.',
+            'params' => array(array('name' => 'state', 'label' => 'In', 'type' => 'select', 'value' => 'all',
+                'options' => array('all' => 'every state') + kop_rinbox_ilinks_state_options())))),
+        'tool'     => 'kop_rinbox_ilinks_tool',
         'list'     => 'kop_rinbox_ilinks_list',
         'get'      => 'kop_rinbox_ilinks_get',
         'act'      => 'kop_rinbox_ilinks_act',
@@ -83,12 +99,44 @@ function kop_rinbox_ilinks_pairs() {
     return $out;
 }
 
+/** State code => "Name (n waiting)", every state with suggestions or links. */
+function kop_rinbox_ilinks_state_options() {
+    $n = array();
+    foreach (kop_rinbox_ilinks_pairs() as $p) $n[$p['state']] = ($n[$p['state']] ?? 0) + 1;
+    foreach (kop_rinbox_ilinks_decided('links') as $p) $n += array($p['state'] => 0);
+    ksort($n);
+    $out = array();
+    foreach ($n as $code => $count) {
+        $name = function_exists('kop_state_canonical_name') ? (string) kop_state_canonical_name($code) : '';
+        $out[(string) $code] = ($name !== '' ? $name : $code) . ' (' . $count . ' waiting)';
+    }
+    return $out;
+}
+
+function kop_rinbox_ilinks_tool($id, array $params) {
+    if ($id !== 'link_same_town') throw new RuntimeException('Unknown tool.');
+    $state = strtoupper((string) ($params['state'] ?? 'all'));
+    $decide = array();
+    foreach (kop_rinbox_ilinks_pairs() as $key => $p) {
+        if ($p['same_town'] && ($state === 'ALL' || $state === '' || $p['state'] === $state)) $decide[$key] = 'link';
+    }
+    if (!$decide) return array('message' => 'No same-town pairs are waiting' . ($state !== 'ALL' && $state !== '' ? ' in ' . $state : '') . '.');
+    kop_inspection_links_save(array('decide' => $decide));
+    $n = count($decide);
+    return array('message' => 'Linked ' . $n . ' pair' . ($n === 1 ? '' : 's') . '. The facility pages show those reports now; each can be removed on the Linked tab.');
+}
+
 /** Approved links as pairs, with the record and the licensing row read fresh. */
 function kop_rinbox_ilinks_linked() {
+    return kop_rinbox_ilinks_decided('links');
+}
+
+/** Decided pairs ('links' or 'rejected'), with the record and the licensing row read fresh. */
+function kop_rinbox_ilinks_decided($which) {
     global $wpdb;
     $stored = kop_inspection_links_get();
     $want = array();
-    foreach ($stored['links'] as $fid => $ids) foreach ((array) $ids as $rid) $want[] = array((int) $fid, (int) $rid);
+    foreach ((array) ($stored[$which] ?? array()) as $fid => $ids) foreach ((array) $ids as $rid) $want[] = array((int) $fid, (int) $rid);
     if (!$want) return array();
     $fids = implode(',', array_unique(array_map(function ($w) { return $w[0]; }, $want)));
     $rids = implode(',', array_unique(array_map(function ($w) { return $w[1]; }, $want)));
@@ -108,7 +156,8 @@ function kop_rinbox_ilinks_linked() {
             'row'       => array('id' => $rid, 'facility_name' => (string) $rows[$rid]['facility_name'], 'full_address' => (string) $rows[$rid]['full_address'],
                 'program_name' => (string) $rows[$rid]['program_name'], 'reports' => null),
             'same_town' => false,
-            'linked'    => true,
+            'linked'    => $which === 'links',
+            'rejected'  => $which === 'rejected',
         );
     }
     uasort($out, function ($a, $b) { return strcmp($a['state'], $b['state']) ?: strcasecmp($a['record']['name'], $b['record']['name']); });
@@ -116,7 +165,11 @@ function kop_rinbox_ilinks_linked() {
 }
 
 function kop_rinbox_ilinks_list(array $q) {
-    $pairs = $q['view'] === 'linked' ? kop_rinbox_ilinks_linked() : kop_rinbox_ilinks_pairs();
+    if ($q['view'] === 'linked') $pairs = kop_rinbox_ilinks_decided('links');
+    elseif ($q['view'] === 'rejected') $pairs = kop_rinbox_ilinks_decided('rejected');
+    else $pairs = kop_rinbox_ilinks_pairs();
+    $state = (string) ($q['filters']['state'] ?? '');
+    if ($state !== '') $pairs = array_filter($pairs, function ($p) use ($state) { return $p['state'] === $state; });
     if ($q['search'] !== '') {
         $needle = mb_strtolower($q['search']);
         $pairs = array_filter($pairs, function ($p) use ($needle) {
@@ -130,8 +183,10 @@ function kop_rinbox_ilinks_list(array $q) {
 }
 
 function kop_rinbox_ilinks_get($key) {
-    $linked = kop_rinbox_ilinks_linked();
-    if (isset($linked[$key])) return kop_rinbox_ilinks_item($linked[$key]);
+    foreach (array('links', 'rejected') as $which) {
+        $decided = kop_rinbox_ilinks_decided($which);
+        if (isset($decided[$key])) return kop_rinbox_ilinks_item($decided[$key]);
+    }
     $pairs = kop_rinbox_ilinks_pairs();
     return isset($pairs[$key]) ? kop_rinbox_ilinks_item($pairs[$key]) : null;
 }
@@ -140,33 +195,56 @@ function kop_rinbox_ilinks_item(array $p) {
     $rec = $p['record'];
     $row = $p['row'];
     $linked = !empty($p['linked']);
-    $text = 'Facility record: ' . $rec['name'] . ' (#' . $rec['id'] . ')' . ($rec['city'] !== '' ? ', ' . $rec['city'] : '') . ($rec['status'] !== '' ? ' · ' . $rec['status'] : '');
-    $others = array_diff($rec['names'], array($rec['name']));
-    if ($others) $text .= "\n  Also known as: " . implode('; ', $others);
-    $text .= "\n\nState licensing entry: " . $row['facility_name'] . ' (' . $p['state'] . ' row #' . $row['id'] . ')'
-        . ($row['full_address'] !== '' ? "\n  " . $row['full_address'] : '')
-        . ($row['program_name'] !== '' && $row['program_name'] !== $row['facility_name'] ? "\n  Program: " . $row['program_name'] : '')
-        . ($row['reports'] !== null ? "\n  " . $row['reports'] . ' inspection report' . ($row['reports'] === 1 ? '' : 's') : '');
+    $rejected = !empty($p['rejected']);
+    $others = array_values(array_diff($rec['names'], array($rec['name'])));
+    $program = $row['program_name'] !== '' && $row['program_name'] !== $row['facility_name'] ? $row['program_name'] : '';
+    $compare = kop_rinbox_compare_rows(
+        array('Facility record (#' . $rec['id'] . ')', 'State licensing entry (' . $p['state'] . ' #' . $row['id'] . ')'),
+        array(
+            'Name'               => array($rec['name'], $row['facility_name']),
+            'Other names'        => array($others, $program !== '' ? 'Program: ' . $program : ''),
+            'Town or address'    => array($rec['city'], $row['full_address']),
+            'Status'             => array($rec['status'], ''),
+            'Inspection reports' => array('', $row['reports'] !== null ? (string) (int) $row['reports'] : ''),
+        )
+    );
+    // Only the name and the place are compared; the other rows say what one side has.
+    foreach ($compare['rows'] as &$r) {
+        if ($r['label'] === 'Town or address') $r['differs'] = $rec['city'] === '' || stripos($row['full_address'], $rec['city']) === false;
+        elseif ($r['label'] !== 'Name') $r['differs'] = false;
+    }
+    unset($r);
     $links = array();
     $state_name = function_exists('kop_state_canonical_name') ? (string) kop_state_canonical_name($p['state']) : $p['state'];
     $tracker = function_exists('kop_state_inspection_page_map') ? kop_state_inspection_page_map() : array();
     if (isset($tracker[$state_name])) $links[] = array('label' => $state_name . ' inspection reports', 'url' => home_url('/' . $tracker[$state_name] . '/'));
+    if ($linked) {
+        $actions = array(array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo'));
+        $text = 'Linked: the facility\'s page shows this entry\'s inspection reports.';
+    } elseif ($rejected) {
+        $actions = array(array('id' => 'unreject', 'label' => 'Suggest it again', 'style' => 'undo'));
+        $text = 'Marked not the same place, so it is not suggested.';
+    } else {
+        $actions = array(
+            array('id' => 'link', 'label' => 'Same facility', 'style' => 'approve'),
+            array('id' => 'reject', 'label' => 'Not this one', 'style' => 'reject'),
+        );
+        $text = $p['same_town']
+            ? 'The licensing entry is in the record\'s town, so this one starts ticked. Leave a pair for later by doing nothing.'
+            : 'Every distinguishing word of the record\'s name is in the entry\'s name, but the town does not match (or is not known). Leave a pair for later by doing nothing.';
+    }
     return array(
         'key'          => $p['key'],
         'title'        => $rec['name'] . '  /  ' . $row['facility_name'],
-        'subtitle'     => $p['state'] . ($linked ? ' · linked' : ($p['same_town'] ? ' · same town' : ' · different or unknown town')),
+        'subtitle'     => $state_name . ($linked ? ' · linked' : ($rejected ? ' · not this one' : ($p['same_town'] ? ' · same town' : ' · different or unknown town'))),
         'text'         => $text,
-        'status'       => $linked ? 'linked' : 'suggested',
-        'status_label' => $linked ? 'Linked' : ($p['same_town'] ? 'Suggested, same town' : 'Suggested'),
+        'compare'      => $compare,
+        'selected'     => !$linked && !$rejected && $p['same_town'],
+        'status'       => $linked ? 'linked' : ($rejected ? 'rejected' : 'suggested'),
+        'status_label' => $linked ? 'Linked' : ($rejected ? 'Not this one' : ($p['same_town'] ? 'Suggested, same town' : 'Suggested')),
         'facility'     => kop_rinbox_facility($rec['id']),
         'links'        => $links,
-        'actions'      => $linked
-            ? array(array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo'))
-            : array(
-                array('id' => 'link', 'label' => 'Same facility', 'style' => 'approve'),
-                array('id' => 'reject', 'label' => 'Not this one', 'style' => 'reject',
-                    'confirm' => 'Never suggest this pair again? (This cannot be undone here.)'),
-            ),
+        'actions'      => $actions,
     );
 }
 
@@ -178,7 +256,11 @@ function kop_rinbox_ilinks_act($key, $action, array $params) {
             return array('message' => 'Linked. The facility\'s page shows that entry\'s inspection reports now. Remove is on the Linked tab.');
         case 'reject':
             kop_inspection_links_save(array('decide' => array($key => 'reject')));
-            return array('message' => 'Marked not the same. This pair will not be suggested again.');
+            return array('message' => 'Marked not the same. This pair will not be suggested again; "Suggest it again" is on the Not this one tab.');
+        case 'unreject':
+            kop_inspection_links_save(array('unreject' => array($key)));
+            delete_transient('kop_rinbox_inspection_links');
+            return array('message' => 'Back in the suggestions.');
         case 'unlink':
             kop_inspection_links_save(array('unlink' => array($key)));
             // The pair may be suggested again: the list is worked out afresh.

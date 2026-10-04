@@ -20,7 +20,6 @@
         if (preview.length > 500) preview = preview.slice(0, 497).trimEnd() + '...';
 
         link.setAttribute('data-kop-citation-preview', preview);
-        link.setAttribute('title', 'Citation preview: ' + preview);
     }
 
     function initialize() {

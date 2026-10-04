@@ -16,7 +16,17 @@ kop_rinbox_register('glossary-feedback', function () {
         'label'    => 'Glossary feedback',
         'group'    => 'Sent in by readers',
         'help'     => 'Notes readers left on glossary entries. Make the change with the Edit entry link (the Glossary Editor), then mark the note added; dismiss notes that need no change.',
-        'views'    => kop_glossary_feedback_statuses(),
+        'views'    => kop_glossary_feedback_statuses() + array('all' => 'All'),
+        'view_counts' => function (array $q = array()) {
+            global $wpdb;
+            kop_glossary_feedback_ensure_table();
+            $out = array_fill_keys(array_keys(kop_glossary_feedback_statuses()), 0);
+            foreach ((array) $wpdb->get_results('SELECT status, COUNT(*) AS n FROM ' . kop_glossary_feedback_table() . ' GROUP BY status') as $r) {
+                if (isset($out[$r->status])) $out[$r->status] = (int) $r->n;
+            }
+            $out['all'] = array_sum($out);
+            return $out;
+        },
         'tool_url' => admin_url('admin.php?page=kop-glossary-feedback'),
         'count'    => function () {
             global $wpdb;
@@ -43,8 +53,8 @@ function kop_rinbox_gfeedback_list(array $q) {
     global $wpdb;
     kop_glossary_feedback_ensure_table();
     $table = kop_glossary_feedback_table();
-    $status = isset(kop_glossary_feedback_statuses()[$q['view']]) ? $q['view'] : 'new';
-    $where = $wpdb->prepare('status = %s', $status);
+    $status = isset(kop_glossary_feedback_statuses()[$q['view']]) || $q['view'] === 'all' ? $q['view'] : 'new';
+    $where = $status === 'all' ? '1=1' : $wpdb->prepare('status = %s', $status);
     if ($q['search'] !== '') {
         $like = '%' . $wpdb->esc_like($q['search']) . '%';
         $where .= $wpdb->prepare(' AND (term LIKE %s OR program LIKE %s OR details LIKE %s)', $like, $like, $like);
@@ -62,16 +72,19 @@ function kop_rinbox_gfeedback_item($r) {
     // What the old screen shows: program, the note, the source and the reader's contact.
     $text = trim(implode("\n", array_filter(array(
         $r->program ? 'Program: ' . $r->program : '',
-        $r->details ? kop_rinbox_excerpt($r->details, 900) : '',
+        $r->details ? (string) $r->details : '',
         $r->source ? 'Source: ' . $r->source : '',
         $r->contact ? 'Contact: ' . $r->contact : '',
     ))));
+    // Every other status, as the old screen's "Mark as" buttons.
+    $buttons = array(
+        'added'     => array('label' => 'Mark added to glossary', 'style' => 'approve'),
+        'dismissed' => array('label' => 'Dismiss', 'style' => 'reject'),
+        'new'       => array('label' => 'Back to new', 'style' => 'undo'),
+    );
     $actions = array();
-    if ($r->status === 'new') {
-        $actions[] = array('id' => 'added', 'label' => 'Mark added to glossary', 'style' => 'approve');
-        $actions[] = array('id' => 'dismissed', 'label' => 'Dismiss', 'style' => 'reject');
-    } else {
-        $actions[] = array('id' => 'new', 'label' => 'Back to new', 'style' => 'undo');
+    foreach ($buttons as $s => $b) {
+        if ($s !== $r->status) $actions[] = array('id' => $s, 'label' => $b['label'], 'style' => $b['style']);
     }
     $editor = add_query_arg($entry_id !== ''
         ? array('view' => 'edit', 'entry' => $entry_id, 'feedback' => (int) $r->id)
@@ -93,6 +106,10 @@ function kop_rinbox_gfeedback_item($r) {
         ),
         'actions'      => $actions,
         'links'        => array(array('label' => $entry_id !== '' ? 'Edit entry' : 'Entry gone: add it', 'url' => $editor)),
+        'details'      => array_values(array_filter(array(
+            array('label' => 'Note', 'value' => '#' . (int) $r->id),
+            $r->contact ? array('label' => 'Reader\'s email', 'value' => (string) $r->contact, 'url' => 'mailto:' . $r->contact) : null,
+        ))),
     );
 }
 

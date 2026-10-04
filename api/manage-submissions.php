@@ -120,7 +120,7 @@ function kop_editable_fields($type) {
     switch ($type) {
         case 'legislation':
             return [
-                'cols' => ['bill_number','bill_title','jurisdiction','chamber','session_year','bill_type','sponsors','status','introduced_date','last_action_date','last_action_text','subject_tags','summary','full_text_url','official_url','position','facilities_affected','tags','reviewer_notes'],
+                'cols' => ['bill_number','bill_title','jurisdiction','chamber','session_year','bill_type','sponsors','status','introduced_date','last_action_date','last_action_text','subject_tags','summary','full_text_url','official_url','position','facilities_affected','tags','reviewer_notes','filebird_folder_id'],
                 'json_array' => ['sponsors','subject_tags','facilities_affected','tags'],
                 'enums' => [
                     'chamber'  => ['house','senate','assembly','joint','federal_house','federal_senate','other','unknown'],
@@ -130,7 +130,7 @@ function kop_editable_fields($type) {
             ];
         case 'lawsuit':
             return [
-                'cols' => ['case_name','case_number','court','jurisdiction','filing_date','status','plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','outcome','settlement_amount','summary','source_urls','document_urls','tags','reviewer_notes'],
+                'cols' => ['case_name','case_number','court','jurisdiction','filing_date','status','plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','outcome','settlement_amount','summary','source_urls','document_urls','tags','reviewer_notes','filebird_folder_id'],
                 'json_array' => ['plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','source_urls','document_urls','tags'],
                 'enums' => [
                     'status' => ['filed','in_progress','settled','dismissed','ruling','appeal','closed','unknown'],
@@ -138,8 +138,10 @@ function kop_editable_fields($type) {
             ];
         case 'news':
             return [
-                'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
-                'json_fields' => ['organizationLogoName','organizationLogoUrl','promoKind'],
+                'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','article_location','tags','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
+                // The News Processor's per-type details live in json_data too.
+                'json_fields' => array_merge(['organizationLogoName','organizationLogoUrl','promoKind'],
+                    function_exists('kop_rinbox_native_news_detail_keys') ? kop_rinbox_native_news_detail_keys() : []),
                 'json_array' => ['facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings'],
                 'enums' => [
                     'article_type' => ['lawsuit','event','expose','arrest','closure','corporate','general'],
@@ -302,6 +304,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 
+    // Jurisdiction and level (lawsuits, legislation) and "sort by date", as
+    // the old Lawsuit and Legislation admin pages had them.
+    if (function_exists('kop_rinbox_native_list_filters')) {
+        list($filterWhere, $filterParams) = kop_rinbox_native_list_filters($type, $_GET);
+        $where = array_merge($where, $filterWhere);
+        $params = array_merge($params, $filterParams);
+    }
+    $orderBy = function_exists('kop_rinbox_native_list_order')
+        ? kop_rinbox_native_list_order($type, (string)($_GET['sort'] ?? ''))
+        : 'ORDER BY created_at DESC';
+
     $whereClause = $where ? 'WHERE ' . implode(' AND ', $where) : '';
 
     $countStmt = $pdo->prepare("SELECT COUNT(*) FROM $table $whereClause");
@@ -312,7 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         // Single content table — pull the whole row and map it to the generic
         // submission shape in PHP (see kop_map_record_submission below).
         $sql = "SELECT * FROM $table $whereClause
-                ORDER BY created_at DESC
+                $orderBy
                 LIMIT {$limit} OFFSET {$offset}";
     } elseif ($type === 'data') {
         // suggested_edits real columns: id, master_id, edited_json_data,
@@ -324,7 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                        edited_json_data as json_data,
                        reason as submission_notes
                 FROM $table $whereClause
-                ORDER BY created_at DESC
+                $orderBy
                 LIMIT {$limit} OFFSET {$offset}";
     } elseif ($type === 'news') {
         // Select the real news columns (the JS card reads article_title,
@@ -335,13 +348,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                        article_type as program_type, author as submitted_by,
                        publication_date as years_active, status, created_at, updated_at, json_data
                 FROM $table $whereClause
-                ORDER BY created_at DESC
+                $orderBy
                 LIMIT {$limit} OFFSET {$offset}";
     } else {
         $sql = "SELECT id, program_name, city_state, organization, program_type, years_active, status,
                        submitted_by, created_at, updated_at, json_data
                 FROM $table $whereClause
-                ORDER BY created_at DESC
+                $orderBy
                 LIMIT {$limit} OFFSET {$offset}";
     }
 
@@ -990,6 +1003,30 @@ try {
                 if (!in_array($col, $editable['cols'], true)) {
                     continue; // not editable
                 }
+                // The record's name may not be emptied (the old save endpoints required it).
+                if ($type !== 'data' && $col === $schema['title_col'] && trim((string)$val) === '') {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'The ' . str_replace('_', ' ', $col) . ' cannot be empty.']);
+                    exit;
+                }
+                if ($col === 'filebird_folder_id') {
+                    $set[] = "`$col` = ?";
+                    $params[] = ($val === '' || $val === null || (int)$val <= 0) ? null : (int)$val;
+                    continue;
+                }
+                if ($type === 'news' && $col === 'tags') {
+                    // One spelling per idea, as save-news-submission.php stores them.
+                    require_once __DIR__ . '/news-tags.php';
+                    $set[] = "`$col` = ?";
+                    $params[] = json_encode(kop_news_tags_normalize(kop_normalize_list($val)), JSON_UNESCAPED_UNICODE);
+                    continue;
+                }
+                if ($type === 'news' && $col === 'article_location') {
+                    $newsJsonFields['location'] = trim((string)$val); // json_data keeps a copy, as the processor saved it
+                }
+                if ($col === 'jurisdiction' || $col === 'article_location') {
+                    $val = trim((string)$val);
+                }
                 if ($type === 'lawsuit' && $col === 'facilities_mentioned') {
                     // Remember the edited list so lawsuit_facility_links can be
                     // re-synced after the UPDATE (same treatment as news below).
@@ -1063,8 +1100,11 @@ try {
                     if (!in_array($val, $editable['enums'][$col], true)) {
                         continue; // ignore invalid enum value
                     }
-                } elseif (preg_match('/_date$/', $col) && (is_null($val) || $val === '')) {
-                    $val = null; // empty DATE -> NULL, not '0000-00-00'
+                } elseif (preg_match('/_date$/', $col)) {
+                    // empty DATE -> NULL, not '0000-00-00'; "March 3, 2021" -> 2021-03-03, as the save endpoints read it
+                    $val = function_exists('kop_rinbox_native_date')
+                        ? kop_rinbox_native_date($val)
+                        : ((is_null($val) || $val === '') ? null : $val);
                 } elseif (is_array($val)) {
                     $val = json_encode($val);
                 }
@@ -1098,6 +1138,12 @@ try {
                 if (array_key_exists('organizationLogoName', $newsJsonFields)) {
                     $newsJson['organizationLogoName'] = is_string($newsJsonFields['organizationLogoName'])
                         ? trim($newsJsonFields['organizationLogoName']) : '';
+                }
+                if (array_key_exists('location', $newsJsonFields)) {
+                    $newsJson['location'] = $newsJsonFields['location'];
+                }
+                if (function_exists('kop_rinbox_native_news_details_merge')) {
+                    $newsJson = kop_rinbox_native_news_details_merge($newsJson, $newsJsonFields);
                 }
 
                 $set[] = 'json_data = ?';
@@ -1138,11 +1184,21 @@ try {
                 }
             }
 
-            echo json_encode([
-                'success' => true,
-                'message' => 'Submission updated',
-                'affected' => $stmt->rowCount()
-            ]);
+            $affected = $stmt->rowCount();
+            $response = ['success' => true, 'message' => 'Submission updated', 'affected' => $affected];
+            // A reviewed case files its documents in its FileBird folder on every
+            // save, as the old Lawsuit admin page did (api/save-lawsuit.php).
+            if ($type === 'lawsuit' && function_exists('kop_rinbox_native_lawsuit_file_docs')) {
+                try {
+                    $filed = kop_rinbox_native_lawsuit_file_docs($pdo, (int)$id);
+                    $response['filebird_folder_id'] = $filed['folder'];
+                    $response['documents_filed'] = $filed['filed'];
+                } catch (Throwable $e) {
+                    error_log("manage-submissions lawsuit documents (id $id) failed: " . $e->getMessage());
+                    $response['link_warning'] = 'Saved, but the case documents could not be filed: ' . $e->getMessage();
+                }
+            }
+            echo json_encode($response);
             break;
 
         default:

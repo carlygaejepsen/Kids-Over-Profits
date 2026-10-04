@@ -6,6 +6,12 @@
  * a lead's other destinations are "Move to", Undo is kop_fornits_undo(). The
  * reading's thread categories are the item's tags (the categories column);
  * any other tag is kept in the shared tags table.
+ *
+ * Everything the old screen (KOP Tools > Fornits) does is here too: the tabs
+ * with counts, the kind, category and importance filters, the most important
+ * items ticked to start with, Add to another record (the Record box on Add,
+ * also in bulk), the whole post, "Read a few more now" (kop_fornits_read_batch),
+ * "Check AI keys" (kop_fornits_check_ai) and the reading's progress.
  */
 
 if (!defined('ABSPATH')) {
@@ -21,9 +27,26 @@ kop_rinbox_register('fornits', function () {
     return array(
         'label'    => 'Fornits',
         'group'    => 'Imports to review',
-        'help'     => 'What the old Fornits survivor forum says about each facility, read by the AI: discussion links, staff, incidents, survivor accounts and leads. '
-            . 'Each quote was checked against its post. Add puts it on the facility record citing the post (survivor accounts stay unpublished); Undo takes it back.',
+        'help'     => 'What the old Fornits survivor forum says about each facility, read by the AI (Gemini and Groq in turn): discussion links, staff, incidents, survivor accounts and leads. '
+            . 'Each quote was checked against its post; one "not found in the post" starts unticked. The most important items start ticked: "Select all" and Add does a page. '
+            . 'Add puts it on the facility record citing the post (discussion links under "Survivor posts and discussion"; survivor accounts unpublished until you tick "OK to publish" on the record). '
+            . 'Wrong facility? Pick another in the Record box beside Add. Undo takes it back.',
         'views'    => $views,
+        'filters'  => array(
+            array('name' => 'kind', 'label' => 'Kind', 'options' => kop_fornits_kinds()),
+            array('name' => 'cat', 'label' => 'Category', 'options' => kop_fornits_categories()),
+            array('name' => 'min', 'label' => 'Importance', 'options' => array('3' => 'Key evidence only', '2' => 'Useful or better', '1' => 'Hide chatter', 'read' => 'Read by the AI')),
+        ),
+        'view_counts' => 'kop_rinbox_fornits_view_counts',
+        'tools'    => array(
+            array('id' => 'read_now', 'label' => 'Read a few more now', 'style' => 'neutral',
+                'help' => 'Loads new batches and has the AI read a few more topics (up to a minute). The hourly run does this on its own.'),
+            array('id' => 'check_ai', 'label' => 'Check AI keys', 'style' => 'neutral',
+                'help' => 'Sends one tiny request to each AI provider through the site\'s own code and says whether it works. Keys are never shown.'),
+            array('id' => 'status', 'label' => 'How far the reading is', 'style' => 'neutral',
+                'help' => 'Topics loaded, read by the AI, calls used today and the last hourly run.'),
+        ),
+        'tool'     => 'kop_rinbox_fornits_tool',
         'tool_url' => admin_url('admin.php?page=kop-fornits'),
         'count'    => function () {
             global $wpdb;
@@ -67,24 +90,88 @@ function kop_rinbox_fornits_list(array $q) {
         set_transient('kop_rinbox_fornits_synced', 1, MINUTE_IN_SECONDS);
         kop_fornits_sync(15);
     }
-    $kinds = kop_fornits_kinds();
-    if (isset($kinds[$q['view']])) {
-        $where = $wpdb->prepare("i.status = 'pending' AND i.kind = %s", $q['view']);
-    } elseif (in_array($q['view'], array('applied', 'rejected'), true)) {
-        $where = $wpdb->prepare('i.status = %s', $q['view']);
-    } else {
-        $where = "i.status = 'pending'";
-    }
-    if ($q['search'] !== '') {
-        $like = '%' . $wpdb->esc_like($q['search']) . '%';
-        $where .= $wpdb->prepare(' AND (i.label LIKE %s OR i.quote LIKE %s OR i.author LIKE %s OR i.summary LIKE %s)', $like, $like, $like, $like);
-    }
+    $where = kop_rinbox_fornits_where($q['view'], $q);
     $total = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . " i WHERE {$where}");
     $order = in_array($q['view'], array('applied', 'rejected'), true)
         ? 'i.reviewed_at DESC, i.id DESC'
         : 'i.importance DESC, i.preselect DESC, i.facility_id, i.post_date, i.id';
     $rows = kop_rinbox_fornits_select($where, array(), $order, $q['limit'], $q['offset']);
     return array('items' => array_map('kop_rinbox_fornits_item', $rows), 'total' => $total);
+}
+
+/** A view's items (as i) under the kind, category, importance and search filters. */
+function kop_rinbox_fornits_where($view, array $q) {
+    global $wpdb;
+    $kinds = kop_fornits_kinds();
+    if (isset($kinds[$view])) {
+        $where = $wpdb->prepare("i.status = 'pending' AND i.kind = %s", $view);
+    } elseif (in_array($view, array('applied', 'rejected'), true)) {
+        $where = $wpdb->prepare('i.status = %s', $view);
+    } else {
+        $where = "i.status = 'pending'";
+    }
+    $f = (array) ($q['filters'] ?? array());
+    if (!empty($f['kind'])) $where .= $wpdb->prepare(' AND i.kind = %s', $f['kind']);
+    if (!empty($f['cat'])) {
+        // FIND_IN_SET, written so SQLite reads it too. The value is one of the category keys (letters and "_").
+        $c = $f['cat'];
+        $where .= $wpdb->prepare(' AND (i.categories = %s OR i.categories LIKE %s OR i.categories LIKE %s OR i.categories LIKE %s)',
+            $f['cat'], $c . ',%', '%,' . $c, '%,' . $c . ',%');
+    }
+    if (($f['min'] ?? '') === 'read') {
+        $where .= " AND i.categories <> ''";
+    } elseif (!empty($f['min'])) {
+        $where .= $wpdb->prepare(' AND i.importance >= %d', (int) $f['min']);
+    }
+    if (($q['search'] ?? '') !== '') {
+        $like = '%' . $wpdb->esc_like($q['search']) . '%';
+        $where .= $wpdb->prepare(' AND (i.label LIKE %s OR i.quote LIKE %s OR i.author LIKE %s OR i.summary LIKE %s)', $like, $like, $like, $like);
+    }
+    return $where;
+}
+
+function kop_rinbox_fornits_view_counts(array $q) {
+    global $wpdb;
+    $out = array();
+    foreach (array_merge(array('pending'), array_keys(kop_fornits_kinds()), array('applied', 'rejected')) as $v) {
+        $out[$v] = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . ' i WHERE ' . kop_rinbox_fornits_where($v, $q));
+    }
+    return $out;
+}
+
+/** The old screen's progress line: topics loaded and read, calls today, the last hourly run. */
+function kop_rinbox_fornits_progress() {
+    global $wpdb;
+    $t = $wpdb->get_row('SELECT COUNT(*) AS n, SUM(read_status = \'read\') AS done, SUM(read_status = \'error\') AS err FROM ' . kop_fornits_topics_table(), ARRAY_A);
+    $last = get_option('kop_fornits_last_run', array());
+    $calls = array();
+    foreach (kop_fornits_calls_today() as $p => $n) $calls[] = ucfirst($p) . ' ' . $n . ' of ' . kop_fornits_caps()[$p];
+    return 'Topics loaded: ' . (int) ($t['n'] ?? 0) . '; read by the AI: ' . (int) ($t['done'] ?? 0)
+        . ((int) ($t['err'] ?? 0) ? '; could not read: ' . (int) $t['err'] : '')
+        . '; AI calls today: ' . implode(', ', $calls)
+        . (!empty($last['at']) ? '; last hourly run ' . get_date_from_gmt($last['at'], 'M j, g:i a') . ', read ' . (int) ($last['read'] ?? 0)
+            . (!empty($last['limit']) ? ' (stopped at the daily limit)' : '') : '')
+        . ((int) ($t['n'] ?? 0) ? '.' : '. No topics yet: scripts/fornits-process.py uploads batches to ' . kop_fornits_dir() . ' every hour while the crawl runs.');
+}
+
+function kop_rinbox_fornits_tool($id, array $params) {
+    if ($id === 'read_now') {
+        kop_fornits_sync(20);
+        $c = kop_fornits_read_batch(6, 60);
+        return array('message' => 'Read ' . $c['read'] . ' topics, ' . $c['items'] . ' new proposals'
+            . ($c['limit'] ? '; the daily limit is reached, the hourly run carries on' : '') . ($c['error'] ? ', ' . $c['error'] . ' errors' : '') . '.');
+    }
+    if ($id === 'check_ai') {
+        $lines = array();
+        foreach (kop_fornits_check_ai() as $p => list($ok, $msg)) {
+            $lines[] = ucfirst($p) . ': ' . ($ok ? '' : 'NOT WORKING. ') . $msg;
+        }
+        return array('message' => implode('  |  ', $lines));
+    }
+    if ($id === 'status') {
+        return array('message' => kop_rinbox_fornits_progress());
+    }
+    throw new RuntimeException('Unknown tool.');
 }
 
 /** The kind of a single item, as a word. */
@@ -142,12 +229,21 @@ function kop_rinbox_fornits_item(array $r) {
             $default = kop_fornits_lead_target($v + array('url' => '', 'type' => 'other'));
             $label = 'Add: ' . $targets[$default];
             foreach ($targets as $id => $l) {
-                if ($id !== $default) $moves[] = array('id' => $id, 'label' => $l);
+                if ($id === $default) continue;
+                $m = array('id' => $id, 'label' => $l);
+                if (!in_array($id, array('news', 'lawsuit'), true)) {
+                    $m['params'] = array(array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id']));
+                }
+                $moves[] = $m;
             }
         } elseif ($kind === 'testimony') {
             $label = 'Add to the record (unpublished)';
         }
-        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => 'approve');
+        // The Record box is the old screen's "Add checked to that record".
+        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => 'approve', 'params' => array(
+            array('name' => 'facility', 'label' => $kind === 'lead' ? 'Record (not needed for a queue)' : 'Record', 'type' => 'facility',
+                'value' => (int) $r['facility_id'], 'optional' => true),
+        ));
         $actions[] = array('id' => 'reject', 'label' => 'Skip', 'style' => 'reject');
     } elseif ($r['status'] === 'applied') {
         $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo');
@@ -186,6 +282,20 @@ function kop_rinbox_fornits_item(array $r) {
     $statuses = array('pending' => 'Waiting', 'applied' => 'Added', 'rejected' => 'Skipped');
     $fid = $r['status'] === 'applied' ? (int) $r['applied_fid'] : (int) $r['facility_id'];
     $when = kop_fornits_month($r['post_date']);
+
+    $details = array();
+    if ($kind === 'lead' && $pending) {
+        $details[] = array('label' => 'Goes to', 'value' => kop_fornits_lead_targets()[kop_fornits_lead_target($v + array('url' => '', 'type' => 'other'))] . ' (change it with "Move to")');
+    }
+    if (kop_fornits_has_headline($r)) $details[] = array('label' => 'Thread title on the forum', 'value' => (string) $r['topic_title']);
+    if ((string) $r['board_name'] !== '') $details[] = array('label' => 'Board', 'value' => (string) $r['board_name']);
+    if ((string) $r['how'] !== '') $details[] = array('label' => 'Matched by', 'value' => (string) $r['how']);
+    if ($kind === 'link' && (string) $r['quote'] !== '' && trim((string) $r['summary']) !== '') {
+        $details[] = array('label' => 'Opening words', 'value' => (string) $r['quote']);
+    }
+    if ($kind !== 'link' && trim((string) $r['context']) !== '') {
+        $details[] = array('label' => 'Whole post', 'value' => trim((string) $r['context']));
+    }
     return array(
         'key'          => (string) $r['pkey'],
         'title'        => (string) $r['label'],
@@ -205,6 +315,9 @@ function kop_rinbox_fornits_item(array $r) {
         'actions'      => $actions,
         'moves'        => $moves,
         'links'        => $links,
+        'details'      => $details,
+        // The reading's most important items, with a quote found in the post, start ticked.
+        'selected'     => $pending && (int) $r['preselect'] === 1,
     );
 }
 
@@ -232,10 +345,14 @@ function kop_rinbox_fornits_act($key, $action, array $params) {
                 throw new RuntimeException('Only a lead can go somewhere else.');
             }
             $fid = (int) $r['facility_id'];
+            $picked = (int) ($params['facility'] ?? 0);
+            // Another record than the reading's match: kop_fornits_apply() puts it there, as "Add checked to that record" did.
+            $other = $picked > 0 && $picked !== $fid ? $picked : 0;
+            if ($other) $fid = $other;
             if ($fid <= 0 && !in_array($target, array('news', 'lawsuit'), true)) {
-                throw new RuntimeException('Pick the facility first: open "Edit details", choose it under Facility and save, then add it.');
+                throw new RuntimeException('Pick the facility first: choose it in the Record box beside Add, then add it.');
             }
-            $res = kop_fornits_apply(array($r), array($r['pkey'] => $target), 0, $user)[$r['pkey']] ?? array('ok' => false, 'error' => 'Nothing was done.');
+            $res = kop_fornits_apply(array($r), array($r['pkey'] => $target), $other, $user)[$r['pkey']] ?? array('ok' => false, 'error' => 'Nothing was done.');
             if (empty($res['ok'])) {
                 if (!empty($res['keep'])) throw new RuntimeException($res['error']);
                 return array('message' => 'Not added: ' . $res['error'] . ' It is now under "Skipped or already there".');

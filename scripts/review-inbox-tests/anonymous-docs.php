@@ -61,4 +61,17 @@ function kop_rinbox_test_anonymous_docs(array $src, array $item, callable $check
     } catch (RuntimeException $e) {
         $check('anonymous-docs: a name that is not a submission is refused', true, $e->getMessage());
     }
+
+    // The old screen's status line and its "encrypt them now" button.
+    $counts = call_user_func($src['view_counts'], array());
+    $check('anonymous-docs: every tab has a count', array_keys($counts) === array('new', 'handled') && $counts['new'] >= 2, json_encode($counts));
+    $portal = new AnonymousDocPortal();
+    $status = $portal->status();
+    $check('anonymous-docs: the portal reports its key, scanning and older unlocked files', array_keys($status) === array('key', 'scanning', 'plaintext') && is_int($status['plaintext']), json_encode($status));
+    $GLOBALS['kop_anon_doc_portal'] = $portal;
+    $spec = kop_rinbox_sources(true)['anonymous-docs'];
+    $check('anonymous-docs: the help says which key locks the files, or that none is set up',
+        strpos($spec['help'], $status['key'] !== '' ? 'Locked with key ' . $status['key'] : 'No public key') !== false);
+    $check('anonymous-docs: the lock tool is offered only when older unlocked files wait', (bool) $spec['tools'] === ($status['plaintext'] > 0 && $status['key'] !== ''));
+    unset($GLOBALS['kop_anon_doc_portal']);
 }

@@ -60,6 +60,20 @@ function kop_rinbox_test_program_homes(array $src, array $item, callable $check)
     $vals = array();
     foreach ($again['fields'] as $f) $vals[$f['name']] = $f['value'];
     $check('program-homes: the edits are kept', $vals['program_name'] === 'Test Program Name' && $vals['home_' . $ids[0]] === 'First Home Renamed' && $vals['home_' . $left_out] === '');
+    $rows = $again['compare']['rows'] ?? array();
+    $marked = array_values(array_filter($rows, function ($r) { return $r['differs']; }));
+    $check('program-homes: every home in the table, the left-out one marked', count($rows) === count($ids) && count($marked) === 1
+        && $marked[0]['values'][0] === 'left out' && strpos($marked[0]['label'], '#' . $left_out . ')') !== false, count($rows) . ' rows');
+    $counts = call_user_func($src['view_counts'], array());
+    $check('program-homes: every tab has a count', array_keys($counts) == array_keys($src['views']), json_encode($counts));
+    $other = array_values(array_filter($again['actions'], function ($a) { return $a['id'] === 'group_other'; }));
+    $check('program-homes: any record can be picked as the program', $other && $other[0]['params'][0]['type'] === 'facility');
+    try {
+        call_user_func($src['act'], $key, 'group_other', array('program_id' => (string) $ids[0]));
+        $check('program-homes: one of the homes is refused as the program', false);
+    } catch (RuntimeException $e) {
+        $check('program-homes: one of the homes is refused as the program', true, $e->getMessage());
+    }
     try {
         call_user_func($src['save'], $key, array('program_name' => '  '));
         $check('program-homes: an empty program name is refused', false);
@@ -71,7 +85,8 @@ function kop_rinbox_test_program_homes(array $src, array $item, callable $check)
     $records = $count();
     $choice = $item['actions'][0]['params'][0]['value'];
     kop_rinbox_test_with_wpdb_writes(function () use ($src, $key, $check, $pdo, $ids, $left_out, $count, $records, $choice) {
-        $res = call_user_func($src['act'], $key, 'group', array('program' => $choice));
+        // The existing record picked with the finder ("Group under this record") is the same as picking it in the list.
+        $res = call_user_func($src['act'], $key, 'group_other', array('program_id' => $choice));
         $pid = (int) substr((string) ($res['key'] ?? ''), 8);
         $tied = $pdo->query('SELECT home_id, home_name FROM wpdl_kop_program_homes WHERE program_id = ' . $pid)->fetchAll(PDO::FETCH_KEY_PAIR);
         $check('program-homes: group ties the homes, with the edited names, leaving out the cleared one', $pid > 0

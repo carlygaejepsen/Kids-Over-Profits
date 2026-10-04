@@ -26,6 +26,7 @@ unset($kop_t, $kop_s);
 function kop_rinbox_test_news(array $src, array $item, callable $check) {
     $pdo = kop_rinbox_pdo();
     $before = kop_rinbox_native_row('news', $item['key']);
+    kop_rinbox_test_news_details($check);
 
     call_user_func($src['save'], $item['key'], array('article_title' => 'Retitled In Test', 'article_type' => 'closure'));
     $row = kop_rinbox_native_row('news', $item['key']);
@@ -76,4 +77,64 @@ function kop_rinbox_test_legislation(array $src, array $item, callable $check) {
     $check('legislation: position and a sponsor list save', $row['position'] === 'watch' && json_decode($row['sponsors'], true) === array('Rep. A', 'Sen. B'), (string) $row['sponsors']);
     kop_rinbox_pdo()->prepare('UPDATE legislation SET position = ?, sponsors = ? WHERE id = ?')
         ->execute(array($before['position'], $before['sponsors'], (int) $item['key']));
+
+    // The old Legislation page's list filters, as api/manage-submissions.php applies them.
+    $pdo = kop_rinbox_pdo();
+    $count = function (array $q, $sort = '') use ($pdo) {
+        list($where, $params) = kop_rinbox_native_list_filters('legislation', $q);
+        $st = $pdo->prepare('SELECT id FROM legislation ' . ($where ? 'WHERE ' . implode(' AND ', $where) : '') . ' '
+            . kop_rinbox_native_list_order('legislation', $sort));
+        $st->execute($params);
+        return count($st->fetchAll(PDO::FETCH_COLUMN));
+    };
+    $all = (int) $pdo->query('SELECT COUNT(*) FROM legislation')->fetchColumn();
+    $fed = (int) $pdo->query("SELECT COUNT(*) FROM legislation WHERE jurisdiction = 'Federal'")->fetchColumn();
+    $check('legislation: level filter splits federal from state bills', $count(array('level' => 'federal')) === $fed
+        && $count(array('level' => 'state'), 'date') + $fed === $all, "federal $fed of $all");
+    $place = (string) $pdo->query("SELECT jurisdiction FROM legislation WHERE jurisdiction <> '' LIMIT 1")->fetchColumn();
+    if ($place !== '') {
+        $n = $pdo->prepare('SELECT COUNT(*) FROM legislation WHERE jurisdiction = ?');
+        $n->execute(array($place));
+        $check('legislation: place filter', $count(array('jurisdiction' => $place)) === (int) $n->fetchColumn(), $place);
+    }
+    $check('legislation: "by date" sorts on the introduced date', strpos(kop_rinbox_native_list_order('legislation', 'date'), 'introduced_date DESC') !== false
+        && kop_rinbox_native_list_order('data', 'date') === 'ORDER BY created_at DESC');
+}
+
+function kop_rinbox_test_lawsuit(array $src, array $item, callable $check) {
+    $pdo = kop_rinbox_pdo();
+    $check('lawsuit: typed dates read like the old save endpoint',
+        kop_rinbox_native_date('March 3, 2021') === '2021-03-03' && kop_rinbox_native_date('2020-01-02') === '2020-01-02'
+        && kop_rinbox_native_date('') === null && kop_rinbox_native_date('not a date') === null);
+    list($where) = kop_rinbox_native_list_filters('lawsuit', array('level' => 'federal'));
+    $check('lawsuit: no level filter (the old page had none)', $where === array());
+    $check('lawsuit: "by date" sorts on the filing date', strpos(kop_rinbox_native_list_order('lawsuit', 'date'), 'filing_date DESC') !== false);
+
+    // A pending case never files its documents (unreviewed uploads stay out of the library).
+    $before = kop_rinbox_native_row('lawsuit', $item['key']);
+    $pdo->prepare("UPDATE lawsuits SET publication_status = 'pending' WHERE id = ?")->execute(array((int) $item['key']));
+    $res = kop_rinbox_native_lawsuit_file_docs($pdo, $item['key']);
+    $check('lawsuit: a pending case files nothing', $res === array('folder' => 0, 'filed' => 0), json_encode($res));
+    try {
+        $pdo->prepare("UPDATE lawsuits SET publication_status = 'published', filebird_folder_id = NULL, document_urls = '[]' WHERE id = ?")->execute(array((int) $item['key']));
+        $res = kop_rinbox_native_lawsuit_file_docs($pdo, $item['key']);
+        $check('lawsuit: a published case runs the save endpoint\'s folder step', is_array($res) && $res['filed'] === 0, json_encode($res));
+    } catch (Throwable $e) {
+        $check('lawsuit: a published case runs the save endpoint\'s folder step', false, $e->getMessage());
+    }
+    $pdo->prepare('UPDATE lawsuits SET publication_status = ?, filebird_folder_id = ?, document_urls = ? WHERE id = ?')
+        ->execute(array($before['publication_status'], $before['filebird_folder_id'], $before['document_urls'], (int) $item['key']));
+}
+
+/** The News Processor's per-type details go into json_data next to what is there. */
+function kop_rinbox_test_news_details(callable $check) {
+    $json = kop_rinbox_native_news_details_merge(array('organizationLogoName' => 'Keep'), array(
+        'closureFacilityName' => '  Example Ranch ', 'closureDate' => '2020-05-01', 'charges' => array('One', 'Two'),
+        'needsAlternateTitle' => 'false', 'article_title' => 'not a detail'));
+    $check('news: details merge into json_data, other keys kept', $json['organizationLogoName'] === 'Keep'
+        && $json['closureFacilityName'] === 'Example Ranch' && $json['charges'] === "One\nTwo"
+        && $json['needsAlternateTitle'] === false && !isset($json['article_title']), json_encode($json));
+    $check('news: every News Processor detail key is editable', count(array_intersect(kop_rinbox_native_news_detail_keys(),
+        array('plaintiffs', 'legalRep', 'pressReleases', 'relatedCoverage', 'staffMemberName', 'caseStatus', 'closureContext', 'ownership'))) === 8);
+    $check('news: "by date" sorts on the publication date', strpos(kop_rinbox_native_list_order('news', 'date'), 'publication_date DESC') !== false);
 }

@@ -21,7 +21,7 @@
     var page = document.querySelector('.admin-submissions-page');
     if (!page) return;
 
-    var state = { sources: [], byKey: {}, tags: [], source: null, view: '', search: '', origin: '', offset: 0, limit: 25, total: 0 };
+    var state = { sources: [], byKey: {}, tags: [], source: null, view: '', search: '', origin: '', filters: {}, offset: 0, limit: 25, total: 0 };
 
     function api(path, body, query) {
         var url = cfg.rest + path;
@@ -169,6 +169,7 @@
         state.view = Object.keys(s.views)[0];
         state.search = '';
         state.origin = '';
+        state.filters = {};
         state.offset = 0;
         page.classList.add('rinbox-active');
         page.querySelectorAll('.type-tabs .submission-tab').forEach(function (t) {
@@ -184,7 +185,7 @@
 
     /* ---- Panel ------------------------------------------------------------- */
 
-    var listEl, pagerEl, statusEl, bulkEl;
+    var listEl, pagerEl, statusEl, bulkEl, viewButtons = {};
 
     function renderPanel() {
         var s = state.byKey[state.source];
@@ -195,8 +196,9 @@
             s.tool_url ? el('a', { class: 'rinbox-tool-link', href: s.tool_url, text: 'Open the full ' + s.label + ' screen' }) : null
         ]);
         var views = el('div', { class: 'submission-tabs rinbox-views', role: 'tablist' });
+        viewButtons = {};
         Object.keys(s.views).forEach(function (v) {
-            views.appendChild(el('button', {
+            views.appendChild(viewButtons[v] = el('button', {
                 type: 'button', role: 'tab', class: 'submission-tab' + (state.view === v ? ' is-active' : ''),
                 'aria-selected': state.view === v ? 'true' : 'false',
                 text: s.views[v],
@@ -212,6 +214,15 @@
                 fillOrigins(origin, data.origins || [], state.origin);
             }).catch(function () { /* no filter */ });
         }
+        // The queue's own dropdowns (kind, category, importance...).
+        var filters = (s.filters || []).map(function (f) {
+            var sel = el('select', { class: 'rinbox-filter', 'aria-label': f.label }, [el('option', { value: '', text: f.label + ': any' })]);
+            Object.keys(f.options || {}).forEach(function (k) {
+                sel.appendChild(el('option', { value: k, text: f.options[k], selected: state.filters[f.name] === k }));
+            });
+            sel.addEventListener('change', function () { state.filters[f.name] = sel.value; state.offset = 0; loadItems(); });
+            return sel;
+        });
         var search = el('input', { type: 'search', class: 'rinbox-search', placeholder: 'Search this queue…', value: state.search, 'aria-label': 'Search this queue' });
         var timer = null;
         search.addEventListener('input', function () {
@@ -242,8 +253,8 @@
         pagerEl = el('div', { class: 'rinbox-pager' });
         panel.appendChild(head);
         panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [views, el('span', { class: 'rinbox-filters' }, [
-            origin ? el('label', { class: 'rinbox-quick-field' }, ['Came from ', origin]) : null, search
-        ])]));
+            origin ? el('label', { class: 'rinbox-quick-field' }, ['Came from ', origin]) : null
+        ].concat(filters, [search]))]));
         if (tools) {
             panel.appendChild(tools);
             if (typeof window.kopFacilityFinderAttach === 'function') {
@@ -262,9 +273,17 @@
         bulkEl.innerHTML = '';
         listEl.innerHTML = '';
         pagerEl.innerHTML = '';
-        api('items', null, { source: src, view: state.view, search: state.search, origin: state.origin, offset: state.offset, limit: state.limit }).then(function (data) {
+        var query = { source: src, view: state.view, search: state.search, origin: state.origin, offset: state.offset, limit: state.limit };
+        Object.keys(state.filters).forEach(function (k) { query['f_' + k] = state.filters[k]; });
+        api('items', null, query).then(function (data) {
             if (state.source !== src) return;
             state.total = data.total || 0;
+            if (data.view_counts) {
+                var names = state.byKey[src].views;
+                Object.keys(viewButtons).forEach(function (v) {
+                    if (data.view_counts[v] !== undefined) viewButtons[v].textContent = names[v] + ' (' + data.view_counts[v] + ')';
+                });
+            }
             var items = data.items || [];
             statusEl.textContent = (note ? note + ' ' : '') + (state.total ? (state.total + (state.total === 1 ? ' item' : ' items')) : 'Nothing here.');
             items.forEach(function (it) { listEl.appendChild(card(it)); });
@@ -302,7 +321,12 @@
             (sel[0].kopItem.actions || []).forEach(function (a) {
                 var ready = function (c) {
                     var mine = (c.kopItem.actions || []).filter(function (b) { return b.id === a.id; })[0];
-                    return mine && (mine.params || []).every(function (p) { return p.value !== '' && p.value !== null && p.value !== undefined && p.value !== 0; });
+                    if (!mine) return false;
+                    var now = paramsOf(c, mine);
+                    return (mine.params || []).every(function (p) {
+                        var v = now[p.name];
+                        return p.optional || (v !== '' && v !== null && v !== undefined && v !== 0 && !(Array.isArray(v) && !v.length));
+                    });
                 };
                 if (!sel.every(ready)) return;
                 buttons.appendChild(el('button', {
@@ -314,6 +338,7 @@
         bulkEl.appendChild(el('label', { class: 'rinbox-quick-field' }, [all, ' Select all']));
         bulkEl.appendChild(count);
         bulkEl.appendChild(buttons);
+        update(); // sure matches start ticked
     }
 
     function runBulk(cards, action) {
@@ -326,8 +351,7 @@
             chain = chain.then(function () {
                 var item = node.kopItem;
                 var mine = (item.actions || []).filter(function (b) { return b.id === action.id; })[0] || action;
-                var params = {};
-                (mine.params || []).forEach(function (p) { params[p.name] = p.value; });
+                var params = paramsOf(node, mine);
                 return api('act', { source: src, key: item.key, action: action.id, params: params }).then(function (res) {
                     done++;
                     if (res.item) fillCard(node, res.item, s, src, res.message);
@@ -343,6 +367,14 @@
             renderBulk();
             refreshCounts();
         });
+    }
+
+    /** An action's params as the card's own inputs say now (its defaults when the card has none). */
+    function paramsOf(node, action) {
+        var inputs = node.kopParams && node.kopParams[action.id];
+        var out = {};
+        (action.params || []).forEach(function (p, i) { out[p.name] = inputs && inputs[i] ? readInput(inputs[i]) : p.value; });
+        return out;
     }
 
     function renderPager() {
@@ -393,11 +425,36 @@
         } else {
             input = el('input', { id: id, type: type === 'number' ? 'number' : 'text' });
             input.value = f.value === null || f.value === undefined ? '' : String(f.value);
+            if (f.lookup && type === 'text') lookupInput(input, f, id);
         }
         if (f.readonly) input.disabled = true;
         input.dataset.field = f.name;
         input.dataset.kind = type;
         return input;
+    }
+
+    /** A text input that suggests values from the source's 'lookup' as the reviewer types (a datalist). */
+    function lookupInput(input, f, id) {
+        var src = state.source;
+        var list = el('datalist', { id: id + '-list' });
+        input.setAttribute('list', list.id);
+        input.setAttribute('autocomplete', 'off');
+        if (f.placeholder) input.setAttribute('placeholder', f.placeholder);
+        document.body.appendChild(list);
+        var timer = null, seq = 0;
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            var q = input.value.trim();
+            if (q.length < 2) return;
+            timer = setTimeout(function () {
+                var mine = ++seq;
+                api('lookup', null, { source: src, name: f.lookup, q: q }).then(function (data) {
+                    if (mine !== seq) return;
+                    list.innerHTML = '';
+                    (data.options || []).forEach(function (o) { list.appendChild(el('option', { value: o.value, label: o.label, text: o.label })); });
+                }).catch(function () { /* no suggestions */ });
+            }, 250);
+        });
     }
 
     function facilitiesInput(id, value) {
@@ -532,8 +589,9 @@
         });
 
         var pick = (item.actions || []).length
-            ? el('input', { type: 'checkbox', class: 'rinbox-select', 'aria-label': 'Select ' + (item.title || 'this item') })
+            ? el('input', { type: 'checkbox', class: 'rinbox-select', 'aria-label': 'Select ' + (item.title || 'this item'), checked: !!item.selected })
             : null;
+        node.kopParams = {};
         node.appendChild(el('header', { class: 'rinbox-card-head' }, [pick ? el('span', { class: 'rinbox-title-row' }, [pick, title]) : title, meta]));
         if (links.childNodes.length) node.appendChild(links);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
@@ -645,6 +703,7 @@
         }
         (item.actions || []).forEach(function (a) {
             var paramInputs = (a.params || []).map(function (p) { return fieldInput(p, prefix + 'p-' + a.id + '-'); });
+            node.kopParams[a.id] = paramInputs;
             var btn = el('button', {
                 type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral'), text: a.label,
                 onclick: function () {

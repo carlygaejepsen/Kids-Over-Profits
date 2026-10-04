@@ -41,6 +41,12 @@ if (isset($_GET['report'])) {
         }
         if (trim((string) $r['raw_content']) !== '') $text .= "Report text as scraped:\n\n" . trim((string) $r['raw_content']);
     }
+    if (($_GET['format'] ?? '') === 'text') {
+        // Plain text, for the report viewer on the Submissions Review page.
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $r ? $text : 'Report not found.';
+        exit;
+    }
     echo json_encode(array('success' => (bool) $r, 'text' => $text));
     exit;
 }

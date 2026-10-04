@@ -18,7 +18,18 @@ kop_rinbox_register('bug-reports', function () {
         'label'    => 'Bug reports',
         'group'    => 'Sent in by readers',
         'help'     => 'Problems readers reported on the site. Changing the status emails the reader when they asked for updates.',
-        'views'    => array('new' => 'New', 'in_progress' => 'In progress', 'resolved' => 'Resolved', 'dismissed' => 'Dismissed'),
+        'views'    => kop_rinbox_bugs_statuses() + array('all' => 'All'),
+        'view_counts' => function (array $q = array()) {
+            global $wpdb;
+            $out = array_fill_keys(array_keys(kop_rinbox_bugs_statuses()), 0);
+            if (kop_rinbox_bugs_table_exists()) {
+                foreach ((array) $wpdb->get_results('SELECT status, COUNT(*) AS n FROM bug_reports GROUP BY status') as $r) {
+                    if (isset($out[$r->status])) $out[$r->status] = (int) $r->n;
+                }
+            }
+            $out['all'] = array_sum($out);
+            return $out;
+        },
         'tool_url' => admin_url('admin.php?page=kop-bug-reports'),
         'count'    => function () {
             global $wpdb;
@@ -65,8 +76,8 @@ function kop_rinbox_bugs_row($id) {
 function kop_rinbox_bugs_list(array $q) {
     global $wpdb;
     if (!kop_rinbox_bugs_table_exists()) return array('items' => array(), 'total' => 0);
-    $status = isset(kop_rinbox_bugs_statuses()[$q['view']]) ? $q['view'] : 'new';
-    $where = $wpdb->prepare('status = %s', $status);
+    $status = isset(kop_rinbox_bugs_statuses()[$q['view']]) || $q['view'] === 'all' ? $q['view'] : 'new';
+    $where = $status === 'all' ? '1=1' : $wpdb->prepare('status = %s', $status);
     if ($q['search'] !== '') {
         $like = '%' . $wpdb->esc_like($q['search']) . '%';
         $where .= $wpdb->prepare(' AND (description LIKE %s OR feature LIKE %s OR page_url LIKE %s)', $like, $like, $like);
@@ -83,17 +94,22 @@ function kop_rinbox_bugs_item($r) {
     if (!empty($r->feature)) $sub[] = $r->feature;
     $sub[] = $cats[$r->category] ?? (string) $r->category;
     // What the old screen shows, the technical details shortened.
-    $lines = array(kop_rinbox_excerpt($r->description, 900));
-    if (!empty($r->steps)) $lines[] = 'Steps: ' . kop_rinbox_excerpt($r->steps, 500);
+    $lines = array(trim((string) $r->description));
+    if (!empty($r->steps)) $lines[] = 'Steps: ' . trim((string) $r->steps);
     if (!empty($r->contact)) $lines[] = 'Contact: ' . $r->contact . (!empty($r->notify_updates) ? ' (wants status updates)' : '');
-    if (!empty($r->user_agent)) $lines[] = 'Browser: ' . kop_rinbox_excerpt($r->user_agent . ($r->viewport ? ' — ' . $r->viewport : ''), 200);
+    // The old screen's "Technical details": the browser and every error the page logged.
+    $details = array();
+    if (!empty($r->user_agent)) $details[] = array('label' => 'Browser', 'value' => $r->user_agent . ($r->viewport ? ' — ' . $r->viewport : ''));
     $errors = json_decode($r->console_errors ? $r->console_errors : 'null', true);
     if (is_array($errors) && $errors) {
         $msgs = array();
-        foreach (array_slice($errors, 0, 3) as $err) {
+        foreach ($errors as $err) {
             if (is_array($err)) $msgs[] = '[' . ($err['type'] ?? '?') . '] ' . ($err['message'] ?? '');
         }
-        if ($msgs) $lines[] = 'Errors: ' . kop_rinbox_excerpt(implode('; ', $msgs), 300) . (count($errors) > 3 ? ' (and ' . (count($errors) - 3) . ' more)' : '');
+        if ($msgs) {
+            $details[] = array('label' => 'Errors (' . count($msgs) . ')', 'value' => $msgs);
+            $lines[] = 'Errors: ' . kop_rinbox_excerpt(implode('; ', array_slice($msgs, 0, 3)), 300) . (count($msgs) > 3 ? ' (and ' . (count($msgs) - 3) . ' more below)' : '');
+        }
     }
     $buttons = array(
         'in_progress' => array('label' => 'Start working on it', 'style' => 'neutral'),
@@ -120,6 +136,7 @@ function kop_rinbox_bugs_item($r) {
             array('name' => 'feature', 'label' => 'Feature', 'type' => 'text', 'value' => (string) $r->feature),
         ),
         'actions'      => $actions,
+        'details'      => $details,
     );
 }
 
@@ -127,6 +144,14 @@ function kop_rinbox_bugs_act($key, $action, array $params) {
     global $wpdb;
     $statuses = kop_rinbox_bugs_statuses();
     if (!isset($statuses[$action])) throw new RuntimeException('Unknown action.');
+    // As the old screen: older tables get the reporter opt-in column before a status change.
+    if (function_exists('kop_bug_ensure_notify_column')) {
+        try {
+            kop_bug_ensure_notify_column();
+        } catch (Throwable $e) {
+            // The column is there already, or this database cannot say.
+        }
+    }
     $existing = kop_rinbox_bugs_row($key);
     if (!$existing) throw new RuntimeException('That report is gone.');
     $wpdb->update('bug_reports', array('status' => $action), array('id' => (int) $key));

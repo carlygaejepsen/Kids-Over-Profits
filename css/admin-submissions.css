@@ -1757,3 +1757,54 @@ button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:foc
     border: 1px solid var(--kop-navy);
 }
 .refile-moved p { margin: 0 0 10px; }
+/* Controls from the old Lawsuit, Legislation and News Processor pages (js syncNewsOnly). */
+.record-only[hidden], .legislation-only[hidden], .dated-only[hidden], .can-add[hidden], .not-data[hidden],
+.add-new-panel[hidden], .kop-edit-paste[hidden], .kop-edit-detail[hidden] {
+    display: none !important;
+}
+.add-new-panel {
+    margin: 12px 0 0;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid var(--kop-border-secondary);
+    background: var(--kop-white);
+    color: var(--kop-text-primary);
+}
+.add-new-panel h3 { margin: 0 0 6px; color: var(--kop-midnight-blue); }
+.add-new-help { margin: 0 0 10px; color: var(--kop-text-muted); font-size: 0.9rem; }
+.add-new-fields { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 12px; align-items: center; }
+.add-new-fields label { font-weight: 600; color: var(--kop-text-secondary); }
+.add-new-fields input { width: 100%; box-sizing: border-box; background: var(--kop-white); color: var(--kop-text-primary); }
+.add-new-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
+
+.kop-edit-tools {
+    margin: 0 0 14px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--kop-border-primary);
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-text-primary);
+}
+.kop-edit-tools-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.kop-edit-tools .kop-tool-btn { padding: 8px 14px; letter-spacing: 0.02em; }
+.kop-tool-label { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: var(--kop-text-secondary); }
+.kop-tool-label select { background: var(--kop-white); color: var(--kop-text-primary); }
+.kop-edit-tools-status { margin: 8px 0 0; font-size: 0.85rem; font-weight: 600; color: var(--kop-text-primary); }
+.kop-edit-tools-status:empty { display: none; }
+.kop-edit-tools-status.success { color: #1a7f4b; }
+.kop-edit-tools-status.error { color: #c0392b; }
+.kop-edit-paste { margin-top: 10px; }
+.kop-edit-paste textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.82rem; }
+.kop-edit-paste-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.kop-edit-ai { display: flex; flex-direction: column; gap: 8px; }
+.kop-edit-ai label { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; font-weight: 600; color: var(--kop-text-secondary); }
+.kop-edit-ai > button { align-self: flex-start; }
+.kop-edit-pick { margin-top: 10px; font-size: 0.85rem; color: var(--kop-text-secondary); }
+.kop-edit-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 4px 12px; }
+.kop-edit-checks label { display: flex; align-items: flex-start; gap: 6px; font-weight: 400; color: var(--kop-text-primary); }
+.set-status-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; color: var(--kop-text-secondary); }
+.set-status-row select { background: var(--kop-white); color: var(--kop-text-primary); }
+.form-data-preview #downloadJsonBtn { margin: 8px 0; }
+@media (max-width: 640px) {
+    .add-new-fields { grid-template-columns: 1fr; }
+}

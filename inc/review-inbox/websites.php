@@ -17,7 +17,26 @@ kop_rinbox_register('websites', function () {
         'label'    => 'Websites sent in',
         'group'    => 'Sent in by readers',
         'help'     => 'Pages sent with the Send to KOP browser button that are not news, lawsuits or bills. Keep the useful ones, trash the rest; Restore brings a trashed one back.',
-        'views'    => array('pending' => 'Waiting', 'publish' => 'Kept', 'trash' => 'Trashed'),
+        'views'    => array('pending' => 'Waiting', 'publish' => 'Kept', 'draft' => 'Drafts', 'trash' => 'Trashed', 'all' => 'All'),
+        'view_counts' => function (array $q = array()) {
+            global $wpdb;
+            $out = array('pending' => 0, 'publish' => 0, 'draft' => 0, 'trash' => 0);
+            foreach ((array) $wpdb->get_results($wpdb->prepare("SELECT post_status, COUNT(*) AS n FROM {$wpdb->posts} WHERE post_type = %s GROUP BY post_status", KOP_EXT_SOURCE_CPT)) as $r) {
+                if (isset($out[$r->post_status])) $out[$r->post_status] = (int) $r->n;
+            }
+            $out['all'] = $out['pending'] + $out['publish'] + $out['draft'];
+            return $out;
+        },
+        // WordPress's "Add website", for a page found some other way.
+        'tools'    => array(array('id' => 'add', 'label' => 'Add a website', 'style' => 'neutral',
+            'help' => 'Adds a page to the waiting list, as if it had been sent in.',
+            'params' => array(
+                array('name' => 'url', 'label' => 'Link', 'type' => 'text', 'value' => ''),
+                array('name' => 'title', 'label' => 'Title', 'type' => 'text', 'value' => '', 'optional' => true),
+                array('name' => 'facility', 'label' => 'Related facility', 'type' => 'text', 'value' => '', 'optional' => true),
+                array('name' => 'notes', 'label' => 'Note', 'type' => 'text', 'value' => '', 'optional' => true),
+            ))),
+        'tool'     => 'kop_rinbox_websites_tool',
         'tool_url' => admin_url('edit.php?post_type=' . KOP_EXT_SOURCE_CPT . '&post_status=pending'),
         'count'    => function () {
             global $wpdb;
@@ -50,8 +69,10 @@ function kop_rinbox_websites_post($id) {
 
 function kop_rinbox_websites_list(array $q) {
     global $wpdb;
-    $status = in_array($q['view'], array('pending', 'publish', 'trash'), true) ? $q['view'] : 'pending';
-    $where = $wpdb->prepare('post_type = %s AND post_status = %s', KOP_EXT_SOURCE_CPT, $status);
+    $status = in_array($q['view'], array('pending', 'publish', 'draft', 'trash', 'all'), true) ? $q['view'] : 'pending';
+    $where = $status === 'all'
+        ? $wpdb->prepare("post_type = %s AND post_status IN ('pending','publish','draft')", KOP_EXT_SOURCE_CPT)
+        : $wpdb->prepare('post_type = %s AND post_status = %s', KOP_EXT_SOURCE_CPT, $status);
     if ($q['search'] !== '') {
         $like = '%' . $wpdb->esc_like($q['search']) . '%';
         $where .= $wpdb->prepare(" AND (post_title LIKE %s OR ID IN (SELECT post_id FROM {$wpdb->postmeta}
@@ -78,18 +99,20 @@ function kop_rinbox_websites_item($p) {
         trim((string) $p->post_content) !== '' ? 'Note: ' . kop_rinbox_excerpt($p->post_content, 300) : '',
     ))));
     $actions = array();
-    if ($p->post_status === 'pending') {
+    if ($p->post_status === 'pending' || $p->post_status === 'draft') {
         $actions[] = array('id' => 'publish', 'label' => 'Keep', 'style' => 'approve');
         $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject');
     } elseif ($p->post_status === 'trash' && get_post_meta($id, '_kop_moved', true)) {
         $actions[] = array('id' => 'unmove', 'label' => 'Undo move', 'style' => 'undo');
     } elseif ($p->post_status === 'trash') {
         $actions[] = array('id' => 'untrash', 'label' => 'Restore', 'style' => 'undo');
+        $actions[] = array('id' => 'delete', 'label' => 'Delete permanently', 'style' => 'reject',
+            'confirm' => 'Delete this website for good? This cannot be undone.');
     } else {
         $actions[] = array('id' => 'unpublish', 'label' => 'Back to waiting', 'style' => 'undo');
         $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject');
     }
-    $labels = array('pending' => 'Waiting', 'publish' => 'Kept', 'trash' => 'Trashed');
+    $labels = array('pending' => 'Waiting', 'publish' => 'Kept', 'draft' => 'Draft', 'trash' => 'Trashed');
     $field = function ($k, $type = 'text') use ($meta) {
         return array('name' => $k, 'label' => kop_ext_source_fields()[$k], 'type' => $type, 'value' => $meta[$k]);
     };
@@ -107,7 +130,9 @@ function kop_rinbox_websites_item($p) {
         'fields'       => array(
             array('name' => 'title', 'label' => 'Title', 'type' => 'text', 'value' => (string) $p->post_title),
             $field('url'), $field('site_name'), $field('author'), $field('published'), $field('facility'),
-            $field('description', 'textarea'), $field('selection', 'textarea'), $sent_by,
+            $field('description', 'textarea'), $field('selection', 'textarea'),
+            array('name' => 'note', 'label' => 'Note (the entry\'s own text)', 'type' => 'textarea', 'value' => (string) $p->post_content),
+            $sent_by,
         ),
         'actions'      => $actions,
         // Reclassify: the news, lawsuit or legislation queue, Industry PR, or a facility's website or resources.
@@ -135,6 +160,12 @@ function kop_rinbox_websites_act($key, $action, array $params) {
             if (!wp_trash_post($id)) throw new RuntimeException('WordPress would not move it to the trash.');
             kop_rinbox_flush_counts();
             return array('message' => 'Moved ' . $name . ' to the trash. Restore (on the Trashed tab) brings it back; WordPress empties the trash after 30 days.');
+        case 'delete':
+            if ($p->post_status !== 'trash') throw new RuntimeException('Trash it first; only a trashed website can be deleted for good.');
+            if (get_post_meta($id, '_kop_moved', true)) throw new RuntimeException('This website was moved to another queue; Undo move instead.');
+            if (!wp_delete_post($id, true)) throw new RuntimeException('WordPress would not delete it.');
+            kop_rinbox_flush_counts();
+            return array('message' => 'Deleted ' . $name . ' for good.');
         case 'untrash':
             // Back to the status it had before (WordPress would otherwise make it a draft).
             $hook = function_exists('wp_untrash_post_set_previous_status') ? 'wp_untrash_post_set_previous_status' : null;
@@ -188,6 +219,11 @@ function kop_rinbox_websites_save($key, array $fields) {
         }
         $done = true;
     }
+    if (array_key_exists('note', $fields) && (string) $fields['note'] !== (string) $p->post_content) {
+        $res = wp_update_post(array('ID' => $id, 'post_content' => sanitize_textarea_field((string) $fields['note'])), true);
+        if (is_wp_error($res) || !$res) throw new RuntimeException('WordPress would not save the note.');
+        $done = true;
+    }
     if (array_key_exists('url', $fields) && trim((string) $fields['url']) !== '' && !preg_match('#^https?://\S+$#i', trim((string) $fields['url']))) {
         throw new RuntimeException('Link: write the full address, starting with https://');
     }
@@ -204,4 +240,20 @@ function kop_rinbox_websites_save($key, array $fields) {
         $done = true;
     }
     return array('message' => $done ? 'Saved.' : 'Nothing to save.');
+}
+
+/** "Add a website": the browser extension's own insert, with its duplicate check. */
+function kop_rinbox_websites_tool($id, array $params) {
+    if ($id !== 'add') throw new RuntimeException('Unknown tool.');
+    $url = esc_url_raw(trim((string) ($params['url'] ?? '')), array('http', 'https'));
+    if ($url === '' || !preg_match('#^https?://\S+$#i', $url)) throw new RuntimeException('Link: write the full address, starting with https://');
+    if (!function_exists('kop_normalize_url')) require_once get_stylesheet_directory() . '/api/url-dedupe.php';
+    if ($dup = kop_ext_find_website_duplicate($url)) {
+        throw new RuntimeException('That page is already on the list (#' . (int) $dup . ').');
+    }
+    $p = array('url' => $url, 'title' => (string) ($params['title'] ?? ''), 'facility' => (string) ($params['facility'] ?? ''));
+    $new = kop_ext_insert_website($p, mb_substr(kop_rinbox_reviewer() . ' (added by hand)', 0, 255), kop_ext_textarea($params['notes'] ?? ''));
+    if (is_wp_error($new) || !$new) throw new RuntimeException('WordPress would not add it' . (is_wp_error($new) ? ': ' . $new->get_error_message() : '.'));
+    kop_rinbox_flush_counts();
+    return array('message' => 'Added to the waiting list.', 'key' => (string) $new);
 }

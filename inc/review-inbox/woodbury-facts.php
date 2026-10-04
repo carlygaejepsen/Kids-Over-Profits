@@ -6,8 +6,15 @@
  * no record can be pointed at one or created; young adult programs are filed
  * with kop_wbf_ya_file(); consultants are flagged with
  * kop_wbf_consultant_apply(); corrections use kop_wbf_edit() and
- * kop_wbf_edit_reset(); Undo is kop_wbf_undo(). Adding a person the build
- * missed stays on the old screen (tool_url).
+ * kop_wbf_edit_reset(); Undo is kop_wbf_undo().
+ *
+ * Everything the old screen (KOP Tools > Woodbury Facts) does is here too:
+ * the tabs with counts and the "kind" filter, items with a checked quote and
+ * a sure match ticked to start with, the build's other close names as
+ * one-click "Add to" buttons, a new program record with its type and "a
+ * different place" box, "Another person in these words"
+ * (kop_wbf_add_person()), every quote and the whole career, loading the build
+ * again and adding the plainly stated items now (kop_wbf_auto_run()).
  */
 
 if (!defined('ABSPATH')) {
@@ -23,8 +30,21 @@ kop_rinbox_register('woodbury-facts', function () {
         'group'    => 'Imports to review',
         'help'     => 'What the Woodbury Reports newsletter says about a program that its record does not have yet: staff, incidents, openings, closings, names, owners, size and ages. '
             . 'Each item shows the words it comes from and links to the issue page. Add puts it on the record citing the page; Undo takes back exactly that. '
-            . 'To add a person the item missed, use the full screen.',
+            . 'Read wrong? "Edit details" fixes the name, role, year or text before you add it. The words name someone the item missed? Use "Add this person". '
+            . 'Wrong program? Pick another record beside Add, or create one. Items with a checked quote and a sure match start ticked. '
+            . 'Plainly stated items (the quote names the person and role, or states the year, size, ages, owner or past name word for word, at a sure match) are added for you every hour: '
+            . 'check or undo them on "Added automatically"; anything you undo stays manual. Closures, incidents, consultant flags and programs with no record always wait for you.'
+            . (is_readable(kop_wbf_path()) ? '' : ' No facts uploaded yet: run python scripts/woodbury-facts.py and copy facts.json to ' . dirname(kop_wbf_path()) . '.'),
         'views'    => $views,
+        'filters'  => array(array('name' => 'grp', 'label' => 'Kind', 'options' => kop_wbf_groups())),
+        'view_counts' => 'kop_rinbox_wbf_view_counts',
+        'tools'    => array(
+            array('id' => 'auto', 'label' => 'Add the plainly stated items now', 'style' => 'neutral',
+                'help' => 'Adds the items the build marked as plainly stated, for up to half a minute (the hourly run does the rest). They land on "Added automatically", each with Undo.'),
+            array('id' => 'resync', 'label' => 'Load the facts file again', 'style' => 'neutral',
+                'help' => 'Reads the uploaded facts.json now, even if it looks unchanged: new items are added, waiting ones take the latest reading.'),
+        ),
+        'tool'     => 'kop_rinbox_wbf_tool',
         'tool_url' => admin_url('admin.php?page=kop-woodbury-facts'),
         'count'    => function () {
             global $wpdb;
@@ -49,12 +69,7 @@ function kop_rinbox_wbf_list(array $q) {
         set_transient('kop_rinbox_wbf_synced', 1, MINUTE_IN_SECONDS);
         kop_wbf_sync();
     }
-    $tabs = kop_wbf_tabs();
-    $where = $tabs[$q['view']]['where'] ?? "status = 'pending'";
-    if ($q['search'] !== '') {
-        $like = '%' . $wpdb->esc_like($q['search']) . '%';
-        $where .= $wpdb->prepare(' AND (program LIKE %s OR program_as_written LIKE %s OR label LIKE %s)', $like, $like, $like);
-    }
+    $where = kop_rinbox_wbf_where($q['view'], $q);
     $table = kop_wbf_table();
     $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE {$where}");
     $order = in_array($q['view'], array('applied', 'auto', 'rejected'), true)
@@ -62,6 +77,47 @@ function kop_rinbox_wbf_list(array $q) {
         : "facility_id = 0, program, facility_id, CASE grp WHEN 'staff' THEN 0 WHEN 'incident' THEN 1 WHEN 'history' THEN 2 WHEN 'details' THEN 3 ELSE 4 END, issue_date, label, id";
     $rows = (array) $wpdb->get_results("SELECT * FROM {$table} WHERE {$where} ORDER BY {$order} LIMIT " . (int) $q['limit'] . ' OFFSET ' . (int) $q['offset'], ARRAY_A);
     return array('items' => array_map('kop_rinbox_wbf_item', $rows), 'total' => $total);
+}
+
+/** A view's rows under the kind filter and the search (program or person). */
+function kop_rinbox_wbf_where($view, array $q) {
+    global $wpdb;
+    $tabs = kop_wbf_tabs();
+    $where = $tabs[$view]['where'] ?? "status = 'pending'";
+    if (!empty($q['filters']['grp'])) $where .= $wpdb->prepare(' AND grp = %s', $q['filters']['grp']);
+    if (($q['search'] ?? '') !== '') {
+        $like = '%' . $wpdb->esc_like($q['search']) . '%';
+        $where .= $wpdb->prepare(' AND (program LIKE %s OR program_as_written LIKE %s OR label LIKE %s)', $like, $like, $like);
+    }
+    return $where;
+}
+
+function kop_rinbox_wbf_view_counts(array $q) {
+    global $wpdb;
+    $out = array();
+    foreach (array_merge(array('pending'), array_keys(kop_wbf_tabs())) as $v) {
+        $out[$v] = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . ' WHERE ' . kop_rinbox_wbf_where($v, $q));
+    }
+    return $out;
+}
+
+function kop_rinbox_wbf_tool($id, array $params) {
+    global $wpdb;
+    if ($id === 'auto') {
+        $n = kop_wbf_auto_run(25);
+        $table = kop_wbf_table();
+        $done = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE status = 'applied' AND reviewed_by = 'auto'");
+        $left = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE status = 'pending' AND auto = 1 AND facility_id > 0");
+        return array('message' => 'Added ' . $n . ' just now; ' . number_format($done) . ' added automatically so far'
+            . ($left ? ', ' . number_format($left) . ' more to go (the hourly run carries on, or click again)' : '') . '.');
+    }
+    if ($id === 'resync') {
+        $sync = kop_wbf_sync(true);
+        delete_transient('kop_rinbox_wbf_synced');
+        if (!$sync) return array('message' => is_readable(kop_wbf_path()) ? 'The facts file could not be read.' : 'No facts file is uploaded yet.');
+        return array('message' => 'Loaded the facts file: ' . (int) $sync['added'] . ' new, ' . (int) $sync['updated'] . ' updated, ' . (int) $sync['gone'] . ' no longer proposed.');
+    }
+    throw new RuntimeException('Unknown tool.');
 }
 
 /** City and state from Woodbury's "Kalispell, MT", as the old screen splits it. */
@@ -104,16 +160,25 @@ function kop_rinbox_wbf_item(array $r) {
             . ($r['match_note'] ?: 'Close name: check it is the same program.');
     }
     if ($ya && $pending && !empty($r['ya_why'])) $lines[] = 'Young adult program: ' . $r['ya_why'];
-    foreach (array_slice($ev, 0, 2) as $e) {
-        $line = kop_wbf_ev_label($e) . (!empty($e['quote']) ? ': "' . kop_rinbox_excerpt($e['quote'], 500) . '"' : '');
+    foreach ($ev as $e) {
+        $line = kop_wbf_ev_label($e) . (!empty($e['quote']) ? ': "' . kop_rinbox_excerpt($e['quote'], 700) . '"' : '');
         if (empty($e['found'])) $line .= ' (these words were not found in the ' . (!empty($e['pub']) ? 'archived page' : 'issue text') . ': check the page before adding)';
         $lines[] = $line;
     }
-    if (count($ev) > 2) $lines[] = (count($ev) - 2) . ' more source' . (count($ev) > 3 ? 's' : '') . ' on the full screen.';
     if ((string) $r['conflict'] !== '') $lines[] = $r['conflict'];
     if ((string) $r['current_val'] !== '') $lines[] = 'On the record now: ' . $r['current_val'];
     if (!empty($extra['career']) && count($extra['career']) > 1) {
-        $lines[] = 'Where Woodbury places ' . ($extra['person'] ?? 'them') . ': ' . implode('; ', array_slice((array) $extra['career'], 0, 8));
+        $lines[] = 'Where Woodbury places ' . ($extra['person'] ?? 'them') . ': ' . implode('; ', (array) $extra['career']);
+    }
+    if ($pending && $r['grp'] === 'consultant') {
+        $cv = kop_wbf_row_value($r);
+        $lines[] = !empty($cv['referrer_id'])
+            ? 'Flagging adds these jobs to the Career History on the consultant record ' . ($cv['referrer_name'] ?? '') . '.'
+            : 'No consultant record yet: flagging creates one (filed under Educational Consultants) with this Career History.';
+    }
+    $alts = array();
+    foreach (array_slice(json_decode((string) $r['alternatives'], true) ?: array(), 0, 3) as $a) {
+        if ((int) ($a['id'] ?? 0) > 0 && (int) $a['id'] !== (int) $r['facility_id']) $alts[(int) $a['id']] = $a;
     }
     if (isset($extra['original'])) $lines[] = 'Corrected by ' . ($extra['edited_by'] ?? 'a reviewer') . '.';
     if (!empty($extra['manual'])) $lines[] = 'Added by hand by ' . ($extra['edited_by'] ?? '') . '.';
@@ -127,9 +192,10 @@ function kop_rinbox_wbf_item(array $r) {
     }
 
     $links = array();
-    foreach (array_slice($ev, 0, 3) as $e) {
+    foreach ($ev as $e) {
         if (!empty($e['url'])) $links[] = array('label' => kop_wbf_ev_label($e), 'url' => (string) $e['url']);
     }
+    if ($ya) $links[] = array('label' => 'Young Adult Programs list', 'url' => admin_url('admin.php?page=kop-young-adult-programs'));
 
     list($city, $state) = kop_rinbox_wbf_place($r['place']);
     $actions = array();
@@ -155,25 +221,48 @@ function kop_rinbox_wbf_item(array $r) {
             array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => $state),
             array('name' => 'country', 'label' => 'or country', 'type' => 'text', 'value' => ''),
             array('name' => 'ages', 'label' => 'Ages', 'type' => 'text', 'value' => preg_match('/^Ages:\s*(.*)$/', $why, $m) ? $m[1] : ''),
+            array('name' => 'program_type', 'label' => 'Described as', 'type' => 'text', 'optional' => true,
+                'value' => $why !== '' && !preg_match('/^(Ages|Name):/', $why) ? mb_substr($why, 0, 255) : ''),
         ));
         $actions[] = array('id' => 'ya_off', 'label' => 'Not a young adult program', 'style' => 'neutral');
     } elseif ($pending) {
         $actions[] = array('id' => 'apply', 'label' => (int) $r['facility_id'] > 0 ? 'Add to the record' : 'Add to this record', 'style' => 'approve', 'params' => array(
             array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id']),
         ));
+        // The build's other close names, one click each (the old screen's buttons under "Another record").
+        foreach ($alts as $aid => $a) {
+            $actions[] = array('id' => 'apply_to_' . $aid, 'label' => 'Add to ' . ($a['name'] ?? '#' . $aid) . (!empty($a['state']) ? ' (' . $a['state'] . ')' : ''), 'style' => 'neutral');
+        }
+        // Any waiting item can go on a new record (the old screen's "Wrong program?").
+        $kinds = kop_wbf_create_kinds();
+        $types = array('' => 'Not sure');
+        foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) $types[$t] = $t;
+        $name = (int) $r['facility_id'] === 0 || $r['program_as_written'] === '' ? $r['program'] : $r['program_as_written'];
+        $actions[] = array('id' => 'create', 'label' => 'Create the record and add this', 'style' => 'neutral',
+            'confirm' => 'Create a new record with this name and add the item to it?', 'params' => array(
+            array('name' => 'kind', 'label' => 'What is it?', 'type' => 'select', 'options' => $kinds, 'value' => 'facility'),
+            array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $name),
+            array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => $city),
+            array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => $state),
+            array('name' => 'country', 'label' => 'or country', 'type' => 'text', 'value' => ''),
+            array('name' => 'type', 'label' => 'Program type', 'type' => 'select', 'options' => $types, 'value' => '', 'optional' => true),
+            array('name' => 'force', 'label' => 'It is a different place from a close match', 'type' => 'checkbox', 'value' => '', 'optional' => true),
+        ));
         if ((int) $r['facility_id'] === 0) {
-            $kinds = kop_wbf_create_kinds();
-            $actions[] = array('id' => 'create', 'label' => 'Create the record and add this', 'style' => 'neutral', 'params' => array(
-                array('name' => 'kind', 'label' => 'What is it?', 'type' => 'select', 'options' => $kinds, 'value' => 'facility'),
-                array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $r['program']),
-                array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => $city),
-                array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => $state),
-                array('name' => 'country', 'label' => 'or country', 'type' => 'text', 'value' => ''),
-            ));
             $actions[] = array('id' => 'ya_on', 'label' => 'It is a young adult program (18+)', 'style' => 'neutral');
         }
     }
     if ($pending) {
+        if ($r['grp'] !== 'consultant' && $ev) {
+            // "Another person in these words": a new waiting staff item citing the same page.
+            $actions[] = array('id' => 'add_person', 'label' => 'Add this person', 'style' => 'neutral', 'params' => array(
+                array('name' => 'name', 'label' => 'Another person in these words: name', 'type' => 'text', 'value' => ''),
+                array('name' => 'role', 'label' => 'Role at this program', 'type' => 'text', 'value' => '', 'optional' => true),
+                array('name' => 'pastJobs', 'label' => 'Past jobs', 'type' => 'text', 'value' => '', 'optional' => true),
+                array('name' => 'where', 'label' => 'List', 'type' => 'select', 'value' => 'staff.notableStaff',
+                    'options' => array('staff.notableStaff' => 'Notable staff', 'staff.administrator' => 'Administrators')),
+            ));
+        }
         if (isset($extra['original'])) $actions[] = array('id' => 'reset', 'label' => 'Back to what Woodbury said', 'style' => 'neutral');
         $actions[] = array('id' => 'reject', 'label' => 'Reject', 'style' => 'reject');
     } elseif ($r['status'] === 'applied') {
@@ -201,6 +290,8 @@ function kop_rinbox_wbf_item(array $r) {
         'fields'       => kop_rinbox_wbf_fields($r),
         'actions'      => $actions,
         'links'        => $links,
+        // As the old screen: a checked quote and a sure match start ticked (records and consultants).
+        'selected'     => $pending && !empty($r['preselect']) && ((int) $r['facility_id'] > 0 || $r['grp'] === 'consultant'),
     );
 }
 
@@ -230,10 +321,20 @@ function kop_rinbox_wbf_act($key, $action, array $params) {
         if (!empty($res['already'])) return array('message' => 'Not added: ' . $res['error'] . ' It is now under Rejected.');
         throw new RuntimeException($res['error']);
     };
+    if (preg_match('/^apply_to_(\d+)$/', $action, $m)) {
+        // One of the build's other close names.
+        $params = array('facility' => (int) $m[1]);
+        $action = 'apply';
+    }
     switch ($action) {
         case 'apply':
             $waiting();
             $fid = (int) ($params['facility'] ?? 0) ?: (int) $r['facility_id'];
+            if ($fid > 0 && $fid !== (int) $r['facility_id']) {
+                $st = kop_rinbox_pdo()->prepare('SELECT COUNT(*) FROM facilities_v2 WHERE id = ?');
+                $st->execute(array($fid));
+                if (!(int) $st->fetchColumn()) throw new RuntimeException('Facility #' . $fid . ' does not exist.');
+            }
             if ($fid <= 0) throw new RuntimeException('Pick the record first (the Record box beside the button).');
             return $result(kop_wbf_apply(array($r), $fid, $user),
                 'Added to ' . kop_rinbox_wbf_name($fid) . ' (' . kop_wbf_where_it_goes($r) . '), citing ' . (kop_wbf_ev_label(kop_wbf_evidence($r)[0] ?? array('label' => 'Woodbury Reports', 'page' => 0))) . '. Undo is on the Added tab.');
@@ -256,8 +357,8 @@ function kop_rinbox_wbf_act($key, $action, array $params) {
             if ($raw_state !== '' && $f['state'] === '') {
                 throw new RuntimeException('"' . $raw_state . '" is not a US state. Leave it empty and give the country instead.');
             }
-            $f['type'] = '';
-            $f['force'] = false;
+            $f['type'] = $p('type');
+            $f['force'] = !empty($params['force']) && $params['force'] !== '0';
             $target = kop_wbc_create_facility(kop_wbf_create_source(kop_wbf_evidence($r)), $f, kop_closure_pdo());
             $fid = (int) $target['id'];
             return $result(kop_wbf_apply(array($r), $fid, $user), 'Created ' . kop_rinbox_wbf_name($fid) . ' and added this item to it. Undo is on the Added tab.');
@@ -297,6 +398,12 @@ function kop_rinbox_wbf_act($key, $action, array $params) {
             return array('message' => $action === 'ya_on'
                 ? 'Every waiting item of "' . $r['program'] . '" is now on the young adult tab, and stays there after the next scan.'
                 : 'Every waiting item of "' . $r['program'] . '" is back on "Programs with no record".');
+        case 'add_person':
+            $waiting();
+            $f = array();
+            foreach (array('name', 'role', 'pastJobs', 'where') as $k) $f[$k] = sanitize_textarea_field((string) ($params[$k] ?? ''));
+            $new = kop_wbf_add_person($r, $f, $user);
+            return array('message' => 'Added ' . $new['label'] . ' as a new waiting item citing the same page (search for the name to find it). Add it like any other.');
         case 'reset':
             kop_wbf_edit_reset($r);
             return array('message' => 'Back to what Woodbury said.');

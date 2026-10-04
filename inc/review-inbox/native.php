@@ -427,3 +427,118 @@ function kop_rinbox_native_origin_counts($type, $status) {
     }
     return $out;
 }
+
+/* ---- What the old Lawsuit, Legislation and News Processor pages did -------- */
+/* api/manage-submissions.php calls these, so the Submissions Review page can do  */
+/* everything those pages did: filter by place, sort by date, edit every field.   */
+
+/**
+ * Jurisdiction and level filters for the lawsuit and legislation lists, as the
+ * old admin pages had them: array(SQL conditions, named params). Level is not
+ * stored; "federal" is jurisdiction 'Federal' (as in api/save-legislation.php).
+ */
+function kop_rinbox_native_list_filters($type, array $q) {
+    $where = array();
+    $params = array();
+    if (!in_array($type, array('lawsuit', 'legislation'), true)) return array($where, $params);
+    $j = trim((string) ($q['jurisdiction'] ?? ''));
+    if ($j !== '') {
+        $where[] = 'jurisdiction = :jurisdiction';
+        $params[':jurisdiction'] = $j;
+    }
+    $level = strtolower(trim((string) ($q['level'] ?? '')));
+    if ($type === 'legislation' && $level === 'federal') {
+        $where[] = "jurisdiction = 'Federal'";
+    } elseif ($type === 'legislation' && $level === 'state') {
+        $where[] = "(jurisdiction IS NULL OR jurisdiction <> 'Federal')";
+    }
+    return array($where, $params);
+}
+
+/** ORDER BY for the list: newest added (default) or by the record's own date, as the old pages sorted. */
+function kop_rinbox_native_list_order($type, $sort) {
+    $dates = array('lawsuit' => 'filing_date', 'legislation' => 'introduced_date', 'news' => 'publication_date');
+    if ($sort === 'date' && isset($dates[$type])) {
+        return "ORDER BY {$dates[$type]} DESC, created_at DESC";
+    }
+    return 'ORDER BY created_at DESC';
+}
+
+/**
+ * The News Processor's "Article type and details" fields, kept in the
+ * article's json_data (api/save-news-submission.php stores them there).
+ */
+function kop_rinbox_native_news_detail_keys() {
+    return array(
+        'plaintiffs', 'defendants', 'legalRep', 'dateFiled', 'jurisdiction', 'pressReleases',
+        'relatedCoverage',
+        'staffMemberName', 'arrestFacilityName', 'misconductDates', 'charges', 'caseStatus',
+        'closureFacilityName', 'closureLocation', 'closureDate', 'closureContext',
+        'corporateFacilityNames', 'corporateLocation', 'keyPersonnel', 'ownership',
+        'needsAlternateTitle',
+    );
+}
+
+/** Put edited detail fields into a news row's json_data (text kept as typed, trimmed). */
+function kop_rinbox_native_news_details_merge(array $json, array $fields) {
+    foreach (kop_rinbox_native_news_detail_keys() as $k) {
+        if (!array_key_exists($k, $fields)) continue;
+        $v = $fields[$k];
+        if ($k === 'needsAlternateTitle') {
+            $json[$k] = (bool) $v && $v !== 'false';
+            continue;
+        }
+        $json[$k] = is_array($v) ? implode("\n", array_map('strval', $v)) : trim((string) $v);
+    }
+    return $json;
+}
+
+/**
+ * A typed date the way the old save endpoints read it: '' is no date,
+ * YYYY-MM-DD stays, anything else strtotime() can read becomes YYYY-MM-DD,
+ * and what it cannot read is no date.
+ */
+function kop_rinbox_native_date($v) {
+    $v = trim((string) $v);
+    if ($v === '') return null;
+    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $v)) return $v;
+    $ts = strtotime($v);
+    return $ts ? date('Y-m-d', $ts) : null;
+}
+
+/**
+ * After a lawsuit is edited: the step api/save-lawsuit.php runs on every save.
+ * Find a FileBird folder from the linked facilities when none is set, and file
+ * the case documents there. Pending and rejected rows are skipped: unreviewed
+ * uploads stay out of the media library until the case is approved.
+ * Returns array('folder' => id or 0, 'filed' => count).
+ */
+function kop_rinbox_native_lawsuit_file_docs(PDO $pdo, $id) {
+    $st = $pdo->prepare('SELECT case_name, document_urls, filebird_folder_id, publication_status FROM lawsuits WHERE id = ?');
+    $st->execute(array((int) $id));
+    $law = $st->fetch(PDO::FETCH_ASSOC);
+    if (!$law || in_array((string) $law['publication_status'], array('pending', 'rejected'), true)) {
+        return array('folder' => 0, 'filed' => 0);
+    }
+    $dir = get_stylesheet_directory() . '/api/';
+    require_once $dir . 'news-mentions.php';
+    require_once $dir . 'lawsuit-facility-links.php';
+    $folder = (int) ($law['filebird_folder_id'] ?? 0);
+    if (!$folder) {
+        $ids = $pdo->prepare('SELECT facility_id FROM lawsuit_facility_links WHERE lawsuit_id = ?');
+        $ids->execute(array((int) $id));
+        $facility_ids = array_map('intval', $ids->fetchAll(PDO::FETCH_COLUMN));
+        if ($facility_ids) {
+            $folder = (int) kop_lawsuit_resolve_facility_folder($pdo, $facility_ids);
+            if ($folder) {
+                $pdo->prepare('UPDATE lawsuits SET filebird_folder_id = ? WHERE id = ?')->execute(array($folder, (int) $id));
+            }
+        }
+    }
+    $filed = 0;
+    if ($folder) {
+        $docs = json_decode((string) $law['document_urls'], true);
+        $filed = kop_lawsuit_file_documents(is_array($docs) ? $docs : array(), $folder, (string) $law['case_name']);
+    }
+    return array('folder' => $folder, 'filed' => $filed);
+}

@@ -54,6 +54,11 @@ function kop_rinbox_test_bug_reports(array $src, array $item, callable $check) {
     $check('bug-reports: back to new', $row()->status === 'new');
     $again = kop_rinbox_get_item('bug-reports', $item['key']);
     $check('bug-reports: a new report offers the three other statuses', array_column($again['actions'], 'id') === array('in_progress', 'resolved', 'dismissed'));
+    $tech = array_column($again['details'], 'value', 'label');
+    $check('bug-reports: the technical details list the browser and every error', isset($tech['Browser']) && in_array('[error] x is undefined', (array) ($tech['Errors (1)'] ?? array()), true), json_encode($tech));
+    $counts = call_user_func($src['view_counts'], array());
+    $check('bug-reports: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['new'] >= 1, json_encode($counts));
+    $check('bug-reports: All lists every report', call_user_func($src['list'], array('view' => 'all', 'search' => '', 'offset' => 0, 'limit' => 1))['total'] === $counts['all']);
     try {
         call_user_func($src['act'], $item['key'], 'delete', array());
         $check('bug-reports: an unknown action is refused', false);

@@ -14,11 +14,45 @@ if (!defined('ABSPATH')) {
 
 kop_rinbox_register('anonymous-docs', function () {
     if (!class_exists('AnonymousDocPortal')) return null;
+    // What the Anonymous Docs screen says above its list: the key, scanning, older unencrypted files.
+    $portal = $GLOBALS['kop_anon_doc_portal'] ?? null;
+    $status = $portal instanceof AnonymousDocPortal ? $portal->status() : null;
+    $notes = '';
+    $tools = array();
+    if ($status) {
+        if ($status['key'] === '') {
+            $notes .= ' No public key is set up, so the upload page is refusing documents: run scripts/anon-portal-keygen.php and deploy inc/anonymous-portal-public.key.';
+        } else {
+            $notes .= ' Locked with key ' . $status['key'] . '.';
+            if (!$status['scanning']) $notes .= ' Malware scanning is not set up (no CLOUDMERSIVE_API_KEY), so the upload page is refusing documents.';
+        }
+        if ($status['plaintext'] > 0) {
+            $notes .= ' ' . $status['plaintext'] . ' document(s) from before encryption are stored unlocked.';
+            if ($status['key'] !== '') {
+                $tools[] = array('id' => 'encrypt', 'label' => 'Lock the older documents now', 'style' => 'approve',
+                    'help' => 'Encrypts the documents stored before encryption existed and deletes their unlocked copies.',
+                    'confirm' => 'Encrypt the older documents and delete their unlocked copies?');
+            }
+        }
+    }
     return array(
         'label'    => 'Anonymous documents',
         'group'    => 'Sent in by readers',
-        'help'     => 'Documents sent through the anonymous upload page. They are locked: download one and open it on your own computer with your private key. Mark it handled once you have read it.',
+        'help'     => 'Documents sent through the anonymous upload page. They are locked: download one and open it on your own computer with scripts/anon-portal-decrypt.php and your private key. Mark it handled once you have read it.' . $notes,
         'views'    => array('new' => 'New', 'handled' => 'Handled'),
+        'view_counts' => function (array $q = array()) {
+            $handled = kop_rinbox_anon_handled();
+            $out = array('new' => 0, 'handled' => 0);
+            foreach (kop_rinbox_anon_files() as $f) $out[isset($handled[$f['name']]) ? 'handled' : 'new']++;
+            return $out;
+        },
+        'tools'    => $tools,
+        'tool'     => function ($id, array $params) {
+            $portal = $GLOBALS['kop_anon_doc_portal'] ?? null;
+            if ($id !== 'encrypt' || !($portal instanceof AnonymousDocPortal)) throw new RuntimeException('Unknown tool.');
+            $done = $portal->encrypt_existing();
+            return array('message' => $done . ' older document(s) locked; their unlocked copies were deleted. Reload the page to see them in the list.');
+        },
         'tool_url' => admin_url('admin.php?page=anonymous-docs'),
         'count'    => function () {
             $handled = kop_rinbox_anon_handled();

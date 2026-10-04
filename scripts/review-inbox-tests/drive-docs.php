@@ -148,4 +148,47 @@ function kop_rinbox_test_drive_docs(array $src, array $item, callable $check) {
         $check('drive-docs: an added link cannot be edited', true, $e->getMessage());
     }
     $GLOBALS['pdo']->prepare('UPDATE wpdl_kop_gdoc_links SET label = ?, kind = ? WHERE pkey = ?')->execute(array($before['label'], $before['kind'], $lic));
+
+    // What the old screen also did: kind filter, tab counts, sure matches ticked, another record, "Add all", reload.
+    $res = call_user_func($src['list'], array('view' => 'pending', 'search' => '', 'offset' => 0, 'limit' => 25, 'filters' => array('kind' => 'news')));
+    $check('drive-docs: the kind filter shows only that kind', $res['total'] === 1 && $res['items'][0]['key'] === $news, (string) $res['total']);
+    $counts = call_user_func($src['view_counts'], array('view' => 'pending', 'search' => '', 'filters' => array()));
+    $check('drive-docs: every tab has its count', $counts['pending'] === 3 && $counts['facility'] === 2 && $counts['company'] === 1
+        && $counts['applied'] === 1 && $counts['rejected'] === 1, json_encode($counts));
+    $check('drive-docs: a sure match starts ticked, a close name does not',
+        kop_rinbox_get_item('drive-docs', $news)['selected'] === true && kop_rinbox_get_item('drive-docs', $lic)['selected'] === false);
+    $apply = kop_rinbox_get_item('drive-docs', $news)['actions'][0];
+    $check('drive-docs: Add has an optional Record box (bulk still works)', ($apply['params'][0]['type'] ?? '') === 'facility' && !empty($apply['params'][0]['optional']));
+    $moves = kop_rinbox_get_item('drive-docs', $news)['moves'];
+    $res_move = array_values(array_filter($moves, function ($m) { return $m['id'] === 'resource'; }))[0] ?? array();
+    $check('drive-docs: moving to a facility page asks for the record', ($res_move['params'][0]['type'] ?? '') === 'facility');
+    $fids = $GLOBALS['pdo']->query("SELECT id FROM facilities_v2 WHERE name <> '' ORDER BY id LIMIT 2")->fetchAll(PDO::FETCH_COLUMN);
+    try {
+        $m = call_user_func($src['act'], $news, 'apply', array('facility' => (string) $fids[1]));
+        $r = $row($news);
+        $check('drive-docs: Add with another record names that record', $r['status'] === 'applied' && (int) $r['applied_fid'] === (int) $fids[1], $m['message']);
+        call_user_func($src['act'], $news, 'undo', array());
+        $check('drive-docs: ...and Undo puts it back', $row($news)['status'] === 'pending');
+    } catch (Throwable $e) {
+        $check('drive-docs: Add with another record', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $tools = array_column($src['tools'], 'id');
+    $check('drive-docs: queue tools are "Add every sure match" and "Load again"', $tools === array('add_all', 'resync'));
+    try {
+        call_user_func($src['tool'], 'add_all', array('facility' => ''));
+        $check('drive-docs: "Add every sure match" needs the facility', false);
+    } catch (RuntimeException $e) {
+        $check('drive-docs: "Add every sure match" needs the facility', true, $e->getMessage());
+    }
+    try {
+        $m = call_user_func($src['tool'], 'add_all', array('facility' => (string) $fids[0], 'kind' => '', 'source' => ''));
+        $check('drive-docs: "Add every sure match" adds the sure ones only', $row($news)['status'] === 'applied' && $row($lic)['status'] === 'pending', $m['message']);
+        call_user_func($src['act'], $news, 'undo', array());
+        $m = call_user_func($src['tool'], 'add_all', array('facility' => (string) $fids[0], 'kind' => 'inspection', 'source' => ''));
+        $check('drive-docs: ...under a kind filter, nothing else', $row($news)['status'] === 'pending', $m['message']);
+    } catch (Throwable $e) {
+        $check('drive-docs: "Add every sure match"', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $m = call_user_func($src['tool'], 'resync', array());
+    $check('drive-docs: "Load the links files again" answers', $m['message'] !== '', $m['message']);
 }

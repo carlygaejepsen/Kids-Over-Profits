@@ -14,6 +14,18 @@ function kop_rinbox_test_map_renames(array $src, array $item, callable $check) {
     $save = $item['actions'][0];
     $check('map-renames: save asks the year and which name came first', $save['id'] === 'save' && $save['params'][1]['type'] === 'select'
         && count($save['params'][1]['options']) === 2, 'suggested ' . $save['params'][0]['value']);
+    $labels = array_column($item['compare']['rows'] ?? array(), 'label');
+    $check('map-renames: the two names side by side, with the years on the map now', ($item['compare']['heads'] ?? array()) === array('Earlier name', 'Later name')
+        && in_array('Name', $labels, true) && in_array('On the map now', $labels, true), implode(', ', $labels));
+    $counts = call_user_func($src['view_counts'], array());
+    $check('map-renames: every tab has a count', array_keys($counts) == array_keys($src['views']) && $counts['review'] === call_user_func($src['count']), json_encode($counts));
+    // A rename with research shows its sources, linked.
+    foreach (kop_network_renames_candidates() as $ck => $c) {
+        if (empty($c['sources'])) continue;
+        $it = kop_rinbox_get_item('map-renames', $ck);
+        $check('map-renames: the research\'s sources are on the card, linked', (bool) array_filter($it['details'], function ($d) { return !empty($d['url']); }), $ck);
+        break;
+    }
     try {
         call_user_func($src['act'], $key, 'save', array('year' => '1700', 'swapped' => '0'));
         $check('map-renames: a year out of range is refused', false);
@@ -37,4 +49,23 @@ function kop_rinbox_test_map_renames(array $src, array $item, callable $check) {
     $check('map-renames: not a rename', (kop_network_renames_decisions()[$key]['decision'] ?? '') === 'skipped');
     call_user_func($src['act'], $key, 'undo', array());
     $check('map-renames: undo "not a rename"', !isset(kop_network_renames_decisions()[$key]));
+
+    call_user_func($src['act'], $key, 'save', array('year' => '2004', 'swapped' => '0'));
+    $now = kop_rinbox_get_item('map-renames', $key)['compare']['rows'];
+    $row = array_values(array_filter($now, function ($r) { return $r['label'] === 'On the map now'; }))[0] ?? array('values' => array());
+    $check('map-renames: after saving, the card shows the split years', strpos((string) ($row['values'][0] ?? ''), '2004') !== false && strpos((string) ($row['values'][1] ?? ''), '2004') !== false, json_encode($row['values']));
+    call_user_func($src['act'], $key, 'undo', array());
+
+    // Save every high-confidence year, then undo them all.
+    $sure = array();
+    foreach (kop_rinbox_mren_rows() as $r) {
+        if (!isset(kop_network_renames_decisions()[$r['key']]) && kop_rinbox_mren_sure(kop_network_renames_candidates()[$r['key']] ?? null)) $sure[] = $r['key'];
+    }
+    $res = call_user_func($src['tool'], 'save_sure', array());
+    $saved = array_keys(array_filter(kop_network_renames_decisions(), function ($d) { return ($d['decision'] ?? '') === 'saved'; }));
+    sort($saved);
+    sort($sure);
+    $check('map-renames: "save every high-confidence year" saves exactly those', $saved === $sure, count($sure) . ' sure; ' . $res['message']);
+    kop_network_renames_decide(array_map(function ($k) { return array('key' => $k, 'decision' => 'undo'); }, $sure), 'test', kop_network_map_graph() ?: array());
+    $check('map-renames: and they can be undone', !kop_network_renames_decisions());
 }

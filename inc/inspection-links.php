@@ -210,6 +210,14 @@ function kop_inspection_links_save($post) {
         if (!$stored['links'][$fid]) unset($stored['links'][$fid]);
         $changed++;
     }
+    // "Not this one" taken back (the review inbox's Undo): the pair can be suggested again.
+    foreach ((array) ($post['unreject'] ?? array()) as $pair) {
+        if (!preg_match('/^(\d+)-(\d+)$/', (string) $pair, $m)) continue;
+        $fid = (int) $m[1];
+        $stored['rejected'][$fid] = array_values(array_diff(array_map('intval', (array) ($stored['rejected'][$fid] ?? array())), array((int) $m[2])));
+        if (!$stored['rejected'][$fid]) unset($stored['rejected'][$fid]);
+        $changed++;
+    }
     if ($changed) {
         $stored['updated'] = time();
         update_option(KOP_INSPECTION_LINKS_OPTION, $stored, false);

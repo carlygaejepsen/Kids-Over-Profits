@@ -51,6 +51,26 @@ if (!function_exists('wp_untrash_post')) {
     }
 }
 
+if (!function_exists('wp_insert_post')) {
+    function wp_insert_post($post, $wp_error = false) {
+        $GLOBALS['pdo']->prepare('INSERT INTO wpdl_posts (post_author, post_date, post_content, post_title, post_excerpt, post_status, post_name, post_modified, post_type)
+                                  VALUES (?, ?, ?, ?, \'\', ?, \'\', ?, ?)')
+            ->execute(array((int) ($post['post_author'] ?? 0), gmdate('Y-m-d H:i:s'), (string) ($post['post_content'] ?? ''), (string) $post['post_title'],
+                (string) $post['post_status'], gmdate('Y-m-d H:i:s'), (string) $post['post_type']));
+        return (int) $GLOBALS['pdo']->lastInsertId();
+    }
+}
+if (!function_exists('get_current_user_id')) {
+    function get_current_user_id() { return 1; }
+}
+if (!function_exists('wp_delete_post')) {
+    function wp_delete_post($id, $force = false) {
+        $GLOBALS['pdo']->prepare('DELETE FROM wpdl_postmeta WHERE post_id = ?')->execute(array((int) $id));
+        $GLOBALS['pdo']->prepare('DELETE FROM wpdl_posts WHERE ID = ?')->execute(array((int) $id));
+        return (object) array('ID' => $id);
+    }
+}
+
 (function () {
     $pdo = $GLOBALS['pdo'];
     $pdo->exec('CREATE TABLE IF NOT EXISTS wpdl_posts (ID INTEGER PRIMARY KEY, post_author INTEGER, post_date TEXT, post_content TEXT, post_title TEXT,
@@ -95,7 +115,7 @@ function kop_rinbox_test_websites(array $src, array $item, callable $check) {
     $res = call_user_func($src['act'], $item['key'], 'trash', array());
     $check('websites: trash', $status() === 'trash', $res['message']);
     $trashed = kop_rinbox_get_item('websites', $item['key']);
-    $check('websites: a trashed website offers Restore', array_column($trashed['actions'], 'id') === array('untrash'));
+    $check('websites: a trashed website offers Restore and Delete permanently', array_column($trashed['actions'], 'id') === array('untrash', 'delete'));
     $res = call_user_func($src['act'], $item['key'], 'untrash', array());
     $check('websites: restore puts it back where it was', $status() === 'pending', $res['message']);
 
@@ -111,6 +131,31 @@ function kop_rinbox_test_websites(array $src, array $item, callable $check) {
     $res = call_user_func($src['act'], $item['key'], 'unmove', array());
     $row = $GLOBALS['pdo']->query('SELECT status FROM news_submissions WHERE id = ' . (int) $done['id'])->fetchColumn();
     $check('websites: Undo move takes the news row back and the website waits again', $row === 'deleted' && $status() === 'pending', $res['message']);
+    // The edit screen's text box, WordPress's Add and Delete Permanently, the status counts.
+    call_user_func($src['save'], $item['key'], array('note' => 'Checked: the staff list is from 2004.'));
+    $check('websites: the note (the entry\'s text) is saved', get_post($id)->post_content === 'Checked: the staff list is from 2004.');
+    try {
+        call_user_func($src['act'], $item['key'], 'delete', array());
+        $check('websites: only a trashed website can be deleted for good', false);
+    } catch (RuntimeException $e) {
+        $check('websites: only a trashed website can be deleted for good', $status() === 'pending', $e->getMessage());
+    }
+    $res = call_user_func($src['tool'], 'add', array('url' => 'https://example.test/added-by-hand', 'title' => 'Added by hand', 'facility' => 'Inbox Ranch', 'notes' => 'From a search.'));
+    $new = (int) $res['key'];
+    $check('websites: Add a website puts it on the waiting list', $new > 0 && get_post_meta($new, '_kop_url', true) === 'https://example.test/added-by-hand'
+        && $GLOBALS['pdo']->query('SELECT post_status FROM wpdl_posts WHERE ID = ' . $new)->fetchColumn() === 'pending', $res['message']);
+    try {
+        call_user_func($src['tool'], 'add', array('url' => 'not a link'));
+        $check('websites: Add refuses a link that is not one', false);
+    } catch (RuntimeException $e) {
+        $check('websites: Add refuses a link that is not one', true, $e->getMessage());
+    }
+    $counts = call_user_func($src['view_counts'], array());
+    $check('websites: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['pending'] >= 2, json_encode($counts));
+    call_user_func($src['act'], (string) $new, 'trash', array());
+    $res = call_user_func($src['act'], (string) $new, 'delete', array());
+    $check('websites: Delete permanently removes a trashed website', !get_post($new), $res['message']);
+
     try {
         call_user_func($src['act'], $item['key'], 'move', array('to' => 'website'));
         $check('websites: a facility destination with no facility is refused', false);

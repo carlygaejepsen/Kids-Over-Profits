@@ -29,7 +29,22 @@ if (kop_rinbox_test_wants('people-merge')) {
 function kop_rinbox_test_people_merge(array $src, array $item, callable $check) {
     $pdo = $GLOBALS['pdo'];
     list($a, $b) = array_map('intval', explode(':', $item['key']));
-    $check('people-merge: both people are named', strpos($item['text'], '#' . $a) !== false && strpos($item['text'], '#' . $b) !== false);
+    $heads = implode(' | ', $item['compare']['heads'] ?? array());
+    $check('people-merge: the two people side by side', strpos($heads, '#' . $a . ')') !== false && strpos($heads, '#' . $b . ')') !== false
+        && in_array('Named at', array_column($item['compare']['rows'], 'label'), true), $heads);
+    $counts = call_user_func($src['view_counts'], array());
+    $check('people-merge: every tab has a count', array_keys($counts) == array_keys($src['views']), json_encode($counts));
+    $ids = array_column($src['tools'], 'id');
+    $check('people-merge: tools to merge any two people and to give new names an id', in_array('merge_any', $ids, true) && in_array('sync', $ids, true), implode(',', $ids));
+    $first = kop_people_load()['rows'][$a];
+    $found = call_user_func($src['lookup'], 'person', mb_substr($first['name'], 0, 6));
+    $check('people-merge: the name boxes suggest people', in_array('#' . $a, array_column($found, 'value'), true), count($found) . ' found');
+    try {
+        call_user_func($src['tool'], 'merge_any', array('keep' => '#' . $a, 'drop' => (string) $a));
+        $check('people-merge: one person twice is refused', false);
+    } catch (RuntimeException $e) {
+        $check('people-merge: one person twice is refused', true, $e->getMessage());
+    }
     $merge = null;
     foreach ($item['actions'] as $x) if ($x['id'] === 'merge') $merge = $x;
     $check('people-merge: merge asks which name to keep', $merge && array_keys($merge['params'][0]['options']) == array((string) $a, (string) $b));
@@ -72,5 +87,15 @@ function kop_rinbox_test_people_merge(array $src, array $item, callable $check) 
             && array_filter($merged['actions'], function ($x) { return $x['id'] === 'undo'; }));
         $res = call_user_func($src['act'], $res['key'], 'undo', array());
         $check('people-merge: Undo puts the people and documents back exactly', $snap() === $before, $res['message']);
+
+        // The same two through "Merge these two people" (by #id), then its Undo.
+        $res = call_user_func($src['tool'], 'merge_any', array('keep' => '#' . $drop, 'drop' => '#' . $keep));
+        $into = (int) $pdo->query('SELECT merged_into FROM wpdl_kop_people WHERE id = ' . $keep)->fetchColumn();
+        $log = kop_pmerge_log();
+        $check('people-merge: the tool merges any two people', $into === $drop, $res['message']);
+        $res = call_user_func($src['act'], 'merge:' . $log[0]['id'], 'undo', array());
+        $check('people-merge: and its Undo puts them back exactly', $snap() === $before, $res['message']);
+        $res = call_user_func($src['tool'], 'sync', array());
+        $check('people-merge: "give new names an id now" runs the sync', strpos($res['message'], 'new ids') !== false, $res['message']);
     });
 }

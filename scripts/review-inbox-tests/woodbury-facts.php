@@ -76,7 +76,7 @@ function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check
     $none = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND facility_id = 0 AND grp <> 'consultant' AND ya = 0 ORDER BY id LIMIT 1");
     $it = kop_rinbox_get_item('woodbury-facts', $none);
     $ids = array_column($it['actions'], 'id');
-    $check('woodbury-facts: a program with no record can be pointed at one, created, or moved to young adult', $ids === array('apply', 'create', 'ya_on', 'reject'), implode(',', $ids));
+    $check('woodbury-facts: a program with no record can be pointed at one, created, or moved to young adult', array_values(array_diff($ids, array('add_person'))) === array('apply', 'create', 'ya_on', 'reject'), implode(',', $ids));
     try {
         call_user_func($src['act'], $none, 'apply', array('facility' => ''));
         $check('woodbury-facts: adding with no record picked is refused', false);
@@ -112,4 +112,42 @@ function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check
         $it = kop_rinbox_get_item('woodbury-facts', $applied);
         $check('woodbury-facts: an added item offers Undo', array_column($it['actions'], 'id') === array('undo') && $it['facility']['id'] > 0);
     }
+
+    // What the old screen also did.
+    $res = call_user_func($src['list'], array('view' => 'records', 'search' => '', 'offset' => 0, 'limit' => 25, 'filters' => array('grp' => 'incident')));
+    $grps = array_unique(array_map(function ($it) { return kop_wbf_rows(array($it['key']))[0]['grp']; }, $res['items']));
+    $check('woodbury-facts: the kind filter shows only that kind', !$res['items'] || $grps === array('incident'), $res['total'] . ' incidents');
+    $counts = call_user_func($src['view_counts'], array('search' => '', 'filters' => array()));
+    $check('woodbury-facts: every tab has its count', count($counts) === 8 && $counts['pending'] === (int) $pdo->query("SELECT COUNT(*) FROM $t WHERE status = 'pending'")->fetchColumn(), json_encode($counts));
+    $pre = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND preselect = 1 AND facility_id > 0 ORDER BY id LIMIT 1");
+    $notpre = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND preselect = 0 AND facility_id > 0 ORDER BY id LIMIT 1");
+    $check('woodbury-facts: a checked quote at a sure match starts ticked, others do not',
+        ($pre === '' || kop_rinbox_get_item('woodbury-facts', $pre)['selected'] === true) && ($notpre === '' || kop_rinbox_get_item('woodbury-facts', $notpre)['selected'] === false));
+    $alt = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND facility_id > 0 AND alternatives LIKE '%\"id\"%' ORDER BY id LIMIT 1");
+    if ($alt !== '') {
+        $ids = array_column(kop_rinbox_get_item('woodbury-facts', $alt)['actions'], 'id');
+        $check('woodbury-facts: the other close names are one-click adds', (bool) preg_grep('/^apply_to_\d+$/', $ids), implode(',', $ids));
+    }
+    $it = kop_rinbox_get_item('woodbury-facts', $staff);
+    $create = array_values(array_filter($it['actions'], function ($a) { return $a['id'] === 'create'; }))[0] ?? array();
+    $check('woodbury-facts: a matched item can still go on a new record, with its type and "different place"',
+        in_array('type', array_column($create['params'] ?? array(), 'name'), true) && in_array('force', array_column($create['params'] ?? array(), 'name'), true));
+    try {
+        call_user_func($src['act'], $staff, 'add_person', array('name' => '', 'role' => 'x'));
+        $check('woodbury-facts: adding a person needs a name', false);
+    } catch (RuntimeException $e) {
+        $check('woodbury-facts: adding a person needs a name', true, $e->getMessage());
+    }
+    try {
+        $m = call_user_func($src['act'], $staff, 'add_person', array('name' => 'Testy McTestface', 'role' => 'Night staff', 'pastJobs' => '', 'where' => 'staff.notableStaff'));
+        $new = $pdo->query("SELECT * FROM $t WHERE label LIKE 'Testy McTestface%'")->fetch(PDO::FETCH_ASSOC);
+        $check('woodbury-facts: "Add this person" adds a waiting staff item citing the same page', $new && $new['status'] === 'pending' && $new['grp'] === 'staff'
+            && (int) $new['facility_id'] === (int) $before['facility_id'], $m['message']);
+        if ($new) $pdo->prepare("DELETE FROM $t WHERE pkey = ?")->execute(array($new['pkey']));
+    } catch (Throwable $e) {
+        $check('woodbury-facts: "Add this person"', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $check('woodbury-facts: queue tools are "Add the plainly stated items now" and "Load again"', array_column($src['tools'], 'id') === array('auto', 'resync'));
+    $m = call_user_func($src['tool'], 'resync', array());
+    $check('woodbury-facts: "Load the facts file again" answers', $m['message'] !== '', $m['message']);
 }

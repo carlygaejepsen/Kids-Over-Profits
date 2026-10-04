@@ -38,7 +38,10 @@ function kop_rinbox_test_glossary_feedback(array $src, array $item, callable $ch
     $res = call_user_func($src['act'], $item['key'], 'added', array());
     $check('glossary-feedback: mark added', $row()->status === 'added', $res['message']);
     $again = kop_rinbox_get_item('glossary-feedback', $item['key']);
-    $check('glossary-feedback: an added note can go back to new', array_column($again['actions'], 'id') === array('new'));
+    $check('glossary-feedback: an added note can be dismissed or go back to new, as on the old screen', array_column($again['actions'], 'id') === array('dismissed', 'new'));
+    $counts = call_user_func($src['view_counts'], array());
+    $check('glossary-feedback: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['added'] >= 1, json_encode($counts));
+    $check('glossary-feedback: All lists every note', call_user_func($src['list'], array('view' => 'all', 'search' => '', 'offset' => 0, 'limit' => 1))['total'] === $counts['all']);
     call_user_func($src['act'], $item['key'], 'new', array());
     $check('glossary-feedback: back to new', $row()->status === 'new');
     call_user_func($src['act'], $item['key'], 'dismissed', array());

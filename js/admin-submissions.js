@@ -125,6 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // PHP). Admins are already authenticated, so we never need to ask them to
     // type a name/email. Fall back to any previously-saved value for safety.
     const REVIEWER = config.reviewer || localStorage.getItem('adminEmail') || '';
+    // Endpoints of the old Lawsuit, Legislation and News Processor pages
+    // (printed by templates/page-admin-submissions.php).
+    const TOOLS = window.kopSubmissionsTools || {};
 
     // Type and status are tab rows; the hidden inputs hold the current value.
     const typeTabs = Array.from(document.querySelectorAll('.type-tabs [data-type]'));
@@ -149,11 +152,23 @@ document.addEventListener('DOMContentLoaded', () => {
      * so its tab, stat and buttons show on the news type alone.
      */
     function syncNewsOnly() {
-        const isNews = typeFilter.value === 'news';
+        const type = typeFilter.value;
+        const isNews = type === 'news';
+        const isRecord = type === 'lawsuit' || type === 'legislation';
         document.querySelectorAll('.news-only').forEach(el => { el.hidden = !isNews; });
+        // The old Lawsuit / Legislation / News Processor pages' controls.
+        document.querySelectorAll('.record-only').forEach(el => { el.hidden = !isRecord; });
+        document.querySelectorAll('.legislation-only').forEach(el => { el.hidden = type !== 'legislation'; });
+        document.querySelectorAll('.dated-only').forEach(el => { el.hidden = !(isRecord || isNews); });
+        document.querySelectorAll('.can-add').forEach(el => { el.hidden = !(isRecord || isNews); });
+        document.querySelectorAll('.not-data').forEach(el => { el.hidden = type === 'data'; });
         if (!isNews && statusFilter.value === 'promotional') {
             statusFilter.value = 'submitted';
         }
+        if (type === 'data' && statusFilter.value === 'draft') {
+            statusFilter.value = 'submitted';
+        }
+        if (typeof syncAddNew === 'function') syncAddNew();
     }
 
     markTabs(typeTabs, 'data-type', typeFilter.value);
@@ -191,6 +206,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     statusFilter.addEventListener('change', loadSubmissions);
     searchFilter.addEventListener('input', debounce(loadSubmissions, 500));
+    ['jurisdictionFilter', 'levelFilter', 'sortFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', loadSubmissions);
+    });
     refreshBtn.addEventListener('click', () => {
         loadStats();
         loadSubmissions();
@@ -677,6 +696,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // "Came from" (filled by js/review-inbox.js): the scraper, an import, the extension, people.
         const originFilter = document.getElementById('originFilter');
         if (originFilter && originFilter.value) params.set('origin', originFilter.value);
+        // Place, level and date order (the old Lawsuit / Legislation pages' list filters).
+        [['jurisdictionFilter', 'jurisdiction'], ['levelFilter', 'level'], ['sortFilter', 'sort']].forEach(([id, key]) => {
+            const el = document.getElementById(id);
+            if (el && el.value && !el.closest('[hidden]')) params.set(key, el.value);
+        });
 
         loadingMessage.style.display = 'block';
         detachModal();              // restore modal to original parent before wiping list
@@ -870,6 +894,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (currentType === 'legislation' || currentType === 'lawsuit') {
                 const icon  = currentType === 'legislation' ? kopIcon('landmark') : kopIcon('scale');
                 const label = currentType === 'legislation' ? 'Bill' : 'Court case';
+                // What the old admin lists showed: filing date, or bill number and bill status.
+                const rec = submission.json_data || {};
+                const extra = currentType === 'lawsuit'
+                    ? (rec.filing_date ? `<span>${kopIcon('calendar')} Filed ${escapeHtml(String(rec.filing_date).slice(0, 10))}</span>` : '')
+                    : ((rec.bill_number ? `<span>${escapeHtml(rec.bill_number)}</span>` : '')
+                        + (rec.status && rec.status !== 'unknown' ? `<span>${escapeHtml(String(rec.status).replace(/_/g, ' '))}</span>` : ''));
                 card.innerHTML = `
                     <div class="submission-header">
                         <h3>${escapeHtml(submission.program_name || 'Untitled')}</h3>
@@ -878,6 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="submission-meta">
                         <span>${icon} ${label}</span>
                         <span>${kopIcon('map-pin')} ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
+                        ${extra}
                     </div>
                     ${footer}
                 `;
@@ -1273,6 +1304,8 @@ document.addEventListener('DOMContentLoaded', () => {
         publishBtn.disabled = false;
         deleteBtn.disabled = false;
         if (promoBtn) promoBtn.disabled = status === 'promotional';
+        const statusSel = document.getElementById('setStatusSelect');
+        if (statusSel) statusSel.value = (status === 'pending' ? 'submitted' : status) || 'submitted';
 
         // Publish is a wiki/news concept (approved → live on wiki). The
         // suggested_edits enum for data submissions only allows
@@ -1718,10 +1751,10 @@ document.addEventListener('DOMContentLoaded', () => {
         legislation: [
             { key: 'bill_title', label: 'Bill title', type: 'text' },
             { key: 'bill_number', label: 'Bill number', type: 'text' },
-            { key: 'jurisdiction', label: 'Jurisdiction', type: 'text' },
+            { key: 'jurisdiction', label: 'Jurisdiction', type: 'jurisdiction' },
             { key: 'chamber', label: 'Chamber', type: 'select', options: ['unknown','house','senate','assembly','joint','federal_house','federal_senate','other'] },
-            { key: 'session_year', label: 'Session / year', type: 'text' },
-            { key: 'bill_type', label: 'Bill type', type: 'text' },
+            { key: 'session_year', label: 'Session / year (choices follow the jurisdiction)', type: 'suggest' },
+            { key: 'bill_type', label: 'Bill type (choices follow the jurisdiction)', type: 'suggest' },
             { key: 'status', label: 'Bill status', type: 'select', options: ['unknown','proposed','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted'] },
             { key: 'position', label: 'KOP position', type: 'select', options: ['unknown','support','oppose','neutral','watch'] },
             { key: 'introduced_date', label: 'Introduced date', type: 'date' },
@@ -1734,13 +1767,14 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'tags', label: 'Tags (one per line)', type: 'list' },
             { key: 'full_text_url', label: 'Full text URL', type: 'url' },
             { key: 'official_url', label: 'Official tracker URL', type: 'url' },
+            { key: 'filebird_folder_id', label: 'FileBird folder (supporting documents)', type: 'folder' },
             { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
         ],
         lawsuit: [
             { key: 'case_name', label: 'Case name', type: 'text' },
             { key: 'case_number', label: 'Case number', type: 'text' },
             { key: 'court', label: 'Court', type: 'text' },
-            { key: 'jurisdiction', label: 'Jurisdiction', type: 'text' },
+            { key: 'jurisdiction', label: 'Jurisdiction', type: 'jurisdiction' },
             { key: 'status', label: 'Case status', type: 'select', options: ['unknown','filed','in_progress','settled','dismissed','ruling','appeal','closed'] },
             { key: 'filing_date', label: 'Filing date', type: 'date' },
             { key: 'settlement_amount', label: 'Settlement amount', type: 'text' },
@@ -1755,6 +1789,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'source_urls', label: 'Source URLs (one per line)', type: 'list' },
             { key: 'document_urls', label: 'Document URLs (one per line)', type: 'list' },
             { key: 'tags', label: 'Tags (one per line)', type: 'list' },
+            { key: 'filebird_folder_id', label: 'FileBird folder (case documents)', type: 'folder' },
             { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
         ],
         news: [
@@ -1765,17 +1800,47 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'publication_date', label: 'Publication date', type: 'date' },
             { key: 'article_url', label: 'Article URL', type: 'url' },
             { key: 'article_type', label: 'Article type', type: 'select', options: ['general','lawsuit','event','expose','arrest','closure','corporate'] },
-            { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'article_location', label: 'Location (City, State or Country)', type: 'text' },
+            { key: 'summary', label: 'Summary (2-3 factual, trauma-sensitive sentences)', type: 'textarea' },
+            { key: 'tags', label: 'Tags (one per line)', type: 'list' },
             { key: 'promoKind', label: 'Industry PR kind (for articles filed as PR)', type: 'select', options: ['', 'fundraiser', 'anniversary', 'marketing', 'expansion', 'award', 'hiring', 'community', 'other'] },
             { key: 'organizationLogoName', label: 'Featured company / organization', type: 'text' },
             { key: 'organizationLogoUrl', label: 'Company logo image URL (HTTPS)', type: 'url' },
             { key: 'facilities_mentioned', label: 'Facilities mentioned (one per line)', type: 'list' },
             { key: 'staff_mentioned', label: 'Staff/owners mentioned (one per line)', type: 'list' },
             { key: 'survivors_mentioned', label: 'Survivors mentioned (one per line)', type: 'list' },
-            { key: 'content_warnings', label: 'Content warnings (one per line)', type: 'list' },
+            { key: 'content_warnings', label: 'Content warnings', type: 'checks' },
+            // The News Processor's "Article type and details" (kept in json_data); each shows for its type.
+            { key: 'plaintiffs', label: 'Plaintiffs', type: 'text', showFor: 'lawsuit' },
+            { key: 'defendants', label: 'Defendants', type: 'text', showFor: 'lawsuit' },
+            { key: 'legalRep', label: 'Legal representation', type: 'text', showFor: 'lawsuit' },
+            { key: 'dateFiled', label: 'Date filed', type: 'date', showFor: 'lawsuit' },
+            { key: 'jurisdiction', label: 'Jurisdiction', type: 'text', showFor: 'lawsuit' },
+            { key: 'pressReleases', label: 'Press releases (one URL per line)', type: 'textarea', showFor: 'lawsuit' },
+            { key: 'relatedCoverage', label: 'Related coverage (one URL per line)', type: 'textarea', showFor: 'event' },
+            { key: 'staffMemberName', label: 'Staff member name', type: 'text', showFor: 'arrest' },
+            { key: 'arrestFacilityName', label: 'Facility name', type: 'text', showFor: 'arrest' },
+            { key: 'misconductDates', label: 'Date(s) of alleged misconduct', type: 'text', showFor: 'arrest' },
+            { key: 'charges', label: 'Charges', type: 'textarea', showFor: 'arrest' },
+            { key: 'caseStatus', label: 'Case status (e.g. awaiting trial, convicted)', type: 'text', showFor: 'arrest' },
+            { key: 'closureFacilityName', label: 'Facility name', type: 'text', showFor: 'closure' },
+            { key: 'closureLocation', label: 'Location (City, State)', type: 'text', showFor: 'closure' },
+            { key: 'closureDate', label: 'Date of closure', type: 'date', showFor: 'closure' },
+            { key: 'closureContext', label: 'Context / reason', type: 'textarea', showFor: 'closure' },
+            { key: 'corporateFacilityNames', label: 'Facility name(s), old and new', type: 'textarea', showFor: 'corporate' },
+            { key: 'corporateLocation', label: 'Location (City, State)', type: 'text', showFor: 'corporate' },
+            { key: 'keyPersonnel', label: 'Key personnel', type: 'textarea', showFor: 'corporate' },
+            { key: 'ownership', label: 'Ownership / funding', type: 'textarea', showFor: 'corporate' },
             { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
         ],
     };
+
+    const US_STATES = Array.isArray(TOOLS.states) ? TOOLS.states : [];
+    const CONTENT_WARNINGS = Array.isArray(TOOLS.contentWarnings) ? TOOLS.contentWarnings : [];
+    // Keys of the AI / auto-fill results that hold lists.
+    const LIST_KEYS = new Set(['plaintiffs', 'defendants', 'facilities_mentioned', 'staff_mentioned', 'organizations_mentioned',
+        'claims', 'source_urls', 'document_urls', 'tags', 'sponsors', 'subject_tags', 'facilities_affected',
+        'survivors_mentioned', 'content_warnings']);
 
     // Types whose real column values are nested in decoded json_data (the GET
     // 'get' response remaps top-level status/submitted_by for these).
@@ -1899,6 +1964,58 @@ document.addEventListener('DOMContentLoaded', () => {
                 input = document.createElement('textarea');
                 input.rows = 3;
                 input.value = coerceList(src[f.key]).join('\n');
+            } else if (f.type === 'jurisdiction') {
+                // Federal or a state, as on the old admin pages; an unusual stored value stays choosable.
+                input = document.createElement('select');
+                const cur = src[f.key] != null ? String(src[f.key]) : '';
+                ['', 'Federal'].concat(US_STATES).concat(cur && cur !== 'Federal' && !US_STATES.includes(cur) ? [cur] : []).forEach(opt => {
+                    const o = document.createElement('option');
+                    o.value = opt;
+                    o.textContent = opt || '(not set)';
+                    input.appendChild(o);
+                });
+                input.value = cur;
+            } else if (f.type === 'folder') {
+                input = document.createElement('select');
+                const cur = src[f.key] != null && src[f.key] !== '' ? String(src[f.key]) : '';
+                input.innerHTML = '<option value="">No folder</option>'
+                    + (cur ? `<option value="${escapeHtml(cur)}">Folder #${escapeHtml(cur)}</option>` : '');
+                input.value = cur;
+                input.dataset.want = cur;
+                fillFolderSelect(input);
+                if (TOOLS.mediaAdmin) {
+                    const a = document.createElement('a');
+                    a.href = TOOLS.mediaAdmin;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.className = 'kop-edit-hint';
+                    a.textContent = 'Manage folders or upload files (opens the media library)';
+                    input.kopAfter = a;
+                }
+            } else if (f.type === 'checks') {
+                // The News Processor's content warning boxes; a warning not on the list stays ticked.
+                input = document.createElement('div');
+                input.className = 'kop-edit-checks';
+                const have = coerceList(src[f.key]);
+                CONTENT_WARNINGS.concat(have.filter(w => !CONTENT_WARNINGS.includes(w))).forEach(w => {
+                    const l = document.createElement('label');
+                    const cb = document.createElement('input');
+                    cb.type = 'checkbox';
+                    cb.value = w;
+                    cb.checked = have.includes(w);
+                    l.appendChild(cb);
+                    l.appendChild(document.createTextNode(' ' + w));
+                    input.appendChild(l);
+                });
+            } else if (f.type === 'suggest') {
+                // Typed freely; choices come from the jurisdiction (api/list-jurisdiction-meta.php).
+                input = document.createElement('input');
+                input.type = 'text';
+                input.value = src[f.key] != null ? String(src[f.key]) : '';
+                input.setAttribute('list', `dl-${type}-${f.key}`);
+                const dl = document.createElement('datalist');
+                dl.id = `dl-${type}-${f.key}`;
+                wrap.appendChild(dl);
             } else {
                 input = document.createElement('input');
                 input.type = (f.type === 'date') ? 'date' : (f.type === 'url' ? 'url' : 'text');
@@ -1911,10 +2028,511 @@ document.addEventListener('DOMContentLoaded', () => {
             input.dataset.fieldKey = f.key;
             input.dataset.fieldType = f.type;
             wrap.appendChild(input);
+            if (input.kopAfter) wrap.appendChild(input.kopAfter);
+            if (f.type === 'checks') wrap.classList.add('kop-edit-full');
+            if (f.showFor) {
+                wrap.dataset.showFor = f.showFor;
+                wrap.classList.add('kop-edit-detail');
+            }
             grid.appendChild(wrap);
         });
 
         structuredEditorBody.appendChild(grid);
+        // The old pages' auto-fill and AI buttons, above the fields.
+        const tools = buildEditorTools(type, submission);
+        if (tools) structuredEditorBody.insertBefore(tools, grid);
+        wireEditorFields(type);
+    }
+
+    // =========================================================================
+    // Tools from the old Lawsuit, Legislation and News Processor pages
+    // =========================================================================
+
+    /** The editor's input for a field key. */
+    function editorField(key) {
+        return structuredEditorBody ? structuredEditorBody.querySelector(`[data-field-key="${key}"]`) : null;
+    }
+
+    /** A field's current value in the editor (lists as arrays). */
+    function editorValue(key) {
+        const el = editorField(key);
+        if (!el) return '';
+        if (el.dataset.fieldType === 'list') return el.value.split(/[\r\n]+/).map(s => s.trim()).filter(Boolean);
+        if (el.dataset.fieldType === 'checks') return Array.from(el.querySelectorAll('input:checked')).map(cb => cb.value);
+        return el.value;
+    }
+
+    /**
+     * Put auto-fill / AI results into the editor. Only keys the editor has and
+     * that came back with something are changed; nothing is saved until Save
+     * Edits. document_urls is added to, never replaced. Returns what changed.
+     */
+    function fillEditor(values) {
+        const changed = [];
+        Object.entries(values || {}).forEach(([key, raw]) => {
+            const el = editorField(key);
+            if (!el || raw == null) return;
+            let list = Array.isArray(raw) ? raw.map(x => (x && typeof x === 'object') ? (x.name || '') : String(x)).map(s => s.trim()).filter(Boolean) : null;
+            const kind = el.dataset.fieldType;
+            if (kind === 'list') {
+                if (!list) list = String(raw).split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+                if (!list.length) return;
+                if (key === 'document_urls') list = Array.from(new Set(editorValue(key).concat(list)));
+                el.value = list.join('\n');
+            } else if (kind === 'checks') {
+                if (!list) list = String(raw).split(/\n|,\s*/).map(s => s.trim()).filter(Boolean);
+                if (!list.length) return;
+                list.forEach(w => {
+                    let cb = Array.from(el.querySelectorAll('input')).find(c => c.value.toLowerCase() === w.toLowerCase());
+                    if (!cb) {
+                        const l = document.createElement('label');
+                        cb = document.createElement('input');
+                        cb.type = 'checkbox';
+                        cb.value = w;
+                        l.appendChild(cb);
+                        l.appendChild(document.createTextNode(' ' + w));
+                        el.appendChild(l);
+                    }
+                    cb.checked = true;
+                });
+            } else {
+                let v = list ? list.join(', ') : String(raw).trim();
+                if (v === '') return;
+                if (el.type === 'date') v = v.slice(0, 10);
+                if (el.tagName === 'SELECT') {
+                    if (!Array.from(el.options).some(o => o.value === v)) {
+                        if (kind !== 'jurisdiction') return; // not one of the choices
+                        const o = document.createElement('option');
+                        o.value = v;
+                        o.textContent = v;
+                        el.appendChild(o);
+                    }
+                }
+                if (el.value === v) return;
+                el.value = v;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            changed.push(key);
+        });
+        return changed;
+    }
+
+    let folderCache = null;
+    /** FileBird folders for the folder pickers, indented under their parents (as the old pages listed them). */
+    async function loadFolders() {
+        if (folderCache) return folderCache;
+        if (!TOOLS.folders) return [];
+        try {
+            const res = await fetch(TOOLS.folders, { credentials: 'same-origin' });
+            const data = await res.json();
+            const folders = Array.isArray(data) ? data : [];
+            const byId = new Map(folders.map(f => [String(f.id), Object.assign({}, f, { children: [] })]));
+            const roots = [];
+            byId.forEach(f => {
+                const parent = String(f.parent || 0);
+                if (parent === '0' || !byId.has(parent)) roots.push(f); else byId.get(parent).children.push(f);
+            });
+            const flat = [];
+            const walk = (nodes, depth) => nodes.slice()
+                .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+                .forEach(n => { flat.push({ id: String(n.id), name: n.name, depth }); walk(n.children, depth + 1); });
+            walk(roots, 0);
+            folderCache = flat;
+        } catch (e) {
+            console.warn('Could not load FileBird folders', e);
+            folderCache = [];
+        }
+        return folderCache;
+    }
+
+    async function fillFolderSelect(select) {
+        const folders = await loadFolders();
+        if (!folders.length || !select.isConnected) return;
+        const want = select.value || select.dataset.want || '';
+        select.innerHTML = '<option value="">No folder</option>' + folders.map(f =>
+            `<option value="${escapeHtml(f.id)}">${'— '.repeat(f.depth)}${escapeHtml(f.name)}</option>`).join('');
+        if (want && !folders.some(f => f.id === want)) {
+            select.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(want)}">Folder #${escapeHtml(want)}</option>`);
+        }
+        select.value = want;
+    }
+
+    /** Bill types and sessions for a jurisdiction (the old Legislation page's dropdowns). */
+    async function loadBillMeta(type) {
+        if (type !== 'legislation' || !TOOLS.billMeta) return;
+        const jurisdiction = editorValue('jurisdiction');
+        const levelSel = structuredEditorBody.querySelector('.kop-tool-level');
+        const level = jurisdiction === 'Federal' ? 'federal' : (levelSel ? levelSel.value : 'state');
+        const fill = (key, items) => {
+            const dl = document.getElementById(`dl-${type}-${key}`);
+            if (!dl) return;
+            dl.innerHTML = items.map(i => `<option value="${escapeHtml(i.value)}">${escapeHtml(i.label)}</option>`).join('');
+        };
+        if (!jurisdiction) { fill('bill_type', []); fill('session_year', []); return; }
+        try {
+            const params = new URLSearchParams({ jurisdiction, level });
+            const res = await fetch(`${TOOLS.billMeta}?${params}`, { credentials: 'same-origin' });
+            const data = await res.json();
+            fill('bill_type', (data.bill_types || []).map(b => ({ value: b, label: b })));
+            fill('session_year', (data.sessions || []).map(s => ({ value: s.identifier, label: s.name || s.identifier })));
+        } catch (e) {
+            console.warn('Bill choices failed', e);
+        }
+    }
+
+    let savedValuesCache = null;
+    /** The News Processor's saved authors and publications, offered as you type. */
+    async function attachSavedValues() {
+        if (!TOOLS.savedValues) return;
+        try {
+            if (!savedValuesCache) {
+                const res = await fetch(`${TOOLS.savedValues}?form=news`, { credentials: 'same-origin' });
+                const data = await res.json();
+                savedValuesCache = (data && data.data && data.data.news) || {};
+            }
+        } catch (e) {
+            savedValuesCache = {};
+        }
+        [['author', 'authors'], ['publication_name', 'publications']].forEach(([key, cat]) => {
+            const el = editorField(key);
+            const vals = (savedValuesCache[cat] || []).map(v => v.value).filter(Boolean);
+            if (!el || !vals.length) return;
+            const dl = document.createElement('datalist');
+            dl.id = `dl-news-${key}`;
+            dl.innerHTML = vals.map(v => `<option value="${escapeHtml(v)}"></option>`).join('');
+            el.insertAdjacentElement('afterend', dl);
+            el.setAttribute('list', dl.id);
+        });
+    }
+
+    /** Field behaviour after the editor is drawn: detail fields per article type, bill choices. */
+    function wireEditorFields(type) {
+        if (type === 'news') {
+            const typeSel = editorField('article_type');
+            const sync = () => {
+                const t = typeSel ? typeSel.value : '';
+                structuredEditorBody.querySelectorAll('.kop-edit-detail').forEach(w => { w.hidden = w.dataset.showFor !== t; });
+            };
+            if (typeSel) typeSel.addEventListener('change', sync);
+            sync();
+            attachSavedValues();
+        }
+        if (type === 'legislation') {
+            const j = editorField('jurisdiction');
+            if (j) j.addEventListener('change', () => loadBillMeta(type));
+            loadBillMeta(type);
+        }
+    }
+
+    /**
+     * Records already holding these addresses (api/check-duplicate-url.php, the
+     * check the old pages ran), leaving out this one. Never blocks on an error.
+     */
+    async function findDuplicates(type, body) {
+        if (!TOOLS.checkDuplicate || !['news', 'lawsuit', 'legislation'].includes(type)) return [];
+        try {
+            const res = await fetch(TOOLS.checkDuplicate, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(Object.assign({ type }, body))
+            });
+            const data = await res.json();
+            return (data && data.success && data.duplicates) || [];
+        } catch (e) {
+            console.warn('Duplicate check failed', e);
+            return [];
+        }
+    }
+
+    /** The address fields the duplicate check reads, per type, from the editor. */
+    function duplicateQuery(type, excludeId) {
+        if (type === 'lawsuit') return { fields: { source_urls: editorValue('source_urls'), document_urls: editorValue('document_urls') }, exclude_id: excludeId || 0 };
+        if (type === 'legislation') return { fields: { full_text_url: editorValue('full_text_url') }, exclude_id: excludeId || 0 };
+        if (type === 'news') return { url: editorValue('article_url'), title: editorValue('article_title'), outlet: editorValue('publication_name'), exclude_id: excludeId || 0 };
+        return null;
+    }
+
+    /** Ask before going on when another record has the same address. True = go on. */
+    async function okDespiteDuplicates(type, query, doing) {
+        if (!query) return true;
+        if (query.fields) {
+            Object.keys(query.fields).forEach(k => {
+                const v = query.fields[k];
+                if (Array.isArray(v) ? !v.length : !String(v || '').trim()) delete query.fields[k];
+            });
+            if (!Object.keys(query.fields).length) return true;
+        } else if (!String(query.url || '').trim() && !String(query.title || '').trim()) {
+            return true;
+        }
+        const dupes = await findDuplicates(type, query);
+        if (!dupes.length) return true;
+        const list = dupes.slice(0, 3).map(d => `- ${d.title || '(untitled)'} (#${d.id}, ${d.status || 'unknown status'})`).join('\n');
+        return confirm(`This already seems to be in our records:\n${list}\n\n${doing} anyway?`);
+    }
+
+    /** A row of tool buttons for the record type, or null. */
+    function buildEditorTools(type, submission) {
+        if (!['lawsuit', 'legislation', 'news'].includes(type)) return null;
+        const box = document.createElement('div');
+        box.className = 'kop-edit-tools';
+        const status = document.createElement('p');
+        status.className = 'kop-edit-tools-status';
+        status.setAttribute('aria-live', 'polite');
+        const say = (msg, isError) => {
+            status.textContent = msg || '';
+            status.className = 'kop-edit-tools-status' + (msg ? (isError ? ' error' : ' success') : '');
+        };
+        const button = (label, icon) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'btn-secondary kop-tool-btn';
+            b.innerHTML = (icon ? kopIcon(icon) + ' ' : '') + escapeHtml(label);
+            return b;
+        };
+        const busy = async (b, text, fn) => {
+            const html = b.innerHTML;
+            b.disabled = true;
+            b.textContent = text;
+            try { await fn(); } finally { b.disabled = false; b.innerHTML = html; }
+        };
+        const filled = (changed, what) => say(changed.length
+            ? `${what} Filled: ${changed.map(k => k.replace(/_/g, ' ')).join(', ')}. Check them, then Save Edits.`
+            : `${what} Nothing new came back; the fields are unchanged.`);
+        const id = submission && submission.id;
+        const row = document.createElement('div');
+        row.className = 'kop-edit-tools-row';
+        box.appendChild(row);
+
+        if (type === 'lawsuit') {
+            const cl = button('Auto-fill from CourtListener (federal cases)', 'sparkles');
+            cl.addEventListener('click', () => busy(cl, 'Fetching...', async () => {
+                const caseNumber = editorValue('case_number').trim();
+                const jurisdiction = editorValue('jurisdiction');
+                if (!caseNumber || !jurisdiction) { say('Fill in the case number and jurisdiction first.', true); return; }
+                if (!await okDespiteDuplicates(type, duplicateQuery(type, id), 'Fetch')) return;
+                say('Fetching the case from CourtListener...');
+                try {
+                    const params = new URLSearchParams({ case_number: caseNumber, jurisdiction, court: editorValue('court') });
+                    const res = await fetch(`${TOOLS.fetchLawsuit}?${params}`, { credentials: 'same-origin' });
+                    const data = await res.json();
+                    if (data.success) filled(fillEditor(data.data), 'Fetched.');
+                    else say('Fetch failed: ' + (data.error || 'check the case number and jurisdiction.'), true);
+                } catch (e) {
+                    say('Could not reach the CourtListener lookup.', true);
+                }
+            }));
+
+            const file = document.createElement('input');
+            file.type = 'file';
+            file.accept = '.pdf,.doc,.docx,.txt,application/pdf';
+            file.hidden = true;
+            const up = button('Upload the complaint and read it with AI', 'file-text');
+            up.title = 'PDF, DOCX or TXT up to 20 MB. The file is saved to the media library.';
+            up.addEventListener('click', () => { if (!up.disabled) { file.value = ''; file.click(); } });
+            file.addEventListener('change', () => {
+                const f = file.files && file.files[0];
+                if (!f) return;
+                busy(up, 'Uploading...', () => readComplaint(f, up, say, filled));
+            });
+
+            const paste = button('Paste JSON from another AI', 'clipboard');
+            const panel = document.createElement('div');
+            panel.className = 'kop-edit-paste';
+            panel.hidden = true;
+            panel.innerHTML = `<textarea rows="8" class="kop-edit-input" aria-label="JSON to paste" spellcheck="false"></textarea>
+                <div class="kop-edit-paste-actions"><button type="button" class="btn-save-edits kop-paste-apply">Fill the fields</button>
+                <button type="button" class="btn-secondary kop-paste-cancel">Cancel</button></div>`;
+            const ta = panel.querySelector('textarea');
+            const empty = JSON.stringify({ case_name: '', case_number: '', court: '', jurisdiction: '', filing_date: '', status: '',
+                outcome: '', settlement_amount: '', summary: '', plaintiffs: [], defendants: [], facilities_mentioned: [],
+                staff_mentioned: [], organizations_mentioned: [], claims: [], source_urls: [], document_urls: [], tags: [] }, null, 2);
+            paste.addEventListener('click', () => {
+                panel.hidden = !panel.hidden;
+                if (!panel.hidden) { if (!ta.value.trim()) ta.value = empty; ta.focus(); ta.select(); }
+            });
+            panel.querySelector('.kop-paste-cancel').addEventListener('click', () => { panel.hidden = true; ta.value = ''; say(''); });
+            panel.querySelector('.kop-paste-apply').addEventListener('click', () => {
+                let parsed;
+                try {
+                    parsed = JSON.parse(ta.value.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, ''));
+                } catch (e) {
+                    say('That is not valid JSON: ' + e.message, true);
+                    return;
+                }
+                Object.keys(parsed || {}).forEach(k => {
+                    if (LIST_KEYS.has(k) && typeof parsed[k] === 'string') parsed[k] = parsed[k].split(/\n|,\s*/).map(s => s.trim()).filter(Boolean);
+                });
+                filled(fillEditor(parsed), 'Pasted.');
+                panel.hidden = true;
+                ta.value = '';
+            });
+            row.append(cl, up, file, paste);
+            box.appendChild(panel);
+        }
+
+        if (type === 'legislation') {
+            const lvl = document.createElement('label');
+            lvl.className = 'kop-tool-label';
+            lvl.innerHTML = 'Level <select class="kop-tool-level"><option value="state">State</option><option value="federal">Federal</option></select>';
+            const lvlSel = lvl.querySelector('select');
+            const rec = (submission && submission.json_data) || {};
+            lvlSel.value = rec.jurisdiction === 'Federal' ? 'federal' : 'state';
+            lvlSel.addEventListener('change', () => loadBillMeta(type));
+            const fb = button('Auto-fill from government sources', 'sparkles');
+            fb.addEventListener('click', () => busy(fb, 'Fetching...', async () => {
+                const raw = editorValue('bill_number').trim();
+                const billType = editorValue('bill_type').trim();
+                const jurisdiction = editorValue('jurisdiction');
+                const level = jurisdiction === 'Federal' ? 'federal' : lvlSel.value;
+                if (!raw || !jurisdiction) { say('Fill in the bill number and jurisdiction first.', true); return; }
+                if (!await okDespiteDuplicates(type, duplicateQuery(type, id), 'Fetch')) return;
+                // Type "SB" + number "1190" -> "SB 1190"; a number already starting with letters stays.
+                const number = (billType && !/^[a-zA-Z]/.test(raw)) ? `${billType} ${raw}` : raw;
+                say('Fetching the bill...');
+                try {
+                    const params = new URLSearchParams({ bill_number: number, jurisdiction, level });
+                    const session = editorValue('session_year');
+                    if (session) params.set('session', session);
+                    const res = await fetch(`${TOOLS.fetchBill}?${params}`, { credentials: 'same-origin' });
+                    const data = await res.json();
+                    if (data.success) {
+                        const d = Object.assign({}, data.data);
+                        if (d.position === 'unknown') delete d.position; // never overwrite our own position
+                        filled(fillEditor(d), 'Fetched.');
+                        loadBillMeta(type);
+                    } else {
+                        say('Fetch failed: ' + (data.error || 'check the bill number and jurisdiction.'), true);
+                    }
+                } catch (e) {
+                    say('Could not reach the bill lookup.', true);
+                }
+            }));
+            row.append(lvl, fb);
+        }
+
+        if (type === 'news') {
+            const ai = document.createElement('div');
+            ai.className = 'kop-edit-ai';
+            ai.innerHTML = `<p class="kop-edit-hint">Read the article with AI, as the News Processor did: it fills title, author, date, outlet,
+                    location, tags, names, summary, alternate title, content warnings, type and details. Check the fields, then Save Edits.</p>
+                <label>Article address <input type="url" class="kop-edit-input kop-ai-url"></label>
+                <label>Or paste the article text (when the address does not work)
+                    <textarea rows="3" class="kop-edit-input kop-ai-text"></textarea></label>
+                <label>Extra instructions for the AI (optional)
+                    <textarea rows="2" class="kop-edit-input kop-ai-instr" placeholder="e.g. Focus on the financial connections"></textarea></label>`;
+            const urlIn = ai.querySelector('.kop-ai-url');
+            const textIn = ai.querySelector('.kop-ai-text');
+            const instrIn = ai.querySelector('.kop-ai-instr');
+            urlIn.value = (submission && submission.article_url) || '';
+            try { instrIn.value = localStorage.getItem('news_ai_custom_instructions') || ''; } catch (e) { /* no storage */ }
+            const go = button('Read with AI', 'bot');
+            go.addEventListener('click', () => busy(go, 'Reading...', async () => {
+                const url = urlIn.value.trim();
+                const text = textIn.value.trim();
+                const instr = instrIn.value.trim();
+                if (!url && !text) { say('Give the article address or paste its text.', true); return; }
+                if (url && !await okDespiteDuplicates(type, { url, exclude_id: id || 0 }, 'Read it')) return;
+                try { if (instr) localStorage.setItem('news_ai_custom_instructions', instr); } catch (e) { /* no storage */ }
+                say('Reading the article with AI (Groq and Gemini take turns)...');
+                try {
+                    const res = await fetch(TOOLS.newsAi, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ url, articleText: text, provider: 'auto', customInstructions: instr })
+                    });
+                    const result = await res.json();
+                    if (!result.success) { say('The AI could not read it: ' + (result.error || 'unknown error'), true); return; }
+                    filled(fillEditor(newsAiToFields(result.data || {}, url)), 'Read.');
+                } catch (e) {
+                    say('Could not reach the AI reader: ' + e.message, true);
+                }
+            }));
+            ai.appendChild(go);
+            box.appendChild(ai);
+        }
+
+        if (type === 'news' || type === 'lawsuit') {
+            // Pick facilities by name, as the News Processor's facility picker did.
+            const key = 'facilities_mentioned';
+            const pick = document.createElement('div');
+            pick.className = 'kop-edit-pick';
+            pick.innerHTML = '<span>Add a facility by name:</span> <input type="number" class="kop-edit-pick-box" data-kop-facility-finder="multi" hidden aria-label="Facility">';
+            const boxIn = pick.querySelector('input');
+            boxIn.addEventListener('kop-facility-picked', (e) => {
+                const f = e.detail || {};
+                if (!f.name) return;
+                const el = editorField(key);
+                if (!el) return;
+                const have = editorValue(key);
+                if (!have.some(n => n.toLowerCase() === f.name.toLowerCase())) el.value = have.concat([f.name]).join('\n');
+                say(`Added ${f.name} to the facilities mentioned. Save Edits to link it.`);
+            });
+            box.appendChild(pick);
+            setTimeout(() => { if (window.kopFacilityFinderAttach) window.kopFacilityFinderAttach(boxIn); }, 0);
+        }
+
+        box.appendChild(status);
+        return box;
+    }
+
+    /** The News Processor's AI answer, mapped onto this editor's fields. */
+    function newsAiToFields(d, url) {
+        const out = {};
+        const map = { title: 'article_title', author: 'author', publicationDate: 'publication_date', publicationName: 'publication_name',
+            location: 'article_location', tags: 'tags', facilities: 'facilities_mentioned', staff: 'staff_mentioned',
+            survivors: 'survivors_mentioned', summary: 'summary', alternateTitle: 'alternate_title',
+            contentWarnings: 'content_warnings', articleType: 'article_type' };
+        Object.entries(map).forEach(([from, to]) => { if (d[from] != null && d[from] !== '') out[to] = d[from]; });
+        if (url) out.article_url = url;
+        // typeSpecificData is flat ({plaintiffs: ...}) or grouped by type ({"for lawsuit": {...}}).
+        const spec = d.typeSpecificData && typeof d.typeSpecificData === 'object' ? d.typeSpecificData : {};
+        Object.entries(spec).forEach(([k, v]) => {
+            if (v && typeof v === 'object' && !Array.isArray(v)) Object.assign(out, v);
+            else out[k] = v;
+        });
+        if (out.article_type) out.article_type = String(out.article_type).toLowerCase();
+        return out;
+    }
+
+    /** Upload a complaint, read it chunk by chunk, merge (api/extract-lawsuit-from-document.php). */
+    async function readComplaint(file, btn, say, filled) {
+        if (!TOOLS.extractLawsuit) { say('The complaint reader is not available.', true); return; }
+        const post = body => fetch(TOOLS.extractLawsuit, {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body), signal: AbortSignal.timeout(90 * 1000)
+        }).then(r => r.json());
+        try {
+            say(`Uploading "${file.name}"...`);
+            const form = new FormData();
+            form.append('action', 'upload');
+            form.append('complaint', file);
+            const folder = editorValue('filebird_folder_id');
+            if (folder) form.append('filebird_folder_id', folder);
+            const upload = await fetch(TOOLS.extractLawsuit, { method: 'POST', credentials: 'same-origin', body: form, signal: AbortSignal.timeout(90 * 1000) }).then(r => r.json());
+            if (!upload.success) throw new Error(upload.error || 'Upload failed');
+            const wait = upload.wait_ms || 65000;
+            for (let i = 0; i < upload.total_chunks; i++) {
+                if (i > 0) {
+                    btn.textContent = `Waiting (${i}/${upload.total_chunks})...`;
+                    say(`Part ${i} of ${upload.total_chunks} read. Waiting ${Math.round(wait / 1000)} seconds before the next (free AI limits)...`);
+                    await new Promise(r => setTimeout(r, wait));
+                }
+                btn.textContent = `Part ${i + 1}/${upload.total_chunks}...`;
+                say(`Reading part ${i + 1} of ${upload.total_chunks}...`);
+                const chunk = await post({ action: 'chunk', job_id: upload.job_id, chunk_index: i });
+                if (!chunk.success) throw new Error(chunk.error || `Part ${i + 1} failed`);
+            }
+            btn.textContent = 'Finishing...';
+            const done = await post({ action: 'finalize', job_id: upload.job_id });
+            if (!done.success) throw new Error(done.error || 'Finishing failed');
+            filled(fillEditor(done.data || {}), 'Read the complaint.');
+        } catch (e) {
+            console.error('Complaint read failed', e);
+            say('Reading the complaint failed: ' + e.message, true);
+        }
     }
 
     /** Gather edited values into a {col: value} map for update_fields. */
@@ -1934,8 +2552,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const fields = {};
         structuredEditorBody.querySelectorAll('[data-field-key]').forEach(el => {
             const key = el.dataset.fieldKey;
-            if (el.dataset.fieldType === 'list') {
-                fields[key] = el.value.split(/[\r\n]+/).map(s => s.trim()).filter(Boolean);
+            if (el.dataset.fieldType === 'list' || el.dataset.fieldType === 'checks') {
+                fields[key] = editorValue(key);
             } else {
                 fields[key] = el.value;
             }
@@ -1958,6 +2576,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (fields.__error) { setEditorStatus(fields.__error, true); return; }
 
         const id = currentSubmission.id;
+        // The duplicate check the old Lawsuit, Legislation and News Processor pages ran before saving.
+        if (!await okDespiteDuplicates(type, duplicateQuery(type, id), 'Save')) return;
         saveFieldsBtn.disabled = true;
         const original = saveFieldsBtn.innerHTML;
         saveFieldsBtn.textContent = 'Saving...';
@@ -1971,7 +2591,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             const result = await response.json();
             if (result.success) {
-                setEditorStatus('✓ Saved', false);
+                setEditorStatus('✓ Saved' + (result.documents_filed ? `. ${result.documents_filed} case document(s) are in its FileBird folder.` : '')
+                    + (result.link_warning ? ' ' + result.link_warning : ''), false);
                 // Refresh the list (titles/locations on cards may have changed)
                 // and re-open this submission so the editor shows stored values.
                 loadSubmissions();
@@ -2339,5 +2960,155 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (submissionModal) {
         _facilityLinkObserver.observe(submissionModal, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // =========================================================================
+    // Set any status, download the record, add a new one (old admin pages)
+    // =========================================================================
+
+    const setStatusSelect = document.getElementById('setStatusSelect');
+    const setStatusBtn = document.getElementById('setStatusBtn');
+    if (setStatusBtn && setStatusSelect) {
+        setStatusBtn.addEventListener('click', async () => {
+            if (!currentSubmission) return;
+            const want = setStatusSelect.value;
+            // Published goes through Publish, which also stamps the date and links a lawsuit's facilities.
+            if (want === 'published') { performAction('publish'); return; }
+            const type = typeFilter ? typeFilter.value : 'wiki';
+            setStatusBtn.disabled = true;
+            actionStatus.innerHTML = '<span class="loading">Processing...</span>';
+            try {
+                const res = await fetch(MANAGE_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'update_status', type, ids: [currentSubmission.id], status: want })
+                });
+                const result = await res.json();
+                if (result.success) {
+                    actionStatus.innerHTML = `<span class="success">${kopIcon('check')} ${escapeHtml(result.message)}</span>`;
+                    const id = currentSubmission.id;
+                    setTimeout(() => { loadStats(); loadSubmissions(); viewSubmission(id); }, 800);
+                } else {
+                    actionStatus.innerHTML = `<span class="error">✗ ${escapeHtml(result.error || 'Could not set the status')}</span>`;
+                }
+            } catch (e) {
+                actionStatus.innerHTML = '<span class="error">✗ Network error</span>';
+            } finally {
+                setStatusBtn.disabled = false;
+            }
+        });
+    }
+
+    // The News Processor's "Export as JSON".
+    const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+    if (downloadJsonBtn) {
+        downloadJsonBtn.addEventListener('click', () => {
+            if (!currentSubmission) return;
+            const type = typeFilter ? typeFilter.value : 'wiki';
+            const blob = new Blob([modalFormData.textContent || '{}'], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${type}-${currentSubmission.id}.json`;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+        });
+    }
+
+    // "+ New Lawsuit" / "+ New Bill" / the News Processor's "Submit to Database".
+    // A function, not a const: syncNewsOnly() runs before this line is reached.
+    function addNewWords() { return {
+        news: { button: 'Add an article', name: 'Article title', url: 'Article web address (optional)',
+            help: 'It opens in the Pending tab. Use Read with AI there to fill in the rest, then approve it.' },
+        lawsuit: { button: 'Add a lawsuit', name: 'Case name', url: 'Source web address (optional)',
+            help: 'It opens in the Pending tab, where the CourtListener, complaint and paste buttons fill in the rest.' },
+        legislation: { button: 'Add a bill', name: 'Bill title', url: 'Bill text web address (optional)',
+            help: 'It opens in the Pending tab, where "Auto-fill from government sources" fills in the rest.' },
+    }; }
+
+    function syncAddNew() {
+        const type = (document.getElementById('typeFilter') || {}).value;
+        const words = addNewWords()[type];
+        const label = document.getElementById('addNewLabel');
+        const panel = document.getElementById('addNewPanel');
+        if (label && words) label.textContent = words.button;
+        if (panel && (!words || panel.dataset.type !== type)) panel.hidden = true;
+    }
+
+    const addNewBtn = document.getElementById('addNewBtn');
+    const addNewPanel = document.getElementById('addNewPanel');
+    if (addNewBtn && addNewPanel) {
+        const nameIn = document.getElementById('addNewName');
+        const urlIn = document.getElementById('addNewUrl');
+        const saveBtn = document.getElementById('addNewSaveBtn');
+        const statusEl = document.getElementById('addNewStatus');
+        const say = (msg, isError) => {
+            statusEl.textContent = msg || '';
+            statusEl.className = 'structured-editor-status' + (msg ? (isError ? ' error' : ' success') : '');
+        };
+        addNewBtn.addEventListener('click', () => {
+            const type = typeFilter.value;
+            const words = addNewWords()[type];
+            if (!words) return;
+            addNewPanel.dataset.type = type;
+            addNewPanel.hidden = !addNewPanel.hidden;
+            document.getElementById('addNewTitle').textContent = words.button;
+            document.getElementById('addNewNameLabel').textContent = words.name;
+            document.getElementById('addNewUrlLabel').textContent = words.url;
+            document.getElementById('addNewHelp').textContent = words.help;
+            say('');
+            if (!addNewPanel.hidden) nameIn.focus();
+        });
+        document.getElementById('addNewCancelBtn').addEventListener('click', () => { addNewPanel.hidden = true; });
+        saveBtn.addEventListener('click', async () => {
+            const type = addNewPanel.dataset.type;
+            const name = nameIn.value.trim();
+            const url = urlIn.value.trim();
+            if (!name) { say(`Write the ${addNewWords()[type].name.toLowerCase()} first.`, true); return; }
+            if (url && !/^https?:\/\//i.test(url)) { say('The web address must start with http:// or https://', true); return; }
+            let endpoint, body, dupe;
+            if (type === 'lawsuit') {
+                endpoint = TOOLS.saveLawsuit;
+                body = { case_name: name, source_urls: url ? [url] : [], publication_status: 'pending' };
+                dupe = url ? { fields: { source_urls: [url] } } : null;
+            } else if (type === 'legislation') {
+                endpoint = TOOLS.saveLegislation;
+                body = { bill_title: name, full_text_url: url, publication_status: 'pending' };
+                dupe = url ? { fields: { full_text_url: url } } : null;
+            } else {
+                endpoint = TOOLS.saveNews;
+                body = { title: name, url, status: 'submitted', submittedBy: REVIEWER };
+                dupe = { url, title: name };
+            }
+            if (!endpoint) { say('This page is missing its save address; reload it.', true); return; }
+            if (!await okDespiteDuplicates(type, dupe, 'Add it')) return;
+            saveBtn.disabled = true;
+            say('Saving...');
+            try {
+                const res = await fetch(endpoint, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await res.json();
+                if (!result.success || !result.id) {
+                    say(result.message || result.error || 'Could not add it.', true);
+                    return;
+                }
+                nameIn.value = '';
+                urlIn.value = '';
+                addNewPanel.hidden = true;
+                statusFilter.value = 'submitted';
+                markTabs(statusTabs, 'data-status', 'submitted');
+                loadStats();
+                await loadSubmissions();
+                viewSubmission(result.id);
+            } catch (e) {
+                say('Network error: ' + e.message, true);
+            } finally {
+                saveBtn.disabled = false;
+            }
+        });
     }
 });

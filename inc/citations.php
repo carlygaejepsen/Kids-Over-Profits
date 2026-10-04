@@ -33,7 +33,7 @@ function kop_citation_link($url, $label, $preview = '', $new_tab = false, $class
     }
     $rel = ($nofollow ? 'nofollow ' : '') . 'noopener';
     $attrs = ' class="' . esc_attr($classes) . '" data-kop-citation-preview="' . esc_attr($preview) . '"'
-        . ' title="' . esc_attr('Citation preview: ' . $preview) . '" rel="' . esc_attr($rel) . '"';
+        . ' rel="' . esc_attr($rel) . '"';
     if ($new_tab) {
         $attrs .= ' target="_blank"';
     }

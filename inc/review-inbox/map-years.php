@@ -6,7 +6,10 @@
  * show on the map and the facility pages at once.
  *
  * Keys: the candidate's id (the map name's id). The years are edited on
- * Accept (its two number boxes start from the researched years).
+ * Accept (its two number boxes start from the researched years, "Still
+ * operating" leaves the closing year off). Tools: accept every
+ * high-confidence proposal at once (the Map Years screen's bulk button), and
+ * the map rebuild of KOP Tools > Map Rebuild.
  */
 
 if (!defined('ABSPATH')) {
@@ -29,6 +32,14 @@ kop_rinbox_register('map-years', function () {
             }
             return $n;
         },
+        'view_counts' => 'kop_rinbox_myears_view_counts',
+        'tools'    => array_values(array_filter(array(
+            array('id' => 'accept_high', 'label' => 'Accept every high-confidence year', 'style' => 'approve',
+                'help' => 'Accepts, as proposed, every year on To review that the research rated high confidence.',
+                'confirm' => 'Accept every high-confidence year as proposed? Each can be undone on the Accepted tab.'),
+            function_exists('kop_rinbox_map_rebuild_tool') ? kop_rinbox_map_rebuild_tool('Accepted years show on the map at once, without a rebuild.') : null,
+        ))),
+        'tool'     => 'kop_rinbox_myears_tool',
         'list'     => 'kop_rinbox_myears_list',
         'get'      => function ($key) {
             $c = kop_network_years_candidates()[$key] ?? null;
@@ -37,6 +48,42 @@ kop_rinbox_register('map-years', function () {
         'act'      => 'kop_rinbox_myears_act',
     );
 });
+
+function kop_rinbox_myears_view_counts() {
+    $decisions = kop_network_years_decisions();
+    $counts = array('review' => 0, 'none' => 0, 'accepted' => 0, 'rejected' => 0);
+    foreach (kop_network_years_candidates() as $id => $c) {
+        $v = kop_rinbox_myears_view($c, $decisions[$id] ?? array());
+        if (isset($counts[$v])) $counts[$v]++;
+    }
+    return $counts;
+}
+
+/** The proposed years of a candidate: [start, end, still operating]. */
+function kop_rinbox_myears_proposed(array $c) {
+    $still = !empty($c['stillOperating']);
+    return array(!empty($c['start']) ? (int) $c['start'] : 0, !empty($c['end']) && !$still ? (int) $c['end'] : 0, $still);
+}
+
+function kop_rinbox_myears_tool($id, array $params) {
+    if ($id === 'map_rebuild') return kop_rinbox_map_rebuild_run();
+    if ($id !== 'accept_high') throw new RuntimeException('Unknown tool.');
+    $decisions = kop_network_years_decisions();
+    $items = array();
+    foreach (kop_network_years_candidates() as $cid => $c) {
+        if (kop_rinbox_myears_view($c, $decisions[$cid] ?? array()) !== 'review' || ($c['confidence'] ?? '') !== 'high') continue;
+        list($start, $end) = kop_rinbox_myears_proposed($c);
+        $items[] = array('id' => (string) $cid, 'decision' => 'accept', 'start' => $start, 'end' => $end);
+    }
+    if (!$items) return array('message' => 'No high-confidence years are waiting.');
+    $done = 0;
+    $failed = 0;
+    foreach (kop_network_years_decide($items, kop_rinbox_reviewer()) as $r) {
+        if (!empty($r['error'])) $failed++;
+        else $done++;
+    }
+    return array('message' => 'Accepted ' . $done . ' year' . ($done === 1 ? '' : 's') . ($failed ? '; ' . $failed . ' could not be (open them to fix the years)' : '') . '. They are on the map now.');
+}
 
 /** Which tab a candidate is on. */
 function kop_rinbox_myears_view(array $c, array $d) {
@@ -84,31 +131,30 @@ function kop_rinbox_myears_item($id, array $c) {
     $view = kop_rinbox_myears_view($c, $d);
     $kinds = array('facility' => 'Program', 'parent' => 'Company', 'association' => 'Trade group',
         'church' => 'Church', 'government' => 'Government body', 'other' => 'Other');
-    $still = !empty($c['stillOperating']);
-    $start = !empty($c['start']) ? (int) $c['start'] : 0;
-    $end = !empty($c['end']) && !$still ? (int) $c['end'] : 0;
+    list($start, $end, $still) = kop_rinbox_myears_proposed($c);
     $proposed = kop_network_years_format($start, $end);
-    $text = $proposed !== '' ? 'Proposed: ' . $proposed . ($still ? ' (still operating)' : '') . '.' : 'No year was found for this name.';
-    if (!empty($c['note'])) $text .= "\n\n" . $c['note'];
-    $links = array();
-    foreach ((array) ($c['sources'] ?? array()) as $s) {
-        if (empty($s['url'])) continue;
-        if (!empty($s['quote'])) $text .= "\n\n\"" . $s['quote'] . '"' . "\n(" . $s['url'] . ')';
-        $host = (string) wp_parse_url($s['url'], PHP_URL_HOST);
-        $links[] = array('label' => $host !== '' ? preg_replace('/^www\./', '', $host) : 'Source', 'url' => $s['url']);
-    }
+    $text = $proposed !== ''
+        ? 'Proposed: ' . str_replace('-', ' to ', $proposed) . ($still ? ' (still operating)' : '') . '. Check the quotes below; some were read through a summary of the page, so open the source to confirm the wording.'
+        : 'No year was found for this name. If you know the years, type them in and save them; otherwise leave it off the timeline.';
+    $details = array();
+    if ($proposed !== '') $details[] = array('label' => 'Confidence', 'value' => (string) ($c['confidence'] ?? 'low'));
+    if (!empty($c['note'])) $details[] = array('label' => 'Note', 'value' => (string) $c['note']);
+    if ($view === 'accepted') $details[] = array('label' => 'On the map', 'value' => str_replace('-', ' to ', (string) ($d['years'] ?? '')) . (!empty($d['by']) ? ' (accepted by ' . $d['by'] . ')' : ''));
+    $details = array_merge($details, kop_rinbox_quote_details((array) ($c['sources'] ?? array())));
     $map = function_exists('kop_network_map_page_url') ? kop_network_map_page_url() : home_url('/network-map/');
-    $links[] = array('label' => 'On the network map', 'url' => $map . '#open=' . rawurlencode($id));
+    $links = array(array('label' => 'See it on the network map', 'url' => $map . '#open=' . rawurlencode($id)));
     $labels = array('review' => 'To review', 'none' => 'No year found', 'accepted' => 'Accepted', 'rejected' => 'Rejected');
     if ($view === 'accepted' || $view === 'rejected') {
         $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo'));
     } else {
+        $found = $view === 'review';
         $actions = array(
-            array('id' => 'accept', 'label' => 'Accept these years', 'style' => 'approve', 'params' => array(
+            array('id' => 'accept', 'label' => $found ? 'Accept these years' : 'Save these years', 'style' => 'approve', 'params' => array(
                 array('name' => 'start', 'label' => 'Opened (year)', 'type' => 'number', 'value' => $start ? (string) $start : ''),
-                array('name' => 'end', 'label' => 'Closed (year; empty if still open or unknown)', 'type' => 'number', 'value' => $end ? (string) $end : ''),
+                array('name' => 'end', 'label' => 'Closed (year; empty if unknown)', 'type' => 'number', 'value' => $end ? (string) $end : '', 'optional' => true),
+                array('name' => 'still', 'label' => 'Still operating', 'type' => 'checkbox', 'value' => $still, 'optional' => true),
             )),
-            array('id' => 'reject', 'label' => 'Reject', 'style' => 'reject'),
+            array('id' => 'reject', 'label' => $found ? 'Reject' : 'Leave off the timeline', 'style' => 'reject'),
         );
     }
     $fid = kop_rinbox_myears_facility_ids()[$id] ?? 0;
@@ -118,6 +164,7 @@ function kop_rinbox_myears_item($id, array $c) {
         'subtitle'     => implode(' · ', array_filter(array($kinds[$c['kind'] ?? ''] ?? '', (string) ($c['place'] ?? ''),
             'confidence: ' . ($c['confidence'] ?? 'low')))),
         'text'         => $text,
+        'details'      => $details,
         'status'       => $view,
         'status_label' => $view === 'accepted' ? 'Accepted: ' . ($d['years'] ?? '') : $labels[$view],
         'created'      => (string) ($d['at'] ?? ''),
@@ -134,7 +181,9 @@ function kop_rinbox_myears_act($key, $action, array $params) {
     $item = array('id' => $key);
     switch ($action) {
         case 'accept':
-            $item += array('decision' => 'accept', 'start' => (int) ($params['start'] ?? 0), 'end' => (int) ($params['end'] ?? 0));
+            // "Still operating" has no closing year.
+            $still = !empty($params['still']) && $params['still'] !== '0';
+            $item += array('decision' => 'accept', 'start' => (int) ($params['start'] ?? 0), 'end' => $still ? 0 : (int) ($params['end'] ?? 0));
             break;
         case 'reject':
             $item['decision'] = 'reject';

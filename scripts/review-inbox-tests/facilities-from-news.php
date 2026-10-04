@@ -42,6 +42,16 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     $again = kop_rinbox_get_item('facilities-from-news', $item['key']);
     $values = array_column($again['fields'], 'value', 'name');
     $check('facilities-from-news: the item shows the saved details', $values['officialName'] === 'Renamed In Test' && $values['state'] === 'UT');
+    // The old screen's create form: the details as params on Create, prefilled, only the name required.
+    $create = array_values(array_filter($again['actions'], function ($a) { return $a['id'] === 'create'; }))[0];
+    $p = array_column($create['params'], null, 'name');
+    $check('facilities-from-news: Create carries the form, prefilled', $p['officialName']['value'] === 'Renamed In Test' && $p['state']['value'] === 'UT'
+        && empty($p['officialName']['optional']) && !empty($p['country']['optional']) && isset($p['type']['options']['Wilderness Therapy']));
+    $counts = call_user_func($src['view_counts'], array());
+    $check('facilities-from-news: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['all'] >= $counts['held'], json_encode($counts));
+    $check('facilities-from-news: All recent lists every name', call_user_func($src['list'], array('view' => 'all', 'search' => '', 'offset' => 0, 'limit' => 1))['total'] === $counts['all']);
+    $check('facilities-from-news: details name the article', in_array('Article', array_column($again['details'], 'label'), true));
+    $check('facilities-from-news: the scan tool is offered', ($src['tools'][0]['id'] ?? '') === 'scan' && is_callable($src['tool']));
     foreach (array(array('state' => 'Utah'), array('type' => 'Spa'), array('officialName' => '  ')) as $bad) {
         try {
             call_user_func($src['save'], $item['key'], $bad);

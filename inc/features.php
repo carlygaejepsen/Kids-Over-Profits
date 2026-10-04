@@ -536,11 +536,38 @@ class AnonymousDocPortal {
             wp_die('Not allowed.', 403);
         }
         check_admin_referer('kop_anon_encrypt_existing');
-        $public_key = $this->public_key();
-        if ($public_key === '') {
+        if ($this->public_key() === '') {
             wp_die('No public key is configured.');
         }
+        $done = $this->encrypt_existing();
+        wp_safe_redirect(admin_url('admin.php?page=anonymous-docs&encrypted=' . $done));
+        exit;
+    }
 
+    /**
+     * What the Anonymous Docs screen shows above its list, for the review
+     * inbox: the key in use, whether malware scanning is set up, and how many
+     * submissions from before encryption are still unencrypted.
+     */
+    public function status() {
+        $public_key = $this->public_key();
+        return array(
+            'key'       => $this->key_fingerprint($public_key),
+            'scanning'  => !empty($this->cloudmersive_api_key),
+            'plaintext' => count($this->plaintext_submissions()),
+        );
+    }
+
+    /**
+     * Seal the submissions stored before encryption, deleting each one's
+     * plaintext once all its sealed files are written. Returns how many were
+     * done (0 when there is no public key).
+     */
+    public function encrypt_existing() {
+        $public_key = $this->public_key();
+        if ($public_key === '') {
+            return 0;
+        }
         $done = 0;
         foreach ($this->plaintext_submissions() as $id => $parts) {
             // A lone "notes.txt" is the document itself, not notes.
@@ -589,9 +616,7 @@ class AnonymousDocPortal {
                 $done++;
             }
         }
-
-        wp_safe_redirect(admin_url('admin.php?page=anonymous-docs&encrypted=' . $done));
-        exit;
+        return $done;
     }
 }
 
@@ -601,7 +626,8 @@ class AnonymousDocPortal {
  * This prevents issues with functions like wp_upload_dir() being called too early.
  */
 function kop_initialize_anonymous_doc_portal() {
-    new AnonymousDocPortal();
+    // Kept, so the review inbox can ask it for its status and the encrypt step.
+    $GLOBALS['kop_anon_doc_portal'] = new AnonymousDocPortal();
 }
 add_action('after_setup_theme', 'kop_initialize_anonymous_doc_portal');
 

@@ -52,6 +52,59 @@ function kop_rinbox_test_indigenous_schools(array $src, array $item, callable $c
     call_user_func($src['act'], $item['key'], 'unapprove', array());
     $check('indigenous-schools: take off puts it back to waiting', kop_ischools_get($pdo, $id)['review'] === 'pending');
 
+    // The old screen's article boxes: file one by its number, take it off again.
+    $nid = (int) $pdo->query("SELECT id FROM news_submissions WHERE status <> 'deleted' ORDER BY id DESC LIMIT 1")->fetchColumn();
+    $filed = function ($school) use ($pdo, $nid) {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM indigenous_school_news WHERE school_id = ? AND news_id = ?');
+        $st->execute(array((int) $school, $nid));
+        return (int) $st->fetchColumn();
+    };
+    $res = call_user_func($src['act'], $item['key'], 'link_news', array('news' => '#' . $nid));
+    $check('indigenous-schools: file an article by its number', $filed($id) === 1, $res['message']);
+    $after = kop_rinbox_get_item('indigenous-schools', $item['key']);
+    $unlink = array_values(array_filter($after['actions'], function ($a) { return $a['id'] === 'unlink_news'; }))[0] ?? null;
+    $check('indigenous-schools: Take off lists the filed articles', $unlink && isset($unlink['params'][0]['options'][(string) $nid]));
+    call_user_func($src['act'], $item['key'], 'unlink_news', array('news_id' => $nid));
+    $check('indigenous-schools: take an article off', $filed($id) === 0);
+    foreach (array('' => 'nothing given', '#999999999' => 'no such number', 'zzqx no such title qxzz' => 'no match') as $bad => $why) {
+        try {
+            call_user_func($src['act'], $item['key'], 'link_news', array('news' => $bad));
+            $check("indigenous-schools: filing with $why is refused", false);
+        } catch (RuntimeException $e) {
+            $check("indigenous-schools: filing with $why is refused", true, $e->getMessage());
+        }
+    }
+    $general = kop_rinbox_get_item('indigenous-schools', '0');
+    $check('indigenous-schools: the schools in general is an item with the article boxes', $general['title'] !== '' && in_array('link_news', array_column($general['actions'], 'id'), true) && !$general['fields']);
+    $had0 = $filed(0);
+    call_user_func($src['act'], '0', 'link_news', array('news' => (string) $nid));
+    $check('indigenous-schools: file an article under the schools in general', $filed(0) === 1);
+    if (!$had0) call_user_func($src['act'], '0', 'unlink_news', array('news_id' => $nid));
+    $counts = call_user_func($src['view_counts'], array());
+    $check('indigenous-schools: every tab has a count', array_keys($counts) === array_keys($src['views']), json_encode($counts));
+
+    // "Add a school" by hand, and a name refused when it is taken.
+    $res = call_user_func($src['tool'], 'add', array('name' => 'Inbox Tool Added School', 'country' => 'Canada', 'region' => 'BC', 'city' => ''));
+    $added = kop_ischools_find_by_name($pdo, 'Inbox Tool Added School');
+    $check('indigenous-schools: Add a school makes a listed record', $added && $added['review'] === 'approved' && $added['country'] === 'Canada', $res['message']);
+    try {
+        call_user_func($src['tool'], 'add', array('name' => 'Inbox Tool Added School'));
+        $check('indigenous-schools: a name already taken is refused', false);
+    } catch (RuntimeException $e) {
+        $check('indigenous-schools: a name already taken is refused', true, $e->getMessage());
+    }
+    if ($added) kop_ischools_delete($pdo, (int) $added['id']);
+    try {
+        call_user_func($src['tool'], 'move', array('facility_id' => ''));
+        $check('indigenous-schools: Move needs a facility', false);
+    } catch (RuntimeException $e) {
+        $check('indigenous-schools: Move needs a facility', true, $e->getMessage());
+    }
+    $name = call_user_func($src['list'], array('view' => 'names', 'search' => '', 'offset' => 0, 'limit' => 1))['items'][0] ?? null;
+    if ($name) {
+        $check('indigenous-schools: a set-aside name offers Add as a school', $name['key'][0] === 'c' && array_column($name['actions'], 'id') === array('add_school'));
+    }
+
     $res = call_user_func($src['act'], $item['key'], 'delete', array());
     $links = $pdo->prepare('SELECT COUNT(*) FROM indigenous_school_news WHERE school_id = ?');
     $links->execute(array($id));
