@@ -104,7 +104,12 @@ $order = $sort === 'worst'
     ? 'h.score DESC, h.finding_date DESC, h.id DESC'
     : '(h.score >= ' . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC';
 $page = max(1, (int) ($_GET['paged'] ?? 1));
-$per_page = 40;
+// A hand-picked list (?ids=12,40), for findings reviewed before a rule changed or picked out by a
+// sweep for misreadings. With &tick=1 each card gets a ticked box and one button rejects them all.
+$ids = array_values(array_filter(array_map('intval', explode(',', (string) ($_GET['ids'] ?? '')))));
+$tick = $ids && !empty($_GET['tick']);
+$bulk_note = mb_substr(trim((string) ($_GET['note'] ?? '')), 0, 200);
+$per_page = $ids ? min(400, max(40, count($ids))) : 40;
 
 $rows = array();
 $total = 0;
@@ -121,8 +126,6 @@ try {
     if ($category !== '') { $where[] = 'FIND_IN_SET(?, h.categories)'; $params[] = $category; }
     if ($min > 0) { $where[] = 'h.score >= ?'; $params[] = $min; }
     if ($q !== '') { $where[] = 'f.facility_name LIKE ?'; $params[] = '%' . $q . '%'; }
-    // A hand-picked list (?ids=12,40), for findings reviewed before a rule changed.
-    $ids = array_values(array_filter(array_map('intval', explode(',', (string) ($_GET['ids'] ?? '')))));
     if ($ids) { $where[] = 'h.id IN (' . implode(',', $ids) . ')'; }
     $sql_where = implode(' AND ', $where);
 
@@ -174,6 +177,10 @@ blockquote { margin: 10px 0; padding: 8px 14px; background: #FFF5CB; border-left
 .actions input { flex: 1 1 260px; max-width: 420px; }
 pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-radius: 6px; max-height: 420px; overflow: auto; font: 0.82rem/1.5 system-ui, sans-serif; }
 .pager a { margin-right: 10px; }
+.bulk { position: sticky; top: 0; z-index: 2; background: #fff; border: 2px solid #c0392b; border-radius: 8px; padding: 10px 14px; margin: 12px 0; max-width: 980px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.bulk input[type=text] { flex: 1 1 260px; max-width: 420px; }
+.tick { display: inline-flex; gap: 6px; align-items: center; font-weight: 700; }
+.tick input { width: 18px; height: 18px; }
 </style></head><body>
 <h1>Review inspection highlights</h1>
 <p class="muted">Candidates read out of the inspection reports by the parser. Nothing here is on the site until it is approved. Approved findings scoring <?php echo (int) kop_ih_severe_score(); ?> or more appear on the home page and the inspection reports hub, most recent first. The excerpt is the state's own wording; open the full report before approving, because the parser cannot tell who did what to whom.</p>
@@ -204,6 +211,17 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
     <span class="muted"><?php echo (int) $total; ?> shown by these filters</span>
 </form>
 
+<?php if ($tick && $status === 'pending' && $rows): ?>
+<div class="bulk">
+    <strong>Picked out as likely misreadings.</strong>
+    <span class="muted">Read each one and untick any that is real harm.</span>
+    <button type="button" class="plain" data-bulk="none">Untick all</button>
+    <input type="text" class="bulk-note" placeholder="Note saved with each rejection" value="<?php echo esc_attr($bulk_note); ?>">
+    <button type="button" class="danger" data-bulk="reject">Reject the ticked findings (<span class="bulk-n"><?php echo count($rows); ?></span>)</button>
+    <span class="bulk-status muted"></span>
+</div>
+<?php endif; ?>
+
 <?php foreach ($rows as $row):
     $source = kop_ih_source_url($row);
     $when = $row['finding_date'] ? date_i18n('F j, Y', strtotime($row['finding_date'] . ' 12:00:00')) : $row['report_date'];
@@ -212,6 +230,7 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
 ?>
 <div class="card <?php echo $band; ?>" data-id="<?php echo (int) $row['id']; ?>" data-report="<?php echo (int) $row['report_id']; ?>">
     <div class="head">
+        <?php if ($tick && $row['status'] === 'pending'): ?><label class="tick"><input type="checkbox" class="bulk-pick" checked> Reject</label><?php endif; ?>
         <span class="score"><?php echo (int) $row['score']; ?></span>
         <strong><?php echo esc_html($row['facility_name']); ?></strong>
         <span class="muted"><?php echo esc_html($row['state']); ?> &middot; <?php echo esc_html($when); ?></span>
@@ -245,7 +264,70 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
 <script>
 (function () {
     var nonce = <?php echo json_encode(wp_create_nonce('kop_review_highlights')); ?>;
+    function save(card, act, note) {
+        var body = new FormData();
+        body.append('_wpnonce', nonce);
+        body.append('id', card.getAttribute('data-id'));
+        body.append('decision', act);
+        body.append('note', note);
+        return fetch(location.pathname, { method: 'POST', body: body, credentials: 'same-origin' })
+            .then(function (r) { return r.json(); });
+    }
+    function picked() {
+        return Array.prototype.filter.call(document.querySelectorAll('.card'), function (card) {
+            var box = card.querySelector('.bulk-pick');
+            return box && box.checked && !card.classList.contains('done');
+        });
+    }
+    function countPicked() {
+        var n = document.querySelector('.bulk-n');
+        if (n) n.textContent = picked().length;
+    }
+    function dropTick(card) {
+        var box = card.querySelector('.bulk-pick');
+        if (box) box.closest('label').remove();
+        countPicked();
+    }
+    document.addEventListener('change', function (e) {
+        if (e.target.classList && e.target.classList.contains('bulk-pick')) countPicked();
+    });
     document.addEventListener('click', function (e) {
+        var bulk = e.target.closest('button[data-bulk]');
+        if (bulk) {
+            if (bulk.getAttribute('data-bulk') === 'none') {
+                document.querySelectorAll('.bulk-pick').forEach(function (b) { b.checked = false; });
+                countPicked();
+                return;
+            }
+            var cards = picked();
+            if (!cards.length) return;
+            var shared = document.querySelector('.bulk-note').value;
+            var status = document.querySelector('.bulk-status');
+            var done = 0, failed = 0;
+            bulk.disabled = true;
+            // One at a time, through the same save as the single Reject button.
+            (function next(i) {
+                if (i >= cards.length) {
+                    status.textContent = 'Rejected ' + done + (failed ? '; ' + failed + ' could not be saved (still ticked)' : '') + '.';
+                    bulk.disabled = false;
+                    countPicked();
+                    return;
+                }
+                var card = cards[i];
+                status.textContent = 'Rejecting ' + (i + 1) + ' of ' + cards.length + '...';
+                save(card, 'rejected', card.querySelector('.note').value || shared)
+                    .then(function (j) {
+                        if (!j.success) { failed++; return; }
+                        done++;
+                        card.classList.add('done');
+                        card.querySelector('.actions').innerHTML = '<span class="muted">Marked rejected.</span>';
+                        dropTick(card);
+                    })
+                    .catch(function () { failed++; })
+                    .then(function () { next(i + 1); });
+            })(0);
+            return;
+        }
         var btn = e.target.closest('button[data-act]');
         if (!btn) return;
         var card = btn.closest('.card');
@@ -262,17 +344,12 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
                 .catch(function () { pre.textContent = 'Could not load the report.'; });
             return;
         }
-        var body = new FormData();
-        body.append('_wpnonce', nonce);
-        body.append('id', card.getAttribute('data-id'));
-        body.append('decision', act);
-        body.append('note', card.querySelector('.note').value);
         btn.disabled = true;
-        fetch(location.pathname, { method: 'POST', body: body, credentials: 'same-origin' })
-            .then(function (r) { return r.json(); })
+        save(card, act, card.querySelector('.note').value)
             .then(function (j) {
                 if (!j.success) { alert(j.error || 'Could not save.'); btn.disabled = false; return; }
                 card.classList.add('done');
+                dropTick(card);
                 card.querySelector('.actions').innerHTML = '<span class="muted">Marked ' + j.status + '.'
                     + (j.merged ? ' Merged with ' + j.merged + ' other finding' + (j.merged === 1 ? '' : 's') + ' from the same day.' : '') + '</span>';
             })
