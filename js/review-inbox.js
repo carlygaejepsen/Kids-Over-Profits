@@ -501,6 +501,21 @@
 
     /* ---- Cards ------------------------------------------------------------- */
 
+    /**
+     * The field that holds a card's name: one the queue marks 'title', else the
+     * text field showing the card's title, else one called name/label/title.
+     */
+    var NAME_FIELDS = ['name', 'officialName', 'program_name', 'title', 'label', 'article_title', 'case_name', 'bill_title'];
+    function titleFieldOf(item) {
+        var text = (item.fields || []).filter(function (f) {
+            return (!f.type || f.type === 'text') && !f.readonly && !f.category && !/url|link/i.test(f.name);
+        });
+        return text.filter(function (f) { return f.title; })[0]
+            || text.filter(function (f) { return item.title && String(f.value || '') === item.title; })[0]
+            || text.filter(function (f) { return NAME_FIELDS.indexOf(f.name) !== -1; })[0]
+            || null;
+    }
+
     function fieldInput(f, idPrefix) {
         var id = idPrefix + f.name;
         var input;
@@ -1035,7 +1050,39 @@
             ? el('input', { type: 'checkbox', class: 'rinbox-select', 'aria-label': 'Select ' + (item.title || 'this item'), checked: !!item.selected })
             : null;
         node.kopParams = {};
-        node.appendChild(el('header', { class: 'rinbox-card-head' }, [pick ? el('span', { class: 'rinbox-title-row' }, [pick, title]) : title, meta]));
+        // "Rename" beside the title saves the queue's name field on its own.
+        var nameField = s.can_save ? titleFieldOf(item) : null;
+        var renameForm = null, renameBtn = null;
+        if (nameField) {
+            var renameInput = el('input', { type: 'text', class: 'rinbox-rename-name', 'aria-label': nameField.label || 'Name', value: nameField.value || '' });
+            renameForm = el('form', { class: 'rinbox-rename', hidden: true }, [
+                renameInput,
+                el('button', { type: 'submit', class: 'rinbox-btn rinbox-btn-neutral', text: 'Save name' }),
+                el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Cancel',
+                    onclick: function () { renameForm.hidden = true; renameBtn.setAttribute('aria-expanded', 'false'); }
+                })
+            ]);
+            renameForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var v = renameInput.value.trim();
+                if (!v) { renameInput.focus(); return; }
+                var fields = {};
+                fields[nameField.name] = v;
+                run(node, item, s, src, 'save', { fields: fields }, e.submitter || null);
+            });
+            renameBtn = el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-undo rinbox-rename-toggle', text: 'Rename', 'aria-expanded': 'false',
+                title: 'Change ' + String(nameField.label || 'the name').toLowerCase(),
+                onclick: function () {
+                    renameForm.hidden = !renameForm.hidden;
+                    renameBtn.setAttribute('aria-expanded', renameForm.hidden ? 'false' : 'true');
+                    if (!renameForm.hidden) { renameInput.focus(); renameInput.select(); }
+                }
+            });
+        }
+        var titleRow = pick || renameBtn ? el('span', { class: 'rinbox-title-row' }, [pick, title, renameBtn]) : title;
+        node.appendChild(el('header', { class: 'rinbox-card-head' }, [titleRow, meta, renameForm]));
         if (item.hold) node.appendChild(holdNote(item, src, node));
         if (item.recs && item.recs.length) node.appendChild(recNote(item));
         if (links.childNodes.length) node.appendChild(links);

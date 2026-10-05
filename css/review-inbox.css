@@ -506,6 +506,38 @@ button.rinbox-tag-x:focus-visible {
     display: none;
 }
 
+/* "Rename" beside a card's title and the one-line form it opens. */
+.rinbox-title-row button.rinbox-rename-toggle {
+    flex: none;
+    margin-left: auto;
+    padding: 2px 10px;
+    font-size: 13px;
+}
+
+.rinbox-rename {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin-top: 6px;
+}
+
+.rinbox-rename[hidden] {
+    display: none;
+}
+
+.rinbox-rename input.rinbox-rename-name {
+    flex: 1 1 260px;
+    min-width: 0;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font: inherit;
+    font-size: 14px;
+}
+
 .rinbox-native select,
 .rinbox-native input[type="text"] {
     background: var(--kop-white, #fff);
