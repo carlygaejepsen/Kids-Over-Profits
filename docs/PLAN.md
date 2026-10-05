@@ -623,6 +623,13 @@ updated.
    **Owner:** approve the first post (run Hawaii from the launcher), then
    publish `/hi-reports/`; the state adds reports a few times a year, so a
    quarterly run is enough.
+   **Oregon extension planned 2026-10-05** (`docs/state-inspection-reports/plans/oregon.md`):
+   `/or-reports/` has site visits for two program types and no abuse findings. The same
+   library has 61 substantiated abuse cases (quarterly legislative reports, 2021-Q4 on),
+   restraint and seclusion reports per program (940 PDFs to 2023, a workbook a quarter
+   since) and site visits for the other types. Build into `or_scraper.py`; the abuse
+   cases also give the serious-findings scan its first Oregon input. **Owner:**
+   records request for complaint investigations and licensing actions (not published).
 
 7. **Inspection rankings** (started 2026-10-05, `inc/inspection-rollup.php`,
    KOP Tools > Inspection Rankings). Built: the hourly count of every report's

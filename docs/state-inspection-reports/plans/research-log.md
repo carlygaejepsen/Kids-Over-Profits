@@ -15,6 +15,8 @@ Arizona, Arkansas, California, Connecticut, Florida, Georgia, Michigan,
 Minnesota, Montana, Nevada, North Carolina, Oklahoma, Oregon, Pennsylvania,
 Texas, Utah, Washington.
 
+Oregon is live with site visits only, and for two program types (residential care, therapeutic boarding schools). Re-checked 2026-10-05: the same library also holds substantiated abuse cases (quarterly legislative reports, 61 cases since 2021-Q4), restraint and seclusion reports per program, and site visits for the other program types. Complaint investigations and licensing actions are not published. Plan: [oregon.md](oregon.md).
+
 ## Plan written, ready to build (11)
 
 Ordered by what is lost by waiting, then by size.
