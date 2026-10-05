@@ -222,7 +222,9 @@ function kop_rinbox_log_undo($id) {
     $src = kop_rinbox_source($r['source']);
     $params = json_decode((string) $r['undo_params'], true);
     try {
-        $res = call_user_func($src['act'], (string) $r['item_key'], $r['undo_action'], is_array($params) ? $params : array());
+        $params = is_array($params) ? $params : array();
+        $res = function_exists('kop_rinbox_homes_act') ? kop_rinbox_homes_act($r['source'], (string) $r['item_key'], $r['undo_action'], $params) : null;
+        if ($res === null) $res = call_user_func($src['act'], (string) $r['item_key'], $r['undo_action'], $params);
     } catch (Throwable $e) {
         $wpdb->query($wpdb->prepare("UPDATE $t SET undone_at = NULL, undone_by = '' WHERE id = %d", (int) $id));
         throw $e;

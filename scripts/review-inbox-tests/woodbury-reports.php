@@ -45,7 +45,7 @@ function kop_rinbox_test_woodbury_reports(array $src, array $item, callable $che
     $m = call_user_func($src['act'], $key, 'skip', array());
     $check('woodbury-reports: skip', kop_wb_get($key)['status'] === 'skipped', $m['message']);
     $it = kop_rinbox_get_item('woodbury-reports', $key);
-    $check('woodbury-reports: skipped pages offer Put back', array_column($it['actions'], 'id') === array('reopen'));
+    $check('woodbury-reports: skipped pages offer Put back', kop_rinbox_test_own_actions($it) === array('reopen'));
     $m = call_user_func($src['act'], $key, 'reopen', array());
     $check('woodbury-reports: put back', kop_wb_get($key)['status'] === 'pending', $m['message']);
     try {
@@ -84,7 +84,7 @@ function kop_rinbox_test_woodbury_reports(array $src, array $item, callable $che
     // What the old screen also did.
     $it = kop_rinbox_get_item('woodbury-reports', $key);
     $check('woodbury-reports: the cut pages show in the card', ($it['preview']['url'] ?? '') !== '' && strpos($it['preview']['url'], 'action=kop_wb_view') !== false);
-    $ids = array_column($it['actions'], 'id');
+    $ids = kop_rinbox_test_own_actions($it);
     $check('woodbury-reports: waiting pages can be filed, filed under another kind of record, created, or skipped',
         $ids === array('file', 'file_record', 'create', 'skip'), implode(',', $ids));
     $file = $it['actions'][0];

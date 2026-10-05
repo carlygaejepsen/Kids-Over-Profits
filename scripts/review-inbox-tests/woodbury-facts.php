@@ -110,7 +110,7 @@ function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check
     $applied = $pick("SELECT pkey FROM $t WHERE status = 'applied' AND applied_fid > 0 ORDER BY id LIMIT 1");
     if ($applied !== '') {
         $it = kop_rinbox_get_item('woodbury-facts', $applied);
-        $check('woodbury-facts: an added item offers Undo', array_column($it['actions'], 'id') === array('undo') && $it['facility']['id'] > 0);
+        $check('woodbury-facts: an added item offers Undo', kop_rinbox_test_own_actions($it) === array('undo') && $it['facility']['id'] > 0);
     }
 
     // What the old screen also did.

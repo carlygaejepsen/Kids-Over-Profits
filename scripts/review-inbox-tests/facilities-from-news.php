@@ -89,7 +89,7 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
         $check('facilities-from-news: link marks it matched and links the article', $after['decision'] === 'matched' && (int) $after['facility_id'] === $fid && (int) $linked->fetchColumn() === 1, $res['message']);
         $linked->closeCursor();
         $moved = kop_rinbox_get_item('facilities-from-news', $item['key']);
-        $check('facilities-from-news: a linked name offers only Remove the link', array_column($moved['actions'], 'id') === array('unlink') && !$moved['fields']);
+        $check('facilities-from-news: a linked name offers only Remove the link', kop_rinbox_test_own_actions($moved) === array('unlink') && !$moved['fields']);
         try {
             call_user_func($src['act'], $item['key'], 'create', array());
             $check('facilities-from-news: create is refused once it has a record', false);

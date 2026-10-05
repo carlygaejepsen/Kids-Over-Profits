@@ -9,6 +9,8 @@
  * drawn on the same page by js/review-inbox.js with the same controls: edit
  * the name and details, change the category, tags, move it to another queue,
  * fill empty fields with AI, and the queue's own actions (with its Undo).
+ * Every card about one facility also gets "Home of a program"
+ * (inc/review-inbox/_homes-action.php, answered before the queue's 'act').
  *
  * A source is an adapter in inc/review-inbox/<name>.php that registers with
  * kop_rinbox_register('<name>', fn () => spec or null). The spec is built on
@@ -314,6 +316,14 @@ function kop_rinbox_finish_items($source, array $items) {
         $it['tags'] = $tags[$it['key']] ?? array();
         $it['hold'] = kop_rinbox_hold_info($source, $it['key']);
         $it['recs'] = $recs[$it['key']] ?? array();
+        // "Home of a program" on every card about one facility (inc/review-inbox/_homes-action.php).
+        if (function_exists('kop_rinbox_homes_action') && is_array($it['facility'])) {
+            try {
+                if ($h = kop_rinbox_homes_action($source, $it)) $it['actions'][] = $h;
+            } catch (Throwable $e) {
+                // The card still draws without it.
+            }
+        }
     }
     unset($it);
     return $items;
@@ -621,7 +631,8 @@ function kop_rinbox_rest_act(WP_REST_Request $req) {
         $params = is_array($params) ? wp_unslash($params) : array();
         $action = sanitize_key((string) $req->get_param('action'));
         $before = kop_rinbox_after($source, $key);
-        $res = call_user_func($src['act'], $key, $action, $params);
+        $res = function_exists('kop_rinbox_homes_act') ? kop_rinbox_homes_act($source, $key, $action, $params) : null;
+        if ($res === null) $res = call_user_func($src['act'], $key, $action, $params);
         kop_rinbox_flush_counts();
         $res = is_array($res) ? $res : array();
         $res += array('message' => 'Done.', 'item' => kop_rinbox_after($source, $res['key'] ?? $key));

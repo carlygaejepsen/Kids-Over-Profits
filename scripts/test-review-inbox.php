@@ -250,5 +250,14 @@ if ($only === '' || $only === 'log') {
     }
 }
 
+if ($only === '' || $only === 'homes') {
+    echo "-- Home of a program (every card about one facility) --\n";
+    try {
+        kop_rinbox_test_homes_action($check);
+    } catch (Throwable $e) {
+        $check('homes: no errors', false, get_class($e) . ': ' . $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine());
+    }
+}
+
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);
