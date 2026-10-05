@@ -163,8 +163,11 @@ function kop_rinbox_facdisc_item(array $r) {
     $detail = json_decode((string) $r['detail'], true) ?: array();
     $e = (array) ($detail['entry'] ?? array());
     $place = trim(implode(', ', array_filter(array($e['city'] ?? '', ($e['state'] ?? '') ?: ($e['country'] ?? '')))));
+    // A corrected name (Rename, Edit details) heads the card; the subtitle keeps the article's own wording.
+    $renamed = trim((string) ($e['officialName'] ?? ''));
+    $renamed = $renamed !== $r['mention'] ? $renamed : '';
     $bits = array();
-    if (!empty($e['officialName']) && $e['officialName'] !== $r['mention']) $bits[] = $e['officialName'];
+    if ($renamed !== '') $bits[] = 'the article says "' . $r['mention'] . '"';
     if ($place !== '') $bits[] = $place;
     if (!empty($e['type'])) $bits[] = $e['type'];
     // The record on the card ("Kissimmee Youth Academy (Kissimmee, FL)"), null when there is none or it is gone.
@@ -241,7 +244,7 @@ function kop_rinbox_facdisc_item(array $r) {
                 array('name' => 'type', 'label' => 'Type', 'type' => 'select', 'options' => $types, 'value' => (string) ($e['type'] ?? ''), 'optional' => true),
             ));
         $fields = array(
-            array('name' => 'officialName', 'label' => 'Name', 'type' => 'text', 'value' => $new_name),
+            array('name' => 'officialName', 'label' => 'Name', 'type' => 'text', 'value' => $new_name, 'title' => true),
             array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => (string) ($e['city'] ?? '')),
             array('name' => 'state', 'label' => 'State (two letters)', 'type' => 'text', 'value' => (string) ($e['state'] ?? '')),
             array('name' => 'country', 'label' => 'Country', 'type' => 'text', 'value' => (string) ($e['country'] ?? '')),
@@ -277,7 +280,7 @@ function kop_rinbox_facdisc_item(array $r) {
     if (!empty($r['reviewed_by'])) $details[] = array('label' => 'Decided by', 'value' => (string) $r['reviewed_by']);
     return array(
         'key'          => (string) $r['id'],
-        'title'        => (string) $r['mention'],
+        'title'        => $renamed !== '' ? $renamed : (string) $r['mention'],
         'details'      => $details,
         'subtitle'     => implode(' · ', $bits),
         'url'          => (string) ($r['article_url'] ?? ''),
