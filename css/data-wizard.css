@@ -1,0 +1,511 @@
+/*
+ * Guided start for the public data form (js/data-form/data-wizard.js).
+ * body.kop-wiz-pick: steps 1-2, the form is hidden.
+ * body.kop-wiz-focus: step 3, only the sections marked .kop-wiz-on show.
+ */
+
+/* ---- What each mode hides ---------------------------------------------- */
+
+body.kop-wiz-pick .container > :not(.admin-header):not(#kop-wizard) {
+    display: none !important;
+}
+
+body.kop-wiz-focus .container .section:not(.kop-wiz-on),
+body.kop-wiz-focus .kop-steps,
+body.kop-wiz-focus .kop-step-kicker,
+body.kop-wiz-focus .admin-warning,
+body.kop-wiz-focus #category-navigation,
+body.kop-wiz-focus .mobile-section-controls,
+body.kop-wiz-focus #fixed-toolbar,
+body.kop-wiz-focus .facility-toc,
+body.kop-wiz-focus .facility-loader-panel:not(.kop-wiz-on),
+body.kop-wiz-focus #private-ownership-toggle-section:not(.kop-wiz-on),
+body.kop-wiz-focus #referrer-agency-toggle-section:not(.kop-wiz-on) {
+    display: none !important;
+}
+
+/* ---- Card ---------------------------------------------------------------- */
+
+.kop-wiz {
+    margin: 0 0 24px;
+}
+
+.kop-wiz-card {
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-midnight, #000435);
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-radius: 10px;
+    padding: 24px;
+}
+
+.kop-wiz-card h2,
+.kop-wiz-card h3 {
+    color: var(--kop-midnight, #000435);
+    margin: 0 0 8px;
+}
+
+.kop-wiz-card h2 {
+    font-size: 24px;
+    line-height: 1.25;
+}
+
+.kop-wiz-card h2:focus {
+    outline: none;
+}
+
+.kop-wiz-card h3 {
+    font-size: 17px;
+}
+
+.kop-wiz-kicker {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-teal-ink, #1F6F79);
+}
+
+.kop-wiz-lead {
+    margin: 0 0 18px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-muted {
+    color: var(--kop-text-muted, #4A5568);
+    font-weight: normal;
+}
+
+.kop-wiz-error {
+    color: var(--kop-coral-pink-ink, #B4232F);
+    font-weight: 600;
+    margin: 8px 0;
+}
+
+/* ---- Search -------------------------------------------------------------- */
+
+.kop-wiz-search label,
+.kop-wiz-field label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-card input[type="search"],
+.kop-wiz-card input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    font-size: 17px;
+    color: var(--kop-midnight, #000435);
+    background: var(--kop-white, #FFFFFF);
+    border: 2px solid var(--kop-navy, #000080);
+    border-radius: 8px;
+}
+
+.kop-wiz-card input[type="search"]:focus,
+.kop-wiz-card input[type="text"]:focus {
+    outline: 3px solid var(--kop-teal, #33A7B5);
+    outline-offset: 1px;
+}
+
+.kop-wiz-results {
+    margin-top: 12px;
+}
+
+.kop-wiz-hits {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.kop-wiz-hits li {
+    margin: 0;
+}
+
+button.kop-wiz-hit,
+button.kop-wiz-hit:hover,
+button.kop-wiz-hit:focus,
+button.kop-wiz-hit:active {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    width: 100%;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--kop-border-primary, #CBD5E0);
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-midnight, #000435);
+    font-size: 16px;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-wiz-hit:hover,
+button.kop-wiz-hit:focus {
+    border-color: var(--kop-navy, #000080);
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight, #000435);
+}
+
+button.kop-wiz-hit:focus-visible {
+    outline: 3px solid var(--kop-teal, #33A7B5);
+    outline-offset: 1px;
+}
+
+.kop-wiz-hit strong {
+    font-size: 17px;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-meta {
+    flex-basis: 100%;
+    font-size: 14px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-wiz-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--kop-mint-green, #B6E3D4);
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-badge-company { background: var(--kop-soft-pastel-yellow, #FFF5CB); }
+.kop-wiz-badge-provider { background: var(--kop-powder-blue, #D6E9F5); }
+.kop-wiz-badge-transporter,
+.kop-wiz-badge-referrer { background: var(--kop-sand, #F2EEDF); }
+
+/* ---- Add new ------------------------------------------------------------- */
+
+.kop-wiz-new {
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--kop-border-primary, #CBD5E0);
+}
+
+.kop-wiz-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+button.kop-wiz-type,
+button.kop-wiz-type:hover,
+button.kop-wiz-type:focus,
+button.kop-wiz-type:active {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-align: left;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--kop-border-primary, #CBD5E0);
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-midnight, #000435);
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.4;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-wiz-type:hover,
+button.kop-wiz-type:focus {
+    border-color: var(--kop-navy, #000080);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-wiz-type strong {
+    font-size: 16px;
+    color: var(--kop-navy, #000080);
+}
+
+.kop-wiz-type span {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-wiz-form {
+    display: grid;
+    gap: 16px;
+    max-width: 560px;
+}
+
+.kop-wiz-choice {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.kop-wiz-choice legend {
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-choice label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 16px;
+    color: var(--kop-midnight, #000435);
+}
+
+/* ---- Topics -------------------------------------------------------------- */
+
+.kop-wiz-target {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight, #000435);
+    font-size: 16px;
+}
+
+.kop-wiz-target button.kop-wiz-link {
+    margin-left: auto;
+}
+
+.kop-wiz-topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 8px;
+}
+
+.kop-wiz-topic {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 14px;
+    border: 1px solid var(--kop-border-primary, #CBD5E0);
+    border-radius: 8px;
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-midnight, #000435);
+    font-size: 16px;
+    line-height: 1.35;
+    cursor: pointer;
+}
+
+.kop-wiz-topic input {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    flex-shrink: 0;
+    accent-color: var(--kop-navy, #000080);
+}
+
+.kop-wiz-topic:has(input:checked) {
+    border-color: var(--kop-navy, #000080);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+/* ---- Buttons ------------------------------------------------------------- */
+
+.kop-wiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+button.kop-wiz-btn,
+button.kop-wiz-btn:hover,
+button.kop-wiz-btn:focus,
+button.kop-wiz-btn:active {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--kop-navy, #000080);
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-navy, #000080);
+    font-size: 15px;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-wiz-btn:hover,
+button.kop-wiz-btn:focus {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-navy, #000080);
+}
+
+button.kop-wiz-btn.kop-wiz-primary,
+button.kop-wiz-btn.kop-wiz-primary:hover,
+button.kop-wiz-btn.kop-wiz-primary:focus,
+button.kop-wiz-btn.kop-wiz-primary:active {
+    background: var(--kop-navy, #000080);
+    color: var(--kop-white, #FFFFFF);
+    border-color: var(--kop-navy, #000080);
+}
+
+button.kop-wiz-btn.kop-wiz-primary:hover,
+button.kop-wiz-btn.kop-wiz-primary:focus {
+    background: var(--kop-midnight, #000435);
+    color: var(--kop-white, #FFFFFF);
+}
+
+button.kop-wiz-btn:focus-visible,
+button.kop-wiz-link:focus-visible,
+button.kop-wiz-chip:focus-visible,
+button.kop-wiz-type:focus-visible {
+    outline: 3px solid var(--kop-teal, #33A7B5);
+    outline-offset: 2px;
+}
+
+button.kop-wiz-link,
+button.kop-wiz-link:hover,
+button.kop-wiz-link:focus,
+button.kop-wiz-link:active {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--kop-navy, #000080);
+    font-size: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-wiz-link:hover,
+button.kop-wiz-link:focus {
+    color: var(--kop-midnight, #000435);
+    background: transparent;
+}
+
+.kop-wiz-foot {
+    margin: 20px 0 0;
+    font-size: 15px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+/* ---- Editing bar --------------------------------------------------------- */
+
+.kop-wiz-more {
+    margin-top: 6px;
+}
+
+.kop-wiz-more summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--kop-navy, #000080);
+}
+
+.kop-wiz-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+button.kop-wiz-chip,
+button.kop-wiz-chip:hover,
+button.kop-wiz-chip:focus,
+button.kop-wiz-chip:active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--kop-navy, #000080);
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-navy, #000080);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-wiz-chip:hover,
+button.kop-wiz-chip:focus {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-navy, #000080);
+}
+
+.kop-wiz-chip svg {
+    width: 14px;
+    height: 14px;
+}
+
+.kop-wiz-confirm {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--kop-orange, #EF9034);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-wiz-confirm p {
+    margin: 0 0 10px;
+}
+
+.kop-wiz-confirm button + button {
+    margin-left: 8px;
+}
+
+.kop-wiz-slim {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: var(--kop-white, #FFFFFF);
+    color: var(--kop-midnight, #000435);
+    border: 1px solid var(--kop-border-primary, #CBD5E0);
+}
+
+/* ---- Phones -------------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    .kop-wiz-card {
+        padding: 16px;
+    }
+
+    .kop-wiz-card h2 {
+        font-size: 21px;
+    }
+
+    .kop-wiz-types,
+    .kop-wiz-topics {
+        grid-template-columns: 1fr;
+    }
+
+    .kop-wiz-actions button.kop-wiz-btn {
+        flex: 1 1 100%;
+    }
+
+    .kop-wiz-confirm button + button {
+        margin: 8px 0 0;
+    }
+}

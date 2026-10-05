@@ -2765,6 +2765,18 @@ if (!function_exists('kop_facility_page_data')) {
         $slug = $entry ? $entry['slug'] : kop_facility_page_slug_candidate($name, $state_code, $country);
         $updated = (string) $row['updated_at'];
 
+        // ---- One section per name of a renamed program (inc/facility-eras.php) ----
+        // A merged profile post writes its own sections, so its page stays whole.
+        $eras = null;
+        if (!$profile && function_exists('kop_facility_eras_build')) {
+            $violations = (array) ($inspections['violations'] ?? array());
+            if (!empty($program_homes['violations'])) $violations = array_merge($violations, $program_homes['violations']);
+            $eras = kop_facility_eras_build($facility_id, array(
+                'memorials' => $memorials, 'violations' => $violations, 'lawsuits' => $lawsuits,
+                'incidents' => $incidents, 'news' => $news, 'staff' => $staff,
+            ));
+        }
+
         return array(
             'id'            => $facility_id,
             'slug'          => $slug,
@@ -2810,6 +2822,7 @@ if (!function_exists('kop_facility_page_data')) {
             'news'          => $news,
             'lawsuits'      => $lawsuits,
             'memorials'     => $memorials,
+            'eras'          => $eras,
             'wiki'          => $wiki,
             'inspections'   => $inspections,
             'documents'     => $documents,
@@ -2824,7 +2837,7 @@ if (!function_exists('kop_facility_page_data')) {
             'memorial_url'  => kop_facility_pages_page_url_by_template('page-memorial.php', '/memorial/'),
             'news_url'      => kop_facility_pages_page_url_by_template('page-news-feed.php', '/news/'),
             'wiki_url'      => add_query_arg('search', rawurlencode($name), kop_facility_pages_page_url_by_template('page-wiki-feed.php', '/wiki-feed/')),
-            'submit_url'    => home_url('/tti-data-submission/'),
+            'submit_url'    => add_query_arg('find', rawurlencode($name), home_url('/tti-data-submission/')),
             'seo_title'     => $seo_title,
             'seo_description' => $seo_description,
             'profile_post'  => $profile ? $profile_post : 0,
@@ -3062,6 +3075,7 @@ if (!function_exists('kop_facility_pages_memorials')) {
                 'name'       => trim((string) $r['name']),
                 'age'        => ($r['age'] === null || $r['age'] === '') ? '' : (string) (int) $r['age'],
                 'program'    => trim((string) $r['program']),
+                'date'       => $date,
                 'date_label' => $date_label,
                 'cause'      => trim((string) $r['cause_of_death']),
                 'category'   => trim((string) $r['cause_category']),

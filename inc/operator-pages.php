@@ -889,7 +889,7 @@ if (!function_exists('kop_operator_page_data')) {
             'seo_title'     => $name . ' | Parent company profile | Kids Over Profits',
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',
             'lawsuits_url'  => $lawsuits_url,
-            'submit_url'    => home_url('/tti-data-submission/'),
+            'submit_url'    => add_query_arg('find', rawurlencode($name), home_url('/tti-data-submission/')),
         );
     }
 }

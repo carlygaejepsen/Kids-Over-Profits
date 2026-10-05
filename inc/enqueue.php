@@ -1516,6 +1516,18 @@ function enqueue_data_form_script() {
 
             );
 
+            // Public form only: the guided start in front of the full form.
+            if (!$is_admin_template) {
+                $wizard_js = get_stylesheet_directory() . '/js/data-form/data-wizard.js';
+                $wizard_css = get_stylesheet_directory() . '/css/data-wizard.css';
+                if (file_exists($wizard_css)) {
+                    wp_enqueue_style('kop-data-wizard', get_stylesheet_directory_uri() . '/css/data-wizard.css', array('kop-data-form-style'), filemtime($wizard_css));
+                }
+                if (file_exists($wizard_js)) {
+                    wp_enqueue_script('kop-data-wizard', get_stylesheet_directory_uri() . '/js/data-form/data-wizard.js', array('data-form-legacy', 'kop-data-toolbar-script'), filemtime($wizard_js), true);
+                }
+            }
+
     
 
         

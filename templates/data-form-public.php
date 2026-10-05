@@ -13,6 +13,9 @@ get_header();
             <h1><?php echo kop_icon('send'); ?> Submit TTI Data Suggestions</h1>
         </div>
 
+        <!-- Guided start: find or add a record, pick topics (js/data-form/data-wizard.js) -->
+        <div id="kop-wizard" class="kop-wiz"></div>
+
         <div class="admin-warning">
             <?php echo kop_icon('alert-circle'); ?> <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
         </div>

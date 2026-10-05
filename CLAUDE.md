@@ -169,6 +169,11 @@ node scripts/test-testimony-move.js
 # KOP Tools > Merge People (inc/people-merge.php): pairs found automatically (short first name, maiden/married name, one letter
 # apart, swapped, same initial at one program, same name under two ids), one-click merge, exact Undo from the Merged tab
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list] [--no-build]   # sync, pairs, merge+undo, PHP/JS key parity, a map build into tmp/
+# Public data form (/tti-data-submission/) opens on a guided start (js/data-form/data-wizard.js, css/data-wizard.css): find the
+# record or add a new facility/company/provider/transporter/referrer, pick topics, see only those sections; saves still go
+# through submitSuggestion(). Topic -> section ids in TOPICS there; ?find=<name>, ?add=<type>, ?full=1. Its text inputs need
+# data-growing-text-field="true" or ui-events.js swaps them for textareas
+python scripts/test-data-wizard.py               # live page + working-tree wizard, 1280 and 390 px
 # Admin facility id boxes: always kop_facility_finder_field() (inc/facility-finder.php), never a bare id input
 php scripts/test-facility-finder.php              # search by name/past name/id against tmp/prod.sqlite, no bare id boxes left
 # Facility directory (/tti-program-index/, both tabs) loads in steps: lists from kop/v1/facilities?view=index (each facility
