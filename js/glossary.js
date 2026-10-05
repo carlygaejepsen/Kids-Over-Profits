@@ -569,6 +569,7 @@
                 return;
             }
             fields.notify_email = followup.email;
+            fields.newsletter_email = followup.newsletterEmail || '';
             if (fbKind === 'used_at' && !fields.program) {
                 fbSay('Please name the facility or program.', 'error');
                 fbProgram.focus();

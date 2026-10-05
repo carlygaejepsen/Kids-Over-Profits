@@ -214,7 +214,10 @@ function kop_glossary_feedback_submit(WP_REST_Request $request) {
 
     // "Email me when this has been reviewed" (inc/submission-followup.php).
     if (function_exists('kop_followup_register')) {
-        kop_followup_register('glossary', $id, array('notify_email' => (string) $request->get_param('notify_email')));
+        kop_followup_register('glossary', $id, array(
+            'notify_email'     => (string) $request->get_param('notify_email'),
+            'newsletter_email' => (string) $request->get_param('newsletter_email'),
+        ));
     }
 
     return new WP_REST_Response(array('success' => true, 'id' => $id), 200);

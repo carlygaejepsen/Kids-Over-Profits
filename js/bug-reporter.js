@@ -318,6 +318,17 @@
         notifyLabel.appendChild(notifyCheck);
         notifyLabel.appendChild(document.createTextNode(' Email me when the status of this report changes (for example when it is being looked at or has been fixed)'));
         notifyWrap.appendChild(notifyLabel);
+        // Newsletter, never ticked by default (inc/newsletter-signup.php); only when MailerLite is connected.
+        var newsCheck = el('input');
+        newsCheck.type = 'checkbox';
+        newsCheck.id = 'kop-bug-newsletter';
+        newsCheck.disabled = true;
+        if (window.kopFollowupSettings && window.kopFollowupSettings.newsletter) {
+            var newsLabel = el('label', 'kop-bug-reporter__checkbox-label');
+            newsLabel.appendChild(newsCheck);
+            newsLabel.appendChild(document.createTextNode(' Also sign me up for the ' + (window.kopFollowupSettings.siteName || 'Kids Over Profits') + ' newsletter'));
+            notifyWrap.appendChild(newsLabel);
+        }
         var notifyHint = el('p', 'kop-bug-reporter__hint', 'Your email is only used for this report. Enter an address above to enable updates.');
         notifyWrap.appendChild(notifyHint);
         form.appendChild(notifyWrap);
@@ -326,6 +337,8 @@
             var hasEmail = contact.value.trim() !== '';
             notifyCheck.disabled = !hasEmail;
             if (!hasEmail) notifyCheck.checked = false;
+            newsCheck.disabled = !hasEmail;
+            if (!hasEmail) newsCheck.checked = false;
             notifyHint.textContent = hasEmail
                 ? 'Your email is only used for this report.'
                 : 'Your email is only used for this report. Enter an address above to enable updates.';
@@ -401,6 +414,7 @@
             steps: steps,
             contact: contact,
             notify: notifyCheck,
+            newsletter: newsCheck,
             syncNotify: syncNotify,
             honeypot: hp,
             includeTech: techCheck,
@@ -515,6 +529,7 @@
             steps: f.steps.value.trim(),
             contact: contactValue,
             notifyUpdates: notifyUpdates,
+            newsletter_email: f.newsletter.checked && contactValue !== '' ? contactValue : '',
             website: f.honeypot.value,
             pageUrl: snap.url,
             pageTitle: document.title,

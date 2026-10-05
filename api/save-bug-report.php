@@ -246,6 +246,11 @@ try {
         kop_bug_report_send_receipt($contact, $newId);
     }
 
+    // "Also sign me up for the newsletter" (inc/newsletter-signup.php), never ticked by default.
+    if (function_exists('kop_newsletter_queue') && function_exists('kop_newsletter_email_from')) {
+        kop_newsletter_queue(kop_newsletter_email_from($input), 'bug-report');
+    }
+
     // Email notification — best effort, never blocks the response.
     if (function_exists('wp_mail') && function_exists('get_option')) {
         $adminEmail = get_option('admin_email');

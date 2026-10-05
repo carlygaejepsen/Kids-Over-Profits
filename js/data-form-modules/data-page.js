@@ -497,7 +497,7 @@
 
         document.addEventListener('formReady', ensureSuggestionButtonBinding, { once: true });
 
-        async function performSuggestionSubmission(changesSummary, notifyEmail) {
+        async function performSuggestionSubmission(changesSummary, notifyEmail, newsletterEmail) {
             const trimmedSummary = (changesSummary || '').trim();
 
             if (!trimmedSummary) {
@@ -663,6 +663,7 @@
                         reason: trimmedSummary,
                         projectName: actualProjectName,
                         notify_email: notifyEmail || '',
+                        newsletter_email: newsletterEmail || '',
                         metadata: {
                             actualProjectName,
                             submittedFrom: 'data.html suggestions form',
@@ -785,7 +786,7 @@
                 confirmButton.disabled = true;
                 confirmButton.textContent = 'Submitting...';
 
-                const success = await performSuggestionSubmission(summary, followup.email);
+                const success = await performSuggestionSubmission(summary, followup.email, followup.newsletterEmail);
 
                 confirmButton.disabled = false;
                 confirmButton.textContent = defaultConfirmText;

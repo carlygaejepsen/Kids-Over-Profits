@@ -1501,7 +1501,8 @@
                 // Submission metadata
                 submittedBy: document.getElementById('newsSubmitterEmail') && document.getElementById('newsSubmitterEmail').value || '',
                 submissionNotes: document.getElementById('newsSubmissionNotes') && document.getElementById('newsSubmissionNotes').value || '',
-                notify_email: followup.email
+                notify_email: followup.email,
+                newsletter_email: followup.newsletterEmail || ''
             };
 
             try {

@@ -103,7 +103,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php 
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # "Email me when this has been reviewed" on every public form (inc/submission-followup.php, js/submission-followup.js): forms post
 # notify_email, the endpoint calls kop_followup_register(); a 10-minute cron reads each item's own status and mails once the decision
-# has stood 10 minutes (an Undo inside that cancels it), then blanks the address. A new public form adds the block and a kind there
+# has stood 10 minutes (an Undo inside that cancels it), then blanks the address. A new public form adds the block and a kind there.
+# The block also has "Also sign me up for the newsletter" (never ticked by default; also in the bug reporter): newsletter_email ->
+# inc/newsletter-signup.php -> MailerLite via the plugin's API key, group = KOP_NEWSLETTER_GROUP_ID / kop_newsletter_group_id option,
+# else the plugin form's groups
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-followup.php
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php

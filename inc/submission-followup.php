@@ -6,7 +6,9 @@
  * buttons, news, wiki entries, lawsuit and legislation tips, glossary notes)
  * shows a checkbox (js/submission-followup.js, kop_followup_fields() here).
  * Ticked, the form posts `notify_email`, and the endpoint calls
- * kop_followup_register() after its insert. Bug reports keep their own
+ * kop_followup_register() after its insert. The same block carries "Also sign
+ * me up for the newsletter" (never ticked by default): `newsletter_email`,
+ * passed on to inc/newsletter-signup.php. Bug reports keep their own
  * opt-in (inc/bug-report-notify.php); the anonymous portal never asks.
  *
  * Nothing is hooked into the approve and reject paths. They are many
@@ -135,6 +137,10 @@ function kop_followup_email_from($input) {
  */
 function kop_followup_register($kind, $item_id, $input) {
     try {
+        // The newsletter box is separate: either can be ticked without the other.
+        if (is_array($input) && function_exists('kop_newsletter_queue')) {
+            kop_newsletter_queue(kop_newsletter_email_from($input), $kind);
+        }
         $email = is_array($input) ? kop_followup_email_from($input) : kop_followup_email_from(array('notify_email' => $input));
         $kinds = kop_followup_kinds();
         $item_id = (int) $item_id;
@@ -438,15 +444,25 @@ function kop_followup_fields($id, $email_id = '') {
     $out = '<div class="kop-followup" data-kop-followup' . ($email_id !== '' ? ' data-kop-followup-for="' . esc_attr($email_id) . '"' : '') . '>'
         . '<label class="kop-followup__check" for="' . esc_attr($id) . '-check">'
         . '<input type="checkbox" id="' . esc_attr($id) . '-check" data-kop-followup-check> Email me when this has been reviewed</label>';
+    if (kop_followup_newsletter_on()) {
+        $out .= '<label class="kop-followup__check" for="' . esc_attr($id) . '-news">'
+            . '<input type="checkbox" id="' . esc_attr($id) . '-news" data-kop-followup-news> Also sign me up for the ' . esc_html(kop_followup_site_name()) . ' newsletter</label>';
+    }
     if ($email_id === '') {
         $out .= '<div class="kop-followup__email" hidden>'
             . '<label for="' . esc_attr($id) . '-email">Your email</label>'
             . '<input type="email" id="' . esc_attr($id) . '-email" data-kop-followup-email maxlength="190" autocomplete="email" placeholder="you@example.com">'
             . '</div>';
     }
-    $out .= '<p class="kop-followup__hint" hidden>One email when it is added or turned down. Your address is never published, and we delete it once that email is sent.</p>'
+    $out .= '<p class="kop-followup__hint" data-kop-followup-hint="notify" hidden>One email when it is added or turned down. Your address is never published, and we delete it once that email is sent.</p>'
+        . '<p class="kop-followup__hint" data-kop-followup-hint="news" hidden>The newsletter is separate: you can unsubscribe from any issue.</p>'
         . '</div>';
     return $out;
+}
+
+/** True when the MailerLite plugin is connected, so the newsletter box can do something. */
+function kop_followup_newsletter_on() {
+    return function_exists('kop_newsletter_queue') && (bool) get_option('mailerlite_api_key');
 }
 
 /** The helper script + styles, on every front-end page (small; forms appear in modals anywhere). */
@@ -458,5 +474,9 @@ add_action('wp_enqueue_scripts', function () {
     }
     if (file_exists($dir . '/js/submission-followup.js')) {
         wp_enqueue_script('kop-submission-followup', $uri . '/js/submission-followup.js', array(), filemtime($dir . '/js/submission-followup.js'), false);
+        wp_localize_script('kop-submission-followup', 'kopFollowupSettings', array(
+            'newsletter' => kop_followup_newsletter_on(),
+            'siteName'   => kop_followup_site_name(),
+        ));
     }
 });

@@ -76,6 +76,8 @@ require_once get_stylesheet_directory() . '/inc/form-help.php';
 require_once get_stylesheet_directory() . '/inc/submission-notify.php';
 // "Email me when this is reviewed": one email to the submitter once a decision stands
 require_once get_stylesheet_directory() . '/inc/submission-followup.php';
+// "Also sign me up for the newsletter" (MailerLite, never ticked by default)
+require_once get_stylesheet_directory() . '/inc/newsletter-signup.php';
 
 // "Send to Kids Over Profits" browser extension intake (browser-extension/send-to-kop/)
 require_once get_stylesheet_directory() . '/inc/source-submissions.php';

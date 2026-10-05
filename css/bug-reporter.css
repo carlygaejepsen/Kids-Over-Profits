@@ -351,6 +351,10 @@
     font-size: 0.875rem;
 }
 
+.kop-bug-reporter__notify .kop-bug-reporter__checkbox-label + .kop-bug-reporter__checkbox-label {
+    margin-top: 6px;
+}
+
 .kop-bug-reporter__notify .kop-bug-reporter__checkbox-label:has(input:disabled) {
     opacity: 0.6;
     cursor: not-allowed;

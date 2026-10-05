@@ -21,6 +21,10 @@
     cursor: pointer;
 }
 
+.kop-followup .kop-followup__check + .kop-followup__check {
+    margin-top: 6px;
+}
+
 .kop-followup .kop-followup__check input {
     margin-top: 3px;
     flex: none;

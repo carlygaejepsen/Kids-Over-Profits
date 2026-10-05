@@ -438,6 +438,7 @@
                     data: data,
                     reason: reason,
                     notify_email: followup.email,
+                    newsletter_email: followup.newsletterEmail || '',
                     metadata: {
                         activeCategory: set.category,
                         actualProjectName: name,

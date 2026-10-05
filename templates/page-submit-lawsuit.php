@@ -471,6 +471,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         payload.notify_email = followup.email;
+        payload.newsletter_email = followup.newsletterEmail || '';
 
         var btn = form.querySelector('.kop-submit-btn');
         btn.disabled = true;

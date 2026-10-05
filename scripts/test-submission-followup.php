@@ -34,6 +34,21 @@ function wp_list_pluck($list, $f) { return array_map(function ($o) use ($f) { re
 function get_bloginfo() { return 'Kids Over Profits'; }
 function sanitize_html_class($v) { return preg_replace('/[^A-Za-z0-9_-]/', '', (string) $v); }
 function esc_attr($v) { return htmlspecialchars((string) $v, ENT_QUOTES); }
+$GLOBALS['kop_test_options']['mailerlite_api_key'] = 'test-key';
+$GLOBALS['kop_test_options']['mailerlite_platform'] = '2';
+$GLOBALS['kop_test_options']['kop_newsletter_group_id'] = '987';
+$GLOBALS['kop_test_transients'] = array();
+$GLOBALS['kop_test_events'] = array();
+$GLOBALS['kop_test_http'] = array();
+function get_transient($k) { return isset($GLOBALS['kop_test_transients'][$k]) ? $GLOBALS['kop_test_transients'][$k] : false; }
+function set_transient($k, $v) { $GLOBALS['kop_test_transients'][$k] = $v; return true; }
+function wp_schedule_single_event($t, $hook, $args) { $GLOBALS['kop_test_events'][] = array($hook, $args); return true; }
+function apply_filters($h, $v) { return $v; }
+function wp_json_encode($v) { return json_encode($v); }
+function wp_remote_post($url, $args) { $GLOBALS['kop_test_http'][] = array($url, $args); return array('response' => array('code' => 201)); }
+function is_wp_error($v) { return false; }
+function wp_remote_retrieve_response_code($r) { return $r['response']['code']; }
+function esc_html($v) { return htmlspecialchars((string) $v, ENT_QUOTES); }
 function wp_mail($to, $subject, $body) { $GLOBALS['kop_test_mail'][] = compact('to', 'subject', 'body'); return true; }
 
 $records = new PDO('sqlite::memory:');
@@ -91,6 +106,7 @@ $wpdb->db->exec("CREATE TABLE wp_kop_submission_followups (
     created_at TEXT, sent_at TEXT NULL)");
 
 require_once __DIR__ . '/../inc/submission-followup.php';
+require_once __DIR__ . '/../inc/newsletter-signup.php';
 
 $fails = 0;
 function check($label, $cond) {
@@ -186,6 +202,29 @@ for ($i = 0; $i < KOP_FOLLOWUP_DAILY_CAP + 3; $i++) {
 }
 check('one address is capped per day', (int) $wpdb->get_var("SELECT COUNT(*) FROM wp_kop_submission_followups WHERE email = 'flood@example.org'") === KOP_FOLLOWUP_DAILY_CAP
     && count(mails()) === KOP_FOLLOWUP_DAILY_CAP);
+
+echo "Newsletter (never ticked by default)\n";
+$GLOBALS['kop_test_events'] = array();
+mails();
+kop_followup_register('lawsuit', 31, array('notify_email' => 'c@example.org'));
+check('follow-up alone does not sign up for the newsletter', !$GLOBALS['kop_test_events']);
+mails();
+kop_followup_register('lawsuit', 31, array('notify_email' => '', 'newsletter_email' => 'n@example.org'));
+check('newsletter alone: queued, no follow-up stored, no receipt', count($GLOBALS['kop_test_events']) === 1
+    && $GLOBALS['kop_test_events'][0][1][0] === 'n@example.org' && !mails()
+    && !(int) $wpdb->get_var("SELECT COUNT(*) FROM wp_kop_submission_followups WHERE email = 'n@example.org'"));
+kop_followup_register('lawsuit', 31, array('newsletter_email' => 'n@example.org'));
+check('same address again the same day: not queued twice', count($GLOBALS['kop_test_events']) === 1);
+kop_followup_register('lawsuit', 31, array('newsletter_email' => 'bad'));
+check('bad address: not queued', count($GLOBALS['kop_test_events']) === 1);
+check('subscribe call reaches MailerLite with the group', kop_newsletter_subscribe_now('n@example.org', 'lawsuit')
+    && $GLOBALS['kop_test_http'][0][0] === 'https://connect.mailerlite.com/api/subscribers'
+    && json_decode($GLOBALS['kop_test_http'][0][1]['body'], true) === array('email' => 'n@example.org', 'groups' => array('987')));
+check('no status sent (an unsubscribed person stays unsubscribed)', strpos($GLOBALS['kop_test_http'][0][1]['body'], 'status') === false);
+$html = kop_followup_fields('z');
+check('newsletter box shown, unticked', strpos($html, 'data-kop-followup-news>') !== false && strpos($html, 'checked') === false);
+unset($GLOBALS['kop_test_options']['mailerlite_api_key']);
+check('no MailerLite connection: no newsletter box', strpos(kop_followup_fields('w'), 'data-kop-followup-news') === false);
 
 echo "Form markup\n";
 $html = kop_followup_fields('x');
