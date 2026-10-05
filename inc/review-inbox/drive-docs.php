@@ -211,10 +211,6 @@ function kop_rinbox_gdl_item(array $r) {
     if (!empty($first['text'])) {
         $lines[] = '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 420) . '"';
     }
-    $where = trim(($first['doc'] ?? '') . (!empty($first['tab']) ? ' > ' . $first['tab'] : '') . (!empty($first['heading']) ? ' > ' . $first['heading'] : ''));
-    if ($where !== '') {
-        $lines[] = 'From ' . $where . (count($seen) > 1 ? ' (and ' . (count($seen) - 1) . ' more place' . (count($seen) > 2 ? 's' : '') . ')' : '') . '.';
-    }
     if ($pending && (int) $r['facility_id'] > 0 && !kop_gdl_sure_match($r)) {
         $lines[] = 'Matched by a close name (' . $r['facility_how'] . '): check it is this facility.';
     }
@@ -296,13 +292,6 @@ function kop_rinbox_gdl_item(array $r) {
         $details[] = array('label' => 'Matched by', 'value' => $r['facility_how'] . ($sure ? ' (sure match)' : ''));
     }
     if ($r['operator_name'] !== '') $details[] = array('label' => 'Company', 'value' => (string) $r['operator_name']);
-    if (count($seen) > 1) {
-        $places = array();
-        foreach (array_slice($seen, 1) as $s) {
-            $places[] = trim(($s['doc'] ?? '') . (!empty($s['tab']) ? ' > ' . $s['tab'] : '') . (!empty($s['heading']) ? ' > ' . $s['heading'] : ''));
-        }
-        $details[] = array('label' => 'Also seen in', 'value' => implode('; ', array_filter($places)));
-    }
     if (!empty($src['credit'])) $details[] = array('label' => 'Credit on the record', 'value' => $src['credit'], 'url' => $src['credit_url'] ?? '');
     if ((string) ($r['original'] ?? '') !== '' && $r['original'] !== $r['url']) $details[] = array('label' => 'Address as written', 'value' => (string) $r['original']);
 
@@ -551,12 +540,10 @@ function kop_rinbox_gdl_group_item($key) {
     $describe = function (array $r) use ($kinds, $sources) {
         $seen = json_decode((string) $r['seen'], true) ?: array();
         $first = $seen[0] ?? array();
-        $where = trim(($first['doc'] ?? '') . (!empty($first['heading']) ? ' > ' . $first['heading'] : ''));
         $sub = ($kinds[$r['kind']] ?? $r['kind']) . ' · goes to ' . kop_rinbox_gdl_goes($r['kind'])
             . (!empty($sources[$r['source']]['label']) ? ' · ' . $sources[$r['source']]['label'] : '')
             . ((int) $r['facility_id'] > 0 && !kop_gdl_sure_match($r) ? ' · close name (' . $r['facility_how'] . '), check it' : '');
         $note = !empty($first['text']) ? '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 200) . '"' : '';
-        if ($note === '' && $where !== '') $note = 'From ' . $where;
         return array('key' => (string) $r['pkey'], 'label' => $r['label'] !== '' ? (string) $r['label'] : (string) $r['url'],
             'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note, 'rename' => true);
     };
