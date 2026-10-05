@@ -300,8 +300,14 @@ $tx_cite = static function ($standard, $narrative) use ($tx) {
 };
 check($tx_cite('748.303(a) - Serious incident reporting', 'On 3/4/24 a child in care self-harmed and was taken to the emergency room. Licensing was notified on 3/9/24.') === array(),
     'TX: a reporting citation about an ER visit is paperwork only');
-check($tx_cite('748.501 - Personnel records', 'A child in care died on 2/2/24. The employee file of the caregiver on shift held no background check.') === array(),
-    'TX: a personnel records citation is paperwork only, even with a death in it');
+// A plan of correction quoted in the finding is a promise, not an event (AZ, 2023).
+check(preg_match('/' . kop_ih_noise_pattern() . '/iu', 'The Executive Director will provide written notification to the Arizona Department of Health Services Bureau of Residential Facilities of a resident\'s death and a report of Self-Injury within two working days.') === 1,
+    'a plan of correction ("The Executive Director will provide written notification ... of a resident\'s death") is not an event');
+// Deaths are always cited (owner rule, 2026-10-05), however the state cited them.
+$c = $tx_cite('748.501 - Personnel records', 'A child in care died on 2/2/24. The employee file of the caregiver on shift held no background check.');
+check(count($c) === 1 && $c[0]['category'] === 'death', 'TX: a paperwork citation with a death in it is queued as the death');
+$c = $tx_cite('748.303(a) - Serious incident reporting', 'A child in care was found unresponsive and was pronounced deceased at the hospital. Licensing was notified three days later.');
+check(count($c) === 1 && $c[0]['category'] === 'death', 'TX: a late-reported death is queued as the death');
 check($tx_cite('748.931 - Pre-service training', 'An employee who had not completed emergency behavior intervention training restrained a child, and the child was hospitalized.') === array(),
     'TX: a training citation is training only');
 $c = $tx_cite('748.303(a) - Serious incident reporting', 'The operation did not report within 24 hours that a caregiver slapped a child in care.');

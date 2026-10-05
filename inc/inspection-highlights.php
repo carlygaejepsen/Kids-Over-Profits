@@ -59,7 +59,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      * only that state's reports. With no state, the base alone.
      */
     function kop_ih_scanner_version($state = '') {
-        $base = 8;
+        $base = 9;
         $states = kop_ih_state_rule_versions();
         return $base * 100 + (int) ($states[strtoupper((string) $state)] ?? 0);
     }
@@ -350,6 +350,8 @@ if (!function_exists('kop_ih_scanner_version')) {
         return '\b(?:polic(?:y|ies)|procedures?|handbook|manual|guidelines?|protocols?|(?:treatment|service|care|safety) plan)\b[^.]{0,60}\b(?:stated?|states|reads?|indicated?|says|said|require[sd]?|titled|outlin\w+|includ\w+)\b'
             // An instruction or a consequence, allowing for a list marker such as "a)" or "3." in front.
             . '|^(?:\W*[a-z0-9]{1,2}[).]\s*)?\W*(?:in the event|if|when|should|unless|staff (?:are|is|will|shall|must) (?:to )?|the (?:facility|provider|program|operation|agency|licensee) (?:will|shall|must)|submit (?:a|an|the)|please|(?:the |this )?deficient practice)\b'
+            // The facility's plan of correction: "The Executive Director will provide written notification ... of a resident's death".
+            . '|\b(?:director|administrator|manager|supervisor|coordinator|licensee)\b[^.]{0,30}\bwill (?:provide|ensure|notify|submit|report|complete|train|review|monitor|maintain|conduct)\b'
             . '|\b(?:trainings?|certificat\w+|curricul\w+|courses?)\b[^.]{0,100}\b(?:Reporting|Prevention|Recogni\w+|Awareness|Intervention|[Ii]dentification|Harassment|Trafficking|Elimination)\b'
             // The topic before the word: "completed suicide awareness and prevention training".
             . '|\b(?:awareness|prevention|intervention|recognition|screening|de-?escalation|first aid|CPR)\b[^.]{0,40}\b(?:trainings?|courses?|curricul\w+|classes|modules?|certificat\w+|materials?)\b'
@@ -1875,8 +1877,9 @@ if (!function_exists('kop_ih_scanner_version')) {
             }
         }
         // A citation for paperwork or training only (owner rule, 2026-10-05) keeps
-        // what staff did to a child and medical neglect, and nothing else.
-        $keep = kop_ih_paperwork_only($finding, $sentences) ? array_merge(kop_ih_paperwork_exempt(), array('medical_neglect')) : null;
+        // what staff did to a child, medical neglect and a death (deaths are always
+        // cited, owner rule 2026-10-05), and nothing else.
+        $keep = kop_ih_paperwork_only($finding, $sentences) ? array_merge(kop_ih_paperwork_exempt(), array('medical_neglect', 'death')) : null;
         foreach ($sentences as $i => $sentence) {
             // A sentence that itself says the allegation failed is not a finding; nor is a quoted policy or an instruction.
             if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) continue;
