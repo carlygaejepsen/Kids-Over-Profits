@@ -9,6 +9,13 @@
  * buttons. After a button the card shows what happened and, where the queue
  * has one, its Undo.
  *
+ * Every card says what Approve and Reject do (the action's 'help'), puts
+ * them first, and has "Preview" beside each link: the page itself in a frame
+ * where the site allows it, else a reading copy (review-inbox/preview).
+ * "Later" snoozes an item or hands it to another admin (review-inbox/hold);
+ * "Your inbox" lists what is assigned to you, what is snoozed, and Recently
+ * done: everything anyone did here, each with its queue's Undo.
+ *
  * window.kopReviewInbox.api(path, body) is used by js/admin-submissions.js
  * for the same tags / AI / move controls on its own five types.
  */
@@ -21,7 +28,8 @@
     var page = document.querySelector('.admin-submissions-page');
     if (!page) return;
 
-    var state = { sources: [], byKey: {}, tags: [], source: null, view: '', search: '', origin: '', filters: {}, offset: 0, limit: 25, total: 0 };
+    var state = { sources: [], byKey: {}, tags: [], admins: [], me: 0, held: { mine: 0, snoozed: 0 }, special: null,
+        source: null, view: '', search: '', origin: '', filters: {}, offset: 0, pages: [], nextOffset: 0, limit: 25, total: 0 };
 
     function api(path, body, query) {
         var url = cfg.rest + path;
@@ -102,8 +110,24 @@
     var listContainer = page.querySelector('.submissions-list-container');
     if (listContainer) listContainer.parentNode.insertBefore(panel, listContainer);
 
+    var SPECIAL = {
+        _mine: { label: 'Assigned to you', count: function () { return state.held.mine; } },
+        _snoozed: { label: 'Snoozed', count: function () { return state.held.snoozed; } },
+        _done: { label: 'Recently done', count: function () { return 0; } }
+    };
+
     function renderTabs() {
         tabsRow.innerHTML = '';
+        var mine = el('div', { class: 'rinbox-group rinbox-group-yours' }, [el('span', { class: 'rinbox-group-label', text: 'Your inbox' })]);
+        Object.keys(SPECIAL).forEach(function (k) {
+            var n = SPECIAL[k].count();
+            mine.appendChild(el('button', {
+                type: 'button', role: 'tab', class: 'submission-tab rinbox-tab' + (state.special === k ? ' is-active' : ''),
+                'aria-selected': state.special === k ? 'true' : 'false', 'data-special': k,
+                onclick: function () { openSpecial(k); }
+            }, [SPECIAL[k].label + ' ', el('span', { class: 'tab-count' + (n ? ' has-items' : ''), text: n ? String(n) : '' })]));
+        });
+        tabsRow.appendChild(mine);
         var groups = {};
         var order = [];
         state.sources.forEach(function (s) {
@@ -132,6 +156,9 @@
         return api('sources', null, fresh ? { fresh: 1 } : null).then(function (data) {
             state.sources = data.sources || [];
             state.tags = data.tags || [];
+            state.admins = data.admins || [];
+            state.me = data.me || 0;
+            state.held = data.held || { mine: 0, snoozed: 0 };
             state.byKey = {};
             state.sources.forEach(function (s) { state.byKey[s.key] = s; });
             renderTabs();
@@ -142,6 +169,7 @@
 
     function leaveInbox() {
         state.source = null;
+        state.special = null;
         page.classList.remove('rinbox-active');
         panel.hidden = true;
         renderTabs();
@@ -157,7 +185,8 @@
     function setUrl() {
         try {
             var u = new URL(window.location.href);
-            if (state.source) u.searchParams.set('type', state.source); else u.searchParams.delete('type');
+            var t = state.special || state.source;
+            if (t) u.searchParams.set('type', t); else u.searchParams.delete('type');
             window.history.replaceState(null, '', u.toString());
         } catch (e) { /* old browser: the tab just is not remembered */ }
     }
@@ -166,11 +195,13 @@
         var s = state.byKey[key];
         if (!s || s.native) return;
         state.source = key;
+        state.special = null;
         state.view = Object.keys(s.views)[0];
         state.search = '';
         state.origin = '';
         state.filters = {};
         state.offset = 0;
+        state.pages = [];
         page.classList.add('rinbox-active');
         page.querySelectorAll('.type-tabs .submission-tab').forEach(function (t) {
             t.classList.remove('is-active');
@@ -202,14 +233,14 @@
                 type: 'button', role: 'tab', class: 'submission-tab' + (state.view === v ? ' is-active' : ''),
                 'aria-selected': state.view === v ? 'true' : 'false',
                 text: s.views[v],
-                onclick: function () { state.view = v; state.offset = 0; renderPanel(); loadItems(); }
+                onclick: function () { state.view = v; state.offset = 0; state.pages = []; renderPanel(); loadItems(); }
             }));
         });
         var origin = null;
         if (s.has_origins) {
             origin = el('select', { class: 'rinbox-origin', 'aria-label': 'Came from' });
             fillOrigins(origin, [], state.origin);
-            origin.addEventListener('change', function () { state.origin = origin.value; state.offset = 0; loadItems(); });
+            origin.addEventListener('change', function () { state.origin = origin.value; state.offset = 0; state.pages = []; loadItems(); });
             api('origins', null, { source: state.source, view: state.view }).then(function (data) {
                 fillOrigins(origin, data.origins || [], state.origin);
             }).catch(function () { /* no filter */ });
@@ -220,14 +251,14 @@
             Object.keys(f.options || {}).forEach(function (k) {
                 sel.appendChild(el('option', { value: k, text: f.options[k], selected: state.filters[f.name] === k }));
             });
-            sel.addEventListener('change', function () { state.filters[f.name] = sel.value; state.offset = 0; loadItems(); });
+            sel.addEventListener('change', function () { state.filters[f.name] = sel.value; state.offset = 0; state.pages = []; loadItems(); });
             return sel;
         });
         var search = el('input', { type: 'search', class: 'rinbox-search', placeholder: 'Search this queue…', value: state.search, 'aria-label': 'Search this queue' });
         var timer = null;
         search.addEventListener('input', function () {
             clearTimeout(timer);
-            timer = setTimeout(function () { state.search = search.value.trim(); state.offset = 0; loadItems(); }, 350);
+            timer = setTimeout(function () { state.search = search.value.trim(); state.offset = 0; state.pages = []; loadItems(); }, 350);
         });
         var tools = null;
         if (s.tools && s.tools.length) {
@@ -278,6 +309,7 @@
         api('items', null, query).then(function (data) {
             if (state.source !== src) return;
             state.total = data.total || 0;
+            state.nextOffset = data.next_offset || (state.offset + (data.items || []).length);
             if (data.view_counts) {
                 var names = state.byKey[src].views;
                 Object.keys(viewButtons).forEach(function (v) {
@@ -285,7 +317,8 @@
                 });
             }
             var items = data.items || [];
-            statusEl.textContent = (note ? note + ' ' : '') + (state.total ? (state.total + (state.total === 1 ? ' item' : ' items')) : 'Nothing here.');
+            statusEl.textContent = (note ? note + ' ' : '') + (state.total ? (state.total + (state.total === 1 ? ' item' : ' items')) : 'Nothing here.')
+                + (data.held ? ' (' + data.held + ' set aside: snoozed or handed to someone else.)' : '');
             items.forEach(function (it) { listEl.appendChild(card(it)); });
             renderBulk();
             renderPager();
@@ -377,19 +410,24 @@
         return out;
     }
 
+    /** Pages follow the queue's own order: set-aside items are skipped, so Next starts where the server says. */
     function renderPager() {
         pagerEl.innerHTML = '';
-        if (state.total <= state.limit) return;
-        var from = state.offset + 1, to = Math.min(state.total, state.offset + state.limit);
+        if (state.total <= state.limit && !state.pages.length) return;
+        var pageNo = state.pages.length + 1, pageCount = Math.max(pageNo, Math.ceil(state.total / state.limit));
         pagerEl.appendChild(el('button', {
-            type: 'button', class: 'btn-secondary', text: 'Previous', disabled: state.offset === 0,
-            onclick: function () { state.offset = Math.max(0, state.offset - state.limit); loadItems(); }
+            type: 'button', class: 'btn-secondary', text: 'Previous', disabled: !state.pages.length,
+            onclick: function () { state.offset = state.pages.pop() || 0; loadItems(); scrollToPanel(); }
         }));
-        pagerEl.appendChild(el('span', { text: ' ' + from + '–' + to + ' of ' + state.total + ' ' }));
+        pagerEl.appendChild(el('span', { text: ' Page ' + pageNo + ' of ' + pageCount + ' ' }));
         pagerEl.appendChild(el('button', {
-            type: 'button', class: 'btn-secondary', text: 'Next', disabled: to >= state.total,
-            onclick: function () { state.offset += state.limit; loadItems(); }
+            type: 'button', class: 'btn-secondary', text: 'Next', disabled: pageNo >= pageCount,
+            onclick: function () { state.pages.push(state.offset); state.offset = state.nextOffset; loadItems(); scrollToPanel(); }
         }));
+    }
+
+    function scrollToPanel() {
+        try { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) { /* old browser */ }
     }
 
     /* ---- Cards ------------------------------------------------------------- */
@@ -557,8 +595,303 @@
         return wrap;
     }
 
+    /** A check or a cross before Approve / Reject (inc/icons.php SVGs; drawn in the button's colour). */
+    function actionIcon(style) {
+        var name = style === 'approve' ? 'check' : (style === 'reject' ? 'x' : '');
+        if (!name || typeof window.kopIcon !== 'function') return null;
+        var span = el('span', { class: 'rinbox-btn-icon', 'aria-hidden': 'true' });
+        span.innerHTML = window.kopIcon(name);
+        return span;
+    }
+
+    /* ---- Preview ----------------------------------------------------------- */
+
+    /**
+     * The box a card's links preview into: the live page in a frame when the
+     * site allows it (our own pages, Drive files), else a reading copy (title,
+     * picture, text) from review-inbox/preview. One link at a time.
+     */
+    function previewPane() {
+        var box = el('div', { class: 'rinbox-pv', hidden: true });
+        box.kopShow = function (url, btn) {
+            if (box.kopUrl === url && !box.hidden) { box.kopHide(); return; }
+            if (box.kopBtn) box.kopBtn.textContent = 'Preview';
+            box.kopUrl = url;
+            box.kopBtn = btn;
+            btn.textContent = 'Hide preview';
+            box.hidden = false;
+            box.innerHTML = '';
+            box.appendChild(el('p', { class: 'rinbox-pv-note', text: 'Loading the page…' }));
+            api('preview', null, { url: url }).then(function (pv) {
+                if (box.kopUrl !== url) return;
+                drawPreview(box, pv);
+            }).catch(function (e) {
+                if (box.kopUrl !== url) return;
+                box.innerHTML = '';
+                box.appendChild(el('p', { class: 'rinbox-pv-note', text: 'Could not preview this link: ' + e.message }));
+                box.appendChild(el('a', { href: url, target: '_blank', rel: 'noopener', text: 'Open it in a new tab' }));
+            });
+        };
+        box.kopHide = function () {
+            box.hidden = true;
+            box.innerHTML = '';
+            box.kopUrl = null;
+            if (box.kopBtn) box.kopBtn.textContent = 'Preview';
+        };
+        return box;
+    }
+
+    function drawPreview(box, pv) {
+        box.innerHTML = '';
+        var hasText = !!(pv.text || pv.title || pv.image);
+        var mode = pv.frame_url ? 'page' : 'text';
+        var body = el('div', { class: 'rinbox-pv-body' });
+        var head = el('div', { class: 'rinbox-pv-head' }, [
+            el('span', { class: 'rinbox-pv-site', text: (pv.site || pv.host || '') + (pv.kind === 'pdf' ? ' (PDF)' : '') })
+        ]);
+        var switcher = null;
+        if (pv.frame_url && hasText) {
+            switcher = el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: 'Show the text only',
+                onclick: function () { mode = mode === 'page' ? 'text' : 'page'; draw(); }
+            });
+            head.appendChild(switcher);
+        }
+        head.appendChild(el('a', { href: pv.url, target: '_blank', rel: 'noopener', text: 'Open in a new tab' }));
+        head.appendChild(el('button', { type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Close', onclick: function () { box.kopHide(); } }));
+        box.appendChild(head);
+        if (pv.note) box.appendChild(el('p', { class: 'rinbox-pv-note', text: pv.note }));
+        box.appendChild(body);
+        function draw() {
+            body.innerHTML = '';
+            if (switcher) switcher.textContent = mode === 'page' ? 'Show the text only' : 'Show the page';
+            if (mode === 'page') {
+                body.appendChild(el('iframe', { src: pv.frame_url, title: 'Preview of ' + (pv.title || pv.url), loading: 'lazy', referrerpolicy: 'no-referrer' }));
+                return;
+            }
+            var reader = el('div', { class: 'rinbox-pv-reader' });
+            if (pv.image) reader.appendChild(el('img', { src: pv.image, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' }));
+            if (pv.title) reader.appendChild(el('h4', { text: pv.title }));
+            String(pv.text || '').split(/\n\s*\n|\n/).forEach(function (para) {
+                if (para.trim()) reader.appendChild(el('p', { text: para.trim() }));
+            });
+            if (!reader.childNodes.length) reader.appendChild(el('p', { text: 'Nothing readable came back from this page. Open it in a new tab to check it.' }));
+            body.appendChild(reader);
+        }
+        draw();
+    }
+
+    function previewButton(url, pane) {
+        return el('button', {
+            type: 'button', class: 'rinbox-pv-btn', text: 'Preview', 'aria-label': 'Preview ' + linkLabel(url) + ' here',
+            onclick: function (e) { pane.kopShow(url, e.currentTarget); }
+        });
+    }
+
+    /* ---- Later: snooze or hand to someone ----------------------------------- */
+
+    function fmtDate(iso) {
+        var d = new Date(iso);
+        return isNaN(d) ? String(iso).slice(0, 10) : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function fmtWhen(iso) {
+        var d = new Date(iso);
+        return isNaN(d) ? String(iso).slice(0, 16) : d.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    /** "Snoozed until Oct 12" / "Handed to Pat by dani: note", with "Put back". */
+    function holdNote(item, src, node) {
+        var h = item.hold;
+        var bits = [];
+        if (h.assigned_to) bits.push((h.mine ? 'Assigned to you' : 'Handed to ' + h.assigned_name) + (h.by ? ' by ' + h.by : ''));
+        if (h.snooze_until) bits.push('snoozed until ' + fmtDate(h.snooze_until));
+        var text = bits.join(', ');
+        text = text.charAt(0).toUpperCase() + text.slice(1) + (h.note ? ': ' + h.note : '');
+        return el('p', { class: 'rinbox-hold' }, [text + ' ', el('button', {
+            type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Put back in the list',
+            onclick: function () { setHold(item, src, node, 0, 0, ''); }
+        })]);
+    }
+
+    function setHold(item, src, node, days, assign, note) {
+        var m = node.querySelector('.rinbox-message');
+        api('hold', { source: src, key: item.key, title: item.title || '', days: days, assign: assign, note: note }).then(function (res) {
+            return api('items', null, { source: src, keys: item.key }).then(function (data) {
+                var next = (data.items || [])[0];
+                if (node.kopAfterHold) { node.kopAfterHold(res, next); refreshCounts(); return; }
+                var hidden = next && next.hold && next.hold.hidden;
+                if (node.classList.contains('rinbox-card') && next && !hidden) {
+                    if (item.source) { next.source = item.source; next.source_label = item.source_label; }
+                    fillCard(node, next, state.byKey[src], src, res.message);
+                } else if (node.classList.contains('rinbox-card')) {
+                    node.classList.add('rinbox-gone');
+                    node.innerHTML = '';
+                    node.appendChild(el('p', { class: 'rinbox-message', text: res.message + ' It is off your list until then; find it under Snoozed or in Recently done.' }));
+                } else if (m) {
+                    m.hidden = false; m.className = 'rinbox-message'; m.textContent = res.message;
+                }
+                refreshCounts();
+            });
+        }).catch(function (e) {
+            if (m) { m.hidden = false; m.className = 'rinbox-message is-error'; m.textContent = e.message; }
+        });
+    }
+
+    /** "Later…": snooze for a while and/or hand to another admin, with a note. */
+    function laterControl(item, src, node) {
+        var box = el('details', { class: 'rinbox-later' });
+        box.appendChild(el('summary', { text: 'Later…' }));
+        var days = el('select', { 'aria-label': 'Snooze for' }, [
+            el('option', { value: '0', text: 'Do not snooze' }),
+            el('option', { value: '1', text: '1 day' }),
+            el('option', { value: '3', text: '3 days' }),
+            el('option', { value: '7', text: '1 week', selected: true }),
+            el('option', { value: '30', text: '1 month' })
+        ]);
+        var who = el('select', { 'aria-label': 'Hand to' }, [el('option', { value: '0', text: 'Nobody' })]);
+        state.admins.forEach(function (a) {
+            who.appendChild(el('option', { value: String(a.id), text: a.id === state.me ? a.name + ' (you)' : a.name, selected: item.hold && item.hold.assigned_to === a.id }));
+        });
+        var note = el('input', { type: 'text', placeholder: 'Note (why, what to check)', 'aria-label': 'Note', value: item.hold && item.hold.note || '' });
+        box.appendChild(el('div', { class: 'rinbox-later-form' }, [
+            el('label', { class: 'rinbox-param' }, ['Snooze ', days]),
+            el('label', { class: 'rinbox-param' }, ['Hand to ', who]),
+            note,
+            el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: 'Set aside',
+                onclick: function () { setHold(item, src, node, parseInt(days.value, 10) || 0, parseInt(who.value, 10) || 0, note.value.trim()); }
+            })
+        ]));
+        return box;
+    }
+
+    /* ---- Your inbox: assigned to you, snoozed, recently done ----------------- */
+
+    function openSpecial(k) {
+        state.special = k;
+        state.source = null;
+        page.classList.add('rinbox-active');
+        page.querySelectorAll('.type-tabs .submission-tab').forEach(function (t) {
+            t.classList.remove('is-active');
+            t.setAttribute('aria-selected', 'false');
+        });
+        panel.hidden = false;
+        renderTabs();
+        setUrl();
+        if (k === '_done') renderDone(); else renderHeld(k === '_mine' ? 'mine' : 'snoozed');
+    }
+
+    function renderHeld(which) {
+        panel.innerHTML = '';
+        panel.appendChild(el('div', { class: 'rinbox-head' }, [
+            el('h2', { text: which === 'mine' ? 'Assigned to you' : 'Snoozed' }),
+            el('p', { class: 'rinbox-help', text: which === 'mine'
+                ? 'Items from any queue that someone handed to you. Approve or reject them here; that takes them off this list.'
+                : 'Items set aside for later. Each comes back to its queue on the date shown, or now with "Put back in the list".' })
+        ]));
+        statusEl = el('p', { class: 'rinbox-status', role: 'status', text: 'Loading…' });
+        listEl = el('div', { class: 'rinbox-list' });
+        bulkEl = el('div', { class: 'rinbox-bulk' });
+        pagerEl = el('div', { class: 'rinbox-pager' });
+        panel.appendChild(statusEl);
+        panel.appendChild(listEl);
+        api('held', null, { which: which }).then(function (data) {
+            var items = data.items || [];
+            statusEl.textContent = items.length ? items.length + (items.length === 1 ? ' item' : ' items') : 'Nothing here.';
+            items.forEach(function (it) {
+                listEl.appendChild(card(it));
+                if (it.native) listEl.lastChild.appendChild(el('p', { class: 'rinbox-help' }, [
+                    which === 'mine' ? 'Approve or reject this one on the ' : 'Put it back in the list, then approve or reject it on the ',
+                    el('button', { type: 'button', class: 'rinbox-pv-btn', text: it.source_label + ' tab', onclick: function () {
+                        var tab = page.querySelector('.type-tabs [data-type="' + it.source + '"]');
+                        if (tab) tab.click();
+                    } }),
+                    '.'
+                ]));
+            });
+        }).catch(function (e) { statusEl.textContent = 'Could not load: ' + e.message; });
+    }
+
+    function renderDone() {
+        panel.innerHTML = '';
+        var q = { mine: '', source: '', search: '', offset: 0, limit: 50 };
+        panel.appendChild(el('div', { class: 'rinbox-head' }, [
+            el('h2', { text: 'Recently done' }),
+            el('p', { class: 'rinbox-help', text: 'Everything approved, rejected, moved or set aside in the review inbox, newest first. Undo runs the queue’s own undo; a row without it cannot be taken back here.' })
+        ]));
+        var mine = el('input', { type: 'checkbox' });
+        var queue = el('select', { 'aria-label': 'Queue' }, [el('option', { value: '', text: 'Every queue' })]);
+        state.sources.forEach(function (s) { queue.appendChild(el('option', { value: s.key, text: s.label })); });
+        var search = el('input', { type: 'search', class: 'rinbox-search', placeholder: 'Search titles…', 'aria-label': 'Search titles' });
+        var timer = null;
+        mine.addEventListener('change', function () { q.mine = mine.checked ? '1' : ''; q.offset = 0; load(); });
+        queue.addEventListener('change', function () { q.source = queue.value; q.offset = 0; load(); });
+        search.addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(function () { q.search = search.value.trim(); q.offset = 0; load(); }, 350); });
+        panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [el('span', { class: 'rinbox-filters' }, [
+            el('label', { class: 'rinbox-quick-field' }, [mine, ' Only what I did']), queue, search
+        ])]));
+        var status = el('p', { class: 'rinbox-status', role: 'status' });
+        var list = el('ol', { class: 'rinbox-done' });
+        var pager = el('div', { class: 'rinbox-pager' });
+        panel.appendChild(status);
+        panel.appendChild(list);
+        panel.appendChild(pager);
+        function load() {
+            status.textContent = 'Loading…';
+            list.innerHTML = '';
+            pager.innerHTML = '';
+            api('log', null, q).then(function (data) {
+                var rows = data.rows || [];
+                status.textContent = data.total ? data.total + ' actions' : 'Nothing done yet.';
+                rows.forEach(function (r) { list.appendChild(doneRow(r)); });
+                if (data.total > q.limit) {
+                    pager.appendChild(el('button', { type: 'button', class: 'btn-secondary', text: 'Newer', disabled: q.offset === 0,
+                        onclick: function () { q.offset = Math.max(0, q.offset - q.limit); load(); } }));
+                    pager.appendChild(el('span', { text: ' ' + (q.offset + 1) + '–' + Math.min(data.total, q.offset + q.limit) + ' of ' + data.total + ' ' }));
+                    pager.appendChild(el('button', { type: 'button', class: 'btn-secondary', text: 'Older', disabled: q.offset + q.limit >= data.total,
+                        onclick: function () { q.offset += q.limit; load(); } }));
+                }
+            }).catch(function (e) { status.textContent = 'Could not load: ' + e.message; });
+        }
+        load();
+    }
+
+    function doneRow(r) {
+        var li = el('li', { class: 'rinbox-done-row' + (r.undone ? ' is-undone' : '') });
+        var msg = el('span', { class: 'rinbox-done-msg', text: r.message || '' });
+        li.appendChild(el('span', { class: 'rinbox-done-when', text: fmtWhen(r.created) + ' · ' + r.user }));
+        li.appendChild(el('span', { class: 'rinbox-done-what rinbox-done-' + (r.style || 'neutral'), text: r.action_label }));
+        li.appendChild(el('span', { class: 'rinbox-done-title' }, [el('strong', { text: r.title || r.key }), ' ', el('span', { class: 'rinbox-queue-badge', text: r.source_label })]));
+        li.appendChild(msg);
+        if (r.undone) {
+            li.appendChild(el('span', { class: 'rinbox-done-undone', text: 'Undone ' + fmtWhen(r.undone.at) + ' by ' + r.undone.by }));
+        } else if (r.can_undo) {
+            var btn = el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Undo',
+                onclick: function () {
+                    btn.disabled = true;
+                    msg.textContent = 'Undoing…';
+                    api('undo', { id: r.id }).then(function (res) {
+                        li.classList.add('is-undone');
+                        btn.replaceWith(el('span', { class: 'rinbox-done-undone', text: res.message || 'Undone.' }));
+                        msg.textContent = r.message || '';
+                        refreshCounts();
+                    }).catch(function (e) {
+                        btn.disabled = false;
+                        msg.textContent = e.message;
+                        msg.classList.add('is-error');
+                    });
+                }
+            });
+            li.appendChild(btn);
+        }
+        return li;
+    }
+
     function card(item) {
-        var src = state.source;
+        // Cards in "Assigned to you" / "Snoozed" come from every queue and say which.
+        var src = item.source || state.source;
         var s = state.byKey[src];
         var node = el('article', { class: 'rinbox-card', 'data-key': item.key });
         fillCard(node, item, s, src);
@@ -573,19 +906,27 @@
 
         var title = el('h3', { class: 'rinbox-title', text: item.title || '(no name)' });
         var meta = el('div', { class: 'rinbox-meta' }, [
+            item.source_label ? el('span', { class: 'rinbox-queue-badge', text: item.source_label }) : null,
             item.status_label ? el('span', { class: 'status-badge rinbox-status-' + String(item.status || '').replace(/[^a-z_-]/gi, ''), text: item.status_label }) : null,
             item.subtitle ? el('span', { text: item.subtitle }) : null,
             item.created ? el('span', { class: 'rinbox-date', text: String(item.created).slice(0, 10) }) : null
         ]);
+        // Every link gets "Preview": the page opens inside the card.
+        var pane = previewPane();
         var links = el('div', { class: 'rinbox-links' });
-        if (item.facility) {
-            links.appendChild(item.facility.url
-                ? el('a', { href: item.facility.url, target: '_blank', rel: 'noopener', text: item.facility.name })
-                : el('span', { text: item.facility.name }));
+        function addLink(url, text, extra) {
+            links.appendChild(el('span', { class: 'rinbox-link' }, [
+                el('a', Object.assign({ href: url, target: '_blank', rel: 'noopener', text: text }, extra || {})),
+                previewButton(url, pane)
+            ]));
         }
-        if (safeHref(item.url)) links.appendChild(el('a', { href: item.url, target: '_blank', rel: 'noopener', title: item.url, text: linkLabel(item.url) }));
+        if (safeHref(item.url)) addLink(item.url, linkLabel(item.url), { title: item.url });
+        if (item.facility) {
+            if (item.facility.url) addLink(item.facility.url, 'Facility page: ' + item.facility.name);
+            else links.appendChild(el('span', { text: item.facility.name }));
+        }
         (item.links || []).forEach(function (l) {
-            if (safeHref(l.url)) links.appendChild(el('a', { href: l.url, target: '_blank', rel: 'noopener', text: l.label }));
+            if (safeHref(l.url)) addLink(l.url, l.label);
         });
 
         var pick = (item.actions || []).length
@@ -593,14 +934,19 @@
             : null;
         node.kopParams = {};
         node.appendChild(el('header', { class: 'rinbox-card-head' }, [pick ? el('span', { class: 'rinbox-title-row' }, [pick, title]) : title, meta]));
+        if (item.hold) node.appendChild(holdNote(item, src, node));
         if (links.childNodes.length) node.appendChild(links);
+        node.appendChild(pane);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
         if (item.details && item.details.length) {
             var dl = el('dl', { class: 'rinbox-details' });
             item.details.forEach(function (d) {
                 dl.appendChild(el('dt', { text: d.label }));
                 var dd = el('dd');
-                if (d.url && safeHref(d.url)) dd.appendChild(el('a', { href: d.url, target: '_blank', rel: 'noopener', text: d.value || linkLabel(d.url) }));
+                if (d.url && safeHref(d.url)) {
+                    dd.appendChild(el('a', { href: d.url, target: '_blank', rel: 'noopener', text: d.value || linkLabel(d.url) }));
+                    dd.appendChild(previewButton(d.url, pane));
+                }
                 else dd.textContent = Array.isArray(d.value) ? d.value.join(', ') : String(d.value === null || d.value === undefined ? '' : d.value);
                 dl.appendChild(dd);
             });
@@ -652,7 +998,6 @@
                 run(node, item, s, src, 'act', { action: 'move', params: params });
             }));
         }
-        node.appendChild(quick);
 
         // Details editor.
         var editable = (item.fields || []).length && s.can_save;
@@ -689,7 +1034,9 @@
             }
         }
 
-        // The queue's own buttons.
+        // The queue's own buttons: Approve and Reject first, each saying what it does.
+        var decide = el('div', { class: 'rinbox-decide' });
+        var does = el('ul', { class: 'rinbox-does' });
         var bar = el('div', { class: 'rinbox-actions' });
         if (editor) {
             bar.appendChild(el('button', {
@@ -704,30 +1051,41 @@
         (item.actions || []).forEach(function (a) {
             var paramInputs = (a.params || []).map(function (p) { return fieldInput(p, prefix + 'p-' + a.id + '-'); });
             node.kopParams[a.id] = paramInputs;
+            var primary = a.style === 'approve' || a.style === 'reject';
             var btn = el('button', {
-                type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral'), text: a.label,
+                type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral') + (primary ? ' rinbox-btn-primary' : ''),
+                title: a.help || null,
                 onclick: function () {
                     if (a.confirm && !window.confirm(a.confirm)) return;
                     var params = {};
                     paramInputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
                     run(node, item, s, src, 'act', { action: a.id, params: params }, btn);
                 }
-            });
+            }, [actionIcon(a.style), a.label]);
+            var target = primary ? decide : bar;
             if (paramInputs.length) {
                 var group = el('span', { class: 'rinbox-action-group' });
                 (a.params || []).forEach(function (p, i) {
                     group.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', paramInputs[i]]));
                 });
                 group.appendChild(btn);
-                bar.appendChild(group);
+                target.appendChild(group);
             } else {
-                bar.appendChild(btn);
+                target.appendChild(btn);
+            }
+            if (a.help && a.style !== 'undo') does.appendChild(el('li', { class: 'rinbox-does-' + (a.style || 'neutral') }, [el('strong', { text: a.label + ': ' }), a.help]));
+        });
+        bar.appendChild(laterControl(item, src, node));
+        if (decide.childNodes.length) node.appendChild(decide);
+        if (does.childNodes.length) node.appendChild(does);
+        node.appendChild(bar);
+        // Filing details (category, tags, Move to) come after the decision.
+        node.appendChild(quick);
+        [decide, bar].forEach(function (box) {
+            if (typeof window.kopFacilityFinderAttach === 'function') {
+                box.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
             }
         });
-        node.appendChild(bar);
-        if (typeof window.kopFacilityFinderAttach === 'function') {
-            bar.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
-        }
 
         var msg = el('p', { class: 'rinbox-message' + (isError ? ' is-error' : ''), role: 'status', text: message || '' });
         if (!message) msg.hidden = true;
@@ -818,6 +1176,7 @@
                 (data.sources || []).forEach(function (s) {
                     if (state.byKey[s.key]) state.byKey[s.key].count = s.count;
                 });
+                if (data.held) state.held = data.held;
                 renderTabs();
             }).catch(function () { /* counts stay as they were */ });
         }, 800);
@@ -935,14 +1294,67 @@
                 onclick: function (e) { go('ai', {}, e.currentTarget); }
             }));
         }
+        row.appendChild(laterControl(item, src, row));
+        row.kopAfterHold = function (res, next) {
+            if (next && next.hold && next.hold.hidden && card.classList.contains('is-pending')) {
+                card.hidden = true;
+                updateHiddenNote(1);
+            } else {
+                nativeQuickRow(card, next || item, src, res.message);
+            }
+        };
         var msg = el('p', { class: 'rinbox-message' + (isError ? ' is-error' : ''), role: 'status', text: message || '' });
         if (!message) msg.hidden = true;
         row.appendChild(msg);
 
+        // What the card is about and what Approve / Reject do, above its buttons.
+        var oldEv = card.querySelector(':scope > .rinbox-native-evidence');
+        var ev = el('div', { class: 'rinbox-native-evidence' });
+        if (item.hold) ev.appendChild(holdNote(item, src, row));
+        var pane = previewPane();
+        if (safeHref(item.url)) {
+            ev.appendChild(el('div', { class: 'rinbox-links' }, [el('span', { class: 'rinbox-link' }, [
+                el('a', { href: item.url, target: '_blank', rel: 'noopener', title: item.url, text: linkLabel(item.url) }),
+                previewButton(item.url, pane)
+            ])]));
+        }
+        ev.appendChild(pane);
+        if (card.classList.contains('is-pending') && (item.approve_help || item.reject_help)) {
+            ev.appendChild(el('ul', { class: 'rinbox-does' }, [
+                item.approve_help ? el('li', { class: 'rinbox-does-approve' }, [el('strong', { text: 'Approve: ' }), item.approve_help]) : null,
+                item.reject_help ? el('li', { class: 'rinbox-does-reject' }, [el('strong', { text: 'Reject: ' }), item.reject_help]) : null
+            ]));
+        }
+
         var footer = card.querySelector(':scope > .submission-footer');
+        if (oldEv) oldEv.replaceWith(ev);
+        else if (footer) card.insertBefore(ev, footer);
+        else card.appendChild(ev);
         if (old) old.replaceWith(row);
         else if (footer) card.insertBefore(row, footer);
         else card.appendChild(row);
+    }
+
+    /** "N set aside are hidden. Show them" over the page's own list. */
+    var hiddenCount = 0;
+    function updateHiddenNote(add) {
+        hiddenCount += add;
+        var note = document.getElementById('rinbox-hidden-note');
+        if (!hiddenCount) { if (note) note.remove(); return; }
+        if (!note) {
+            note = el('p', { id: 'rinbox-hidden-note', class: 'rinbox-status' });
+            ownList.parentNode.insertBefore(note, ownList);
+        }
+        note.innerHTML = '';
+        note.appendChild(document.createTextNode(hiddenCount + (hiddenCount === 1 ? ' item is' : ' items are') + ' set aside (snoozed or handed to someone else) and not shown. '));
+        note.appendChild(el('button', {
+            type: 'button', class: 'rinbox-pv-btn', text: 'Show them',
+            onclick: function () {
+                ownList.querySelectorAll('.submission-card[hidden]').forEach(function (c) { c.hidden = false; });
+                hiddenCount = 0;
+                updateHiddenNote(0);
+            }
+        }));
     }
 
     var decorateTimer = null;
@@ -960,9 +1372,15 @@
         api('items', null, { source: src, keys: keys.join(',') }).then(function (data) {
             var byKey = {};
             (data.items || []).forEach(function (it) { byKey[it.key] = it; });
+            if (!ownList.querySelector('.submission-card[hidden]')) { hiddenCount = 0; updateHiddenNote(0); }
+            var hide = 0;
             cards.forEach(function (c) {
-                if (byKey[c.dataset.id] && c.isConnected) nativeQuickRow(c, byKey[c.dataset.id], src);
+                var it = byKey[c.dataset.id];
+                if (!it || !c.isConnected) return;
+                nativeQuickRow(c, it, src);
+                if (it.hold && it.hold.hidden && c.classList.contains('is-pending')) { c.hidden = true; hide++; }
             });
+            if (hide) updateHiddenNote(hide);
         }).catch(function () {
             cards.forEach(function (c) { delete c.dataset.rinbox; });
         });
@@ -980,6 +1398,7 @@
         decorateNative();
         var wanted = null;
         try { wanted = new URL(window.location.href).searchParams.get('type'); } catch (e) { wanted = null; }
-        if (wanted && state.byKey[wanted] && !state.byKey[wanted].native) openSource(wanted);
+        if (wanted && SPECIAL[wanted]) openSpecial(wanted);
+        else if (wanted && state.byKey[wanted] && !state.byKey[wanted].native) openSource(wanted);
     });
 })();

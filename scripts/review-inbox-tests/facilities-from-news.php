@@ -34,7 +34,7 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     };
     $before = $get();
     $check('facilities-from-news: waiting item is held back', in_array($before['decision'], array('possible_duplicate', 'other_era', 'needs_place'), true), $before['decision']);
-    $check('facilities-from-news: held item offers link and create', array_column($item['actions'], 'id') === array('link', 'create'));
+    $check('facilities-from-news: held item offers link, create and reject', array_column($item['actions'], 'id') === array('link', 'create', 'dismiss'));
 
     call_user_func($src['save'], $item['key'], array('officialName' => 'Renamed In Test', 'state' => 'ut', 'type' => 'Wilderness Therapy'));
     $entry = json_decode($get()['detail'], true)['entry'];

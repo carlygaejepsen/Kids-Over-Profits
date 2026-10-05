@@ -241,8 +241,17 @@ function kop_rinbox_gdl_item(array $r) {
     $actions = array();
     $moves = array();
     if ($pending) {
+        $fac = kop_rinbox_facility($r['facility_id']);
+        $fac_name = $fac ? $fac['name'] : 'the record you pick';
+        if ($default === 'resource') {
+            $add_help = 'Adds this link to the facility page of ' . $fac_name . ' under "Materials and links".';
+        } elseif ($default === 'website') {
+            $add_help = 'Adds this link to the website links of ' . $fac_name . '.';
+        } else {
+            $add_help = 'Sends this link to the ' . strtolower($targets[$default]) . ', where it waits for its own review; nothing is published yet and no email is sent.';
+        }
         // The Record box is the old screen's "Add checked to that record": another record than the match.
-        $actions[] = array('id' => 'apply', 'label' => 'Add: ' . $targets[$default], 'style' => 'approve', 'params' => array(
+        $actions[] = array('id' => 'apply', 'label' => 'Add: ' . $targets[$default], 'style' => 'approve', 'help' => $add_help, 'params' => array(
             array('name' => 'facility', 'label' => kop_gdl_needs_facility($default) ? 'Record' : 'Record (not needed for a queue)',
                 'type' => 'facility', 'value' => (int) $r['facility_id'], 'optional' => true),
         ));
@@ -251,10 +260,12 @@ function kop_rinbox_gdl_item(array $r) {
             $n = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_gdl_table() . ' WHERE ' . kop_rinbox_gdl_sure_where((int) $r['facility_id']));
             if ($n > 1) {
                 $actions[] = array('id' => 'apply_all', 'label' => 'Add all ' . $n . ' sure matches for this facility', 'style' => 'neutral',
-                    'confirm' => 'Add all ' . $n . ' links tied for sure to this facility, each where its kind goes?');
+                    'confirm' => 'Add all ' . $n . ' links tied for sure to this facility, each where its kind goes?',
+                    'help' => 'Adds every waiting link matched for sure to ' . $fac_name . ', each to the place its kind goes (facility page, website links or a review queue).');
             }
         }
-        $actions[] = array('id' => 'reject', 'label' => 'Skip', 'style' => 'reject');
+        $actions[] = array('id' => 'reject', 'label' => 'Reject: skip this link', 'style' => 'reject',
+            'help' => 'Nothing is added anywhere; the link moves to the Skipped tab.');
         foreach ($targets as $id => $label) {
             if ($id === $default) continue;
             $m = array('id' => $id, 'label' => $label);
@@ -264,9 +275,11 @@ function kop_rinbox_gdl_item(array $r) {
             $moves[] = $m;
         }
     } elseif ($r['status'] === 'applied') {
-        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo');
+        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Takes the link off where it was added and puts it back in the waiting list.');
     } else {
-        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral');
+        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the link waits for review again.');
     }
     $statuses = array('pending' => 'Waiting', 'applied' => 'Added', 'rejected' => 'Skipped', 'gone' => 'No longer offered');
     $fid = $r['status'] === 'applied' ? (int) $r['applied_fid'] : (int) $r['facility_id'];

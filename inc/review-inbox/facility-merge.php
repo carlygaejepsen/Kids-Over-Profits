@@ -144,23 +144,29 @@ function kop_rinbox_fmerge_pair_item(array $p, $status) {
     }
     if ($status === 'dismissed') {
         $why = 'Marked not the same' . (!empty($p['by']) ? ' by ' . $p['by'] : '') . (!empty($p['at']) ? ' on ' . substr($p['at'], 0, 10) : '');
-        $actions = array(array('id' => 'undismiss', 'label' => 'Put back on the list', 'style' => 'neutral'));
+        $actions = array(array('id' => 'undismiss', 'label' => 'Put back on the list', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the pair is suggested again.'));
         if (!empty($p['homes'])) {
             $why .= ': tied as homes of program #' . (int) $p['homes']['program'];
             $actions = array(array('id' => 'undo_homes', 'label' => 'Undo: not homes of one program', 'style' => 'undo',
-                'confirm' => 'Untie the two homes from the program and put the pair back on the list?'));
+                'confirm' => 'Untie the two homes from the program and put the pair back on the list?',
+                'help' => 'Unties both records from program #' . (int) $p['homes']['program'] . ' and puts the pair back on the list.'));
         }
     } else {
         $why = (string) $p['reason'];
+        $kept = (int) $keep === (int) $a['id'] ? $a : $b;
+        $other = (int) $keep === (int) $a['id'] ? $b : $a;
         $actions = array(
-            array('id' => 'merge', 'label' => 'Merge into one', 'style' => 'approve',
+            array('id' => 'merge', 'label' => 'Approve: merge into one', 'style' => 'approve',
+                'help' => 'Folds ' . $other['name'] . ' into ' . $kept['name'] . ' (or the other way round, as picked below): its names, articles, lawsuits, documents and staff move to the kept record, and its page forwards there.',
                 'confirm' => 'Merge these two records? The one you do not keep becomes another name of the kept one. You can undo it from the Merged tab.',
                 'params' => array(array('name' => 'keep', 'label' => 'Record to keep', 'type' => 'select', 'value' => (string) $keep,
                     'options' => array(
                         (string) $a['id'] => 'Keep ' . $a['name'] . ' (#' . $a['id'] . (!empty($a['place']) ? ', ' . $a['place'] : '') . ')',
                         (string) $b['id'] => 'Keep ' . $b['name'] . ' (#' . $b['id'] . (!empty($b['place']) ? ', ' . $b['place'] : '') . ')',
                     )))),
-            array('id' => 'dismiss', 'label' => 'Not the same place', 'style' => 'reject'),
+            array('id' => 'dismiss', 'label' => 'Reject: not the same place', 'style' => 'reject',
+                'help' => 'Both records stay as they are; this pair is not suggested again.'),
         );
         if ($h = kop_rinbox_fmerge_homes_action($a, $b)) $actions[] = $h;
     }
@@ -194,6 +200,7 @@ function kop_rinbox_fmerge_homes_action(array $a, array $b) {
     $choices['new'] = 'A new program record';
     $choices['other'] = 'Another existing record (find it below)';
     return array('id' => 'homes', 'label' => 'Homes of one program', 'style' => 'neutral',
+        'help' => 'Keeps both records separate and ties them to one program record as its homes; the program page lists both.',
         'confirm' => 'Tie both records to the program as its homes? They stay separate records, and this pair is not offered again. Undo is on the Not the same tab.',
         'params' => array(
             array('name' => 'program', 'label' => 'Program', 'type' => 'select', 'value' => $plan['program_id'] ? (string) $plan['program_id'] : 'new', 'options' => $choices),
@@ -213,6 +220,7 @@ function kop_rinbox_fmerge_merged_item(array $m) {
     $actions = array();
     if (!empty($m['canUndo'])) {
         $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Splits ' . $m['drop']['name'] . ' back out into its own record, with its page and everything it had.',
             'confirm' => 'Split "' . $m['drop']['name'] . '" back out into its own record, with everything it had?');
     }
     return array(

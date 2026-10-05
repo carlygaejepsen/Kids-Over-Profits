@@ -219,15 +219,19 @@ function kop_rinbox_ilinks_item(array $p) {
     $tracker = function_exists('kop_state_inspection_page_map') ? kop_state_inspection_page_map() : array();
     if (isset($tracker[$state_name])) $links[] = array('label' => $state_name . ' inspection reports', 'url' => home_url('/' . $tracker[$state_name] . '/'));
     if ($linked) {
-        $actions = array(array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo'));
+        $actions = array(array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo',
+            'help' => 'The facility page of ' . $rec['name'] . ' stops showing the inspection reports of ' . $row['facility_name'] . '.'));
         $text = 'Linked: the facility\'s page shows this entry\'s inspection reports.';
     } elseif ($rejected) {
-        $actions = array(array('id' => 'unreject', 'label' => 'Suggest it again', 'style' => 'undo'));
+        $actions = array(array('id' => 'unreject', 'label' => 'Suggest it again', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the pair goes back to the suggestions.'));
         $text = 'Marked not the same place, so it is not suggested.';
     } else {
         $actions = array(
-            array('id' => 'link', 'label' => 'Same facility', 'style' => 'approve'),
-            array('id' => 'reject', 'label' => 'Not this one', 'style' => 'reject'),
+            array('id' => 'link', 'label' => 'Approve: same facility', 'style' => 'approve',
+                'help' => 'The facility page of ' . $rec['name'] . ' shows the ' . $p['state'] . ' inspection reports filed under ' . $row['facility_name'] . '.'),
+            array('id' => 'reject', 'label' => 'Reject: not this one', 'style' => 'reject',
+                'help' => 'Nothing on the site changes; this pair is not suggested again.'),
         );
         $text = $p['same_town']
             ? 'The licensing entry is in the record\'s town, so this one starts ticked. Leave a pair for later by doing nothing.'

@@ -145,16 +145,24 @@ function kop_rinbox_myears_item($id, array $c) {
     $links = array(array('label' => 'See it on the network map', 'url' => $map . '#open=' . rawurlencode($id)));
     $labels = array('review' => 'To review', 'none' => 'No year found', 'accepted' => 'Accepted', 'rejected' => 'Rejected');
     if ($view === 'accepted' || $view === 'rejected') {
-        $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo'));
+        $nm = (string) ($c['name'] ?? $id);
+        $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => $view === 'accepted'
+                ? 'Takes these years off ' . $nm . ' on the network map; the name waits for review again.'
+                : 'Nothing on the site changes; the name waits for review again.'));
     } else {
         $found = $view === 'review';
+        $nm = (string) ($c['name'] ?? $id);
         $actions = array(
-            array('id' => 'accept', 'label' => $found ? 'Accept these years' : 'Save these years', 'style' => 'approve', 'params' => array(
+            array('id' => 'accept', 'label' => $found ? 'Accept these years' : 'Save these years', 'style' => 'approve',
+                'help' => 'Shows ' . $nm . ' with the years below on the network map timeline, live at once.',
+                'params' => array(
                 array('name' => 'start', 'label' => 'Opened (year)', 'type' => 'number', 'value' => $start ? (string) $start : ''),
                 array('name' => 'end', 'label' => 'Closed (year; empty if unknown)', 'type' => 'number', 'value' => $end ? (string) $end : '', 'optional' => true),
                 array('name' => 'still', 'label' => 'Still operating', 'type' => 'checkbox', 'value' => $still, 'optional' => true),
             )),
-            array('id' => 'reject', 'label' => $found ? 'Reject' : 'Leave off the timeline', 'style' => 'reject'),
+            array('id' => 'reject', 'label' => $found ? 'Reject these years' : 'Leave off the timeline', 'style' => 'reject',
+                'help' => 'The map keeps ' . $nm . ' without these years; the name moves to Rejected.'),
         );
     }
     $fid = kop_rinbox_myears_facility_ids()[$id] ?? 0;

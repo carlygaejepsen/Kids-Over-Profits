@@ -252,7 +252,7 @@ class wpdb {
     public function get_var($sql, $x = 0, $y = 0) { $rows = $this->rows($sql); if (!isset($rows[$y])) return null; $v = array_values($rows[$y]); return $v[$x] ?? null; }
     public function get_col($sql, $x = 0) { $out = array(); foreach ($this->rows($sql) as $r) { $v = array_values($r); $out[] = $v[$x] ?? null; } return $out; }
     public function esc_like($s) { return addcslashes((string) $s, '_%\\'); }
-    public function query($sql) { return 0; }
+    public function query($sql) { return empty($GLOBALS['kop_test_wpdb_writes']) ? 0 : $this->write($sql, array()); }
     // Writes run only for a test that set $GLOBALS['kop_test_wpdb_writes'] on a scratch copy
     // (scripts/test-review-inbox.php); everywhere else they do nothing, so tmp/prod.sqlite stays as synced.
     private function write($sql, array $vals) {

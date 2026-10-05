@@ -199,9 +199,14 @@ function kop_rinbox_wbf_item(array $r) {
 
     list($city, $state) = kop_rinbox_wbf_place($r['place']);
     $actions = array();
+    $goes = kop_wbf_where_it_goes($r);
     if ($pending && $r['grp'] === 'consultant') {
         $v = kop_wbf_row_value($r);
-        $actions[] = array('id' => 'consultant', 'label' => !empty($v['referrer_id']) ? 'Flag as former industry staff' : 'Flag (creates their consultant record)', 'style' => 'approve');
+        $actions[] = array('id' => 'consultant', 'label' => !empty($v['referrer_id']) ? 'Flag as former industry staff' : 'Flag (creates their consultant record)', 'style' => 'approve',
+            'help' => (!empty($v['referrer_id'])
+                ? 'Flags the consultant record of ' . ($v['referrer_name'] ?? ($v['name'] ?? 'this person')) . ' as former industry staff'
+                : 'Creates a consultant record for ' . ($v['name'] ?? 'this person') . ' under Educational Consultants, flagged as former industry staff,')
+                . ' and adds these jobs to its Career History, citing Woodbury.');
     } elseif ($pending && $ya && (int) $r['facility_id'] === 0) {
         $programs = array();
         $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
@@ -210,12 +215,16 @@ function kop_rinbox_wbf_item(array $r) {
         }
         if ($programs) {
             $match = $pdo && function_exists('kop_ya_find_by_name') ? (kop_ya_find_by_name($pdo, $r['program']) ?: kop_ya_find_by_name($pdo, $r['program_as_written'])) : null;
-            $actions[] = array('id' => 'ya_apply', 'label' => 'Add to that young adult program', 'style' => 'approve', 'params' => array(
+            $actions[] = array('id' => 'ya_apply', 'label' => 'Add to that young adult program', 'style' => 'approve',
+                'help' => 'Adds this item to the young adult program you pick, on the Young Adult Programs page, citing the Woodbury page.',
+                'params' => array(
                 array('name' => 'ya', 'label' => 'Young adult program', 'type' => 'select', 'options' => $programs, 'value' => $match ? (string) $match['id'] : ''),
             ));
         }
         $why = (string) ($r['ya_why'] ?? '');
-        $actions[] = array('id' => 'ya_create', 'label' => 'Create the young adult program and add this', 'style' => 'neutral', 'params' => array(
+        $actions[] = array('id' => 'ya_create', 'label' => 'Create the young adult program and add this', 'style' => $programs ? 'neutral' : 'approve',
+            'help' => 'Makes a new young adult program named ' . $r['program'] . ' (listed on the Young Adult Programs page at once) and adds this item to it, citing the Woodbury page.',
+            'params' => array(
             array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $r['program']),
             array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => $city),
             array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => $state),
@@ -224,14 +233,18 @@ function kop_rinbox_wbf_item(array $r) {
             array('name' => 'program_type', 'label' => 'Described as', 'type' => 'text', 'optional' => true,
                 'value' => $why !== '' && !preg_match('/^(Ages|Name):/', $why) ? mb_substr($why, 0, 255) : ''),
         ));
-        $actions[] = array('id' => 'ya_off', 'label' => 'Not a young adult program', 'style' => 'neutral');
+        $actions[] = array('id' => 'ya_off', 'label' => 'Not a young adult program', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; every waiting item of ' . $r['program'] . ' moves to "Programs with no record".');
     } elseif ($pending) {
-        $actions[] = array('id' => 'apply', 'label' => (int) $r['facility_id'] > 0 ? 'Add to the record' : 'Add to this record', 'style' => 'approve', 'params' => array(
+        $actions[] = array('id' => 'apply', 'label' => (int) $r['facility_id'] > 0 ? 'Add to the record' : 'Add to this record', 'style' => 'approve',
+            'help' => 'Adds this to ' . ((int) $r['facility_id'] > 0 ? kop_rinbox_wbf_name($r['facility_id']) : 'the record you pick') . ' under ' . $goes . ', citing the Woodbury page.',
+            'params' => array(
             array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id']),
         ));
         // The build's other close names, one click each (the old screen's buttons under "Another record").
         foreach ($alts as $aid => $a) {
-            $actions[] = array('id' => 'apply_to_' . $aid, 'label' => 'Add to ' . ($a['name'] ?? '#' . $aid) . (!empty($a['state']) ? ' (' . $a['state'] . ')' : ''), 'style' => 'neutral');
+            $actions[] = array('id' => 'apply_to_' . $aid, 'label' => 'Add to ' . ($a['name'] ?? '#' . $aid) . (!empty($a['state']) ? ' (' . $a['state'] . ')' : ''), 'style' => 'neutral',
+                'help' => 'Adds this to ' . ($a['name'] ?? 'record #' . $aid) . ' instead, under ' . $goes . ', citing the Woodbury page.');
         }
         // Any waiting item can go on a new record (the old screen's "Wrong program?").
         $kinds = kop_wbf_create_kinds();
@@ -239,6 +252,7 @@ function kop_rinbox_wbf_item(array $r) {
         foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) $types[$t] = $t;
         $name = (int) $r['facility_id'] === 0 || $r['program_as_written'] === '' ? $r['program'] : $r['program_as_written'];
         $actions[] = array('id' => 'create', 'label' => 'Create the record and add this', 'style' => 'neutral',
+            'help' => 'Makes a new record with the name and place below (a facility gets its own facility page) and adds this item to it.',
             'confirm' => 'Create a new record with this name and add the item to it?', 'params' => array(
             array('name' => 'kind', 'label' => 'What is it?', 'type' => 'select', 'options' => $kinds, 'value' => 'facility'),
             array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $name),
@@ -249,13 +263,16 @@ function kop_rinbox_wbf_item(array $r) {
             array('name' => 'force', 'label' => 'It is a different place from a close match', 'type' => 'checkbox', 'value' => '', 'optional' => true),
         ));
         if ((int) $r['facility_id'] === 0) {
-            $actions[] = array('id' => 'ya_on', 'label' => 'It is a young adult program (18+)', 'style' => 'neutral');
+            $actions[] = array('id' => 'ya_on', 'label' => 'It is a young adult program (18+)', 'style' => 'neutral',
+                'help' => 'Nothing on the site changes; every waiting item of ' . $r['program'] . ' moves to the young adult tab.');
         }
     }
     if ($pending) {
         if ($r['grp'] !== 'consultant' && $ev) {
             // "Another person in these words": a new waiting staff item citing the same page.
-            $actions[] = array('id' => 'add_person', 'label' => 'Add this person', 'style' => 'neutral', 'params' => array(
+            $actions[] = array('id' => 'add_person', 'label' => 'Add this person', 'style' => 'neutral',
+                'help' => 'Makes a new waiting item for the person you name, citing the same page; nothing is added to a record until that item is approved.',
+                'params' => array(
                 array('name' => 'name', 'label' => 'Another person in these words: name', 'type' => 'text', 'value' => ''),
                 array('name' => 'role', 'label' => 'Role at this program', 'type' => 'text', 'value' => '', 'optional' => true),
                 array('name' => 'pastJobs', 'label' => 'Past jobs', 'type' => 'text', 'value' => '', 'optional' => true),
@@ -263,12 +280,16 @@ function kop_rinbox_wbf_item(array $r) {
                     'options' => array('staff.notableStaff' => 'Notable staff', 'staff.administrator' => 'Administrators')),
             ));
         }
-        if (isset($extra['original'])) $actions[] = array('id' => 'reset', 'label' => 'Back to what Woodbury said', 'style' => 'neutral');
-        $actions[] = array('id' => 'reject', 'label' => 'Reject', 'style' => 'reject');
+        if (isset($extra['original'])) $actions[] = array('id' => 'reset', 'label' => 'Back to what Woodbury said', 'style' => 'neutral',
+            'help' => 'Drops the corrections made here; the item reads as Woodbury had it.');
+        $actions[] = array('id' => 'reject', 'label' => 'Reject', 'style' => 'reject',
+            'help' => 'Nothing is added anywhere; the item moves to the Rejected tab.');
     } elseif ($r['status'] === 'applied') {
-        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo');
+        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Takes what this item added off the record and puts it back in the waiting list; a record it created stays.');
     } else {
-        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral');
+        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the item waits for review again.');
     }
 
     $statuses = array('pending' => 'Waiting', 'applied' => $r['reviewed_by'] === 'auto' ? 'Added automatically' : 'Added', 'rejected' => 'Rejected', 'gone' => 'No longer proposed');

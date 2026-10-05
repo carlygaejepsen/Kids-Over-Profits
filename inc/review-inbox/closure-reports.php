@@ -141,12 +141,19 @@ function kop_rinbox_closure_item(array $r) {
             $params[] = array('name' => 'end_year', 'label' => 'End year', 'type' => 'number', 'optional' => true,
                 'value' => $r['closure_date'] ? substr($r['closure_date'], 0, 4) : '');
         }
-        $actions[] = array('id' => 'apply', 'label' => 'Confirm: mark ' . $r['target_status'], 'style' => 'approve', 'params' => $params);
-        $actions[] = array('id' => 'dismiss', 'label' => 'Dismiss: not a closure', 'style' => 'reject');
+        $fac = kop_rinbox_facility($r['facility_id']);
+        $who = $fac ? $fac['name'] : 'the facility you pick';
+        $actions[] = array('id' => 'apply', 'label' => 'Confirm: mark ' . $r['target_status'], 'style' => 'approve', 'params' => $params,
+            'help' => 'Sets ' . $who . ' to ' . $r['target_status'] . ($r['target_status'] === 'Closed' ? ' (with the end year below)' : '')
+                . ' on its facility page and the network map, and lists this article on its page.');
+        $actions[] = array('id' => 'dismiss', 'label' => 'Dismiss: not a closure', 'style' => 'reject',
+            'help' => 'No facility changes; the report moves to the Dismissed tab.');
     } elseif ($r['status'] === 'applied') {
-        $actions[] = array('id' => 'undo', 'label' => 'Undo: restore the old status', 'style' => 'undo');
+        $actions[] = array('id' => 'undo', 'label' => 'Undo: restore the old status', 'style' => 'undo',
+            'help' => 'Puts the facility back to the status and end year it had before, and the report waits for review again.');
     } else {
-        $actions[] = array('id' => 'reopen', 'label' => 'Back to review', 'style' => 'neutral');
+        $actions[] = array('id' => 'reopen', 'label' => 'Back to review', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the report waits for review again.');
     }
     $quote = (string) $r['quote'];
     $pdo = kop_closure_pdo();

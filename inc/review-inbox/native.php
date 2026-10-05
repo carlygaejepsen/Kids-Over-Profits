@@ -230,6 +230,8 @@ function kop_rinbox_native_item($type, array $r) {
         'moves'        => $moves,
         'actions'      => $actions,
         'moved'        => $log ? array('to' => $log['to']) : null,
+        'approve_help' => kop_rinbox_native_help($type)[0],
+        'reject_help'  => kop_rinbox_native_help($type)[1],
     );
 }
 
@@ -266,10 +268,37 @@ function kop_rinbox_native_save($type, $key, array $fields) {
     return array('message' => 'Saved.');
 }
 
+/**
+ * What Approve and Reject on the page's own cards do, in a sentence each,
+ * shown on the card so the reviewer knows what they are approving.
+ */
+function kop_rinbox_native_help($type) {
+    $reject = 'Nothing on the site changes; it moves to Rejected (Undo in Recently done).';
+    $help = array(
+        'news'        => array('Puts this article on the site: the news list and the pages of the facilities it names.', $reject),
+        'lawsuit'     => array('Publishes this case at once: the lawsuits list and the pages of the facilities it involves.', $reject),
+        'legislation' => array('Publishes this bill at once on the legislation pages.', $reject),
+        'wiki'        => array("Puts this write-up on the program's facility page.", $reject),
+        'data'        => array('Writes these changes into the facility record. Recently done cannot take this one back.', 'Nothing in the record changes; the suggestion moves to Rejected.'),
+    );
+    return $help[$type] ?? array('', $reject);
+}
+
 function kop_rinbox_native_act($type, $key, $action, array $params) {
     if ($action === 'move') return kop_rinbox_native_move($type, $key, (string) ($params['to'] ?? ''), $params);
     if ($action === 'unmove') return kop_rinbox_native_unmove($type, $key);
+    if ($action === 'restore') return kop_rinbox_native_restore($type, $key, (string) ($params['status'] ?? ''));
     throw new RuntimeException('Approve and reject this with the buttons on its card.');
+}
+
+/** Undo from Recently done: put the status back to what it was before approve / reject. */
+function kop_rinbox_native_restore($type, $key, $status) {
+    $t = kop_rinbox_native_types()[$type];
+    $allowed = array('submitted', 'pending', 'approved', 'published', 'rejected', 'promotional', 'draft');
+    if (!in_array($status, $allowed, true)) throw new RuntimeException('Unknown status to go back to.');
+    if (!kop_rinbox_native_row($type, $key)) throw new RuntimeException('That submission is gone.');
+    kop_rinbox_pdo()->prepare("UPDATE {$t['table']} SET {$t['status_col']} = ? WHERE id = ?")->execute(array($status, (int) $key));
+    return array('message' => 'Back to ' . $status . '.');
 }
 
 function kop_rinbox_native_move($type, $key, $to, array $params = array()) {

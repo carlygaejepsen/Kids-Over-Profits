@@ -100,17 +100,24 @@ function kop_rinbox_websites_item($p) {
     ))));
     $actions = array();
     if ($p->post_status === 'pending' || $p->post_status === 'draft') {
-        $actions[] = array('id' => 'publish', 'label' => 'Keep', 'style' => 'approve');
-        $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject');
+        $actions[] = array('id' => 'publish', 'label' => 'Approve: keep this website', 'style' => 'approve',
+            'help' => 'Files it under Kept, the internal list of useful websites; it is not shown on the public site. To put it on a facility page or in a queue, use "Move to" instead.');
+        $actions[] = array('id' => 'trash', 'label' => 'Reject: trash', 'style' => 'reject',
+            'help' => 'Moves it to the trash; Restore brings it back, and WordPress empties the trash after 30 days.');
     } elseif ($p->post_status === 'trash' && get_post_meta($id, '_kop_moved', true)) {
-        $actions[] = array('id' => 'unmove', 'label' => 'Undo move', 'style' => 'undo');
+        $actions[] = array('id' => 'unmove', 'label' => 'Undo move', 'style' => 'undo',
+            'help' => 'Takes it back out of the place it was moved to (while nobody has reviewed it there) and puts it in the waiting list again.');
     } elseif ($p->post_status === 'trash') {
-        $actions[] = array('id' => 'untrash', 'label' => 'Restore', 'style' => 'undo');
+        $actions[] = array('id' => 'untrash', 'label' => 'Restore', 'style' => 'undo',
+            'help' => 'Takes it out of the trash, back to the list it was on.');
         $actions[] = array('id' => 'delete', 'label' => 'Delete permanently', 'style' => 'reject',
+            'help' => 'Deletes it for good; there is no undo.',
             'confirm' => 'Delete this website for good? This cannot be undone.');
     } else {
-        $actions[] = array('id' => 'unpublish', 'label' => 'Back to waiting', 'style' => 'undo');
-        $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject');
+        $actions[] = array('id' => 'unpublish', 'label' => 'Back to waiting', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; it goes back to the waiting list.');
+        $actions[] = array('id' => 'trash', 'label' => 'Trash', 'style' => 'reject',
+            'help' => 'Moves it to the trash; Restore brings it back, and WordPress empties the trash after 30 days.');
     }
     $labels = array('pending' => 'Waiting', 'publish' => 'Kept', 'draft' => 'Draft', 'trash' => 'Trashed');
     $field = function ($k, $type = 'text') use ($meta) {

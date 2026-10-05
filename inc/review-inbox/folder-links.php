@@ -109,8 +109,10 @@ function kop_rinbox_flinks_item($key, $view, $r, array $by_id, array $counts) {
         $details[] = array('label' => 'Known as', 'value' => implode(' / ', (array) $r['matched_names']));
         $actions = array(
             array('id' => 'link', 'label' => 'Same facility: link them', 'style' => 'approve',
+                'help' => 'The facility document library shows the files of both folders, "' . $name($a) . '" and "' . $name($b) . '", together; no file moves.',
                 'params' => array(array('name' => 'note', 'label' => 'Note (e.g. renamed 2014)', 'type' => 'text', 'value' => '', 'optional' => true))),
-            array('id' => 'dismiss', 'label' => 'Alternate name: keep apart', 'style' => 'reject'),
+            array('id' => 'dismiss', 'label' => 'Alternate name: keep apart', 'style' => 'reject',
+                'help' => 'Nothing on the site changes; the two folders stay apart and this pair is not suggested again.'),
         );
         $text = 'If these are one facility under two names, link them: its documents then show the files of both folders. If the names are only related, or are separate programs, keep them apart.';
         $label = 'Suggested';
@@ -126,11 +128,13 @@ function kop_rinbox_flinks_item($key, $view, $r, array $by_id, array $counts) {
             if ($group) $details[] = array('label' => 'Shown together', 'value' => implode('; ', $group) . ': ' . $files . ' files');
         }
         $actions = array(array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo',
-            'confirm' => 'Remove this link? The folders keep their own files; the documents stop showing them together.'));
+            'confirm' => 'Remove this link? The folders keep their own files; the documents stop showing them together.',
+            'help' => 'The two folders stop showing together; each keeps its own files.'));
         $text = 'Linked: the facility\'s documents show the files of both folders.';
         $label = 'Linked';
     } else {
-        $actions = array(array('id' => 'restore', 'label' => 'Suggest it again', 'style' => 'undo'));
+        $actions = array(array('id' => 'restore', 'label' => 'Suggest it again', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the pair goes back to the suggestions.'));
         $text = 'Marked as alternate names: kept apart and not suggested.';
         $label = 'Alternate names';
     }

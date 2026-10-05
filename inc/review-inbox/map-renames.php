@@ -197,18 +197,24 @@ function kop_rinbox_mren_item(array $r) {
 
     if ($view === 'review') {
         $actions = array(
-            array('id' => 'save', 'label' => 'Save the rename year', 'style' => 'approve', 'params' => array(
+            array('id' => 'save', 'label' => 'Save the rename year', 'style' => 'approve',
+                'help' => 'On the network map timeline, the first name (picked below) ends in the year you give and the other starts then; the change is live at once.',
+                'params' => array(
                 array('name' => 'year', 'label' => 'Year of the rename', 'type' => 'number', 'value' => $a['suggest'] ? (string) $a['suggest'] : ''),
                 array('name' => 'swapped', 'label' => 'Which name came first', 'type' => 'select', 'value' => $swapped ? '1' : '0', 'options' => array(
                     '0' => $r['earlier']['name'] . ' first, then ' . $r['later']['name'],
                     '1' => 'The other way round: ' . $r['later']['name'] . ' first, then ' . $r['earlier']['name'],
                 )),
             )),
-            array('id' => 'skip', 'label' => 'Not a rename', 'style' => 'reject'),
+            array('id' => 'skip', 'label' => 'Reject: not a rename', 'style' => 'reject',
+                'help' => 'The map stays as it is; the pair moves to "Not a rename".'),
         );
         $label = 'To review';
     } else {
-        $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo'));
+        $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => $view === 'saved'
+                ? 'Takes the saved rename year off the map; the rename waits for review again.'
+                : 'Nothing on the site changes; the rename waits for review again.'));
         $label = $view === 'saved'
             ? 'Saved: renamed in ' . (int) $d['year'] . (!empty($d['swapped']) ? ', the other way round' : '')
             : 'Not a rename';

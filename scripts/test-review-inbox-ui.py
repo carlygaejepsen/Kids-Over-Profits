@@ -63,7 +63,7 @@ setTimeout(function () {
 def closure_item(status="pending", stage="closed", name="Sunrise Ranch", message=None, key="36"):
     acts = ([{"id": "apply", "label": "Confirm closure", "style": "approve",
               "params": [{"name": "end_year", "label": "End year", "type": "number", "value": "2024"}]},
-             {"id": "dismiss", "label": "Dismiss", "style": "reject"}]
+             {"id": "dismiss", "label": "Dismiss", "style": "reject", "help": "Nothing on the site changes."}]
             if status == "pending" else [{"id": "undo", "label": "Undo", "style": "undo"}])
     return {
         "key": key, "title": name, "subtitle": "Closed, 2024-05-01 · Utah", "created": "2026-09-30 10:00:00",
@@ -94,6 +94,7 @@ NEWS = {
     "moves": [{"id": "lawsuit", "label": "Move to Lawsuits"},
               {"id": "website", "label": "Move to Facility website", "params": [{"name": "facility_id", "label": "Facility", "type": "facility", "value": 0}]}],
     "actions": [], "tags": ["Neglect"], "links": [],
+    "approve_help": "Puts this article on the site.", "reject_help": "Nothing on the site changes.",
 }
 
 SOURCES = {"sources": [
@@ -107,7 +108,12 @@ SOURCES = {"sources": [
     {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting", "applied": "Added"}, "count": 2,
      "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False,
      "filters": [{"name": "kind", "label": "Kind", "options": {"news": "News article", "court": "Court record"}}]},
-], "tags": ["follow up", "needs source", "Neglect"]}
+], "tags": ["follow up", "needs source", "Neglect"], "admins": [{"id": 1, "name": "Dani"}, {"id": 2, "name": "Pat"}],
+    "me": 1, "held": {"mine": 1, "snoozed": 0}}
+
+LOG = {"rows": [{"id": 9, "source": "closure", "source_label": "Closure reports", "key": "36", "title": "Sunrise Ranch",
+                 "action": "apply", "action_label": "Confirm closure", "style": "approve", "message": "Confirmed.",
+                 "user": "dani", "created": "2026-10-05 14:00:00Z", "can_undo": True, "undone": None}], "total": 1}
 
 
 def drive_item(key, sure):
@@ -149,6 +155,8 @@ def main():
                                    {"key": "sciad", "label": "SCIAD NET", "count": 2}]}
             elif path == "lookup":
                 out = {"options": [{"value": "c45", "label": "Aspen Education Group · Company (operator)"}]}
+            elif path == "items" and "keys=" in url and "source=closure" in url:
+                out = {"items": [dict(closure_item(), hold={"assigned_to": 2, "hidden": True})], "total": 1}
             elif path == "items" and "source=drive" in url:
                 out = {"items": [drive_item("a1", True), drive_item("a2", False)], "total": 2, "view_counts": {"pending": 2, "applied": 7}}
             elif path == "items":
@@ -169,6 +177,18 @@ def main():
                 out = {"tags": sorted(body["tags"], key=str.lower), "message": "Tags saved."}
             elif path == "ai":
                 out = {"message": "Filled: Closure date.", "filled": ["closure_date"], "item": closure_item() if body["source"] == "closure" else NEWS}
+            elif path == "preview":
+                out = {"url": "https://www.ksl.com/a", "host": "ksl.com", "frame_url": "", "kind": "page", "site": "KSL",
+                       "title": "Utah youth ranch closes", "image": "", "text": "The ranch closed its doors on May 1. " + chr(10) * 2 + "State officials said...", "note": ""}
+            elif path == "hold":
+                out = {"message": "Handed to Pat, back on Oct 12."}
+            elif path == "held":
+                out = {"items": [dict(closure_item(key="40", name="Held Ranch"), source="closure", source_label="Closure reports",
+                                      hold={"assigned_to": 1, "assigned_name": "Dani", "mine": True, "snooze_until": "", "note": "check dates", "by": "pat", "hidden": False})], "total": 1}
+            elif path == "log":
+                out = LOG
+            elif path == "undo":
+                out = {"message": "Undone."}
             elif path == "tool":
                 out = {"message": "Scanned 10 articles: 1 closure found."}
             elif path == "act" and body["source"] == "drive":
@@ -212,6 +232,9 @@ def main():
 
             pg.wait_for_selector(".submission-card .rinbox-native")
             check(pg.locator(".submission-card .rinbox-native select").count() >= 1, f"@{width} the page's own card gets the quick row")
+            ev = pg.locator(".submission-card .rinbox-native-evidence")
+            check("Puts this article on the site" in ev.inner_text() and ev.locator(".rinbox-pv-btn").count() == 1,
+                  f"@{width} the page's own card shows its link with Preview and what Approve does", ev.inner_text())
             pg.locator(".submission-card .rinbox-native select").first.select_option("closure")
             pg.wait_for_function("() => document.querySelector('.rinbox-native .rinbox-message') && /Saved/.test(document.querySelector('.rinbox-native .rinbox-message').textContent)")
             check(any(c[0] == "save" and c[1]["fields"] == {"article_type": "closure"} for c in calls), f"@{width} native category saves on change")
@@ -266,7 +289,7 @@ def main():
             pg.wait_for_selector(".rinbox-card")
             check(pg.locator(".submissions-list-container").is_hidden(), f"@{width} the page's own list steps aside")
             check("type=closure" in pg.url, f"@{width} the open queue is in the address", pg.url)
-            link = pg.locator(".rinbox-card").first.locator(".rinbox-links a").nth(1)
+            link = pg.locator(".rinbox-card").first.locator(".rinbox-links a").first
             check("ksl.com" in link.inner_text() and "http" not in link.inner_text(), f"@{width} the article link reads as words", link.inner_text())
 
             pg.locator(".rinbox-card .rinbox-quick select").first.select_option("suspended")
@@ -296,6 +319,17 @@ def main():
                 pg.screenshot(path=str(shots / f"closure-edit-{width}.png"), full_page=True)
                 pg.locator(".rinbox-edit-toggle").first.click()
 
+            card0 = pg.locator(".rinbox-card").first
+            check("Nothing on the site changes" in card0.locator(".rinbox-does").inner_text(), f"@{width} the card says what Reject does")
+            check(card0.locator(".rinbox-decide .rinbox-btn-approve").count() == 1 and card0.locator(".rinbox-decide .rinbox-btn-reject").count() == 1,
+                  f"@{width} Approve and Reject sit together first")
+            card0.locator(".rinbox-pv-btn").first.click()
+            pg.wait_for_selector(".rinbox-card .rinbox-pv-reader h4")
+            check("Utah youth ranch closes" in card0.locator(".rinbox-pv").inner_text() and any(c[0] == "preview" for c in calls),
+                  f"@{width} Preview shows a reading copy inside the card")
+            card0.locator(".rinbox-pv-head button", has_text="Close").click()
+            check(card0.locator(".rinbox-pv").is_hidden(), f"@{width} the preview closes")
+
             pg.locator(".rinbox-card .rinbox-param input").first.fill("2023")
             pg.locator(".rinbox-card .rinbox-btn-approve").first.click()
             pg.wait_for_selector(".rinbox-card .rinbox-btn-undo")
@@ -303,6 +337,15 @@ def main():
                   f"@{width} an action sends its parameters and shows Undo")
             pg.wait_for_function("() => [...document.querySelectorAll('.rinbox-card .rinbox-message')].some(m => /Confirmed/.test(m.textContent))", timeout=5000)
             check(True, f"@{width} the action's message is shown")
+
+            # Later: hand the second card to someone else; it leaves the list.
+            card1 = pg.locator(".rinbox-card").nth(1)
+            card1.locator(".rinbox-later summary").click()
+            card1.locator(".rinbox-later select[aria-label='Hand to']").select_option("2")
+            card1.locator(".rinbox-later button", has_text="Set aside").click()
+            pg.wait_for_function("() => [...document.querySelectorAll('.rinbox-card.rinbox-gone')].some(c => /Handed to Pat/.test(c.textContent))")
+            check(any(c[0] == "hold" and c[1]["assign"] == 2 and c[1]["days"] == 7 for c in calls), f"@{width} Later sends the snooze and the person",
+                  json.dumps([c[1] for c in calls if c[0] == "hold"]))
 
             wide = pg.evaluate("() => document.documentElement.scrollWidth")
             check(wide <= width, f"@{width} nothing is wider than the screen", f"{wide}px")
@@ -328,6 +371,22 @@ def main():
             pg.wait_for_function("() => /Add: News queue: 1 done/.test(document.querySelector('.rinbox-status').textContent)")
             check(any(c[0] == "act" and c[1]["source"] == "drive" and c[1]["key"] == "a1" and c[1]["params"] == {"facility": ""} for c in calls),
                   f"@{width} bulk sends each card's own values", json.dumps([c[1] for c in calls if c[0] == "act" and c[1]["source"] == "drive"]))
+
+            # Your inbox: assigned to you, recently done with Undo.
+            pg.locator(".rinbox-tab", has_text="Assigned to you").click()
+            pg.wait_for_selector(".rinbox-card[data-key='40']")
+            check("Closure reports" in pg.locator(".rinbox-card[data-key='40'] .rinbox-queue-badge").inner_text()
+                  and "check dates" in pg.locator(".rinbox-card[data-key='40'] .rinbox-hold").inner_text(), f"@{width} Assigned to you shows the queue and the note")
+            pg.locator(".rinbox-tab", has_text="Recently done").click()
+            pg.wait_for_selector(".rinbox-done-row")
+            pg.locator(".rinbox-done-row button", has_text="Undo").click()
+            pg.wait_for_selector(".rinbox-done-row.is-undone")
+            check(any(c[0] == "undo" and c[1] == {"id": 9} for c in calls), f"@{width} Undo from Recently done runs once")
+            check("type=_done" in pg.url, f"@{width} Recently done is in the address", pg.url)
+            wide = pg.evaluate("() => document.documentElement.scrollWidth")
+            check(wide <= width, f"@{width} Recently done fits the screen", f"{wide}px")
+            if width == 1280:
+                pg.screenshot(path=str(shots / f"done-{width}.png"), full_page=True)
 
             pg.locator(".type-tabs [data-type='news']").click()
             check(pg.locator(".rinbox-panel").is_hidden() and pg.locator(".submissions-list-container").is_visible(), f"@{width} the page's own tab brings its list back")

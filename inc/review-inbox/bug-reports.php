@@ -111,15 +111,22 @@ function kop_rinbox_bugs_item($r) {
             $lines[] = 'Errors: ' . kop_rinbox_excerpt(implode('; ', array_slice($msgs, 0, 3)), 300) . (count($msgs) > 3 ? ' (and ' . (count($msgs) - 3) . ' more below)' : '');
         }
     }
+    // kop_bug_report_notify_status_change() emails only a reader who left an email address and asked for updates.
+    $emails = !empty($r->notify_updates) && is_email(trim((string) $r->contact));
+    $mail = $emails ? ' The reader is emailed about the change.' : ' No email goes out (the reader did not ask for updates).';
     $buttons = array(
-        'in_progress' => array('label' => 'Start working on it', 'style' => 'neutral'),
-        'resolved'    => array('label' => 'Resolved', 'style' => 'approve'),
-        'dismissed'   => array('label' => 'Dismiss', 'style' => 'reject'),
-        'new'         => array('label' => 'Back to new', 'style' => 'undo'),
+        'in_progress' => array('label' => 'Start working on it', 'style' => 'neutral',
+            'help' => 'Moves the report to In progress; nothing else on the site changes.' . $mail),
+        'resolved'    => array('label' => 'Approve: mark resolved', 'style' => 'approve',
+            'help' => 'Marks the report fixed and moves it to Resolved; nothing else on the site changes.' . $mail),
+        'dismissed'   => array('label' => 'Reject: dismiss', 'style' => 'reject',
+            'help' => 'Closes the report without changes and moves it to Dismissed.' . $mail),
+        'new'         => array('label' => 'Back to new', 'style' => 'undo',
+            'help' => 'Reopens the report as new.' . $mail),
     );
     $actions = array();
     foreach ($buttons as $s => $b) {
-        if ($s !== $r->status) $actions[] = array('id' => $s, 'label' => $b['label'], 'style' => $b['style']);
+        if ($s !== $r->status) $actions[] = array('id' => $s, 'label' => $b['label'], 'style' => $b['style'], 'help' => $b['help']);
     }
     $title = trim(preg_replace('/\s+/u', ' ', (string) $r->description));
     return array(

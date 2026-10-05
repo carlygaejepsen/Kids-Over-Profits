@@ -28,7 +28,7 @@ kop_rinbox_register('scraper-finds', function () {
     return array(
         'label'    => 'Scraper finds',
         'group'    => 'Found by the news scans',
-        'help'     => 'Articles the nightly news scraper found but turned away. Send a good one where it belongs with "Move to", or dismiss it. '
+        'help'     => 'Articles the nightly news scraper found but turned away. Send a good one to the news queue (or elsewhere with "Move to"), or dismiss it. '
             . '"Passed, link not found" are articles the filter accepted but whose Google News link could not be opened that night.',
         'views'    => array(
             'waiting'    => 'Turned away',
@@ -182,13 +182,19 @@ function kop_scraper_finds_item(array $e) {
     $actions = array();
     $moves = array();
     if (!$d) {
-        $actions[] = array('id' => 'dismiss', 'label' => 'Dismiss', 'style' => 'reject');
-        $moves = kop_rdest_moves();
+        // The usual way in: the news queue. "Move to" sends it anywhere else.
+        $actions[] = array('id' => 'send_news', 'label' => 'Approve: send to the news queue', 'style' => 'approve',
+            'help' => 'Adds this article to the news queue as a new submission, where it waits for its own review; nothing is published yet and no email is sent.');
+        $actions[] = array('id' => 'dismiss', 'label' => 'Reject: dismiss', 'style' => 'reject',
+            'help' => 'Nothing is added anywhere; the find moves to the Dismissed tab.');
+        $moves = kop_rdest_moves(array('news'));
     } elseif ($d['decision'] === 'sent') {
-        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo');
+        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Takes the find back out of where it was sent (while nobody has reviewed it there) and puts it on the list again.');
         $why[] = (string) ($d['message'] ?? 'Sent.');
     } else {
-        $actions[] = array('id' => 'undo', 'label' => 'Back to the list', 'style' => 'neutral');
+        $actions[] = array('id' => 'undo', 'label' => 'Back to the list', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the find goes back on the list.');
     }
     $title = trim((string) ($d['title'] ?? '') !== '' ? $d['title'] : ($e['title'] ?? ''));
     return array(
@@ -251,6 +257,10 @@ function kop_scraper_finds_act($key, $action, array $params) {
             if ($d) throw new RuntimeException('It was already handled.');
             kop_scraper_finds_set_decision($key, array('decision' => 'dismissed', 'by' => $user, 'at' => time()));
             return array('message' => 'Dismissed. "Back to the list" on the Dismissed tab brings it back.');
+        case 'send_news':
+            // The approve button: "Move to News".
+            $params['to'] = 'news';
+            // no break: sent as a move.
         case 'move':
             if ($d) throw new RuntimeException('It was already handled.');
             $url = $e['own_url'] !== '' ? $e['own_url'] : kop_scraper_finds_resolve((string) $e['link']);

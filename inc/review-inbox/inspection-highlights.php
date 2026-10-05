@@ -124,9 +124,14 @@ function kop_rinbox_ih_item(array $r) {
     // The old screen's note box goes with the decision (optional; a bulk decision keeps each card's note).
     $note = array(array('name' => 'note', 'label' => 'Note', 'type' => 'text', 'value' => (string) $r['review_note'], 'optional' => true));
     $actions = array();
-    if ($r['status'] !== 'approved') $actions[] = array('id' => 'approved', 'label' => 'Approve', 'style' => 'approve', 'params' => $note);
-    if ($r['status'] !== 'rejected') $actions[] = array('id' => 'rejected', 'label' => 'Reject', 'style' => 'reject', 'params' => $note);
-    if ($r['status'] !== 'pending') $actions[] = array('id' => 'pending', 'label' => 'Back to pending', 'style' => 'undo');
+    $where = 'the facility page of ' . $r['facility_name'] . ' (when a facility record is linked to it)'
+        . ($severe ? ', the home page and the inspection reports hub' : '');
+    if ($r['status'] !== 'approved') $actions[] = array('id' => 'approved', 'label' => 'Approve: show on the site', 'style' => 'approve', 'params' => $note,
+        'help' => 'Shows this finding on ' . $where . '; other approved findings of the same day are folded into one entry.');
+    if ($r['status'] !== 'rejected') $actions[] = array('id' => 'rejected', 'label' => 'Reject: keep off the site', 'style' => 'reject', 'params' => $note,
+        'help' => 'The finding never shows on the site' . ($r['status'] === 'approved' ? ' (it comes off the pages it is on now)' : '') . '; the inspection report itself stays listed.');
+    if ($r['status'] !== 'pending') $actions[] = array('id' => 'pending', 'label' => 'Back to pending', 'style' => 'undo',
+        'help' => 'Takes the finding off the site and puts it back in the waiting list.');
     $links = array(array(
         'label' => 'Full report (old screen)',
         'url'   => get_stylesheet_directory_uri() . '/api/review-inspection-highlights.php?' . http_build_query(array('status' => $r['status'], 'ids' => (int) $r['id'])),

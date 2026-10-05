@@ -75,6 +75,72 @@ require_once dirname(__DIR__) . '/inc/review-inbox-menu.php';
 $GLOBALS['kop_test_options']['kop_review_inbox_db'] = KOP_REVIEW_INBOX_DB_VERSION;
 $pdo->exec("CREATE TABLE IF NOT EXISTS wpdl_kop_review_tags (source TEXT NOT NULL, item_key TEXT NOT NULL, tag TEXT NOT NULL,
     created_by TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL, PRIMARY KEY (source, item_key, tag))");
+// Recently done and set-aside items (inc/review-inbox-log.php).
+$pdo->exec("CREATE TABLE IF NOT EXISTS wpdl_kop_review_log (id INTEGER PRIMARY KEY AUTOINCREMENT, source TEXT NOT NULL, item_key TEXT NOT NULL,
+    title TEXT NOT NULL DEFAULT '', action TEXT NOT NULL, action_label TEXT NOT NULL DEFAULT '', style TEXT NOT NULL DEFAULT '', message TEXT,
+    undo_action TEXT NOT NULL DEFAULT '', undo_params TEXT, user_login TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL, undone_at TEXT, undone_by TEXT NOT NULL DEFAULT '')");
+$pdo->exec("CREATE TABLE IF NOT EXISTS wpdl_kop_review_holds (source TEXT NOT NULL, item_key TEXT NOT NULL, title TEXT NOT NULL DEFAULT '',
+    assigned_to INTEGER NOT NULL DEFAULT 0, snooze_until TEXT, note TEXT NOT NULL DEFAULT '', created_by TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL, PRIMARY KEY (source, item_key))");
+
+/*
+ * A made-up queue for the log / Undo / set-aside checks: five items; approve
+ * sends one to 'done' (where it offers Undo), undo sends it back, reject drops it.
+ */
+$GLOBALS['kop_rinbox_zz'] = array('a' => 'waiting', 'b' => 'waiting', 'c' => 'waiting', 'd' => 'waiting', 'e' => 'waiting');
+$kop_rinbox_zz_item = function ($k) {
+    $st = $GLOBALS['kop_rinbox_zz'][$k] ?? null;
+    if ($st === null) return null;
+    return array('key' => $k, 'title' => 'Item ' . strtoupper($k), 'status' => $st, 'actions' => $st === 'waiting'
+        ? array(array('id' => 'approve', 'label' => 'Approve: do it', 'style' => 'approve', 'help' => 'Does it.'), array('id' => 'reject', 'label' => 'Reject', 'style' => 'reject'))
+        : array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo')));
+};
+if ($only === '' || $only === 'log') kop_rinbox_register('zz-test', function () use ($kop_rinbox_zz_item) {
+    return array(
+        'label' => 'Test queue', 'views' => array('waiting' => 'Waiting', 'done' => 'Done'),
+        'count' => function () { return count(array_filter($GLOBALS['kop_rinbox_zz'], function ($s) { return $s === 'waiting'; })); },
+        'list' => function (array $q) use ($kop_rinbox_zz_item) {
+            $keys = array_keys(array_filter($GLOBALS['kop_rinbox_zz'], function ($s) use ($q) { return $s === $q['view']; }));
+            return array('items' => array_map($kop_rinbox_zz_item, array_slice($keys, $q['offset'], $q['limit'])), 'total' => count($keys));
+        },
+        'get' => $kop_rinbox_zz_item,
+        'act' => function ($k, $action) {
+            if ($action === 'approve') $GLOBALS['kop_rinbox_zz'][$k] = 'done';
+            elseif ($action === 'undo') $GLOBALS['kop_rinbox_zz'][$k] = 'waiting';
+            elseif ($action === 'reject') unset($GLOBALS['kop_rinbox_zz'][$k]);
+            else throw new RuntimeException('unknown');
+            return array('message' => ucfirst($action) . ' ' . $k . '.');
+        },
+    );
+});
+// WordPress user functions the set-aside code reads.
+if (!function_exists('get_current_user_id')) { function get_current_user_id() { return 1; } }
+if (!function_exists('get_userdata')) {
+    function get_userdata($id) {
+        $names = array(1 => 'Inbox Test', 2 => 'Pat');
+        return isset($names[$id]) ? (object) array('ID' => $id, 'display_name' => $names[$id], 'user_login' => strtolower($names[$id]), 'user_email' => '') : false;
+    }
+}
+if (!function_exists('get_users')) { function get_users() { return array(get_userdata(1), get_userdata(2)); } }
+if (!function_exists('user_can')) { function user_can($id) { return (bool) get_userdata($id); } }
+if (!function_exists('wp_mail')) { function wp_mail() { return true; } }
+if (!class_exists('WP_REST_Request')) {
+    class WP_REST_Request {
+        private $p = array();
+        public function set_param($k, $v) { $this->p[$k] = $v; }
+        public function get_param($k) { return $this->p[$k] ?? null; }
+    }
+}
+if (!class_exists('WP_REST_Response')) {
+    class WP_REST_Response {
+        private $d;
+        public function __construct($d = null, $status = 200) { $this->d = $d; }
+        public function get_data() { return $this->d; }
+    }
+}
+if (!function_exists('wp_unslash')) { function wp_unslash($v) { return $v; } }
+if (!function_exists('sanitize_key')) { function sanitize_key($k) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $k)); } }
+if (!function_exists('wp_date')) { function wp_date($f, $t = null) { return gmdate($f, $t ?? time()); } }
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -130,6 +196,57 @@ foreach ($sources as $key => $src) {
         if (function_exists($hook)) $hook($src, $first, $check);
     } catch (Throwable $e) {
         $check("$key: no errors", false, get_class($e) . ': ' . $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine());
+    }
+}
+
+if ($only === '' || $only === 'log') {
+    echo "-- Recently done, Undo, set aside --\n";
+    try {
+        global $wpdb;
+        $act = function ($key, $action) {
+            $req = new WP_REST_Request();
+            foreach (array('source' => 'zz-test', 'key' => $key, 'action' => $action, 'params' => array()) as $k => $v) $req->set_param($k, $v);
+            return kop_rinbox_rest_act($req)->get_data();
+        };
+        $act('a', 'approve');
+        $row = $wpdb->get_row("SELECT * FROM wpdl_kop_review_log ORDER BY id DESC LIMIT 1", ARRAY_A);
+        $check('log: approving records title, label, style and the Undo to run', $row && $row['title'] === 'Item A' && $row['action_label'] === 'Approve: do it'
+            && $row['style'] === 'approve' && $row['undo_action'] === 'undo', json_encode($row));
+        $list = kop_rinbox_log_list(array('offset' => 0, 'limit' => 10));
+        $check('log: Recently done lists it with Undo', $list['total'] >= 1 && $list['rows'][0]['can_undo'] && $list['rows'][0]['source_label'] === 'Test queue');
+        $u = kop_rinbox_log_undo((int) $row['id']);
+        $check("log: Undo runs the queue's own undo", $GLOBALS['kop_rinbox_zz']['a'] === 'waiting', $u['message']);
+        $twice = '';
+        try { kop_rinbox_log_undo((int) $row['id']); } catch (Throwable $e) { $twice = $e->getMessage(); }
+        $check('log: a second Undo is refused', $twice !== '', $twice);
+        $act('b', 'reject');
+        $row = $wpdb->get_row("SELECT * FROM wpdl_kop_review_log ORDER BY id DESC LIMIT 1", ARRAY_A);
+        $check('log: an item that left the queue has no Undo', $row['style'] === 'reject' && $row['undo_action'] === '', json_encode($row));
+
+        // Set aside: c handed to someone else, d snoozed; neither is in my waiting list, and the pages skip them.
+        kop_rinbox_hold_set('zz-test', 'c', 'Item C', 0, 2, 'check it');
+        kop_rinbox_hold_set('zz-test', 'd', 'Item D', 7, 0, '');
+        kop_rinbox_holds_active(null, true);
+        $src = kop_rinbox_source('zz-test');
+        $hidden = kop_rinbox_hidden_keys('zz-test');
+        $check('holds: assigned to someone else and snoozed leave my list', isset($hidden['c'], $hidden['d']) && count($hidden) === 2, json_encode(array_keys($hidden)));
+        $q = array('view' => 'waiting', 'search' => '', 'offset' => 0, 'limit' => 1, 'filters' => array());
+        $p1 = kop_rinbox_list_unheld($src, 'zz-test', $q);
+        $p2 = kop_rinbox_list_unheld($src, 'zz-test', array('offset' => $p1['next_offset']) + $q);
+        $check('holds: pages skip set-aside items', array_column($p1['items'], 'key') === array('a') && array_column($p2['items'], 'key') === array('e')
+            && $p1['total'] === 2, json_encode(array(array_column($p1['items'], 'key'), array_column($p2['items'], 'key'), $p1['total'])));
+        $info = kop_rinbox_hold_info('zz-test', 'c');
+        $check('holds: the card says who has it and the note', $info && $info['assigned_name'] === 'Pat' && $info['note'] === 'check it' && $info['hidden'], json_encode($info));
+        $snoozed = kop_rinbox_held_items('snoozed');
+        $check('holds: Snoozed lists it with its queue', array_column($snoozed['items'], 'key') === array('d') && $snoozed['items'][0]['source_label'] === 'Test queue');
+        $act('d', 'approve');
+        kop_rinbox_holds_active(null, true);
+        $check('holds: approving clears the hold', kop_rinbox_hold_info('zz-test', 'd') === null);
+        kop_rinbox_hold_set('zz-test', 'c', 'Item C', 0, 0, '');
+        kop_rinbox_holds_active(null, true);
+        $check('holds: Put back in the list removes the hold', kop_rinbox_hold_info('zz-test', 'c') === null);
+    } catch (Throwable $e) {
+        $check('log: no errors', false, get_class($e) . ': ' . $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine());
     }
 }
 

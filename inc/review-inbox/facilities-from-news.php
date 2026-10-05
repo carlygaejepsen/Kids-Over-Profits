@@ -18,7 +18,7 @@ kop_rinbox_register('facilities-from-news', function () {
     return array(
         'label'    => 'Facilities from news',
         'group'    => 'Found by the news scans',
-        'help'     => 'Programs named in news articles that have no record yet. A youth residential program with a known state or country is added as a new record by the hourly scan; the names it held back wait here. Link the article to the right record, or check the details and create a new record. Remove takes out a record the scan made while nobody has edited it.'
+        'help'     => 'Programs named in news articles that have no record yet. A youth residential program with a known state or country is added as a new record by the hourly scan; the names it held back wait here. Link the article to the right record, check the details and create a new record, or reject a name that is not a facility. Remove takes out a record the scan made while nobody has edited it.'
             . ($waiting !== null ? ' ' . $waiting . ' saved articles are not scanned yet; the hourly run reads a handful at a time.' : ''),
         'views'    => array(
             'held'    => 'To decide',
@@ -179,12 +179,20 @@ function kop_rinbox_facdisc_item(array $r) {
     $actions = array();
     $fields = array();
     $links = array();
+    $held = in_array($r['decision'], kop_rinbox_facdisc_view_decisions()['held'], true);
     if ($open) {
-        $actions[] = array('id' => 'link', 'label' => 'Link the article to this record', 'style' => 'approve',
+        // With a record to link to, linking is the main approve; with none, creating the record is.
+        $has_record = (int) $r['facility_id'] > 0;
+        $fac = kop_rinbox_facility($r['facility_id']);
+        $new_name = (string) (($e['officialName'] ?? '') ?: $r['mention']);
+        $actions[] = array('id' => 'link', 'label' => 'Link the article to this record', 'style' => $has_record ? 'approve' : 'neutral',
+            'help' => 'Lists this article on the facility page of ' . ($fac ? $fac['name'] : 'the record you pick') . '; no new record is made.',
             'params' => array(array('name' => 'facility_id', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id'])));
         // The old screen's "Not in the database? Create it" form: the details as the scan read them, changeable here.
         $types = kop_rinbox_options(array_combine(kop_facdisc_types(), kop_facdisc_types()));
-        $actions[] = array('id' => 'create', 'label' => 'Create this facility', 'style' => 'neutral',
+        $actions[] = array('id' => 'create', 'label' => 'Create this facility', 'style' => $has_record ? 'neutral' : 'approve',
+            'help' => 'Makes a new facility record for ' . $new_name . ($place !== '' ? ' (' . $place . ')' : '')
+                . ' from the details below, with its own facility page, and lists this article there. If that name and place already have a record, the article is linked to it instead.',
             'confirm' => 'Create a new facility record with these details?',
             'params' => array(
                 array('name' => 'officialName', 'label' => 'Name', 'type' => 'text', 'value' => (string) (($e['officialName'] ?? '') ?: $r['mention'])),
@@ -201,8 +209,18 @@ function kop_rinbox_facdisc_item(array $r) {
             array('name' => 'type', 'label' => 'Type', 'type' => 'select', 'options' => kop_rinbox_options(array_combine(kop_facdisc_types(), kop_facdisc_types())),
                 'value' => (string) ($e['type'] ?? ''), 'category' => true),
         );
-    } elseif ($r['decision'] === 'created') {
+    }
+    if ($held) {
+        $actions[] = array('id' => 'dismiss', 'label' => 'Reject: not a facility', 'style' => 'reject',
+            'help' => 'No record is made or linked; the name moves to "Set aside (not a facility)" and later scans leave it alone.');
+    } elseif ($r['decision'] === 'not_facility' && !empty($detail['dismissed_from'])) {
+        $actions[] = array('id' => 'undismiss', 'label' => 'Back to review', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the name goes back to "To decide".');
+    }
+    if ($r['decision'] === 'created') {
         $actions[] = array('id' => 'remove', 'label' => 'Remove the record it created', 'style' => 'undo',
+            'help' => 'Deletes the record the scan made for ' . (kop_rinbox_facility($r['facility_id'])['name'] ?? $r['mention'])
+                . ' and its article links, as long as nobody has edited it; later scans will not create it again.',
             'confirm' => 'Remove the record the scan created for this? The scan will not create it again.');
     } elseif ($r['decision'] === 'indigenous_school') {
         $links[] = array('label' => 'Filed at Indigenous Schools', 'url' => admin_url('admin.php?page=kop-indigenous-schools'));
@@ -258,6 +276,29 @@ function kop_rinbox_facdisc_act($key, $action, array $params) {
             return array('message' => $decision === 'created'
                 ? 'Created ' . $label . ' and linked ' . $article . ' to it. Remove (on the Created tab) takes it out again.'
                 : 'That name and place is already in the database as ' . $label . ', so ' . $article . ' is linked to it. No new record was made.');
+        case 'dismiss':
+        case 'undismiss':
+            $detail = json_decode((string) $r['detail'], true) ?: array();
+            if ($action === 'dismiss') {
+                if (!in_array($r['decision'], kop_rinbox_facdisc_view_decisions()['held'], true)) {
+                    throw new RuntimeException('Only a name still waiting to be decided can be set aside.');
+                }
+                $detail['dismissed_from'] = $r['decision'];
+                $to = 'not_facility';
+            } else {
+                if ($r['decision'] !== 'not_facility' || empty($detail['dismissed_from'])) {
+                    throw new RuntimeException('Only a name set aside here can go back to review.');
+                }
+                $to = (string) $detail['dismissed_from'];
+                unset($detail['dismissed_from']);
+            }
+            // The same row the scan keeps (kop_facdisc_record()): a set-aside name is known, so later scans skip it.
+            $pdo->prepare('UPDATE news_facility_candidates SET decision = ?, detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
+                ->execute(array($to, wp_json_encode($detail), $user, $id));
+            kop_rinbox_flush_counts();
+            return array('message' => $action === 'dismiss'
+                ? 'Set aside as not a facility. No record was made; "Back to review" on the Set aside tab brings it back.'
+                : 'Back in "To decide".');
         case 'remove':
             $was = $r['facility_id'] ? wp_strip_all_tags(kop_facility_finder_label($pdo, (int) $r['facility_id'])) : '"' . $r['mention'] . '"';
             kop_facdisc_remove($pdo, $id, $user);

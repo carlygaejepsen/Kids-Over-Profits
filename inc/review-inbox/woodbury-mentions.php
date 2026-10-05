@@ -209,10 +209,14 @@ function kop_rinbox_wb_item(array $r) {
     $actions = array();
     $best = (int) $r['facility_id'];
     if ($pending) {
-        $actions[] = array('id' => 'file', 'label' => 'File it', 'style' => 'approve',
+        $best_name = $best ? kop_rinbox_facility($best)['name'] : 'the record you pick';
+        $actions[] = array('id' => 'file', 'label' => 'Approve: file these pages', 'style' => 'approve',
+            'help' => 'Saves these pages as a PDF in the "Woodbury Reports Mentions" folder of ' . $best_name . ' (or the records picked below), listed with its documents on its page.',
             'params' => kop_rinbox_wb_target_params($r, $best, $alts, $best ? kop_rinbox_wb_parents(array($best)) : array(), 'File under'));
         if (function_exists('kop_wbc_existing_target')) {
-            $actions[] = array('id' => 'file_record', 'label' => 'File under that record', 'style' => 'neutral', 'params' => array(
+            $actions[] = array('id' => 'file_record', 'label' => 'File under that record', 'style' => 'neutral',
+                'help' => 'Files the pages under the consultant, company, provider or transporter you name instead (and any facilities added).',
+                'params' => array(
                 array('name' => 'record', 'label' => 'A consultant, company, provider or transporter', 'type' => 'text', 'value' => '',
                     'lookup' => 'record', 'placeholder' => 'Name of the firm or person'),
                 array('name' => 'facilities', 'label' => 'And these facilities', 'type' => 'facilities', 'value' => array(), 'optional' => true),
@@ -225,6 +229,7 @@ function kop_rinbox_wb_item(array $r) {
             $types = array('' => 'Not sure');
             foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) $types[$t] = $t;
             $actions[] = array('id' => 'create', 'label' => 'Create the record and file the pages under it', 'style' => 'neutral',
+                'help' => 'Makes a new record of the kind and name below, then files the pages under it.',
                 'confirm' => 'Create a new record with this name and file the pages under it?', 'params' => array(
                 array('name' => 'kind', 'label' => 'Not in the database? Kind', 'type' => 'select', 'options' => kop_wbc_kinds(), 'value' => ''),
                 array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $p['name']),
@@ -238,25 +243,31 @@ function kop_rinbox_wb_item(array $r) {
                 array('name' => 'facilities', 'label' => 'Also file under these facilities', 'type' => 'facilities', 'value' => array(), 'optional' => true),
             ));
         }
-        $actions[] = array('id' => 'skip', 'label' => 'Skip', 'style' => 'reject');
+        $actions[] = array('id' => 'skip', 'label' => 'Reject: skip these pages', 'style' => 'reject',
+            'help' => 'Nothing is filed; the pages move to the Skipped tab.');
     } elseif ($filed) {
         $have = array_column($places, 'key');
         $fac_ids = array();
         foreach ($places as $p) if ($p['kind'] === 'facility' && $p['id']) $fac_ids[] = $p['id'];
         $parents = array_values(array_filter(kop_rinbox_wb_parents($fac_ids), function ($c) use ($have) { return !in_array('c' . $c['id'], $have, true); }));
         $add = kop_rinbox_wb_target_params($r, 0, array(), $parents, 'Also file under');
-        $actions[] = array('id' => 'add', 'label' => 'Also file it there', 'style' => 'neutral', 'params' => $add);
+        $actions[] = array('id' => 'add', 'label' => 'Also file it there', 'style' => 'neutral', 'params' => $add,
+            'help' => 'Lists the same filed PDF under another record as well; nothing is copied.');
         $extras = array();
         foreach ($places as $p) if (!$p['primary'] && $p['key'] !== '') $extras[$p['key']] = $p['name'] . ($p['kind'] === 'company' ? ' (company)' : '');
         if ($extras) {
-            $actions[] = array('id' => 'untag', 'label' => 'Take it off', 'style' => 'neutral', 'params' => array(
+            $actions[] = array('id' => 'untag', 'label' => 'Take it off', 'style' => 'neutral',
+                'help' => 'Takes the PDF off the record you pick; it stays with the other records.',
+                'params' => array(
                 array('name' => 'record', 'label' => 'Take it off', 'type' => 'select', 'options' => $extras, 'value' => ''),
             ));
         }
         $actions[] = array('id' => 'undo', 'label' => 'Undo filing', 'style' => 'undo',
+            'help' => 'Deletes the filed PDF from every record it is listed under and puts the pages back in the waiting list.',
             'confirm' => 'Delete the filed copy of these pages and put them back in the queue?');
     } else {
-        $actions[] = array('id' => 'reopen', 'label' => 'Put back', 'style' => 'neutral');
+        $actions[] = array('id' => 'reopen', 'label' => 'Put back', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the pages wait for review again.');
     }
 
     $statuses = array('pending' => 'Waiting', 'filed' => 'Filed', 'skipped' => 'Skipped', 'gone' => 'No longer found');

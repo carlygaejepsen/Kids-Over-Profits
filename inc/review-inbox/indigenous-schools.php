@@ -148,9 +148,11 @@ function kop_rinbox_ischools_article_parts(PDO $pdo, $school_id) {
         $options[(string) (int) $a['id']] = '#' . (int) $a['id'] . ' ' . mb_substr($title, 0, 80);
     }
     $actions = array(array('id' => 'link_news', 'label' => 'File an article', 'style' => 'neutral',
+        'help' => 'Files the article you name under ' . ($school_id ? 'this school' : 'the schools in general') . '; it shows on the Indian Boarding Schools page once the article itself is approved.',
         'params' => array(array('name' => 'news', 'label' => 'Article number, title or web address', 'type' => 'text', 'value' => ''))));
     if ($options) {
-        $actions[] = array('id' => 'unlink_news', 'label' => 'Take off', 'style' => 'undo',
+        $actions[] = array('id' => 'unlink_news', 'label' => 'Take an article off', 'style' => 'undo',
+            'help' => 'Takes the article you pick off ' . ($school_id ? 'this school' : 'the schools in general') . '; the article stays in the news database.',
             'params' => array(array('name' => 'news_id', 'label' => 'Article', 'type' => 'select', 'options' => $options, 'value' => '')));
     }
     return array($links, $lines, $actions);
@@ -170,11 +172,14 @@ function kop_rinbox_ischools_item(array $s) {
     ))));
     $actions = array();
     if ($pending) {
-        $actions[] = array('id' => 'approve', 'label' => 'Approve', 'style' => 'approve');
+        $actions[] = array('id' => 'approve', 'label' => 'Approve: list on the page', 'style' => 'approve',
+            'help' => 'Lists ' . $s['name'] . ' on the Indian Boarding Schools page, with its approved articles.');
     } else {
-        $actions[] = array('id' => 'unapprove', 'label' => 'Take off the page', 'style' => 'undo');
+        $actions[] = array('id' => 'unapprove', 'label' => 'Take off the page', 'style' => 'undo',
+            'help' => 'Takes ' . $s['name'] . ' off the Indian Boarding Schools page; it waits for review again.');
     }
-    $actions[] = array('id' => 'delete', 'label' => 'Delete', 'style' => 'reject',
+    $actions[] = array('id' => 'delete', 'label' => $pending ? 'Reject: delete' : 'Delete', 'style' => 'reject',
+        'help' => 'Deletes the school record for good (there is no undo); its articles stay in the news database.',
         'confirm' => 'Delete this school? Its articles stay in the news database.');
     $actions = array_merge($actions, $article_actions);
     $nil = function ($v) { return $v === null ? '' : (string) $v; };
@@ -239,7 +244,8 @@ function kop_rinbox_ischools_name_item(array $r) {
         'text'         => 'From: ' . ($r['article_title'] ?: 'article #' . (int) $r['news_id']) . '. If this is an Indigenous school, add it.',
         'status'       => 'name',
         'status_label' => 'Not filed',
-        'actions'      => array(array('id' => 'add_school', 'label' => 'Add as a school', 'style' => 'approve')),
+        'actions'      => array(array('id' => 'add_school', 'label' => 'Add as a school', 'style' => 'approve',
+            'help' => 'Makes a school record for ' . $r['mention'] . ' with this article (or files the article under the school of that name), waiting for review; a new school is not on the page until approved.')),
     );
 }
 

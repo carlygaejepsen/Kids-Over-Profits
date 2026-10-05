@@ -98,13 +98,17 @@ function kop_rinbox_ya_item(array $p) {
         }
     }
     $actions = array($hidden
-        ? array('id' => 'show', 'label' => 'Show on the page', 'style' => 'approve')
-        : array('id' => 'hide', 'label' => 'Hide from the page', 'style' => 'undo'));
+        ? array('id' => 'show', 'label' => 'Approve: show on the page', 'style' => 'approve',
+            'help' => 'Lists ' . $p['name'] . ' on the Young Adult Programs page, with its facts.')
+        : array('id' => 'hide', 'label' => 'Hide from the page', 'style' => 'undo',
+            'help' => 'Takes ' . $p['name'] . ' off the Young Adult Programs page; it waits on the Hidden tab.'));
     if ($options) {
         $actions[] = array('id' => 'drop_fact', 'label' => 'Take this fact off', 'style' => 'undo',
+            'help' => 'Takes the fact you pick off this program; its Woodbury item goes back for review on Woodbury Facts.',
             'params' => array(array('name' => 'key', 'label' => 'Fact', 'type' => 'select', 'options' => $options, 'value' => '')));
     }
-    $actions[] = array('id' => 'delete', 'label' => 'Delete', 'style' => 'reject',
+    $actions[] = array('id' => 'delete', 'label' => $hidden ? 'Reject: delete' : 'Delete', 'style' => 'reject',
+        'help' => 'Deletes this program record for good (there is no undo); its Woodbury items go back for review on Woodbury Facts.',
         'confirm' => 'Delete this program? Its Woodbury items go back for review.');
     $nil = function ($v) { return $v === null ? '' : (string) $v; };
     return array(

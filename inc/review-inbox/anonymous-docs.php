@@ -119,8 +119,10 @@ function kop_rinbox_anon_item(array $f) {
         'status_label' => $h ? 'Handled' : 'New',
         'fields'       => array(),
         'actions'      => array($h
-            ? array('id' => 'unhandled', 'label' => 'Mark not handled', 'style' => 'undo')
-            : array('id' => 'handled', 'label' => 'Mark handled', 'style' => 'approve')),
+            ? array('id' => 'unhandled', 'label' => 'Mark not handled', 'style' => 'undo',
+                'help' => 'Nothing on the site changes; the document goes back with the new ones.')
+            : array('id' => 'handled', 'label' => 'Mark handled', 'style' => 'approve',
+                'help' => 'Moves the document to Handled. The encrypted file stays on the server and nothing is published.')),
         'links'        => array(array('label' => 'Download (encrypted)', 'url' => $download)),
     );
 }

@@ -448,6 +448,21 @@ try {
             $reviewerNotes = $data['reviewerNotes'] ?? $data['reviewer_notes'] ?? '';
             $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
 
+            // What each one was, for the review inbox's Recently done (and its Undo).
+            $kopLogBefore = [];
+            if (function_exists('kop_rinbox_log_native') && function_exists('kop_rinbox_native_types')) {
+                $kopTypes = kop_rinbox_native_types();
+                if (isset($kopTypes[$type])) {
+                    $kt = $kopTypes[$type];
+                    $kph = implode(',', array_fill(0, count($ids), '?'));
+                    $kst = $pdo->prepare("SELECT id, {$kt['status_col']} AS st, {$kt['title']} AS title FROM {$kt['table']} WHERE id IN ($kph)");
+                    $kst->execute(array_values(array_map('intval', $ids)));
+                    foreach ($kst->fetchAll(PDO::FETCH_ASSOC) as $kr) {
+                        $kopLogBefore[(int) $kr['id']] = ['status' => (string) $kr['st'], 'title' => (string) $kr['title']];
+                    }
+                }
+            }
+
             if ($type === 'data' && $action !== 'reject') {
                 // Approving a suggested edit is more than a status flip: the
                 // edited JSON must be merged into the master tables. The shared
@@ -475,6 +490,7 @@ try {
                     $response['error'] = implode('; ', $errors);
                     $response['errors'] = $errors;
                 }
+                if ($kopLogBefore && $applied) kop_rinbox_log_native($type, $kopLogBefore, $action);
                 echo json_encode($response);
                 break;
             }
@@ -518,6 +534,7 @@ try {
             
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
+            if ($kopLogBefore) kop_rinbox_log_native($type, $kopLogBefore, $action);
             
             $affected = $stmt->rowCount();
 

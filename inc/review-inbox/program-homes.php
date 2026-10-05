@@ -155,11 +155,14 @@ function kop_rinbox_ph_item(array $s) {
         'links'        => $links,
         'actions'      => array(
             array('id' => 'group', 'label' => 'Group under one program', 'style' => 'approve',
+                'help' => 'Ties the ' . count($s['homes']) . ' homes (each keeps its own record and page) to the program record picked below; the program page lists them with their news, lawsuits and serious findings, and each home page names the program.',
                 'params' => array(array('name' => 'program', 'label' => 'Program record', 'type' => 'select',
                     'value' => $s['existing'] ? (string) $s['existing']['id'] : 'new', 'options' => $choices))),
             array('id' => 'group_other', 'label' => 'Group under this record', 'style' => 'neutral',
+                'help' => 'The same grouping, under another existing record you find below instead.',
                 'params' => array(array('name' => 'program_id', 'label' => 'Or another program record', 'type' => 'facility', 'value' => ''))),
-            array('id' => 'dismiss', 'label' => 'Not one program', 'style' => 'reject'),
+            array('id' => 'dismiss', 'label' => 'Reject: not one program', 'style' => 'reject',
+                'help' => 'The records stay as they are; this group is not suggested again.'),
         ),
     );
 }
@@ -194,8 +197,10 @@ function kop_rinbox_ph_group_item($pid) {
         'url'          => $f ? $f['url'] : '',
         'actions'      => array(
             array('id' => 'undo', 'label' => 'Undo the grouping', 'style' => 'undo',
+                'help' => 'Unties every home from ' . ($name !== '' ? $name : 'this program') . ($made ? ', and deletes the program record this review made if nothing has changed on it.' : '; the program record stays.'),
                 'confirm' => 'Untie every home from this program?' . ($made ? ' The program record this review made is deleted if nothing has been linked to it or changed on it since.' : '')),
             array('id' => 'remove_home', 'label' => 'Take one home out', 'style' => 'neutral',
+                'help' => 'Unties the home you pick from this program; it stands on its own again.',
                 'params' => array(array('name' => 'home_id', 'label' => 'Home', 'type' => 'select', 'value' => (string) $homes[0]['id'], 'options' => $options))),
         ),
     );
@@ -210,7 +215,8 @@ function kop_rinbox_ph_dismissed_item($key, $when) {
         'text'         => 'Records named "' . ucwords($base) . ' – ..." in ' . ($state !== '' ? $state : 'this state') . ' are not offered as one program.',
         'status'       => 'dismissed',
         'status_label' => 'Not one program',
-        'actions'      => array(array('id' => 'undismiss', 'label' => 'Back in the suggestions', 'style' => 'neutral')),
+        'actions'      => array(array('id' => 'undismiss', 'label' => 'Back in the suggestions', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the group is suggested again.')),
     );
 }
 

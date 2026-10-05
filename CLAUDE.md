@@ -94,7 +94,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.ph
 # Review inbox: every approval queue on the Submissions Review page (inc/review-inbox.php, js/review-inbox.js). Each queue is
 # a source in inc/review-inbox/<name>.php, registered with kop_rinbox_register(), calling the queue's own apply/undo functions;
 # cards edit name/details, category, tags (shared {prefix}kop_review_tags unless the queue keeps its own), "Move to" another queue,
-# "Fill empty fields with AI" (news/lawsuits: kop_enrich_*_row(), else a generic filler). A new queue gets a source file there
+# "Fill empty fields with AI" (news/lawsuits: kop_enrich_*_row(), else a generic filler). A new queue gets a source file there.
+# Every approve/reject action carries 'help' (one sentence: what clicking does), shown on the card. inc/review-inbox-log.php:
+# Recently done ({prefix}kop_review_log, Undo = the item's 'undo' action, or 'restore' for the five native types, logged from
+# api/manage-submissions.php), Later = snooze / hand to an admin ({prefix}kop_review_holds, off everyone else's list), Preview
+# (review-inbox/preview: framed where allowed, else a reading copy)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)

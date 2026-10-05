@@ -195,17 +195,20 @@ function kop_rinbox_pmerge_pair_item(array $p, $status) {
     }
     if ($status === 'dismissed') {
         $why = 'Marked not the same' . (!empty($p['by']) ? ' by ' . $p['by'] : '') . (!empty($p['at']) ? ' on ' . substr($p['at'], 0, 10) : '');
-        $actions = array(array('id' => 'undismiss', 'label' => 'Put back on the list', 'style' => 'neutral'));
+        $actions = array(array('id' => 'undismiss', 'label' => 'Put back on the list', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the pair is suggested again.'));
     } else {
         $why = (string) $p['reason'];
         $actions = array(
             array('id' => 'merge', 'label' => 'Same person: merge', 'style' => 'approve',
+                'help' => 'Makes ' . $a['name'] . ' and ' . $b['name'] . ' one person under the name picked below: the other name becomes another name of that person, their staff entries are listed together on facility and company pages, and the network map draws one person from its next build.',
                 'params' => array(array('name' => 'keep', 'label' => 'Name to keep', 'type' => 'select', 'value' => (string) $keep,
                     'options' => array(
                         (string) $a['id'] => 'Keep ' . $a['name'] . ' (#' . $a['id'] . ')',
                         (string) $b['id'] => 'Keep ' . $b['name'] . ' (#' . $b['id'] . ')',
                     )))),
-            array('id' => 'dismiss', 'label' => 'Not the same person', 'style' => 'reject'),
+            array('id' => 'dismiss', 'label' => 'Reject: not the same person', 'style' => 'reject',
+                'help' => 'Both people stay separate; this pair is not suggested again.'),
         );
     }
     return array(
@@ -229,6 +232,7 @@ function kop_rinbox_pmerge_merged_item(array $m) {
     $actions = array();
     if (!empty($m['canUndo'])) {
         $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Makes ' . $m['drop']['name'] . ' their own person again, with the staff entries they had.',
             'confirm' => 'Make "' . $m['drop']['name'] . '" their own person again, with the entries they had?');
     }
     $moved = (int) ($m['moved'] ?? 0);

@@ -239,16 +239,36 @@ function kop_rinbox_fornits_item(array $r) {
         } elseif ($kind === 'testimony') {
             $label = 'Add to the record (unpublished)';
         }
+        $fac = kop_rinbox_facility($r['facility_id']);
+        $fname = $fac ? $fac['name'] : 'the record you pick';
+        if ($kind === 'lead') {
+            $help = array(
+                'news'    => 'Sends the lead to the news queue, where it waits for its own review; nothing is published yet and no email is sent.',
+                'lawsuit' => 'Sends the lead to the lawsuits queue, where it waits for its own review; nothing is published yet and no email is sent.',
+                'closed'  => 'Sets ' . $fname . ' to Closed on its facility page and the network map, citing the post.',
+                'note'    => 'Adds this as a note on the record of ' . $fname . ', citing the post.',
+            )[$default] ?? '';
+        } else {
+            $help = array(
+                'link'      => 'Lists this thread on the facility page of ' . $fname . ' under "Survivor posts and discussion".',
+                'staff'     => 'Adds ' . ((string) ($v['person'] ?? '') !== '' ? $v['person'] : 'this person') . ' to the staff list of ' . $fname . ', citing the post.',
+                'incident'  => 'Adds this to the critical incidents of ' . $fname . ', citing the post.',
+                'testimony' => 'Adds this account to the survivor testimony of ' . $fname . ', unpublished: it shows only after "OK to publish" is ticked on the record.',
+            )[$kind] ?? '';
+        }
         // The Record box is the old screen's "Add checked to that record".
-        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => 'approve', 'params' => array(
+        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => 'approve', 'help' => $help, 'params' => array(
             array('name' => 'facility', 'label' => $kind === 'lead' ? 'Record (not needed for a queue)' : 'Record', 'type' => 'facility',
                 'value' => (int) $r['facility_id'], 'optional' => true),
         ));
-        $actions[] = array('id' => 'reject', 'label' => 'Skip', 'style' => 'reject');
+        $actions[] = array('id' => 'reject', 'label' => 'Reject: skip this', 'style' => 'reject',
+            'help' => 'Nothing is added anywhere; the item moves to the Skipped tab.');
     } elseif ($r['status'] === 'applied') {
-        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo');
+        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+            'help' => 'Takes it off the record (or out of its queue) and puts it back in the waiting list.');
     } else {
-        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral');
+        $actions[] = array('id' => 'undo', 'label' => 'Back to review', 'style' => 'neutral',
+            'help' => 'Nothing on the site changes; the item waits for review again.');
     }
 
     $ro = !$pending;

@@ -566,3 +566,292 @@ button.rinbox-tag-x:focus-visible {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/* ---- Decision row: Approve / Reject first, each saying what it does ---- */
+
+.rinbox-decide {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+button.rinbox-btn-primary {
+    padding: 10px 20px;
+    font-size: 15px;
+}
+
+.rinbox-btn-icon {
+    display: inline-flex;
+    margin-right: 6px;
+    vertical-align: -2px;
+}
+
+.rinbox-btn-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.rinbox-does {
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-does li {
+    margin: 2px 0;
+    padding-left: 10px;
+    border-left: 3px solid var(--kop-teal, #33A7B5);
+}
+
+.rinbox-does li.rinbox-does-approve {
+    border-left-color: var(--kop-chartreuse, #B2E102);
+}
+
+.rinbox-does li.rinbox-does-reject {
+    border-left-color: var(--kop-coral-pink, #FE8088);
+}
+
+.rinbox-queue-badge {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ---- Preview ---- */
+
+.rinbox-link {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+button.rinbox-pv-btn,
+button.rinbox-pv-btn:hover,
+button.rinbox-pv-btn:focus,
+button.rinbox-pv-btn:active {
+    border: 1px solid var(--kop-navy, #000080);
+    border-radius: 6px;
+    padding: 1px 8px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy, #000080);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+button.rinbox-pv-btn:hover {
+    background: var(--kop-sand, #F2EEDF);
+}
+
+button.rinbox-pv-btn:focus-visible {
+    outline: 2px solid var(--kop-navy, #000080);
+    outline-offset: 2px;
+}
+
+.rinbox-pv {
+    margin: 10px 0;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 8px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    overflow: hidden;
+}
+
+.rinbox-pv-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    align-items: center;
+    padding: 8px 10px;
+    background: var(--kop-sand, #F2EEDF);
+    font-size: 13px;
+}
+
+.rinbox-pv-site {
+    flex: 1 1 auto;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.rinbox-pv-head button.rinbox-btn {
+    padding: 4px 10px;
+    font-size: 13px;
+}
+
+.rinbox-pv-note {
+    margin: 8px 10px;
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.rinbox-pv-body iframe {
+    display: block;
+    width: 100%;
+    height: 70vh;
+    min-height: 360px;
+    border: 0;
+    background: var(--kop-white, #fff);
+}
+
+.rinbox-pv-reader {
+    max-height: 70vh;
+    overflow: auto;
+    padding: 10px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+.rinbox-pv-reader h4 {
+    margin: 0 0 8px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-pv-reader img {
+    display: block;
+    max-width: 100%;
+    max-height: 260px;
+    margin: 0 0 10px;
+    border-radius: 6px;
+}
+
+.rinbox-pv-reader p {
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+}
+
+/* ---- Later: snooze / hand to someone ---- */
+
+.rinbox-later {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-later summary {
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-weight: 700;
+    color: var(--kop-navy, #000080);
+}
+
+.rinbox-later summary:focus-visible {
+    outline: 2px solid var(--kop-navy, #000080);
+    outline-offset: 2px;
+}
+
+.rinbox-later-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    align-items: center;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.rinbox-later-form input[type="text"] {
+    min-width: 0;
+    flex: 1 1 180px;
+}
+
+.rinbox-hold {
+    margin: 8px 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 13px;
+}
+
+.rinbox-hold button.rinbox-btn {
+    padding: 3px 10px;
+    font-size: 12px;
+}
+
+.rinbox-native-evidence {
+    margin: 8px 0;
+}
+
+/* ---- Recently done ---- */
+
+.rinbox-done {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.rinbox-done-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    align-items: center;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 14px;
+}
+
+.rinbox-done-row.is-undone {
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.rinbox-done-when,
+.rinbox-done-msg,
+.rinbox-done-undone {
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.rinbox-done-msg.is-error {
+    color: var(--kop-coral-pink-ink, #D9020F);
+}
+
+.rinbox-done-title {
+    flex: 1 1 260px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.rinbox-done-what {
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-done-approve {
+    background: var(--kop-chartreuse, #B2E102);
+}
+
+.rinbox-done-reject {
+    background: var(--kop-coral-pink-fill, #D9020F);
+    color: var(--kop-white, #fff);
+}
+
+.rinbox-done-row button.rinbox-btn {
+    padding: 4px 12px;
+    font-size: 13px;
+}
+
+.rinbox-group-yours .rinbox-group-label {
+    font-weight: 800;
+}

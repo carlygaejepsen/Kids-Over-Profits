@@ -90,11 +90,14 @@ function kop_rinbox_pubapp_item(array $r) {
         $url = (string) (($r['official_url'] ?? '') ?: ($r['full_text_url'] ?? ''));
     }
     $status = (string) $r['publication_status'];
+    $what = $law ? 'lawsuit' : 'bill';
     $actions = array();
     if ($status === 'approved') {
-        $actions[] = array('id' => 'publish', 'label' => 'Publish', 'style' => 'approve');
+        $actions[] = array('id' => 'publish', 'label' => 'Publish', 'style' => 'approve',
+            'help' => 'Puts this ' . $what . ' on the public site, where its ' . ($law ? 'lawsuit' : 'legislation') . ' listings show it.');
     } elseif ($status === 'published' && array_key_exists($key, kop_rinbox_pubapp_log())) {
-        $actions[] = array('id' => 'unpublish', 'label' => 'Undo: back to approved', 'style' => 'undo');
+        $actions[] = array('id' => 'unpublish', 'label' => 'Undo: back to approved', 'style' => 'undo',
+            'help' => 'Takes this ' . $what . ' off the public site again; it stays approved.');
     }
     $title = (string) ($law ? $r['case_name'] : $r['bill_title']);
     return array(

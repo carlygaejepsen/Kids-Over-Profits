@@ -78,13 +78,16 @@ function kop_rinbox_gfeedback_item($r) {
     ))));
     // Every other status, as the old screen's "Mark as" buttons.
     $buttons = array(
-        'added'     => array('label' => 'Mark added to glossary', 'style' => 'approve'),
-        'dismissed' => array('label' => 'Dismiss', 'style' => 'reject'),
-        'new'       => array('label' => 'Back to new', 'style' => 'undo'),
+        'added'     => array('label' => 'Approve: mark added to glossary', 'style' => 'approve',
+            'help' => 'Moves this note to Added. It does not change the glossary itself: make the change with "Edit entry" first.'),
+        'dismissed' => array('label' => 'Reject: dismiss', 'style' => 'reject',
+            'help' => 'The glossary stays as it is; the note moves to Dismissed. The reader is not emailed.'),
+        'new'       => array('label' => 'Back to new', 'style' => 'undo',
+            'help' => 'Nothing on the site changes; the note goes back with the new ones.'),
     );
     $actions = array();
     foreach ($buttons as $s => $b) {
-        if ($s !== $r->status) $actions[] = array('id' => $s, 'label' => $b['label'], 'style' => $b['style']);
+        if ($s !== $r->status) $actions[] = array('id' => $s, 'label' => $b['label'], 'style' => $b['style'], 'help' => $b['help']);
     }
     $editor = add_query_arg($entry_id !== ''
         ? array('view' => 'edit', 'entry' => $entry_id, 'feedback' => (int) $r->id)

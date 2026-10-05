@@ -64,15 +64,20 @@
  * offered for the selected cards, and each card sends what its own inputs
  * say at the time.
  *
+ * An action may carry 'help': one sentence on what clicking it does, shown
+ * under the Approve / Reject buttons so the reviewer knows what they approve.
+ *
  * REST (manage_options, wp_rest nonce): kop/v1/review-inbox/{sources, items,
- * act, save, tags, ai}. Tested by scripts/test-review-inbox.php.
+ * act, save, tags, ai}; inc/review-inbox-log.php adds {log, undo, hold, held,
+ * preview}: Recently done with Undo, snooze / assign, and link previews.
+ * Tested by scripts/test-review-inbox.php.
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-const KOP_REVIEW_INBOX_DB_VERSION = '1';
+const KOP_REVIEW_INBOX_DB_VERSION = '2';
 
 /** Add a source: $build returns its spec, or null when its queue is not loaded. */
 function kop_rinbox_register($key, callable $build) {
@@ -81,6 +86,8 @@ function kop_rinbox_register($key, callable $build) {
 
 // Where "Move to" can send an item (news, lawsuits, legislation, Industry PR, a facility's website or resources).
 require_once __DIR__ . '/review-destinations.php';
+// Recently done (with Undo), snooze / assign, link previews.
+require_once __DIR__ . '/review-inbox-log.php';
 
 foreach (glob(__DIR__ . '/review-inbox/*.php') ?: array() as $kop_rinbox_file) {
     require_once $kop_rinbox_file;
@@ -194,6 +201,7 @@ function kop_rinbox_ensure_tables() {
         PRIMARY KEY  (source, item_key, tag),
         KEY tag (tag)
     ) " . $wpdb->get_charset_collate() . ';');
+    foreach (kop_rinbox_log_tables_sql($wpdb->get_charset_collate()) as $sql) dbDelta($sql);
     update_option('kop_review_inbox_db', KOP_REVIEW_INBOX_DB_VERSION);
 }
 
@@ -297,6 +305,7 @@ function kop_rinbox_finish_items($source, array $items) {
             'details' => array(), 'compare' => null, 'preview' => null, 'selected' => false);
         $it['key'] = (string) $it['key'];
         $it['tags'] = $tags[$it['key']] ?? array();
+        $it['hold'] = kop_rinbox_hold_info($source, $it['key']);
     }
     unset($it);
     return $items;
@@ -471,9 +480,12 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
         $counts = kop_rinbox_counts((bool) $req->get_param('fresh'));
         $out = array();
         foreach (kop_rinbox_sources() as $key => $src) {
+            // Snoozed items and items handed to someone else are not waiting on me.
+            $count = $counts[$key] ?? null;
+            if ($count !== null) $count = max(0, $count - count(kop_rinbox_hidden_keys($key)));
             $out[] = array(
                 'key' => $key, 'label' => $src['label'], 'group' => $src['group'], 'views' => $src['views'],
-                'count' => $counts[$key] ?? null, 'native' => (bool) $src['native'], 'tool_url' => (string) $src['tool_url'],
+                'count' => $count, 'native' => (bool) $src['native'], 'tool_url' => (string) $src['tool_url'],
                 'help' => (string) ($src['help'] ?? ''), 'can_save' => !empty($src['save']),
                 'can_ai' => !empty($src['save']) || !empty($src['ai_fill']),
                 'has_origins' => !empty($src['origins']),
@@ -481,7 +493,8 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
                 'filters' => array_values((array) ($src['filters'] ?? array())),
             );
         }
-        return array('sources' => $out, 'tags' => kop_rinbox_known_tags());
+        return array('sources' => $out, 'tags' => kop_rinbox_known_tags(), 'admins' => kop_rinbox_admins(),
+            'me' => get_current_user_id(), 'held' => kop_rinbox_held_counts());
     });
 }
 
@@ -510,8 +523,15 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
             }
             return array('items' => kop_rinbox_finish_items($source, $items), 'total' => count($items), 'view' => $view);
         }
-        $res = call_user_func($src['list'], $q);
-        $out = array('items' => kop_rinbox_finish_items($source, (array) ($res['items'] ?? array())), 'total' => (int) ($res['total'] ?? 0), 'view' => $view);
+        // The waiting view leaves out what is snoozed or handed to someone else.
+        if ($view === $views[0]) {
+            $res = kop_rinbox_list_unheld($src, $source, $q);
+        } else {
+            $res = call_user_func($src['list'], $q);
+            $res['next_offset'] = $q['offset'] + count((array) ($res['items'] ?? array()));
+        }
+        $out = array('items' => kop_rinbox_finish_items($source, (array) ($res['items'] ?? array())), 'total' => (int) ($res['total'] ?? 0), 'view' => $view,
+            'next_offset' => (int) $res['next_offset'], 'held' => (int) ($res['held'] ?? 0));
         if (!empty($src['view_counts'])) {
             try {
                 $out['view_counts'] = array_map('intval', (array) call_user_func($src['view_counts'], $q));
@@ -585,10 +605,15 @@ function kop_rinbox_rest_act(WP_REST_Request $req) {
         $key = (string) $req->get_param('key');
         $src = kop_rinbox_source($source);
         $params = $req->get_param('params');
-        $res = call_user_func($src['act'], $key, sanitize_key((string) $req->get_param('action')), is_array($params) ? wp_unslash($params) : array());
+        $params = is_array($params) ? wp_unslash($params) : array();
+        $action = sanitize_key((string) $req->get_param('action'));
+        $before = kop_rinbox_after($source, $key);
+        $res = call_user_func($src['act'], $key, $action, $params);
         kop_rinbox_flush_counts();
         $res = is_array($res) ? $res : array();
-        return $res + array('message' => 'Done.', 'item' => kop_rinbox_after($source, $res['key'] ?? $key));
+        $res += array('message' => 'Done.', 'item' => kop_rinbox_after($source, $res['key'] ?? $key));
+        kop_rinbox_log_action($source, (string) ($res['key'] ?? $key), $action, $params, $before, $res['item'], $res['message']);
+        return $res;
     });
 }
 
