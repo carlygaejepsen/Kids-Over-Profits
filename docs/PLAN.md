@@ -640,6 +640,28 @@ updated.
    **Owner:** approve the first post (run Hawaii from the launcher), then
    publish `/hi-reports/`; the state adds reports a few times a year, so a
    quarterly run is enough.
+   **Colorado built 2026-10-05, never run live:** `co_scraper.py` and
+   `co_scope.json` (Tools repo, in the launcher and the guide),
+   `js/inspections/states/co.js` (tested on a fixture only), registrations
+   and the draft `/co-reports/` page spec (swept into another session's
+   commit f7451626). Plan: `docs/state-inspection-reports/plans/colorado.md`.
+   Source: the Health department's Tableau dashboard (last three years,
+   citation text and plans of correction). Earlier that day scripted probes
+   of its session commands hung the state's server, so the scraper reads
+   citation text only by clicking in real Chrome, checks the page header
+   names the one citation before downloading, waits 5 s between actions,
+   stops on any 30 s/5xx/double failure and reads `--max-citations` (40) a
+   run. Scope: 9 in (Southern Peaks, Third Way Center, Devereux Cleo Wallace,
+   Cedar Springs, Peak View, Highlands, Denver Springs, Centennial Peaks,
+   Tennyson Center), 9 unsure (West Pines, Sierra Vista, Johnstown Heights,
+   West Springs, three Eating Recovery Center licences, HCA Aurora,
+   M.I.K.I.D.), 54 out. No `--out` run exists: the server timed out at 18:27
+   and answered 503 at 18:57 ET, and the owner stopped the attempt.
+   Self-reported occurrences (Cedar Springs: 223 since 2023) are not read.
+   **Owner:** on a healthy evening run the five steps in the plan's Status
+   section (lists only, one citation watched with `--headed --shots`, one
+   facility, then 40 a run), settle the 9 unsure facilities, then approve
+   the first post.
    **Oregon extension planned 2026-10-05** (`docs/state-inspection-reports/plans/oregon.md`):
    `/or-reports/` has site visits for two program types and no abuse findings. The same
    library has 61 substantiated abuse cases (quarterly legislative reports, 2021-Q4 on),

@@ -4,13 +4,14 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Twenty-eight tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's, West Virginia's, Iowa's, Maryland's, South Dakota's, Virginia's and Hawaii's are linked only after the owner publishes the page):
+Twenty-nine tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's, West Virginia's, Iowa's, Maryland's, South Dakota's, Virginia's, Hawaii's and Colorado's are linked only after the owner publishes the page):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
 | Arizona (`AZ`) | `az-reports` | shared engine | API |
 | Arkansas (`AR`) | `ar-reports` | shared engine | API |
 | California (`CA`) | `ca-reports` | `js/inspections/ca-reports.js` (legacy) | `js/data/ccl_reports_batch_*.json` only |
+| Colorado (`CO`) | `co-reports` | shared engine | API (`co_scraper.py`; Health department (CDPHE) inspections of the last three years from its Tableau dashboard, each citation's text and the facility's plan of correction, read slowly in real Chrome; youth allowlist in `co_scope.json`; psychiatric residential treatment facilities and psychiatric hospitals with adolescent units only; built 2026-10-05, not yet run live) |
 | Connecticut (`CT`) | `ct-reports` | shared engine | API, `js/data/ct_reports.json` fallback |
 | Florida (`FL`) | `fl-reports` | shared engine | API |
 | Georgia (`GA`) | `ga-reports` | shared engine | API |

@@ -29,6 +29,11 @@ Health department's statements of deficiencies for youth special treatment
 facilities and therapeutic living programs (9 of 43 facilities, 21 statements
 since 2023; a youth allowlist; scans read by OCR).
 
+**Built 2026-10-05, never run live:** [colorado.md](colorado.md), Colorado
+(CO), the Health department's Tableau dashboard read slowly in real Chrome
+(9 youth facilities on an allowlist). The first live run waits for a day the
+state's server is healthy; the plan gives the commands and what to check.
+
 [research-log.md](research-log.md) records what every state publishes,
 including the ones with nothing online, so the research is not repeated.
 
