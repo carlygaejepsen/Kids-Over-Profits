@@ -48,7 +48,7 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     $again = kop_rinbox_get_item('facilities-from-news', $item['key']);
     $values = array_column($again['fields'], 'value', 'name');
     $check('facilities-from-news: the item shows the saved details', $values['officialName'] === 'Renamed In Test' && $values['state'] === 'UT');
-    $check('facilities-from-news: the card is headed by the corrected name, the article wording kept in the subtitle', $again['title'] === 'Renamed In Test' && strpos($again['subtitle'], $item['title']) !== false);
+    $check('facilities-from-news: the card is headed by the corrected name and does not show the original wording', $again['title'] === 'Renamed In Test' && strpos($again['subtitle'], $item['title']) === false);
     // The old screen's create form: the details as params on Create, prefilled, only the name required.
     $create = array_values(array_filter($again['actions'], function ($a) { return $a['id'] === 'create'; }))[0];
     $p = array_column($create['params'], null, 'name');

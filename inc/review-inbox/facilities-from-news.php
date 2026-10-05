@@ -163,11 +163,9 @@ function kop_rinbox_facdisc_item(array $r) {
     $detail = json_decode((string) $r['detail'], true) ?: array();
     $e = (array) ($detail['entry'] ?? array());
     $place = trim(implode(', ', array_filter(array($e['city'] ?? '', ($e['state'] ?? '') ?: ($e['country'] ?? '')))));
-    // A corrected name (Rename, Edit details) heads the card; the subtitle keeps the article's own wording.
+    // A corrected name (Rename, Edit details) heads the card; the wording the article came in with is not shown.
     $renamed = trim((string) ($e['officialName'] ?? ''));
-    $renamed = $renamed !== $r['mention'] ? $renamed : '';
     $bits = array();
-    if ($renamed !== '') $bits[] = 'the article says "' . $r['mention'] . '"';
     if ($place !== '') $bits[] = $place;
     if (!empty($e['type'])) $bits[] = $e['type'];
     // The record on the card ("Kissimmee Youth Academy (Kissimmee, FL)"), null when there is none or it is gone.
