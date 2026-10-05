@@ -101,7 +101,7 @@ function kop_rinbox_log_insert(array $row) {
  * as it is now (null: it left the queue). The Undo is the first 'undo' style
  * action $after offers that needs no answer.
  */
-function kop_rinbox_log_action($source, $key, $action, array $params, $before, $after, $message) {
+function kop_rinbox_log_action($source, $key, $action, array $params, $before, $after, $message, $undo_as = null) {
     try {
         if (in_array($action, array('save'), true)) return;
         $label = $action;
@@ -116,7 +116,12 @@ function kop_rinbox_log_action($source, $key, $action, array $params, $before, $
             }
         }
         $undo = '';
-        if ($style !== 'undo' && is_array($after)) {
+        $undo_params = null;
+        if (is_array($undo_as) && !empty($undo_as['action'])) {
+            // The act said how to take it back (kop_rinbox_gdl_group_act: every link one click added).
+            $undo = (string) $undo_as['action'];
+            $undo_params = (array) ($undo_as['params'] ?? array());
+        } elseif ($style !== 'undo' && is_array($after)) {
             foreach ((array) ($after['actions'] ?? array()) as $a) {
                 if (($a['style'] ?? '') !== 'undo') continue;
                 $required = array_filter((array) ($a['params'] ?? array()), function ($p) { return empty($p['optional']) && (string) ($p['value'] ?? '') === ''; });
@@ -127,7 +132,7 @@ function kop_rinbox_log_action($source, $key, $action, array $params, $before, $
             'source' => $source, 'item_key' => $key,
             'title' => (string) (($before['title'] ?? '') ?: ($after['title'] ?? '') ?: $key),
             'action' => $action, 'action_label' => $label, 'style' => $style, 'message' => (string) $message,
-            'undo_action' => $undo,
+            'undo_action' => $undo, 'undo_params' => $undo_params,
         ));
         if ($style === 'approve' || $style === 'reject' || $after === null) kop_rinbox_hold_clear($source, $key);
     } catch (Throwable $e) {

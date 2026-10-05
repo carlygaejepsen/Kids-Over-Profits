@@ -407,7 +407,75 @@
         var inputs = node.kopParams && node.kopParams[action.id];
         var out = {};
         (action.params || []).forEach(function (p, i) { out[p.name] = inputs && inputs[i] ? readInput(inputs[i]) : p.value; });
+        if (node.kopPicked) out.picked = node.kopPicked();
         return out;
+    }
+
+    /**
+     * A card's list of links to tick (item.checklist: one card per facility).
+     * Each entry is one link or several from one website folded together
+     * ({keys, label, url?, sub, note?, checked, items?}). The card's actions
+     * get the ticked links' keys as params.picked (paramsOf).
+     */
+    function checklistBox(item, node, pane, prefix) {
+        var boxes = [];
+        var count = el('span', { class: 'rinbox-check-count' });
+        function update() {
+            var on = 0, all = 0;
+            boxes.forEach(function (b) { all += b.kopKeys.length; if (b.checked) on += b.kopKeys.length; });
+            count.textContent = on + ' of ' + all + ' links ticked';
+        }
+        function setAll(v) { boxes.forEach(function (b) { b.checked = v; }); update(); }
+        var head = el('div', { class: 'rinbox-check-head' }, [
+            count,
+            el('button', { type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: 'Tick all', onclick: function () { setAll(true); } }),
+            el('button', { type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: 'Untick all', onclick: function () { setAll(false); } })
+        ]);
+        var list = el('ul', { class: 'rinbox-checklist' });
+        function linkRow(e) {
+            var bits = [];
+            if (safeHref(e.url)) {
+                bits.push(el('a', { href: e.url, target: '_blank', rel: 'noopener', text: e.label, title: e.url }));
+                bits.push(previewButton(e.url, pane));
+            } else {
+                bits.push(el('span', { text: e.label }));
+            }
+            return bits;
+        }
+        item.checklist.forEach(function (e, i) {
+            var id = prefix + 'chk-' + i;
+            var box = el('input', { type: 'checkbox', id: id, checked: !!e.checked, 'aria-label': 'Tick ' + e.label });
+            box.kopKeys = e.keys || [];
+            box.addEventListener('change', update);
+            boxes.push(box);
+            var li = el('li', { class: 'rinbox-check' + (e.items ? ' rinbox-check-bundle' : '') });
+            var main = el('div', { class: 'rinbox-check-main' }, [box]);
+            if (e.items) {
+                main.appendChild(el('label', { for: id, class: 'rinbox-check-label', text: e.label }));
+            } else {
+                linkRow(e).forEach(function (b) { main.appendChild(b); });
+            }
+            li.appendChild(main);
+            if (e.sub) li.appendChild(el('div', { class: 'rinbox-check-sub', text: e.sub }));
+            if (e.note) li.appendChild(el('div', { class: 'rinbox-check-note', text: e.note }));
+            if (e.items) {
+                var inner = el('ul', { class: 'rinbox-check-items' });
+                e.items.forEach(function (x) {
+                    var row = el('li', null, linkRow(x));
+                    if (x.note) row.appendChild(el('div', { class: 'rinbox-check-note', text: x.note }));
+                    inner.appendChild(row);
+                });
+                li.appendChild(el('details', { class: 'rinbox-check-more' }, [el('summary', { text: 'Show the ' + e.items.length + ' links' }), inner]));
+            }
+            list.appendChild(li);
+        });
+        node.kopPicked = function () {
+            var keys = [];
+            boxes.forEach(function (b) { if (b.checked) keys = keys.concat(b.kopKeys); });
+            return keys;
+        };
+        update();
+        return el('div', { class: 'rinbox-check-wrap' }, [head, list]);
     }
 
     /** Pages follow the queue's own order: set-aside items are skipped, so Next starts where the server says. */
@@ -956,6 +1024,8 @@
         if (links.childNodes.length) node.appendChild(links);
         node.appendChild(pane);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
+        node.kopPicked = null;
+        if (item.checklist && item.checklist.length) node.appendChild(checklistBox(item, node, pane, prefix));
         if (item.details && item.details.length) {
             var dl = el('dl', { class: 'rinbox-details' });
             item.details.forEach(function (d) {
@@ -1079,6 +1149,7 @@
                     if (a.confirm && !window.confirm(a.confirm)) return;
                     var params = {};
                     paramInputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
+                    if (node.kopPicked) params.picked = node.kopPicked();
                     run(node, item, s, src, 'act', { action: a.id, params: params }, btn);
                 }
             }, [actionIcon(a.style), a.label]);

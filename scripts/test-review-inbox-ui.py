@@ -128,6 +128,23 @@ def drive_item(key, sure):
     }
 
 
+def drive_card():
+    """One card per facility: a link and three from one website folded into a row, Add/Skip the ticked ones."""
+    return {
+        "key": "g:f9::", "title": "Sunrise Ranch", "subtitle": "4 links: 4 news articles", "status": "pending", "status_label": "Waiting",
+        "selected": False, "fields": [], "moves": [], "links": [], "tags": [],
+        "checklist": [
+            {"keys": ["k1"], "label": "Ranch under investigation", "url": "https://www.ksl.com/a", "sub": "News article · goes to news, live at once",
+             "note": "\"the ranch was cited\"", "checked": True},
+            {"keys": ["k2", "k3", "k4"], "label": "sltrib.com: 3 news articles", "sub": "goes to news, live at once", "checked": True,
+             "items": [{"key": k, "label": "Tribune story " + k, "url": "https://www.sltrib.com/" + k, "sub": "", "note": ""} for k in ("k2", "k3", "k4")]},
+        ],
+        "actions": [{"id": "add_picked", "label": "Add ticked links", "style": "approve",
+                     "params": [{"name": "facility", "label": "Record", "type": "facility", "value": 9, "optional": True}]},
+                    {"id": "skip_picked", "label": "Skip ticked links", "style": "reject"}],
+    }
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shots", default=str(ROOT / "tmp" / "review-inbox-ui"))
@@ -158,7 +175,7 @@ def main():
             elif path == "items" and "keys=" in url and "source=closure" in url:
                 out = {"items": [dict(closure_item(), hold={"assigned_to": 2, "hidden": True})], "total": 1}
             elif path == "items" and "source=drive" in url:
-                out = {"items": [drive_item("a1", True), drive_item("a2", False)], "total": 2, "view_counts": {"pending": 2, "applied": 7}}
+                out = {"items": [drive_item("a1", True), drive_item("a2", False), drive_card()], "total": 3, "view_counts": {"pending": 2, "applied": 7}}
             elif path == "items":
                 if "source=news" in url:
                     out = {"items": [NEWS], "total": 1}
@@ -191,6 +208,10 @@ def main():
                 out = {"message": "Undone."}
             elif path == "tool":
                 out = {"message": "Scanned 10 articles: 1 closure found."}
+            elif path == "act" and body["source"] == "drive" and body["key"].startswith("g:"):
+                left = drive_card()
+                left["checklist"] = left["checklist"][1:]
+                out = {"message": "Added 1 link, each where its kind goes.", "item": left}
             elif path == "act" and body["source"] == "drive":
                 out = {"message": "Added to the news queue.", "item": None}
             elif path == "act":
@@ -356,7 +377,7 @@ def main():
             pg.wait_for_selector(".rinbox-card[data-key='a2']")
             check("Added (7)" in pg.locator(".rinbox-views").inner_text(), f"@{width} the view tabs show their counts", pg.locator(".rinbox-views").inner_text())
             ticked = pg.evaluate("() => [...document.querySelectorAll('.rinbox-card .rinbox-select')].map(c => c.checked)")
-            check(ticked == [True, False], f"@{width} a sure match starts ticked", json.dumps(ticked))
+            check(ticked == [True, False, False], f"@{width} a sure match starts ticked", json.dumps(ticked))
             check(pg.locator(".rinbox-bulk button", has_text="Add: News queue (1)").count() == 1,
                   f"@{width} an action whose values may stay empty is offered in bulk")
             pg.locator(".rinbox-filter").select_option("news")
@@ -371,6 +392,24 @@ def main():
             pg.wait_for_function("() => /Add: News queue: 1 done/.test(document.querySelector('.rinbox-status').textContent)")
             check(any(c[0] == "act" and c[1]["source"] == "drive" and c[1]["key"] == "a1" and c[1]["params"] == {"facility": ""} for c in calls),
                   f"@{width} bulk sends each card's own values", json.dumps([c[1] for c in calls if c[0] == "act" and c[1]["source"] == "drive"]))
+
+            # One card per facility: tick boxes, a website's links folded together, Add sends only the ticked ones.
+            group = pg.locator(".rinbox-card[data-key='g:f9::']")
+            check(group.locator(".rinbox-check-count").inner_text() == "4 of 4 links ticked", f"@{width} the card counts its ticked links",
+                  group.locator(".rinbox-check-count").inner_text())
+            group.locator(".rinbox-check-more summary").click()
+            check(group.locator(".rinbox-check-items a").count() == 3, f"@{width} a folded website row opens to its links")
+            group.locator(".rinbox-check-bundle input[type=checkbox]").uncheck()
+            check(group.locator(".rinbox-check-count").inner_text() == "1 of 4 links ticked", f"@{width} unticking a folded row unticks all its links")
+            wide = pg.evaluate("() => document.documentElement.scrollWidth")
+            check(wide <= width, f"@{width} the facility card fits the screen", f"{wide}px")
+            pg.screenshot(path=str(shots / f"drive-card-{width}.png"), full_page=True)
+            group.locator("button", has_text="Add ticked links").click()
+            pg.wait_for_function("() => /Added 1 link/.test(document.querySelector(\"[data-key='g:f9::']\").textContent)")
+            sent = [c[1] for c in calls if c[0] == "act" and c[1]["key"] == "g:f9::"]
+            check(len(sent) == 1 and sent[0]["action"] == "add_picked" and sent[0]["params"]["picked"] == ["k1"] and str(sent[0]["params"]["facility"]) == "9",
+                  f"@{width} Add ticked sends only the ticked links", json.dumps(sent))
+            check(group.locator(".rinbox-check").count() == 1, f"@{width} the card then shows what is left")
 
             # Your inbox: assigned to you, recently done with Undo.
             pg.locator(".rinbox-tab", has_text="Assigned to you").click()

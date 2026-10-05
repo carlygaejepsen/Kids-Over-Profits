@@ -199,7 +199,8 @@ function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
     $sql = "SELECT id, article_title, article_url, author, publication_name, publication_date,
                    article_type, article_location, tags, facilities_mentioned, staff_mentioned,
                    survivors_mentioned, content_warnings, summary, json_data
-            FROM news_submissions WHERE status = 'submitted'";
+            FROM news_submissions WHERE (status = 'submitted' OR (status = 'approved' AND " . kop_enrich_sender_where('submitted_by') . '))';
+    // Approved imports too: Drive Docs approves a link as it adds it (kop_gdl_queue_go_live), before anything reads it.
     $params = array();
     if ($ids) {
         $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')';
@@ -274,7 +275,7 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply, $text = '') {
         $latestStmt = $pdo->prepare('SELECT * FROM news_submissions WHERE id = ?');
         $latestStmt->execute(array((int) $id));
         $latest = $latestStmt->fetch(PDO::FETCH_ASSOC);
-        if (!$latest || $latest['status'] !== 'submitted') {
+        if (!$latest || !in_array($latest['status'], array('submitted', 'approved'), true)) {
             return array('ok' => false, 'id' => $id, 'error' => 'submission is no longer awaiting review');
         }
         if ((string) $latest['article_url'] !== (string) $row['article_url']) {
@@ -369,7 +370,8 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply, $text = '') {
 
 /** Pending lawsuit rows with no parties yet. */
 function kop_enrich_lawsuit_ids(PDO $pdo, $limit, array $ids = array()) {
-    $sql = "SELECT id FROM lawsuits WHERE publication_status = 'pending' AND plaintiffs IN ('[]', '') AND defendants IN ('[]', '')
+    // Published imports too: Drive Docs publishes a court record as it adds it (kop_gdl_queue_go_live).
+    $sql = "SELECT id FROM lawsuits WHERE publication_status IN ('pending', 'published') AND plaintiffs IN ('[]', '') AND defendants IN ('[]', '')
               AND " . kop_enrich_sender_where('submitted_by');
     $params = array();
     if ($ids) {

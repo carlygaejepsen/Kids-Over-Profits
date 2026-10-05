@@ -125,8 +125,9 @@ function kop_rinbox_test_drive_docs(array $src, array $item, callable $check) {
         $st = $GLOBALS['pdo']->prepare('SELECT status, article_url FROM news_submissions WHERE id = ?');
         $st->execute(array((int) ($done['id'] ?? 0)));
         $news_row = $st->fetch(PDO::FETCH_ASSOC);
-        $check('drive-docs: "Move to" the news queue adds a waiting news item', $r['status'] === 'applied' && ($done['target'] ?? '') === 'news'
-            && $news_row && $news_row['status'] === 'submitted' && $news_row['article_url'] === $r['url'], $m['message']);
+        // Adding is the review: the news row is approved at once (kop_gdl_queue_go_live), no second approval in the news queue.
+        $check('drive-docs: "Move to" the news queue adds the article approved', $r['status'] === 'applied' && ($done['target'] ?? '') === 'news'
+            && !empty($done['live']) && $news_row && $news_row['status'] === 'approved' && $news_row['article_url'] === $r['url'], $m['message']);
         $m = call_user_func($src['act'], $lic, 'undo', array());
         $st->execute(array((int) $done['id']));
         $check('drive-docs: Undo takes it out of the news queue', $row($lic)['status'] === 'pending' && $st->fetchColumn() === 'deleted', $m['message']);
@@ -150,7 +151,7 @@ function kop_rinbox_test_drive_docs(array $src, array $item, callable $check) {
     $GLOBALS['pdo']->prepare('UPDATE wpdl_kop_gdoc_links SET label = ?, kind = ? WHERE pkey = ?')->execute(array($before['label'], $before['kind'], $lic));
 
     // What the old screen also did: kind filter, tab counts, sure matches ticked, another record, "Add all", reload.
-    $res = call_user_func($src['list'], array('view' => 'pending', 'search' => '', 'offset' => 0, 'limit' => 25, 'filters' => array('kind' => 'news')));
+    $res = call_user_func($src['list'], array('view' => 'pending', 'search' => '', 'offset' => 0, 'limit' => 25, 'filters' => array('kind' => 'news', 'layout' => 'single')));
     $check('drive-docs: the kind filter shows only that kind', $res['total'] === 1 && $res['items'][0]['key'] === $news, (string) $res['total']);
     $counts = call_user_func($src['view_counts'], array('view' => 'pending', 'search' => '', 'filters' => array()));
     $check('drive-docs: every tab has its count', $counts['pending'] === 3 && $counts['facility'] === 2 && $counts['company'] === 1
@@ -191,4 +192,59 @@ function kop_rinbox_test_drive_docs(array $src, array $item, callable $check) {
     }
     $m = call_user_func($src['tool'], 'resync', array());
     $check('drive-docs: "Load the links files again" answers', $m['message'] !== '', $m['message']);
+
+    // One card per facility (the default): links ticked or not, Add and Skip the ticked ones, Undo all of a click.
+    $res = call_user_func($src['list'], array('view' => 'pending', 'search' => '', 'origin' => '', 'offset' => 0, 'limit' => 25, 'filters' => array()));
+    $keys = array_column($res['items'], 'key');
+    $fcard = 'g:f' . (int) $fids[0] . '::';
+    $check('drive-docs: the waiting list is one card per facility, then the company', $res['total'] === 2 && $keys[0] === $fcard
+        && strpos($keys[1], 'g:c' . md5('Example Holdings')) === 0, json_encode($keys));
+    $card = $res['items'][0];
+    $ticked = array();
+    foreach ($card['checklist'] as $e) foreach ($e['keys'] as $k) $ticked[$k] = $e['checked'];
+    $check('drive-docs: the card ticks the sure link and leaves the close name unticked', ($ticked[$news] ?? null) === true && ($ticked[$lic] ?? null) === false,
+        json_encode($ticked));
+    $check('drive-docs: the card has Add ticked and Skip ticked', array_column($card['actions'], 'id') === array('add_picked', 'skip_picked'));
+    $kinded = call_user_func($src['list'], array('view' => 'pending', 'search' => '', 'origin' => '', 'offset' => 0, 'limit' => 25, 'filters' => array('kind' => 'news')));
+    $kcard = $kinded['items'][0] ?? array();
+    $check('drive-docs: under a kind filter the card keeps only that kind', $kinded['total'] === 1 && count($kcard['checklist'] ?? array()) === 1
+        && kop_rinbox_get_item('drive-docs', $kcard['key'])['checklist'][0]['keys'] === array($news), json_encode($kcard['key'] ?? ''));
+    try {
+        call_user_func($src['act'], $fcard, 'add_picked', array('picked' => array()));
+        $check('drive-docs: Add with nothing ticked is refused', false);
+    } catch (RuntimeException $e) {
+        $check('drive-docs: Add with nothing ticked is refused', true, $e->getMessage());
+    }
+    try {
+        $m = call_user_func($src['act'], $fcard, 'add_picked', array('picked' => array($news), 'facility' => (string) $fids[0]));
+        $done = json_decode((string) $row($news)['applied'], true) ?: array();
+        $st = $GLOBALS['pdo']->prepare('SELECT status FROM news_submissions WHERE id = ?');
+        $st->execute(array((int) ($done['id'] ?? 0)));
+        $check('drive-docs: Add ticked adds only the ticked link, the news approved at once', $row($news)['status'] === 'applied'
+            && $row($lic)['status'] === 'pending' && $st->fetchColumn() === 'approved', $m['message']);
+        $check('drive-docs: ...and names its Undo for every link it added', ($m['undo']['action'] ?? '') === 'undo_picked'
+            && ($m['undo']['params']['keys'] ?? array()) === array($news));
+        $left = kop_rinbox_get_item('drive-docs', $fcard);
+        $check('drive-docs: the card then shows only what is left', $left && count($left['checklist']) === 1 && $left['checklist'][0]['keys'] === array($lic));
+        $u = call_user_func($src['act'], $fcard, 'undo_picked', $m['undo']['params']);
+        $st->execute(array((int) $done['id']));
+        $check('drive-docs: Undo of the click takes the article off the site and back to waiting', $row($news)['status'] === 'pending'
+            && $st->fetchColumn() === 'deleted', $u['message']);
+    } catch (Throwable $e) {
+        $check('drive-docs: Add ticked and Undo', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $m = call_user_func($src['act'], $fcard, 'skip_picked', array('picked' => array($news, $lic)));
+    $check('drive-docs: Skip ticked skips them all', $row($news)['status'] === 'rejected' && $row($lic)['status'] === 'rejected'
+        && call_user_func($src['get'], $fcard) === null, $m['message']);
+    call_user_func($src['act'], $fcard, 'undo_picked', $m['undo']['params']);
+    $check('drive-docs: ...and its Undo brings them back', $row($news)['status'] === 'pending' && $row($lic)['status'] === 'pending');
+    $ccard = $keys[1];
+    try {
+        $m = call_user_func($src['act'], $ccard, 'add_picked', array('picked' => array($people)));
+        $check('drive-docs: a company card asks for the record before a facility-page link', $row($people)['status'] === 'pending'
+            && strpos($m['message'], 'need a facility') !== false, $m['message']);
+    } catch (Throwable $e) {
+        $check('drive-docs: a company card asks for the record', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $check('drive-docs: a card key that is not a card finds nothing', call_user_func($src['get'], 'g:c' . md5('nobody') . '::') === null);
 }

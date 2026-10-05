@@ -618,7 +618,8 @@ function kop_rinbox_rest_act(WP_REST_Request $req) {
         kop_rinbox_flush_counts();
         $res = is_array($res) ? $res : array();
         $res += array('message' => 'Done.', 'item' => kop_rinbox_after($source, $res['key'] ?? $key));
-        kop_rinbox_log_action($source, (string) ($res['key'] ?? $key), $action, $params, $before, $res['item'], $res['message']);
+        kop_rinbox_log_action($source, (string) ($res['key'] ?? $key), $action, $params, $before, $res['item'], $res['message'], $res['undo'] ?? null);
+        unset($res['undo']);
         return $res;
     });
 }

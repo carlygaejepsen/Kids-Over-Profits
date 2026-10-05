@@ -10,16 +10,18 @@
  *
  * KOP Tools > Drive Docs shows one card per facility with its links. Each
  * link goes where its kind belongs, and the reviewer can send it elsewhere:
- *   - news articles: the news queue (status 'submitted'), as the browser
- *     extension sends them, naming the facility;
- *   - court records and bills: the lawsuits and legislation queues (pending);
+ *   - news articles: the news queue, as the browser extension sends them,
+ *     naming the facility, and approved at once (the reviewer has just looked
+ *     at it; the hourly reader in api/lib-record-enrich.php still fills it);
+ *   - court records and bills: the lawsuits and legislation queues, published
+ *     at once the same way;
  *   - the program's own website: the record's profileLinks;
  *   - everything else (licensing reports, survivor posts, staff profiles,
  *     reference, government pages, archive copies): the record's
  *     resourceLinks, shown on the facility page under "Materials and links".
  * Queue inserts send no admin emails. Undo takes back exactly what was added:
- * the link comes off the record, or a queue row nobody has reviewed yet is
- * removed (news is soft-deleted).
+ * the link comes off the record, or the queue row it made is removed (news is
+ * soft-deleted) unless someone has rejected or filed it since.
  *
  * Decisions live in {prefix}kop_gdoc_links, keyed by the link's address, so a
  * rebuild adds new links and never undoes a decision.
@@ -483,28 +485,75 @@ function kop_gdl_queue_add(PDO $pdo, array $r, $target, $facility_name, $reviewe
     } finally {
         remove_filter('kop_notify_admins_enabled', $quiet);
     }
-    return array('target' => $target, 'id' => (int) $id);
+    kop_gdl_queue_go_live($pdo, $target, (int) $id, $reviewer);
+    return array('target' => $target, 'id' => (int) $id, 'live' => true);
 }
 
-/** Take a queue row back while nobody has reviewed it. */
+/**
+ * Adding a link from Drive Docs is the review: the row it made goes live as
+ * approving it in its own queue would (news approved, lawsuits and bills
+ * published), with the same case links api/manage-submissions.php makes.
+ */
+function kop_gdl_queue_go_live(PDO $pdo, $target, $id, $reviewer) {
+    if ($target === 'news') {
+        $pdo->prepare("UPDATE news_submissions SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?")
+            ->execute(array(mb_substr((string) $reviewer, 0, 255), (int) $id));
+    } else {
+        $table = $target === 'lawsuit' ? 'lawsuits' : 'legislation';
+        $pdo->prepare("UPDATE {$table} SET publication_status = 'published', published_at = CURRENT_TIMESTAMP WHERE id = ?")
+            ->execute(array((int) $id));
+    }
+    if ($target === 'legislation') {
+        return;
+    }
+    try {
+        require_once get_stylesheet_directory() . '/api/lawsuit-news-links.php';
+        if ($target === 'news') {
+            kop_sync_news_lawsuit_links($pdo, (int) $id, (string) $reviewer);
+        } else {
+            kop_sync_lawsuit_news_links($pdo, (int) $id, (string) $reviewer);
+        }
+    } catch (Throwable $e) {
+        error_log('kop drive docs: case links for ' . $target . ' #' . $id . ' failed: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Take a queue row back: one still waiting, or one Drive Docs put live
+ * ($done['live']) that nobody has rejected or filed elsewhere since.
+ */
 function kop_gdl_queue_remove(PDO $pdo, array $done) {
     $id = (int) ($done['id'] ?? 0);
+    $live = !empty($done['live']);
     if ($done['target'] === 'news') {
-        $st = $pdo->prepare("UPDATE news_submissions SET status = 'deleted' WHERE id = ? AND status = 'submitted'");
+        $st = $pdo->prepare("UPDATE news_submissions SET status = 'deleted' WHERE id = ? AND status IN ('submitted'" . ($live ? ", 'approved'" : '') . ')');
         $st->execute(array($id));
         if (!$st->rowCount()) {
             throw new RuntimeException('News item #' . $id . ' has been reviewed in the news queue already; remove it there.');
         }
+        if ($live) {
+            try {
+                require_once get_stylesheet_directory() . '/api/lawsuit-news-links.php';
+                kop_sync_news_lawsuit_links($pdo, $id, 'drive docs undo');
+            } catch (Throwable $e) {
+                error_log('kop drive docs undo: case links for news #' . $id . ' failed: ' . $e->getMessage());
+            }
+        }
         return;
     }
     $table = $done['target'] === 'lawsuit' ? 'lawsuits' : 'legislation';
-    $st = $pdo->prepare("DELETE FROM {$table} WHERE id = ? AND publication_status = 'pending'");
+    $st = $pdo->prepare("DELETE FROM {$table} WHERE id = ? AND publication_status IN ('pending'" . ($live ? ", 'published'" : '') . ')');
     $st->execute(array($id));
     if (!$st->rowCount()) {
         throw new RuntimeException(ucfirst($done['target']) . ' #' . $id . ' has been reviewed already; remove it there.');
     }
     if ($table === 'lawsuits') {
         $pdo->prepare('DELETE FROM lawsuit_facility_links WHERE lawsuit_id = ?')->execute(array($id));
+        try {
+            $pdo->prepare('DELETE FROM lawsuit_news_links WHERE lawsuit_id = ?')->execute(array($id));
+        } catch (Throwable $e) {
+            // No case-article table on this copy.
+        }
     }
 }
 
@@ -866,7 +915,7 @@ function kop_render_drive_docs_page() {
         . '<li><strong>Check <em>Goes to</em>.</strong> News goes to the news queue, court records and bills to their queues, the program\'s own site to its website links, '
         . 'and everything else (licensing reports, survivor posts, staff profiles, reference) to the resource links on the facility page. Change it on any row.</li>'
         . '<li><strong>Click <em>Add checked</em></strong>, or <em>Add everything ticked on this page</em> at the top. Facility links show on the page at once; '
-        . 'queue items wait in their queue as if sent from the browser extension, with no emails. A card with many links has <em>Add all</em>, '
+        . 'news, court records and bills go into their queues already approved (on the site at once, no second approval), with no emails. A card with many links has <em>Add all</em>, '
         . 'which adds every sure match the card holds under the filters you picked, in batches.</li>'
         . '<li><strong>Wrong place?</strong> Pick another record in the box under the card and click <em>Add checked to that record</em>. '
         . 'On <em>Company only</em> and <em>No facility</em>, pick the record first; news can go to the queue without one.</li>'

@@ -28,10 +28,14 @@ kop_rinbox_register('drive-docs', function () {
         'help'     => 'Links found in your Google Docs, HEAL\'s old site, the r/troubledteens wiki and SCIAD NET that the site does not have yet. '
             . 'Add sends each one where its kind belongs (news to the news queue, court records and bills to their queues, the program\'s own site to its website links, '
             . 'everything else to "Materials and links" on the facility page). To put it on another record, pick it in the Record box beside Add. '
-            . 'Sure matches start ticked: "Select all" and Add does a whole page. "Move to" sends a link somewhere else; Undo takes it back. '
-            . 'Queue items wait in their queue with no emails sent.'
+            . 'Each card is one facility with all its links; links from one website are folded into one row. Tick what belongs and click "Add ticked links" '
+            . '(close-name matches start unticked). News, court records and bills go straight onto the site, with no second approval in their queues. '
+            . 'Undo in Recently done takes back a whole click. "Show: One card per link" gives a card per link, with "Move to" and edits. No emails are sent.'
             . (kop_gdl_paths() ? '' : ' No links uploaded yet: run python scripts/gdocs-extract.py and copy tmp/gdocs/links.json to ' . dirname(kop_gdl_path()) . '.'),
-        'filters'  => array(array('name' => 'kind', 'label' => 'Kind', 'options' => $kinds)),
+        'filters'  => array(
+            array('name' => 'kind', 'label' => 'Kind', 'options' => $kinds),
+            array('name' => 'layout', 'label' => 'Show', 'options' => array('' => 'One card per facility', 'single' => 'One card per link')),
+        ),
         'view_counts' => 'kop_rinbox_gdl_view_counts',
         'tools'    => array(
             array('id' => 'add_all', 'label' => 'Add every sure match for a facility', 'style' => 'approve',
@@ -61,6 +65,7 @@ kop_rinbox_register('drive-docs', function () {
         },
         'list'     => 'kop_rinbox_gdl_list',
         'get'      => function ($key) {
+            if (strncmp((string) $key, 'g:', 2) === 0) return kop_rinbox_gdl_group_item($key);
             $rows = kop_gdl_rows(array($key));
             return $rows ? kop_rinbox_gdl_item($rows[0]) : null;
         },
@@ -78,6 +83,7 @@ function kop_rinbox_gdl_list(array $q) {
         set_transient('kop_rinbox_gdl_synced', 1, MINUTE_IN_SECONDS);
         kop_gdl_sync();
     }
+    if (kop_rinbox_gdl_grouped($q)) return kop_rinbox_gdl_group_list($q);
     $where = kop_rinbox_gdl_where($q['view'], $q);
     $table = kop_gdl_table();
     $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE {$where}");
@@ -248,7 +254,7 @@ function kop_rinbox_gdl_item(array $r) {
         } elseif ($default === 'website') {
             $add_help = 'Adds this link to the website links of ' . $fac_name . '.';
         } else {
-            $add_help = 'Sends this link to the ' . strtolower($targets[$default]) . ', where it waits for its own review; nothing is published yet and no email is sent.';
+            $add_help = 'Adds this link to the ' . strtolower($targets[$default]) . ' already approved, so it is on the site at once with no second approval there (the hourly AI reader still fills in its details). No email is sent.';
         }
         // The Record box is the old screen's "Add checked to that record": another record than the match.
         $actions[] = array('id' => 'apply', 'label' => 'Add: ' . $targets[$default], 'style' => 'approve', 'help' => $add_help, 'params' => array(
@@ -332,6 +338,7 @@ function kop_rinbox_gdl_row($key) {
 
 function kop_rinbox_gdl_act($key, $action, array $params) {
     global $wpdb;
+    if (strncmp((string) $key, 'g:', 2) === 0) return kop_rinbox_gdl_group_act($key, $action, $params);
     $r = kop_rinbox_gdl_row($key);
     $user = kop_rinbox_reviewer();
     $targets = kop_gdl_targets();
@@ -360,7 +367,7 @@ function kop_rinbox_gdl_act($key, $action, array $params) {
             }
             $where = kop_gdl_needs_facility($to)
                 ? ($to === 'website' ? 'the website links of ' : 'the "Materials and links" list of ') . kop_rinbox_facility($fid)['name']
-                : 'the ' . strtolower($targets[$to]) . ', waiting for review there (no emails sent)';
+                : 'the ' . strtolower($targets[$to]) . ', approved and on the site now (no emails sent)';
             return array('message' => 'Added to ' . $where . '. Undo is on the Added tab.');
         case 'apply_all':
             if ($r['status'] !== 'pending' || !kop_gdl_sure_match($r)) throw new RuntimeException('This link is not a waiting sure match.');
@@ -409,4 +416,277 @@ function kop_rinbox_gdl_save($key, array $fields) {
     $wpdb->update(kop_gdl_table(), $set, array('pkey' => $r['pkey']));
     kop_rinbox_flush_counts();
     return array('message' => 'Saved.');
+}
+
+/* ---- One card per facility --------------------------------------------- */
+
+/*
+ * The waiting tabs show one card per facility (a company's links with no
+ * facility share a card, and so do the links of one doc with neither). The
+ * card lists its links with a tick box each, links from one website folded
+ * into one row; "Add ticked links" puts every ticked one where its kind goes,
+ * "Skip ticked links" skips them. Close-name matches start unticked. One
+ * Recently done entry per click, whose Undo takes back every link it did.
+ * The Show filter's "One card per link" gives the single-link cards (Move to,
+ * edits, the Record box per link).
+ *
+ * Card key: g:<f facility id | c md5(company) | d md5(doc)>:<kind>:<source>,
+ * the kind and source filters the list had, so the card keeps showing what
+ * the list showed.
+ */
+
+if (!defined('KOP_GDL_GROUP_ROWS')) {
+    define('KOP_GDL_GROUP_ROWS', 300);
+}
+
+/** Does this list show one card per facility? */
+function kop_rinbox_gdl_grouped(array $q) {
+    return ($q['filters']['layout'] ?? '') !== 'single' && in_array($q['view'], array('pending', 'facility', 'company', 'none'), true);
+}
+
+function kop_rinbox_gdl_group_list(array $q) {
+    global $wpdb;
+    $table = kop_gdl_table();
+    $where = kop_rinbox_gdl_where($q['view'], $q);
+    $op = "CASE WHEN facility_id > 0 THEN '' ELSE operator_name END";
+    $doc = "CASE WHEN facility_id > 0 OR operator_name <> '' THEN '' ELSE source_doc END";
+    $group = "facility_id, {$op}, {$doc}";
+    $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM (SELECT 1 FROM {$table} WHERE {$where} GROUP BY {$group}) g");
+    $list = (array) $wpdb->get_results("SELECT facility_id AS fid, {$op} AS op, {$doc} AS doc, COUNT(*) AS n FROM {$table} WHERE {$where} "
+        . "GROUP BY {$group} ORDER BY facility_id = 0, COUNT(*) DESC, MIN(id) LIMIT " . (int) $q['limit'] . ' OFFSET ' . (int) $q['offset'], ARRAY_A);
+    $kind = (string) ($q['filters']['kind'] ?? '');
+    $origin = (string) ($q['origin'] ?? '');
+    $items = array();
+    foreach ($list as $g) {
+        $key = 'g:' . ((int) $g['fid'] > 0 ? 'f' . (int) $g['fid'] : ($g['op'] !== '' ? 'c' . md5((string) $g['op']) : 'd' . md5((string) $g['doc'])))
+            . ':' . (isset(kop_gdl_kinds()[$kind]) ? $kind : '') . ':' . (isset(kop_gdl_sources()[$origin]) ? $origin : '');
+        $item = kop_rinbox_gdl_group_item($key);
+        if ($item) $items[] = $item;
+    }
+    return array('items' => $items, 'total' => $total);
+}
+
+/**
+ * A card key as [SQL condition over its waiting links, facility id, card name],
+ * or null when the key is not a card or nothing waits under it.
+ */
+function kop_rinbox_gdl_group_parse($key) {
+    global $wpdb;
+    if (!preg_match('/^g:([fcd])([0-9a-f]+):([a-z_]*):([a-z]*)$/', (string) $key, $m)) return null;
+    $table = kop_gdl_table();
+    $where = "status = 'pending'";
+    $fid = 0;
+    $name = '';
+    if ($m[1] === 'f') {
+        $fid = (int) $m[2];
+        $where .= $wpdb->prepare(' AND facility_id = %d', $fid);
+        $fac = kop_rinbox_facility($fid);
+        $name = $fac ? $fac['name'] : 'Facility #' . $fid;
+    } else {
+        $col = $m[1] === 'c' ? 'operator_name' : 'source_doc';
+        $base = $m[1] === 'c' ? "status = 'pending' AND facility_id = 0 AND operator_name <> ''" : "status = 'pending' AND facility_id = 0 AND operator_name = ''";
+        $found = null;
+        foreach ((array) $wpdb->get_col("SELECT DISTINCT {$col} FROM {$table} WHERE {$base}") as $v) {
+            if (md5((string) $v) === $m[2]) { $found = (string) $v; break; }
+        }
+        if ($found === null) return null;
+        $where = $base . $wpdb->prepare(" AND {$col} = %s", $found);
+        $name = $m[1] === 'c' ? 'Company: ' . $found : 'No facility: ' . ($found !== '' ? $found : 'links with no doc name');
+    }
+    if ($m[3] !== '' && isset(kop_gdl_kinds()[$m[3]])) $where .= $wpdb->prepare(' AND kind = %s', $m[3]);
+    if ($m[4] !== '' && isset(kop_gdl_sources()[$m[4]])) $where .= $wpdb->prepare(' AND source = %s', $m[4]);
+    return array('where' => $where, 'fid' => $fid, 'name' => $name, 'company' => $m[1] === 'c');
+}
+
+/** Where a link goes when added, in words. */
+function kop_rinbox_gdl_goes($kind) {
+    $t = kop_gdl_default_target($kind);
+    return array('news' => 'news, live at once', 'lawsuit' => 'lawsuits, live at once', 'legislation' => 'legislation, live at once',
+        'website' => 'website links', 'resource' => '"Materials and links"')[$t] ?? $t;
+}
+
+/** "3 news articles, 1 court record": a kind count in words. */
+function kop_rinbox_gdl_kind_words(array $counts) {
+    $words = array(
+        'news' => array('news article', 'news articles'), 'court' => array('court record', 'court records'),
+        'legislation' => array('bill', 'bills'), 'inspection' => array('licensing report', 'licensing reports'),
+        'government' => array('government page', 'government pages'), 'social' => array('survivor/social post', 'survivor/social posts'),
+        'people' => array('person page', 'person pages'), 'advertising' => array('advertising listing', 'advertising listings'),
+        'reference' => array('reference', 'references'), 'archive' => array('archive copy', 'archive copies'),
+        'program_site' => array("program site page", "program site pages"), 'other' => array('other link', 'other links'),
+    );
+    $out = array();
+    foreach ($counts as $k => $n) {
+        $w = $words[$k] ?? array($k, $k);
+        $out[] = $n . ' ' . $w[$n === 1 ? 0 : 1];
+    }
+    return implode(', ', $out);
+}
+
+function kop_rinbox_gdl_group_item($key) {
+    global $wpdb;
+    $g = kop_rinbox_gdl_group_parse($key);
+    if (!$g) return null;
+    $table = kop_gdl_table();
+    $n = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE {$g['where']}");
+    if (!$n) return null;
+    $rows = (array) $wpdb->get_results("SELECT * FROM {$table} WHERE {$g['where']} ORDER BY " . kop_gdl_kind_order_sql()
+        . ', domain, label, id LIMIT ' . (int) KOP_GDL_GROUP_ROWS, ARRAY_A);
+    $kinds = kop_gdl_kinds();
+    $sources = kop_gdl_sources();
+
+    // Links from one website (and as sure as each other) fold into one row.
+    $bundles = array();
+    $kind_counts = array();
+    $doubtful = 0;
+    $created = '';
+    foreach ($rows as $r) {
+        $sure = kop_gdl_sure_match($r);
+        if ((int) $r['facility_id'] > 0 && !$sure) $doubtful++;
+        $kind_counts[$r['kind']] = ($kind_counts[$r['kind']] ?? 0) + 1;
+        if ($created === '' || $r['created_at'] < $created) $created = (string) $r['created_at'];
+        $bkey = ($r['domain'] !== '' ? $r['domain'] : $r['url']) . '|' . ($sure ? 1 : 0);
+        $bundles[$bkey][] = $r;
+    }
+    $describe = function (array $r) use ($kinds, $sources) {
+        $seen = json_decode((string) $r['seen'], true) ?: array();
+        $first = $seen[0] ?? array();
+        $where = trim(($first['doc'] ?? '') . (!empty($first['heading']) ? ' > ' . $first['heading'] : ''));
+        $sub = ($kinds[$r['kind']] ?? $r['kind']) . ' · goes to ' . kop_rinbox_gdl_goes($r['kind'])
+            . (!empty($sources[$r['source']]['label']) ? ' · ' . $sources[$r['source']]['label'] : '')
+            . ((int) $r['facility_id'] > 0 && !kop_gdl_sure_match($r) ? ' · close name (' . $r['facility_how'] . '), check it' : '');
+        $note = !empty($first['text']) ? '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 200) . '"' : '';
+        if ($note === '' && $where !== '') $note = 'From ' . $where;
+        return array('key' => (string) $r['pkey'], 'label' => $r['label'] !== '' ? (string) $r['label'] : (string) $r['url'],
+            'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note);
+    };
+    $checklist = array();
+    foreach ($bundles as $list) {
+        $sure = kop_gdl_sure_match($list[0]) || (int) $list[0]['facility_id'] === 0;
+        if (count($list) === 1) {
+            $e = $describe($list[0]);
+            $checklist[] = array('keys' => array($e['key']), 'label' => $e['label'], 'url' => $e['url'], 'sub' => $e['sub'], 'note' => $e['note'], 'checked' => $sure);
+            continue;
+        }
+        $counts = array();
+        foreach ($list as $r) $counts[$r['kind']] = ($counts[$r['kind']] ?? 0) + 1;
+        $targets = array_unique(array_map(function ($r) { return kop_rinbox_gdl_goes($r['kind']); }, $list));
+        $checklist[] = array(
+            'keys'    => array_column($list, 'pkey'),
+            'label'   => $list[0]['domain'] . ': ' . kop_rinbox_gdl_kind_words($counts),
+            'sub'     => 'goes to ' . implode(' and ', $targets)
+                . ((int) $list[0]['facility_id'] > 0 && !kop_gdl_sure_match($list[0]) ? ' · close name (' . $list[0]['facility_how'] . '), check it' : ''),
+            'checked' => $sure,
+            'items'   => array_map($describe, $list),
+        );
+    }
+
+    $text = array();
+    if ($n > count($rows)) $text[] = 'Showing the first ' . count($rows) . ' of ' . $n . ' links; the rest appear here once these are done.';
+    if ($doubtful) $text[] = $doubtful . ' link' . ($doubtful > 1 ? 's were' : ' was') . ' matched by a close name and start' . ($doubtful > 1 ? '' : 's') . ' unticked: check they are about this facility.';
+    if ($g['fid'] <= 0) $text[] = 'No facility yet: news, court records and bills can be added as they are; for the rest, pick the facility in the Record box first.';
+    $where_to = $g['fid'] > 0 ? $g['name'] : 'the record you pick';
+
+    return array(
+        'key'          => (string) $key,
+        'title'        => $g['name'],
+        'subtitle'     => $n . ' link' . ($n > 1 ? 's' : '') . ': ' . kop_rinbox_gdl_kind_words($kind_counts),
+        'url'          => '',
+        'text'         => implode("\n", $text),
+        'created'      => $created,
+        'status'       => 'pending',
+        'status_label' => 'Waiting',
+        'facility'     => $g['fid'] > 0 ? kop_rinbox_facility($g['fid']) : null,
+        'fields'       => array(),
+        'checklist'    => $checklist,
+        'actions'      => array(
+            array('id' => 'add_picked', 'label' => 'Add ticked links', 'style' => 'approve',
+                'help' => 'Puts every ticked link where its kind goes, in one go: news, court records and bills straight onto the site (no second approval), '
+                    . 'program sites to the website links and the rest to "Materials and links" of ' . $where_to . '. Undo in Recently done takes them all back.',
+                'params' => array(array('name' => 'facility', 'label' => $g['fid'] > 0 ? 'Record' : 'Record (needed for facility-page links)',
+                    'type' => 'facility', 'value' => $g['fid'], 'optional' => true))),
+            array('id' => 'skip_picked', 'label' => 'Skip ticked links', 'style' => 'reject',
+                'help' => 'Nothing is added anywhere; the ticked links move to the Skipped tab.'),
+        ),
+        'moves'        => array(),
+        'links'        => array(),
+        'details'      => array(),
+        'selected'     => false,
+    );
+}
+
+/** The card's waiting links among $picked (pkeys). */
+function kop_rinbox_gdl_group_picked(array $g, $picked) {
+    global $wpdb;
+    $picked = array_values(array_unique(array_filter(array_map(function ($k) { return preg_replace('/[^a-f0-9]/', '', (string) $k); }, (array) $picked), 'strlen')));
+    if (!$picked) throw new RuntimeException('Tick at least one link first.');
+    $out = array();
+    foreach (array_chunk($picked, 200) as $chunk) {
+        $in = implode(',', array_map(function ($k) { return "'" . $k . "'"; }, $chunk));
+        $out = array_merge($out, (array) $wpdb->get_results('SELECT * FROM ' . kop_gdl_table() . " WHERE {$g['where']} AND pkey IN ({$in}) ORDER BY id", ARRAY_A));
+    }
+    if (!$out) throw new RuntimeException('Those links were already handled. Reload the list.');
+    return $out;
+}
+
+function kop_rinbox_gdl_group_act($key, $action, array $params) {
+    global $wpdb;
+    $user = kop_rinbox_reviewer();
+    if ($action === 'undo_picked') {
+        $keys = array_values(array_filter(array_map(function ($k) { return preg_replace('/[^a-f0-9]/', '', (string) $k); }, (array) ($params['keys'] ?? array())), 'strlen'));
+        $rows = $keys ? kop_gdl_rows($keys) : array();
+        if (!$rows) throw new RuntimeException('Nothing to undo.');
+        $ok = $bad = 0;
+        $why = '';
+        foreach (kop_gdl_undo($rows, $user) as $res) {
+            if (!empty($res['ok'])) $ok++;
+            else { $bad++; $why = $why ?: (string) ($res['error'] ?? ''); }
+        }
+        kop_rinbox_flush_counts();
+        return array('message' => 'Undone: ' . $ok . ' link' . ($ok === 1 ? '' : 's') . ' back in the waiting list'
+            . ($bad ? '; ' . $bad . ' could not be taken back (' . $why . ')' : '') . '.');
+    }
+    $g = kop_rinbox_gdl_group_parse($key);
+    if (!$g) throw new RuntimeException('Nothing waits on this card any more.');
+    $rows = kop_rinbox_gdl_group_picked($g, $params['picked'] ?? array());
+    if ($action === 'skip_picked') {
+        $now = current_time('mysql', true);
+        foreach ($rows as $r) {
+            $wpdb->update(kop_gdl_table(), array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => 'Skipped')),
+                'reviewed_by' => $user, 'reviewed_at' => $now), array('pkey' => $r['pkey']));
+        }
+        kop_rinbox_flush_counts();
+        return array('message' => 'Skipped ' . count($rows) . ' link' . (count($rows) === 1 ? '' : 's') . '. Nothing was added.',
+            'undo' => array('action' => 'undo_picked', 'params' => array('keys' => array_column($rows, 'pkey'))));
+    }
+    if ($action !== 'add_picked') throw new RuntimeException('Unknown action.');
+    $fid = $g['fid'];
+    $picked = (int) ($params['facility'] ?? 0);
+    if ($picked > 0 && $picked !== $fid) {
+        $st = kop_rinbox_pdo()->prepare('SELECT COUNT(*) FROM facilities_v2 WHERE id = ?');
+        $st->execute(array($picked));
+        if (!(int) $st->fetchColumn()) throw new RuntimeException('Facility #' . $picked . ' does not exist.');
+        $fid = $picked;
+    }
+    // 40 at a time, for 25 seconds: a big card is finished with another click.
+    $added = array();
+    $refused = $need = $left = 0;
+    $started = time();
+    foreach (array_chunk($rows, 40) as $i => $batch) {
+        if ($i && time() - $started > 25) { $left += count($batch); continue; }
+        foreach (kop_gdl_apply($batch, array(), $fid, $user) as $pkey => $res) {
+            if (!empty($res['ok'])) $added[] = (string) $pkey;
+            elseif (!empty($res['keep'])) $need++;
+            else $refused++;
+        }
+    }
+    kop_rinbox_flush_counts();
+    $msg = 'Added ' . count($added) . ' link' . (count($added) === 1 ? '' : 's') . ', each where its kind goes'
+        . ($fid > 0 ? ' (facility links on ' . kop_rinbox_facility($fid)['name'] . ')' : '')
+        . ($refused ? '; ' . $refused . ' already on file or refused (now under "Skipped or already there")' : '')
+        . ($need ? '; ' . $need . ' need a facility: pick it in the Record box and add again' : '')
+        . ($left ? '; ' . $left . ' not reached yet: click Add again' : '') . '.';
+    $out = array('message' => $msg);
+    if ($added) $out['undo'] = array('action' => 'undo_picked', 'params' => array('keys' => $added));
+    return $out;
 }
