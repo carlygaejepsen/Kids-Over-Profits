@@ -95,7 +95,8 @@ $sentence_cases = array(
     array('The Compliance Officer observed bird feathers and one deceased bird on the ground in the back yard.', array()),
     array('Failure to have anti-ligature curtain rods presents a health and safety risk for patients including possible death.', array()),
     array('The assessment listed Homicide risk: low and suicidal ideations: passive.', array()),
-    array('The administrator failed to provide written notification to the Department of a resident\'s death within one working day.', array('death')),
+    // Owner rule, 2026-10-05: a notice sent late is paperwork, whatever it was about.
+    array('The administrator failed to provide written notification to the Department of a resident\'s death within one working day.', array()),
     array('The complaint alleged a resident had an unauthorized absence and later passed away.', array('death', 'missing')),
     // Training and screenings are not deaths; self-harm is not a suicide attempt (owner, 2026-09-30).
     array('One out of three child records reviewed did not have a completed suicide screening completed within 90 days of the last completed suicide screening.', array()),
@@ -174,6 +175,34 @@ $sentence_cases = array_merge($sentence_cases, array(
     array('On video, a staff member was seen shoving a child to prevent them from going into the room of a peer.', array('physical_abuse')),
     array('A child in care was subjected to physical abuse by a operation staff member.', array('physical_abuse')),
 ));
+$sentence_cases = array_merge($sentence_cases, array(
+    // Owner rule, 2026-10-05: paperwork or training only does not count.
+    array('The child\'s hospitalization on 4/2/24 was not reported to Licensing within 24 hours.', array()),
+    array('The facility did not document the restraint in which the youth sustained a bruise.', array()),
+    array('The operation failed to complete an incident report after a child in care was taken to the emergency room.', array()),
+    array('A youth ran away on 5/1 and the runaway was documented late.', array()),
+    array('Staff who restrained the child had expired restraint certification.', array()),
+    array('The facility failed to notify the parent within 24 hours that the youth was transported to the hospital.', array()),
+    array('A youth was taken to the emergency room after swallowing a battery.', array('self_harm', 'hospitalization')),
+    // ... but what staff did to a child counts however it was cited.
+    array('The facility failed to report to Licensing within 24 hours that S1 slapped C1.', array('physical_abuse')),
+    array('Staff restrained the child in a prone hold, causing a broken wrist, and did not document the restraint.', array('restraint_injury')),
+    // Owner rule, 2026-10-05: a resident assaulting staff does not count.
+    array('C1 punched a staff member in the face.', array()),
+    array('The resident assaulted staff and police were called.', array()),
+    array('Staff was struck by a resident and taken to the emergency room.', array()),
+    array('A staff member was taken to the hospital after a youth attacked her.', array()),
+    array('Youth 2 kicked and bit staff during the restraint, and S1 sustained a bruise.', array()),
+    array('S1 was hit by C1 during the incident.', array()),
+    array('S1 restrained C1 after being hit by C1.', array()),
+    array('The youth threw a chair at staff and was arrested.', array()),
+    array('A resident physically assaulted a staff member.', array()),
+    // ... but staff hurting the child in the same sentence still counts.
+    array('C1 hit S2, and S2 then punched C1 in the face.', array('physical_abuse')),
+    array('After the youth assaulted staff, staff restrained the youth in a prone hold, resulting in a fractured arm.', array('restraint_injury')),
+    array('Staff punched a resident who was taken to the emergency room.', array('physical_abuse', 'hospitalization')),
+    array('A youth had a panic attack and staff slapped him.', array('physical_abuse')),
+));
 foreach ($sentence_cases as $case) {
     $got = array();
     foreach (kop_ih_split_sentences($case[0]) as $s) $got = array_merge($got, array_keys(kop_ih_match_sentence($s)));
@@ -220,6 +249,25 @@ $c = $tx_run('The child ran away from the operation. The child was found decease
 check(count($c) === 1 && $c[0]['category'] === 'death', 'TX: a runaway who died is queued as a death');
 $c = $tx_run('The child ran away from the operation and was later taken to the hospital by ambulance.');
 check(count($c) === 1 && $c[0]['category'] === 'hospitalization', 'TX: a runaway who ended up in hospital is queued');
+
+// Owner rule, 2026-10-05: a citation for paperwork or training only is not queued.
+$tx_cite = static function ($standard, $narrative) use ($tx) {
+    $row = $tx;
+    $row['categories_json'] = json_encode(array('Standard Number / Description' => $standard, 'Standard Risk Level' => 'High', 'Deficiency Narrative' => $narrative));
+    return kop_ih_candidates('TX', $row);
+};
+check($tx_cite('748.303(a) - Serious incident reporting', 'On 3/4/24 a child in care self-harmed and was taken to the emergency room. Licensing was notified on 3/9/24.') === array(),
+    'TX: a reporting citation about an ER visit is paperwork only');
+check($tx_cite('748.501 - Personnel records', 'A child in care died on 2/2/24. The employee file of the caregiver on shift held no background check.') === array(),
+    'TX: a personnel records citation is paperwork only, even with a death in it');
+check($tx_cite('748.931 - Pre-service training', 'An employee who had not completed emergency behavior intervention training restrained a child, and the child was hospitalized.') === array(),
+    'TX: a training citation is training only');
+$c = $tx_cite('748.303(a) - Serious incident reporting', 'The operation did not report within 24 hours that a caregiver slapped a child in care.');
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse', 'TX: a reporting citation that records staff abuse is kept');
+$c = $tx_cite('748.685 - Caregiver responsibilities', 'The caregiver failed to supervise the child, who self-harmed and was taken to the emergency room. The incident was documented late.');
+check(count($c) === 1 && $c[0]['category'] === 'self_harm', 'TX: a supervision failure with a late record is not paperwork only');
+$c = $tx_cite('', 'A child in care ran away and was struck by a car. The operation failed to notify the parent within 24 hours.');
+check($c === array(), 'TX: with no rule named, a citation whose only fault is a late notice is paperwork only');
 
 // California
 $ca_text = '13On 9-27-24 LPA conducted an unannounced inspection. Staff physically assaulted client in care. '
@@ -549,7 +597,7 @@ $c = kop_ih_candidates('OK', $ok_row(array('kind' => 'complaint', 'visit_type' =
 check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && $c[0]['score'] === 80 && $c[0]['kind'] === 'complaint', 'OK: a substantiated complaint keeps the full score');
 check($c && $c[0]['state_label'] === 'Substantiated complaint' && strpos($c[0]['standard'], '340:110-3-154.2(b)(1)') === 0, 'OK: label and requirement');
 $visit = array('kind' => 'visit', 'visit_type' => 'Full', 'purpose' => 'Periodic', 'items' => array(
-    array('requirement' => '340:110-3-152(f)', 'description' => 'Notifications.', 'observed' => 'Program failed to notify licensing of a resident taken to the emergency room on 3-16-24.', 'nrs' => false),
+    array('requirement' => '340:110-3-153(a)', 'description' => 'Supervision.', 'observed' => 'Program failed to supervise a resident who was taken to the emergency room on 3-16-24.', 'nrs' => false),
 ));
 $c = kop_ih_candidates('OK', $ok_row($visit));
 check(count($c) === 1 && $c[0]['score'] === 47 && $c[0]['state_label'] === 'Non-compliance cited at a monitoring visit', 'OK: an ordinary visit item scores as a citation');
@@ -557,8 +605,86 @@ $visit['items'][0]['nrs'] = true;
 $c = kop_ih_candidates('OK', $ok_row($visit));
 check(count($c) === 1 && $c[0]['score'] === 55 && strpos($c[0]['state_label'], 'numerous, repeated or serious') !== false, 'OK: an NRS item keeps the full score');
 check(kop_ih_candidates('OK', $ok_row(array('kind' => 'visit', 'items' => array()))) === array(), 'OK: a visit with nothing found has no candidate');
+// Owner rule, 2026-10-05: a citation for paperwork only is not queued, whatever it mentions.
+$late = array('kind' => 'visit', 'visit_type' => 'Full', 'purpose' => 'Periodic', 'items' => array(
+    array('requirement' => '340:110-3-152(f)', 'description' => 'Notifications.', 'observed' => 'Program failed to notify licensing of a resident taken to the emergency room on 3-16-24.', 'nrs' => true),
+));
+check(kop_ih_candidates('OK', $ok_row($late)) === array(), 'OK: a late notification of an ER visit is paperwork only');
 check(kop_ih_document_url('http://residentialchildplacingview.okdhs.org/ResidentialView/ResidentialView.aspx?CaseNumber=K850052676', '{}') === ''
     && kop_ih_document_url('https://example.org/report.pdf', '{}') === 'https://example.org/report.pdf', 'a facility page is not a report\'s own document');
+
+// New Hampshire (nh_scraper.py): items are the rules not met; only the coordinator's observations are read.
+$nh = array('report_date' => '2025-03-04', 'raw_content' => '', 'categories_json' => json_encode(array(
+    'visit_type' => 'Licensed Complaint Visit', 'is_complaint' => true, 'items' => array(
+        array('rule' => 'He-C 4001.15(ag)', 'rule_text' => 'Staff shall not use physical punishment.', 'result' => 'Non-Compliant', 'high_risk' => true,
+            'observations' => 'Staff A slapped Resident A across the face during an argument in the dining room.', 'directed_cap' => 'Staff A shall be retrained.', 'corrective_action_plan' => 'We retrained staff.'),
+        array('rule' => 'He-C 4001.07(c)', 'rule_text' => 'Records.', 'result' => 'Founded, Problem Resolved', 'high_risk' => false,
+            'observations' => 'The program failed to notify the department within 24 hours that Resident B was taken to the emergency room.'),
+        array('rule' => 'He-C 4001.09', 'result' => 'Non-Compliant', 'observations' => ''),
+    ))));
+$f = kop_ih_extract('NH', $nh);
+check(count($f) === 2 && strpos($f[0]['text'], 'Staff A slapped') === 0 && $f[0]['factor'] === 1.0, 'NH: observations only, a high-risk rule at full weight');
+check($f && $f[1]['kind'] === 'complaint' && $f[1]['corrected_on_site'] === true, 'NH: founded and resolved is a complaint put right');
+$c = kop_ih_candidates('NH', $nh);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && strpos($c[0]['state_label'], 'high-risk rule') !== false, 'NH: the slap is queued, the late notice is not');
+
+// Wyoming (wy_scraper.py): a DFS notice counts only when the evidence supports it; a WDH survey tag's evidence.
+$wy = static function (array $cats) { return array('report_date' => '2024-05-01', 'raw_content' => '', 'categories_json' => json_encode($cats)); };
+$c = kop_ih_candidates('WY', $wy(array('source' => 'DFS', 'kind' => 'notice', 'non_compliance' => true,
+    'allegation' => 'It was reported that a staff member choked a youth during a restraint, leaving bruises on his neck.',
+    'rules' => array(array('chapter' => '6', 'section' => '12', 'title' => 'Discipline')))));
+check(count($c) === 1 && $c[0]['kind'] === 'complaint' && $c[0]['score'] === 85, 'WY: a supported notice is the confirmed allegation');
+check(kop_ih_candidates('WY', $wy(array('source' => 'DFS', 'kind' => 'notice', 'non_compliance' => false,
+    'allegation' => 'It was reported that a staff member choked a youth.'))) === array(), 'WY: a notice the evidence did not support is not queued');
+check(kop_ih_extract('WY', $wy(array('source' => 'DFS', 'kind' => 'visit'))) === array(), 'WY: handwritten visits have nothing to read');
+$f = kop_ih_extract('WY', $wy(array('source' => 'WDH', 'kind' => 'survey', 'survey_type' => 'Survey', 'complaint_intakes' => array('WY00123456'), 'tags' => array(
+    array('tag' => 'N 137', 'title' => 'Restraint and seclusion', 'regulation' => '', 'evidence' => '483.356 Each facility must ... This STANDARD is not met as evidenced by: Based on record review, staff placed Resident 1 in a prone restraint and the resident sustained a fractured wrist.'),
+))));
+check(count($f) === 1 && strpos($f[0]['text'], 'Based on record review') === 0 && $f[0]['factor'] === 1.0 && strpos($f[0]['state_label'], 'complaint survey') !== false,
+    'WY: an unsplit survey tag is cut at its evidence; a complaint intake makes it an investigation');
+
+// Idaho (id_scraper.py): the surveyor's finding, never the plan.
+$id = array('report_date' => '4/10/2024', 'raw_content' => '', 'categories_json' => json_encode(array('kind' => 'deficiencies', 'risk_assessment' => 'Bronze', 'license_granted' => '1-Year',
+    'deficiencies' => array(array('rule' => '16.04.18.411.02.b', 'rule_text' => 'Supervision.', 'finding' => 'This is a repeat deficiency. Staff failed to supervise Resident 3, who ran away and was struck by a car, suffering a broken leg.', 'plan' => 'We will retrain staff.', 'repeat' => true)))));
+$f = kop_ih_extract('ID', $id);
+check(count($f) === 1 && strpos($f[0]['text'], 'Staff failed') === 0 && $f[0]['factor'] === 1.0 && strpos($f[0]['state_label'], 'repeat deficiency') !== false, 'ID: repeat note dropped from the text, full weight');
+check(count(kop_ih_candidates('ID', $id)) === 1, 'ID: a runaway with a broken leg is queued');
+check(kop_ih_extract('ID', array('categories_json' => json_encode(array('kind' => 'no_deficiencies')))) === array(), 'ID: a no-deficiency letter has nothing');
+
+// Maine (me_scraper.py): adult programs and rule wording are left out.
+$me = array('report_date' => '2025-01-10', 'raw_content' => '', 'categories_json' => json_encode(array('inspection_type' => 'Full Agency Survey', 'is_complaint' => true, 'deficiencies' => array(
+    array('section' => 'SECTION 7. CLIENT RIGHTS', 'finding' => 'Finding: The agency must protect clients. Based on interview, a staff member pushed a youth into a wall, injuring the youth.'),
+    array('section' => 'SECTION 9', 'finding' => 'Based on record review, two adults in the outpatient program were not seen by a prescriber.'),
+))));
+$f = kop_ih_extract('ME', $me);
+check(count($f) === 1 && strpos($f[0]['text'], 'Based on interview') === 0 && $f[0]['factor'] === 1.0, 'ME: rule wording and an adults-only finding are dropped');
+check(kop_ih_extract('ME', array('categories_json' => json_encode(array('adult_program' => true, 'deficiencies' => array(array('finding' => str_repeat('Staff hit a client. ', 5))))))) === array(), 'ME: an adult program is skipped');
+
+// Ohio (oh_scraper.py): residential findings, one per specialist's comment.
+$oh = array('report_date' => '2025-08-01', 'raw_content' => '', 'categories_json' => json_encode(array('review_type' => 'Full', 'findings' => array(
+    array('residential' => true, 'question' => '14. Did staff use only approved restraint techniques', 'rule' => '5180:2-9-04(C)', 'cap_needed' => true,
+        'comments' => array(array('record' => 'Record 2', 'comment' => 'Staff used a prone restraint and the youth sustained a bloody nose.'), array('record' => 'Record 3', 'comment' => 'Staff used a prone restraint and the youth sustained a bloody nose.'))),
+    array('residential' => false, 'question' => '3. Foster home study', 'comments' => array(array('comment' => 'The foster parent hit the child with a belt, causing bruises.'))),
+    array('residential' => true, 'question' => '32. If due during the review period, is there documentation of the incident report', 'rule' => '5180:2-9-42(B)(9)', 'cap_needed' => true,
+        'comments' => array(array('comment' => 'The incident report for the youth taken to the emergency room was not completed.'))),
+))));
+$f = kop_ih_extract('OH', $oh);
+check(count($f) === 2 && $f[0]['factor'] === 0.85, 'OH: residential only, one finding per distinct comment');
+$c = kop_ih_candidates('OH', $oh);
+check(count($c) === 1 && $c[0]['category'] === 'restraint_injury', 'OH: the restraint injury is queued, the missing incident report is not');
+
+// West Virginia (wv_scraper.py): the full finding from detail, corrected tags skipped, the federal severity letter.
+$wv = array('report_date' => '2024-11-12', 'raw_content' => '', 'categories_json' => json_encode(array('survey_type' => 'Complaint Survey', 'is_complaint' => true,
+    'tags' => array(
+        array('tag' => 'F 0156', 'regulation' => 'Abuse', 'scope' => 'SS=G', 'finding' => 'short', 'corrected' => false),
+        array('tag' => 'N 0127', 'regulation' => 'Supervision', 'scope' => '', 'finding' => 'short', 'corrected' => true),
+    ),
+    'detail' => array('tags' => array(
+        array('tag' => 'F 0156', 'regulation' => 'Abuse 483.13 The facility must protect residents.', 'finding' => 'Based on interview and video review, a mental health technician punched Resident #4 in the face.'),
+        array('tag' => 'N 0127', 'regulation' => 'Supervision', 'finding' => 'Based on record review, a resident went missing.'),
+    )))));
+$f = kop_ih_extract('WV', $wv);
+check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['state_label'], 'severity G') !== false, 'WV: a corrected tag is skipped; severity G is full weight');
 
 echo "Rules: $checks checks, $failures failed.\n";
 
