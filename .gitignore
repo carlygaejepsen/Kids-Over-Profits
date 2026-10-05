@@ -80,3 +80,6 @@ scripts/history/*.outline.txt
 /tmp/
 .aider*
 node_modules
+
+# Utah checklist PDFs live in Drive (FileBird Cloud/ut_checklists), copied to the site by api/sync-inspection-archive.php
+js/data/ut_checklists/*.pdf
