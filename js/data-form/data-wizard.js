@@ -153,6 +153,21 @@
         return [person.firstName, person.lastName].map((p) => String(p || '').trim()).filter(Boolean).join(' ');
     }
 
+    // "Jane Q Example" -> Jane Q / Example, so lists sort by surname. A suffix
+    // stays with the surname: "John Smith Jr." -> John / Smith Jr.
+    function splitPersonName(full) {
+        const words = String(full || '').trim().split(/\s+/).filter(Boolean);
+        if (words.length < 2) return { firstName: words[0] || '', lastName: '' };
+        let cut = words.length - 1;
+        if (cut > 1 && /^(jr|sr|ii|iii|iv|v|phd|md|esq)\.?,?$/i.test(words[cut])) cut -= 1;
+        // Particles belong to the surname: "Ana de la Cruz" -> Ana / de la Cruz.
+        while (cut > 1 && /^(de|del|della|der|den|la|le|van|von|da|di|du|dos|das|st\.?|mac|bin|al)$/i.test(words[cut - 1])) cut -= 1;
+        return {
+            firstName: words.slice(0, cut).join(' ').replace(/,$/, ''),
+            lastName: words.slice(cut).join(' ')
+        };
+    }
+
     function facilityPlace(facility) {
         const details = facility.locationDetails || {};
         const city = String(details.city || '').trim();
@@ -747,16 +762,16 @@
         }
 
         const isRef = t.type === 'referrer';
-        const [first, ...rest] = t.name.split(/\s+/);
+        const person = Object.assign(splitPersonName(t.name), { fullName: t.name });
         if (isRef) {
             data.isIndependentConsultant = t.isPerson;
             data.referrerType = t.isPerson ? 'individual' : 'group';
-            if (t.isPerson) Object.assign(data.referrerConsultants[0], { firstName: first, lastName: rest.join(' '), fullName: t.name });
+            if (t.isPerson) Object.assign(data.referrerConsultants[0], person);
             else data.referrerAgency.name = t.name;
         } else {
             data.isIndependentTransporter = t.isPerson;
             data.transporterType = t.isPerson ? 'individual' : 'company';
-            if (t.isPerson) Object.assign(data.transporters[0], { firstName: first, lastName: rest.join(' '), fullName: t.name });
+            if (t.isPerson) Object.assign(data.transporters[0], person);
             else data.transporterCompany.name = t.name;
         }
         await load(t.name, { data, category: isRef ? 'referrers' : 'transporters' });

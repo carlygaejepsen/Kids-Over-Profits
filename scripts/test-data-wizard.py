@@ -80,6 +80,9 @@ with sync_playwright() as p:
               "| consultant", pg.evaluate("JSON.stringify(window.formData.referrerConsultants && window.formData.referrerConsultants[0] && [window.formData.referrerConsultants[0].firstName, window.formData.referrerConsultants[0].lastName])"),
               "| visible:", visible_sections(pg))
         pg.screenshot(path=OUT + f"wiz-referrer-{width}.png", full_page=True)
+        split = pg.evaluate("[window.formData.referrerConsultants[0].firstName, window.formData.referrerConsultants[0].lastName]")
+        if split != ["Jane Q", "Example"]:
+            errors.append(f"name split: {split}, wanted Jane Q / Example")
         pg.close()
     b.close()
 print("page errors:", errors[:10])
