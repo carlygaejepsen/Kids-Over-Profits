@@ -64,6 +64,11 @@ php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / 
 # Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
 # Facility Profile posts listed in kop_facility_pages_merged_profiles() (hyde) print unchanged on their /facility/ page, the post 301s there
 php scripts/test-facility-pages.php
+# A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky
+# Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious
+# findings, lawsuits, incidents, news and staff of its years, another name's record included (both pages print every name).
+# No usable rename year = the page stays whole. A new dated list on the page goes in kop_facility_eras_kinds()
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-eras.php [--list]   # every renamed program, rendered to the temp dir
 # Facility pages show approved serious findings (inspection_highlights), staff with their other industry roles
 # (other records' staff lists + network map), incidents as a timeline, and news cards with pictures:
 # inc/news-images.php copies each article's share image (else the outlet's logo) into uploads/kop-news-images/, hourly cron

@@ -135,6 +135,171 @@ $kop_fp_news_card = static function (array $n) {
     <?php
 };
 
+// The lists the dated sections print. A renamed program's page prints each
+// once per name (inc/facility-eras.php), so they are written once here.
+$kop_fp_memorial_list = static function (array $items) use ($page) {
+    ?>
+    <ul class="kop-fp-records kop-fp-deaths">
+        <?php foreach ($items as $m) :
+            $bits = array_filter(array($m['age'] !== '' ? 'age ' . $m['age'] : '', $m['date_label'], $m['cause']), 'strlen');
+            ?>
+            <li>
+                <?php if ($m['kop_url'] !== '' && preg_match('#^https?://#i', $m['kop_url'])) : ?>
+                    <a href="<?php echo esc_url($m['kop_url']); ?>"><?php echo esc_html($m['name']); ?></a>
+                <?php else : ?>
+                    <a href="<?php echo esc_url($page['memorial_url']); ?>"><?php echo esc_html($m['name']); ?></a>
+                <?php endif; ?>
+                <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                <?php if ($m['source_url'] !== '' && preg_match('#^https?://#i', $m['source_url'])) : ?>
+                    <span class="meta"><?php echo kop_citation_link($m['source_url'], $m['source_name'] !== '' ? $m['source_name'] : 'Source', $m['source_name'], true, '', true); ?></span>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php
+};
+$kop_fp_violation_cards = static function (array $items) use ($kop_fp_violation_card) {
+    $kop_fp_v_first = array_slice($items, 0, 4);
+    $kop_fp_v_rest = array_slice($items, 4);
+    ?>
+    <div class="kop-fp-vcards">
+        <?php foreach ($kop_fp_v_first as $v) $kop_fp_violation_card($v); ?>
+    </div>
+    <?php if ($kop_fp_v_rest) : ?>
+        <details class="kop-fp-more">
+            <summary><?php echo count($kop_fp_v_rest); ?> more serious <?php echo count($kop_fp_v_rest) === 1 ? 'finding' : 'findings'; ?></summary>
+            <div class="kop-fp-vcards">
+                <?php foreach ($kop_fp_v_rest as $v) $kop_fp_violation_card($v); ?>
+            </div>
+        </details>
+    <?php endif; ?>
+    <?php
+};
+$kop_fp_lawsuit_list = static function (array $items) use ($page) {
+    ?>
+    <ul class="kop-fp-records kop-fp-cases">
+        <?php foreach ($items as $l) :
+            $bits = array_filter(array($l['year'], $l['status'], $l['court'], $l['case_number']), 'strlen');
+            ?>
+            <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:lawsuit:' . (int) $l['id'], 'this lawsuit') : ''; ?>>
+                <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
+                <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
+                <?php if (!empty($l['home'])) : ?><span class="meta">About <?php echo !empty($l['home_url']) ? '<a href="' . esc_url($l['home_url']) . '">' . esc_html($l['home']) . '</a>' : esc_html($l['home']); ?></span><?php endif; ?>
+                <?php if ($l['outcome'] !== '') : ?><p class="kop-fp-record-summary"><strong>Outcome:</strong> <?php echo esc_html($l['outcome']); ?></p><?php endif; ?>
+                <?php if ($l['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($l['summary']); ?></p><?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+    <?php
+};
+$kop_fp_incident_list = static function (array $items) use ($kop_fp_sources) {
+    ?>
+    <ol class="kop-fp-timeline">
+        <?php foreach ($items as $inc) : ?>
+            <li>
+                <?php if ($inc['when'] !== '' || $inc['kind'] !== '') : ?>
+                    <p class="kop-fp-tl-head">
+                        <?php if ($inc['when'] !== '') : ?><span class="kop-fp-tl-when"><?php echo esc_html($inc['when']); ?></span><?php endif; ?>
+                        <?php if ($inc['kind'] !== '') : ?><span class="kop-fp-tl-kind"><?php echo esc_html($inc['kind']); ?></span><?php endif; ?>
+                    </p>
+                <?php endif; ?>
+                <p class="kop-fp-tl-text"><?php echo esc_html($inc['text']); ?><?php if ($inc['source'] !== '') $kop_fp_sources(array($inc), 'span'); ?></p>
+            </li>
+        <?php endforeach; ?>
+    </ol>
+    <?php
+};
+$kop_fp_news_list = static function (array $items) use ($kop_fp_news_card) {
+    $kop_fp_n_first = array_slice($items, 0, 6);
+    $kop_fp_n_rest = array_slice($items, 6);
+    ?>
+    <ul class="kop-fp-news">
+        <?php foreach ($kop_fp_n_first as $n) $kop_fp_news_card($n); ?>
+    </ul>
+    <?php if ($kop_fp_n_rest) : ?>
+        <details class="kop-fp-more">
+            <summary><?php echo count($kop_fp_n_rest); ?> more <?php echo count($kop_fp_n_rest) === 1 ? 'article' : 'articles'; ?></summary>
+            <ul class="kop-fp-news">
+                <?php foreach ($kop_fp_n_rest as $n) $kop_fp_news_card($n); ?>
+            </ul>
+        </details>
+    <?php endif; ?>
+    <?php
+};
+// $tag: the heading over each group, one level under the section's own.
+$kop_fp_staff_lists = static function (array $staff, $tag = 'h3') use ($kop_fp_sources) {
+    $staff_labels = array('administrator' => 'Administration', 'notableStaff' => 'Notable staff', 'pastTTIJobs' => 'Staff who came from other programs');
+    ?>
+    <?php foreach ($staff_labels as $key => $label) :
+        if (empty($staff[$key])) continue;
+        ?>
+        <<?php echo $tag; ?> class="kop-fp-subhead"><?php echo esc_html($label); ?></<?php echo $tag; ?>>
+        <?php if ($key === 'pastTTIJobs') : ?>
+            <ul class="kop-fp-people">
+                <?php foreach ($staff[$key] as $person) : ?>
+                    <li><?php echo esc_html($person['text']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else : ?>
+            <ul class="kop-fp-staff">
+                <?php foreach ($staff[$key] as $person) : ?>
+                    <li class="kop-fp-person<?php echo !empty($person['career']) ? ' kop-fp-person--career' : ''; ?>">
+                        <?php if (isset($person['name'])) : ?>
+                            <p class="kop-fp-person-name"><?php echo esc_html($person['name']); ?></p>
+                            <?php if ($person['role'] !== '' || $person['source'] !== '') : ?>
+                                <p class="kop-fp-person-role"><?php echo esc_html($person['role']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></p>
+                            <?php endif; ?>
+                            <?php if (!empty($person['career'])) : ?>
+                                <div class="kop-fp-career">
+                                    <p class="kop-fp-career-label">Elsewhere in the industry</p>
+                                    <ul>
+                                        <?php foreach ($person['career'] as $job) :
+                                            $job_meta = trim($job['role'] . ($job['years'] !== '' ? ($job['role'] !== '' ? ', ' : '') . $job['years'] : ''));
+                                            ?>
+                                            <li>
+                                                <?php if ($job['url'] !== '') : ?>
+                                                    <a href="<?php echo esc_url($job['url']); ?>"><?php echo esc_html($job['place']); ?></a>
+                                                <?php else : ?>
+                                                    <span class="kop-fp-career-place"><?php echo esc_html($job['place']); ?></span>
+                                                <?php endif; ?>
+                                                <?php if ($job_meta !== '') : ?><span class="kop-fp-career-role"><?php echo esc_html($job_meta); ?></span><?php endif; ?>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php endif; ?>
+                        <?php else : ?>
+                            <p class="kop-fp-person-name"><?php echo esc_html($person['text']); ?></p>
+                            <?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    <?php endforeach; ?>
+    <?php
+};
+
+// A renamed program: one section per name holds what is dated to its years,
+// and the ordinary sections below keep only what no name took.
+$kop_fp_eras = !empty($page['eras']['list']) ? $page['eras'] : null;
+$kop_fp_totals = array();
+foreach (array('memorials', 'lawsuits', 'incidents', 'news') as $kop_fp_k) $kop_fp_totals[$kop_fp_k] = count($page[$kop_fp_k] ?? array());
+$kop_fp_totals['staff'] = count($page['staff']['administrator'] ?? array()) + count($page['staff']['notableStaff'] ?? array());
+if ($kop_fp_eras) {
+    foreach (array('memorials', 'lawsuits', 'incidents', 'news', 'staff') as $kop_fp_k) $page[$kop_fp_k] = $kop_fp_eras['rest'][$kop_fp_k];
+    $kop_fp_totals = $kop_fp_eras['totals'];
+}
+$kop_fp_era_kinds = array(
+    'memorials'  => array('candle', 'Deaths on record'),
+    'violations' => array('alert-triangle', 'Serious violations'),
+    'lawsuits'   => array('scale', 'Lawsuits'),
+    'incidents'  => array('siren', 'Incidents on record'),
+    'news'       => array('newspaper', 'News coverage'),
+    'staff'      => array('users', 'Staff'),
+);
+
 $kop_fp_sections = array();
 // Homes of a program (inc/program-homes.php): a program lists them, a home lists the others.
 $kop_fp_homes = !empty($page['program_homes']['homes']) ? $page['program_homes']['homes'] : (!empty($page['home_of']['others']) ? $page['home_of']['others'] : array());
@@ -166,6 +331,8 @@ if (!empty($page['program_homes']['violations'])) {
         return ($b['severe'] <=> $a['severe']) ?: ($b['weight'] <=> $a['weight']) ?: strcmp((string) $b['date'], (string) $a['date']);
     });
 }
+if ($kop_fp_eras) $kop_fp_violations = $kop_fp_eras['rest']['violations'];
+else $kop_fp_totals['violations'] = count($kop_fp_violations);
 $kop_fp_has_violations = !empty($kop_fp_violations);
 $kop_fp_has_incidents = !empty($page['incidents']);
 
@@ -237,6 +404,7 @@ $kop_fp_profile_section = static function (array $s, $class = '') use ($kop_fp_i
     <?php
 };
 
+if ($kop_fp_eras) foreach ($kop_fp_eras['list'] as $kop_fp_era) $kop_fp_sections[$kop_fp_era['id']] = 'As ' . $kop_fp_era['name'];
 if ($kop_fp_has_memorials) $kop_fp_sections['memorials'] = 'Deaths on record';
 if ($kop_fp_has_violations) $kop_fp_sections['violations'] = 'Serious violations';
 if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
@@ -382,22 +550,27 @@ get_header();
 
             <?php
             // The record in numbers, worst first; each tile jumps to its section.
-            $kop_fp_people = 0;
-            foreach (array('administrator', 'notableStaff') as $k) $kop_fp_people += count($page['staff'][$k] ?? array());
             $kop_fp_tiles = array(
-                array('memorials', 'candle', count($page['memorials'] ?? array()), 'death on record', 'deaths on record', 'grave'),
-                array('violations', 'alert-triangle', count($kop_fp_violations), 'serious violation confirmed by inspectors', 'serious violations confirmed by inspectors', 'grave'),
-                array('lawsuits', 'scale', count($page['lawsuits'] ?? array()), 'lawsuit', 'lawsuits', 'warn'),
-                array('incidents', 'siren', count($page['incidents'] ?? array()), 'incident on record', 'incidents on record', 'warn'),
-                array('news', 'newspaper', count($page['news'] ?? array()), 'news article', 'news articles', 'info'),
-                array('staff', 'users', $kop_fp_people, 'staff member named', 'staff members named', 'info'),
+                array('memorials', 'candle', (int) $kop_fp_totals['memorials'], 'death on record', 'deaths on record', 'grave'),
+                array('violations', 'alert-triangle', (int) $kop_fp_totals['violations'], 'serious violation confirmed by inspectors', 'serious violations confirmed by inspectors', 'grave'),
+                array('lawsuits', 'scale', (int) $kop_fp_totals['lawsuits'], 'lawsuit', 'lawsuits', 'warn'),
+                array('incidents', 'siren', (int) $kop_fp_totals['incidents'], 'incident on record', 'incidents on record', 'warn'),
+                array('news', 'newspaper', (int) $kop_fp_totals['news'], 'news article', 'news articles', 'info'),
+                array('staff', 'users', (int) $kop_fp_totals['staff'], 'staff member named', 'staff members named', 'info'),
             );
+            // A tile jumps to its section, or on a renamed program's page to the first name that has the kind.
+            $kop_fp_tile_anchor = static function ($kind) use ($kop_fp_eras, $kop_fp_id) {
+                foreach ($kop_fp_eras ? $kop_fp_eras['list'] : array() as $era) {
+                    if (!empty($era[$kind])) return $era['id'] . '-' . $kind;
+                }
+                return $kop_fp_id($kind);
+            };
             $kop_fp_tiles = array_values(array_filter($kop_fp_tiles, static function ($t) { return $t[2] > 0; }));
             if (count($kop_fp_tiles) >= 2) : ?>
             <ul class="kop-fp-stats" aria-label="This record in numbers">
                 <?php foreach ($kop_fp_tiles as $t) : ?>
                     <li class="kop-fp-stat kop-fp-stat--<?php echo esc_attr($t[5]); ?>">
-                        <a href="#<?php echo esc_attr($kop_fp_id($t[0])); ?>">
+                        <a href="#<?php echo esc_attr($kop_fp_tile_anchor($t[0])); ?>">
                             <?php echo $kop_fp_icon($t[1]); ?>
                             <span class="kop-fp-stat-n"><?php echo (int) $t[2]; ?></span>
                             <span class="kop-fp-stat-label"><?php echo esc_html($t[2] === 1 ? $t[3] : $t[4]); ?></span>
@@ -470,48 +643,58 @@ get_header();
             </div>
             <?php endif; ?>
 
+            <?php foreach ($kop_fp_eras ? $kop_fp_eras['list'] : array() as $kop_fp_era) :
+                $kop_fp_era_meta = array_filter(array($kop_fp_era['years'], $kop_fp_era['operators'] ? implode(', ', $kop_fp_era['operators']) : ''), 'strlen');
+                $kop_fp_era_parts = 0;
+                ?>
+            <section class="kop-fp-section kop-fp-era" id="<?php echo esc_attr($kop_fp_era['id']); ?>">
+                <h2><span class="kop-fp-era-as">As</span> <?php echo esc_html($kop_fp_era['name']); ?></h2>
+                <?php if ($kop_fp_era_meta) : ?><p class="kop-fp-era-meta"><?php echo esc_html(implode(' | ', $kop_fp_era_meta)); ?></p><?php endif; ?>
+                <?php if ($kop_fp_era['url'] !== '') : ?><p class="kop-fp-count"><a href="<?php echo esc_url($kop_fp_era['url']); ?>">The record kept under this name</a></p><?php endif; ?>
+                <?php foreach ($kop_fp_era_kinds as $kop_fp_k => $kop_fp_kind) :
+                    $kop_fp_items = $kop_fp_era[$kop_fp_k];
+                    if (!$kop_fp_items) continue;
+                    $kop_fp_era_parts++;
+                    // The pencil edits this record's list, so it shows where this record's entries stand.
+                    $kop_fp_era_edit = '';
+                    if ($kop_fp_k === 'incidents' || $kop_fp_k === 'staff') {
+                        $kop_fp_own = $kop_fp_k === 'staff' ? array_merge(...array_values($kop_fp_items)) : $kop_fp_items;
+                        foreach ($kop_fp_own as $kop_fp_it) {
+                            if ((int) ($kop_fp_it['_fid'] ?? 0) !== (int) $page['id']) continue;
+                            $kop_fp_era_edit = $kop_fp_k === 'staff' ? $kop_fp_edit('staff', 'staff') : $kop_fp_edit('practices', 'critical incidents');
+                            break;
+                        }
+                    }
+                    ?>
+                    <div class="kop-fp-era-part<?php echo $kop_fp_k === 'violations' ? ' kop-fp-violations' : ''; ?>" id="<?php echo esc_attr($kop_fp_era['id'] . '-' . $kop_fp_k); ?>"<?php echo $kop_fp_era_edit; ?>>
+                        <h3 class="kop-fp-era-kind"><?php echo $kop_fp_icon($kop_fp_kind[0]); ?><?php echo esc_html($kop_fp_kind[1]); ?></h3>
+                        <?php
+                        if ($kop_fp_k === 'memorials') $kop_fp_memorial_list($kop_fp_items);
+                        elseif ($kop_fp_k === 'violations') $kop_fp_violation_cards($kop_fp_items);
+                        elseif ($kop_fp_k === 'lawsuits') $kop_fp_lawsuit_list($kop_fp_items);
+                        elseif ($kop_fp_k === 'incidents') $kop_fp_incident_list($kop_fp_items);
+                        elseif ($kop_fp_k === 'news') $kop_fp_news_list($kop_fp_items);
+                        else $kop_fp_staff_lists($kop_fp_items, 'h4');
+                        ?>
+                    </div>
+                <?php endforeach; ?>
+                <?php if (!$kop_fp_era_parts) : ?><p class="kop-fp-count">Nothing on record is dated to these years yet.</p><?php endif; ?>
+            </section>
+            <?php endforeach; ?>
+
             <?php if ($kop_fp_has_memorials) : ?>
             <section class="kop-fp-section" id="<?php echo $kop_fp_id('memorials'); ?>">
                 <h2><?php echo $kop_fp_icon('candle'); ?>Deaths on record</h2>
-                <ul class="kop-fp-records kop-fp-deaths">
-                    <?php foreach ($page['memorials'] as $m) :
-                        $bits = array_filter(array($m['age'] !== '' ? 'age ' . $m['age'] : '', $m['date_label'], $m['cause']), 'strlen');
-                        ?>
-                        <li>
-                            <?php if ($m['kop_url'] !== '' && preg_match('#^https?://#i', $m['kop_url'])) : ?>
-                                <a href="<?php echo esc_url($m['kop_url']); ?>"><?php echo esc_html($m['name']); ?></a>
-                            <?php else : ?>
-                                <a href="<?php echo esc_url($page['memorial_url']); ?>"><?php echo esc_html($m['name']); ?></a>
-                            <?php endif; ?>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($m['source_url'] !== '' && preg_match('#^https?://#i', $m['source_url'])) : ?>
-                                <span class="meta"><?php echo kop_citation_link($m['source_url'], $m['source_name'] !== '' ? $m['source_name'] : 'Source', $m['source_name'], true, '', true); ?></span>
-                            <?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php $kop_fp_memorial_list($page['memorials']); ?>
                 <p class="kop-fp-count"><a href="<?php echo esc_url($page['memorial_url']); ?>">The memorial</a></p>
             </section>
             <?php endif; ?>
 
-            <?php if ($kop_fp_has_violations) :
-                $kop_fp_v_first = array_slice($kop_fp_violations, 0, 4);
-                $kop_fp_v_rest = array_slice($kop_fp_violations, 4);
-                ?>
+            <?php if ($kop_fp_has_violations) : ?>
             <section class="kop-fp-section kop-fp-violations" id="<?php echo $kop_fp_id('violations'); ?>">
                 <h2><?php echo $kop_fp_icon('alert-triangle'); ?>Serious violations</h2>
                 <p class="kop-fp-count">What state inspectors found and confirmed here, in their own words. Each finding was picked out of the inspection reports and checked by our team before it was listed.</p>
-                <div class="kop-fp-vcards">
-                    <?php foreach ($kop_fp_v_first as $v) $kop_fp_violation_card($v); ?>
-                </div>
-                <?php if ($kop_fp_v_rest) : ?>
-                    <details class="kop-fp-more">
-                        <summary><?php echo count($kop_fp_v_rest); ?> more serious <?php echo count($kop_fp_v_rest) === 1 ? 'finding' : 'findings'; ?></summary>
-                        <div class="kop-fp-vcards">
-                            <?php foreach ($kop_fp_v_rest as $v) $kop_fp_violation_card($v); ?>
-                        </div>
-                    </details>
-                <?php endif; ?>
+                <?php $kop_fp_violation_cards($kop_fp_violations); ?>
             </section>
             <?php endif; ?>
 
@@ -521,20 +704,7 @@ get_header();
                 <h2><?php echo $kop_fp_icon('scale'); ?><?php echo esc_html($kop_fp_title('lawsuits', 'Lawsuits')); ?></h2>
                 <?php if (isset($kop_fp_psec['lawsuits'])) $kop_fp_render_items($kop_fp_psec['lawsuits']['items']); ?>
                 <?php if (!empty($page['lawsuits'])) : ?>
-                <ul class="kop-fp-records kop-fp-cases">
-                    <?php foreach ($page['lawsuits'] as $l) :
-                        $bits = array_filter(array($l['year'], $l['status'], $l['court'], $l['case_number']), 'strlen');
-                        ?>
-                        <li<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:lawsuit:' . (int) $l['id'], 'this lawsuit') : ''; ?>>
-                            <a href="<?php echo esc_url($page['lawsuits_url']); ?>"><?php echo esc_html($l['case_name']); ?></a>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($l['link_type'] === 'mentioned') : ?><span class="meta">Names this facility</span><?php endif; ?>
-                            <?php if (!empty($l['home'])) : ?><span class="meta">About <?php echo !empty($l['home_url']) ? '<a href="' . esc_url($l['home_url']) . '">' . esc_html($l['home']) . '</a>' : esc_html($l['home']); ?></span><?php endif; ?>
-                            <?php if ($l['outcome'] !== '') : ?><p class="kop-fp-record-summary"><strong>Outcome:</strong> <?php echo esc_html($l['outcome']); ?></p><?php endif; ?>
-                            <?php if ($l['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($l['summary']); ?></p><?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php $kop_fp_lawsuit_list($page['lawsuits']); ?>
                 <?php endif; ?>
                 <p class="kop-fp-count"><a href="<?php echo esc_url($page['lawsuits_url']); ?>">Every case in the lawsuit directory</a></p>
             </section>
@@ -543,19 +713,7 @@ get_header();
             <?php if ($kop_fp_has_incidents) : ?>
             <section class="kop-fp-section" id="<?php echo $kop_fp_id('incidents'); ?>"<?php echo $kop_fp_edit('practices', 'critical incidents'); ?>>
                 <h2><?php echo $kop_fp_icon('siren'); ?>Incidents on record</h2>
-                <ol class="kop-fp-timeline">
-                    <?php foreach ($page['incidents'] as $inc) : ?>
-                        <li>
-                            <?php if ($inc['when'] !== '' || $inc['kind'] !== '') : ?>
-                                <p class="kop-fp-tl-head">
-                                    <?php if ($inc['when'] !== '') : ?><span class="kop-fp-tl-when"><?php echo esc_html($inc['when']); ?></span><?php endif; ?>
-                                    <?php if ($inc['kind'] !== '') : ?><span class="kop-fp-tl-kind"><?php echo esc_html($inc['kind']); ?></span><?php endif; ?>
-                                </p>
-                            <?php endif; ?>
-                            <p class="kop-fp-tl-text"><?php echo esc_html($inc['text']); ?><?php if ($inc['source'] !== '') $kop_fp_sources(array($inc), 'span'); ?></p>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
+                <?php $kop_fp_incident_list($page['incidents']); ?>
             </section>
             <?php endif; ?>
 
@@ -576,24 +734,12 @@ get_header();
                         return !isset($kop_fp_n_seen[$kop_fp_n_key($n['url'])]);
                     })));
                 }
-                $kop_fp_n_first = array_slice($kop_fp_n_all, 0, 6);
-                $kop_fp_n_rest = array_slice($kop_fp_n_all, 6);
                 ?>
             <section class="kop-fp-section" id="<?php echo $kop_fp_id('news'); ?>">
                 <?php echo $kop_fp_alias('news', 'news'); ?>
                 <h2><?php echo $kop_fp_icon('newspaper'); ?><?php echo esc_html($kop_fp_title('news', 'News coverage')); ?></h2>
                 <?php if ($kop_fp_n_media) $kop_fp_render_items($kop_fp_n_media); ?>
-                <ul class="kop-fp-news">
-                    <?php foreach ($kop_fp_n_first as $n) $kop_fp_news_card($n); ?>
-                </ul>
-                <?php if ($kop_fp_n_rest) : ?>
-                    <details class="kop-fp-more">
-                        <summary><?php echo count($kop_fp_n_rest); ?> more <?php echo count($kop_fp_n_rest) === 1 ? 'article' : 'articles'; ?></summary>
-                        <ul class="kop-fp-news">
-                            <?php foreach ($kop_fp_n_rest as $n) $kop_fp_news_card($n); ?>
-                        </ul>
-                    </details>
-                <?php endif; ?>
+                <?php $kop_fp_news_list($kop_fp_n_all); ?>
             </section>
             <?php endif; ?>
 
@@ -632,58 +778,10 @@ get_header();
 
             <?php if (isset($kop_fp_psec['videos'])) $kop_fp_profile_section($kop_fp_psec['videos'], 'kop-fp-videos'); ?>
 
-            <?php if ($kop_fp_has_staff) :
-                $staff_labels = array('administrator' => 'Administration', 'notableStaff' => 'Notable staff', 'pastTTIJobs' => 'Staff who came from other programs');
-                ?>
+            <?php if ($kop_fp_has_staff) : ?>
             <section class="kop-fp-section" id="<?php echo $kop_fp_id('staff'); ?>"<?php echo $kop_fp_edit('staff', 'staff'); ?>>
                 <h2><?php echo $kop_fp_icon('users'); ?>Staff</h2>
-                <?php foreach ($staff_labels as $key => $label) :
-                    if (empty($page['staff'][$key])) continue;
-                    ?>
-                    <h3 class="kop-fp-subhead"><?php echo esc_html($label); ?></h3>
-                    <?php if ($key === 'pastTTIJobs') : ?>
-                        <ul class="kop-fp-people">
-                            <?php foreach ($page['staff'][$key] as $person) : ?>
-                                <li><?php echo esc_html($person['text']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else : ?>
-                        <ul class="kop-fp-staff">
-                            <?php foreach ($page['staff'][$key] as $person) : ?>
-                                <li class="kop-fp-person<?php echo !empty($person['career']) ? ' kop-fp-person--career' : ''; ?>">
-                                    <?php if (isset($person['name'])) : ?>
-                                        <p class="kop-fp-person-name"><?php echo esc_html($person['name']); ?></p>
-                                        <?php if ($person['role'] !== '' || $person['source'] !== '') : ?>
-                                            <p class="kop-fp-person-role"><?php echo esc_html($person['role']); ?><?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?></p>
-                                        <?php endif; ?>
-                                        <?php if (!empty($person['career'])) : ?>
-                                            <div class="kop-fp-career">
-                                                <p class="kop-fp-career-label">Elsewhere in the industry</p>
-                                                <ul>
-                                                    <?php foreach ($person['career'] as $job) :
-                                                        $job_meta = trim($job['role'] . ($job['years'] !== '' ? ($job['role'] !== '' ? ', ' : '') . $job['years'] : ''));
-                                                        ?>
-                                                        <li>
-                                                            <?php if ($job['url'] !== '') : ?>
-                                                                <a href="<?php echo esc_url($job['url']); ?>"><?php echo esc_html($job['place']); ?></a>
-                                                            <?php else : ?>
-                                                                <span class="kop-fp-career-place"><?php echo esc_html($job['place']); ?></span>
-                                                            <?php endif; ?>
-                                                            <?php if ($job_meta !== '') : ?><span class="kop-fp-career-role"><?php echo esc_html($job_meta); ?></span><?php endif; ?>
-                                                        </li>
-                                                    <?php endforeach; ?>
-                                                </ul>
-                                            </div>
-                                        <?php endif; ?>
-                                    <?php else : ?>
-                                        <p class="kop-fp-person-name"><?php echo esc_html($person['text']); ?></p>
-                                        <?php if ($person['source'] !== '') $kop_fp_sources(array($person), 'span'); ?>
-                                    <?php endif; ?>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                <?php endforeach; ?>
+                <?php $kop_fp_staff_lists($page['staff']); ?>
             </section>
             <?php endif; ?>
 

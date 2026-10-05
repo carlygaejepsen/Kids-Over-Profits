@@ -706,8 +706,20 @@ Next, in order:
    resolves through a different record's otherNames, pastNames or match
    aliases. On "Earlier or later name", Facilities from News offers
    "Create this name's record", prefilled with the rename link.
-5. **Pages.** A facility page says "Earlier called Y (until 2014)" or
-   "Later called X (from 2014)" with links. `identification.listAs` holds
+5. **Pages.** Done 2026-10-05 (`inc/facility-eras.php`,
+   `php scripts/test-facility-eras.php --list`): a renamed program's page
+   is cut into one section per name, earliest first ("As Copper Canyon
+   Academy", "As Sedona Sky Academy"), each holding the deaths, serious
+   findings, lawsuits, incidents, news and staff of its years. Where the
+   other name has its own record, both pages print both names' sections and
+   link each other. It reads the map's rename lines and Map Renames' years,
+   so it covers only renames with a usable year (48 pages on the
+   2026-09-30 mirror; 48 more records on a rename line stay whole until
+   their year is saved at Map Renames, or because a name split or joined).
+   Still open: records whose past names are not on the map (about 150)
+   have no rename year anywhere; licensing reports and documents are not
+   split by name; staff carry no dates, so one record holding two names
+   keeps its staff in the ordinary section. `identification.listAs` holds
    the owner's headline-name override.
 6. **Owner pass on curated aliases that name another era**, restored on
    2026-09-29:

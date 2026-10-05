@@ -58,6 +58,8 @@ require_once get_stylesheet_directory() . '/inc/survivor-archives.php';
 // Article pictures (share image, else the publication's logo) for the news cards
 require_once get_stylesheet_directory() . '/inc/news-images.php';
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
+// A renamed program's page cut into one section per name
+require_once get_stylesheet_directory() . '/inc/facility-eras.php';
 require_once get_stylesheet_directory() . '/inc/operator-pages.php';
 require_once get_stylesheet_directory() . '/inc/operator-history.php';
 require_once get_stylesheet_directory() . '/inc/program-homes.php';
