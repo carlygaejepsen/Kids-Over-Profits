@@ -34,7 +34,13 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     };
     $before = $get();
     $check('facilities-from-news: waiting item is held back', in_array($before['decision'], array('possible_duplicate', 'other_era', 'needs_place'), true), $before['decision']);
-    $check('facilities-from-news: held item offers link, create and reject', array_column($item['actions'], 'id') === array('link', 'create', 'dismiss'));
+    // "Same program" only when the card has a record; the other choices open their form first ('ask').
+    $choices = $item['facility'] ? array('link', 'link_other', 'create', 'dismiss') : array('link_other', 'create', 'dismiss');
+    $check('facilities-from-news: held item offers same program, another record, new program and skip', array_column($item['actions'], 'id') === $choices,
+        json_encode(array_column($item['actions'], 'id')));
+    $asks = array_column(array_filter($item['actions'], function ($a) { return !empty($a['ask']); }), 'id');
+    $check('facilities-from-news: another record and new program open a form first, the record box starts empty', $asks === array('link_other', 'create')
+        && (string) array_values(array_filter($item['actions'], function ($a) { return $a['id'] === 'link_other'; }))[0]['params'][0]['value'] === '');
 
     call_user_func($src['save'], $item['key'], array('officialName' => 'Renamed In Test', 'state' => 'ut', 'type' => 'Wilderness Therapy'));
     $entry = json_decode($get()['detail'], true)['entry'];
@@ -50,7 +56,7 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     $counts = call_user_func($src['view_counts'], array());
     $check('facilities-from-news: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['all'] >= $counts['held'], json_encode($counts));
     $check('facilities-from-news: All recent lists every name', call_user_func($src['list'], array('view' => 'all', 'search' => '', 'offset' => 0, 'limit' => 1))['total'] === $counts['all']);
-    $check('facilities-from-news: details name the article', in_array('Article', array_column($again['details'], 'label'), true));
+    $check('facilities-from-news: details name the article', in_array('Found in', array_column($again['details'], 'label'), true));
     $check('facilities-from-news: the scan tool is offered', ($src['tools'][0]['id'] ?? '') === 'scan' && is_callable($src['tool']));
     foreach (array(array('state' => 'Utah'), array('type' => 'Spa'), array('officialName' => '  ')) as $bad) {
         try {
@@ -103,7 +109,7 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
         $check('facilities-from-news: Remove the link puts the name back and takes the article off', $back['decision'] === $before['decision']
             && (string) $back['facility_id'] === (string) $before['facility_id'] && (int) $linked->fetchColumn() === $had, $res['message']);
         $linked->closeCursor();
-        $check('facilities-from-news: after Remove the link it can be linked again', array_column(kop_rinbox_get_item('facilities-from-news', $item['key'])['actions'], 'id') === array('link', 'create', 'dismiss'));
+        $check('facilities-from-news: after Remove the link it can be linked again', array_column(kop_rinbox_get_item('facilities-from-news', $item['key'])['actions'], 'id') === $choices);
         try {
             call_user_func($src['act'], $item['key'], 'unlink', array());
             $check('facilities-from-news: Remove the link is refused when nothing is linked', false);

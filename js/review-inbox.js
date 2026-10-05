@@ -1155,22 +1155,55 @@
                 }
             }));
         }
+        var askForms = el('div', { class: 'rinbox-ask-forms' });
         (item.actions || []).forEach(function (a) {
             var paramInputs = (a.params || []).map(function (p) { return fieldInput(p, prefix + 'p-' + a.id + '-'); });
             node.kopParams[a.id] = paramInputs;
             var primary = a.style === 'approve' || a.style === 'reject';
+            var go = function (b) {
+                if (a.confirm && !window.confirm(a.confirm)) return;
+                var params = {};
+                paramInputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
+                if (node.kopPicked) params.picked = node.kopPicked();
+                run(node, item, s, src, 'act', { action: a.id, params: params }, b);
+            };
+            var target = primary ? decide : bar;
+            if (a.ask && paramInputs.length) {
+                // 'ask': the button only opens a small form; the form's own button (a.submit) runs the action.
+                var askForm = el('div', { class: 'rinbox-ask-form', hidden: true });
+                var opener = el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral') + (primary ? ' rinbox-btn-primary' : ''),
+                    title: a.help || null, 'aria-expanded': 'false',
+                    onclick: function () {
+                        askForm.hidden = !askForm.hidden;
+                        opener.setAttribute('aria-expanded', askForm.hidden ? 'false' : 'true');
+                        var first = askForm.hidden ? null : askForm.querySelector('.kop-ff-q, input:not([type=number]), select');
+                        if (first) first.focus();
+                    }
+                }, [actionIcon(a.style), a.label]);
+                if (a.help) askForm.appendChild(el('p', { class: 'rinbox-help', text: a.help }));
+                var askFields = el('div', { class: 'rinbox-action-group' });
+                (a.params || []).forEach(function (p, i) {
+                    askFields.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', paramInputs[i]]));
+                });
+                askForm.appendChild(askFields);
+                var submit = el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style === 'reject' ? 'reject' : 'approve'),
+                    onclick: function () { go(submit); }
+                }, [a.submit || a.label]);
+                askForm.appendChild(el('div', { class: 'rinbox-actions' }, [submit, el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Cancel',
+                    onclick: function () { askForm.hidden = true; opener.setAttribute('aria-expanded', 'false'); }
+                })]));
+                target.appendChild(opener);
+                askForms.appendChild(askForm);
+                return;
+            }
             var btn = el('button', {
                 type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral') + (primary ? ' rinbox-btn-primary' : ''),
                 title: a.help || null,
-                onclick: function () {
-                    if (a.confirm && !window.confirm(a.confirm)) return;
-                    var params = {};
-                    paramInputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
-                    if (node.kopPicked) params.picked = node.kopPicked();
-                    run(node, item, s, src, 'act', { action: a.id, params: params }, btn);
-                }
+                onclick: function () { go(btn); }
             }, [actionIcon(a.style), a.label]);
-            var target = primary ? decide : bar;
             if (paramInputs.length) {
                 var group = el('span', { class: 'rinbox-action-group' });
                 (a.params || []).forEach(function (p, i) {
@@ -1185,11 +1218,12 @@
         });
         bar.appendChild(laterControl(item, src, node));
         if (decide.childNodes.length) node.appendChild(decide);
+        if (askForms.childNodes.length) node.appendChild(askForms);
         if (does.childNodes.length) node.appendChild(does);
         node.appendChild(bar);
         // Filing details (category, tags, Move to) come after the decision.
         node.appendChild(quick);
-        [decide, bar].forEach(function (box) {
+        [decide, bar, askForms].forEach(function (box) {
             if (typeof window.kopFacilityFinderAttach === 'function') {
                 box.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
             }

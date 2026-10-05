@@ -42,14 +42,14 @@ define('KOP_FACILITY_DISCOVERY_DB_VERSION', '1');
 /** Decisions, as the review screen names them. */
 function kop_facdisc_decisions() {
     return array(
-        'created'      => 'Created',
-        'matched'      => 'Linked to a record',
-        'possible_duplicate' => 'Possible duplicate',
-        'other_era'    => 'Earlier or later name',
-        'needs_place'  => 'No place given',
+        'created'      => 'New record (made by the scan)',
+        'matched'      => 'Listed on a record',
+        'possible_duplicate' => 'Might be a record we have',
+        'other_era'    => 'Might be another name of a record',
+        'needs_place'  => 'Place unknown',
         'unquoted'     => 'Not found in the article',
         'provider'     => 'Provider, not a facility',
-        'not_facility' => 'Not a facility',
+        'not_facility' => 'Skipped (not a facility)',
         'indigenous_school' => 'Indigenous residential school',
         'removed'      => 'Removed',
     );
@@ -524,6 +524,10 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
 
 /** The article, as the new record's notes cite it. */
 function kop_facdisc_source_note(array $news) {
+    // Another source creating through kop_facdisc_create() (KOP Tools > State Lists) words its own note.
+    if (!empty($news['source_note'])) {
+        return (string) $news['source_note'];
+    }
     $bits = array_filter(array(
         $news['publication_name'] ?: '',
         $news['article_title'] ? '"' . $news['article_title'] . '"' : '',
@@ -570,11 +574,12 @@ function kop_facdisc_build_doc(array $entry, array $news) {
             'gender' => $entry['gender'],
         ),
         'notes'           => array(kop_facdisc_source_note($news)),
+        'resourceLinks'   => (array) ($news['resource_links'] ?? array()),
     );
     $doc = kop_facility_normalize($legacy, array('facility_id' => null, 'unique_name' => ''));
     $doc['facility_id'] = null;
-    $doc['provenance']['source'] = 'news-discovery';
-    $doc['provenance']['sourceCategory'] = 'news';
+    $doc['provenance']['source'] = (string) ($news['provenance_source'] ?? 'news-discovery');
+    $doc['provenance']['sourceCategory'] = (string) ($news['provenance_category'] ?? 'news');
     $doc['provenance']['sourceProject'] = '';
     $doc['provenance']['sourceProjectId'] = null;
     $doc['provenance']['sourceOperator'] = null;
@@ -950,6 +955,39 @@ function kop_facdisc_unlink(PDO $pdo, $candidate_id, $reviewer) {
     do_action('kop_facility_status_changed', $fid);
     return $fid;
 }
+
+/**
+ * One time: take back the links made by hand on 2026-10-05, when the queue's
+ * cards made "link" the obvious click (ten names around 16:25 UTC and
+ * Project RENEW at 20:04; Kissimmee was already undone). Each goes back to
+ * "To decide" to be decided again on the reworked card; a link someone has
+ * since changed is left alone.
+ */
+add_action('init', function () {
+    if (get_option('kop_facdisc_undo_20261005') || !function_exists('kop_closure_pdo')) {
+        return;
+    }
+    update_option('kop_facdisc_undo_20261005', gmdate('c'), false);
+    try {
+        $pdo = kop_closure_pdo();
+        $row = $pdo->prepare('SELECT decision, reviewed_by FROM news_facility_candidates WHERE id = ?');
+        foreach (array(506, 504, 496, 487, 477, 475, 455, 433, 426, 421, 486) as $id) {
+            $row->execute(array($id));
+            $c = $row->fetch(PDO::FETCH_ASSOC);
+            $row->closeCursor();
+            if (!$c || $c['decision'] !== 'matched' || $c['reviewed_by'] !== 'admin') {
+                continue;
+            }
+            try {
+                kop_facdisc_unlink($pdo, $id, 'admin (undo of 2026-10-05 links)');
+            } catch (Throwable $e) {
+                error_log('kop facility discovery undo ' . $id . ': ' . $e->getMessage());
+            }
+        }
+    } catch (Throwable $e) {
+        error_log('kop facility discovery undo: ' . $e->getMessage());
+    }
+}, 40);
 
 /** Create a record for a name the scan held back, with the fields an admin filled in. */
 function kop_facdisc_create_by_hand(PDO $pdo, $candidate_id, array $fields, $reviewer) {

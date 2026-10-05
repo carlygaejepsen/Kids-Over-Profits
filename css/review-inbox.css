@@ -1002,3 +1002,17 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-group-yours .rinbox-group-label {
     font-weight: 800;
 }
+
+/* An action that opens a small form first ('ask' on the action). */
+.rinbox-ask-form {
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--kop-teal, #33A7B5);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-ask-form .rinbox-help {
+    margin: 0 0 8px;
+}
