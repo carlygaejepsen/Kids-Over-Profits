@@ -200,6 +200,12 @@ node scripts/test-facility-ref-split.js           # the forms split a pasted com
 php -d extension=pdo_sqlite scripts/test-source-submissions.php   # against an in-memory copy of tmp/prod.sqlite
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
+# Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked
+# against facilities_v2 in tmp/prod.sqlite with the same name key as the facility pages; matched / no record / ambiguous (never forced),
+# our open records the list lacks (only where the list covers that type), and an added/gone diff against the previous dated snapshot in
+# tmp/state-lists/<st>/<date>/ (MO vanishing from the registry is news). Writes tmp/state-lists/report.md + report.json, no DB writes
+py -3 scripts/state-lists-check.py [--state MO ...] [--refresh] [--full]   # --refresh refetches (1 request/s) and adds today's snapshot
+py -3 scripts/state-lists-check.py --selftest     # parsers + matcher + diff on made-up fixtures
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
 # seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
 python scripts/build-media-subfolders.py
