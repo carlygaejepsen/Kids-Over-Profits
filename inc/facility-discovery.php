@@ -222,6 +222,50 @@ function kop_facdisc_near_tokens($t, array $index) {
 }
 
 /**
+ * Words that are town names: the entry's city and every city our records list
+ * in that state (cached per request), as kop_normalize_name_key() words.
+ */
+function kop_facdisc_place_words(PDO $pdo, $state, $city = '') {
+    static $by_state = array();
+    $state = strtoupper((string) $state);
+    if (!isset($by_state[$state])) {
+        $words = array();
+        if ($state !== '') {
+            $st = $pdo->prepare("SELECT DISTINCT city FROM facilities_v2 WHERE state = ? AND city IS NOT NULL AND city <> ''");
+            $st->execute(array($state));
+            foreach ($st->fetchAll(PDO::FETCH_COLUMN) as $c) {
+                foreach (explode(' ', kop_normalize_name_key((string) $c)) as $w) {
+                    if (strlen($w) >= 4) $words[$w] = true;
+                }
+            }
+        }
+        $by_state[$state] = $words;
+    }
+    $words = $by_state[$state];
+    foreach (explode(' ', kop_normalize_name_key((string) $city)) as $w) {
+        if (strlen($w) >= 4) $words[$w] = true;
+    }
+    return array_keys($words);
+}
+
+/** A "name" that is only a town ("Kissimmee", "Madison"): a place, never a program. */
+function kop_facdisc_is_place_name(PDO $pdo, $name, $state, $city = '') {
+    $key = kop_normalize_name_key(preg_replace('/\s*\([^)]*\)\s*$/', '', (string) $name));
+    if ($key === '') {
+        return false;
+    }
+    if ($key === kop_normalize_name_key((string) $city)) {
+        return true;
+    }
+    if ((string) $state === '') {
+        return false;
+    }
+    $st = $pdo->prepare('SELECT 1 FROM facilities_v2 WHERE state = ? AND LOWER(city) = ? LIMIT 1');
+    $st->execute(array(strtoupper((string) $state), strtolower(trim((string) $name))));
+    return (bool) $st->fetchColumn();
+}
+
+/**
  * An existing record that is probably the same place, which the model did
  * not call the same: returns its id, or null. In the same state (anywhere,
  * with no state):
@@ -253,8 +297,11 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
     if (strlen($key) < 6) {
         return null;
     }
-    $mine = $words($key);
     $city_key = kop_normalize_name_key((string) $city);
+    // Town names say where a program is, never which one: "Kissimmee" is not
+    // Kissimmee Youth Academy, "Tuskegee Union" not Sequel TSI of Tuskegee.
+    $places = kop_facdisc_place_words($pdo, $state, $city);
+    $mine = array_diff($words($key), $places);
     // Capitalised short words may be an acronym of a record's name: "Camp
     // SAYLA" is Southeast Alabama Youth Leadership Academy.
     preg_match_all('/\b[A-Z]{3,6}\b/', (string) $name, $m);
@@ -279,7 +326,7 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
         if (abs(strlen($other) - strlen($key)) <= $max && levenshtein($other, $key) <= $max) {
             return (int) $r['id'];
         }
-        if ($state !== '' && strlen($other) >= 6
+        if ($state !== '' && strlen($other) >= 6 && $mine && array_diff($words($other), $places)
             && (strpos(' ' . $other . ' ', ' ' . $key . ' ') !== false || strpos(' ' . $key . ' ', ' ' . $other . ' ') !== false)) {
             return (int) $r['id'];
         }
@@ -287,7 +334,7 @@ function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
             return (int) $r['id'];
         }
         if ($state !== '' && $city_key !== '' && kop_normalize_name_key((string) $r['city']) === $city_key
-            && array_intersect($mine, $words($other))) {
+            && array_intersect($mine, array_diff($words($other), $places))) {
             return (int) $r['id'];
         }
     }
@@ -647,7 +694,12 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
         kop_facdisc_record($pdo, $entry['name'], $news, 'indigenous_school', null, $detail);
         return array('indigenous_school', null);
     }
-    if ($entry['kind'] === 'facility' && isset($entry['quoted']) && !$entry['quoted']) {
+    if ($entry['kind'] === 'facility' && kop_facdisc_is_place_name($pdo, $entry['name'], $entry['state'] ?? '', $entry['city'] ?? '')) {
+        // A town in a list of a company's sites, not a program's name.
+        $decision = 'not_facility';
+        $fid = null;
+        $detail['entry']['by'] = 'place name';
+    } elseif ($entry['kind'] === 'facility' && isset($entry['quoted']) && !$entry['quoted']) {
         // Not in the article it read: held for a person, with the record it looked like.
         $decision = 'unquoted';
         $fid = $entry['sameAs'] ?: ($entry['renameOf'] ?: null);
@@ -1001,6 +1053,42 @@ add_action('init', function () {
     }
     update_option('kop_facdisc_undo_20261005_v2', $state, false);
 }, 40);
+
+/**
+ * One time: cards waiting in "To decide" whose name is only a town
+ * ("Kissimmee", "Madison", "Courtland" from a company's list of sites) go to
+ * Skipped, as the scan now files them; each keeps "Undo: back to To decide".
+ */
+add_action('init', function () {
+    if (get_option('kop_facdisc_place_names_v1') || !function_exists('kop_closure_pdo')) {
+        return;
+    }
+    try {
+        $pdo = kop_closure_pdo();
+        if (!$pdo) {
+            return;
+        }
+        update_option('kop_facdisc_place_names_v1', gmdate('c'), false);
+        $rows = $pdo->query("SELECT id, mention, decision, detail FROM news_facility_candidates
+                             WHERE decision IN ('possible_duplicate','other_era','needs_place','unquoted')")->fetchAll(PDO::FETCH_ASSOC);
+        $set = $pdo->prepare("UPDATE news_facility_candidates SET decision = 'not_facility', detail = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?");
+        $moved = array();
+        foreach ($rows as $r) {
+            $detail = json_decode((string) $r['detail'], true) ?: array();
+            $e = (array) ($detail['entry'] ?? array());
+            if (!kop_facdisc_is_place_name($pdo, $r['mention'], $e['state'] ?? '', $e['city'] ?? '')) {
+                continue;
+            }
+            $detail['dismissed_from'] = $r['decision'];
+            $detail['entry']['by'] = 'place name';
+            $set->execute(array(wp_json_encode($detail), (int) $r['id']));
+            $moved[] = (int) $r['id'] . ' ' . $r['mention'];
+        }
+        update_option('kop_facdisc_place_names_v1', array('at' => gmdate('c'), 'moved' => $moved), false);
+    } catch (Throwable $e) {
+        error_log('kop facility discovery place names: ' . $e->getMessage());
+    }
+}, 41);
 
 /** Create a record for a name the scan held back, with the fields an admin filled in. */
 function kop_facdisc_create_by_hand(PDO $pdo, $candidate_id, array $fields, $reviewer) {

@@ -164,9 +164,20 @@ $check('a name in the title is in the source', kop_facdisc_in_source('Mingus Mou
 $check('a town the page only listed is not', !kop_facdisc_in_source('Kissimmee', $head));
 $check('whole words only ("Madison" is not in "Madisonville")', !kop_facdisc_in_source('Madison', kop_facdisc_norm_text('Madisonville Academy')));
 $check('punctuation and case do not matter', kop_facdisc_in_source('Sequel TSI - Kissimmee', kop_facdisc_norm_text('the SEQUEL TSI Kissimmee campus')));
-$unq = kop_facdisc_apply_entry($pdo, array('name' => 'Kissimmee', 'kind' => 'facility', 'sameAs' => 11129, 'renameOf' => null, 'officialName' => 'Kissimmee',
+$unq = kop_facdisc_apply_entry($pdo, array('name' => 'Osceola Youth Ranch', 'kind' => 'facility', 'sameAs' => 11129, 'renameOf' => null, 'officialName' => 'Osceola Youth Ranch',
     'state' => 'FL', 'country' => '', 'city' => 'Kissimmee', 'quoted' => false), array('id' => 628), false);
 $check('a name not in the article is held, not linked', $unq === array('unquoted', 11129), json_encode($unq));
+
+echo "-- Town names are never a match --\n";
+// Sequel's site list on article #628: each town was offered as the record that shares its name.
+$check('"Kissimmee" is a town, not Kissimmee Youth Academy', kop_facdisc_near_duplicate($pdo, 'Kissimmee', 'FL', 'Kissimmee') === null);
+$check('"Courtland" is a town, not Brighter Path Courtland', kop_facdisc_near_duplicate($pdo, 'Courtland', 'AL', 'Courtland') === null);
+$check('"Tuskegee Union" is not Sequel TSI of Tuskegee', kop_facdisc_near_duplicate($pdo, 'Tuskegee Union', 'AL', 'Tuskegee') === null);
+$check('a town alone is a place name', kop_facdisc_is_place_name($pdo, 'Kissimmee', 'FL', '') && kop_facdisc_is_place_name($pdo, 'Madison', 'AL', 'Madison'));
+$check('a program named after its town is not', !kop_facdisc_is_place_name($pdo, 'Kissimmee Youth Academy', 'FL', 'Kissimmee'));
+$town = kop_facdisc_apply_entry($pdo, array('name' => 'Courtland', 'kind' => 'facility', 'sameAs' => null, 'renameOf' => null, 'officialName' => 'Courtland',
+    'state' => 'AL', 'country' => '', 'city' => 'Courtland', 'quoted' => true), array('id' => 628), false);
+$check('a town alone is skipped, never offered as a record', $town === array('not_facility', null), json_encode($town));
 
 // ---------------------------------------------------------------------------
 echo "-- The prompt --\n";
