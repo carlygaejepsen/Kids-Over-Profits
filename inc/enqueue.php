@@ -566,6 +566,13 @@ function kop_enqueue_report_scripts() {
             'json_glob'     => '',
             'report_page'   => true,
         ),
+        'hi-reports' => array(
+            'script_handle' => 'hi-reports-script',
+            'script_path'   => '/js/inspections/states/hi.js',
+            'data_object'   => 'hiReportsData',
+            'json_glob'     => '',
+            'report_page'   => true,
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -721,7 +728,7 @@ function kop_state_reports_body_class($classes) {
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
         'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mi-reports', 'mn-reports', 'nc-reports', 'nv-reports', 'ok-reports', 'or-reports', 'pa-reports', 'fl-reports', 'ga-reports',
         'nh-reports', 'wy-reports', 'id-reports', 'me-reports', 'oh-reports', 'wv-reports',
-        'ia-reports', 'md-reports', 'sd-reports', 'va-reports',
+        'ia-reports', 'md-reports', 'sd-reports', 'va-reports', 'hi-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {

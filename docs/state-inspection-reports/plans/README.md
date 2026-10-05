@@ -24,6 +24,11 @@ build them: the first two lose data while they wait.
 | [south-dakota.md](south-dakota.md) | SD | Licensing portal (HTML + PDF) | 27 providers, about 150 PDFs | Small and easy |
 | [maryland.md](maryland.md) | MD | Human Services report folders (HTML listing + PDF) | 32 providers, 174 PDFs | Summaries only |
 
+**Built 2026-10-05, not yet posted:** [hawaii.md](hawaii.md), Hawaii (HI), the
+Health department's statements of deficiencies for youth special treatment
+facilities and therapeutic living programs (8 of 43 facilities, 20 statements
+since 2023; a youth allowlist; scans read by OCR).
+
 [research-log.md](research-log.md) records what every state publishes,
 including the ones with nothing online, so the research is not repeated.
 

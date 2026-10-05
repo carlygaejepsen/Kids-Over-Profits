@@ -520,6 +520,9 @@ function kop_tool_page_specs() {
         // Virginia (owner, 2026-10-05).
         array('template' => 'page-state-reports.php', 'title' => 'Virginia Inspection Reports', 'slug' => 'va-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from two Virginia agencies. The Department of Behavioral Health and Developmental Services licenses psychiatric residential treatment facilities, therapeutic group homes and other residential services for children and posts its inspections and investigations, with the provider&#8217;s corrective action plan once finalized, in <a href="https://vadbhdsv7prod.glsuite.us/GLSuiteWeb/Clients/vadbhds/Public/ProviderSearch/ProviderSearchSearch.aspx">its provider search</a>. The Department of Social Services licenses the other children&#8217;s residential facilities and posts each inspection with the violations cited in <a href="https://www.dss.virginia.gov/licensed-care/search-licensing-programs/childrens-residential-facility-search/">its facility search</a>.</p><!-- /wp:paragraph -->'),
+        // Hawaii: a draft until the owner approves the first post (hi_scraper.py --no-post run 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'Hawaii Inspection Reports', 'slug' => 'hi-reports', 'status' => 'draft', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the Hawaii Department of Health, Office of Health Care Assurance, which licenses special treatment facilities and therapeutic living programs and posts each licensing inspection since 2023 on <a href="https://health.hawaii.gov/ohca/inspection-reports/">its inspection reports page</a>: a statement of deficiencies with each rule broken, what the inspector found and the facility&#8217;s plan of correction, or a statement that no deficiencies were found. The same licences cover adult programs; only programs for young people are listed here.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Most statements with deficiencies are scans of the signed form. Their text was read by software and may contain reading errors, and plans of correction written by hand are not transcribed; the state&#8217;s document is linked with every report. The state does not say which inspections followed a complaint, and posts no complaint investigations.</p><!-- /wp:paragraph -->'),
     );
 }
 
@@ -701,7 +704,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '23';
+    $version = '24';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

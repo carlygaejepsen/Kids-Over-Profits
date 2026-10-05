@@ -15,7 +15,7 @@ Arizona, Arkansas, California, Connecticut, Florida, Georgia, Michigan,
 Minnesota, Montana, Nevada, North Carolina, Oklahoma, Oregon, Pennsylvania,
 Texas, Utah, Washington.
 
-## Plan written, ready to build (10)
+## Plan written, ready to build (11)
 
 Ordered by what is lost by waiting, then by size.
 
@@ -30,13 +30,13 @@ Ordered by what is lost by waiting, then by size.
 | Iowa | 32 | [iowa.md](iowa.md) | 46 psychiatric institutions for children (25 closed), 240 federal survey PDFs | Small and clean |
 | Maryland | 29 | [maryland.md](maryland.md) | 174 short inspection summaries for group homes | Summaries only, one line per citation |
 | Maine | 24 | [maine.md](maine.md) | Behavioral health licence surveys for about 13 youth operators: inspection history from 2013, documents (complaint surveys, deficiencies, plans of correction) from late 2024 | Per operator, so scope is an allowlist; no permanent links |
+| Hawaii | 9 | [hawaii.md](hawaii.md) | Health department statements of deficiencies for special treatment facilities and therapeutic living programs, 43 facilities, 110 statements since 2023; 8 youth programs in scope, 20 statements | Built 2026-10-05, not yet posted; scans read by OCR; youth allowlist `hi_scope.json` |
 | South Dakota | 16 | [south-dakota.md](south-dakota.md) | 27 providers, about 150 licensing studies, inspections and corrective plans | Small and easy |
 
 ## Something is published, no plan yet (worth a second look later)
 
 | State | Tracked | What exists | Why it waits |
 |---|---|---|---|
-| Hawaii | 9 | Health department inspection reports for special treatment facilities and therapeutic living programs, https://health.hawaii.gov/ohca/inspection-reports/ : 43 facilities, about 110 PDFs, 2023 on, one static page | Reports with deficiencies are scans needing OCR; adult and youth programs mixed, so it needs a youth allowlist; few of our records. Samples in `tmp/scraper-research/hi/` |
 | Colorado | 56 | Health department (CDPHE) inspections, citation text, plans of correction and self-reported occurrences for every health-licensed facility, last three years, in a Tableau Server workbook; probed 2026-10-05, see "Colorado probe" below | Not built: the data is reachable, but only by driving the dashboard's server-side state, and scripted probes hung the state's Tableau server. The child-welfare licence (most facilities) publishes nothing |
 | Massachusetts | 57 | Education department program reviews of approved special education residential schools, https://www.doe.mass.edu/oases/ps-cpr/ : about 150 DOCX reports | Education compliance reviews, not licensing or abuse findings; the residential licence publishes nothing. New regulations take effect 2026-11-17 and may bring licensing history online: re-check after that date |
 | Missouri | 116 | The license-exempt facility registry, a one-page PDF updated monthly, https://mydss.mo.gov/provider-services/children/residential-program/license-exempt | A list, not reports. Worth diffing monthly to catch new and vanished facilities |

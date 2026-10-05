@@ -61,6 +61,7 @@ $FOLDERS = array(
     'md_pdfs'       => 'md',
     'sd_pdfs'       => 'sd',
     'va_pdfs'       => 'va',
+    'hi_pdfs'       => 'hi',
 );
 
 $lock = fopen(sys_get_temp_dir() . '/kop-sync-inspection-archive.lock', 'c');

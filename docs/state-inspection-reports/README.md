@@ -4,7 +4,7 @@ The State-Level Inspection Reports module provides public-facing viewers for sta
 
 ## Supported States
 
-Twenty-seven tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's, West Virginia's, Iowa's, Maryland's, South Dakota's and Virginia's are linked only after the owner publishes the page):
+Twenty-eight tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklahoma's, Pennsylvania's, New Hampshire's, Wyoming's, Idaho's, Maine's, Ohio's, West Virginia's, Iowa's, Maryland's, South Dakota's, Virginia's and Hawaii's are linked only after the owner publishes the page):
 
 | State | Slug | Viewer | Data |
 |---|---|---|---|
@@ -14,6 +14,7 @@ Twenty-seven tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklaho
 | Connecticut (`CT`) | `ct-reports` | shared engine | API, `js/data/ct_reports.json` fallback |
 | Florida (`FL`) | `fl-reports` | shared engine | API |
 | Georgia (`GA`) | `ga-reports` | shared engine | API |
+| Hawaii (`HI`) | `hi-reports` | shared engine | API (`hi_scraper.py`; Health department statements of deficiencies and plans of correction since 2023 for special treatment facilities and therapeutic living programs, a youth allowlist in `hi_scope.json`, scans read by OCR; PDFs archived to the Drive folder `hi_pdfs/`) |
 | Idaho (`ID`) | `id-reports` | shared engine | API (`id_scraper.py`; statements of deficiencies with plans of correction and no-deficiency letters from the Health and Welfare public documents library; PDFs archived to the Drive folder `id_pdfs/`) |
 | Iowa (`IA`) | `ia-reports` | shared engine | API (`ia_scraper.py`; survey visits to psychiatric medical institutions for children since 2018, CMS-2567 statements of deficiencies with plans of correction, from the DIAL health facilities database; PDFs archived to the Drive folder `ia_pdfs/`) |
 | Maine (`ME`) | `me-reports` | shared engine | API (`me_scraper.py`; behavioral health organization surveys from the state licence lookup, an operator allowlist in `me_scope.json`; documents since late 2024 archived to the Drive folder `me_pdfs/`) |
@@ -36,7 +37,7 @@ Twenty-seven tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklaho
 | Wyoming (`WY`) | `wy-reports` | shared engine | API (`wy_scraper.py`; Family Services notices of non-compliance (OCR) and handwritten facility visits (documents only), plus health department PRTF surveys; PDFs archived to the Drive folder `wy_pdfs/`) |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 
-The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers not yet linked from public state lists (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine, Ohio, West Virginia, Iowa, Maryland, South Dakota, Virginia): each joins the map only once its page is published, so no list links a missing page. The West Virginia, Iowa, Maryland, South Dakota and Virginia pages are provisioned as drafts until the owner approves their first post. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
+The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/rest-api.php`. Its `$pending` list holds trackers not yet linked from public state lists (Michigan, Oklahoma, Pennsylvania, New Hampshire, Wyoming, Idaho, Maine, Ohio, West Virginia, Iowa, Maryland, South Dakota, Virginia, Hawaii): each joins the map only once its page is published, so no list links a missing page. The West Virginia, Iowa, Maryland, South Dakota and Virginia pages were provisioned as drafts until the owner approved their first post; the Hawaii page is a draft until its first post is approved. The home page grid, the hub, the facility pages and the state hubs all derive their tracker links from it (`kop_report_state_links()` and `kop_report_state_sentence()` in `inc/utilities.php`).
 
 ## Architecture
 
