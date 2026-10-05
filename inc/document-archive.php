@@ -129,7 +129,7 @@ function kop_doc_archive_covers($folder_id, $n = 3) {
  * removed, and every six hours.
  */
 function kop_doc_archive_data() {
-    $cached = get_transient('kop_doc_archive_v4');
+    $cached = get_transient('kop_doc_archive_v5');
     if (is_array($cached)) {
         return $cached;
     }
@@ -213,6 +213,28 @@ function kop_doc_archive_data() {
     }
     uasort($programs, function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
 
+    // A folder is named after its program or company: the record's past and
+    // other names go into the filter's text, so the old name finds it too.
+    if (function_exists('kop_v2_alias_index')) {
+        $aliases = kop_v2_alias_index();
+        $want = array('facilities' => array(), 'operators' => array());
+        foreach ($want as $kind => $_) {
+            foreach ($aliases[$kind] as $a) $want[$kind][(int) $a[0]][] = $a[1];
+        }
+        $by_name = array();
+        foreach (array('facilities' => 'facilities_v2', 'operators' => $wpdb->prefix . 'kop_operators') as $kind => $table) {
+            if (!$want[$kind]) continue;
+            $ids = implode(',', array_map('intval', array_keys($want[$kind])));
+            foreach ((array) $wpdb->get_results("SELECT id, name FROM {$table} WHERE id IN ({$ids})", ARRAY_A) as $r) {
+                $k = strtolower(trim((string) $r['name']));
+                $by_name[$k] = array_merge($by_name[$k] ?? array(), $want[$kind][(int) $r['id']]);
+            }
+        }
+        foreach ($programs as $key => $p) {
+            if (isset($by_name[$key])) $programs[$key]['aka'] = implode(' ', array_unique($by_name[$key]));
+        }
+    }
+
     $networks = array();
     foreach (kop_doc_archive_networks() as $fid) {
         if (!isset($by_id[$fid]) || (int) $by_id[$fid]['files'] === 0) {
@@ -294,14 +316,14 @@ function kop_doc_archive_data() {
         'programs' => array_values($programs),
         'recent'   => $recent,
     );
-    set_transient('kop_doc_archive_v4', $data, 6 * HOUR_IN_SECONDS);
+    set_transient('kop_doc_archive_v5', $data, 6 * HOUR_IN_SECONDS);
     return $data;
 }
 
 add_action('add_attachment', 'kop_doc_archive_flush');
 add_action('delete_attachment', 'kop_doc_archive_flush');
 function kop_doc_archive_flush() {
-    delete_transient('kop_doc_archive_v4');
+    delete_transient('kop_doc_archive_v5');
 }
 
 /** The "Start here" row: rated research library items, else the fallback titles. */
@@ -522,7 +544,7 @@ function kop_doc_archive_render_landing() {
                     <h3 class="kop-da-letter-h"><?php echo esc_html($letter); ?></h3>
                     <ul>
                         <?php foreach ($group as $p) : ?>
-                            <li data-name="<?php echo esc_attr(strtolower($p['name'] . ' ' . (isset($p['within']) ? $p['within'] : ''))); ?>">
+                            <li data-name="<?php echo esc_attr(strtolower($p['name'] . ' ' . (isset($p['within']) ? $p['within'] : '') . ' ' . (isset($p['aka']) ? $p['aka'] : ''))); ?>">
                                 <a href="<?php echo esc_url(kop_doc_archive_collection_url($p['folder'])); ?>"><?php echo esc_html($p['name']); ?><?php if (!empty($p['within'])) : ?> <span class="kop-da-within"><?php echo esc_html($p['within']); ?></span><?php endif; ?></a>
                                 <span class="kop-da-n"><?php echo esc_html(number_format_i18n($p['count'])); ?></span>
                             </li>

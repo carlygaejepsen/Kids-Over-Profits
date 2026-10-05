@@ -788,10 +788,12 @@ if (!function_exists('kop_program_homes_page')) {
                     echo '<button class="button">Suggest it again</button></form></div>';
                 }
             } else {
-                $list = array_values(array_filter($suggestions, static function ($s) use ($q) {
+                // A home is found by its past or other names too.
+                $aka = ($q !== '' && function_exists('kop_v2_alias_match_ids')) ? kop_v2_alias_match_ids('facilities', $q) : array();
+                $list = array_values(array_filter($suggestions, static function ($s) use ($q, $aka) {
                     if ($q === '') return true;
                     if (stripos($s['program_name'], $q) !== false) return true;
-                    foreach ($s['homes'] as $h) if (stripos($h['name'], $q) !== false) return true;
+                    foreach ($s['homes'] as $h) if (stripos($h['name'], $q) !== false || isset($aka[(int) $h['id']])) return true;
                     return false;
                 }));
                 $per = 20;
@@ -889,9 +891,12 @@ if (!function_exists('kop_program_homes_page_grouped')) {
             $names[(int) $r['id']] = (string) $r['name'];
         }
         uasort($map['programs'], static function ($a, $b) { return count($b) - count($a); });
+        // Past and other names count too.
+        $aka = ($q !== '' && function_exists('kop_v2_alias_match_ids')) ? kop_v2_alias_match_ids('facilities', $q) : array();
         foreach ($map['programs'] as $pid => $homes) {
             $hay = ($names[$pid] ?? '') . ' ' . implode(' ', array_map(static function ($h) use ($names) { return $names[$h] ?? ''; }, $homes));
-            if ($q !== '' && stripos($hay, $q) === false) continue;
+            $by_alias = isset($aka[$pid]) || array_filter($homes, static function ($h) use ($aka) { return isset($aka[(int) $h]); });
+            if ($q !== '' && stripos($hay, $q) === false && !$by_alias) continue;
             $url = function_exists('kop_facility_page_url') ? kop_facility_page_url($pid) : '';
             echo '<div class="kop-ph-card"><h2>' . ($url !== '' ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener">' . esc_html($names[$pid] ?? '#' . $pid) . '</a>' : esc_html($names[$pid] ?? '#' . $pid))
                 . ' <span class="kop-ph-meta">#' . (int) $pid . ', ' . count($homes) . ' homes</span></h2><table><tbody>';

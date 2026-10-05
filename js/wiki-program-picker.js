@@ -212,7 +212,10 @@
                     if (row.status) meta.push(escapeHtml(row.status));
                     // Hit was on a past/alternate name — explain why this
                     // differently-named program is in the results.
-                    if (row.matched_name) meta.push('aka “' + escapeHtml(row.matched_name) + '”');
+                    if (row.matched_name) {
+                        meta.push((row.matched_kind === 'past' ? 'Formerly ' : row.matched_kind === 'current' ? 'Now known as ' : 'Also known as ')
+                            + escapeHtml(row.matched_name));
+                    }
                     var rowEl = el('button', 'kop-pp-result',
                         '<span class="kop-pp-result-name">' + escapeHtml(row.unique_name) + '</span>' +
                         (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +

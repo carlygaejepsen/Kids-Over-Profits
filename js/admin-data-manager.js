@@ -107,7 +107,7 @@
                         return;
                     }
                     d.data.forEach(function (row) {
-                        var meta = [row.city, row.state, row.status].filter(Boolean).join(' · ');
+                        var meta = [aliasLabel(row), row.city, row.state, row.status].filter(Boolean).join(' · ');
                         var b = el('button', 'dm-progsearch-row',
                             '<strong>' + esc(row.unique_name) + '</strong>' +
                             (meta ? ' <span class="dm-muted">' + esc(meta) + '</span>' : '') +
@@ -121,6 +121,13 @@
         }, 250);
         input.addEventListener('input', run);
         return wrap;
+    }
+
+    // "Formerly X" / "Now known as X" / "Also known as X" for a hit on one of
+    // the program's other names (facility-search.php matched_name/_kind).
+    function aliasLabel(row) {
+        if (!row.matched_name) return '';
+        return (row.matched_kind === 'past' ? 'Formerly ' : row.matched_kind === 'current' ? 'Now known as ' : 'Also known as ') + row.matched_name;
     }
 
     // ---- table render ----
@@ -185,7 +192,8 @@
             tr.innerHTML =
                 '<td class="dm-name">' + esc(it.display_name || it.unique_name) +
                     (it.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
-                    '<div class="dm-uniquename">' + esc(it.unique_name) + '</div></td>' +
+                    '<div class="dm-uniquename">' + esc(it.unique_name) + '</div>' +
+                    (it.matched_name ? '<div class="dm-muted">' + esc(aliasLabel(it)) + '</div>' : '') + '</td>' +
                 '<td>' + badge(it.category) + '</td>' +
                 '<td class="dm-mono">#' + esc(it.id) + '</td>' +
                 '<td class="dm-center dm-fac-cell">' + facCell + '</td>' +

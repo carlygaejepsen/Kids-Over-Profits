@@ -81,6 +81,32 @@ $TABLE_CATEGORY = array_flip($CATEGORY_TABLE);
  * {data:{data:{operator,facilities}}}; without unwrapping, facilities are
  * invisible here and the program index (which unwraps) would disagree.
  */
+/**
+ * [name, kind] when $q is in one of the record's alternate names (its
+ * operator's or a facility's pastNames / otherNames / currentName), null
+ * otherwise. kind: 'past', 'other' or 'current'.
+ */
+function kop_dm_alias_hit(array $project, string $q): ?array {
+    $d = isset($project['data']) && is_array($project['data']) ? $project['data'] : $project;
+    $holders = [];
+    if (isset($d['operator']) && is_array($d['operator'])) $holders[] = $d['operator'];
+    foreach ((isset($d['facilities']) && is_array($d['facilities']) ? $d['facilities'] : []) as $f) {
+        if (is_array($f) && isset($f['identification']) && is_array($f['identification'])) $holders[] = $f['identification'];
+    }
+    foreach ($holders as $h) {
+        foreach (['pastNames' => 'past', 'previousNames' => 'past', 'otherNames' => 'other'] as $k => $kind) {
+            foreach ((isset($h[$k]) && is_array($h[$k]) ? $h[$k] : []) as $n) {
+                if (is_array($n)) $n = $n['name'] ?? '';
+                if (is_string($n) && trim($n) !== '' && mb_stripos($n, $q) !== false) return [trim($n), $kind];
+            }
+        }
+        if (!empty($h['currentName']) && is_string($h['currentName']) && mb_stripos($h['currentName'], $q) !== false) {
+            return [trim($h['currentName']), 'current'];
+        }
+    }
+    return null;
+}
+
 function kop_dm_decode($json): array {
     $p = json_decode($json ?: '{}', true);
     if (!is_array($p)) {
@@ -443,15 +469,19 @@ try {
                 if ($table === 'facilities_master' && kop_dm_v2_writes($pdo)) {
                     $rows = kop_dm_master_rows($pdo);
                     if ($q !== '') {
+                        // Past and other names find a record too.
                         $rows = array_values(array_filter($rows, static function ($row) use ($q) {
-                            return mb_stripos($row['unique_name'], $q) !== false;
+                            return mb_stripos($row['unique_name'], $q) !== false
+                                || (mb_stripos((string)$row['json_data'], $q) !== false && kop_dm_alias_hit(kop_dm_decode($row['json_data']), $q));
                         }));
                     }
                 } else {
                     $sql = "SELECT id, unique_name, json_data, updated_at FROM `$table`";
                     $params = [];
                     if ($q !== '') {
-                        $sql .= " WHERE unique_name LIKE ?";
+                        // json_data too, for past/other names (checked below).
+                        $sql .= " WHERE unique_name LIKE ? OR json_data LIKE ?";
+                        $params[] = '%' . $q . '%';
                         $params[] = '%' . $q . '%';
                     }
                     $sql .= " ORDER BY unique_name ASC";
@@ -466,6 +496,11 @@ try {
                 foreach ($rows as $row) {
                     $project = kop_dm_decode($row['json_data']);
                     if (!empty($project['__facility_ref'])) continue; // hidden id rows
+                    $aka = null;
+                    if ($q !== '' && mb_stripos($row['unique_name'], $q) === false) {
+                        $aka = kop_dm_alias_hit($project, $q);
+                        if (!$aka) continue; // the phrase was only in other text
+                    }
 
                     $meta = kop_dm_describe($project, $table);
                     $un = $row['unique_name'];
@@ -481,6 +516,8 @@ try {
                         'wiki_links'         => $wikiCounts[$un] ?? ['suggested' => 0, 'confirmed' => 0, 'total' => 0],
                         'name_match_unlinked' => $nameUnlinked[strtolower($un)] ?? 0,
                         'updated_at'         => $row['updated_at'] ?? null,
+                        'matched_name'       => $aka ? $aka[0] : null,
+                        'matched_kind'       => $aka ? $aka[1] : null,
                     ];
                 }
             }

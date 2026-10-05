@@ -1350,6 +1350,7 @@ function kop_collect_operator_values($data, &$set) {
             kop_add_autocomplete_values($set, isset($operator['otherNames']) ? $operator['otherNames'] : array());
             kop_add_autocomplete_values($set, isset($operator['parentCompanies']) ? $operator['parentCompanies'] : array());
             kop_add_autocomplete_values($set, isset($operator['previousNames']) ? $operator['previousNames'] : array());
+            kop_add_autocomplete_values($set, isset($operator['pastNames']) ? $operator['pastNames'] : array());
         }
     }
 
@@ -1381,6 +1382,7 @@ function kop_collect_facility_values($data, &$set) {
                 kop_add_autocomplete_value($set, isset($identification['name']) ? $identification['name'] : null);
                 kop_add_autocomplete_value($set, isset($identification['currentName']) ? $identification['currentName'] : null);
                 kop_add_autocomplete_values($set, isset($identification['otherNames']) ? $identification['otherNames'] : array());
+                kop_add_autocomplete_values($set, isset($identification['pastNames']) ? $identification['pastNames'] : array());
             }
         }
     }
@@ -2126,6 +2128,40 @@ function kop_search_facility_name($facility) {
 }
 
 /**
+ * "Formerly X (Facility: Y)" when $q is in one of the project's alternate
+ * names (the operator's or a facility's pastNames / previousNames /
+ * otherNames / currentName), '' otherwise.
+ */
+function kop_search_alias_snippet($data, $q) {
+    $holders = array();
+    if (!empty($data['operator']) && is_array($data['operator'])) {
+        $holders[] = array($data['operator'], 'Operator: ' . (is_string($data['operator']['name'] ?? null) ? $data['operator']['name'] : ''));
+    }
+    foreach ((!empty($data['facilities']) && is_array($data['facilities']) ? $data['facilities'] : array()) as $facility) {
+        if (is_array($facility) && !empty($facility['identification']) && is_array($facility['identification'])) {
+            $holders[] = array($facility['identification'], 'Facility: ' . kop_search_facility_name($facility));
+        }
+    }
+    foreach ($holders as $h) {
+        list($names, $whose) = $h;
+        $found = array();
+        foreach (array('pastNames' => 'past', 'previousNames' => 'past', 'otherNames' => 'other') as $k => $kind) {
+            foreach ((isset($names[$k]) && is_array($names[$k]) ? $names[$k] : array()) as $n) {
+                if (is_array($n)) $n = $n['name'] ?? '';
+                if (is_string($n) && trim($n) !== '') $found[] = array(trim($n), $kind);
+            }
+        }
+        if (!empty($names['currentName']) && is_string($names['currentName'])) $found[] = array(trim($names['currentName']), 'current');
+        foreach ($found as $pair) {
+            if (stripos($pair[0], $q) === false) continue;
+            $label = function_exists('kop_alias_label') ? kop_alias_label($pair[1], $pair[0]) : $pair[0];
+            return $label . (trim($whose, ': ') !== 'Operator' && trim($whose, ': ') !== 'Facility' ? ' (' . $whose . ')' : '');
+        }
+    }
+    return '';
+}
+
+/**
  * Run the facility-side queries against one normalized project payload.
  *
  * @param array $data    Normalized project data (operator + facilities[]).
@@ -2143,6 +2179,10 @@ function kop_search_match_project($data, $names, $queries) {
             if (stripos($name, $queries['keyword']) !== false) {
                 return array('snippet' => 'Name: ' . $name, 'type' => 'keyword');
             }
+        }
+        $snippet = kop_search_alias_snippet($data, $queries['keyword']);
+        if ($snippet !== '') {
+            return array('snippet' => $snippet, 'type' => 'keyword');
         }
         $snippet = kop_search_in_data($data, $queries['keyword']);
         if ($snippet) {
@@ -2189,6 +2229,11 @@ function kop_search_match_project($data, $names, $queries) {
                     return array('snippet' => 'Facility: ' . $facility_name, 'type' => 'company');
                 }
             }
+        }
+        // Past and other names: "Formerly X (Facility: Y)".
+        $snippet = kop_search_alias_snippet($data, $company);
+        if ($snippet !== '') {
+            return array('snippet' => $snippet, 'type' => 'company');
         }
     }
 

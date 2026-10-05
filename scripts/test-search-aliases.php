@@ -183,6 +183,29 @@ echo "-- Guards --\n";
 $r = $search_with_ids('Co', 200);
 $check('a 2-character query does not trigger alias matching', $find($r, 12161) === null);
 
+echo "-- Alternate names always show up --\n";
+// Eight records are named "Aspen ..."; with room for three, the past name on
+// Viewpoint Center (#10361, formerly Aspen Institute for Behavioral
+// Assessment) used to be crowded out. A third of the slots go to alias hits.
+$r = $search_with_ids('Aspen', 3);
+$vp = $find($r, 10361);
+$check('"Aspen" (3 slots) still lists Viewpoint Center by its past name', $vp !== null, implode(', ', array_column($r, 'display')));
+if ($vp) $check('...with "Formerly Aspen Institute..."', strpos(kop_v2_search_alias_hint($vp), 'Formerly Aspen Institute') === 0);
+$check('...after the direct name matches', $r && empty($r[0]['matched_name']));
+
+// identification.currentName: the record carries the old name.
+$r = $search_with_ids('Kissimmee Youth', 10);
+$osc = $find($r, 9653);
+$check('"Kissimmee Youth" finds Three Springs of Osceola (now that name)', $osc !== null, implode(', ', array_column($r, 'display')));
+if ($osc) $check('...worded "Now known as"', kop_v2_search_alias_hint($osc) === 'Now known as Kissimmee Youth Academy');
+
+// Operators match their other names too.
+$ops = kop_v2_search('Eckerd Youth Alternatives', 0, 5, 0)['operators'];
+$eck = null;
+foreach ($ops as $o) if ($o['display'] === 'Eckerd Connects') $eck = $o;
+$check('"Eckerd Youth Alternatives" finds the company Eckerd Connects', $eck !== null, implode(', ', array_column($ops, 'display')));
+if ($eck) $check('...worded "Also known as"', kop_v2_search_alias_hint($eck) === 'Also known as Eckerd Youth Alternatives');
+
 // 3 characters is the stated minimum and must work.
 $r = $search_with_ids('Cop', 50);
 $check('a 3-character query does trigger alias matching', $find($r, 12161) !== null);

@@ -798,6 +798,15 @@ if (!function_exists('kop_fmerge_side')) {
         $staff = 0;
         foreach ((array) ($doc['staff'] ?? array()) as $v) if (is_array($v)) $staff += count($v);
         $type = $doc['facilityDetails']['type'] ?? '';
+        // Its past, other and current names ("Formerly X"), shown and searchable.
+        $aka = array();
+        foreach (array('pastNames' => 'past', 'otherNames' => 'other') as $k => $kind) {
+            $list = function_exists('kop_v2_search_name_list') ? kop_v2_search_name_list($idn[$k] ?? null) : array();
+            foreach ($list as $n) $aka[] = function_exists('kop_alias_label') ? kop_alias_label($kind, $n) : $n;
+        }
+        if (!empty($idn['currentName']) && is_string($idn['currentName'])) {
+            $aka[] = function_exists('kop_alias_label') ? kop_alias_label('current', $idn['currentName']) : $idn['currentName'];
+        }
         return array(
             'id'        => $id,
             'name'      => (string) ($idn['name'] ?? $r['unique_name']),
@@ -807,6 +816,7 @@ if (!function_exists('kop_fmerge_side')) {
             'years'     => $start !== '' || $end !== '' ? trim($start . '-' . $end, '-') : '',
             'type'      => is_array($type) ? implode(', ', $type) : (string) $type,
             'companies' => array_values(array_unique($companies)),
+            'aka'       => array_values(array_unique($aka)),
             'news'      => (int) ($ctx['counts'][$id]['news'] ?? 0),
             'lawsuits'  => (int) ($ctx['counts'][$id]['lawsuits'] ?? 0),
             'docs'      => $folder ? (int) $ctx['doc_counts'][$folder] : 0,
@@ -1315,6 +1325,7 @@ if (!function_exists('kop_fmerge_page')) {
                     box.appendChild(pick);
                 }
                 box.appendChild(el('h2', 'kop-fm__name', s.name));
+                if (s.aka && s.aka.length) box.appendChild(el('p', 'kop-fm__line kop-fm__muted', s.aka.join(' · ')));
                 var where = [s.place, s.status, s.years].filter(Boolean).join(' · ');
                 box.appendChild(el('p', 'kop-fm__line', where || 'No place on file'));
                 if (s.address) box.appendChild(el('p', 'kop-fm__line kop-fm__muted', s.address));
@@ -1479,7 +1490,7 @@ if (!function_exists('kop_fmerge_page')) {
 
             function matches(x, q) {
                 if (!q) return true;
-                var text = JSON.stringify([x.a ? [x.a.name, x.a.place, x.a.companies] : '', x.b ? [x.b.name, x.b.place, x.b.companies] : '',
+                var text = JSON.stringify([x.a ? [x.a.name, x.a.aka, x.a.place, x.a.companies] : '', x.b ? [x.b.name, x.b.aka, x.b.place, x.b.companies] : '',
                     x.keep && x.keep.name ? x.keep.name : '', x.drop && x.drop.name ? x.drop.name : '']).toLowerCase();
                 return text.indexOf(q) !== -1;
             }

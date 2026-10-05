@@ -21,7 +21,8 @@ if (!defined('ABSPATH')) {
  * Facilities matching $q: by id (digits), current name, unique name, or a
  * past/other name from json_data identification. Best matches first.
  * Each row: id, name, city, state, country, status, start_year, end_year,
- * matched (the past name that matched, or '').
+ * matched (the past/other/current name that matched, or ''), matched_kind
+ * ('past', 'other', 'current' or '').
  */
 function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
     $q = trim((string) $q);
@@ -37,6 +38,7 @@ function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
         $stmt->execute(array((int) $m[1]));
         if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $row['matched'] = '';
+            $row['matched_kind'] = '';
             $row['rank'] = -1;
             $found[(int) $row['id']] = $row;
         }
@@ -53,13 +55,19 @@ function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
         }
         $name = (string) $row['name'];
         $row['matched'] = '';
+        $row['matched_kind'] = '';
         $row['rank'] = strcasecmp($name, $q) === 0 ? 0 : (mb_stripos($name, $q) === 0 ? 1 : 2);
         $found[(int) $row['id']] = $row;
     }
 
     // Past and other names only live in json_data; LIKE narrows the pool,
-    // then only a hit on an actual name field counts (not wiki text).
-    $stmt = $pdo->prepare("SELECT $cols, json_data FROM facilities_v2 WHERE json_data LIKE ? ESCAPE '!' LIMIT 400");
+    // then only a hit on an actual name field counts (not wiki text). Only
+    // records holding such a field are read (a few hundred), so a common word
+    // in other text cannot push a renamed program out of the pool.
+    $stmt = $pdo->prepare("SELECT $cols, json_data FROM facilities_v2
+                            WHERE json_data LIKE ? ESCAPE '!'
+                              AND (json_data LIKE '%pastNames%' OR json_data LIKE '%otherNames%' OR json_data LIKE '%currentName%')
+                            LIMIT 2000");
     $stmt->execute(array($like));
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
         $id = (int) $row['id'];
@@ -69,18 +77,22 @@ function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
         $data = json_decode((string) $row['json_data'], true);
         $ident = is_array($data) && isset($data['identification']) && is_array($data['identification']) ? $data['identification'] : array();
         $names = array();
-        foreach (array('pastNames', 'otherNames') as $key) {
-            if (!empty($ident[$key]) && is_array($ident[$key])) {
-                $names = array_merge($names, $ident[$key]);
+        foreach (array('pastNames' => 'past', 'otherNames' => 'other') as $key => $kind) {
+            $list = function_exists('kop_v2_search_name_list') ? kop_v2_search_name_list($ident[$key] ?? null)
+                : (isset($ident[$key]) && is_array($ident[$key]) ? $ident[$key] : array());
+            foreach ($list as $n) {
+                $names[] = array($n, $kind);
             }
         }
         if (!empty($ident['currentName']) && is_string($ident['currentName'])) {
-            $names[] = $ident['currentName'];
+            $names[] = array($ident['currentName'], 'current');
         }
-        foreach ($names as $alias) {
+        foreach ($names as $pair) {
+            list($alias, $kind) = $pair;
             if (is_string($alias) && mb_stripos($alias, $q) !== false) {
                 unset($row['json_data']);
                 $row['matched'] = $alias;
+                $row['matched_kind'] = $kind;
                 $row['rank'] = mb_stripos($alias, $q) === 0 ? 3 : 4;
                 $found[$id] = $row;
                 break;
@@ -109,6 +121,7 @@ function kop_facility_finder_search(PDO $pdo, $q, $limit = 12) {
             'start_year' => $row['start_year'] ? (int) $row['start_year'] : null,
             'end_year'   => $row['end_year'] ? (int) $row['end_year'] : null,
             'matched'    => (string) $row['matched'],
+            'matched_kind' => (string) $row['matched_kind'],
         );
     }
     return $out;
@@ -189,7 +202,8 @@ function kop_facility_finder_print_assets() {
             var place = [f.city, f.state || f.country].filter(Boolean).join(', ');
             var years = f.start_year || f.end_year ? (f.start_year || '?') + '–' + (f.end_year || '') : '';
             var bits = [place, f.status && f.status !== 'Unknown' ? f.status : '', years, '#' + f.id].filter(Boolean);
-            return (f.matched ? 'Was: ' + f.matched + ' · ' : '') + bits.join(' · ');
+            var said = !f.matched ? '' : (f.matched_kind === 'past' ? 'Formerly ' : f.matched_kind === 'current' ? 'Now known as ' : 'Also known as ') + f.matched;
+            return (said ? said + ' · ' : '') + bits.join(' · ');
         }
 
         function attach(box) {

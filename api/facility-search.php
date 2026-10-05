@@ -56,6 +56,44 @@ if (!function_exists('kop_picker_collect_known_names')) {
     }
 }
 
+/**
+ * The program's own alternate names as [name, kind] pairs, kind 'past'
+ * (pastNames, formerNames, previousNames), 'other' (otherNames, aliases,
+ * alternateNames) or 'current' (currentName: the record carries the old
+ * name). Staff, people and contact lists are skipped, so a person's name is
+ * never offered as the program's.
+ */
+if (!function_exists('kop_fsearch_alias_names')) {
+    function kop_fsearch_alias_names($node, array &$out, int $depth = 0): void {
+        if ($depth > 6 || !is_array($node)) {
+            return;
+        }
+        static $kinds = [
+            'pastnames' => 'past', 'past_names' => 'past', 'formernames' => 'past', 'former_names' => 'past',
+            'previousnames' => 'past', 'previous_names' => 'past',
+            'othernames' => 'other', 'other_names' => 'other', 'aliases' => 'other', 'alternatenames' => 'other',
+        ];
+        foreach ($node as $key => $value) {
+            $lkey = is_string($key) ? strtolower($key) : '';
+            if ($lkey !== '' && preg_match('/staff|people|person|administrator|contact|director|founder|owner|referr|news|lawsuit|incident|testimon/', $lkey)) {
+                continue;
+            }
+            if ($lkey === 'currentname' && is_string($value) && trim($value) !== '') {
+                $out[] = [trim($value), 'current'];
+            } elseif (isset($kinds[$lkey]) && is_array($value)) {
+                foreach ($value as $alias) {
+                    if (is_array($alias)) $alias = $alias['name'] ?? '';
+                    if (is_string($alias) && trim($alias) !== '') {
+                        $out[] = [trim($alias), $kinds[$lkey]];
+                    }
+                }
+            } elseif (is_array($value)) {
+                kop_fsearch_alias_names($value, $out, $depth + 1);
+            }
+        }
+    }
+}
+
 try {
     $q = trim((string)($_GET['q'] ?? ''));
     $limit = (int)($_GET['limit'] ?? 20);
@@ -69,8 +107,9 @@ try {
 
     // Over-fetch: json_data LIKE also hits records that merely MENTION the
     // query somewhere (wiki prose, addresses); the PHP pass below keeps only
-    // hits on actual name fields, so we need slack in the pool.
-    $pool = min(150, $limit * 5);
+    // hits on actual name fields, so the pool is wide enough that a renamed
+    // program is never cut before its names are read.
+    $pool = 2000;
     $like = '%' . $q . '%';
 
     // facilities_master is frozen once admin saves write the v2 tables: the
@@ -121,50 +160,55 @@ try {
         $rows = $stmt->fetchAll();
     }
 
-    // Keep unique_name hits as-is; keep json-only hits ONLY when the query
-    // matches one of the record's known names (current/alternate/past) —
-    // otherwise any record whose wiki text mentions the query would surface.
-    $qLower = mb_strtolower($q);
-    $filtered = [];
+    // Direct hits on unique_name, plus records whose own past/other/current
+    // name matches (kop_fsearch_alias_names); a record that only MENTIONS the
+    // query in prose is dropped. Alternate-name hits sort after direct hits
+    // (starts-with first), and always show up: when any match, a third of
+    // the slots (at least one) go to them even when direct hits would fill
+    // the list, the same rule as the site search (kop_v2_search_rank()).
+    $direct = [];
+    $alias = [];
     foreach ($rows as $row) {
-        $matchedName = null;
-        if (mb_stripos($row['unique_name'], $q) === false) {
-            $names = [];
-            $decoded = json_decode($row['json_data'] ?? '', true);
-            if (is_array($decoded)) {
-                kop_picker_collect_known_names($decoded, $names);
-            }
-            foreach (array_unique($names) as $known) {
-                if ($known !== $row['unique_name'] && mb_stripos($known, $q) !== false) {
-                    $matchedName = $known;
-                    break;
-                }
-            }
-            if ($matchedName === null) {
-                continue;
-            }
+        if (mb_stripos($row['unique_name'], $q) !== false) {
+            $row['matched_name'] = null;
+            $row['matched_kind'] = null;
+            $row['sort_group'] = mb_stripos($row['unique_name'], $q) === 0 ? 0 : 1;
+            $direct[] = $row;
+            continue;
         }
-        $row['matched_name'] = $matchedName;
-        // Alt-name hits sort after direct-name hits (query relevance), with
-        // starts-with beating contains within the group.
-        $row['sort_group'] = $matchedName === null
-            ? (mb_stripos($row['unique_name'], $q) === 0 ? 0 : 1)
-            : (mb_stripos($matchedName, $q) === 0 ? 2 : 3);
-        $filtered[] = $row;
-        if (count($filtered) >= $limit * 2) {
-            break;
+        $names = [];
+        $decoded = json_decode($row['json_data'] ?? '', true);
+        if (is_array($decoded)) {
+            kop_fsearch_alias_names($decoded, $names);
         }
+        $best = null;
+        foreach ($names as $pair) {
+            [$known, $kind] = $pair;
+            if ($known === $row['unique_name'] || mb_stripos($known, $q) === false) continue;
+            $group = mb_stripos($known, $q) === 0 ? 2 : 3;
+            if ($best === null || $group < $best[2]) $best = [$known, $kind, $group];
+        }
+        if ($best === null) {
+            continue;
+        }
+        $row['matched_name'] = $best[0];
+        $row['matched_kind'] = $best[1];
+        $row['sort_group'] = $best[2];
+        $alias[] = $row;
     }
 
-    usort($filtered, static function ($a, $b) {
+    $order = static function ($a, $b) {
         if ($a['sort_group'] !== $b['sort_group']) {
             return $a['sort_group'] - $b['sort_group'];
         }
         $la = strlen($a['unique_name']);
         $lb = strlen($b['unique_name']);
         return $la !== $lb ? $la - $lb : strcmp($a['unique_name'], $b['unique_name']);
-    });
-    $rows = array_slice($filtered, 0, $limit);
+    };
+    usort($direct, $order);
+    usort($alias, $order);
+    $keepAlias = min(count($alias), max(max(1, intdiv($limit, 3)), $limit - count($direct)));
+    $rows = array_merge(array_slice($direct, 0, $limit - $keepAlias), array_slice($alias, 0, $keepAlias));
 
     // Pull state/city/status out of the JSON for disambiguation.
     $out = array_map(static function ($row) {
@@ -239,6 +283,8 @@ try {
             // The past/alternate name the query matched, when it wasn't the
             // unique_name itself — lets the picker explain the hit.
             'matched_name' => $row['matched_name'] ?? null,
+            // 'past' / 'other' / 'current': how to word it ("Formerly X").
+            'matched_kind' => $row['matched_kind'] ?? null,
         ];
     }, $rows);
 

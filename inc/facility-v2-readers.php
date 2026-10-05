@@ -604,6 +604,194 @@ if (!function_exists('kop_v2_search_name_list')) {
     }
 }
 
+if (!function_exists('kop_v2_alias_index')) {
+    /**
+     * Every alternate name on file, for search: {facilities: [[id, alias,
+     * kind]], operators: [[id, alias, kind]]}, kind being 'past'
+     * (identification.pastNames; an operator's pastNames/previousNames),
+     * 'other' (otherNames) or 'current' (identification.currentName: the
+     * record carries the old name, this is what it is called now). One pass
+     * over facilities_v2 and kop_operators, kept in a transient keyed by both
+     * tables' row count and last update, so an edited name is searchable on
+     * the next request.
+     */
+    function kop_v2_alias_index() {
+        global $wpdb;
+        static $index = null;
+        if ($index !== null) return $index;
+        $ops_table = $wpdb->prefix . 'kop_operators';
+        $fp_f = $wpdb->get_row("SELECT COUNT(*), MAX(id), MAX(updated_at) FROM facilities_v2", ARRAY_N);
+        $fp_o = $wpdb->get_row("SELECT COUNT(*), MAX(id), MAX(updated_at) FROM {$ops_table}", ARRAY_N);
+        $cache_key = 'kop_v2_alias_idx_' . md5(implode('|', (array)$fp_f) . '#' . implode('|', (array)$fp_o));
+        $cached = get_transient($cache_key);
+        if (is_array($cached) && isset($cached['facilities'], $cached['operators'])) {
+            return $index = $cached;
+        }
+
+        $collect = function ($id, $name, $fields, $current) {
+            $out = array();
+            $seen = array(mb_strtolower(trim((string)$name)) => true);
+            foreach ($fields as $kind => $names) {
+                foreach ($names as $alias) {
+                    $k = mb_strtolower($alias);
+                    if (isset($seen[$k])) continue;
+                    $seen[$k] = true;
+                    $out[] = array($id, $alias, $kind);
+                }
+            }
+            if (is_string($current) && trim($current) !== '' && !isset($seen[mb_strtolower(trim($current))])) {
+                $out[] = array($id, trim($current), 'current');
+            }
+            return $out;
+        };
+
+        $index = array('facilities' => array(), 'operators' => array());
+        $rows = $wpdb->get_results(
+            "SELECT id, name, json_data FROM facilities_v2
+              WHERE json_data LIKE '%pastNames%' OR json_data LIKE '%otherNames%' OR json_data LIKE '%currentName%'",
+            ARRAY_A
+        );
+        foreach ((array)$rows as $r) {
+            $doc = kop_v2_decode($r['json_data']);
+            if (!$doc) continue;
+            $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
+            foreach ($collect((int)$r['id'], $r['name'], array(
+                'past'  => kop_v2_search_name_list($ident['pastNames'] ?? null),
+                'other' => kop_v2_search_name_list($ident['otherNames'] ?? null),
+            ), $ident['currentName'] ?? null) as $hit) {
+                $index['facilities'][] = $hit;
+            }
+        }
+        $rows = $wpdb->get_results(
+            "SELECT id, name, json_data FROM {$ops_table}
+              WHERE json_data LIKE '%Names%' OR json_data LIKE '%aliases%' OR json_data LIKE '%currentName%'",
+            ARRAY_A
+        );
+        foreach ((array)$rows as $r) {
+            $stored = json_decode((string)$r['json_data'], true);
+            $op = (is_array($stored) && isset($stored['operator']) && is_array($stored['operator'])) ? $stored['operator'] : array();
+            foreach ($collect((int)$r['id'], $r['name'], array(
+                'past'  => array_merge(
+                    kop_v2_search_name_list($op['pastNames'] ?? null),
+                    kop_v2_search_name_list($op['previousNames'] ?? null),
+                    kop_v2_search_name_list($op['formerNames'] ?? null)
+                ),
+                'other' => array_merge(
+                    kop_v2_search_name_list($op['otherNames'] ?? null),
+                    kop_v2_search_name_list($op['aliases'] ?? null)
+                ),
+            ), $op['currentName'] ?? null) as $hit) {
+                $index['operators'][] = $hit;
+            }
+        }
+        set_transient($cache_key, $index, DAY_IN_SECONDS);
+        return $index;
+    }
+}
+
+if (!function_exists('kop_v2_alias_match_ids')) {
+    /**
+     * id => "Formerly X" (kop_alias_label()) for every record with an
+     * alternate name containing $phrase. $kind: 'facilities' or 'operators'.
+     * For list filters, so a renamed record is found by its old name too.
+     */
+    function kop_v2_alias_match_ids($kind, $phrase) {
+        $phrase = trim((string)$phrase);
+        $out = array();
+        if ($phrase === '') return $out;
+        foreach (kop_v2_alias_index()[$kind] ?? array() as $a) {
+            if (!isset($out[$a[0]]) && mb_stripos($a[1], $phrase) !== false) {
+                $out[$a[0]] = kop_alias_label($a[2], $a[1]);
+            }
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_v2_alias_hint_for')) {
+    /**
+     * "Formerly X" / "Also known as X" / "Now known as X" when $phrase matches
+     * one of a record's alternate names but not $own_name, '' otherwise.
+     * $kind: 'facilities' or 'operators' (kop_v2_alias_index() keys). For
+     * search boxes that find records their own way and still say why a
+     * differently-named record is listed.
+     */
+    function kop_v2_alias_hint_for($kind, $id, $phrase, $own_name = '') {
+        $phrase = trim((string)$phrase);
+        if (mb_strlen($phrase) < 3) return '';
+        if ($own_name !== '' && kop_v2_search_score($own_name, $phrase) !== null) return '';
+        $index = kop_v2_alias_index();
+        $best = null;
+        foreach ($index[$kind] ?? array() as $a) {
+            if ((int)$a[0] !== (int)$id) continue;
+            $score = kop_v2_search_score($a[1], $phrase);
+            if ($score !== null && ($best === null || $score < $best[0])) $best = array($score, $a[1], $a[2]);
+        }
+        return $best ? kop_alias_label($best[2], $best[1]) : '';
+    }
+}
+
+if (!function_exists('kop_v2_search_score')) {
+    /**
+     * How well a name matches a phrase, lower is better: 0 the same name,
+     * 1 starts with it, 2 a word in it starts with it, 3 anywhere inside,
+     * null no match. Also compared on kop_facility_name_key(), so
+     * "St. Mary's" finds "St Marys".
+     */
+    function kop_v2_search_score($name, $phrase) {
+        $n = mb_strtolower(trim((string)$name));
+        $p = mb_strtolower(trim((string)$phrase));
+        if ($p === '' || $n === '') return null;
+        $nk = kop_facility_name_key((string)$name);
+        $pk = kop_facility_name_key((string)$phrase);
+        if ($n === $p || ($pk !== '' && $nk === $pk)) return 0;
+        if (mb_strpos($n, $p) === 0 || ($pk !== '' && strpos($nk, $pk) === 0)) return 1;
+        if (preg_match('/(^|[^\p{L}\p{N}])' . preg_quote($p, '/') . '/u', $n)
+            || ($pk !== '' && strpos(' ' . $nk, ' ' . $pk) !== false)) return 2;
+        if (mb_strpos($n, $p) !== false || ($pk !== '' && strpos($nk, $pk) !== false)) return 3;
+        return null;
+    }
+}
+
+if (!function_exists('kop_v2_search_rank')) {
+    /**
+     * Direct name hits and alternate-name hits merged into $limit results.
+     * Each candidate: {id, score, alias, name[, kind]}. Sorted by score, an
+     * alias hit half a step behind a direct hit with the same score (the
+     * docs/PLAN.md 3.7 name-era rule: a name's own record comes first), then
+     * by name; one entry per id, its best match kept. Alternate names always
+     * show up: when any match, a third of the slots (at least one) go to the
+     * best of them even when direct hits alone would fill the list.
+     */
+    function kop_v2_search_rank(array $candidates, $limit) {
+        if ($limit <= 0) return array();
+        usort($candidates, function ($a, $b) {
+            $sa = $a['score'] + ($a['alias'] ? 0.5 : 0);
+            $sb = $b['score'] + ($b['alias'] ? 0.5 : 0);
+            if ($sa != $sb) return $sa < $sb ? -1 : 1;
+            return strcasecmp($a['name'], $b['name']);
+        });
+        $best = array();
+        foreach ($candidates as $c) {
+            if (!isset($best[$c['id']])) $best[$c['id']] = $c;
+        }
+        $all = array_values($best);
+        $top = array_slice($all, 0, $limit);
+        $waiting = array_values(array_filter(array_slice($all, $limit), function ($c) { return $c['alias']; }));
+        $have = count(array_filter($top, function ($c) { return $c['alias']; }));
+        $reserve = max(1, intdiv($limit, 3));
+        while ($have < $reserve && $waiting) {
+            // The weakest direct hit makes room for the next alias hit.
+            for ($i = count($top) - 1; $i >= 0 && $top[$i]['alias']; $i--);
+            if ($i < 0) break;
+            array_splice($top, $i, 1);
+            $top[] = array_shift($waiting);
+            $have++;
+        }
+        return $top;
+    }
+}
+
 if (!function_exists('kop_v2_search')) {
     /**
      * Operators, facilities and places matching a phrase, from v2.
@@ -612,15 +800,13 @@ if (!function_exists('kop_v2_search')) {
      * the facility's state or country page when one exists, '' otherwise (the
      * caller then links to the program index search).
      *
-     * A facility's own name/name_key/unique_name is tried first; when a
-     * phrase of 3+ characters doesn't fill `facility_limit` that way, past
-     * and other names from identification.pastNames / otherNames in
-     * json_data are tried too (cheap LIKE scan, ~4,700 rows), so a renamed
-     * program ("Copper Canyon" -> Sedona Sky Academy) is still found. Those
-     * hits carry `matched_name` (the alias that matched) and `matched_kind`
-     * ('past' or 'other'), and always sort after direct name matches, so a
-     * name belonging to its own separate record (the docs/PLAN.md 3.7
-     * name-era rule) ranks ahead of another record's alias.
+     * Facilities and operators match on their own name and on every
+     * alternate name in kop_v2_alias_index(), so a renamed program ("Copper
+     * Canyon" -> Sedona Sky Academy) is always found. An alternate-name hit
+     * carries `matched_name` (the name that matched) and `matched_kind`
+     * ('past', 'other' or 'current'; kop_v2_search_alias_hint() words it).
+     * Ranking and the slots kept for alternate names: kop_v2_search_rank().
+     * Facilities matched only in other record fields fill what is left.
      */
     function kop_v2_search($phrase, $facility_limit = 10, $operator_limit = 5, $place_limit = 3) {
         global $wpdb;
@@ -629,111 +815,131 @@ if (!function_exists('kop_v2_search')) {
         if ($phrase === '') return $out;
         $like = '%' . $wpdb->esc_like($phrase) . '%';
         $key_like = '%' . $wpdb->esc_like(kop_facility_name_key($phrase)) . '%';
+        $aliases = mb_strlen($phrase) >= 3 ? kop_v2_alias_index() : array('facilities' => array(), 'operators' => array());
 
-        $ops = $wpdb->get_results($wpdb->prepare(
-            "SELECT o.id, o.name, o.json_data,
-                    (SELECT COUNT(*) FROM {$wpdb->prefix}kop_operator_facilities ofc WHERE ofc.operator_id = o.id) AS n
-               FROM {$wpdb->prefix}kop_operators o
-              WHERE o.name LIKE %s OR o.unique_name LIKE %s
-              ORDER BY n DESC, o.name
-              LIMIT %d",
-            $like, $like, $operator_limit
-        ), ARRAY_A);
-        foreach ((array)$ops as $o) {
-            $stored = json_decode($o['json_data'], true);
-            $op = (is_array($stored) && isset($stored['operator'])) ? $stored['operator'] : array();
-            $hq = isset($op['headquarters']) && is_string($op['headquarters']) ? $op['headquarters'] : '';
-            $out['operators'][] = array(
-                'kind' => 'operator', 'display' => $o['name'], 'operator' => $o['name'],
-                'location' => $hq, 'fac_count' => (int)$o['n'], 'url' => '',
-                'profile_url' => function_exists('kop_operator_page_url') ? kop_operator_page_url((int)$o['id']) : '',
-            );
-        }
-
-        $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, name, state, city, country, status
-               FROM facilities_v2
-              WHERE name LIKE %s OR name_key LIKE %s OR unique_name LIKE %s
-              ORDER BY (name LIKE %s) DESC, name
-              LIMIT %d",
-            $like, $key_like, $like, $wpdb->esc_like($phrase) . '%', $facility_limit
-        ), ARRAY_A);
-
-        // Past/other-name fallback: only for queries long enough to avoid
-        // acronym noise, and only to fill out what the name match above left
-        // short, so a record's own name match is never crowded out by
-        // another record's alias.
-        $remaining = $facility_limit - count($rows);
-        if ($remaining > 0 && mb_strlen($phrase) >= 3) {
-            $exclude = array_map('intval', wp_list_pluck((array)$rows, 'id'));
-            $pool_limit = min(150, max(40, $facility_limit * 8));
-            $alias_pool = $wpdb->get_results($wpdb->prepare(
-                "SELECT id, name, state, city, country, status, json_data
-                   FROM facilities_v2
-                  WHERE json_data LIKE %s
-                  LIMIT %d",
-                $like, $pool_limit
-            ), ARRAY_A);
-            foreach ((array)$alias_pool as $ar) {
-                if ($remaining <= 0) break;
-                $id = (int)$ar['id'];
-                if (in_array($id, $exclude, true)) continue;
-                $doc = kop_v2_decode($ar['json_data']);
-                if (!$doc) continue;
-                $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
-                $hit = null;
-                $kind = null;
-                foreach (array('pastNames' => 'past', 'otherNames' => 'other') as $field => $k) {
-                    foreach (kop_v2_search_name_list($ident[$field] ?? null) as $n) {
-                        if (mb_stripos($n, $phrase) !== false) { $hit = $n; $kind = $k; break 2; }
-                    }
+        // Alternate-name candidates, the best-matching name per id.
+        $alias_hits = function ($list) use ($phrase) {
+            $hits = array();
+            foreach ($list as $a) {
+                $score = kop_v2_search_score($a[1], $phrase);
+                if ($score === null) continue;
+                if (!isset($hits[$a[0]]) || $score < $hits[$a[0]]['score']) {
+                    $hits[$a[0]] = array('id' => $a[0], 'score' => $score, 'alias' => true, 'name' => $a[1], 'kind' => $a[2]);
                 }
-                if ($hit === null) continue;
-                unset($ar['json_data']);
-                $ar['matched_name'] = $hit;
-                $ar['matched_kind'] = $kind;
-                $rows[] = $ar;
-                $exclude[] = $id;
-                $remaining--;
             }
-        }
+            return array_values($hits);
+        };
+        $direct_hits = function ($rows) use ($phrase) {
+            $out = array();
+            foreach ((array)$rows as $r) {
+                $score = kop_v2_search_score($r['name'], $phrase);
+                $out[] = array('id' => (int)$r['id'], 'score' => $score === null ? 3 : $score, 'alias' => false, 'name' => (string)$r['name']);
+            }
+            return $out;
+        };
 
-        // Search the remaining record fields after names and aliases. Keep
-        // the candidate set bounded; these JSON blobs are not indexed.
-        $remaining = $facility_limit - count($rows);
-        if ($remaining > 0 && mb_strlen($phrase) >= 4) {
-            $exclude = array_map('intval', wp_list_pluck((array)$rows, 'id'));
-            $detail_pool = $wpdb->get_results($wpdb->prepare(
-                "SELECT id, name, state, city, country, status
-                   FROM facilities_v2
-                  WHERE json_data LIKE %s
-                  ORDER BY name
-                  LIMIT %d",
-                $like, min(500, max(100, $facility_limit * 20))
+        if ($operator_limit > 0) {
+            $ops_table = $wpdb->prefix . 'kop_operators';
+            $direct = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name FROM {$ops_table}
+                  WHERE name LIKE %s OR unique_name LIKE %s
+                  ORDER BY name LIMIT %d",
+                $like, $like, max(30, $operator_limit * 4)
             ), ARRAY_A);
-            foreach ((array)$detail_pool as $detail) {
-                $id = (int)$detail['id'];
-                if (in_array($id, $exclude, true)) continue;
-                $rows[] = $detail;
-                $exclude[] = $id;
-                $remaining--;
-                if ($remaining <= 0) break;
+            $picked = kop_v2_search_rank(array_merge($direct_hits($direct), $alias_hits($aliases['operators'])), $operator_limit);
+            $op_rows = array();
+            if ($picked) {
+                $ids = implode(',', array_map('intval', wp_list_pluck($picked, 'id')));
+                $found = $wpdb->get_results(
+                    "SELECT o.id, o.name, o.json_data,
+                            (SELECT COUNT(*) FROM {$wpdb->prefix}kop_operator_facilities ofc WHERE ofc.operator_id = o.id) AS n
+                       FROM {$ops_table} o
+                      WHERE o.id IN ({$ids})",
+                    ARRAY_A
+                );
+                foreach ((array)$found as $o) $op_rows[(int)$o['id']] = $o;
+            }
+            foreach ($picked as $c) {
+                if (!isset($op_rows[$c['id']])) continue;
+                $o = $op_rows[$c['id']];
+                $stored = json_decode($o['json_data'], true);
+                $op = (is_array($stored) && isset($stored['operator'])) ? $stored['operator'] : array();
+                $hq = isset($op['headquarters']) && is_string($op['headquarters']) ? $op['headquarters'] : '';
+                $out['operators'][] = array(
+                    'id' => (int)$o['id'],
+                    'kind' => 'operator', 'display' => $o['name'], 'operator' => $o['name'],
+                    'location' => $hq, 'fac_count' => (int)$o['n'], 'url' => '',
+                    'profile_url' => function_exists('kop_operator_page_url') ? kop_operator_page_url((int)$o['id']) : '',
+                    'matched_name' => $c['alias'] ? $c['name'] : null,
+                    'matched_kind' => $c['alias'] ? $c['kind'] : null,
+                );
             }
         }
 
-        $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck((array)$rows, 'id')));
-        foreach ((array)$rows as $r) {
+        $rows = array();
+        if ($facility_limit > 0) {
+            $direct = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name FROM facilities_v2
+                  WHERE name LIKE %s OR name_key LIKE %s OR unique_name LIKE %s
+                  ORDER BY (name LIKE %s) DESC, name
+                  LIMIT %d",
+                $like, $key_like, $like, $wpdb->esc_like($phrase) . '%', max(40, $facility_limit * 4)
+            ), ARRAY_A);
+            $picked = kop_v2_search_rank(array_merge($direct_hits($direct), $alias_hits($aliases['facilities'])), $facility_limit);
+
+            // Search the remaining record fields after names and aliases. Keep
+            // the candidate set bounded; these JSON blobs are not indexed.
+            $ids = array_map('intval', wp_list_pluck($picked, 'id'));
+            $remaining = $facility_limit - count($picked);
+            if ($remaining > 0 && mb_strlen($phrase) >= 4) {
+                $detail_pool = $wpdb->get_col($wpdb->prepare(
+                    "SELECT id FROM facilities_v2
+                      WHERE json_data LIKE %s
+                      ORDER BY name
+                      LIMIT %d",
+                    $like, min(500, max(100, $facility_limit * 20))
+                ));
+                foreach ((array)$detail_pool as $id) {
+                    $id = (int)$id;
+                    if (in_array($id, $ids, true)) continue;
+                    $picked[] = array('id' => $id, 'alias' => false);
+                    $ids[] = $id;
+                    if (--$remaining <= 0) break;
+                }
+            }
+            if ($ids) {
+                $by_id = array();
+                $found = $wpdb->get_results(
+                    "SELECT id, name, state, city, country, status FROM facilities_v2 WHERE id IN (" . implode(',', $ids) . ")",
+                    ARRAY_A
+                );
+                foreach ((array)$found as $r) $by_id[(int)$r['id']] = $r;
+                foreach ($picked as $c) {
+                    if (!isset($by_id[$c['id']])) continue;
+                    $r = $by_id[$c['id']];
+                    $r['matched_name'] = $c['alias'] ? $c['name'] : null;
+                    $r['matched_kind'] = $c['alias'] ? $c['kind'] : null;
+                    $rows[] = $r;
+                }
+            }
+        }
+
+        $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck($rows, 'id')));
+        foreach ($rows as $r) {
             $place = $r['state'] ? trim($r['city'] . ', ' . $r['state'], ', ') : trim($r['city'] . ', ' . $r['country'], ', ');
             $op_name = isset($operators[(int)$r['id']]) ? $operators[(int)$r['id']]['name'] : '';
             $out['facilities'][] = array(
+                'id' => (int)$r['id'],
                 'kind' => 'facility', 'display' => $r['name'], 'operator' => $op_name,
                 'location' => $place . ($r['status'] && $r['status'] !== 'Unknown' ? ' (' . $r['status'] . ')' : ''),
                 'fac_count' => 0, 'url' => kop_v2_place_page_url($r['state'], $r['country']),
                 'profile_url' => function_exists('kop_facility_page_url') ? kop_facility_page_url((int)$r['id']) : '',
-                'matched_name' => $r['matched_name'] ?? null,
-                'matched_kind' => $r['matched_kind'] ?? null,
+                'matched_name' => $r['matched_name'],
+                'matched_kind' => $r['matched_kind'],
             );
         }
+
+        if ($place_limit <= 0) return $out;
 
         $keys = $wpdb->get_col($wpdb->prepare(
             "SELECT location_key FROM {$wpdb->prefix}kop_facility_locations
@@ -756,6 +962,21 @@ if (!function_exists('kop_v2_search')) {
     }
 }
 
+if (!function_exists('kop_alias_label')) {
+    /**
+     * The words every search box puts before an alternate name: 'past' ->
+     * "Formerly X", 'current' -> "Now known as X", anything else -> "Also
+     * known as X". The search boxes' scripts word it the same.
+     */
+    function kop_alias_label($kind, $name) {
+        $name = trim((string)$name);
+        if ($name === '') return '';
+        if ($kind === 'past') return 'Formerly ' . $name;
+        if ($kind === 'current') return 'Now known as ' . $name;
+        return 'Also known as ' . $name;
+    }
+}
+
 if (!function_exists('kop_v2_search_alias_hint')) {
     /**
      * "Formerly X" / "Also known as X" for a kop_v2_search() facility/operator
@@ -766,7 +987,7 @@ if (!function_exists('kop_v2_search_alias_hint')) {
      */
     function kop_v2_search_alias_hint($result) {
         if (empty($result['matched_name'])) return '';
-        return ($result['matched_kind'] === 'past' ? 'Formerly ' : 'Also known as ') . $result['matched_name'];
+        return kop_alias_label($result['matched_kind'] ?? '', $result['matched_name']);
     }
 }
 

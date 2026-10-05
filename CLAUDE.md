@@ -192,9 +192,12 @@ php scripts/test-facility-finder.php              # search by name/past name/id 
 # opened (?view=detail&key[]=), file cached in uploads/kop-cache/directory/<fingerprint>/ (inc/directory-feed.php). A field the
 # closed lists read goes in kop_directory_feed_slim_facility()
 python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws the same page as the whole feed, timings
-# Header search dropdown and the site-wide search widget (kop_v2_search() in inc/facility-v2-readers.php, read by
-# inc/ajax-search-lite.php, inc/global-search.php, search.php): also matches identification.pastNames/otherNames,
-# shown as "Formerly X" / "Also known as X", current-name hits ranked first
+# Alternate names always show up in every search box and autocomplete: a facility's or company's pastNames, otherNames
+# and currentName match, and the row says which, worded by kop_alias_label() ("Formerly X" / "Also known as X" / "Now
+# known as X"). kop_v2_search() (header dropdown, search widget, search.php, facility-suggest, research tags) ranks from
+# the cached kop_v2_alias_index() and keeps a third of the slots for alias hits; list filters use kop_v2_alias_match_ids();
+# the admin finder, facility-search.php (Data Manager, news processor, wiki picker), the data forms' autocompletes
+# (js/autocomplete.js alternateNameDetail()), the wizard and the map search carry the kind too. A new box does the same
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
 # Search results link to the record's own page (/facility/, /operator/; wiki entries and inspection rows to the matching
 # facility page in the same state), falling back to the state hub or directory search: kop_search_v2_result_url() and

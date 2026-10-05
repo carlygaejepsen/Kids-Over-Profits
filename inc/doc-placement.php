@@ -522,7 +522,7 @@ add_action('rest_api_init', function () {
                 foreach (kop_facility_finder_search($pdo, $q, 8) as $f) {
                     $place = trim(implode(', ', array_filter(array($f['city'], $f['state'] ?: $f['country']))));
                     $meta = array_filter(array(
-                        $f['matched'] !== '' ? 'Was: ' . $f['matched'] : '',
+                        $f['matched'] !== '' ? (function_exists('kop_alias_label') ? kop_alias_label($f['matched_kind'], $f['matched']) : 'Was: ' . $f['matched']) : '',
                         $place,
                         $f['status'] && $f['status'] !== 'Unknown' ? $f['status'] : '',
                         '#' . $f['id'],

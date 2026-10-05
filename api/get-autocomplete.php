@@ -227,6 +227,7 @@ function collect_operator_values(array $data, array &$set)
         add_values($set, $operator['otherNames'] ?? []);
         add_values($set, $operator['parentCompanies'] ?? []);
         add_values($set, $operator['previousNames'] ?? []);
+        add_values($set, $operator['pastNames'] ?? []);
     }
 
     if (!empty($data['facilities']) && is_array($data['facilities'])) {
@@ -256,6 +257,7 @@ function collect_facility_values(array $data, array &$set)
                 add_value($set, $identification['name'] ?? null);
                 add_value($set, $identification['currentName'] ?? null);
                 add_values($set, $identification['otherNames'] ?? []);
+                add_values($set, $identification['pastNames'] ?? []);
             }
         }
     }

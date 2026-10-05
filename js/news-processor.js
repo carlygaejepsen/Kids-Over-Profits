@@ -1135,6 +1135,15 @@
                     nameSpan.style.fontWeight = '500';
                     opt.appendChild(nameSpan);
 
+                    // A hit on one of the program's other names says which.
+                    if (item.matched_name) {
+                        const akaSpan = document.createElement('div');
+                        akaSpan.textContent = (item.matched_kind === 'past' ? 'Formerly ' : item.matched_kind === 'current' ? 'Now known as ' : 'Also known as ') + item.matched_name;
+                        akaSpan.style.fontSize = '0.85em';
+                        akaSpan.style.color = 'var(--kop-text-muted, #4A5568)';
+                        opt.appendChild(akaSpan);
+                    }
+
                     const loc = [item.city, item.state].filter(Boolean).join(', ');
                     if (loc) {
                         const locSpan = document.createElement('div');

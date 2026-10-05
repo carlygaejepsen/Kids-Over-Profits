@@ -508,6 +508,9 @@ function displayFacilities(facilitiesData, containerId) {
 
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
+            // Past, other and current names, so the search box finds them too.
+            const facilityAliasesAttr = escapeAttribute([].concat(identificationPastNames, identificationOtherNames,
+                cleanText(identification.currentName) || []).join(' | '));
 
             // Only render the "Learn more" disclosure when there is expanded
             // content behind it.
@@ -525,7 +528,7 @@ function displayFacilities(facilitiesData, containerId) {
                     </div>`
                 : '';
 
-            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}" data-has-violations="${facilityHasViolationsFlag(facility) ? '1' : '0'}" data-report-count="${facilityInspectionReportCount(facility)}">
+            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-aliases="${facilityAliasesAttr}" data-status="${statusClass}" data-has-violations="${facilityHasViolationsFlag(facility) ? '1' : '0'}" data-report-count="${facilityInspectionReportCount(facility)}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
                         ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
@@ -570,7 +573,7 @@ function filterFacilities() {
         let visibleFacilities = 0;
         
         facilityCards.forEach(card => {
-            const facilityName = card.dataset.facility.toLowerCase();
+            const facilityName = (card.dataset.facility + ' ' + (card.dataset.aliases || '')).toLowerCase();
             const facilityStatus = card.dataset.status;
             
             const matchesSearch = operatorName.includes(searchTerm) || facilityName.includes(searchTerm);

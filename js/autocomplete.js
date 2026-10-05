@@ -174,6 +174,57 @@ const CACHE_CATEGORY_MAP = {
     operatingperiod: 'operatingPeriods'
 };
 
+// Alternate names for the dropdown's second line, rebuilt with the name lists:
+// lower-cased name -> notes. A record's own name lists its other names
+// ("Formerly A", "Also known as B", "Now known as C"); each other name points
+// back at the record ("Past name of X", "Other name of X").
+const alternateNameNotes = { facility: new Map(), operator: new Map() };
+
+function plainNames(list) {
+    if (typeof list === 'string') return list.trim() ? [list.trim()] : [];
+    if (!Array.isArray(list)) return [];
+    return list
+        .map(n => (n && typeof n === 'object') ? n.name : n)
+        .filter(n => typeof n === 'string' && n.trim())
+        .map(n => n.trim());
+}
+
+function addNameNote(map, name, note) {
+    if (!name || !note) return;
+    const key = name.toLowerCase();
+    if (!map.has(key)) map.set(key, []);
+    const notes = map.get(key);
+    if (!notes.includes(note)) notes.push(note);
+}
+
+/**
+ * Note one record's names: its own name, past names, other names and current
+ * name. Every alternate name is also added to `names` so it can be found.
+ */
+function noteAlternateNames(map, names, name, past, other, current) {
+    const own = typeof name === 'string' ? name.trim() : '';
+    const now = typeof current === 'string' && current.trim() && current.trim() !== own ? current.trim() : '';
+    const pastList = plainNames(past).filter(n => n !== own);
+    const otherList = plainNames(other).filter(n => n !== own);
+    const few = list => list.slice(0, 2).join(', ') + (list.length > 2 ? ' +' + (list.length - 2) : '');
+    if (own) {
+        if (pastList.length) addNameNote(map, own, 'Formerly ' + few(pastList));
+        if (otherList.length) addNameNote(map, own, 'Also known as ' + few(otherList));
+        if (now) addNameNote(map, own, 'Now known as ' + now);
+    }
+    pastList.forEach(n => { names.add(n); if (own) addNameNote(map, n, 'Past name of ' + own); });
+    otherList.forEach(n => { names.add(n); if (own) addNameNote(map, n, 'Other name of ' + own); });
+    if (now) { names.add(now); if (own) addNameNote(map, now, 'Formerly ' + own); }
+}
+
+/** The second line for a suggestion in a facility or operator box, '' if none. */
+function alternateNameDetail(kind, value) {
+    const map = alternateNameNotes[kind];
+    if (!map || typeof value !== 'string') return '';
+    const notes = map.get(value.trim().toLowerCase());
+    return notes ? notes.slice(0, 3).join(' | ') : '';
+}
+
 /**
  * Invalidate cached aggregated data
  * @param {string|null} category - Specific category to invalidate, or null for all
@@ -206,15 +257,19 @@ function getAllOperators() {
         const projects = window.projects || {};
         const customOperators = window.customOperators || [];
         const operators = new Set([...DEFAULT_OPERATORS, ...customOperators]);
+        alternateNameNotes.operator = new Map();
 
         Object.values(projects).forEach(project => {
             // Skip project-level operator data for location projects
             // (location project names are places, not companies)
             if (project.category !== 'locations') {
-                if (project.data && project.data.operator && project.data.operator.name) operators.add(project.data.operator.name);
-                if (project.data && project.data.operator && project.data.operator.currentName) operators.add(project.data.operator.currentName);
-                if (project.data && project.data.operator && project.data.operator.otherNames) {
-                    project.data.operator.otherNames.forEach(name => operators.add(name));
+                const op = project.data && project.data.operator;
+                if (op && op.name) operators.add(op.name);
+                if (op) {
+                    noteAlternateNames(alternateNameNotes.operator, operators, op.name,
+                        plainNames(op.pastNames).concat(plainNames(op.previousNames), plainNames(op.formerNames)),
+                        plainNames(op.otherNames).concat(plainNames(op.aliases)),
+                        op.currentName);
                 }
             }
 
@@ -245,12 +300,15 @@ function getAllFacilityNames() {
         const projects = window.projects || {};
         const customFacilityNames = window.customFacilityNames || [];
         const names = new Set(customFacilityNames);
+        alternateNameNotes.facility = new Map();
 
         Object.values(projects).forEach(project => {
             project.data && project.data.facilities && project.data.facilities.forEach(facility => {
-                if (facility.identification && facility.identification.name) names.add(facility.identification.name);
-                if (facility.identification && facility.identification.currentName) names.add(facility.identification.currentName);
-                facility.identification && facility.identification.otherNames && facility.identification.otherNames.forEach(name => names.add(name));
+                const ident = facility.identification;
+                if (!ident) return;
+                if (ident.name) names.add(ident.name);
+                noteAlternateNames(alternateNameNotes.facility, names, ident.name,
+                    ident.pastNames, ident.otherNames, ident.currentName);
             });
 
             // Collect from referrer consultants' facilitiesReferred (shared autocomplete)
@@ -857,6 +915,9 @@ function createAutocomplete(input, getDataFunction, category) {
         wrapper.appendChild(dropdown);
     }
 
+    const notesKind = category === 'operator' ? 'operator'
+        : (category === 'facility' || category === 'facilityref') ? 'facility' : '';
+
     let currentFocus = -1;
     let abortController = null; // For cancelling pending requests
     let isCommittingSelection = false; // Flag to prevent re-showing dropdown after selection
@@ -970,12 +1031,15 @@ function createAutocomplete(input, getDataFunction, category) {
             div.className = 'autocomplete-item';
             // A suggestion is a string, or {value, detail} for a server-backed one
             // (detail: where it is, and "Formerly X" for a past-name hit).
-            const detail = item && typeof item === 'object' ? String(item.detail || '') : '';
             const suggestionText = item && typeof item === 'object'
                 ? String(item.value || '')
                 : (typeof item === 'string'
                     ? item
                     : (item === null || item === undefined ? '' : String(item)));
+            // A plain name in a facility or operator box shows its other names.
+            const detail = item && typeof item === 'object'
+                ? String(item.detail || '')
+                : (notesKind ? alternateNameDetail(notesKind, suggestionText) : '');
             div.dataset.value = suggestionText;
 
             if (detail) {

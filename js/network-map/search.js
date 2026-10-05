@@ -39,8 +39,9 @@
 
     /**
      * The best matches for a query, best first. Each result is
-     * {node, level, via} where via is the alias that matched, or '' when the
-     * name itself did.
+     * {node, level, via, viaKind} where via is the alias that matched, or ''
+     * when the name itself did, and viaKind says which kind of name it is:
+     * 'past' (formerNames), 'current' (what it is called now) or 'other'.
      */
     function rank(nodes, query, limit) {
         var needle = normalise(query);
@@ -50,15 +51,19 @@
         nodes.forEach(function (node) {
             var best = levelOf(normalise(node.name), needle);
             var via = '';
+            var viaKind = '';
             var score = best === -1 ? Infinity : best * 2;
             /* Every other name the place answers to: the board's aliases,
              * the names it traded under before, and the rest. Someone who
              * remembers the old name is exactly the reader who needs to
              * find the place. */
-            (node.aliases || [])
-                .concat(node.formerNames || [], node.otherNames || [],
-                    node.currentName ? [node.currentName] : [])
-                .forEach(function (alias) {
+            var named = [];
+            (node.aliases || []).forEach(function (a) { named.push([a, 'other']); });
+            (node.formerNames || []).forEach(function (a) { named.push([a, 'past']); });
+            (node.otherNames || []).forEach(function (a) { named.push([a, 'other']); });
+            if (node.currentName) named.push([node.currentName, 'current']);
+            named.forEach(function (pair) {
+                    var alias = pair[0];
                     var level = levelOf(normalise(alias), needle);
                     /* An alias match ranks just below a name match at the
                      * same level, so "Provo" finds Provo Canyon School
@@ -66,10 +71,11 @@
                     if (level !== -1 && level * 2 + 1 < score) {
                         score = level * 2 + 1;
                         via = alias;
+                        viaKind = pair[1];
                     }
                 });
             if (score === Infinity) return;
-            hits.push({ node: node, level: score, via: via });
+            hits.push({ node: node, level: score, via: via, viaKind: viaKind });
         });
         hits.sort(function (a, b) {
             if (a.level !== b.level) return a.level - b.level;
@@ -154,7 +160,8 @@
                 var meta = document_.createElement('span');
                 meta.className = 'kop-network__search-meta';
                 meta.textContent = (KIND_WORDS[hit.node.kind] || hit.node.kind || '') +
-                    (hit.via ? ' - also called ' + hit.via : '');
+                    (hit.via ? ' - ' + (hit.viaKind === 'past' ? 'formerly '
+                        : hit.viaKind === 'current' ? 'now known as ' : 'also known as ') + hit.via : '');
                 item.appendChild(meta);
                 item.addEventListener('mousedown', function (event) {
                     /* mousedown, not click: the input's blur would close the

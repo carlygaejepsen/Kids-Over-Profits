@@ -204,10 +204,9 @@
             const type = category === 'providers' ? 'provider' : 'facility';
             let entry = facilities.get(key);
             if (!entry) {
-                const aliases = [ident.currentName].concat(nameList(ident.otherNames), nameList(ident.pastNames))
-                    .map((a) => String(a || '').trim())
-                    .filter((a) => a && fold(a) !== fold(name));
-                entry = { type, name, aliases, place, operator: '', facilityId: id, homes: [] };
+                const kinds = aliasKinds(ident.currentName, ident.pastNames, ident.otherNames);
+                const aliases = Object.keys(kinds).map((k) => kinds[k].name).filter((a) => fold(a) !== fold(name));
+                entry = { type, name, aliases, aliasKinds: kinds, place, operator: '', facilityId: id, homes: [] };
                 facilities.set(key, entry);
                 entries.push(entry);
             }
@@ -245,12 +244,14 @@
                 // Skip shells with nothing in them (published wiki entries load
                 // as empty company projects).
                 if (opName || named.length) {
+                    const kinds = aliasKinds(op.currentName, nameList(op.pastNames).concat(nameList(op.previousNames)), op.otherNames);
                     entries.push({
                         type: 'company',
                         name: opName || key,
-                        aliases: [key, op.currentName].concat(nameList(op.otherNames), nameList(op.pastNames))
+                        aliases: [key].concat(Object.keys(kinds).map((k) => kinds[k].name))
                             .map((a) => String(a || '').trim())
                             .filter((a) => a && fold(a) !== fold(opName || key)),
+                        aliasKinds: kinds,
                         place: String(op.headquarters || op.location || '').trim(),
                         count: named.length,
                         homes: [{ project: key, category }]
@@ -264,6 +265,28 @@
         });
 
         state.index = entries;
+    }
+
+    // folded name -> {name, kind}: 'past', 'other' or 'current' (what the
+    // record is called now), so a hit can say "Formerly X" or "Now known as X".
+    function aliasKinds(current, past, other) {
+        const out = {};
+        const add = (n, kind) => {
+            n = String(n || '').trim();
+            if (n && !out[fold(n)]) out[fold(n)] = { name: n, kind };
+        };
+        add(current, 'current');
+        nameList(past).forEach((n) => add(n, 'past'));
+        nameList(other).forEach((n) => add(n, 'other'));
+        return out;
+    }
+
+    function aliasLabel(entry, via) {
+        const k = entry.aliasKinds && entry.aliasKinds[fold(via)];
+        const kind = k ? k.kind : 'other';
+        if (kind === 'past') return `Formerly ${esc(via)}`;
+        if (kind === 'current') return `Now known as ${esc(via)}`;
+        return `Also known as ${esc(via)}`;
     }
 
     function scoreEntry(entry, q, tokens) {
@@ -380,7 +403,7 @@
         box.innerHTML = `<ul class="kop-wiz-hits">${hits.map((hit, i) => {
             const e = hit.entry;
             const bits = [];
-            if (hit.via) bits.push(`Also known as ${esc(hit.via)}`);
+            if (hit.via) bits.push(aliasLabel(hit.entry, hit.via));
             if (e.place) bits.push(esc(e.place));
             if (e.operator && fold(e.operator) !== fold(e.name)) bits.push(`Run by ${esc(e.operator)}`);
             if (e.type === 'company' && e.count) bits.push(`${e.count} program${e.count === 1 ? '' : 's'}`);

@@ -1317,17 +1317,44 @@ function kop_research_search_facilities($request) {
         return rest_ensure_response(array('results' => array()));
     }
 
-    $like = '%' . $wpdb->esc_like($phrase) . '%';
-    $ids  = $wpdb->get_col($wpdb->prepare(
-        "SELECT id FROM facilities_v2 WHERE name LIKE %s ORDER BY (name LIKE %s) DESC, name LIMIT 12",
-        $like,
-        $wpdb->esc_like($phrase) . '%'
-    ));
+    // Programs by their own name or any past/other name (kop_v2_search()),
+    // never by a word in their other fields: this picks a program, and
+    // "Add as a new program" below must not offer a renamed one again.
+    $ids  = array();
+    $hint = array();
+    if (function_exists('kop_v2_search')) {
+        foreach (kop_v2_search($phrase, 12, 0, 0)['facilities'] as $f) {
+            if (empty($f['matched_name']) && kop_v2_search_score($f['display'], $phrase) === null) {
+                continue;
+            }
+            $ids[] = (int) $f['id'];
+            $hint[(int) $f['id']] = kop_v2_search_alias_hint($f);
+        }
+    } else {
+        $like = '%' . $wpdb->esc_like($phrase) . '%';
+        $ids  = $wpdb->get_col($wpdb->prepare(
+            "SELECT id FROM facilities_v2 WHERE name LIKE %s ORDER BY (name LIKE %s) DESC, name LIMIT 12",
+            $like,
+            $wpdb->esc_like($phrase) . '%'
+        ));
+    }
 
-    return rest_ensure_response(array('results' => array_merge(
-        kop_research_operator_chips(kop_research_search_operator_ids($phrase), true),
-        kop_research_facility_chips($ids)
-    )));
+    // Each result says which other name it was found by ("Formerly X").
+    $results = array();
+    foreach (kop_research_operator_chips(kop_research_search_operator_ids($phrase), true) as $chip) {
+        $chip['aka'] = function_exists('kop_v2_alias_hint_for') ? kop_v2_alias_hint_for('operators', $chip['id'], $phrase, $chip['name']) : '';
+        $results[] = $chip;
+    }
+    $facility_chips = array();
+    foreach (kop_research_facility_chips($ids) as $chip) {
+        $chip['aka'] = $hint[$chip['id']] ?? '';
+        $facility_chips[$chip['id']] = $chip;
+    }
+    foreach ($ids as $id) {
+        if (isset($facility_chips[(int) $id])) $results[] = $facility_chips[(int) $id];
+    }
+
+    return rest_ensure_response(array('results' => $results));
 }
 
 /**

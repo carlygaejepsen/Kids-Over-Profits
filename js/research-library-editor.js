@@ -164,13 +164,17 @@
                 button.setAttribute('data-type', tagType(row.type));
                 button.setAttribute('data-name', row.name);
                 button.setAttribute('data-place', row.place || '');
-                button.textContent = row.name + (row.place ? ' - ' + row.place : '');
+                button.textContent = row.name + (row.place ? ' - ' + row.place : '') + (row.aka ? ' (' + row.aka + ')' : '');
                 li.appendChild(button);
                 tagResults.appendChild(li);
             });
             // Nothing by exactly this name: offer to add it as a new program.
+            // A program found by its past or other name counts: it is the same program.
             var exact = results.some(function (row) {
-                return String(row.name).toLowerCase() === phrase.toLowerCase();
+                var p = phrase.toLowerCase();
+                var aka = String(row.aka || '').toLowerCase();
+                return String(row.name).toLowerCase() === p
+                    || (aka !== '' && aka.slice(-p.length - 1) === ' ' + p);
             });
             if (!exact && config.create) {
                 var createLi = document.createElement('li');
