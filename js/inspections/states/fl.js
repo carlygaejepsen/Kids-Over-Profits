@@ -3,8 +3,10 @@
  *
  * Data comes from api/inspections-read.php?state=FL, two agencies:
  *   AHCA  Agency for Health Care Administration licensing surveys of RTCs and
- *         therapeutic group homes. Each survey carries its own structured
- *         deficiency list (code, requirement, correction date).
+ *         therapeutic group homes, children's crisis stabilization units and
+ *         psychiatric hospitals (program_category names the type). Each survey
+ *         carries its own structured deficiency list (code, requirement,
+ *         correction date).
  *   DJJ   Department of Juvenile Justice documents for residential commitment
  *         and detention programs:
  *           QI Residential / QI Detention  quality improvement reviews; each
@@ -20,8 +22,9 @@
  * showing none (QI only when the text has no failed/limited rating at all,
  * since follow-up reviews quote earlier ratings).
  *
- * Ten AHCA rows are pagination rows the scraper parsed as surveys (survey date
- * "1234567", inspection type "1"); they are not shown. AHCA surveys with no
+ * Ten older AHCA rows are pagination rows the scraper parsed as surveys (survey
+ * date "1234567", inspection type "1"); they are not shown. The scraper now
+ * skips the pager and reads every page. AHCA surveys with no
  * deficiencies carry a placeholder "None" entry, which is not counted.
  */
 (function () {
