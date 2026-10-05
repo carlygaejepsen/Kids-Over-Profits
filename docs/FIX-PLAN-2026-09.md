@@ -637,9 +637,15 @@ nothing can be until a person approves it.
   left out), OH (residential review comments), WV (federal SS= letter
   weighted as Georgia's), IA (PMIC CMS-2567, no E tags), MD (the state's
   safety rating: 1.0 / 0.7), SD (corrective action plans only) and VA (VDSS
-  violations; DBHDS rows rated N or NS). Still out: WA (rule, finding and
-  plan interleaved), NV (no text), OR (rule wording), MT (not in
-  `inspection_reports`). Owner rules: a citation whose fault is only
+  violations; DBHDS rows rated N or NS). Montana too: it has no scraper
+  posting to the database, so `api/lib-mt-reports.php` copies
+  `js/data/mt_reports.json` (292 surveys, 28 programs) into
+  `inspection_facilities` / `inspection_reports` before every applied scan
+  (unchanged surveys are left alone; a changed one is rescanned). Its
+  findings passages are read without a rule (they are often under the wrong
+  one) and with the program's plan cut out; against the file, 9 candidates.
+  Still out: WA (rule, finding and plan interleaved), NV (no text), OR (rule
+  wording). Owner rules: a citation whose fault is only
   paperwork or training (`kop_ih_paperwork_only`: the rule cited is about
   records, reporting or training, or the text names only such a failure and
   no failure of care) keeps physical and sexual abuse by staff and medical

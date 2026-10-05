@@ -142,9 +142,12 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'exclude'  => kop_ih_peer_pattern() . '|\b(?:assault\w*|aggress\w*|attack\w*|violen\w+)\s+(?:against|on|toward|towards)\s+(?:the |a |an |facility |program )?(?:staff|personnel|employees?|caregivers?|nurses?)\b',
                 'patterns' => array(
                     // Staff by role, or by the labels the states use: S1 (California), E1 (Arizona).
-                    '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b[^.]{0,80}\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|dragg\w+|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b[^.]{0,80}\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
                     '\bphysical(?:ly)? (?:abus\w+|assault\w*)',
                     '\bcorporal punishment\b',
+                    // Picked up or pulled by the shirt or hair, more force than a hold.
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|[SE]\d{1,2})s?\b[^.]{0,60}\b(?:pick\w*|pull\w*|lift\w*|grabb\w*)\s+(?:\w+\s+){0,8}?by (?:his|her|their|the) (?:hair|shirt|collar|neck|throat|hood\w*|ear)s?\b',
+                    '\b(?:excessive|unnecessary|inappropriate|unreasonable) (?:physical )?force\b|\bphysical force\b[^.]{0,80}\bby (?:the )?staff\b',
                 ),
             ),
             'restraint_injury' => array(
@@ -155,7 +158,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'patterns' => array(
                     '\b(?:restrain\w*|seclu\w+|physical holds?|prone|take-?downs?|emergency behavior intervention|EBI|personal restraint)\b',
                 ),
-                'requires' => '\b(?:injur\w+|bruis\w+|fractur\w+|broken?|bleed\w*|blood\w*|concussion|abrasions?|rug burns?|carpet burns?|swollen|swelling|lacerat\w+|unconscious|(?:could not|couldn\'t|unable to) breathe|dislocat\w+|sprain\w*|scratch\w*|marks?)\b',
+                'requires' => '\b(?:being hurt|hurt (?:him|her|them)|injur\w+|bruis\w+|fractur\w+|broken?|bleed\w*|blood\w*|concussion|abrasions?|rug burns?|carpet burns?|swollen|swelling|lacerat\w+|unconscious|(?:could not|couldn\'t|unable to) breathe|dislocat\w+|sprain\w*|scratch\w*|marks?)\b',
             ),
             // A suicide attempt and self-harm are told apart (owner, 2026-09-30):
             // cutting or swallowing an object is not labelled a suicide attempt.
@@ -247,7 +250,8 @@ if (!function_exists('kop_ih_scanner_version')) {
     function kop_ih_adult_took_part($sentence) {
         $adult = '\b(?:staff(?: members?)?|caregivers?|employees?|volunteers?|adults?|counselors?|supervisors?|house ?parents?|administrators?|teachers?|therapists?|directors?|owners?|nurses?|coach(?:es)?|mentors?|(?:foster|resource) (?:parent|mother|father)s?|personnel|[SE]\d{1,2}|(?:unidentified|unknown|adult|older) (?:male|female|man|woman)|m[ae]n|wom[ae]n)\b';
         $act = '\b(?:sex\w*|touch\w*|kiss\w*|fondl\w+|grop\w+|intercourse|massag\w+|nude|naked|propositi\w+|groom\w+|flirt\w*|private (?:parts|areas?)|genital\w*|relationships?)\b';
-        $block = '/\b(?:supervis|unaware|aware|monitor|allow|permit|fail|result|led to|lead to|while|when|check|asleep|slept|sleep|prevent|protect|separat|interven|report(?!edly)|notif|inform|discover|observ|caught|witness|walk|notic|saw|seen|learn|look|oblivious|redirect|stat(?:ed|es)|said|told|interview|describ|explain|indicat|confirm)\w*|\./iu';
+        // Also a numbered child in between ("reported to staff that Youth #2 and Youth #3 engaged"), or the adult's view ("hid from staff's view and engaged").
+        $block = '/^(?:\x{2019}|\')s\b|\b(?:Client|Child|Youth|Resident|Minor|Participant|Patient|Student) ?#\s?\d+|\bP ?#\d+|\b[CRY]\d{1,2}\b|\b(?:supervis|unaware|aware|monitor|allow|permit|fail|result|led to|lead to|while|when|check|asleep|slept|sleep|prevent|protect|separat|interven|report(?!edly)|notif|inform|discover|observ|caught|witness|walk|notic|saw|seen|learn|look|oblivious|redirect|stat(?:ed|es)|said|told|interview|describ|explain|indicat|confirm)\w*|\./iu';
         if (!preg_match_all('/' . $adult . '/iu', $sentence, $adults, PREG_OFFSET_CAPTURE)) return false;
         if (!preg_match_all('/' . $act . '/iu', $sentence, $acts, PREG_OFFSET_CAPTURE)) return false;
         foreach ($adults[0] as $a) {
@@ -360,8 +364,9 @@ if (!function_exists('kop_ih_scanner_version')) {
     function kop_ih_peer_pattern() {
         // A client label: "C1", "Y2", "Client #2", "Child 1 (C1)", each maybe followed by a
         // form reference in brackets. Staff are S1, S2 and never match.
-        $label = '(?:(?:Client|Child|Youth|Resident|Minor) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\b[CYR]\d+\b)(?:\s*\([^)]{0,60}\))?';
-        $second = '(?:(?:Client|Child|Youth|Resident|Minor) ?)?\(?' . $label;
+        $label = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\bP ?#\d+|\b[CYR]\d+\b)(?:\s*\([^)]{0,60}\))?';
+        // "Participant #1 and #2", "Youth #2 and Youth #3": a bare "#2" after a label is the second child.
+        $second = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?)?\(?(?:' . $label . '|#\s?\d+)';
         $verb = '(?:hit|hitting|struck|punch|slapp|kick|chok|shov|assault|attack|fought|fight|beat|touch|grop|fondl|rape|raping|molest|sexual|engag|had sex)';
         $noun = '(?:child|children|client|clients|resident|residents|youth|youths|minor|minors|student|students|peer|peers|kids?|roommates?)';
         $other = '(?:another|other|fellow|younger|older) ' . $noun;
@@ -390,7 +395,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** A child in care, by word or by the labels the states use (C1, R1, Y1, "Client #2"). */
     function kop_ih_child_word() {
-        return '(?:child(?:ren)?|clients?|residents?|youths?|minors?|students?|patients?|peers?|juveniles?|boys?|girls?|kids?|[CRY]\d{1,2}|(?:Client|Child|Youth|Resident|Minor) ?#?\d+)';
+        return '(?:child(?:ren)?|clients?|residents?|youths?|minors?|students?|patients?|participants?|peers?|juveniles?|boys?|girls?|kids?|[CRY]\d{1,2}|P ?#\d+|(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+)';
     }
 
     /**
@@ -441,7 +446,9 @@ if (!function_exists('kop_ih_scanner_version')) {
         return '\b(?:fail\w*|neglect\w*|late|untimely|delay\w*|without)\s+(?:to\s+)?(?:\w+\s+){0,2}?' . $verb . '\b'
             // Not "the child did not tell staff": only the program's records and notices.
             . '|\b(?:did not|didn\'t|does not|was not|were not|has not|had not|have not|never)\s+(?:\w+\s+){0,2}?(?:report|notify|document|record|log|submit|chart)\w*\b'
-            . '|\b(?:report\w*|notif\w*|submit\w*|contact\w*)\b[^.]{0,40}\b(?:within (?:\S+ ){1,2}(?:hours?|days?)|timely|in writing|(?:\w+ ){0,2}(?:hours?|days?) late)\b'
+            . '|\b(?:did not|didn\'t|does not|do not|was not|were not|has not|had not|fail\w* to|not)\s+(?:\w+\s+){0,3}?(?:provide|submit|send|complete|file|have|contain|include|show|maintain|keep|obtain)\s+(?:\w+\s+){0,4}?(?:written|documentation|documented|reports?|records?|copy|copies|logs?|forms?|signatures?|notices?|notifications?)\b'
+            . '|\b(?:no|missing|lack\w*|incomplete|absent)\s+(?:\w+\s+){0,2}?(?:documentation|paperwork|signatures?|written (?:report|notice|notification|documentation))\b'
+            . '|\b(?:report\w*|notif\w*|submit\w*|contact\w*)\b[^.]{0,80}\b(?:within (?:\S+ ){1,2}(?:hours?|days?)|timely|in writing|(?:\w+ ){0,2}(?:hours?|days?) late)\b'
             . '|\b(?:untrained|not (?:been |yet )?trained|(?:lack\w*|without|no) (?:\w+ )?(?:training|certification)|(?:training|certification)s? (?:was |were |had |has )?(?:expired|missing|incomplete|overdue|lapsed|out of date)|(?:expired|missing|incomplete|overdue|lapsed) (?:\w+ ){0,3}(?:training|certification)s?)\b';
     }
 
@@ -631,13 +638,12 @@ if (!function_exists('kop_ih_scanner_version')) {
      * interleaved line by line, and Nevada stores no finding text. Oregon's
      * site visit findings are almost all the rule's own wording run together
      * with what the licensor saw (a dry run on 2026-09-28 queued 90, nearly
-     * every one a quoted rule), so it is left out. Montana's surveys are not
-     * in inspection_reports (mt_dl.py only downloads them; the page reads
-     * js/data/mt_reports.json).
+     * every one a quoted rule), so it is left out. Montana's surveys reach
+     * inspection_reports through api/lib-mt-reports.php, not a scraper.
      */
     function kop_ih_supported_states() {
         return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK',
-            'PA', 'MI', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA');
+            'PA', 'MI', 'MT', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA');
     }
 
     /**
@@ -688,6 +694,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             case 'VA': return kop_ih_extract_va($data);
             case 'MI': return kop_ih_extract_mi($data, (string) ($row['raw_content'] ?? ''));
             case 'PA': return kop_ih_extract_pa($data);
+            case 'MT': return kop_ih_extract_mt($data);
         }
         return array();
     }
@@ -1591,6 +1598,60 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'factor' => ($sanction || $repeat) ? 1.0 : kop_ih_citation_factor($investigation),
                 'corrected_on_site' => null, 'kind' => 'citation',
             );
+        }
+        return $out;
+    }
+
+    /**
+     * Montana (api/lib-mt-reports.php copies js/data/mt_reports.json into the
+     * database): DPHHS statements of deficiencies for youth care facilities,
+     * therapeutic group homes and private alternative adolescent residential
+     * programs, as Header and Issues. Every rule listed is one not met, but
+     * the findings are not reliably under their rule (185 of 749 describe the
+     * previous rule), so each distinct findings passage is a finding with no
+     * standard. Header.Description repeats a passage on about a third of
+     * surveys and is read once. A passage opens with the form's "The intent of
+     * this rule or law has not been met as evidenced by" and "Findings:",
+     * which are cut. The plan of correction is the program's own text and is
+     * never read. A complaint inspection is the Department confirming what
+     * was reported; a survey with a repeat deficiency keeps the full score.
+     */
+    function kop_ih_extract_mt(array $data) {
+        $header = is_array($data['Header'] ?? null) ? $data['Header'] : array();
+        $issues = is_array($data['Issues'] ?? null) ? $data['Issues'] : array();
+        if (!$issues && trim((string) ($header['Description'] ?? '')) === '') return array();
+        $type = '';
+        foreach ($header as $key => $value) {
+            if (in_array($key, array('Facility', 'Administrator', 'Description'), true) || !is_scalar($value)) continue;
+            if (preg_match('/^(?:Renewal|Complaint|Follow[\s-]?Up|Provisional Status|Initial|Annual)\b.*Inspection$/iu', trim((string) $value))) {
+                $type = trim((string) $value);
+                break;
+            }
+        }
+        $repeat = false;
+        foreach ($issues as $issue) if (is_array($issue) && !empty($issue['Repeat Deficiency'])) $repeat = true;
+        $complaint = (bool) preg_match('/complaint/i', $type);
+        $label = 'Deficiency cited' . ($type !== '' ? ', ' . strtolower($type) : '') . ($repeat ? ', repeat deficiency' : '');
+        $sources = array((string) ($header['Description'] ?? ''));
+        foreach ($issues as $issue) {
+            if (is_array($issue)) $sources[] = (string) ($issue['Findings'] ?? '');
+        }
+        $seen = array();
+        $out = array();
+        foreach ($sources as $source) {
+            // The program's plan, where the extraction ran it into the findings, up to the next rule's findings.
+            $source = (string) preg_replace('/\bPROVIDER\W{0,3}S\W*PLAN OF CORRECTION\b.*?(?=\bThe intent of this rule|\bFINDINGS?\s*:|$)/isu', ' ', $source);
+            foreach ((array) preg_split('/\bThe intent of this rule(?: or law)? has not been met as evidenced\s+by\b[^\n]*|\bFINDINGS?\s*:/iu', $source) as $passage) {
+                $text = kop_ih_clean_text($passage);
+                if (mb_strlen($text) < 40) continue;
+                $key = mb_strtolower((string) preg_replace('/\W+/u', '', $text));
+                if (isset($seen[$key])) continue;
+                $seen[$key] = true;
+                $out[] = array(
+                    'text' => $text, 'standard' => '', 'state_label' => $label,
+                    'factor' => ($complaint || $repeat) ? 1.0 : kop_ih_citation_factor(false), 'corrected_on_site' => null, 'kind' => 'citation',
+                );
+            }
         }
         return $out;
     }

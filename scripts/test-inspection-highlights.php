@@ -187,6 +187,14 @@ $sentence_cases = array_merge($sentence_cases, array(
     // ... but what staff did to a child counts however it was cited.
     array('The facility failed to report to Licensing within 24 hours that S1 slapped C1.', array('physical_abuse')),
     array('Staff restrained the child in a prone hold, causing a broken wrist, and did not document the restraint.', array('restraint_injury')),
+    // Montana's surveys (2026-10-05).
+    array('1. Youth #4 reports that he witnessed Staff #2 pick Youth #1 up by his shirt and drag him to the unit from the dining hall and place him in a restraint.', array('physical_abuse')),
+    array('There are consistent reports from both youth and staff of verbal abuse, use of physical force, profanity and degradation of youth by staff as evidenced by:', array('physical_abuse')),
+    array('Youth #4 heard Youth #1 scream during the restraint that he was being hurt.', array('restraint_injury')),
+    array('Participant #1 and #2 had stacked several bean bags up and made a little wall in front of themselves to hide from staff’s view and engaged in a sexual activity.', array()),
+    array('On 08/19/2024, Youth #1 reported to staff that Youth #2 and Youth #3 engaged in sexual activity.', array()),
+    array('P#1 suffered injuries of multiple bruises, bite marks, and scratches that were done by participant #2 during this incident.', array()),
+    array('Staff did not report an incident of child abuse or neglect that occurred on 9/6/2013 to the state child abuse hotline within 24 hours of the incident.', array()),
     // Owner rule, 2026-10-05: a resident assaulting staff does not count.
     array('C1 punched a staff member in the face.', array()),
     array('The resident assaulted staff and police were called.', array()),
@@ -754,7 +762,38 @@ $d['form'] = 'table';
 check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a table-form scan is left out');
 unset($d['form'], $d['counts_as_violation']);
 check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a document the page does not count is left out');
-check(!in_array('NV', kop_ih_supported_states(), true) && !in_array('OR', kop_ih_supported_states(), true) && count(kop_ih_supported_states()) === 23, 'states: 23 supported, Nevada and Oregon left out');
+check(!in_array('NV', kop_ih_supported_states(), true) && !in_array('OR', kop_ih_supported_states(), true) && count(kop_ih_supported_states()) === 24, 'states: 24 supported, Nevada and Oregon left out');
+
+// Montana (js/data/mt_reports.json, copied in by api/lib-mt-reports.php): findings passages, never the plan.
+$mt = static function (array $survey) { return array('report_date' => '09/14/2018', 'raw_content' => '', 'categories_json' => json_encode($survey)); };
+$survey = array('source_file' => 'x.txt', 'Header' => array('Facility' => 'Test Ranch', 'Survey Type' => 'Complaint Inspection', 'Survey Date' => '09/14/2018',
+    'Description' => 'THE INTENT OF THIS RULE HAS NOT BEEN MET, AS EVIDENCED BY: The surveyor’s review of records. Findings: 1) Staff #1 did not provide appropriate supervision to residents #1 and #2. Resident #2 was discovered by a person in the community unconscious on the sidewalk.'),
+    'Issues' => array(
+        array('Rule' => '37.97.154-1 YOUTH CARE FACILITY (YCF): CARE AND GUID', 'Findings' => '1) Staff #1 did not provide appropriate supervision to residents #1 and #2. Resident #2 was discovered by a person in the community unconscious on the sidewalk.', 'Repeat Deficiency' => false),
+        array('Rule' => 'x', 'Findings' => 'Findings: The facility did not provide a copy of the written report as described in MCA 53-21-107(7)(a) through (7)(e) within 5 working days of the completion of the investigation to the departments Licensure Bureau regarding Resident #3’s selfharm/suicide attempt on 7/15/2018.'),
+        array('Rule' => 'y', 'Findings' => '1) Participant #4 missed medication on 5/1/20 through 5/15/20 with no documentation of the error PROVIDERS PLAN OF CORRECTION: 1) Amend current MAR to show each dose. Findings: 2) Staff #2 restrained Youth #1 in a prone hold, causing a bloody nose.'),
+    ));
+$f = kop_ih_extract('MT', $mt($survey));
+check(count($f) === 5 && $f[0]['factor'] === 1.0 && $f[0]['standard'] === '', 'MT: each distinct passage once (the Description repeat read once), a complaint at full weight; got ' . count($f));
+check(!array_filter($f, static function ($x) { return stripos($x['text'], 'Amend current MAR') !== false; }), 'MT: the program\'s plan of correction is cut out');
+$cats = array_map(static function ($c) { return $c['category']; }, kop_ih_candidates('MT', $mt($survey)));
+sort($cats);
+check($cats === array('medical_neglect', 'restraint_injury'), 'MT: the restraint and the missed doses are queued, the late written report is not; got ' . implode(',', $cats));
+
+// The importer: Montana's surveys into the database, idempotent.
+require_once dirname(__DIR__) . '/api/lib-mt-reports.php';
+$mtdb = new PDO('sqlite::memory:');
+$mtdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$mtdb->exec('CREATE TABLE inspection_facilities (id INTEGER PRIMARY KEY, state TEXT, facility_name TEXT, full_address TEXT, phone TEXT, program_category TEXT, program_name TEXT, executive_director TEXT, scraped_timestamp TEXT)');
+$mtdb->exec('CREATE TABLE inspection_reports (id INTEGER PRIMARY KEY, facility_id INT, report_id TEXT, report_date TEXT, report_url TEXT, raw_content TEXT, content_length INT, is_structured INT, summary TEXT, categories_json TEXT)');
+$dry = kop_mt_reports_import($mtdb, false);
+check($dry['added'] > 250 && (int) $mtdb->query('SELECT COUNT(*) FROM inspection_reports')->fetchColumn() === 0, 'MT import: a dry run counts and writes nothing');
+$first = kop_mt_reports_import($mtdb, true);
+$again = kop_mt_reports_import($mtdb, true);
+check($first['added'] === $dry['added'] && $again['added'] === 0 && $again['updated'] === 0 && $again['unchanged'] === $first['added'], 'MT import: a second run changes nothing');
+check((int) $mtdb->query("SELECT COUNT(*) FROM inspection_facilities WHERE state = 'MT'")->fetchColumn() === $first['facilities'], 'MT import: one facility per program name');
+$mt_scan = kop_ih_scan($mtdb, 1000, false, array('MT'));
+check($mt_scan['scanned'] === $first['added'] && count($mt_scan['candidates']) >= 5, 'MT: the copied surveys are scanned; ' . count($mt_scan['candidates']) . ' candidates');
 
 echo "Rules: $checks checks, $failures failed.\n";
 
