@@ -14,7 +14,7 @@
  *   store    candidates go to inspection_highlights as pending; a re-run
  *            adds new ones and never touches a row a person has reviewed
  *
- * Five gates keep the queue short (owner rules, 2026-09-21 and 2026-09-28):
+ * Seven gates keep the queue short (owner rules, 2026-09-21, 2026-09-28 and 2026-10-05):
  *
  *   substantiated  only findings the state itself confirmed are queued: a
  *                  Texas citation, a California deficiency, or a California
@@ -32,6 +32,14 @@
  *                  medical care always is.
  *   elopement      a child running away is not queued on its own, only when
  *                  the same finding records a death or a serious injury.
+ *   paperwork      a citation whose fault is only records, notices or
+ *                  training (kop_ih_paperwork_only) keeps what staff did to a
+ *                  child and medical neglect, nothing else; a sentence that
+ *                  mentions harm only as what went unrecorded or was reported
+ *                  late does not count it (kop_ih_paperwork_pattern).
+ *   on staff       a resident assaulting staff is not abuse, nor the hospital
+ *                  visit or police call after it (kop_ih_assault_on_staff_pattern),
+ *                  unless staff hurt the child in the same sentence.
  *
  * Nothing here publishes anything. A candidate names a facility and
  * describes harm, so it stays pending until an admin approves it.
@@ -618,14 +626,18 @@ if (!function_exists('kop_ih_scanner_version')) {
     // -----------------------------------------------------------------------
 
     /**
-     * States with an adapter. Washington waits for its scraper (the PDF
-     * columns come out interleaved) and Nevada stores no finding text.
-     * Oregon's site visit findings are almost all the rule's own wording
-     * run together with what the licensor saw (a dry run on 2026-09-28
-     * queued 90, nearly every one a quoted rule), so it is left out.
+     * States with an adapter. Washington's statements of deficiencies come
+     * out of its scraper with the rule, the finding and the facility's plan
+     * interleaved line by line, and Nevada stores no finding text. Oregon's
+     * site visit findings are almost all the rule's own wording run together
+     * with what the licensor saw (a dry run on 2026-09-28 queued 90, nearly
+     * every one a quoted rule), so it is left out. Montana's surveys are not
+     * in inspection_reports (mt_dl.py only downloads them; the page reads
+     * js/data/mt_reports.json).
      */
     function kop_ih_supported_states() {
-        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK');
+        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK',
+            'PA', 'MI', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA');
     }
 
     /**
@@ -674,6 +686,8 @@ if (!function_exists('kop_ih_scanner_version')) {
             case 'MD': return kop_ih_extract_md($data);
             case 'SD': return kop_ih_extract_sd($data);
             case 'VA': return kop_ih_extract_va($data);
+            case 'MI': return kop_ih_extract_mi($data, (string) ($row['raw_content'] ?? ''));
+            case 'PA': return kop_ih_extract_pa($data);
         }
         return array();
     }
@@ -1475,6 +1489,107 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'standard' => kop_ih_short_standard(trim(($c['standard'] ?? '') . ' ' . ($full['standard_text'] ?? ''))),
                 'state_label' => $label . ', DBHDS ' . $what,
                 'factor' => $factor, 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /** Michigan's conclusion as the state's label, or '' when it establishes nothing. */
+    function kop_ih_mi_established($conclusion) {
+        $c = kop_ih_clean_text($conclusion);
+        if (!preg_match('/^(?:Allegations?\s*#?\s*\d+(?:\s*(?:and|&|,)\s*(?:Allegations?\s*#?\s*)?\d+)*\s*[^\w\s]*\s*)?((?:Repeat(?:ed)?\s+)?(?:No\s+|Not\s+)?Viola?t\w*(?:\s+(?:Not\s+)?Estab\w*)?)/iu', $c, $m)) return '';
+        $words = strtolower($m[1]);
+        if (preg_match('/\b(?:no|not)\b/', $words)) return '';
+        if (preg_match('/^repeat/', $words)) return 'Repeat violation established';
+        return strpos($words, 'estab') !== false ? 'Violation established' : '';
+    }
+
+    /**
+     * Michigan (mi_scraper.py): MDHHS child welfare licensing documents, in
+     * categories.doc_type. Only special investigations are read: per
+     * allegation the rule, the allegation, the interviews, the investigator's
+     * analysis and a conclusion. An analysis is a finding only when its own
+     * conclusion establishes a violation ("Violation Established", "Repeat
+     * Violation Established"). The allegation itself is not queued: one
+     * allegation is weighed against several rules, and a violation
+     * established under the reporting rule says nothing of an abuse claim
+     * that was not. The interviews are what people said, not what the
+     * Department found. The analysis is in categories.detail.allegations when
+     * the scraper keeps it, otherwise read from the text, each ANALYSIS label
+     * to the CONCLUSION label, whose line gives the outcome. Inspections
+     * (renewal, interim, original) are left out. Youth are "Youth A", staff
+     * "Staff 1".
+     */
+    function kop_ih_extract_mi(array $data, $raw) {
+        if (($data['doc_type'] ?? '') !== 'special_investigation') return array();
+        $allegations = array_values(array_filter((array) ($data['allegations'] ?? array()), 'is_array'));
+        $detail = $data['detail']['allegations'] ?? null;
+        $runs = array();
+        if (is_array($detail) && count($detail) === count($allegations)) {
+            foreach ($allegations as $i => $a) {
+                $runs[] = array((string) ($detail[$i]['analysis'] ?? ''), (string) ($a['conclusion'] ?? ''), $a);
+            }
+        } else {
+            $label = '[ \t]*(?:%s)(?:[ \t]*:|[ \t]*$|[ \t]+(?=[A-Z]))';
+            $pattern = '/^' . sprintf($label, 'ANALYSIS|Analysis') . '[ \t]*(.*?)^'
+                . sprintf($label, 'CONCLUSIONS?|Conclusions?') . '[ \t]*([^\r\n]*(?:\r?\n[^\r\n]*)?)/msu';
+            preg_match_all($pattern, (string) $raw, $m, PREG_SET_ORDER);
+            foreach ($m as $i => $x) {
+                $runs[] = array($x[1], $x[2], count($m) === count($allegations) ? $allegations[$i] : array());
+            }
+        }
+        $out = array();
+        foreach ($runs as $run) {
+            list($analysis, $conclusion, $a) = $run;
+            $label = kop_ih_mi_established($conclusion);
+            if ($label === '') continue;
+            $text = kop_ih_clean_text($analysis);
+            if (mb_strlen($text) < 40) continue;
+            $out[] = array(
+                'text' => $text, 'standard' => kop_ih_short_standard(trim((string) ($a['rule'] ?? '') . ' ' . (string) ($a['rule_title'] ?? ''))),
+                'state_label' => $label . ', special investigation',
+                'factor' => 1.0, 'corrected_on_site' => null, 'kind' => 'complaint',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Pennsylvania (pa_scraper.py): one DHS "Licensing Inspection Summary -
+     * Public" per document, in categories.kind (citation, followup, sanction,
+     * clean, licence, waiver, other). Each citation's "Description of
+     * Violation" is the inspector's finding, substantiated by nature; the
+     * requirement text and the provider's plan of correction beside it are not
+     * read. categories.citations keeps 240 characters of each violation; the
+     * whole text, when longer, is in categories.detail.citations in the same
+     * order. Only documents the page counts (counts_as_violation) are read, so
+     * a follow-up of a citation summary that is also listed is not queued
+     * twice. Scans of about 2009 to 2012 (form 'table') are left out: OCR
+     * reads that table column by column and the finding is a guess. A licence
+     * action and a repeat violation keep the full score.
+     */
+    function kop_ih_extract_pa(array $data) {
+        if (empty($data['counts_as_violation']) || ($data['form'] ?? '') === 'table') return array();
+        $citations = is_array($data['citations'] ?? null) ? $data['citations'] : array();
+        $detail = is_array($data['detail']['citations'] ?? null) ? $data['detail']['citations'] : array();
+        $type = trim((string) ($data['inspection_type'] ?? ''));
+        $sanction = ($data['kind'] ?? '') === 'sanction';
+        $investigation = (bool) preg_match('/complaint|incident|investigat/i', $type);
+        $out = array();
+        foreach ($citations as $i => $c) {
+            if (!is_array($c)) continue;
+            $full = is_array($detail[$i] ?? null) ? (string) ($detail[$i]['violation'] ?? '') : '';
+            $text = kop_ih_clean_text($full !== '' ? $full : preg_replace('/\x{2026}$/u', '', (string) ($c['violation'] ?? '')));
+            if (mb_strlen($text) < 30) continue;
+            $repeat = !empty($c['repeat']);
+            $regulation = trim((string) ($c['regulation'] ?? ''));
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim(($regulation !== '' ? '55 Pa. Code § ' . $regulation : '') . ' ' . (string) ($c['title'] ?? ''))),
+                'state_label' => kop_ih_short_standard('Citation' . ($type !== '' ? ', ' . strtolower($type) . ' inspection' : '')
+                    . ($repeat ? ', repeat violation' : '') . ($sanction ? ', licence action taken' : ''), 110),
+                'factor' => ($sanction || $repeat) ? 1.0 : kop_ih_citation_factor($investigation),
+                'corrected_on_site' => null, 'kind' => 'citation',
             );
         }
         return $out;

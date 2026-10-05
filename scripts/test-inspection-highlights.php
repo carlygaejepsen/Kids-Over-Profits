@@ -732,6 +732,30 @@ check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['text'], 'Staff
 $dbhds['no_violation'] = true;
 check(kop_ih_extract('VA', $va($dbhds)) === array(), 'VA: a "No Violation" plan has no findings');
 
+// Michigan (mi_scraper.py): an analysis counts only under an established conclusion.
+$mi_raw = "ALLEGATION: Staff 1 hit Youth A.\nINVESTIGATION: Youth A said Staff 1 hit him.\nANALYSIS: Video review showed Staff 1 struck Youth A in the face with a closed fist during an argument.\nCONCLUSION: VIOLATION ESTABLISHED\n"
+    . "ALLEGATION: Staff 2 restrained Youth B.\nANALYSIS: There was no evidence that Staff 2 restrained Youth B, who was taken to the hospital for an unrelated illness.\nCONCLUSION: VIOLATION NOT ESTABLISHED\n";
+$mi = array('report_date' => '2024-03-03', 'raw_content' => $mi_raw, 'categories_json' => json_encode(array('doc_type' => 'special_investigation',
+    'allegations' => array(array('rule' => 'CCI Rule 400.4159', 'rule_title' => 'Resident restraint', 'conclusion' => 'Violation Established'), array('rule' => 'CCI Rule 400.4159', 'conclusion' => 'Violation Not Established')))));
+$f = kop_ih_extract('MI', $mi);
+check(count($f) === 1 && strpos($f[0]['text'], 'Video review') === 0 && $f[0]['kind'] === 'complaint' && strpos($f[0]['standard'], 'CCI Rule 400.4159') === 0, 'MI: only the established analysis, with its rule');
+$c = kop_ih_candidates('MI', $mi);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && $c[0]['score'] === 80, 'MI: the established assault is queued at full weight');
+check(kop_ih_extract('MI', array('raw_content' => $mi_raw, 'categories_json' => json_encode(array('doc_type' => 'renewal')))) === array(), 'MI: inspections are not read');
+
+// Pennsylvania (pa_scraper.py): the full violation from detail; only documents that count; no table-form scans.
+$pa = array('report_date' => '2023-05-05', 'raw_content' => '', 'categories_json' => json_encode(array('kind' => 'citation', 'counts_as_violation' => true, 'inspection_type' => 'Complaint',
+    'citations' => array(array('regulation' => '3800.32.d', 'title' => 'Protection from abuse', 'violation' => 'short…', 'repeat' => false)),
+    'detail' => array('citations' => array(array('violation' => 'On a date redacted, staff person A dragged child #1 down the hallway by the arm, leaving bruises on the child\'s forearm.'))))));
+$f = kop_ih_extract('PA', $pa);
+check(count($f) === 1 && strpos($f[0]['text'], 'dragged') !== false && $f[0]['factor'] === 1.0 && strpos($f[0]['standard'], '55 Pa. Code § 3800.32.d') === 0, 'PA: the full violation from detail, a complaint inspection at full weight');
+$d = json_decode($pa['categories_json'], true);
+$d['form'] = 'table';
+check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a table-form scan is left out');
+unset($d['form'], $d['counts_as_violation']);
+check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a document the page does not count is left out');
+check(!in_array('NV', kop_ih_supported_states(), true) && !in_array('OR', kop_ih_supported_states(), true) && count(kop_ih_supported_states()) === 23, 'states: 23 supported, Nevada and Oregon left out');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------
