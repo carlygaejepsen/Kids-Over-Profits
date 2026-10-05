@@ -135,9 +135,9 @@ def drive_card():
         "selected": False, "fields": [], "moves": [], "links": [], "tags": [],
         "checklist": [
             {"keys": ["k1"], "label": "Ranch under investigation", "url": "https://www.ksl.com/a", "sub": "News article · goes to news, live at once",
-             "note": "\"the ranch was cited\"", "checked": True},
+             "note": "\"the ranch was cited\"", "checked": True, "rename": True},
             {"keys": ["k2", "k3", "k4"], "label": "sltrib.com: 3 news articles", "sub": "goes to news, live at once", "checked": True,
-             "items": [{"key": k, "label": "Tribune story " + k, "url": "https://www.sltrib.com/" + k, "sub": "", "note": ""} for k in ("k2", "k3", "k4")]},
+             "items": [{"key": k, "label": "Tribune story " + k, "url": "https://www.sltrib.com/" + k, "sub": "", "note": "", "rename": True} for k in ("k2", "k3", "k4")]},
         ],
         "actions": [{"id": "add_picked", "label": "Add ticked links", "style": "approve",
                      "params": [{"name": "facility", "label": "Record", "type": "facility", "value": 9, "optional": True}]},
@@ -408,6 +408,15 @@ def main():
             check(group.locator(".rinbox-check-count").inner_text() == "1 of 4 links ticked", f"@{width} unticking a folded row unticks all its links")
             wide = pg.evaluate("() => document.documentElement.scrollWidth")
             check(wide <= width, f"@{width} the facility card fits the screen", f"{wide}px")
+            row = group.locator(".rinbox-check").first
+            row.locator(".rinbox-rename-toggle").click()
+            row.locator(".rinbox-rename-name").fill("Ranch cited by the state")
+            row.locator(".rinbox-rename button[type='submit']").click()
+            pg.wait_for_function("() => /Ranch cited by the state/.test(document.querySelector(\"[data-key='g:f9::'] .rinbox-check a\").textContent)")
+            check(any(c[0] == "save" and c[1]["key"] == "k1" and c[1]["fields"] == {"label": "Ranch cited by the state"} for c in calls),
+                  f"@{width} a link in the facility card is renamed from its row")
+            group.locator(".rinbox-check-bundle .rinbox-check-items li").first.locator(".rinbox-rename-toggle").click()
+            check(group.locator(".rinbox-check-items .rinbox-rename-name").first.is_visible(), f"@{width} links inside a folded website row can be renamed too")
             pg.screenshot(path=str(shots / f"drive-card-{width}.png"), full_page=True)
             group.locator("button", has_text="Add ticked links").click()
             pg.wait_for_function("() => /Added 1 link/.test(document.querySelector(\"[data-key='g:f9::']\").textContent)")

@@ -558,14 +558,14 @@ function kop_rinbox_gdl_group_item($key) {
         $note = !empty($first['text']) ? '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 200) . '"' : '';
         if ($note === '' && $where !== '') $note = 'From ' . $where;
         return array('key' => (string) $r['pkey'], 'label' => $r['label'] !== '' ? (string) $r['label'] : (string) $r['url'],
-            'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note);
+            'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note, 'rename' => true);
     };
     $checklist = array();
     foreach ($bundles as $list) {
         $sure = kop_gdl_sure_match($list[0]) || (int) $list[0]['facility_id'] === 0;
         if (count($list) === 1) {
             $e = $describe($list[0]);
-            $checklist[] = array('keys' => array($e['key']), 'label' => $e['label'], 'url' => $e['url'], 'sub' => $e['sub'], 'note' => $e['note'], 'checked' => $sure);
+            $checklist[] = array('keys' => array($e['key']), 'label' => $e['label'], 'url' => $e['url'], 'sub' => $e['sub'], 'note' => $e['note'], 'checked' => $sure, 'rename' => true);
             continue;
         }
         $counts = array();

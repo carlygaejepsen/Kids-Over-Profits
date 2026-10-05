@@ -435,11 +435,50 @@
         var list = el('ul', { class: 'rinbox-checklist' });
         function linkRow(e) {
             var bits = [];
+            var labelEl;
             if (safeHref(e.url)) {
-                bits.push(el('a', { href: e.url, target: '_blank', rel: 'noopener', text: e.label, title: e.url }));
+                labelEl = el('a', { href: e.url, target: '_blank', rel: 'noopener', text: e.label, title: e.url });
+                bits.push(labelEl);
                 bits.push(previewButton(e.url, pane));
             } else {
-                bits.push(el('span', { text: e.label }));
+                labelEl = el('span', { text: e.label });
+                bits.push(labelEl);
+            }
+            var rowKey = e.key || (e.keys && e.keys.length === 1 ? e.keys[0] : '');
+            if (e.rename && rowKey) {
+                // "Rename" on a link row saves just that link's label (the queue's own save), without redrawing the card.
+                var src = item.source || state.source;
+                var input = el('input', { type: 'text', class: 'rinbox-rename-name', 'aria-label': 'Name for this link', value: e.label || '' });
+                var form = el('form', { class: 'rinbox-rename rinbox-rename-row', hidden: true });
+                var rowMsg = el('span', { class: 'rinbox-rename-msg', role: 'status' });
+                var btn = el('button', { type: 'button', class: 'rinbox-btn rinbox-btn-undo rinbox-rename-toggle', text: 'Rename', 'aria-expanded': 'false' });
+                form.appendChild(input);
+                form.appendChild(el('button', { type: 'submit', class: 'rinbox-btn rinbox-btn-neutral', text: 'Save name' }));
+                form.appendChild(el('button', {
+                    type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Cancel',
+                    onclick: function () { form.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+                }));
+                form.appendChild(rowMsg);
+                btn.addEventListener('click', function () {
+                    form.hidden = !form.hidden;
+                    btn.setAttribute('aria-expanded', form.hidden ? 'false' : 'true');
+                    if (!form.hidden) { input.focus(); input.select(); }
+                });
+                form.addEventListener('submit', function (ev) {
+                    ev.preventDefault();
+                    var v = input.value.trim();
+                    if (!v) { input.focus(); return; }
+                    rowMsg.textContent = 'Saving…';
+                    api('save', { source: src, key: rowKey, fields: { label: v } }).then(function () {
+                        labelEl.textContent = v;
+                        e.label = v;
+                        form.hidden = true;
+                        btn.setAttribute('aria-expanded', 'false');
+                        rowMsg.textContent = '';
+                    }).catch(function (err) { rowMsg.textContent = err.message; });
+                });
+                bits.push(btn);
+                bits.push(form);
             }
             return bits;
         }

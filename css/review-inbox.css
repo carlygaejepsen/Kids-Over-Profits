@@ -522,6 +522,22 @@ button.rinbox-tag-x:focus-visible {
     margin-top: 6px;
 }
 
+.rinbox-check button.rinbox-rename-toggle {
+    flex: none;
+    padding: 2px 10px;
+    font-size: 13px;
+}
+
+.rinbox-rename-row {
+    flex-basis: 100%;
+    margin-top: 2px;
+}
+
+.rinbox-rename-msg {
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 .rinbox-rename[hidden] {
     display: none;
 }
