@@ -192,7 +192,8 @@ function kop_rinbox_fornits_item(array $r) {
     $kind = (string) $r['kind'];
     $imp = kop_fornits_importance_labels();
     $post_url = kop_fornits_post_url($r['topic_id'], $r['post_n']);
-    $headline = kop_fornits_has_headline($r) ? (string) $r['topic_headline'] : (string) $r['topic_title'];
+    // The forum's own thread title is never shown (it can be crude or name people); only our headline is.
+    $headline = kop_fornits_has_headline($r) ? (string) $r['topic_headline'] : '';
 
     $lines = array();
     if ($kind === 'link') {
@@ -216,7 +217,7 @@ function kop_rinbox_fornits_item(array $r) {
     if (!empty($done['reason'])) $lines[] = $done['reason'];
 
     $links = array();
-    if ((string) $r['topic_url'] !== '') $links[] = array('label' => 'Thread: ' . kop_rinbox_excerpt($headline, 80), 'url' => (string) $r['topic_url']);
+    if ((string) $r['topic_url'] !== '') $links[] = array('label' => $headline !== '' ? 'Thread: ' . kop_rinbox_excerpt($headline, 80) : 'The forum thread', 'url' => (string) $r['topic_url']);
     if ($kind !== 'link') $links[] = array('label' => 'Post ' . ((int) $r['post_n'] + 1), 'url' => $post_url);
     if ($kind === 'lead' && !empty($v['url'])) $links[] = array('label' => 'Link in the post', 'url' => (string) $v['url']);
 
@@ -307,7 +308,6 @@ function kop_rinbox_fornits_item(array $r) {
     if ($kind === 'lead' && $pending) {
         $details[] = array('label' => 'Goes to', 'value' => kop_fornits_lead_targets()[kop_fornits_lead_target($v + array('url' => '', 'type' => 'other'))] . ' (change it with "Move to")');
     }
-    if (kop_fornits_has_headline($r)) $details[] = array('label' => 'Thread title on the forum', 'value' => (string) $r['topic_title']);
     if ((string) $r['board_name'] !== '') $details[] = array('label' => 'Board', 'value' => (string) $r['board_name']);
     if ((string) $r['how'] !== '') $details[] = array('label' => 'Matched by', 'value' => (string) $r['how']);
     if ($kind === 'link' && (string) $r['quote'] !== '' && trim((string) $r['summary']) !== '') {
