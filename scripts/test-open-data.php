@@ -49,6 +49,14 @@ require __DIR__ . '/kop-test-harness.php';
 function kop_seed_pdo() { return $GLOBALS['pdo']; }
 $GLOBALS['pdo'] = $pdo;
 require_once dirname(__DIR__) . '/inc/inspection-highlights.php';
+// The glossary lives in SQL tables the read-only mirror harness cannot fill
+// (scripts/test-glossary-store.php checks the real export); write the same
+// data from the import source.
+require_once dirname(__DIR__) . '/inc/glossary-build.php';
+function kop_glossary_store_export_file($path) {
+    $built = kop_glossary_build((string) file_get_contents(dirname(__DIR__) . '/js/data/glossary/glossary.md'));
+    return $built['data'] && file_put_contents($path, json_encode($built['data'])) !== false;
+}
 require_once dirname(__DIR__) . '/inc/open-data.php';
 
 $failures = 0;

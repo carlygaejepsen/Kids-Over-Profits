@@ -136,7 +136,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Glossary Editor',
-                'desc'     => 'Edit TTI glossary entries; changes are live at once and can be downloaded as glossary.md to commit.',
+                'desc'     => 'Edit TTI glossary entries, sections and introduction; changes are live at once, with Undo.',
                 'type'     => 'screen',
                 'screen'   => 'kop-glossary-editor',
                 'requires' => 'kop_render_glossary_editor_page',

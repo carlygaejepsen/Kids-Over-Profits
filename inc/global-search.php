@@ -11,7 +11,7 @@
  *   - inspection_facilities (state report pages)
  *   - WP media library attachments (documents)
  *   - {prefix}kop_addresses + {prefix}kop_facility_addresses
- *   - the TTI glossary (js/data/glossary/glossary.json)
+ *   - the TTI glossary (inc/glossary-store.php)
  *   - WP pages/posts
  *   - suggested_edits (admins only — requires the wp_rest nonce the widget sends)
  *
@@ -344,7 +344,7 @@ function kop_global_search_collect($phrase) {
         }
     }
 
-    // --- Glossary (js/data/glossary/glossary.json) -------------------------
+    // --- Glossary (inc/glossary-store.php) -------------------------
     if (function_exists('kop_glossary_search')) {
         $items = array();
         foreach (kop_glossary_search($phrase, 5) as $hit) {

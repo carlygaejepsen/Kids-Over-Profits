@@ -2,8 +2,9 @@
 /**
  * Render the glossary offline.
  *
- * Stubs the few WordPress functions inc/glossary.php touches, renders the
- * page unfiltered and filtered, and checks for the mistakes that would
+ * Imports js/data/glossary/glossary.md into the glossary tables on an
+ * in-memory SQLite copy (scripts/lib-glossary-test-db.php), renders the page
+ * from them unfiltered and filtered, and checks for the mistakes that would
  * actually reach a reader: a duplicate id, a #link with nothing to land on,
  * markup from the data reaching the page unescaped, a filter that shows the
  * wrong entries.
@@ -17,20 +18,6 @@ if (PHP_SAPI !== 'cli') {
     exit("CLI only.\n");
 }
 
-define('ABSPATH', true);
-
-function get_stylesheet_directory() {
-    return dirname(__DIR__);
-}
-function esc_html($text) {
-    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
-}
-function esc_attr($text) {
-    return htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
-}
-function esc_url($url) {
-    return htmlspecialchars((string) $url, ENT_QUOTES, 'UTF-8');
-}
 function selected($a, $b) {
     if ((string) $a === (string) $b) {
         echo ' selected="selected"';
@@ -58,17 +45,11 @@ function kop_operator_page_url_for_name($name) {
     );
     return isset($known[$name]) ? $known[$name] : '';
 }
-function apply_filters($hook, $value) {
-    return $value;
-}
-function rest_url($path) {
-    return 'https://kidsoverprofits.org/wp-json/' . $path;
-}
 function add_query_arg($key, $value, $url) {
     return $url . (strpos($url, '?') === false ? '?' : '&') . rawurlencode($key) . '=' . rawurlencode($value);
 }
 
-require dirname(__DIR__) . '/inc/glossary.php';
+require __DIR__ . '/lib-glossary-test-db.php';
 
 $failures = 0;
 function check($ok, $message) {
@@ -94,7 +75,7 @@ function dom_of($html) {
 }
 
 $data = kop_glossary_data();
-check($data !== null, 'glossary.json loads');
+check($data !== null, 'the glossary imports into the tables and loads');
 if (!$data) {
     exit(1);
 }

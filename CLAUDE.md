@@ -54,10 +54,10 @@ node scripts/build-reporting-directory.js
 node scripts/verify-reporting-links.js          # slow, hits every agency site
 node scripts/pull-childusa-sol.js               # monthly: CHILD USA sexual-abuse deadlines, review the diff, then rebuild
 php scripts/test-reporting-directory.php        # renders the page offline
-# After editing the glossary source js/data/glossary/glossary.md
-node scripts/build-glossary.js
-php scripts/test-glossary.php                   # renders /glossary/ offline, checks every #link
-php scripts/test-glossary-build.php             # PHP build == glossary.json, editor round trips
+# The glossary is in SQL tables (inc/glossary-store.php), edited at KOP Tools > Glossary Editor; both tests import
+# js/data/glossary/glossary.md into an in-memory SQLite copy (scripts/lib-glossary-test-db.php)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-glossary.php         # renders /glossary/ offline, checks every #link
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-glossary-store.php   # import == markdown build, add/edit/delete/undo, refs, sections
 # After editing the FL/NC adapters' text readers or api/lib-inspection-text-signals.php (PHP must match JS exactly)
 node scripts/test-inspection-text-signals.js --php=<Local php.exe>
 php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / ?text= against tmp/prod.sqlite
@@ -290,18 +290,18 @@ that folder is the field-by-field schema. Rendered server-side by
 
 ### Glossary data
 
-`js/data/glossary/glossary.md` is the TTI glossary source (sections `##`,
-program groups `###`/`####`, entries `**Term** *(aka ...)*: text. Used at: *A, B*`).
-`build-glossary.js` writes the `glossary.json` the /glossary/ page reads and
-fails on any `**cross-reference**` that does not name an entry. Rendered
-server-side by `inc/glossary.php` (`templates/page-glossary.php`).
-Admins can also edit entries in wp-admin (KOP Tools > Glossary Editor,
-`inc/glossary-editor.php`): saved changes sit in the `kop_glossary_edits`
-option and are applied over the deployed glossary.md by a PHP port of the
-build (`inc/glossary-build.php`), live at once. Commit them by downloading the
-merged glossary.md from the editor, rebuilding and committing; they then clear
-themselves. `php scripts/test-glossary-build.php` checks the PHP build still
-matches `glossary.json` exactly, so change both builds together.
+The glossary lives in SQL tables (`inc/glossary-store.php`): `{prefix}kop_glossary_nodes`
+(sections, and program groups under them), `_entries` (term, qualifier, definition, `anchor` = the
+page's #id, kept unless the term changes), `_aliases`, `_tags` (`used`/`reported` program + note) and
+`_log` (every entry change, before/after, for Undo); title and intro in the `kop_glossary_meta` option.
+Edited at KOP Tools > Glossary Editor (`inc/glossary-editor.php`: entries, sections, intro, Recent
+changes with Undo) and with the pencil on each entry. Every save runs `kop_glossary_finish()`
+(`inc/glossary-build.php`) over the tables with the change applied: a `**cross-reference**` must name
+exactly one entry or the save is refused. Rendered server-side by `inc/glossary.php`
+(`templates/page-glossary.php`), cached by the `kop_glossary_rev` revision. The open data download
+writes the same data as `glossary.json`. `js/data/glossary/glossary.md` is only the source of the
+one-time import into empty tables (the old editor's `kop_glossary_edits` overlay applied first);
+editing it changes nothing on the site.
 
 ### Network map data
 
@@ -338,6 +338,7 @@ to the program aggregate otherwise.
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
+- `{prefix}kop_glossary_nodes` / `_entries` / `_aliases` / `_tags` / `_log` - The TTI glossary: sections and groups, terms, other names, program tags, and each entry change for Undo (`inc/glossary-store.php`)
 - `{prefix}kop_glossary_feedback` - Reader notes from the glossary's "My facility used this too" / "Suggest a correction" buttons (`inc/glossary-feedback.php`; reviewed under KOP Tools > Glossary Feedback)
 - `{prefix}kop_addresses` / `{prefix}kop_facility_addresses` - Physical address IDs and which facility stood where (`api/manage-addresses.php`; join table rebuilt from facility data on each seed)
 

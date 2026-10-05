@@ -12,7 +12,7 @@
  *   post:12:block:3:ab12cd  the 4th top-level block of post 12's content (hash
  *                           of its source, so a changed page cannot be overwritten)
  *   pt:faq:intro            a Page Text section (inc/page-text.php)
- *   gl:<entry id>           a glossary entry (inc/glossary-editor.php's save)
+ *   gl:<entry anchor>       a glossary entry (inc/glossary-editor.php's save)
  *   facility:45:staff       a group of a facility's fields (facilities_v2)
  *   facility:45:all|raw     every field, or the whole record as JSON
  *   fstatus:45:Closed       set a facility's status in one click, years kept (save
@@ -377,58 +377,57 @@ function kop_ie_pt_save(array $p, array $v) {
 
 /* ---- Glossary entries (inc/glossary-editor.php) ----------------------------- */
 
-function kop_ie_gl_entry($id) {
-    $state = function_exists('kop_glossary_editor_state') ? kop_glossary_editor_state() : null;
-    if (!$state) {
-        throw new RuntimeException('js/data/glossary/glossary.md is missing on the server.');
+function kop_ie_gl_entry($anchor) {
+    if (!function_exists('kop_glossary_store_ready') || !kop_glossary_store_ready()) {
+        throw new RuntimeException('The glossary tables are empty.');
     }
-    $entries = kop_glossary_entries_by_id($state['data']);
-    if (!isset($entries[$id])) {
+    $state = kop_glossary_store_load();
+    $id = kop_glossary_entry_id_for_anchor($state, (string) $anchor);
+    if (!$id) {
         throw new RuntimeException('That entry is no longer in the glossary. Reload the page.');
     }
-    return array($state, $entries[$id]);
+    return array($state, $state['entries'][$id]);
 }
 
 function kop_ie_gl_load(array $p) {
     list($state, $entry) = kop_ie_gl_entry($p[0] ?? '');
-    $orig = kop_glossary_parse_entry($entry['source'], true);
-    $containers = array();
-    foreach (kop_glossary_containers($state['data']) as $path) {
-        $label = kop_glossary_container_label($path);
-        $containers[] = array('value' => $label, 'label' => $label);
+    $f = kop_glossary_snapshot_fields($entry);
+    $sections = array();
+    foreach (kop_glossary_node_paths($state['nodes']) as $nid => $path) {
+        $sections[] = array('value' => (string) $nid, 'label' => kop_glossary_container_label($path));
     }
     return array(
         'title'  => 'Glossary: ' . $entry['term'],
         'fields' => array(
-            kop_ie_field('term', 'Term', 'text', $orig['term']),
-            kop_ie_field('note', 'Qualifier', 'text', $orig['note'], array('help' => 'Shown in brackets after the term. An entry has a qualifier or other names, not both.')),
-            kop_ie_field('aka_list', 'Also called', 'lines', implode("\n", $orig['aka'])),
-            kop_ie_field('text', 'Definition', 'textarea', $orig['text_raw'], array('rows' => 6, 'help' => '**Term** links to another entry by its name.')),
-            kop_ie_field('used', 'Used at', 'lines', kop_glossary_tag_lines($orig['used'])),
-            kop_ie_field('reported', 'Reportedly used at', 'lines', kop_glossary_tag_lines($orig['reported'])),
-            kop_ie_field('container', 'Section', 'select', kop_glossary_container_label($entry['container']), array('options' => $containers)),
+            kop_ie_field('term', 'Term', 'text', $f['term']),
+            kop_ie_field('note', 'Qualifier', 'text', $f['note'], array('help' => 'Shown in brackets after the term.')),
+            kop_ie_field('aka_list', 'Also called', 'lines', $f['aka_list']),
+            kop_ie_field('text', 'Definition', 'textarea', $f['text'], array('rows' => 6, 'help' => '**Term** links to another entry by its name.')),
+            kop_ie_field('used', 'Used at', 'lines', $f['used']),
+            kop_ie_field('reported', 'Reportedly used at', 'lines', $f['reported']),
+            kop_ie_field('node', 'Section', 'select', (string) $f['node_id'], array('options' => $sections)),
         ),
     );
 }
 
 /**
- * Saved through the glossary editor's own handler, so the build check, the
- * change list and "back to the original" behave exactly as in wp-admin.
+ * Saved through the glossary editor's own handler, so the reference check
+ * and the change log (Undo) behave exactly as in wp-admin.
  */
 function kop_ie_gl_save(array $p, array $v) {
     kop_ie_gl_entry($p[0] ?? '');
     $post = array(
-        'kop_ge_do'        => 'save',
-        'kop_ge_entry'     => (string) $p[0],
-        'kop_ge_feedback'  => '0',
-        'kop_ge_term'      => (string) ($v['term'] ?? ''),
-        'kop_ge_note'      => (string) ($v['note'] ?? ''),
-        'kop_ge_aka'       => (string) ($v['aka_list'] ?? ''),
-        'kop_ge_text'      => (string) ($v['text'] ?? ''),
-        'kop_ge_used'      => (string) ($v['used'] ?? ''),
-        'kop_ge_reported'  => (string) ($v['reported'] ?? ''),
-        'kop_ge_container' => (string) ($v['container'] ?? ''),
-        '_wpnonce'         => wp_create_nonce('kop_glossary_editor'),
+        'kop_ge_do'       => 'save',
+        'kop_ge_entry'    => (string) $p[0],
+        'kop_ge_feedback' => '0',
+        'kop_ge_term'     => (string) ($v['term'] ?? ''),
+        'kop_ge_note'     => (string) ($v['note'] ?? ''),
+        'kop_ge_aka'      => (string) ($v['aka_list'] ?? ''),
+        'kop_ge_text'     => (string) ($v['text'] ?? ''),
+        'kop_ge_used'     => (string) ($v['used'] ?? ''),
+        'kop_ge_reported' => (string) ($v['reported'] ?? ''),
+        'kop_ge_node'     => (string) ($v['node'] ?? ''),
+        '_wpnonce'        => wp_create_nonce('kop_glossary_editor'),
     );
     $saved_post = $_POST;
     $saved_request = $_REQUEST;

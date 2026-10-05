@@ -464,7 +464,7 @@ function kop_tool_page_specs() {
         // Published: it is a reference list of public agencies, and every
         // entry carries the source and the date it was checked.
         array('template' => 'page-report-abuse.php',       'title' => 'Report Abuse',        'slug' => 'report-abuse',       'status' => 'publish'),
-        // The TTI glossary, rendered from js/data/glossary/glossary.json.
+        // The TTI glossary, rendered from the glossary tables (inc/glossary-store.php).
         array('template' => 'page-glossary.php',           'title' => 'TTI Glossary',        'slug' => 'glossary',           'status' => 'publish'),
         // Bulk downloads of every public dataset, built daily by inc/open-data.php.
         array('template' => 'page-open-data.php',          'title' => 'Open Data',           'slug' => 'open-data',          'status' => 'publish'),

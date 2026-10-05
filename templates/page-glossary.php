@@ -4,7 +4,7 @@
  * Description: The TTI glossary. The language of the Troubled Teen Industry,
  * from program handbooks, staff manuals, state records and survivor accounts.
  *
- * Everything below the title comes from js/data/glossary/glossary.json through
+ * Everything below the title comes from the glossary tables (inc/glossary-store.php) through
  * inc/glossary.php. The page's own editor content, if any, is printed above
  * the glossary, so a note can be added in wp-admin without touching this file.
  *

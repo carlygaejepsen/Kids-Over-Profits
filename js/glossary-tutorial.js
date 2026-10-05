@@ -1,5 +1,5 @@
 // Guided tour for the TTI Glossary (templates/page-glossary.php, built by
-// inc/glossary.php from js/data/glossary/glossary.md). Reuses the shared
+// inc/glossary.php from the glossary tables). Reuses the shared
 // TutorialOverlay class, which must load first (see the glossary tour
 // enqueue in templates/page-glossary.php).
 (function () {

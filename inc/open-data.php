@@ -451,8 +451,9 @@ function kop_open_data_datasets() {
         );
     }
 
-    $glossary_file = get_stylesheet_directory() . '/js/data/glossary/glossary.json';
-    if (is_readable($glossary_file)) {
+    /* The glossary is in SQL (inc/glossary-store.php): written out as the JSON it always was. */
+    $glossary_file = trailingslashit(sys_get_temp_dir()) . 'kop-glossary-' . getmypid() . '.json';
+    if (function_exists('kop_glossary_store_export_file') && kop_glossary_store_export_file($glossary_file)) {
         $sets['glossary'] = array(
             'title'       => 'TTI glossary',
             'group'       => 'Reference',
@@ -543,7 +544,7 @@ function kop_open_data_write_dataset($dir, $key, array $spec) {
         $decoded = json_decode((string) file_get_contents("$dir/$name"), true);
         $count = 0;
         if (is_array($decoded) && isset($decoded['count']) && is_int($decoded['count'])) {
-            $count = $decoded['count'];                     // glossary.json: number of entries
+            $count = $decoded['count'];                     // the glossary: number of entries
         } elseif (is_array($decoded)) {
             foreach (array('entries', 'terms', 'states', 'items') as $list_key) {
                 if (isset($decoded[$list_key]) && is_array($decoded[$list_key])) { $count = count($decoded[$list_key]); break; }

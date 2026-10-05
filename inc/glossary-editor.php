@@ -1,203 +1,31 @@
 <?php
 /**
- * Glossary Editor: add, edit, move and delete glossary entries from wp-admin
- * (KOP Data Tools > Glossary Editor).
+ * Glossary Editor: add, edit, move and delete glossary entries, and manage
+ * the sections and groups they sit in (KOP Tools > Glossary Editor).
  *
- * js/data/glossary/glossary.md in git stays the source of truth, and the
- * server has no Node to rebuild glossary.json. So an edit made here is kept
- * as a small overlay in the kop_glossary_edits option: one change per entry,
- * each naming the paragraph of glossary.md it replaces. The site applies the
- * overlay to the deployed glossary.md, rebuilds with the PHP port of the
- * build (inc/glossary-build.php, same cross-reference checks), and caches the
- * result, so a saved edit is live at once.
+ * The glossary is in SQL tables (inc/glossary-store.php); a save goes
+ * straight to them and is live at once. Every save is checked first: a
+ * **cross-reference** in any text must still name exactly one entry. Each
+ * entry change is logged and can be undone from "Recent changes".
  *
- * To make the edits permanent, download the merged glossary.md from the
- * editor, put it in the repo, run node scripts/build-glossary.js and commit.
- * Once that deploys, each change finds its own text already in glossary.md
- * and clears itself. A change whose paragraph was edited in the repo
- * meanwhile is not applied; the editor lists it as out of date.
- *
- * A change: array(
- *   'id'        => unique id,
- *   'target'    => the glossary.md paragraph it replaces (null: a new entry),
- *   'markdown'  => the new paragraph (null: delete the entry),
- *   'container' => section/group titles to move it into (null: stay put),
- *   'term', 'user', 'time', 'date' => for the list of pending changes,
- * )
+ * The pencil on a glossary entry (inc/inline-edit.php, gl:<anchor>) saves
+ * through kop_glossary_editor_handle_post(), so both behave the same.
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once __DIR__ . '/glossary-build.php';
+require_once __DIR__ . '/glossary-store.php';
 
 define('KOP_GLOSSARY_EDITOR_PAGE', 'kop-glossary-editor');
 
-function kop_glossary_source_path() {
-    return get_stylesheet_directory() . '/js/data/glossary/glossary.md';
-}
-
-/** The deployed glossary.md, or null. */
-function kop_glossary_repo_markdown() {
-    $path = kop_glossary_source_path();
-    return is_readable($path) ? (string) file_get_contents($path) : null;
-}
-
-function kop_glossary_edits() {
-    $edits = get_option('kop_glossary_edits');
-    return is_array($edits) && isset($edits['ops']) && is_array($edits['ops']) ? $edits['ops'] : array();
-}
-
-function kop_glossary_save_edits($ops) {
-    update_option('kop_glossary_edits', array('ops' => array_values($ops)), false);
-}
-
-/**
- * Index just past the last paragraph of a container (the paragraph before
- * the next heading of any level), or -1 when the container is not there.
- */
-function kop_glossary_container_end($paras, $container) {
-    $path = array();
-    $found = -1;
-    foreach ($paras as $i => $para) {
-        $level = kop_glossary_heading_level($para);
-        if ($level < 2) {
-            continue;
-        }
-        if ($found >= 0) {
-            return $i;
-        }
-        $title = kop_glossary_trim(substr($para, $level + 1));
-        $path = array_slice($path, 0, $level - 2);
-        $path[] = $title;
-        if ($path === array_values($container)) {
-            $found = $i;
-        }
-    }
-    return $found >= 0 ? count($paras) : -1;
-}
-
-/** Term and qualifier of an entry paragraph, to tell entries apart. */
-function kop_glossary_entry_key($para) {
-    $e = kop_glossary_parse_entry((string) $para);
-    return $e ? kop_glossary_lower($e['term'] . '|' . $e['note']) : '';
-}
-
-/**
- * Apply the changes to glossary.md.
- *
- * @return array('markdown' => string, 'status' => op id => 'applied' | 'stale' | 'in_repo')
- */
-function kop_glossary_apply_edits($markdown, $ops) {
-    $paras = kop_glossary_paragraphs($markdown);
-    $repo = $paras;
-    $status = array();
-    $latest = '';
-
-    foreach ($ops as $op) {
-        $target = isset($op['target']) ? $op['target'] : null;
-        $new = isset($op['markdown']) ? $op['markdown'] : null;
-        $container = !empty($op['container']) ? $op['container'] : null;
-        $at = $target !== null ? array_search($target, $paras, true) : false;
-
-        /* Already in glossary.md: the repo caught up with this change. */
-        if ($at === false) {
-            if ($new !== null && in_array($new, $repo, true)) {
-                $status[$op['id']] = 'in_repo';
-                continue;
-            }
-            if ($new === null) {
-                $key = kop_glossary_entry_key($target);
-                $still = false;
-                foreach ($repo as $p) {
-                    if ($key !== '' && kop_glossary_entry_key($p) === $key) {
-                        $still = true;
-                        break;
-                    }
-                }
-                $status[$op['id']] = $still ? 'stale' : 'in_repo';
-                continue;
-            }
-            if ($target !== null) {
-                $status[$op['id']] = 'stale';
-                continue;
-            }
-        }
-        if (($target === null || $container !== null) && ($container === null || kop_glossary_container_end($paras, $container) < 0)) {
-            $status[$op['id']] = 'stale';
-            continue;
-        }
-
-        if ($at !== false) {
-            array_splice($paras, $at, 1);
-        }
-        if ($new !== null) {
-            $insert = $container !== null ? kop_glossary_container_end($paras, $container) : $at;
-            array_splice($paras, $insert, 0, array($new));
-        }
-        $status[$op['id']] = 'applied';
-        if (!empty($op['date']) && $op['date'] > $latest) {
-            $latest = $op['date'];
-        }
-    }
-
-    /* The page's "Updated" date follows the newest applied change. */
-    if ($latest !== '') {
-        foreach ($paras as $i => $para) {
-            if (preg_match('/^updated: (\d{4}-\d{2}-\d{2})$/D', $para, $m)) {
-                if ($latest > $m[1]) {
-                    $paras[$i] = 'updated: ' . $latest;
-                }
-                break;
-            }
-        }
-    }
-    return array('markdown' => implode("\n\n", $paras) . "\n", 'status' => $status);
-}
-
-/**
- * The glossary with the saved changes applied, for kop_glossary_data(), or
- * null when there are none (or they no longer build), so the page reads the
- * committed glossary.json as before.
- */
-function kop_glossary_live_data() {
-    $ops = kop_glossary_edits();
-    if (!$ops) {
-        return null;
-    }
-    $path = kop_glossary_source_path();
-    if (!is_readable($path)) {
-        return null;
-    }
-    $key = md5(filemtime($path) . '|' . filesize($path) . '|' . serialize($ops));
-    $cache = get_option('kop_glossary_live');
-    if (is_array($cache) && isset($cache['key']) && $cache['key'] === $key) {
-        return $cache['data'];
-    }
-    $applied = kop_glossary_apply_edits(kop_glossary_repo_markdown(), $ops);
-    $built = kop_glossary_build($applied['markdown']);
-    update_option('kop_glossary_live', array('key' => $key, 'data' => $built['data'], 'errors' => $built['errors']), false);
-    return $built['data'];
-}
-
-/** Let cached copies of /glossary/ go after a change. */
-function kop_glossary_purge_page_cache() {
-    delete_option('kop_glossary_live');
-    $page = get_page_by_path(KOP_GLOSSARY_SLUG);
-    if ($page) {
-        clean_post_cache($page->ID);
-        do_action('litespeed_purge_post', $page->ID);
-    }
-    do_action('litespeed_purge_url', home_url('/' . KOP_GLOSSARY_SLUG . '/'));
-}
-
-/* ---- Entry form <-> markdown ----------------------------------------- */
+/* ---- Helpers ------------------------------------------------------------ */
 
 /** One tag line per program: "Program" or "Program (note)". */
 function kop_glossary_tag_lines($tags) {
     $lines = array();
-    foreach ($tags as $t) {
+    foreach ((array) $tags as $t) {
         $lines[] = $t['program'] . (!empty($t['note']) ? ' (' . $t['note'] . ')' : '');
     }
     return implode("\n", $lines);
@@ -214,178 +42,18 @@ function kop_glossary_lines($text) {
     return $out;
 }
 
-/** Strip tag, program key: what matters when comparing tag lists. */
-function kop_glossary_tags_equal($a, $b) {
-    $norm = function ($tags) {
-        return array_map(function ($t) {
-            return array($t['program'], isset($t['note']) ? $t['note'] : '');
-        }, $tags);
-    };
-    return $norm($a) === $norm($b);
-}
-
-/**
- * Build an entry paragraph from the form. Parts the form did not change keep
- * their original wording ($orig: kop_glossary_parse_entry($para, true)), so a
- * one-word fix is a one-word diff.
- *
- * @return array('markdown' => string, 'errors' => list)
- */
-function kop_glossary_entry_markdown($fields, $orig) {
-    $errors = array();
-    $term = kop_glossary_trim(preg_replace('/\s+/u', ' ', $fields['term']));
-    $note = kop_glossary_trim(preg_replace('/\s+/u', ' ', $fields['note']));
-    /* One name per line, so a name may hold a comma. */
-    $aka = kop_glossary_lines($fields['aka_list']);
-    if (strpos($fields['aka_list'], '"') !== false) {
-        $errors[] = 'Also called: leave out quotation marks.';
-    }
-    $text = kop_glossary_trim(preg_replace('/\s*\n\s*/u', ' ', str_replace("\r", '', $fields['text'])));
-    $used = array_map('kop_glossary_parse_tag', kop_glossary_lines($fields['used']));
-    $reported = array_map('kop_glossary_parse_tag', kop_glossary_lines($fields['reported']));
-
-    if ($term === '') {
-        $errors[] = 'The term is required.';
-    }
-    if (strpos($term, '*') !== false || strpos($note, '*') !== false) {
-        $errors[] = 'The term and the qualifier cannot contain asterisks.';
-    }
-    if ($note !== '' && $aka) {
-        $errors[] = 'An entry can have a qualifier or other names ("also called"), not both. Put the other names in the definition, or drop the qualifier.';
-    }
-    if (preg_match('/^aka /i', $note)) {
-        $errors[] = 'Put other names under "Also called", not in the qualifier.';
-    }
-    if ($text === '') {
-        $errors[] = 'The definition is required.';
-    }
-    if ($errors) {
-        return array('markdown' => '', 'errors' => $errors);
-    }
-
-    /* Head: **Term** *(qualifier or aka ...)*: */
-    if ($orig && $orig['term'] === $term && $orig['note'] === $note && $orig['aka'] === $aka) {
-        $head = rtrim($orig['head']) . ' ';
-    } else {
-        $paren = '';
-        if ($note !== '') {
-            $paren = $note;
-        } elseif ($aka) {
-            $quote = false;
-            foreach ($aka as $a) {
-                if (strpos($a, ',') !== false) {
-                    $quote = true;
-                }
-            }
-            if ($quote) {
-                $last = count($aka) - 1;
-                $paren = 'aka ' . implode(' ', array_map(function ($a, $i) use ($last) {
-                    return '"' . $a . ($i < $last ? ',' : '') . '"';
-                }, $aka, array_keys($aka)));
-            } else {
-                $paren = 'aka ' . implode(', ', $aka);
+/** Every section and group: node id => its titles path, in page order. */
+function kop_glossary_node_paths($nodes) {
+    $out = array();
+    $walk = function ($parent) use (&$walk, &$out, $nodes) {
+        foreach ($nodes as $id => $n) {
+            if ($n['parent_id'] === $parent) {
+                $out[$id] = kop_glossary_store_node_path($nodes, $id);
+                $walk($id);
             }
         }
-        $head = '**' . $term . '**' . ($paren !== '' ? ' *(' . $paren . ')*' : '') . ': ';
-    }
-
-    /* Definition: the original wording when only whitespace differs. */
-    if ($orig && preg_replace('/\s+/u', ' ', $orig['text_raw']) === $text) {
-        $text = $orig['text_raw'];
-    }
-
-    /* Tags: Used at: *A, B*; reportedly used at: *C* */
-    if ($orig && kop_glossary_tags_equal($orig['used'], $used) && kop_glossary_tags_equal($orig['reported'], $reported)) {
-        $tags = $orig['tags_raw'];
-    } else {
-        $parts = '';
-        if ($used) {
-            $parts .= 'Used at: *' . implode(', ', array_map(function ($t) {
-                return $t['program'] . (!empty($t['note']) ? ' (' . $t['note'] . ')' : '');
-            }, $used)) . '*';
-        }
-        if ($reported) {
-            $parts .= ($used ? '; reportedly used at: *' : 'Reportedly used at: *') . implode(', ', array_map(function ($t) {
-                return $t['program'] . (!empty($t['note']) ? ' (' . $t['note'] . ')' : '');
-            }, $reported)) . '*';
-        }
-        $tags = $parts !== '' ? ' ' . $parts : '';
-    }
-    $markdown = $head . $text . $tags;
-
-    /* Read it back: anything the format cannot carry shows up here. */
-    $back = kop_glossary_parse_entry($markdown, true);
-    if (!$back) {
-        return array('markdown' => '', 'errors' => array('The entry could not be read back. Check the term for stray characters.'));
-    }
-    if ($back['term'] !== $term) {
-        $errors[] = 'The term did not survive: it would read as "' . $back['term'] . '".';
-    }
-    if ($back['note'] !== $note || $back['aka'] !== $aka) {
-        $errors[] = 'The qualifier or other names did not survive (unbalanced parentheses?). They would read as: '
-            . ($back['note'] !== '' ? '(' . $back['note'] . ')' : 'aka ' . implode(' | ', $back['aka']));
-    }
-    if (preg_replace('/\s+/u', ' ', $back['text_raw']) !== preg_replace('/\s+/u', ' ', $text)) {
-        $errors[] = 'The definition did not survive: its end looks like a "Used at:" list. Reword the last sentence.';
-    }
-    if (!kop_glossary_tags_equal($back['used'], $used) || !kop_glossary_tags_equal($back['reported'], $reported)) {
-        $errors[] = 'A program list did not survive. A program name with a comma or an asterisk in it cannot be tagged '
-            . '(names with a comma must be added to COMMA_NAMES in scripts/build-glossary.js and inc/glossary-build.php).';
-    }
-    if (strpos($markdown, "\n") !== false) {
-        $errors[] = 'The entry must be one paragraph.';
-    }
-    return array('markdown' => $markdown, 'errors' => $errors);
-}
-
-/* ---- Working state --------------------------------------------------- */
-
-/**
- * Everything the screens need: the changes, what became of each, the
- * merged markdown, its build (with each entry's source paragraph), and any
- * build errors.
- */
-function kop_glossary_editor_state($ops = null) {
-    $ops = $ops === null ? kop_glossary_edits() : $ops;
-    $repo = kop_glossary_repo_markdown();
-    if ($repo === null) {
-        return null;
-    }
-    $applied = kop_glossary_apply_edits($repo, $ops);
-    $built = kop_glossary_build($applied['markdown'], true);
-    return array(
-        'ops'      => $ops,
-        'status'   => $applied['status'],
-        'markdown' => $applied['markdown'],
-        'data'     => $built['data'],
-        'errors'   => $built['errors'],
-    );
-}
-
-/** id => entry (with source and container) of a built glossary. */
-function kop_glossary_entries_by_id($data) {
-    $out = array();
-    if ($data) {
-        foreach (kop_glossary_all_entries($data) as $entry) {
-            $out[$entry['id']] = $entry;
-        }
-    }
-    return $out;
-}
-
-/** Every section and group, as title paths. */
-function kop_glossary_containers($data) {
-    $out = array();
-    $walk = function ($node, $path) use (&$walk, &$out) {
-        $path[] = $node['title'];
-        $out[] = $path;
-        foreach ($node['groups'] as $g) {
-            $walk($g, $path);
-        }
     };
-    foreach (($data['sections'] ?? array()) as $s) {
-        $walk($s, array());
-    }
+    $walk(0);
     return $out;
 }
 
@@ -393,17 +61,78 @@ function kop_glossary_container_label($path) {
     return implode(' › ', (array) $path);
 }
 
-/** The change that produced this paragraph, as an index into $ops, or -1. */
-function kop_glossary_op_for($ops, $status, $para) {
-    foreach ($ops as $i => $op) {
-        if (($status[$op['id']] ?? '') === 'applied' && $op['markdown'] === $para) {
-            return $i;
+/** Entry row id for an anchor (#id), or 0. */
+function kop_glossary_entry_id_for_anchor($state, $anchor) {
+    foreach ($state['entries'] as $id => $e) {
+        if ($e['anchor'] === (string) $anchor) {
+            return $id;
         }
     }
-    return -1;
+    return 0;
 }
 
-/* ---- Admin menu and download ----------------------------------------- */
+/**
+ * A snapshot from the form's fields.
+ *
+ * @return array('snap' => array|null, 'errors' => list)
+ */
+function kop_glossary_fields_to_snapshot($fields) {
+    $errors = array();
+    $term = kop_glossary_trim(preg_replace('/\s+/u', ' ', (string) $fields['term']));
+    $note = kop_glossary_trim(preg_replace('/\s+/u', ' ', (string) $fields['note']));
+    $text = kop_glossary_trim(preg_replace('/\s*\n\s*/u', ' ', str_replace("\r", '', (string) $fields['text'])));
+    if ($term === '') {
+        $errors[] = 'The term is required.';
+    }
+    if (strpos($term, '*') !== false || strpos($note, '*') !== false) {
+        $errors[] = 'The term and the qualifier cannot contain asterisks.';
+    }
+    if (preg_match('/^aka /i', $note)) {
+        $errors[] = 'Put other names under "Also called", not in the qualifier.';
+    }
+    if ($text === '') {
+        $errors[] = 'The definition is required.';
+    }
+    if ((int) $fields['node_id'] <= 0) {
+        $errors[] = 'Choose where the entry goes.';
+    }
+    if ($errors) {
+        return array('snap' => null, 'errors' => $errors);
+    }
+    $aka = array();
+    foreach (kop_glossary_lines($fields['aka_list']) as $a) {
+        $aka[] = trim($a, " \"\u{201C}\u{201D}");
+    }
+    return array('snap' => array(
+        'node_id'    => (int) $fields['node_id'],
+        'anchor'     => '',
+        'term'       => $term,
+        'note'       => $note,
+        'aka'        => array_values(array_filter($aka, 'strlen')),
+        'definition' => $text,
+        'used'       => array_map('kop_glossary_parse_tag', kop_glossary_lines($fields['used'])),
+        'reported'   => array_map('kop_glossary_parse_tag', kop_glossary_lines($fields['reported'])),
+    ), 'errors' => array());
+}
+
+/** Form fields for an entry snapshot (or an empty one). */
+function kop_glossary_snapshot_fields($snap, $node_id = 0) {
+    return array(
+        'term'     => $snap ? $snap['term'] : '',
+        'note'     => $snap ? $snap['note'] : '',
+        'aka_list' => $snap ? implode("\n", $snap['aka']) : '',
+        'text'     => $snap ? $snap['definition'] : '',
+        'used'     => $snap ? kop_glossary_tag_lines($snap['used']) : '',
+        'reported' => $snap ? kop_glossary_tag_lines($snap['reported']) : '',
+        'node_id'  => $snap ? (int) $snap['node_id'] : (int) $node_id,
+    );
+}
+
+function kop_glossary_entry_url($anchor) {
+    return home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $anchor);
+}
+
+/* ---- Admin menu ---------------------------------------------------------- */
 
 function kop_register_glossary_editor_menu() {
     if (!function_exists('kop_tools_parent_slug')) {
@@ -424,56 +153,7 @@ function kop_glossary_editor_url($args = array()) {
     return add_query_arg($args, admin_url('admin.php?page=' . KOP_GLOSSARY_EDITOR_PAGE));
 }
 
-/** The merged glossary.md, as a download. */
-add_action('admin_post_kop_glossary_download', function () {
-    if (!current_user_can('manage_options')) {
-        wp_die('Not authorized', 'Access Denied', array('response' => 403));
-    }
-    check_admin_referer('kop_glossary_download');
-    $state = kop_glossary_editor_state();
-    if (!$state) {
-        wp_die('js/data/glossary/glossary.md is missing on the server.');
-    }
-    nocache_headers();
-    header('Content-Type: text/markdown; charset=utf-8');
-    header('Content-Disposition: attachment; filename="glossary.md"');
-    echo $state['markdown'];
-    exit;
-});
-
-/* ---- Saving ------------------------------------------------------------ */
-
-/**
- * Check a new set of changes builds; save it if so.
- *
- * @return array errors (empty on success)
- */
-function kop_glossary_commit_ops($ops) {
-    $state = kop_glossary_editor_state($ops);
-    if (!$state) {
-        return array('js/data/glossary/glossary.md is missing on the server.');
-    }
-    if ($state['errors']) {
-        return $state['errors'];
-    }
-    kop_glossary_save_edits($ops);
-    kop_glossary_purge_page_cache();
-    return array();
-}
-
-function kop_glossary_new_op($target, $markdown, $container, $term) {
-    $user = wp_get_current_user();
-    return array(
-        'id'        => wp_generate_password(12, false),
-        'target'    => $target,
-        'markdown'  => $markdown,
-        'container' => $container,
-        'term'      => $term,
-        'user'      => $user ? $user->user_login : '',
-        'time'      => current_time('mysql'),
-        'date'      => current_time('Y-m-d'),
-    );
-}
+/* ---- Saving -------------------------------------------------------------- */
 
 /** Mark a reader's feedback note as added to the glossary. */
 function kop_glossary_editor_close_feedback($feedback_id) {
@@ -486,64 +166,74 @@ function kop_glossary_editor_close_feedback($feedback_id) {
 /**
  * Handle a POST from the editor.
  *
- * @return array('notice' => string, 'errors' => list, 'view' => 'list'|'edit', 'fields' => form values to redisplay)
+ * @return array('notice' => string, 'errors' => list, 'view' => 'list'|'edit'|'sections', 'fields' => form values to redisplay)
  */
 function kop_glossary_editor_handle_post() {
     check_admin_referer('kop_glossary_editor');
     $do = sanitize_key($_POST['kop_ge_do'] ?? '');
-    $state = kop_glossary_editor_state();
-    if (!$state) {
-        return array('errors' => array('js/data/glossary/glossary.md is missing on the server.'), 'view' => 'list');
-    }
-    $ops = $state['ops'];
-    $entries = kop_glossary_entries_by_id($state['data']);
     $post = wp_unslash($_POST);
-
-    if ($do === 'discard') {
-        $id = (string) ($post['kop_ge_op'] ?? '');
-        $kept = array_values(array_filter($ops, function ($op) use ($id) {
-            return $op['id'] !== $id;
-        }));
-        if (count($kept) === count($ops)) {
-            return array('errors' => array('That change was already gone.'), 'view' => 'list');
-        }
-        $errors = kop_glossary_commit_ops($kept);
-        return $errors
-            ? array('errors' => array_merge(array('That change cannot be undone on its own; other entries depend on it:'), $errors), 'view' => 'list')
-            : array('notice' => 'Change undone.', 'view' => 'list');
+    if (!kop_glossary_store_ready()) {
+        return array('errors' => array('The glossary tables are empty and js/data/glossary/glossary.md could not be imported.'), 'view' => 'list');
     }
 
-    $entry_id = (string) ($post['kop_ge_entry'] ?? '');
-    $entry = $entry_id !== '' ? ($entries[$entry_id] ?? null) : null;
-    if ($entry_id !== '' && !$entry) {
+    if ($do === 'undo') {
+        $r = kop_glossary_store_undo((int) ($post['kop_ge_log'] ?? 0));
+        return $r['errors']
+            ? array('errors' => array_merge(array('That change cannot be undone:'), $r['errors']), 'view' => 'list')
+            : array('notice' => 'Undone: "' . $r['term'] . '" is back as it was.', 'view' => 'list');
+    }
+
+    /* Sections and groups. */
+    if (in_array($do, array('node_save', 'node_delete', 'node_up', 'node_down', 'meta_save'), true)) {
+        $node_id = (int) ($post['kop_ge_node'] ?? 0);
+        if ($do === 'meta_save') {
+            $errors = kop_glossary_store_save_meta(array(
+                'title' => (string) ($post['kop_ge_title'] ?? ''),
+                'intro' => preg_split('/\n\s*\n/', str_replace("\r", '', (string) ($post['kop_ge_intro'] ?? ''))),
+            ));
+            return $errors ? array('errors' => $errors, 'view' => 'sections') : array('notice' => 'Title and introduction saved.', 'view' => 'sections');
+        }
+        if ($do === 'node_delete') {
+            $errors = kop_glossary_store_delete_node($node_id);
+            return $errors ? array('errors' => $errors, 'view' => 'sections') : array('notice' => 'Deleted.', 'view' => 'sections');
+        }
+        if ($do === 'node_up' || $do === 'node_down') {
+            kop_glossary_store_move_node($node_id, $do === 'node_up' ? -1 : 1);
+            return array('notice' => 'Moved.', 'view' => 'sections');
+        }
+        $r = kop_glossary_store_save_node($node_id, array(
+            'parent_id' => (int) ($post['kop_ge_parent'] ?? 0),
+            'title'     => (string) ($post['kop_ge_title'] ?? ''),
+            'sources'   => (string) ($post['kop_ge_sources'] ?? ''),
+            'notes'     => preg_split('/\n\s*\n/', str_replace("\r", '', (string) ($post['kop_ge_notes'] ?? ''))),
+        ));
+        return $r['errors']
+            ? array('errors' => $r['errors'], 'view' => 'sections')
+            : array('notice' => '"' . kop_glossary_trim((string) $post['kop_ge_title']) . '" saved.', 'view' => 'sections');
+    }
+
+    $state = kop_glossary_store_load();
+    $anchor = (string) ($post['kop_ge_entry'] ?? '');
+    $id = $anchor !== '' ? kop_glossary_entry_id_for_anchor($state, $anchor) : 0;
+    if ($anchor !== '' && !$id) {
         return array('errors' => array('That entry is no longer in the glossary. It may have been renamed or deleted meanwhile.'), 'view' => 'list');
     }
     $feedback_id = (int) ($post['kop_ge_feedback'] ?? 0);
     $close_feedback = $feedback_id > 0 && !empty($post['kop_ge_close_feedback']);
-    $index = $entry ? kop_glossary_op_for($ops, $state['status'], $entry['source']) : -1;
 
     if ($do === 'delete') {
-        if (!$entry) {
+        if (!$id) {
             return array('errors' => array('Nothing to delete.'), 'view' => 'list');
         }
-        if ($index >= 0 && $ops[$index]['target'] === null) {
-            array_splice($ops, $index, 1);             // an entry added here: just drop it
-        } elseif ($index >= 0) {
-            $ops[$index]['markdown'] = null;
-            $ops[$index]['container'] = null;
-            $ops[$index]['time'] = current_time('mysql');
-            $ops[$index]['date'] = current_time('Y-m-d');
-        } else {
-            $ops[] = kop_glossary_new_op($entry['source'], null, null, $entry['term']);
-        }
-        $errors = kop_glossary_commit_ops($ops);
+        $term = $state['entries'][$id]['term'];
+        $errors = kop_glossary_store_delete_entry($id);
         if ($errors) {
-            return array('errors' => array_merge(array('"' . $entry['term'] . '" cannot be deleted while other text links to it. Edit these first:'), $errors), 'view' => 'list');
+            return array('errors' => array_merge(array('"' . $term . '" cannot be deleted while other text links to it. Edit these first:'), $errors), 'view' => 'list');
         }
         if ($close_feedback) {
             kop_glossary_editor_close_feedback($feedback_id);
         }
-        return array('notice' => '"' . $entry['term'] . '" deleted.', 'view' => 'list');
+        return array('notice' => '"' . $term . '" deleted. Undo is under Recent changes.', 'view' => 'list');
     }
 
     if ($do !== 'save') {
@@ -551,82 +241,37 @@ function kop_glossary_editor_handle_post() {
     }
 
     $fields = array(
-        'term'      => (string) ($post['kop_ge_term'] ?? ''),
-        'note'      => (string) ($post['kop_ge_note'] ?? ''),
-        'aka_list'  => (string) ($post['kop_ge_aka'] ?? ''),
-        'text'      => (string) ($post['kop_ge_text'] ?? ''),
-        'used'      => (string) ($post['kop_ge_used'] ?? ''),
-        'reported'  => (string) ($post['kop_ge_reported'] ?? ''),
-        'container' => (string) ($post['kop_ge_container'] ?? ''),
+        'term'     => (string) ($post['kop_ge_term'] ?? ''),
+        'note'     => (string) ($post['kop_ge_note'] ?? ''),
+        'aka_list' => (string) ($post['kop_ge_aka'] ?? ''),
+        'text'     => (string) ($post['kop_ge_text'] ?? ''),
+        'used'     => (string) ($post['kop_ge_used'] ?? ''),
+        'reported' => (string) ($post['kop_ge_reported'] ?? ''),
+        'node_id'  => (int) ($post['kop_ge_node'] ?? 0),
     );
     $fail = function ($errors) use ($fields) {
         return array('errors' => $errors, 'view' => 'edit', 'fields' => $fields);
     };
-
-    $container = null;
-    foreach (kop_glossary_containers($state['data']) as $path) {
-        if (kop_glossary_container_label($path) === $fields['container']) {
-            $container = $path;
-        }
+    $made = kop_glossary_fields_to_snapshot($fields);
+    if ($made['errors']) {
+        return $fail($made['errors']);
     }
-    if (!$container) {
-        return $fail(array('Choose where the entry goes.'));
-    }
-
-    $orig = $entry ? kop_glossary_parse_entry($entry['source'], true) : null;
-    $built = kop_glossary_entry_markdown($fields, $orig);
-    if ($built['errors']) {
-        return $fail($built['errors']);
-    }
-    $markdown = $built['markdown'];
-    $moved = $entry && $container !== $entry['container'];
-
-    if ($entry && !$moved && $markdown === $entry['source']) {
-        if ($close_feedback) {
-            kop_glossary_editor_close_feedback($feedback_id);
-        }
-        return array('notice' => 'No changes to "' . $entry['term'] . '".', 'view' => 'list');
-    }
-
-    if (!$entry) {
-        $ops[] = kop_glossary_new_op(null, $markdown, $container, $fields['term']);
-    } elseif ($index >= 0) {
-        $op = $ops[$index];
-        $op['markdown'] = $markdown;
-        if ($moved || $op['target'] === null) {
-            $op['container'] = $container;
-        }
-        $op['term'] = kop_glossary_trim($fields['term']);
-        $op['time'] = current_time('mysql');
-        $op['date'] = current_time('Y-m-d');
-        if ($op['target'] !== null && $op['target'] === $markdown && empty($op['container'])) {
-            array_splice($ops, $index, 1);             // edited back to the original
-        } else {
-            $ops[$index] = $op;
-        }
-    } else {
-        $ops[] = kop_glossary_new_op($entry['source'], $markdown, $moved ? $container : null, $fields['term']);
-    }
-
-    $errors = kop_glossary_commit_ops($ops);
-    if ($errors) {
-        return $fail($errors);
+    $r = kop_glossary_store_save_entry($id, $made['snap']);
+    if ($r['errors']) {
+        return $fail($r['errors']);
     }
     if ($close_feedback) {
         kop_glossary_editor_close_feedback($feedback_id);
     }
-    /* Find the saved entry for its link. */
-    $after = kop_glossary_editor_state();
-    $link = '';
-    foreach (kop_glossary_entries_by_id($after['data']) as $e) {
-        if ($e['source'] === $markdown) {
-            $link = ' <a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $e['id'])) . '" target="_blank" rel="noopener">View it on the glossary</a>.';
-        }
+    $term = $made['snap']['term'];
+    if (!empty($r['unchanged'])) {
+        return array('notice' => 'No changes to "' . $term . '".', 'view' => 'list');
     }
-    return array('notice' => esc_html('"' . kop_glossary_trim($fields['term']) . '" saved and live.') . $link, 'notice_html' => true, 'view' => 'list');
+    $link = ' <a href="' . esc_url(kop_glossary_entry_url($r['anchor'])) . '" target="_blank" rel="noopener">View it on the glossary</a>.';
+    return array('notice' => esc_html('"' . $term . '" saved and live.') . $link, 'notice_html' => true, 'view' => 'list', 'anchor' => $r['anchor']);
 }
 
-/* ---- Screens ------------------------------------------------------------ */
+/* ---- Screens ------------------------------------------------------------- */
 
 function kop_render_glossary_editor_page() {
     if (!current_user_can('manage_options')) {
@@ -637,29 +282,12 @@ function kop_render_glossary_editor_page() {
         $result = kop_glossary_editor_handle_post();
     }
 
-    $state = kop_glossary_editor_state();
     echo '<div class="wrap kop-ge">';
     kop_glossary_editor_styles();
-    if (!$state) {
-        echo '<h1>Glossary Editor</h1><div class="notice notice-error"><p><code>js/data/glossary/glossary.md</code> is missing on the server.</p></div></div>';
+    if (!kop_glossary_store_ready()) {
+        echo '<h1>Glossary Editor</h1><div class="notice notice-error"><p>The glossary tables are empty and <code>js/data/glossary/glossary.md</code> could not be imported.</p></div></div>';
         return;
     }
-
-    /* Changes the repo has caught up with clear themselves. */
-    $cleared = array_filter($state['ops'], function ($op) use ($state) {
-        return ($state['status'][$op['id']] ?? '') === 'in_repo';
-    });
-    if ($cleared) {
-        $keep = array_values(array_filter($state['ops'], function ($op) use ($state) {
-            return ($state['status'][$op['id']] ?? '') !== 'in_repo';
-        }));
-        kop_glossary_save_edits($keep);
-        kop_glossary_purge_page_cache();
-        $state = kop_glossary_editor_state();
-        echo '<div class="notice notice-info is-dismissible"><p>' . count($cleared) . ' saved change' . (count($cleared) === 1 ? ' is' : 's are')
-            . ' now in the repository copy of glossary.md and ' . (count($cleared) === 1 ? 'was' : 'were') . ' cleared.</p></div>';
-    }
-
     if (!empty($result['notice'])) {
         echo '<div class="notice notice-success is-dismissible"><p>' . (!empty($result['notice_html']) ? $result['notice'] : esc_html($result['notice'])) . '</p></div>';
     }
@@ -671,9 +299,12 @@ function kop_render_glossary_editor_page() {
         echo '</ul></div>';
     }
 
+    $state = kop_glossary_store_load();
     $view = $result['view'] ?? sanitize_key($_GET['view'] ?? 'list');
     if ($view === 'edit' || $view === 'new') {
         kop_glossary_editor_form($state, $result['fields'] ?? null);
+    } elseif ($view === 'sections') {
+        kop_glossary_editor_sections($state);
     } else {
         kop_glossary_editor_list($state);
     }
@@ -685,126 +316,134 @@ function kop_glossary_editor_styles() {
     <style>
         .kop-ge .kop-ge-box { background: #fff; border: 1px solid #c3c4c7; padding: 12px 16px; margin: 16px 0; }
         .kop-ge .kop-ge-box h2 { margin-top: 4px; }
-        .kop-ge .kop-ge-badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; background: #dcdcde; }
-        .kop-ge .kop-ge-badge--applied { background: #d1e7dd; }
-        .kop-ge .kop-ge-badge--stale { background: #f8d7da; }
-        .kop-ge .kop-ge-muted { color: #646970; }
+        .kop-ge .kop-ge-badge { display: inline-block; padding: 1px 7px; border-radius: 10px; font-size: 11px; background: #dcdcde; color: #1d2327; }
+        .kop-ge .kop-ge-badge--add { background: #d1e7dd; }
+        .kop-ge .kop-ge-badge--delete { background: #f8d7da; }
+        .kop-ge .kop-ge-muted { color: #50575e; }
         .kop-ge .kop-ge-form th { width: 180px; }
         .kop-ge .kop-ge-form textarea, .kop-ge .kop-ge-form input[type=text], .kop-ge .kop-ge-form select { width: 100%; max-width: 820px; }
-        .kop-ge .kop-ge-md { white-space: pre-wrap; background: #f6f7f7; padding: 8px 10px; max-width: 820px; font-size: 12px; }
         .kop-ge .kop-ge-filter { margin: 12px 0; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
         .kop-ge .kop-ge-add { display: flex; gap: 6px; margin-top: 6px; max-width: 820px; }
         .kop-ge .kop-ge-add input { flex: 1; }
+        .kop-ge .kop-ge-node { border-left: 3px solid #c3c4c7; padding: 4px 0 4px 12px; margin: 10px 0; }
+        .kop-ge .kop-ge-node details > summary { cursor: pointer; font-weight: 600; }
+        .kop-ge .kop-ge-node form { display: inline; }
+        .kop-ge .kop-ge-node .kop-ge-node { margin-left: 18px; }
+        .kop-ge .kop-ge-node textarea, .kop-ge .kop-ge-node input[type=text] { width: 100%; max-width: 760px; }
     </style>
     <?php
 }
 
-function kop_glossary_editor_list($state) {
-    $ops = $state['ops'];
-    $status = $state['status'];
-    $entries = kop_glossary_entries_by_id($state['data']);
-
+function kop_glossary_editor_nav($current) {
+    $tabs = array('list' => 'Entries', 'sections' => 'Sections and introduction');
     echo '<h1 class="wp-heading-inline">Glossary Editor</h1> ';
     echo '<a class="page-title-action" href="' . esc_url(kop_glossary_editor_url(array('view' => 'new'))) . '">Add a term</a>';
-    echo '<hr class="wp-header-end">';
-    echo '<p>Edits save straight to <a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/')) . '" target="_blank" rel="noopener">the glossary</a>. '
-        . 'Reader suggestions are under <a href="' . esc_url(admin_url('admin.php?page=kop-glossary-feedback')) . '">Glossary Feedback</a>.</p>';
-
-    if ($state['errors']) {
-        echo '<div class="notice notice-error"><p><strong>The glossary with the saved changes does not build, so the site is showing the committed version.</strong> Undo or fix the changes below:</p><ul>';
-        foreach ($state['errors'] as $e) {
-            echo '<li>' . esc_html($e) . '</li>';
-        }
-        echo '</ul></div>';
+    echo '<hr class="wp-header-end"><nav class="nav-tab-wrapper">';
+    foreach ($tabs as $key => $label) {
+        echo '<a class="nav-tab' . ($key === $current ? ' nav-tab-active' : '') . '" href="' . esc_url(kop_glossary_editor_url($key === 'list' ? array() : array('view' => $key))) . '">' . esc_html($label) . '</a>';
     }
+    echo '</nav>';
+    echo '<p>Changes save straight to <a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/')) . '" target="_blank" rel="noopener">the glossary</a>. '
+        . 'Reader suggestions are under <a href="' . esc_url(admin_url('admin.php?page=kop-glossary-feedback')) . '">Glossary Feedback</a>.</p>';
+}
 
-    /* Pending changes. */
-    if ($ops) {
-        $by_source = array();
-        foreach ($entries as $e) {
-            $by_source[$e['source']] = $e;
+function kop_glossary_editor_list($state) {
+    kop_glossary_editor_nav('list');
+    $paths = kop_glossary_node_paths($state['nodes']);
+
+    /* Recent changes, each with Undo. */
+    $recent = kop_glossary_store_recent(15);
+    if ($recent) {
+        $by_id = array();
+        foreach ($state['entries'] as $id => $e) {
+            $by_id[$id] = $e;
         }
-        echo '<div class="kop-ge-box"><h2>Saved changes not yet in the repository (' . count($ops) . ')</h2>';
-        echo '<p class="kop-ge-muted">These are live on the site. To make them permanent, download glossary.md, replace <code>js/data/glossary/glossary.md</code> with it, run <code>node scripts/build-glossary.js</code>, and commit both files. After that deploys, these clear themselves.</p>';
-        echo '<p><a class="button button-primary" href="' . esc_url(wp_nonce_url(admin_url('admin-post.php?action=kop_glossary_download'), 'kop_glossary_download')) . '">Download glossary.md</a></p>';
-        echo '<table class="widefat striped"><thead><tr><th>Entry</th><th style="width:110px">Change</th><th style="width:170px">By</th><th style="width:120px">Status</th><th style="width:170px"></th></tr></thead><tbody>';
-        foreach ($ops as $op) {
-            $st = $status[$op['id']] ?? 'stale';
-            $kind = $op['markdown'] === null ? 'Deleted' : ($op['target'] === null ? 'Added' : (!empty($op['container']) ? 'Edited, moved' : 'Edited'));
-            $live = $op['markdown'] !== null && isset($by_source[$op['markdown']]) ? $by_source[$op['markdown']] : null;
-            echo '<tr><td><strong>' . esc_html($op['term']) . '</strong>';
-            if (!empty($op['container']) && $op['markdown'] !== null) {
-                echo '<br><span class="kop-ge-muted">to ' . esc_html(kop_glossary_container_label($op['container'])) . '</span>';
+        $kinds = array('add' => 'Added', 'edit' => 'Edited', 'delete' => 'Deleted');
+        echo '<details class="kop-ge-box"' . (isset($_GET['changes']) ? ' open' : '') . '><summary><strong>Recent changes</strong></summary>';
+        echo '<table class="widefat striped" style="margin-top:10px"><thead><tr><th>Entry</th><th style="width:90px">Change</th><th style="width:200px">By</th><th style="width:120px"></th></tr></thead><tbody>';
+        foreach ($recent as $log) {
+            $live = isset($by_id[(int) $log['entry_id']]) ? $by_id[(int) $log['entry_id']] : null;
+            echo '<tr><td>';
+            echo $live
+                ? '<a href="' . esc_url(kop_glossary_editor_url(array('view' => 'edit', 'entry' => $live['anchor']))) . '"><strong>' . esc_html($log['term']) . '</strong></a>'
+                : '<strong>' . esc_html($log['term']) . '</strong>';
+            echo '</td><td><span class="kop-ge-badge kop-ge-badge--' . esc_attr($log['action']) . '">' . esc_html($kinds[$log['action']] ?? $log['action']) . '</span></td>';
+            echo '<td>' . esc_html($log['user']) . '<br><span class="kop-ge-muted">' . esc_html($log['created_at']) . '</span></td><td>';
+            if (!empty($log['undone_at'])) {
+                echo '<span class="kop-ge-muted">Undone ' . esc_html($log['undone_at']) . '</span>';
+            } else {
+                echo '<form method="post" onsubmit="return confirm(\'Undo this change?\');">';
+                wp_nonce_field('kop_glossary_editor');
+                echo '<input type="hidden" name="kop_ge_do" value="undo"><input type="hidden" name="kop_ge_log" value="' . (int) $log['id'] . '">'
+                    . '<button class="button button-small">Undo</button></form>';
             }
-            if ($st === 'stale') {
-                echo '<p class="kop-ge-muted">This entry was changed in the repository after this edit, so the edit is not applied. Your version:</p>'
-                    . '<div class="kop-ge-md">' . esc_html($op['markdown'] ?? '(delete)') . '</div>';
-            }
-            echo '</td><td>' . esc_html($kind) . '</td>';
-            echo '<td>' . esc_html($op['user']) . '<br><span class="kop-ge-muted">' . esc_html($op['time']) . '</span></td>';
-            echo '<td><span class="kop-ge-badge kop-ge-badge--' . esc_attr($st) . '">' . esc_html($st === 'applied' ? 'Live' : 'Out of date') . '</span></td><td>';
-            if ($live) {
-                echo '<a class="button button-small" href="' . esc_url(kop_glossary_editor_url(array('view' => 'edit', 'entry' => $live['id']))) . '">Edit</a> ';
-            }
-            echo '<form method="post" style="display:inline" onsubmit="return confirm(\'Undo this change?\');">';
-            wp_nonce_field('kop_glossary_editor');
-            echo '<input type="hidden" name="kop_ge_do" value="discard"><input type="hidden" name="kop_ge_op" value="' . esc_attr($op['id']) . '">'
-                . '<button class="button button-small">Undo</button></form></td></tr>';
+            echo '</td></tr>';
         }
-        echo '</tbody></table></div>';
+        echo '</tbody></table></details>';
     }
 
     /* The entries. */
     $q = trim((string) wp_unslash($_GET['q'] ?? ''));
-    $section = (string) wp_unslash($_GET['section'] ?? '');
-    $edited = array();
-    foreach ($ops as $op) {
-        if (($status[$op['id']] ?? '') === 'applied' && $op['markdown'] !== null) {
-            $edited[$op['markdown']] = $op['target'] === null ? 'Added' : 'Edited';
-        }
-    }
+    $section = (int) ($_GET['section'] ?? 0);
     echo '<form class="kop-ge-filter" method="get"><input type="hidden" name="page" value="' . esc_attr(KOP_GLOSSARY_EDITOR_PAGE) . '">'
         . '<input type="search" name="q" value="' . esc_attr($q) . '" placeholder="Term, word or program" style="min-width:260px">'
-        . '<select name="section"><option value="">All sections</option>';
-    foreach (($state['data']['sections'] ?? array()) as $s) {
-        echo '<option value="' . esc_attr($s['title']) . '"' . selected($section, $s['title'], false) . '>' . esc_html($s['title']) . '</option>';
+        . '<select name="section"><option value="0">All sections</option>';
+    foreach ($state['nodes'] as $id => $n) {
+        if ($n['parent_id'] === 0) {
+            echo '<option value="' . (int) $id . '"' . selected($section, $id, false) . '>' . esc_html($n['title']) . '</option>';
+        }
     }
     echo '</select><button class="button">Filter</button>';
-    if ($q !== '' || $section !== '') {
+    if ($q !== '' || $section) {
         echo ' <a href="' . esc_url(kop_glossary_editor_url()) . '">Clear</a>';
     }
     echo '</form>';
 
     $words = $q === '' ? array() : explode(' ', kop_glossary_lower(preg_replace('/\s+/', ' ', $q)));
     $rows = array();
-    foreach ($entries as $e) {
-        if ($section !== '' && $e['container'][0] !== $section) {
+    foreach ($state['entries'] as $id => $e) {
+        $path_ids = array();
+        for ($n = $e['node_id']; isset($state['nodes'][$n]); $n = $state['nodes'][$n]['parent_id']) {
+            $path_ids[] = $n;
+        }
+        if ($section && !in_array($section, $path_ids, true)) {
             continue;
         }
-        if (!kop_glossary_entry_matches($e, '', $words)) {
+        $match = array('term' => $e['term'], 'note' => $e['note'], 'text' => $e['definition'], 'aka' => $e['aka'],
+            'used' => kop_glossary_editor_slug_tags($e['used']), 'reported' => kop_glossary_editor_slug_tags($e['reported']));
+        if (!kop_glossary_entry_matches($match, '', $words)) {
             continue;
         }
         $rows[] = $e;
     }
-    echo '<p class="kop-ge-muted">' . count($rows) . ' of ' . count($entries) . ' entries</p>';
-    echo '<table class="widefat striped"><thead><tr><th>Term</th><th>Where</th><th style="width:90px">Programs</th><th style="width:90px"></th><th style="width:130px"></th></tr></thead><tbody>';
+    usort($rows, function ($a, $b) {
+        return strcmp(kop_glossary_sort_key($a['term']), kop_glossary_sort_key($b['term']));
+    });
+    echo '<p class="kop-ge-muted">' . count($rows) . ' of ' . count($state['entries']) . ' entries</p>';
+    echo '<table class="widefat striped"><thead><tr><th>Term</th><th>Where</th><th style="width:90px">Programs</th><th style="width:170px">Last changed</th><th style="width:110px"></th></tr></thead><tbody>';
     foreach ($rows as $e) {
-        $n = count($e['used']) + count($e['reported']);
-        echo '<tr><td><a href="' . esc_url(kop_glossary_editor_url(array('view' => 'edit', 'entry' => $e['id']))) . '"><strong>' . esc_html($e['term']) . '</strong></a>'
+        $edit = kop_glossary_editor_url(array('view' => 'edit', 'entry' => $e['anchor']));
+        echo '<tr><td><a href="' . esc_url($edit) . '"><strong>' . esc_html($e['term']) . '</strong></a>'
             . ($e['note'] !== '' ? ' <span class="kop-ge-muted">(' . esc_html($e['note']) . ')</span>' : '') . '</td>'
-            . '<td>' . esc_html(kop_glossary_container_label($e['container'])) . '</td>'
-            . '<td>' . (int) $n . '</td>'
-            . '<td>' . (isset($edited[$e['source']]) ? '<span class="kop-ge-badge kop-ge-badge--applied">' . esc_html($edited[$e['source']]) . '</span>' : '') . '</td>'
-            . '<td><a href="' . esc_url(kop_glossary_editor_url(array('view' => 'edit', 'entry' => $e['id']))) . '">Edit</a> | '
-            . '<a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $e['id'])) . '" target="_blank" rel="noopener">View</a></td></tr>';
+            . '<td>' . esc_html(kop_glossary_container_label($paths[$e['node_id']] ?? array())) . '</td>'
+            . '<td>' . (int) (count($e['used']) + count($e['reported'])) . '</td>'
+            . '<td>' . ($e['updated_by'] !== 'import' ? esc_html($e['updated_by']) . '<br>' : '') . '<span class="kop-ge-muted">' . esc_html($e['updated_at']) . '</span></td>'
+            . '<td><a href="' . esc_url($edit) . '">Edit</a> | '
+            . '<a href="' . esc_url(kop_glossary_entry_url($e['anchor'])) . '" target="_blank" rel="noopener">View</a></td></tr>';
     }
     echo '</tbody></table>';
 }
 
+/** Tags with the slug the page's filter reads. */
+function kop_glossary_editor_slug_tags($tags) {
+    foreach ($tags as $i => $t) {
+        $tags[$i]['slug'] = kop_glossary_slugify($t['program']);
+    }
+    return $tags;
+}
+
 /** The add / edit form. $fields: values to show again after a failed save. */
 function kop_glossary_editor_form($state, $fields) {
-    $entries = kop_glossary_entries_by_id($state['data']);
-
     /* A reader's note this edit answers. */
     $feedback_id = (int) ($_REQUEST['kop_ge_feedback'] ?? ($_GET['feedback'] ?? 0));
     $feedback = null;
@@ -813,35 +452,36 @@ function kop_glossary_editor_form($state, $fields) {
         $feedback = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . kop_glossary_feedback_table() . ' WHERE id = %d', $feedback_id));
     }
 
-    $entry_id = (string) wp_unslash($_REQUEST['kop_ge_entry'] ?? ($_GET['entry'] ?? ''));
+    $anchor = (string) wp_unslash($_REQUEST['kop_ge_entry'] ?? ($_GET['entry'] ?? ''));
+    $id = $anchor !== '' ? kop_glossary_entry_id_for_anchor($state, $anchor) : 0;
     /* A note's own record of its entry beats a stale id in the link. */
-    if ($feedback && !isset($entries[$entry_id]) && function_exists('kop_glossary_feedback_entry_id')) {
-        $entry_id = kop_glossary_feedback_entry_id($feedback);
+    if ($feedback && !$id && function_exists('kop_glossary_feedback_entry_id')) {
+        $anchor = kop_glossary_feedback_entry_id($feedback);
+        $id = $anchor !== '' ? kop_glossary_entry_id_for_anchor($state, $anchor) : 0;
     }
-    $entry = $entry_id !== '' ? ($entries[$entry_id] ?? null) : null;
-    if ($entry_id !== '' && !$entry) {
-        echo '<h1>Glossary Editor</h1><div class="notice notice-error"><p>No entry "' . esc_html($entry_id) . '". It may have been renamed.</p></div>';
+    if ($anchor !== '' && !$id) {
+        echo '<h1>Glossary Editor</h1><div class="notice notice-error"><p>No entry "' . esc_html($anchor) . '". It may have been renamed.</p></div>';
         echo '<p><a href="' . esc_url(kop_glossary_editor_url()) . '">Back to the list</a></p>';
         return;
     }
-    $section_default = (string) wp_unslash($_GET['in'] ?? '');
+    $entry = $id ? $state['entries'][$id] : null;
+    $paths = kop_glossary_node_paths($state['nodes']);
     if ($fields === null) {
-        $orig = $entry ? kop_glossary_parse_entry($entry['source'], true) : null;
-        $fields = array(
-            'term'      => $orig ? $orig['term'] : '',
-            'note'      => $orig ? $orig['note'] : '',
-            'aka_list'  => $orig ? implode("\n", $orig['aka']) : '',
-            'text'      => $orig ? $orig['text_raw'] : '',
-            'used'      => $orig ? kop_glossary_tag_lines($orig['used']) : '',
-            'reported'  => $orig ? kop_glossary_tag_lines($orig['reported']) : '',
-            'container' => $entry ? kop_glossary_container_label($entry['container']) : ($section_default !== '' ? $section_default : 'Shared Terms A–Z'),
-        );
+        $default_node = (int) ($_GET['in'] ?? 0);
+        if (!$default_node) {
+            foreach ($paths as $nid => $path) {
+                if (count($path) === 1 && stripos($path[0], 'Shared Terms') === 0) {
+                    $default_node = $nid;
+                }
+            }
+        }
+        $fields = kop_glossary_snapshot_fields($entry, $default_node);
     }
 
     echo '<h1>' . ($entry ? 'Edit "' . esc_html($entry['term']) . '"' : 'Add a term') . '</h1>';
     echo '<p><a href="' . esc_url(kop_glossary_editor_url()) . '">&larr; All entries</a>';
     if ($entry) {
-        echo ' &middot; <a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $entry['id'])) . '" target="_blank" rel="noopener">View on the glossary</a>';
+        echo ' &middot; <a href="' . esc_url(kop_glossary_entry_url($entry['anchor'])) . '" target="_blank" rel="noopener">View on the glossary</a>';
     }
     echo '</p>';
 
@@ -861,14 +501,20 @@ function kop_glossary_editor_form($state, $fields) {
     }
 
     $programs = array();
-    foreach (($state['data']['programs'] ?? array()) as $p) {
-        $programs[] = $p['name'];
+    foreach ($state['entries'] as $e) {
+        foreach (array_merge($e['used'], $e['reported']) as $t) {
+            $programs[$t['program']] = true;
+        }
     }
+    $programs = array_keys($programs);
+    usort($programs, function ($a, $b) {
+        return strcmp(kop_glossary_sort_key($a), kop_glossary_sort_key($b));
+    });
     ?>
     <form method="post" class="kop-ge-form" action="<?php echo esc_url(kop_glossary_editor_url()); ?>">
         <?php wp_nonce_field('kop_glossary_editor'); ?>
         <input type="hidden" name="kop_ge_do" value="save">
-        <input type="hidden" name="kop_ge_entry" value="<?php echo esc_attr($entry ? $entry['id'] : ''); ?>">
+        <input type="hidden" name="kop_ge_entry" value="<?php echo esc_attr($entry ? $entry['anchor'] : ''); ?>">
         <input type="hidden" name="kop_ge_feedback" value="<?php echo (int) $feedback_id; ?>">
         <table class="form-table" role="presentation">
             <tr>
@@ -878,7 +524,7 @@ function kop_glossary_editor_form($state, $fields) {
             <tr>
                 <th><label for="kop-ge-note">Qualifier</label></th>
                 <td><input type="text" id="kop-ge-note" name="kop_ge_note" value="<?php echo esc_attr($fields['note']); ?>">
-                    <p class="description">Shown in parentheses after the term, e.g. the full name of an abbreviation, or the program when two entries share a term. Leave blank if the entry has other names below.</p></td>
+                    <p class="description">Shown in parentheses after the term, e.g. the full name of an abbreviation, or the program when two entries share a term.</p></td>
             </tr>
             <tr>
                 <th><label for="kop-ge-aka">Also called</label></th>
@@ -893,24 +539,23 @@ function kop_glossary_editor_form($state, $fields) {
             <tr>
                 <th><label for="kop-ge-used">Used at</label></th>
                 <td><textarea id="kop-ge-used" name="kop_ge_used" rows="4"><?php echo esc_textarea($fields['used']); ?></textarea>
-                    <div class="kop-ge-add"><input type="text" list="kop-ge-programs" data-for="kop-ge-used" placeholder="Add a program"><button type="button" class="button" data-add="kop-ge-used">Add</button></div>
+                    <div class="kop-ge-add"><input type="text" list="kop-ge-programs" placeholder="Add a program"><button type="button" class="button" data-add="kop-ge-used">Add</button></div>
                     <p class="description">Programs whose own documents use the term, one per line. A note on how that program used it goes in parentheses: <code>Spring Ridge Academy (also as "vicinity visit")</code>.</p></td>
             </tr>
             <tr>
                 <th><label for="kop-ge-reported">Reportedly used at</label></th>
                 <td><textarea id="kop-ge-reported" name="kop_ge_reported" rows="4"><?php echo esc_textarea($fields['reported']); ?></textarea>
-                    <div class="kop-ge-add"><input type="text" list="kop-ge-programs" data-for="kop-ge-reported" placeholder="Add a program"><button type="button" class="button" data-add="kop-ge-reported">Add</button></div>
+                    <div class="kop-ge-add"><input type="text" list="kop-ge-programs" placeholder="Add a program"><button type="button" class="button" data-add="kop-ge-reported">Add</button></div>
                     <p class="description">Programs where survivor accounts report the term, one per line.</p></td>
             </tr>
             <tr>
-                <th><label for="kop-ge-container">Section</label></th>
-                <td><select id="kop-ge-container" name="kop_ge_container">
-                    <?php foreach (kop_glossary_containers($state['data']) as $path) :
-                        $label = kop_glossary_container_label($path); ?>
-                        <option value="<?php echo esc_attr($label); ?>"<?php selected($fields['container'], $label); ?>><?php echo esc_html(str_repeat('— ', count($path) - 1) . end($path)); ?></option>
+                <th><label for="kop-ge-node">Section</label></th>
+                <td><select id="kop-ge-node" name="kop_ge_node">
+                    <?php foreach ($paths as $nid => $path) : ?>
+                        <option value="<?php echo (int) $nid; ?>"<?php selected((int) $fields['node_id'], $nid); ?>><?php echo esc_html(str_repeat('— ', count($path) - 1) . end($path)); ?></option>
                     <?php endforeach; ?>
                 </select>
-                    <p class="description">Shared Terms A–Z for a term documented at more than one program; a program's own group for one documented at a single program. Entries sort alphabetically within it.</p></td>
+                    <p class="description">Shared Terms A–Z for a term documented at more than one program; a program's own group for one documented at a single program. Entries sort alphabetically within it. New groups are made under <a href="<?php echo esc_url(kop_glossary_editor_url(array('view' => 'sections'))); ?>">Sections</a>.</p></td>
             </tr>
             <?php if ($feedback) : ?>
             <tr>
@@ -928,11 +573,10 @@ function kop_glossary_editor_form($state, $fields) {
     </form>
 
     <?php if ($entry) : ?>
-        <details style="margin:8px 0 16px"><summary>Markdown for this entry</summary><div class="kop-ge-md"><?php echo esc_html($entry['source']); ?></div></details>
-        <form method="post" action="<?php echo esc_url(kop_glossary_editor_url()); ?>" onsubmit="return confirm('Delete this entry from the glossary?');">
+        <form method="post" action="<?php echo esc_url(kop_glossary_editor_url()); ?>" onsubmit="return confirm('Delete this entry from the glossary? Undo is under Recent changes.');">
             <?php wp_nonce_field('kop_glossary_editor'); ?>
             <input type="hidden" name="kop_ge_do" value="delete">
-            <input type="hidden" name="kop_ge_entry" value="<?php echo esc_attr($entry['id']); ?>">
+            <input type="hidden" name="kop_ge_entry" value="<?php echo esc_attr($entry['anchor']); ?>">
             <input type="hidden" name="kop_ge_feedback" value="<?php echo (int) $feedback_id; ?>">
             <button type="submit" class="button button-link-delete">Delete this entry</button>
         </form>
@@ -954,5 +598,88 @@ function kop_glossary_editor_form($state, $fields) {
         });
     });
     </script>
+    <?php
+}
+
+/** One small POST button for a node action. */
+function kop_glossary_editor_node_button($do, $node_id, $label, $confirm = '') {
+    echo '<form method="post"' . ($confirm !== '' ? ' onsubmit="return confirm(' . esc_attr(wp_json_encode($confirm)) . ');"' : '') . '>';
+    wp_nonce_field('kop_glossary_editor');
+    echo '<input type="hidden" name="kop_ge_do" value="' . esc_attr($do) . '"><input type="hidden" name="kop_ge_node" value="' . (int) $node_id . '">'
+        . '<button class="button button-small">' . esc_html($label) . '</button></form> ';
+}
+
+/** Sections, groups and the introduction. */
+function kop_glossary_editor_sections($state) {
+    kop_glossary_editor_nav('sections');
+    $meta = kop_glossary_store_meta();
+    $counts = array();
+    foreach ($state['entries'] as $e) {
+        $counts[$e['node_id']] = ($counts[$e['node_id']] ?? 0) + 1;
+    }
+    ?>
+    <div class="kop-ge-box">
+        <h2>Title and introduction</h2>
+        <form method="post">
+            <?php wp_nonce_field('kop_glossary_editor'); ?>
+            <input type="hidden" name="kop_ge_do" value="meta_save">
+            <p><label>Title<br><input type="text" name="kop_ge_title" value="<?php echo esc_attr($meta['title']); ?>" style="width:100%;max-width:760px"></label></p>
+            <p><label>Introduction<br><textarea name="kop_ge_intro" rows="8" style="width:100%;max-width:760px"><?php echo esc_textarea(implode("\n\n", $meta['intro'])); ?></textarea></label></p>
+            <p class="description">A blank line between paragraphs. <code>**Section name**</code> links to that section.</p>
+            <p><button class="button button-primary">Save</button></p>
+        </form>
+    </div>
+    <h2>Sections and groups</h2>
+    <p class="kop-ge-muted">Entries sort alphabetically inside each one; sections and groups keep the order set here. Only an empty one can be deleted.</p>
+    <?php
+    $render = function ($parent, $depth) use (&$render, $state, $counts) {
+        foreach ($state['nodes'] as $id => $n) {
+            if ($n['parent_id'] !== $parent) {
+                continue;
+            }
+            $has_children = false;
+            foreach ($state['nodes'] as $c) {
+                if ($c['parent_id'] === $id) {
+                    $has_children = true;
+                }
+            }
+            echo '<div class="kop-ge-node"><details><summary>' . esc_html($n['title'])
+                . ' <span class="kop-ge-muted">(' . (int) ($counts[$id] ?? 0) . ' entries, #' . esc_html(($parent ? 'g-' : '') . $n['anchor']) . ')</span></summary>';
+            echo '<form method="post" style="display:block;margin:8px 0">';
+            wp_nonce_field('kop_glossary_editor');
+            echo '<input type="hidden" name="kop_ge_do" value="node_save"><input type="hidden" name="kop_ge_node" value="' . (int) $id . '">'
+                . '<p><label>Title<br><input type="text" name="kop_ge_title" value="' . esc_attr($n['title']) . '"></label></p>';
+            if ($parent) {
+                echo '<p><label>Sources<br><input type="text" name="kop_ge_sources" value="' . esc_attr($n['sources']) . '"></label></p>';
+            }
+            echo '<p><label>Notes (shown above the entries; a blank line between paragraphs)<br><textarea name="kop_ge_notes" rows="4">' . esc_textarea(implode("\n\n", $n['notes'])) . '</textarea></label></p>'
+                . '<p><button class="button button-primary">Save</button></p></form>';
+            kop_glossary_editor_node_button('node_up', $id, 'Move up');
+            kop_glossary_editor_node_button('node_down', $id, 'Move down');
+            if (empty($counts[$id]) && !$has_children) {
+                kop_glossary_editor_node_button('node_delete', $id, 'Delete', 'Delete "' . $n['title'] . '"?');
+            }
+            echo ' <a href="' . esc_url(kop_glossary_editor_url(array('view' => 'new', 'in' => $id))) . '">Add a term here</a>';
+            if ($depth < 3) {
+                echo '<form method="post" style="display:block;margin:8px 0">';
+                wp_nonce_field('kop_glossary_editor');
+                echo '<input type="hidden" name="kop_ge_do" value="node_save"><input type="hidden" name="kop_ge_parent" value="' . (int) $id . '">'
+                    . '<input type="text" name="kop_ge_title" placeholder="New group under ' . esc_attr($n['title']) . '" style="max-width:360px"> '
+                    . '<button class="button">Add group</button></form>';
+            }
+            echo '</details>';
+            $render($id, $depth + 1);
+            echo '</div>';
+        }
+    };
+    $render(0, 1);
+    ?>
+    <form method="post" class="kop-ge-box">
+        <?php wp_nonce_field('kop_glossary_editor'); ?>
+        <input type="hidden" name="kop_ge_do" value="node_save">
+        <input type="hidden" name="kop_ge_parent" value="0">
+        <label>New section <input type="text" name="kop_ge_title" style="min-width:300px"></label>
+        <button class="button">Add section</button>
+    </form>
     <?php
 }

@@ -1,20 +1,24 @@
 <?php
 /**
- * The glossary build in PHP: glossary.md in, the glossary.json data out.
+ * The glossary build: a tree of sections, groups and entries in, the data the
+ * page reads out (ids, cross-references checked, entries sorted, the program
+ * list).
  *
- * A port of scripts/build-glossary.js, so the admin editor
- * (inc/glossary-editor.php) can rebuild the glossary on the server, where
- * there is no Node. The two must agree: scripts/test-glossary-build.php
- * builds js/data/glossary/glossary.md here and compares the result with the
- * committed glossary.json, which build-glossary.js wrote. Change one, change
- * the other.
+ * The glossary lives in SQL tables (inc/glossary-store.php). The store reads
+ * them into the same tree the markdown parser makes and runs
+ * kop_glossary_finish() over it, so every save is checked the way the old
+ * markdown build checked the file: a **cross-reference** must name exactly
+ * one entry, ids must be unique.
+ *
+ * The markdown parser stays for the one-time import of
+ * js/data/glossary/glossary.md into empty tables.
  *
  * Entry points:
  *   kop_glossary_build($markdown, $keep_source = false)
- *       array('data' => the glossary.json structure or null, 'errors' => list)
+ *       array('data' => the page data or null, 'errors' => list)
  *       With $keep_source every entry also carries 'source' (its markdown
- *       paragraph) and 'container' (the section/group titles it sits under),
- *       for the editor; they are not part of glossary.json.
+ *       paragraph) and 'container' (the section/group titles it sits under).
+ *   kop_glossary_finish($doc)            a parsed or stored tree -> data + errors
  *   kop_glossary_paragraphs($markdown)   the paragraphs the parser reads
  *   kop_glossary_parse_entry($para)      one entry paragraph, or null
  */
@@ -241,7 +245,7 @@ function kop_glossary_heading_level($para) {
 
 /**
  * The parse: a tree of stdClass nodes, so entries can be updated in place
- * while they are also listed flat. Mirrors parse() in build-glossary.js.
+ * while they are also listed flat.
  */
 function kop_glossary_parse($markdown, $keep_source) {
     $doc = (object) array('title' => '', 'updated' => '', 'intro' => array(), 'sections' => array());
@@ -334,6 +338,20 @@ function kop_glossary_build($markdown, $keep_source = false) {
     } catch (RuntimeException $e) {
         return array('data' => null, 'errors' => array($e->getMessage()));
     }
+    $out = kop_glossary_finish($doc);
+    return $out['errors'] ? array('data' => null, 'errors' => $out['errors']) : $out;
+}
+
+/**
+ * Ids, the cross-reference check, sorting and the program list over a parsed
+ * tree (stdClass nodes as kop_glossary_parse() makes them). An entry that
+ * already has an id (a stored one) keeps it; the others get the term, plus
+ * the qualifier or group when two entries share a term.
+ *
+ * @return array('data' => array, 'errors' => list) data is built even when
+ *         there are errors, so the page can still show a stored glossary.
+ */
+function kop_glossary_finish($doc) {
     $errors = array();
     $entries = kop_glossary_build_entries($doc);
 
@@ -346,9 +364,13 @@ function kop_glossary_build($markdown, $keep_source = false) {
     $used = array();
     foreach ($entries as $pair) {
         list($entry, $group_title) = $pair;
-        $id = kop_glossary_slugify($entry->term);
-        if ($counts[$id] > 1) {
-            $id = kop_glossary_slugify($entry->term . ' ' . ($entry->note !== '' ? $entry->note : $group_title));
+        if (isset($entry->id) && $entry->id !== '') {
+            $id = $entry->id;
+        } else {
+            $id = kop_glossary_slugify($entry->term);
+            if ($counts[$id] > 1) {
+                $id = kop_glossary_slugify($entry->term . ' ' . ($entry->note !== '' ? $entry->note : $group_title));
+            }
         }
         if ($id === '' || isset($used[$id])) {
             $errors[] = 'Duplicate or empty id "' . $id . '" for "' . $entry->term . '"';
@@ -468,10 +490,6 @@ function kop_glossary_build($markdown, $keep_source = false) {
         }
     }
 
-    if ($errors) {
-        return array('data' => null, 'errors' => $errors);
-    }
-
     $programs = array_values($programs);
     usort($programs, function ($a, $b) {
         return strcmp(kop_glossary_sort_key($a['name']), kop_glossary_sort_key($b['name']));
@@ -485,7 +503,7 @@ function kop_glossary_build($markdown, $keep_source = false) {
         'refs'     => $refs,
         'sections' => $doc->sections,
     );
-    /* Objects to plain arrays, as json_decode(..., true) of glossary.json. */
+    /* Objects to plain arrays. */
     $data = json_decode(json_encode($out, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), true);
     if (!is_array($data)) {
         return array('data' => null, 'errors' => array('The glossary could not be encoded: ' . json_last_error_msg()));
@@ -493,5 +511,5 @@ function kop_glossary_build($markdown, $keep_source = false) {
     if (empty($data['refs'])) {
         $data['refs'] = array();
     }
-    return array('data' => $data, 'errors' => array());
+    return array('data' => $data, 'errors' => $errors);
 }

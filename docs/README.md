@@ -53,7 +53,7 @@ here, and the tests `CLAUDE.md` names for each one:
 | `/operator/<slug>/` | `inc/operator-pages.php`, `templates/operator-page.php` |
 | State and country hubs | `templates/page-state.php`, `templates/page-country.php`, `inc/rest-api.php`, `inc/country-rest-api.php` |
 | `/report-abuse/` | `inc/reporting-directory.php`, data in `js/data/reporting/` (schema in its `README.md`) |
-| `/glossary/` | `inc/glossary.php`, `inc/glossary-feedback.php`, source in `js/data/glossary/glossary.md` |
+| `/glossary/` | `inc/glossary.php`, `inc/glossary-feedback.php`, data in SQL tables (`inc/glossary-store.php`), edited at KOP Tools > Glossary Editor |
 | Lawsuits and legislation | `templates/page-lawsuits.php`, `templates/page-legislation.php` and their admin and submit templates |
 | Research library and resources | `inc/research-library.php`, `inc/resources-list.php` |
 | Hubs and long-form articles | `templates/page-hub.php`, `templates/page-article.php`, `inc/article-parts.php`, `inc/article-pieces.php` |
@@ -91,8 +91,9 @@ Per-organization library pages use `templates/page-document-folder.php`.
   imports and one-off admin fixes (run from the browser as an admin, usually
   with `?apply=1`).
 - `js/` and `css/` hold page scripts and styles. `js/data/` holds the
-  generated JSON: the program aggregate, the network graph, the reporting
-  directory and the glossary.
+  generated JSON: the program aggregate, the network graph and the reporting
+  directory. The glossary is in SQL tables; `js/data/glossary/glossary.md` is
+  only the source of its one-time import.
 - `scripts/` holds the data pipelines, scrapers and offline test harnesses.
   Most PHP tests render against `tmp/prod.sqlite`, a mirror of production
   made by `scripts/sync-prod-sqlite.py`.

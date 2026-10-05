@@ -3,11 +3,10 @@
  * The TTI glossary: the language of the Troubled Teen Industry, from program
  * handbooks, staff manuals, state records and survivor accounts.
  *
- * The data is js/data/glossary/glossary.json, built from glossary.md by
- * scripts/build-glossary.js. Edits saved in wp-admin (Glossary Editor,
- * inc/glossary-editor.php) are applied over glossary.md and rebuilt on the
- * server until they are committed; kop_glossary_data() returns that version
- * when there is one.
+ * The data lives in SQL tables (inc/glossary-store.php), edited in wp-admin
+ * at KOP Tools > Glossary Editor (inc/glossary-editor.php) and with the
+ * pencil on each entry; kop_glossary_data() builds the page data from them,
+ * cached until the next change.
  *
  * Rendered server-side, every entry, so the page is readable, searchable with
  * the browser's own find, and linkable (/glossary/#bust) with no JavaScript.
@@ -27,31 +26,18 @@ if (!defined('KOP_GLOSSARY_SLUG')) {
     define('KOP_GLOSSARY_SLUG', 'glossary');
 }
 
-/** Path to the built glossary. */
-function kop_glossary_data_path() {
-    return get_stylesheet_directory() . '/js/data/glossary/glossary.json';
-}
+require_once __DIR__ . '/glossary-store.php';
 
-/** The decoded glossary, or null when the file is missing or unreadable. */
+/** The glossary's page data, or null when the tables are empty. */
 function kop_glossary_data() {
     static $data = false;
-    if ($data !== false) {
+    static $rev = null;
+    $now = (int) get_option('kop_glossary_rev', 0);
+    if ($data !== false && $rev === $now) {
         return $data;
     }
-    $data = null;
-    $live = function_exists('kop_glossary_live_data') ? kop_glossary_live_data() : null;
-    if ($live) {
-        $data = $live;
-        return $data;
-    }
-    $path = kop_glossary_data_path();
-    if (!is_readable($path)) {
-        return null;
-    }
-    $decoded = json_decode((string) file_get_contents($path), true);
-    if (is_array($decoded) && !empty($decoded['sections'])) {
-        $data = $decoded;
-    }
+    $data = kop_glossary_store_data();
+    $rev = (int) get_option('kop_glossary_rev', 0);
     return $data;
 }
 
