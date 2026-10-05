@@ -801,7 +801,7 @@ $d['form'] = 'table';
 check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a table-form scan is left out');
 unset($d['form'], $d['counts_as_violation']);
 check(kop_ih_extract('PA', array('categories_json' => json_encode($d))) === array(), 'PA: a document the page does not count is left out');
-check(!in_array('NV', kop_ih_supported_states(), true) && !in_array('OR', kop_ih_supported_states(), true) && count(kop_ih_supported_states()) === 24, 'states: 24 supported, Nevada and Oregon left out');
+check(!in_array('NV', kop_ih_supported_states(), true) && !in_array('OR', kop_ih_supported_states(), true) && count(kop_ih_supported_states()) === 25, 'states: 25 supported, Nevada and Oregon left out');
 
 // Montana (js/data/mt_reports.json, copied in by api/lib-mt-reports.php): findings passages, never the plan.
 $mt = static function (array $survey) { return array('report_date' => '09/14/2018', 'raw_content' => '', 'categories_json' => json_encode($survey)); };
@@ -852,6 +852,23 @@ $vdb->exec('UPDATE inspection_highlight_scans SET scanner_version = scanner_vers
 $bumped = kop_ih_scan($vdb, 100, true, array('TX', 'PA'));
 check($bumped['scanned'] === 1 && $bumped['remaining'] === 0, 'versions: only the report of the state whose rules moved is read again');
 check((int) $vdb->query('SELECT scanner_version FROM inspection_highlight_scans WHERE report_id = 2')->fetchColumn() === kop_ih_scanner_version('PA'), 'versions: it is marked with its state\'s version');
+
+// Washington (wa_scraper.py): findings read column by column; older rows without them give nothing.
+$wa = static function (array $cats) { return array('report_date' => '2023-09-20', 'raw_content' => 'spliced columns', 'categories_json' => json_encode($cats)); };
+$c = kop_ih_candidates('WA', $wa(array('report_category' => 'state_investigation', 'findings' => array(
+    array('rule' => 'WAC 246-341-0600 Individual rights.', 'findings' => "Based on interview and record review, the facility failed to protect patients from abuse.\nA staff member slapped Patient #3 in the face on 5/2/23."),
+))));
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && $c[0]['kind'] === 'complaint' && $c[0]['standard'] === 'WAC 246-341-0600 Individual rights.', 'WA: an investigation finding is queued with its rule');
+$f = kop_ih_extract('WA', $wa(array('report_category' => 'state_inspection', 'inspection_type' => 'ONGOING - ROUTINE', 'findings' => array(
+    array('rule' => '1015 Resident rights WAC 246-337-075(4)(a)', 'findings' => 'Washington Administrative Code was not met as evidenced by: Based on clinical record review, the RTF did not protect the confidentiality of residents.'),
+))));
+check(count($f) === 1 && strpos($f[0]['text'], 'Based on') === 0 && $f[0]['state_label'] === 'Deficiency cited, routine inspection' && $f[0]['factor'] === 0.85, 'WA: an inspection drops the form\'s opening and scores as routine');
+$f = kop_ih_extract('WA', $wa(array('report_category' => 'enforcement', 'inspection_number' => 'M2023-434 Summary Action Order', 'findings' => array(
+    array('rule' => 'Findings of fact', 'findings' => 'Staff restrained a youth face down and the youth was taken to the emergency room with a broken arm.'),
+))));
+check(count($f) === 1 && $f[0]['factor'] === 1.0 && $f[0]['standard'] === '' && $f[0]['state_label'] === 'Findings of fact, summary action order', 'WA: an order\'s findings of fact are read');
+check(kop_ih_extract('WA', $wa(array('report_category' => 'state_investigation', 'deficiencies' => array()))) === array(), 'WA: a row scraped before the column reader gives nothing');
+check(kop_ih_extract('WA', $wa(array('report_category' => 'state_investigation', 'document_owner_case' => '2023-11257', 'findings' => array(array('rule' => 'x', 'findings' => str_repeat('Staff hit a resident. ', 4)))))) === array(), 'WA: a case listed with another case\'s document gives nothing');
 
 echo "Rules: $checks checks, $failures failed.\n";
 

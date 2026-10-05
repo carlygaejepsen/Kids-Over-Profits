@@ -682,9 +682,11 @@ if (!function_exists('kop_ih_scanner_version')) {
     // -----------------------------------------------------------------------
 
     /**
-     * States with an adapter. Washington's statements of deficiencies come
-     * out of its scraper with the rule, the finding and the facility's plan
-     * interleaved line by line, and Nevada stores no finding text. Oregon's
+     * States with an adapter. Washington's are read from categories.findings,
+     * which its scraper fills column by column since 2026-10-05 (before, the
+     * rule, the finding and the facility's plan came out interleaved line by
+     * line, so older rows give nothing until rescraped). Nevada stores no
+     * finding text. Oregon's
      * site visit findings are almost all the rule's own wording run together
      * with what the licensor saw (a dry run on 2026-09-28 queued 90, nearly
      * every one a quoted rule), so it is left out. Montana's surveys reach
@@ -692,7 +694,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      */
     function kop_ih_supported_states() {
         return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK',
-            'PA', 'MI', 'MT', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA');
+            'PA', 'MI', 'MT', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA', 'WA');
     }
 
     /**
@@ -744,6 +746,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             case 'MI': return kop_ih_extract_mi($data, (string) ($row['raw_content'] ?? ''));
             case 'PA': return kop_ih_extract_pa($data);
             case 'MT': return kop_ih_extract_mt($data);
+            case 'WA': return kop_ih_extract_wa($data);
         }
         return array();
     }
@@ -1701,6 +1704,53 @@ if (!function_exists('kop_ih_scanner_version')) {
                     'factor' => ($complaint || $repeat) ? 1.0 : kop_ih_citation_factor(false), 'corrected_on_site' => null, 'kind' => 'citation',
                 );
             }
+        }
+        return $out;
+    }
+
+    /**
+     * Washington (wa_scraper.py): Department of Health documents for
+     * residential treatment facilities and behavioral health agencies, in
+     * categories.report_category. A Statement of Deficiency is a table of
+     * three columns, the rule cited, the inspector's findings and the
+     * facility's plan of correction; the scraper reads it column by column
+     * (scans by OCR) into categories.findings, {rule, findings}, so only the
+     * inspector's words are here. An enforcement document (Notice of Intent,
+     * Summary Action Order) gives its numbered findings of fact instead.
+     * Reports scraped before the column reader have no findings and are
+     * skipped; so is a case DOH lists with another case's document
+     * (document_owner_case). A complaint investigation is the Department
+     * confirming what was reported; an order is in force, a notice of intent
+     * can still be contested.
+     */
+    function kop_ih_extract_wa(array $data) {
+        if (!empty($data['document_owner_case'])) return array();
+        $category = (string) ($data['report_category'] ?? '');
+        $action = '';
+        if ($category === 'enforcement') {
+            $action = preg_match('/Summary Action Order|Notice of Intent|Statement of Charges|Agreed Order/i', (string) ($data['inspection_number'] ?? ''), $m) ? $m[0] : 'Enforcement action';
+            $label = 'Findings of fact, ' . strtolower($action);
+            $factor = preg_match('/^(?:Notice of Intent|Statement of Charges)$/i', $action) ? 0.9 : 1.0;
+        } elseif ($category === 'state_investigation') {
+            $label = 'Deficiency cited, complaint investigation';
+            $factor = kop_ih_citation_factor(true);
+        } else {
+            $type = strtolower(trim((string) preg_replace('/^ONGOING\s*-\s*/i', '', (string) ($data['inspection_type'] ?? ''))));
+            $label = 'Deficiency cited' . ($type !== '' ? ', ' . $type . ' inspection' : ', inspection');
+            $factor = kop_ih_citation_factor(false);
+        }
+        $out = array();
+        foreach ((array) ($data['findings'] ?? array()) as $f) {
+            if (!is_array($f)) continue;
+            // The form's own opening ("The Washington Administrative Code was not met as evidenced by:").
+            $text = kop_ih_clean_text(preg_replace('/^\s*[^.:]{0,60}?\b(?:was|is|were|are)\s+not\s+met\s+as\s+evidenced\s+by:?\s*/iu', '', (string) ($f['findings'] ?? '')));
+            if (mb_strlen($text) < 40) continue;
+            $rule = (string) ($f['rule'] ?? '');
+            $out[] = array(
+                'text' => $text, 'standard' => $rule === 'Findings of fact' ? '' : kop_ih_short_standard($rule),
+                'state_label' => $label, 'factor' => $factor, 'corrected_on_site' => null,
+                'kind' => $category === 'state_investigation' ? 'complaint' : 'citation',
+            );
         }
         return $out;
     }
