@@ -997,7 +997,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await runAction(action, [id], '');
             if (result.success) {
                 submission.status = statusAfter(action, currentType);
-                if (currentSubmission && String(currentSubmission.id) === String(id)) {
+                // Approving or rejecting closes this card's open details.
+                if ((action === 'approve' || action === 'reject') && String(expandedCardId) === String(id)) {
+                    closeModal();
+                } else if (currentSubmission && String(currentSubmission.id) === String(id)) {
                     currentSubmission.status = submission.status;
                     modalStatus.textContent = submission.status;
                     modalStatus.className = `status-badge status-${submission.status}`;
@@ -2638,7 +2641,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     loadStats();
                     loadSubmissions();
-                    if (action === 'delete') {
+                    // A decision closes the details; the next card is what matters now.
+                    if (action === 'delete' || action === 'approve' || action === 'reject' || action === 'promo') {
                         closeModal();
                     } else {
                         // Reload current submission to show updated status

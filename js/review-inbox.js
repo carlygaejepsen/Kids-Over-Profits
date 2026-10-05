@@ -1232,19 +1232,26 @@
                 else heading.insertBefore(document.createTextNode(next.title), heading.firstChild);
             }
             nativeQuickRow(card, next, src, res.message);
-            // An open detail panel shows the old values: open it again.
+            // An open detail panel shows the old values: open it again, or
+            // close it after an approve or reject.
             var view = card.querySelector('.btn-view');
-            if (view && /hide/i.test(view.textContent)) { view.click(); setTimeout(function () { view.click(); }, 50); }
+            if (view && /hide/i.test(view.textContent)) {
+                view.click();
+                if (!res.kopDecided) setTimeout(function () { view.click(); }, 50);
+            }
             refreshCounts();
             refreshOwnOrigins(true);
         }
-        function go(kind, body, btn) {
+        function go(kind, body, btn, decided) {
             row.querySelectorAll('button, select, input').forEach(function (b) { b.disabled = true; });
             if (btn) btn.classList.add('is-busy');
             msg.hidden = false;
             msg.className = 'rinbox-message';
             msg.textContent = kind === 'ai' ? 'Reading the article and filling empty fields…' : 'Working…';
-            api(kind, Object.assign({ source: src, key: item.key }, body)).then(after).catch(function (e) {
+            api(kind, Object.assign({ source: src, key: item.key }, body)).then(function (res) {
+                if (decided) res.kopDecided = true;
+                after(res);
+            }).catch(function (e) {
                 nativeQuickRow(card, item, src, e.message, true);
             });
         }
@@ -1284,7 +1291,7 @@
         (item.actions || []).forEach(function (a) {
             row.appendChild(el('button', {
                 type: 'button', class: 'rinbox-btn rinbox-btn-' + (a.style || 'neutral'), text: a.label,
-                onclick: function (e) { go('act', { action: a.id, params: {} }, e.currentTarget); }
+                onclick: function (e) { go('act', { action: a.id, params: {} }, e.currentTarget, a.style === 'approve' || a.style === 'reject'); }
             }));
         });
         if (s.can_ai) {
