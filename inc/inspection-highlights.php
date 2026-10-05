@@ -114,11 +114,12 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'label'    => 'Sexual abuse',
                 'weight'   => 90,
                 // Assault counts whoever did it, another child included (owner rule, 2026-09-28).
+                'exclude'  => '\bsexually abusing (?:him|her|them)?self\b',
                 'patterns' => array(
                     // Not "sexually abusive behavior", a screening a program must run at admission.
                     '\bsexual(?:ly)? (?:abus(?!ive behaviou?rs?)\w+|assault\w*|exploit\w+)',
                     '\b(?:rape[ds]?|raping|molest\w+|sodomi\w+)\b',
-                    '\b(?:non-? ?consensual|unwanted)\b[^.]{0,30}\bsex',
+                    '\b(?:non-? ?consensual|unwanted)\b[^.]{0,30}\bsex(?!ual (?:advances?|comments?|remarks?|gestures?|talk|language|jokes?))',
                     '\bsex\w*\b[^.]{0,40}\b(?:against (?:his|her|their) will|without (?:his|her|their )?consent)',
                     '\bforc\w+\b[^.]{0,30}\bsex',
                 ),
@@ -143,7 +144,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'patterns' => array(
                     // Staff by role, or by the labels the states use: S1 (California), E1 (Arizona).
                     // Nothing between staff and the act that denies it, supposes it, or names a child as the one acting.
-                    '(?<!\bfrom )(?<!\bwith )(?<!\bto )(?<!\btoward )(?<!\btowards )(?<!\bby )\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b' . kop_ih_actor_gap(80) . '\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
+                    '(?<!\bfrom )(?<!\bwith )(?<!\bto )(?<!\btoward )(?<!\btowards )(?<!\bby )(?<!\btold )(?<!\basked )(?<!\binformed )(?<!\bnotified )\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b' . kop_ih_actor_gap(80) . '\b(?:hit(?! the (?:brakes?|button|alarm|switch|gas|road|ball))|hitting|struck|(?<!hole )punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault(?!ive)\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
                     '\bphysical(?:ly)? (?:abus\w+|assault\w*)',
                     // The child hit by staff: "Youth A being physically hit by Staff 2".
                     '\b(?:hit|struck|punched|slapped|kicked|choked|shoved|pushed|assaulted|beaten|thrown|slammed|dragged|bitten)\s+by\s+(?:a |the |another |one |former )?(?:staff|caregiver|employee|counselor|supervisor|[SE]\d{1,2})\b',
@@ -178,6 +179,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             'self_harm' => array(
                 'label'    => 'Self-harm',
                 'weight'   => 65,
+                'exclude'  => '\bopen\w* (?:his|her|their|his\/her|the) mouth\b|\bmouth checks?\b|\bcheek\w*\b',
                 'patterns' => array(
                     '\b(?:self[- ]harm\w*|self[- ]injur\w+|self[- ]inflict\w*)\b',
                     '\b(?:cut|cutting|burn(?:ed|ing|t)?) (?:him|her|them)sel(?:f|ves)\b',
@@ -188,8 +190,8 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'label'    => 'Medical neglect',
                 'weight'   => 60,
                 'patterns' => array(
-                    '\b(?:fail\w+|did not|didn\'t|neglected|refus\w+) to (?:seek|obtain|get|provide|arrange)\b[^.]{0,40}\b(?:medical|treatment|doctor|physician)\b',
-                    '\b(?:not|never) (?:\w+ )?(?:received?|given|provided|taken to|seen by) (?:any |a |the )?(?:medical|treatment|doctor|physician|dentist)\b',
+                    '\b(?:fail\w+|did not|didn\'t|neglected|refus\w+) to (?:seek|obtain|get|provide|arrange)\b[^.]{0,40}\b(?:medical|treatment|doctor|physician)\b(?!\s+(?:records?|documentation|information|history|charts?|files?|consents?|releases?|forms?|reports?))',
+                    '\b(?:not|never) (?:\w+ )?(?:received?|given|provided|taken to|seen by) (?:any |a |the )?(?:medical|treatment|doctor|physician|dentist)\b(?!\s+(?:records?|documentation|information|history|charts?|files?|consents?|releases?|forms?|reports?))',
                     '\b(?:medical neglect|denied (?:medical|medications?)|withh[eo]ld\w* (?:\w+ )?medications?)\b',
                     '\bdelay\w* (?:in )?(?:seeking |obtaining |getting )?(?:medical|treatment)\b',
                 ),
@@ -311,7 +313,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Words that mean the sentence talks about a possibility, a rule or a plan, not an event. */
     function kop_ih_hypothetical_pattern() {
-        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|lead(?:s|ing)? to|in (?:the )?(?:case|event) (?:of|that)|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|jok\w+|histor(?:y|ies) of)\b';
+        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|lead(?:s|ing)? to|in (?:the )?(?:case|event) (?:of|that)|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|accus\w+|known or suspected|jok\w+|histor(?:y|ies) of)\b';
     }
 
     /**
@@ -346,7 +348,9 @@ if (!function_exists('kop_ih_scanner_version')) {
             . '|\b(?:previous|prior|former|last) (?:group home|placement|facility|home|foster home|program|school|provider)\b'
             // A record review's lists: diagnoses, a history line, an admission assessment (North Carolina's bullets).
             . '|\bdiagnos(?:is|es)\b|\bdiagnosed with\b[^.]*,|^\W*(?:hx|history|past)\b'
-            . '|\b(?:admission|intake|initial|clinical|comprehensive|psychiatric|psychological) (?:assessment|evaluation)s?\b[^.]{0,80}\b(?:documented|revealed|showed|indicated|noted|listed)\b'
+            . '|\b(?:admission|intake|initial|clinical|comprehensive|psychiatric|psychological|biopsychosocial|psychosocial) (?:assessment|evaluation)s?\b[^.]{0,80}\b(?:documented|revealed|showed|indicated|indicates|noted|listed)\b'
+            // A legal definition quoted (Virginia's "Abuse means any act ... caused or might have caused ... death").
+            . '|\bmeans any act\b|\bmight have caused\b|\bknowing(?:ly)?,? recklessly,? or intentionally\b|\bincludes?,? but (?:is |are )?not limited to\b'
             // Rule text: what a provider shall do, a list of the crimes a statute names.
             . '|\bshall\b|\bArticle \d+\w*, |\b(?:G\.S\.|NCAC|General Statutes)\b';
     }
@@ -371,7 +375,7 @@ if (!function_exists('kop_ih_scanner_version')) {
         // A client label: "C1", "Y2", "Client #2", "Child 1 (C1)", each maybe followed by a
         // form reference in brackets. Staff are S1, S2 and never match.
         // Michigan writes "Youth A", "Resident B".
-        $label = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\bP ?#\d+|\b[CYR]\d+\b|\b(?:Youth|Resident|Child|Client|Minor|Student) [A-Z]\b)(?:\s*\([^)]{0,60}\))?';
+        $label = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient|Individual|Consumer) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\bP ?#\d+|\b[CYR]\d+\b|\b(?:Youth|Resident|Child|Client|Minor|Student) [A-Z]\b)(?:\s*\([^)]{0,60}\))?';
         // "Participant #1 and #2", "Youth #2 and Youth #3": a bare "#2" after a label is the second child.
         $second = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?)?\(?(?:' . $label . '|#\s?\d+)';
         $verb = '(?:hit|hitting|struck|punch|slapp|kick|chok|shov|assault|attack|fought|fight|beat|touch|grop|fondl|rape|raping|molest|sexual|engag|had sex)';
@@ -403,7 +407,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      * the one acting ("Staff 2 followed, Youth A ... kick the door").
      */
     function kop_ih_actor_gap($max) {
-        return '(?:(?!\b(?:not|never|no|denied|denies|deny|denying|would|could|may|might|felt|feel|fear\w*|worried|threaten\w*|if|whether|allow\w*|alleg\w*)\b|\b(?:Youth|Resident|Child|Client|Minor|Student|Participant) (?:[A-Z]|#?\s?\d+)\b|\b[CRY]\d{1,2}\b)[^.]){0,' . (int) $max . '}';
+        return '(?:(?!\b(?:not|never|no|denied|denies|deny|denying|would|could|may|might|felt|feel|fear\w*|worried|threaten\w*|if|whether|allow\w*|alleg\w*)\b|\b(?:Youth|Resident|Child|Client|Minor|Student|Participant|Individual|Consumer) (?:[A-Z]|#?\s?\d+)\b|\b[CRY]\d{1,2}\b)[^.]){0,' . (int) $max . '}';
     }
 
     /** Staff, by role or by the labels the states use (S1 in California, E1 in Arizona). */
@@ -413,7 +417,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** A child in care, by word or by the labels the states use (C1, R1, Y1, "Client #2"). */
     function kop_ih_child_word() {
-        return '(?:child(?:ren)?|clients?|residents?|youths?|minors?|students?|patients?|participants?|peers?|juveniles?|boys?|girls?|kids?|[CRY]\d{1,2}|P ?#\d+|(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+|(?:Youth|Resident|Child|Client|Minor|Student) [A-Z]\b)';
+        return '(?:child(?:ren)?|clients?|residents?|youths?|minors?|students?|patients?|participants?|peers?|juveniles?|boys?|girls?|kids?|[CRY]\d{1,2}|P ?#\d+|(?:Client|Child|Youth|Resident|Minor|Participant|Patient|Individual|Consumer) ?#?\s?\d+|(?:Youth|Resident|Child|Client|Minor|Student) [A-Z]\b)';
     }
 
     /**
@@ -465,6 +469,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             // Not "the child did not tell staff": only the program's records and notices.
             . '|\b(?:did not|didn\'t|does not|was not|were not|has not|had not|have not|never)\s+(?:\w+\s+){0,2}?(?:report|notify|document|record|log|submit|chart)\w*\b'
             . '|\b(?:did not|didn\'t|does not|do not|was not|were not|has not|had not|fail\w* to|not)\s+(?:\w+\s+){0,3}?(?:provide|submit|send|complete|file|have|contain|include|show|maintain|keep|obtain)\s+(?:\w+\s+){0,4}?(?:written|documentation|documented|reports?|records?|copy|copies|logs?|forms?|signatures?|notices?|notifications?)\b'
+            . '|\bthere (?:was|were|is|are) (?:not|no) (?:an? )?(?:\w+ ){0,3}?(?:logs?|records?|documentation|reports?|forms?)\b'
             . '|\b(?:no|missing|lack\w*|incomplete|absent)\s+(?:\w+\s+){0,2}?(?:documentation|paperwork|signatures?|written (?:report|notice|notification|documentation))\b'
             . '|\b(?:report\w*|notif\w*|submit\w*|contact\w*)\b[^.]{0,80}\b(?:within (?:\S+ ){1,2}(?:hours?|days?)|timely|in writing|(?:\w+ ){0,2}(?:hours?|days?) late)\b'
             . '|\b(?:untrained|not (?:been |yet )?trained|(?:lack\w*|without|no) (?:\w+ )?(?:training|certification)|(?:training|certification)s? (?:was |were |had |has )?(?:expired|missing|incomplete|overdue|lapsed|out of date)|(?:expired|missing|incomplete|overdue|lapsed) (?:\w+ ){0,3}(?:training|certification)s?)\b';
@@ -626,7 +631,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             if ($on_staff && !in_array($key, array('death', 'restraint_injury'), true)) continue;
             if (!empty($cat['requires']) && kop_ih_sentence_has($sentence, $cat['requires']) === false) continue;
             if (!empty($cat['exclude']) && preg_match('/' . $cat['exclude'] . '/iu', $sentence)) continue;
-            $paperwork = !in_array($key, $exempt, true);
+            $paperwork = !in_array($key, $exempt, true) || ($key === 'sexual_abuse' && !kop_ih_adult_took_part($sentence));
             foreach ($cat['patterns'] as $pattern) {
                 $words = kop_ih_sentence_has($sentence, $pattern, $paperwork);
                 if ($words === false) continue;
@@ -1805,6 +1810,8 @@ if (!function_exists('kop_ih_scanner_version')) {
             if (!empty($finding['require_verdict']) && !kop_ih_verdict_near($verdicts, $i)) continue;
             $found = kop_ih_match_sentence($sentence);
             if ($keep !== null) $found = array_intersect_key($found, array_flip($keep));
+            // A late report about residents with each other is still only a late report.
+            if ($keep !== null && isset($found['sexual_abuse']) && !kop_ih_adult_took_part($sentence)) unset($found['sexual_abuse']);
             if (!$found) continue;
             $top = 0;
             foreach ($found as $key => $words) {

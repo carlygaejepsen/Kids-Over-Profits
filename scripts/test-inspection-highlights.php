@@ -138,6 +138,9 @@ $noise_cases = array_merge($noise_cases, array(
     'Staff reviewed the self-harm training materials during orientation.',
     'The Penal Code Section 11165.6 defines child abuse or neglect as a physical injury or death inflicted by other than accidental means upon a child by another person.',
     'The rule for incident reporting to DCWL for AWOL\'s, youth involvement with law enforcement, youth hospitalizations, etc. also states immediate reporting, but not more than 24 hours.',
+    'Abuse means any act or failure to act by an employee or other person responsible for the care of an individual in a facility or program operated, licensed, or funded by the department.',
+    'This action demonstrates use of excessive force, was performed knowingly and intentionally, and might have caused physical or psychological harm, injury, or death to the individual.',
+    'This includes, but is not limited to, frequent unprovoked physical assaults, weapon use, or severe property destruction. Active Suicide Risk: Individuals with a current, imminent plan for suicide.',
     '"As a reminder, Serious Occurrences are any event that result in Restraint or Seclusion, Resident\'s Death, Any Serious Injury to a Resident, and a Resident\'s Suicide Attempt.',
 ));
 foreach ($noise_cases as $s) check((bool) preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is set aside');
@@ -210,6 +213,22 @@ $sentence_cases = array_merge($sentence_cases, array(
     array('Both staff were aware of concerns of Youth A being physically hit by Staff 2 and there was no report made to Child Protective Services.', array('physical_abuse')),
     array('It is found that Former Staff 1 hit Youth A with a walkie talkie more than once and pulled out strands of Youth A\'s hair.', array('physical_abuse')),
     array('Youth C reported having sexual intercourse with Staff 1 while he was at the facility.', array('sexual_abuse')),
+    // The states added 2026-10-05, from their real reports (live copy of 2026-10-05).
+    array('Staff E confirmed observing the hole punch on each fire extinguisher for the month of June 2022.', array()),
+    array('Two staff were transporting Consumer #13 when Staff H hit the brakes to avoid a car accident and Consumer #13 fell forward hitting his head.', array()),
+    array('Review of Consumer #1\'s incident reports revealed a 4/1/03 incident in which he accused staff of physical abuse (dragging him down the hallway).', array()),
+    array('The staff were scheduled to work with children that had known aggressive/assaultive behaviors.', array()),
+    array('On 1/31/2025, Child 2 told staff the water hitting her skin made her feel uncomfortable.', array()),
+    array('The facility failed to provide medical records upon request for 1 of 3 sample patients reviewed.', array()),
+    array('The parent of patient #2 stated they never received the medical records they requested.', array()),
+    array('Once the resident has swallowed the medications, the resident must open his/her mouth, to allow staff to check that medications were swallowed.', array()),
+    array('On 2/14/16 an unwanted sexual advance by resident #4 towards resident #8 occurred in the basement of a church.', array()),
+    array('Patient #2 became nude, sexually abusing self and stocking objects into her vagina.', array()),
+    array('Child A and B\'s assessment did not include assessment related to known or suspected suicide or self-injury attempts or gestures.', array()),
+    array('Staff member B kicked Child 4 in the leg causing the child to fall to the ground.', array('physical_abuse')),
+    array('Employee #1 used excessive force by grabbing individual\'s arm and flipped Individual #1 over Employee #1\'s head resulting in Individual #1 landing hard on the floor.', array('physical_abuse')),
+    array('The video footage showed Staff A dragging Resident A from their bedroom into the bathroom by grasping the back of the resident\'s shirt.', array('physical_abuse')),
+    array('The complainant reported that Resident A had been forced to perform oral sex by Resident B.', array('sexual_abuse')),
     // Owner rule, 2026-10-05: a resident assaulting staff does not count.
     array('C1 punched a staff member in the face.', array()),
     array('The resident assaulted staff and police were called.', array()),
