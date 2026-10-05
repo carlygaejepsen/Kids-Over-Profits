@@ -1238,26 +1238,75 @@ add_shortcode('kop_document', 'kop_document_shortcode');
  * news_story_arcs migration hasn't run), so it's safe to leave in place.
  */
 /**
- * Facility learn-more link for a story arc row, or null when the arc has no
- * facility_label. A custom facility_url (a dedicated profile page like /hyde)
- * wins; without one the button goes to the facility's profile page
- * (editorial post or generated /facility/<slug>/, inc/facility-pages.php)
- * when a record of that name has one, and otherwise to the location index
- * filtered to the facility name (the program index lists operators only).
+ * Facility learn-more link for a story arc row, or null when there is no
+ * facility to name. A custom facility_url (a dedicated profile page like
+ * /hyde) wins; without one the button goes to the profile page (editorial
+ * post or generated /facility/<slug>/, inc/facility-pages.php) of the record
+ * named by facility_label. When the label names no record with a page (a
+ * short or former name), or the arc has no label at all, the button goes to
+ * the facility the arc's own articles are linked to most
+ * (kop_news_arc_linked_facility()). Only a label that matches nothing falls
+ * back to the location index filtered to it (the program index lists
+ * operators only).
  */
 function kop_news_arc_facility_link(array $arc): ?array {
     $label = trim((string) ($arc['facility_label'] ?? ''));
+    $url = trim((string) ($arc['facility_url'] ?? ''));
+    if ($url === '' && $label !== '' && function_exists('kop_facility_page_url_for_name')) {
+        $url = (string) kop_facility_page_url_for_name($label);
+    }
+    if ($url === '' && !empty($arc['id'])) {
+        $linked = kop_news_arc_linked_facility((int) $arc['id']);
+        if ($linked) {
+            return ['label' => $label !== '' ? $label : $linked['name'], 'url' => $linked['url']];
+        }
+    }
     if ($label === '') {
         return null;
-    }
-    $url = trim((string) ($arc['facility_url'] ?? ''));
-    if ($url === '' && function_exists('kop_facility_page_url_for_name')) {
-        $url = (string) kop_facility_page_url_for_name($label);
     }
     if ($url === '') {
         $url = '/tti-program-index/?view=location&search=' . rawurlencode($label);
     }
     return ['label' => $label, 'url' => $url];
+}
+
+/**
+ * The facility a story arc's published articles are linked to most
+ * (news_facility_links), as {name, url}, or null when none of them is linked
+ * to a facility with a page. Ties go to the lower id.
+ */
+function kop_news_arc_linked_facility(int $arc_id): ?array {
+    global $wpdb;
+    static $cache = [];
+    if ($arc_id <= 0 || !function_exists('kop_facility_page_url') || !function_exists('kop_facility_pages_index')) {
+        return null;
+    }
+    if (array_key_exists($arc_id, $cache)) {
+        return $cache[$arc_id];
+    }
+    $suppress = $wpdb->suppress_errors(true);
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT l.facility_id, COUNT(DISTINCT l.news_id) AS n
+           FROM news_facility_links l
+           JOIN news_submissions s ON s.id = l.news_id
+          WHERE s.story_arc_id = %d AND s.status IN ('approved','published')
+          GROUP BY l.facility_id
+          ORDER BY n DESC, l.facility_id ASC",
+        $arc_id
+    ), ARRAY_A);
+    $wpdb->suppress_errors($suppress);
+
+    $found = null;
+    $index = kop_facility_pages_index();
+    foreach ((array) $rows as $row) {
+        $id = (int) $row['facility_id'];
+        $url = (string) kop_facility_page_url($id);
+        if ($url !== '' && isset($index['ids'][$id])) {
+            $found = ['name' => (string) $index['ids'][$id]['name'], 'url' => $url];
+            break;
+        }
+    }
+    return $cache[$arc_id] = $found;
 }
 
 function kop_ongoing_stories_shortcode($atts) {

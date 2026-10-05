@@ -737,7 +737,8 @@ if (!function_exists('kop_facility_profile_link_card')) {
 if (!function_exists('kop_facility_profile_items')) {
     /**
      * A section's blocks as items in order: link preview blocks become
-     * {type: card}, every other block {type: html, raw}. Column blocks are
+     * {type: card}, a FileBird document library {type: doclib, folders[]},
+     * every other block {type: html, raw}. Column blocks are
      * opened so the cards inside them line up with the page's own cards.
      */
     function kop_facility_profile_items(array $blocks) {
@@ -745,6 +746,11 @@ if (!function_exists('kop_facility_profile_items')) {
         foreach ($blocks as $b) {
             if ($b['name'] === 'visual-link-preview/link') {
                 $items[] = array('type' => 'card', 'card' => kop_facility_profile_link_card($b['attrs']));
+            } elseif ($b['name'] === 'filebird/document-library') {
+                // FileBird's own library widget: the page prints the folder as
+                // the theme's document tiles instead (kop_facility_pages_documents()).
+                $folders = $b['attrs']['request']['selectedFolder'] ?? array();
+                $items[] = array('type' => 'doclib', 'folders' => array_values(array_filter(array_map('intval', (array) $folders))));
             } elseif ($b['name'] === 'columns' || $b['name'] === 'column') {
                 $items = array_merge($items, kop_facility_profile_items(kop_facility_profile_split_blocks($b['inner'])));
             } else {

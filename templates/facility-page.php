@@ -204,8 +204,10 @@ $kop_fp_alias = static function ($kind, $anchor) use ($kop_fp_psec) {
 $kop_fp_title = static function ($kind, $default) use ($kop_fp_psec) {
     return isset($kop_fp_psec[$kind]) ? $kop_fp_psec[$kind]['title'] : $default;
 };
-// A profile section's items in order: link previews as cards, every other block through the_content.
-$kop_fp_render_items = static function (array $items) use ($kop_fp_news_card) {
+// A profile section's items in order: link previews as cards, a FileBird
+// library as the theme's document tiles (left out where the record's own
+// library already prints), every other block through the_content.
+$kop_fp_render_items = static function (array $items, $skip_doclib = false) use ($kop_fp_news_card) {
     $cards = array();
     $flush = static function () use (&$cards, $kop_fp_news_card) {
         if (!$cards) return;
@@ -220,6 +222,14 @@ $kop_fp_render_items = static function (array $items) use ($kop_fp_news_card) {
             continue;
         }
         $flush();
+        if ($it['type'] === 'doclib') {
+            if ($skip_doclib || !function_exists('kop_facility_pages_documents')) continue;
+            foreach ($it['folders'] as $folder) {
+                $lib = kop_facility_pages_documents(array(), $folder);
+                echo $lib['html']; // Shortcode output, escaped by the shortcode.
+            }
+            continue;
+        }
         echo kop_facility_profile_render($it['raw']);
     }
     $flush();
@@ -822,7 +832,7 @@ get_header();
             <section class="kop-fp-section kop-fp-documents" id="<?php echo $kop_fp_id('documents'); ?>">
                 <?php echo $kop_fp_alias('documents', 'documents'); ?>
                 <h2><?php echo esc_html($kop_fp_title('documents', 'Documents')); ?></h2>
-                <?php if (isset($kop_fp_psec['documents'])) $kop_fp_render_items($kop_fp_psec['documents']['items']); ?>
+                <?php if (isset($kop_fp_psec['documents'])) $kop_fp_render_items($kop_fp_psec['documents']['items'], !empty($page['documents']['html'])); ?>
                 <?php if (!empty($page['documents']['html'])) : ?>
                     <?php echo $page['documents']['html']; // Shortcode output, escaped by the shortcode. ?>
                 <?php endif; ?>

@@ -24,7 +24,8 @@
     display: block;
 }
 
-.entry-content img:not(.alignleft):not(.alignright):not([class*="emoji"]) {
+/* Document tile previews (css/document-library.css) keep their fixed-height crop. */
+.entry-content :not(.doc-thumbnail) > img:not(.alignleft):not(.alignright):not([class*="emoji"]) {
     max-width: 100%;
     height: auto;
 }
