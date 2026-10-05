@@ -605,22 +605,24 @@ updated.
    `docs/state-inspection-reports/plans/hawaii.md`. Source: the Health
    department's inspection reports page (one static page, 2023 on); 43
    special treatment facilities and therapeutic living programs, 110
-   statements. Scope is a youth allowlist: 8 in (Benchmark Behavioral
-   Health System, Bobby Benson Center, Hiki Mai Ka La, Na Ohana Pulama,
-   Pearl Haven, Pacific Quest Awapuhi, Olena and Reed's Bay), 33 adult
-   programs out, 2 unsure and not scraped (E Ho'oulu Hou Elua Program,
-   Nova Luna). A full `--no-post` run: 8 facilities, 20 statements
-   2023-02-17 to 2026-03-17, 11 with deficiencies (12 cited, all flagged)
-   and 9 with none; 12 read by OCR (scans of the signed form, columns
-   cropped and read one by one); 4 plans of correction handwritten and not
-   transcribed (Benchmark 2024 and 2025, Pearl Haven 2023 and 2025);
-   nothing held by the privacy check, no not_a_report, nothing unread. 4
-   names reach 2 `facilities_v2` records (the three Pacific Quest sites ->
-   Pacific Quest, Pearl Haven); Benchmark, Bobby Benson, Hiki Mai Ka La and
-   Na Ohana Pulama have no record and no near miss. **Owner:** settle the 2
-   unsure scope rows, approve the first post (run Hawaii from the
-   launcher), then publish `/hi-reports/`; the state adds reports a few
-   times a year, so a quarterly run is enough.
+   statements. Scope is a youth allowlist, settled by the owner
+   2026-10-05: 9 in (Benchmark Behavioral Health System, Bobby Benson
+   Center, Hiki Mai Ka La, Na Ohana Pulama, Nova Luna, Pearl Haven, Pacific
+   Quest Awapuhi, Olena and Reed's Bay), 34 out (33 adult programs, and E
+   Ho'oulu Hou Elua Program, whose population is not established). A full
+   `--no-post` run: 9 facilities, 21 statements 2023-02-17 to 2026-03-17,
+   12 with deficiencies (14 cited, all flagged) and 9 with none; 13 read by
+   OCR (scans of the signed form, columns cropped and read one by one); 4
+   plans of correction handwritten and not transcribed (Benchmark 2024 and
+   2025, Pearl Haven 2023 and 2025); nothing held by the privacy check, no
+   not_a_report, nothing unread. The Drive folder `hi_pdfs/` lists without
+   a sign-in (shared by link, like `wy_pdfs/` and `ia_pdfs/`). 4 names
+   reach 2 `facilities_v2` records (the three Pacific Quest sites ->
+   Pacific Quest, Pearl Haven); Benchmark, Bobby Benson, Hiki Mai Ka La, Na
+   Ohana Pulama and Nova Luna have no record and no near miss.
+   **Owner:** approve the first post (run Hawaii from the launcher), then
+   publish `/hi-reports/`; the state adds reports a few times a year, so a
+   quarterly run is enough.
 
 7. **Inspection rankings** (started 2026-10-05, `inc/inspection-rollup.php`,
    KOP Tools > Inspection Rankings). Built: the hourly count of every report's

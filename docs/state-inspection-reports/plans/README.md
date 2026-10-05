@@ -26,7 +26,7 @@ build them: the first two lose data while they wait.
 
 **Built 2026-10-05, not yet posted:** [hawaii.md](hawaii.md), Hawaii (HI), the
 Health department's statements of deficiencies for youth special treatment
-facilities and therapeutic living programs (8 of 43 facilities, 20 statements
+facilities and therapeutic living programs (9 of 43 facilities, 21 statements
 since 2023; a youth allowlist; scans read by OCR).
 
 [research-log.md](research-log.md) records what every state publishes,

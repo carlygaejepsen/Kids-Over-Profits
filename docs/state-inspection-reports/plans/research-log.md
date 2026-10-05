@@ -30,7 +30,7 @@ Ordered by what is lost by waiting, then by size.
 | Iowa | 32 | [iowa.md](iowa.md) | 46 psychiatric institutions for children (25 closed), 240 federal survey PDFs | Small and clean |
 | Maryland | 29 | [maryland.md](maryland.md) | 174 short inspection summaries for group homes | Summaries only, one line per citation |
 | Maine | 24 | [maine.md](maine.md) | Behavioral health licence surveys for about 13 youth operators: inspection history from 2013, documents (complaint surveys, deficiencies, plans of correction) from late 2024 | Per operator, so scope is an allowlist; no permanent links |
-| Hawaii | 9 | [hawaii.md](hawaii.md) | Health department statements of deficiencies for special treatment facilities and therapeutic living programs, 43 facilities, 110 statements since 2023; 8 youth programs in scope, 20 statements | Built 2026-10-05, not yet posted; scans read by OCR; youth allowlist `hi_scope.json` |
+| Hawaii | 9 | [hawaii.md](hawaii.md) | Health department statements of deficiencies for special treatment facilities and therapeutic living programs, 43 facilities, 110 statements since 2023; 9 youth programs in scope, 21 statements | Built 2026-10-05, not yet posted; scans read by OCR; youth allowlist `hi_scope.json` |
 | South Dakota | 16 | [south-dakota.md](south-dakota.md) | 27 providers, about 150 licensing studies, inspections and corrective plans | Small and easy |
 
 ## Something is published, no plan yet (worth a second look later)

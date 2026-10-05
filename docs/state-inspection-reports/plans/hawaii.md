@@ -113,7 +113,7 @@ health residences, crisis centres and youth programs alike, so scope is
 not; a page row the file does not list is reported at the end of every run
 and not scraped.
 
-On 2026-10-05: **8 in, 33 out, 2 unsure.**
+Settled by the owner on 2026-10-05: **9 in, 34 out, 0 unsure.**
 
 | In | Licence | Why |
 |---|---|---|
@@ -125,13 +125,13 @@ On 2026-10-05: **8 in, 33 out, 2 unsure.**
 | Pacific Quest - Reed's Bay | 116-STF | Pacific Quest, tracked |
 | Pacific Quest - Olena | 117-STF | Pacific Quest, tracked (TLP on the page, STF on the roster) |
 | Pacific Quest - Awapuhi | none | Pacific Quest, tracked; not on the April 2026 roster |
+| Nova Luna | 98-STF | Eating disorder treatment for adolescents and adults; was unsure, the owner put it in 2026-10-05 |
 
-| Unsure | Why |
-|---|---|
-| E Ho'oulu Hou Elua Program | Catholic Charities, 2848 Park Street, 6 beds; nothing found says who it serves; not on the roster (2 statements, 2023 and 2024) |
-| Nova Luna, Inc. | Eating disorder treatment for adolescents and adults; whether the residential site takes minors is not stated (1 statement, 2023) |
+E Ho'oulu Hou Elua Program (Catholic Charities, 2848 Park Street, 6 beds,
+not on the roster, 2 statements) was unsure: who it serves is not
+established, and the owner left it out on 2026-10-05.
 
-The 33 out are adult programs (C.A.R.E. Hawaii's adult residences and crisis
+The other 33 out are adult programs (C.A.R.E. Hawaii's adult residences and crisis
 services, Big Island Substance Abuse Council, Habilitat, Hina Mauka,
 Ho'omau Ke Ola, Aloha House, the Salvation Army, Sand Island, Women's Way,
 the Hawaii State Hospital program and others), each with its reason in the
@@ -183,27 +183,33 @@ tracked TTI program.
 ## The full run (2026-10-05)
 
 `python hi_scraper.py --no-post --out <file>`: 24 requests (index page,
-licensing page, 2 rosters, 20 PDFs).
+licensing page, 2 rosters, 20 PDFs); after the owner's scope decisions one
+more request for Nova Luna's statement, then `--full --cached` for the
+complete `--out` file.
 
-- Page: 43 STF/TLP facilities, 110 links. Scope: 8 in, 33 out, 2 unsure
-  (3 statements not scraped).
-- Payload: 8 facilities, 20 statements, 2023-02-17 to 2026-03-17.
-- By kind: 11 with deficiencies (12 deficiencies cited; all 11 flagged), 9
+- Page: 43 STF/TLP facilities, 110 links. Scope: 9 in, 34 out.
+- Payload: 9 facilities, 21 statements, 2023-02-17 to 2026-03-17.
+- By kind: 12 with deficiencies (14 deficiencies cited; all 12 flagged), 9
   with no deficiencies, 0 unread.
-- 12 read by OCR. 4 with handwritten plans not transcribed (Benchmark
-  2024-07-08 and 2025-07-02, Pearl Haven 2023-12-14 and 2025-12-05).
+- 13 read by OCR. 4 with handwritten plans not transcribed (Benchmark
+  2024-07-08 and 2025-07-02, Pearl Haven 2023-12-14 and 2025-12-05). Nova
+  Luna's 2023 statement (2 deficiencies, scanned) passed the privacy check;
+  its correction is rough handwriting-like typing that OCR read with errors.
 - Held by the privacy check: 0. `not_a_report`: 0. Failed downloads: 0.
   Label dates that differ from the document: 0.
 - Every PDF archived to `I:\My Drive\FileBird Cloud - kidsoverprofits.org\hi_pdfs`
-  (20 files).
+  (21 files). The folder lists without a sign-in at
+  `https://drive.google.com/embeddedfolderview?id=12_psb85BOl-4ihw2IF5814G3CnCctT-Y`
+  (21 entries, checked 2026-10-05), so it is shared by link like the other
+  `*_pdfs` folders.
 - A second run with `--cached` made no requests and read every statement
   from the extraction cache.
 - Names (`php scripts/match-inspection-names.php --state=HI
   --file=<out.json>`): 4 names reach 2 records (Pacific Quest - Reed's Bay,
   Awapuhi and Olena -> Pacific Quest #12565; Pearl Haven -> #9617).
-  Benchmark Behavioral Health System, Bobby Benson Center, Hiki Mai Ka La and
-  Na Ohana Pulama reach no record and have no near miss (we hold no record
-  for them).
+  Benchmark Behavioral Health System, Bobby Benson Center, Hiki Mai Ka La,
+  Na Ohana Pulama and Nova Luna reach no record and have no near miss (we
+  hold no record for them).
 
 Known reading limits, left as they are: OCR spelling slips in scanned
 answers ("dictitian", "Smg" for "5mg"), a stray line of signature initials at
@@ -224,13 +230,9 @@ whole-page read; the finding and the correction are there).
 
 ## Left for the owner
 
-- Settle the two unsure rows in `hi_scope.json` (E Ho'oulu Hou Elua
-  Program, Nova Luna).
-- Check that the Drive folder `hi_pdfs/` is shared "Anyone with the link"
-  (the archive sync indexes only shared folders).
 - Approve the first production post (run Hawaii from the launcher), then
   publish `/hi-reports/` (created on deploy as a draft).
-- Link Benchmark, Bobby Benson, Hiki Mai Ka La or Na Ohana Pulama at KOP
+- Link Benchmark, Bobby Benson, Hiki Mai Ka La, Na Ohana Pulama or Nova Luna at KOP
   Tools > Inspection Links if records are added for them.
 - Run it quarterly: the state posts a few statements a month across all
   care homes, and each STF or TLP is inspected once a year.
