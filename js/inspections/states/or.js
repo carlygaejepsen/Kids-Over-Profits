@@ -17,6 +17,12 @@
  * No violation count is shown: the older checklist can include follow-ups on
  * earlier visits, and OCR dropped which Yes/No box was ticked. The old viewer
  * flagged finding_count > 0, which is the whole checklist (370 of 409).
+ *
+ * Complaints: Oregon publishes no complaint documents per program, only a
+ * quarterly report to the legislature listing each abuse report it
+ * substantiated, by provider. The scraper posts each one as its own report
+ * (categories.kind = 'complaint') in a row named for the provider, which is
+ * joined here to the program's site visits when the names match.
  */
 (function () {
     'use strict';
@@ -122,8 +128,52 @@
         return '';
     }
 
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'];
+
+    // The incident date as the state printed it: a full date, "03/2021",
+    // "April/May 2021", or words ("Multiple", "Unknown (historical)").
+    function incidentDate(printed, ctx, report) {
+        var text = inline(printed);
+        if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(text)) {
+            return ctx.formatDate(parseDate(report.report_date).getTime()) || text;
+        }
+        var m = text.match(/^(\d{1,2})\/(\d{4})$/);
+        if (m && MONTHS[parseInt(m[1], 10) - 1]) return MONTHS[parseInt(m[1], 10) - 1] + ' ' + m[2];
+        if (!text) return 'Date not given';
+        return /\d{4}/.test(text) ? text : 'Incident date: ' + text.toLowerCase();
+    }
+
+    // One abuse report the state substantiated (see the header).
+    function readAbuseReport(report) {
+        var cats = report.categories || {};
+        var types = (Array.isArray(cats.abuse_types) ? cats.abuse_types : []).map(inline).filter(Boolean);
+        var narrative = inline(cats.narrative);
+        return {
+            kind:           'complaint',
+            report_id:      report.report_id || '',
+            report_date:    report.report_date || '',
+            visit_type:     'Substantiated abuse report',
+            pdf_url:        safeString(cats.pdf_url),
+            status:         'flagged',
+            number:         inline(cats.report_number) || report.report_id || '',
+            provider:       inline(cats.provider),
+            incident:       safeString(cats.incident_date),
+            abuse_type:     types.join(', ') || inline(cats.abuse_type),
+            allegations:    parseInt(cats.allegation_count, 10) || 0,
+            harm:           cats.harm_resulted === true,
+            harm_answer:    inline(cats.injury_result),
+            narrative:      narrative,
+            corrective:     inline(cats.corrective_actions),
+            quarter:        inline(cats.quarter),
+            preview:        narrative.slice(0, 300),
+            raw_content:    report.raw_content || ''
+        };
+    }
+
     function readReport(report) {
         var cats = report.categories || {};
+        if (cats.kind === 'complaint') return readAbuseReport(report);
         var newFindings = normalizeWhitespace(cats.new_findings);
         var checklist = (Array.isArray(cats.findings) ? cats.findings : []).map(function (f) {
             return { rule: inline(f && f.rule), excerpt: normalizeWhitespace(f && f.excerpt) };
@@ -178,6 +228,8 @@
         };
     }
 
+    var ABUSE_ROW_CATEGORY = 'Child caring agency';
+
     // "Adapt Deer Creek" and "Adapt - Deer Creek" are one facility.
     function mergeKey(name) {
         return String(name || '').toLowerCase()
@@ -206,6 +258,10 @@
                 order.push(key);
             }
             var target = merged[key];
+            // The abuse reports' own row says only "Child caring agency"; the
+            // licensed program's row says what kind of program it is.
+            var category = inline(info.program_category);
+            if (category && (!target.category || target.category === ABUSE_ROW_CATEGORY)) target.category = category;
             (facility.reports || []).forEach(function (report) {
                 var id = report.report_id || '';
                 if (id && target.seen[id]) return;
@@ -233,6 +289,49 @@
         var rows = pairs.filter(function (p) { return p[1] && p[1].length; })
             .map(function (p) { return p[0] + ': ' + p[1].join(' '); });
         return rows.length ? ui.paragraphs(rows) : '';
+    }
+
+    function abuseReportRow(report, ctx) {
+        var badges = [{ text: 'Substantiated', tone: 'flagged' }];
+        if (report.harm) badges.push({ text: 'Injury, sexual abuse or death resulted', tone: 'flagged' });
+        return {
+            date: incidentDate(report.incident, ctx, report),
+            type: report.visit_type,
+            tone: 'flagged',
+            badges: badges,
+            facts: [
+                report.abuse_type,
+                report.allegations > 1 ? report.allegations + ' allegations' : '',
+                report.number ? 'Report ' + report.number : ''
+            ],
+            link: {
+                href: report.pdf_url,
+                text: 'Official quarterly report' + (report.quarter ? ' (' + report.quarter.replace('-', ' ') + ')' : '')
+            },
+            links: [ctx.archiveLink(report.pdf_url)],
+            preview: report.preview,
+            body: function () {
+                var chips = [];
+                if (report.harm_answer) {
+                    chips.push({
+                        text: 'Injury, sexual abuse or death: ' + report.harm_answer.replace(/\s*[-–,]\s*/, ', ').toLowerCase(),
+                        tone: report.harm ? 'flagged' : 'neutral'
+                    });
+                }
+                var html = ui.finding({
+                    title: report.abuse_type || 'Abuse',
+                    chips: chips,
+                    evidence: [report.narrative || 'The quarterly report gives no narrative for this report.'],
+                    more: [report.corrective ? { title: 'Corrective actions and outcome', paragraphs: [report.corrective] } : null],
+                    tone: 'flagged'
+                });
+                html += ui.note('Oregon publishes abuse reports at child caring agencies only when it substantiates them, in a quarterly report to the legislature that names the provider'
+                    + (report.provider ? ' (here: "' + report.provider + '")' : '')
+                    + '. Reports it did not substantiate are not published.');
+                html += ui.section('Full entry text', ui.docText(report.raw_content));
+                return html;
+            }
+        };
     }
 
     page.mount({
@@ -266,12 +365,16 @@
         isFlagged: isFlagged,
 
         summary: function (facility, ctx) {
-            var reports = ctx.reports(facility);
+            var all = ctx.reports(facility);
+            var abuse = all.filter(function (r) { return r.kind === 'complaint'; }).length;
+            var reports = all.filter(function (r) { return r.kind !== 'complaint'; });
             var flagged = reports.filter(isFlagged).length;
             var clean = reports.filter(function (r) { return r.status === 'clean'; }).length;
-            var latest = reports.reduce(function (max, r) { return Math.max(max, parseDate(r.report_date).getTime()); }, 0);
+            var latest = all.reduce(function (max, r) { return Math.max(max, parseDate(r.report_date).getTime()); }, 0);
 
-            var stats = [{ text: ctx.plural(reports.length, 'site visit'), tone: 'neutral' }];
+            var stats = [];
+            if (reports.length || !abuse) stats.push({ text: ctx.plural(reports.length, 'site visit'), tone: 'neutral' });
+            if (abuse) stats.push({ text: ctx.plural(abuse, 'substantiated abuse report'), tone: 'flagged' });
             if (flagged) stats.push({ text: ctx.plural(flagged, 'visit') + ' requiring corrections', tone: 'flagged' });
             else if (clean) stats.push({ text: 'No findings', tone: 'clean' });
             if (latest > 0) stats.push({ text: 'Latest ' + ctx.formatDate(latest), tone: 'neutral' });
@@ -284,6 +387,7 @@
         },
 
         report: function (report, ctx) {
+            if (report.kind === 'complaint') return abuseReportRow(report, ctx);
             var badges = [];
             if (report.status === 'flagged') badges.push({ text: 'Corrections required', tone: 'flagged' });
             else if (report.status === 'clean') badges.push({ text: 'No new findings', tone: 'clean' });

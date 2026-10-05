@@ -63,6 +63,10 @@ $cases = array(
         array('citations' => 1, 'complaints' => 1, 'substantiated' => 1, 'cited' => 1)),
     array('OK visit, two items', 'OK', array('kind' => 'visit', 'items' => array(array('nrs' => true), array('nrs' => false))), '',
         array('citations' => 2, 'cited' => 1)),
+    array('OR substantiated abuse report', 'OR', array('kind' => 'complaint', 'finding' => 'Substantiated', 'abuse_types' => array('Neglect')), '',
+        array('complaints' => 1, 'substantiated' => 1)),
+    array('OR site visit with checklist findings', 'OR', array('report_type' => 'Unannounced', 'finding_count' => 4, 'findings' => array(array('rule' => '413-215-0076'))), '',
+        array()),
     array('UT findings count', 'UT', array('Findings Count' => '3'), '', array('citations' => 3, 'cited' => 1)),
     array('UT clean', 'UT', array('Findings Count' => '0'), '', array()),
     array('AZ complaint, one repeat of two', 'AZ', array('inspection_type' => 'Complaint;Compliance (Annual)', 'deficiencies' => array(

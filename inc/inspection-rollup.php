@@ -40,7 +40,7 @@ if (!function_exists('kop_irl_version')) {
 
     /** Bump when kop_irl_report_counts() or kop_irl_report_year() changes: every report is counted again. */
     function kop_irl_version() {
-        return 2;
+        return 3;
     }
 
     // -----------------------------------------------------------------------
@@ -64,7 +64,9 @@ if (!function_exists('kop_irl_version')) {
      * Which measures each state publishes, with where the number comes from.
      * A state not listed has reports only. Left out on purpose: WA (the
      * scraper interleaves PDF columns), CT (the non-compliance field is
-     * mostly "Not at the time of this visit"), AR/OR/NV (no verdict field).
+     * mostly "Not at the time of this visit"), AR/NV (no verdict field).
+     * Oregon's site visits have no verdict field either; its complaints are
+     * the abuse reports ODHS substantiated, the only ones it publishes.
      */
     function kop_irl_state_measures() {
         return array(
@@ -120,6 +122,10 @@ if (!function_exists('kop_irl_version')) {
             ),
             'GA' => array(
                 'complaints' => 'Licensure complaint surveys',
+            ),
+            'OR' => array(
+                'complaints'    => 'Abuse reports in the quarterly legislative reports (Oregon publishes only the ones it substantiated)',
+                'substantiated' => 'Abuse reports substantiated by the Department of Human Services',
             ),
         );
     }
@@ -269,6 +275,13 @@ if (!function_exists('kop_irl_version')) {
 
             case 'GA':
                 if (stripos((string) ($data['survey_type'] ?? ''), 'Complaint') !== false) $c['complaints'] = 1;
+                break;
+
+            case 'OR':
+                if (($data['kind'] ?? '') === 'complaint') {
+                    $c['complaints'] = 1;
+                    if (strcasecmp(trim((string) ($data['finding'] ?? '')), 'Substantiated') === 0) $c['substantiated'] = 1;
+                }
                 break;
         }
         if (!isset($c['cited']) && !empty($c['citations'])) $c['cited'] = 1;
