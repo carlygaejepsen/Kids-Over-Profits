@@ -125,7 +125,8 @@ if (!function_exists('kop_wiki_reddit_compare')) {
     /**
      * One wiki_submissions row against its live Reddit page: null when the
      * check has no result for it, else
-     *   slug, reddit_url, checked (date the page was read), revised (Reddit's
+     *   page (the wiki address, e.g. index/carlbrook or active-programs/cedu),
+     *   slug (the page without index/, as the editor's lists name it), reddit_url, checked (date the page was read), revised (Reddit's
      *   last edit, '' when unknown), state: 'same' | 'differs' | 'missing'
      *   (no such page on Reddit) | 'changed' (saved here after the check),
      *   edited (saved in the wiki editor, not the import), samples.
@@ -133,8 +134,9 @@ if (!function_exists('kop_wiki_reddit_compare')) {
     function kop_wiki_reddit_compare(array $row) {
         $live = kop_wiki_reddit_live();
         $rec = $live['rows'][(string) (int) ($row['id'] ?? 0)] ?? null;
-        if (!$live || !is_array($rec) || empty($rec['slug'])) return null;
-        $page = $live['pages'][$rec['slug']] ?? array();
+        if (!$live || !is_array($rec) || empty($rec['page'])) return null;
+        $path = (string) $rec['page'];
+        $page = $live['pages'][$path] ?? array();
         if (empty($page['exists'])) {
             $state = 'missing';
         } elseif (isset($row['updated_at']) && (string) $row['updated_at'] !== (string) $rec['updated_at']) {
@@ -143,8 +145,9 @@ if (!function_exists('kop_wiki_reddit_compare')) {
             $state = !empty($rec['differs']) ? 'differs' : 'same';
         }
         return array(
-            'slug'       => $rec['slug'],
-            'reddit_url' => 'https://www.reddit.com/r/troubledteens/wiki/index/' . ($state === 'missing' ? '' : rawurlencode($rec['slug']) . '/'),
+            'page'       => $path,
+            'slug'       => preg_replace('~^index/~', '', $path),
+            'reddit_url' => 'https://www.reddit.com/r/troubledteens/wiki/' . ($state === 'missing' ? 'index/' : implode('/', array_map('rawurlencode', explode('/', $path))) . '/'),
             'checked'    => (string) ($page['fetched'] ?? ''),
             'revised'    => (string) ($page['revised'] ?? ''),
             'state'      => $state,
@@ -156,7 +159,7 @@ if (!function_exists('kop_wiki_reddit_compare')) {
 
 if (!function_exists('kop_wiki_reddit_compare_all')) {
     /**
-     * Reddit page slug => kop_wiki_reddit_compare() of the newest live entry
+     * Page slug (address without index/) => kop_wiki_reddit_compare() of the newest live entry
      * paired with that page (the one the wiki editor opens).
      */
     function kop_wiki_reddit_compare_all(PDO $pdo) {

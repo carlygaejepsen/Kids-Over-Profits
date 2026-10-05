@@ -107,12 +107,14 @@ echo "entries whose text now names modmail: $with_link\n";
 $fixture = tempnam(sys_get_temp_dir(), 'kopwl');
 file_put_contents($fixture, json_encode(array(
     'checked' => '2026-10-05',
-    'pages' => array('same' => array('exists' => true, 'revised' => '2022-03-08', 'fetched' => '2026-10-05'),
-                     'diff' => array('exists' => true, 'revised' => '2023-01-01', 'fetched' => '2026-10-05'),
-                     'gone' => array('exists' => false, 'revised' => '', 'fetched' => '2026-10-05')),
-    'rows' => array('1' => array('slug' => 'same', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => false, 'samples' => array()),
-                    '2' => array('slug' => 'diff', 'updated_at' => '2026-06-08 19:38:15', 'edited' => true, 'differs' => true, 'samples' => array(array('reddit' => 'a', 'ours' => 'b'))),
-                    '3' => array('slug' => 'gone', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => true, 'samples' => array())),
+    'pages' => array('index/same' => array('exists' => true, 'revised' => '2022-03-08', 'fetched' => '2026-10-05'),
+                     'index/diff' => array('exists' => true, 'revised' => '2023-01-01', 'fetched' => '2026-10-05'),
+                     'index/gone' => array('exists' => false, 'revised' => '', 'fetched' => '2026-10-05'),
+                     'active-programs/cedu' => array('exists' => true, 'revised' => '2021-01-01', 'fetched' => '2026-10-05')),
+    'rows' => array('1' => array('page' => 'index/same', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => false, 'samples' => array()),
+                    '2' => array('page' => 'index/diff', 'updated_at' => '2026-06-08 19:38:15', 'edited' => true, 'differs' => true, 'samples' => array(array('reddit' => 'a', 'ours' => 'b'))),
+                    '3' => array('page' => 'index/gone', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => true, 'samples' => array()),
+                    '4' => array('page' => 'active-programs/cedu', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => false, 'samples' => array())),
 )));
 define('KOP_WIKI_REDDIT_LIVE_FILE', $fixture);
 $at = '2026-06-08 19:38:15';
@@ -123,6 +125,9 @@ $check($state(3, $at) === 'missing', 'entry whose page is gone reads missing');
 $check($state(1, '2026-10-06 10:00:00') === 'changed', 'entry saved after the check reads changed, not same');
 $check($state(99, $at) === null, 'entry the check never reached gets no mark');
 $check(strpos(kop_wiki_reddit_compare(array('id' => 3, 'updated_at' => $at))['reddit_url'], '/gone') === false, 'missing page links the wiki index, not a dead page');
+$nested = kop_wiki_reddit_compare(array('id' => 4, 'updated_at' => $at));
+$check($nested['reddit_url'] === 'https://www.reddit.com/r/troubledteens/wiki/active-programs/cedu/' && $nested['slug'] === 'active-programs/cedu', 'a page outside index/ links its own address');
+$check(kop_wiki_reddit_compare(array('id' => 1, 'updated_at' => $at))['slug'] === 'same', 'an index page is keyed without index/, as the editor names it');
 $all = kop_wiki_reddit_compare_all($pdo);
 echo 'compare_all on the mirror with the fixture: ' . count($all) . " slugs\n";
 unlink($fixture);
