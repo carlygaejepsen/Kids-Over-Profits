@@ -14,10 +14,13 @@
  * first (api/lib-mt-reports.php); a dry run only counts them.
  *
  * Browser, as an administrator: a dry run by default, ?apply=1 to save. A
- * browser run is one batch; reload until it reports 0 remaining.
+ * saving run works for about 25 seconds a load and, while reports remain,
+ * reloads itself (a Refresh header), so one visit carries it to the end.
+ * A dry run is one batch.
  */
 
 $kop_ih_cli = php_sapi_name() === 'cli';
+$kop_ih_started = microtime(true);
 
 require_once __DIR__ . '/config.php';
 require_once dirname(__DIR__) . '/inc/inspection-highlights.php';
@@ -40,8 +43,10 @@ if ($kop_ih_cli) {
         exit;
     }
     header('Content-Type: text/plain; charset=utf-8');
+    // Held until the end, so the reload header can still be sent once the count is known.
+    ob_start();
     $apply = !empty($_GET['apply']);
-    $limit = min(5000, max(100, (int) ($_GET['limit'] ?? 3000)));
+    $limit = min(5000, max(100, (int) ($_GET['limit'] ?? ($apply ? 500 : 3000))));
     $states = !empty($_GET['states']) ? explode(',', preg_replace('/[^A-Za-z,]/', '', (string) $_GET['states'])) : array();
 }
 
@@ -73,8 +78,9 @@ try {
                     . '      ' . mb_substr($c['excerpt'], 0, 300) . "\n";
             }
         }
-        // The CLI works through the whole backlog; a browser run is one batch.
-    } while ($kop_ih_cli && $apply && $result['scanned'] > 0 && $result['remaining'] > 0);
+        // The CLI works through the whole backlog; a saving browser run until about 25 seconds have passed.
+    } while ($apply && $result['scanned'] > 0 && $result['remaining'] > 0
+        && ($kop_ih_cli || microtime(true) - $kop_ih_started < 25));
 } catch (Exception $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
     echo 'Error: ' . $e->getMessage() . "\n";
@@ -84,3 +90,10 @@ try {
 if (!$kop_ih_cli && !$apply) {
     echo "\nNothing was saved. Add ?apply=1 to save the candidates as pending.\n";
 }
+if (!$kop_ih_cli && $apply) {
+    echo $result['remaining'] > 0
+        ? "\n{$result['remaining']} reports left. This page reloads itself in 2 seconds and carries on; leave it open.\n"
+        : "\nDone: every report has been scanned with the current rules.\n";
+    if ($result['remaining'] > 0 && !headers_sent()) header('Refresh: 2');
+}
+if (!$kop_ih_cli) ob_end_flush();

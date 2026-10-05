@@ -834,6 +834,25 @@ check((int) $mtdb->query("SELECT COUNT(*) FROM inspection_facilities WHERE state
 $mt_scan = kop_ih_scan($mtdb, 1000, false, array('MT'));
 check($mt_scan['scanned'] === $first['added'] && count($mt_scan['candidates']) >= 5, 'MT: the copied surveys are scanned; ' . count($mt_scan['candidates']) . ' candidates');
 
+// Versions per state: a report is rescanned only when its own state's rules moved.
+check(kop_ih_scanner_version('TX') === kop_ih_scanner_version() + ((kop_ih_state_rule_versions()['TX'] ?? 0)), 'versions: a state without a bump scans with the base version');
+$vdb = new PDO('sqlite::memory:');
+$vdb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$vdb->exec('CREATE TABLE inspection_facilities (id INTEGER PRIMARY KEY, state TEXT, facility_name TEXT)');
+$vdb->exec('CREATE TABLE inspection_reports (id INTEGER PRIMARY KEY, facility_id INT, report_id TEXT, report_date TEXT, categories_json TEXT, raw_content TEXT)');
+$vdb->exec("INSERT INTO inspection_facilities VALUES (1, 'TX', 'A'), (2, 'PA', 'B')");
+$vrow = $vdb->prepare('INSERT INTO inspection_reports (facility_id, report_id, report_date, categories_json, raw_content) VALUES (?, ?, ?, ?, ?)');
+$vrow->execute(array(1, 't1', '2024-01-01', json_encode(array('Standard Risk Level' => 'High', 'Deficiency Narrative' => 'Staff punched a resident in the face.')), ''));
+$vrow->execute(array(2, 'p1', '2024-01-01', json_encode(array('counts_as_violation' => true, 'citations' => array(array('regulation' => '3800.32', 'violation' => 'Staff person A slapped child #1 across the face.')))), ''));
+$first = kop_ih_scan($vdb, 100, true, array('TX', 'PA'));
+$again = kop_ih_scan($vdb, 100, true, array('TX', 'PA'));
+check($first['scanned'] === 2 && $again['scanned'] === 0, 'versions: a second run reads nothing');
+// As if Pennsylvania's rules had been bumped: its report carries an older version than PA now scans with.
+$vdb->exec('UPDATE inspection_highlight_scans SET scanner_version = scanner_version - 1 WHERE report_id = 2');
+$bumped = kop_ih_scan($vdb, 100, true, array('TX', 'PA'));
+check($bumped['scanned'] === 1 && $bumped['remaining'] === 0, 'versions: only the report of the state whose rules moved is read again');
+check((int) $vdb->query('SELECT scanner_version FROM inspection_highlight_scans WHERE report_id = 2')->fetchColumn() === kop_ih_scanner_version('PA'), 'versions: it is marked with its state\'s version');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------

@@ -50,9 +50,33 @@
 
 if (!function_exists('kop_ih_scanner_version')) {
 
-    /** Bump when the rules change; the scanner then looks at every report again. */
-    function kop_ih_scanner_version() {
-        return 8;
+    /**
+     * The version of the rules a report was scanned with; a report scanned
+     * with another version is scanned again. A change to the shared rules
+     * (categories, cues, the paperwork and peer rules) bumps the base and
+     * rescans every state; a change to one state's adapter or wording bumps
+     * only that state in kop_ih_state_rule_versions(), so the next run reads
+     * only that state's reports. With no state, the base alone.
+     */
+    function kop_ih_scanner_version($state = '') {
+        $base = 8;
+        $states = kop_ih_state_rule_versions();
+        return $base * 100 + (int) ($states[strtoupper((string) $state)] ?? 0);
+    }
+
+    /** Per-state bumps of the rules (0 to 99), for changes that touch one state only. */
+    function kop_ih_state_rule_versions() {
+        return array();
+    }
+
+    /** SQL for the version each report's state is scanned with, as a CASE on f.state. */
+    function kop_ih_scanner_version_sql(array $states) {
+        $sql = 'CASE f.state';
+        foreach ($states as $st) {
+            $st = preg_replace('/[^A-Z]/', '', strtoupper((string) $st));
+            if ($st !== '') $sql .= " WHEN '$st' THEN " . (int) kop_ih_scanner_version($st);
+        }
+        return $sql . ' ELSE ' . (int) kop_ih_scanner_version() . ' END';
     }
 
     /** Candidates scoring below this are not queued. */
@@ -2090,7 +2114,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $c['standard'] !== '' ? mb_substr($c['standard'], 0, 500) : null,
                 $c['state_label'] !== '' ? mb_substr($c['state_label'], 0, 120) : null, $c['kind'],
                 $c['corrected_on_site'] === null ? null : (int) $c['corrected_on_site'],
-                kop_ih_scanner_version(), kop_ih_parse_date($row['report_date'] ?? ''),
+                kop_ih_scanner_version($state), kop_ih_parse_date($row['report_date'] ?? ''),
             );
             if (!isset($existing[$c['finding_key']])) {
                 // The scrapers hold some reports under two ids; the first row scanned keeps the finding.
@@ -2386,7 +2410,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
         $in = implode(',', array_fill(0, count($states), '?'));
         $has_scans = !$rescan_all && ($apply || kop_ih_table_exists($pdo, 'inspection_highlight_scans'));
-        $join = $has_scans ? 'LEFT JOIN inspection_highlight_scans s ON s.report_id = r.id AND s.scanner_version = ' . (int) kop_ih_scanner_version() : '';
+        $join = $has_scans ? 'LEFT JOIN inspection_highlight_scans s ON s.report_id = r.id AND s.scanner_version = ' . kop_ih_scanner_version_sql($states) : '';
         $where = "f.state IN ($in)" . ($has_scans ? ' AND s.report_id IS NULL' : '');
 
         $count = $pdo->prepare("SELECT COUNT(*) FROM inspection_reports r JOIN inspection_facilities f ON f.id = r.facility_id $join WHERE $where");
@@ -2411,7 +2435,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             $candidates = kop_ih_candidates($row['state'], $row);
             if ($apply) {
                 foreach (kop_ih_store($pdo, $row['state'], $row, $candidates) as $k => $v) $result[$k] += $v;
-                $mark->execute(array((int) $row['id'], kop_ih_scanner_version()));
+                $mark->execute(array((int) $row['id'], kop_ih_scanner_version($row['state'])));
             } else {
                 foreach ($candidates as $c) {
                     $dup_key = (int) $row['facility_id'] . ':' . $c['text_hash'];
