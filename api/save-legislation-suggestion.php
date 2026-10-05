@@ -139,6 +139,10 @@ try {
             'Reference'    => '#' . $newId,
         ]);
     }
+    // "Email me when this has been reviewed" (inc/submission-followup.php).
+    if (function_exists('kop_followup_register')) {
+        kop_followup_register('legislation', $newId, $input);
+    }
 
     echo json_encode([
         'success' => true,

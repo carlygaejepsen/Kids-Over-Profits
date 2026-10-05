@@ -101,6 +101,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.ph
 # (review-inbox/preview: framed where allowed, else a reading copy)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
+# "Email me when this has been reviewed" on every public form (inc/submission-followup.php, js/submission-followup.js): forms post
+# notify_email, the endpoint calls kop_followup_register(); a 10-minute cron reads each item's own status and mails once the decision
+# has stood 10 minutes (an Undo inside that cancels it), then blanks the address. A new public form adds the block and a kind there
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-followup.php
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite

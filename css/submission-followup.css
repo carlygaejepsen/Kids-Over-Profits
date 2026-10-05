@@ -1,0 +1,68 @@
+/* "Email me when this has been reviewed" on the public forms (inc/submission-followup.php,
+   js/submission-followup.js). Every form it sits in is a light panel or modal. */
+.kop-followup {
+    margin: 12px 0 4px;
+    padding: 10px 12px;
+    border: 1px solid var(--kop-teal-ink, #24757F);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+.kop-followup .kop-followup__check {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+    cursor: pointer;
+}
+
+.kop-followup .kop-followup__check input {
+    margin-top: 3px;
+    flex: none;
+}
+
+.kop-followup .kop-followup__email {
+    margin-top: 8px;
+}
+
+.kop-followup .kop-followup__email label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-followup .kop-followup__email input {
+    width: 100%;
+    max-width: 360px;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--kop-navy, #000080);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.95rem;
+}
+
+.kop-followup .kop-followup__email input:focus {
+    outline: 2px solid var(--kop-teal-ink, #24757F);
+    outline-offset: 1px;
+}
+
+.kop-followup .kop-followup__hint {
+    margin: 6px 0 0;
+    font-size: 0.82rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-followup .kop-followup__error {
+    margin: 6px 0 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #B42318;
+}

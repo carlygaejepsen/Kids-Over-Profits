@@ -446,6 +446,10 @@ try {
             'Reference' => '#' . $suggestion_id,
         ]);
     }
+    // "Email me when this has been reviewed" (inc/submission-followup.php).
+    if (function_exists('kop_followup_register')) {
+        kop_followup_register('suggested_edit', (int) $suggestion_id, $input);
+    }
 
     echo json_encode([
         'success' => true, 

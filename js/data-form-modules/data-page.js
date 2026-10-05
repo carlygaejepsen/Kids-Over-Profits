@@ -497,7 +497,7 @@
 
         document.addEventListener('formReady', ensureSuggestionButtonBinding, { once: true });
 
-        async function performSuggestionSubmission(changesSummary) {
+        async function performSuggestionSubmission(changesSummary, notifyEmail) {
             const trimmedSummary = (changesSummary || '').trim();
 
             if (!trimmedSummary) {
@@ -662,6 +662,7 @@
                         data: dataToSubmit,
                         reason: trimmedSummary,
                         projectName: actualProjectName,
+                        notify_email: notifyEmail || '',
                         metadata: {
                             actualProjectName,
                             submittedFrom: 'data.html suggestions form',
@@ -775,16 +776,23 @@
                     return;
                 }
 
+                // "Email me when this has been reviewed" (js/submission-followup.js)
+                const followup = window.kopFollowup ? window.kopFollowup.value(modal) : { ok: true, email: '' };
+                if (!followup.ok) {
+                    return;
+                }
+
                 confirmButton.disabled = true;
                 confirmButton.textContent = 'Submitting...';
 
-                const success = await performSuggestionSubmission(summary);
+                const success = await performSuggestionSubmission(summary, followup.email);
 
                 confirmButton.disabled = false;
                 confirmButton.textContent = defaultConfirmText;
 
                 if (success) {
                     summaryInput.value = '';
+                    if (window.kopFollowup) window.kopFollowup.reset(modal);
                     hideModal();
                 } else if (errorMessage) {
                     errorMessage.style.display = 'block';

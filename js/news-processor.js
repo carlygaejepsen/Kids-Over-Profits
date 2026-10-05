@@ -1448,6 +1448,13 @@
                 return;
             }
 
+            // "Email me when this has been reviewed" (js/submission-followup.js)
+            const followup = window.kopFollowup ? window.kopFollowup.value(modal) : { ok: true, email: '' };
+            if (!followup.ok) {
+                statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} ${escAttr(followup.message)}</span>`;
+                return;
+            }
+
             statusEl.innerHTML = `<span class="loading">${kopIcon('hourglass')} Submitting...</span>`;
             confirmBtn.disabled = true;
 
@@ -1493,7 +1500,8 @@
                 ownership: formData.ownership,
                 // Submission metadata
                 submittedBy: document.getElementById('newsSubmitterEmail') && document.getElementById('newsSubmitterEmail').value || '',
-                submissionNotes: document.getElementById('newsSubmissionNotes') && document.getElementById('newsSubmissionNotes').value || ''
+                submissionNotes: document.getElementById('newsSubmissionNotes') && document.getElementById('newsSubmissionNotes').value || '',
+                notify_email: followup.email
             };
 
             try {

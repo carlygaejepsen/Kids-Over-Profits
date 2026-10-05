@@ -253,6 +253,7 @@ get_header();
         <div class="news-submit-form-group">
             <label for="newsSubmitterEmail">Your Email (optional):</label>
             <input type="email" id="newsSubmitterEmail" placeholder="your@email.com">
+            <?php if (function_exists('kop_followup_fields')) echo kop_followup_fields('newsFollowup', 'newsSubmitterEmail'); ?>
         </div>
         <div class="news-submit-form-group">
             <label for="newsSubmissionNotes">Notes (optional):</label>

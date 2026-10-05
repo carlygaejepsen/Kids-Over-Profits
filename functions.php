@@ -74,6 +74,8 @@ require_once get_stylesheet_directory() . '/inc/form-help.php';
 
 // Admin notifications for public submissions (suggested edits, wiki, news, ...)
 require_once get_stylesheet_directory() . '/inc/submission-notify.php';
+// "Email me when this is reviewed": one email to the submitter once a decision stands
+require_once get_stylesheet_directory() . '/inc/submission-followup.php';
 
 // "Send to Kids Over Profits" browser extension intake (browser-extension/send-to-kop/)
 require_once get_stylesheet_directory() . '/inc/source-submissions.php';

@@ -117,6 +117,7 @@ if (!$tracker_url) { $tracker_url = home_url('/legislation'); }
                     <textarea name="notes" rows="2" placeholder="Anything else we should know? Where did you hear about this bill?"></textarea>
                 </label>
             </div>
+            <?php if (function_exists('kop_followup_fields')) echo kop_followup_fields('legislationFollowup'); ?>
             <!-- Honeypot: leave empty. Hidden from people, tempting to bots. -->
             <div class="kop-hp" aria-hidden="true">
                 <label>Website<input type="text" name="website_hp" tabindex="-1" autocomplete="off"></label>
@@ -194,6 +195,15 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        // "Email me when this has been reviewed" (js/submission-followup.js)
+        var followup = window.kopFollowup ? window.kopFollowup.value(form) : { ok: true, email: '' };
+        if (!followup.ok) {
+            statusEl.textContent = followup.message;
+            statusEl.className = 'kop-submit-status error';
+            return;
+        }
+        payload.notify_email = followup.email;
+
         var btn = form.querySelector('.kop-submit-btn');
         btn.disabled = true;
         statusEl.textContent = 'Submitting…';
@@ -227,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (again) {
         again.addEventListener('click', function () {
             form.reset();
+            if (window.kopFollowup) window.kopFollowup.reset(form);
             form.hidden = false;
             if (thanks) thanks.hidden = true;
             statusEl.textContent = '';

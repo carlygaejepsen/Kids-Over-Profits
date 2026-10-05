@@ -343,6 +343,9 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
             $pdo->prepare('UPDATE news_submissions SET json_data = ? WHERE id = ?')->execute(array(wp_json_encode($json), (int) $r['id']));
         }
         $message .= ' Filed here as rejected with a note.';
+        if (function_exists('kop_followup_mark_moved')) {
+            kop_followup_mark_moved(kop_followup_kind_for_native($type), (int) $r['id']);
+        }
     }
     $log = kop_rinbox_native_moves();
     $log[$type . ':' . (int) $r['id']] = array('to' => $to, 'done' => $done, 'prev_status' => $t['pending'],

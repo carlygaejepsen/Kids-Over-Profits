@@ -212,6 +212,11 @@ function kop_glossary_feedback_submit(WP_REST_Request $request) {
         @wp_mail($admin, '[KOP] Glossary: ' . strtolower($kinds[$kind]) . ' for "' . $term . '" (#' . $id . ')', $body);
     }
 
+    // "Email me when this has been reviewed" (inc/submission-followup.php).
+    if (function_exists('kop_followup_register')) {
+        kop_followup_register('glossary', $id, array('notify_email' => (string) $request->get_param('notify_email')));
+    }
+
     return new WP_REST_Response(array('success' => true, 'id' => $id), 200);
 }
 

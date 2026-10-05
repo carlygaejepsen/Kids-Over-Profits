@@ -2711,6 +2711,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
+            // "Email me when this has been reviewed" (js/submission-followup.js)
+            const followup = window.kopFollowup ? window.kopFollowup.value(submitModal) : { ok: true, email: '' };
+            if (!followup.ok) {
+                submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} ${escapeHtml(followup.message)}</span>`;
+                return;
+            }
+
             submitStatus.innerHTML = `<span class="loading">${kopIcon('hourglass')} Submitting...</span>`;
             confirmSubmitBtn.disabled = true;
 
@@ -2725,6 +2732,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 sourceSlug: currentEntrySlug || '',
                 submittedBy: document.getElementById('submitterEmail')?.value || '',
                 submissionNotes: document.getElementById('submissionNotes')?.value || '',
+                notify_email: followup.email,
                 // Program index linkage (required server-side for non-drafts).
                 facilityUniqueName: linkedProgram.uniqueName,
                 documentFolderId: linkedProgram.documentFolderId || null

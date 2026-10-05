@@ -2094,6 +2094,7 @@ get_header();
                     <textarea id="suggestion-summary" rows="4" placeholder="e.g., Added new facility, corrected operator name, updated staff list..." style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;"></textarea>
                     <p id="suggestion-error" style="color: #dc2626; font-size: 13px; display: none; margin-top: 5px;">Please provide a summary of your changes.</p>
                 </div>
+                <?php if (function_exists('kop_followup_fields')) echo kop_followup_fields('suggestionFollowup'); ?>
                 <div style="padding: 20px 0 0 0; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                     <button class="modal-btn modal-btn-secondary" id="suggestion-modal-cancel" style="padding: 10px 20px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Cancel</button>
                     <button class="modal-btn modal-btn-primary" id="suggestion-modal-confirm" style="padding: 10px 20px; border: none; background: #24757F; color: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.2s;">Submit Suggestion</button>

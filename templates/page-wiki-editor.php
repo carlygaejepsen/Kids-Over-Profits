@@ -769,6 +769,7 @@ get_header();
                 <div class="submit-form-group">
                     <label for="submitterEmail">Your Email (optional):</label>
                     <input type="email" id="submitterEmail" placeholder="your@email.com">
+                    <?php if (function_exists('kop_followup_fields')) echo kop_followup_fields('wikiFollowup', 'submitterEmail'); ?>
                 </div>
                 <div class="submit-form-group">
                     <label for="submissionNotes">Notes (optional):</label>

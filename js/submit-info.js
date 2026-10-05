@@ -377,6 +377,7 @@
                     fieldsHtml +
                     '<div class="kop-si-field"><label>Sources <span class="kop-si-hint">— links or where this info comes from</span></label>' +
                     '<textarea data-kop-si-field="__sources"></textarea></div>' +
+                    (window.kopFollowup ? window.kopFollowup.html('kop-si-followup') : '') +
                 '</div>' +
                 '<div class="kop-si-footer">' +
                     '<span class="kop-si-status"></span>' +
@@ -411,6 +412,14 @@
                 return;
             }
 
+            // "Email me when this has been reviewed" (js/submission-followup.js)
+            var followup = window.kopFollowup ? window.kopFollowup.value(overlay) : { ok: true, email: '' };
+            if (!followup.ok) {
+                statusEl.textContent = followup.message;
+                statusEl.className = 'kop-si-status error';
+                return;
+            }
+
             var data = set.build(values, name);
             data.name = name;
 
@@ -428,6 +437,7 @@
                     projectName: name,
                     data: data,
                     reason: reason,
+                    notify_email: followup.email,
                     metadata: {
                         activeCategory: set.category,
                         actualProjectName: name,

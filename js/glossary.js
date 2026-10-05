@@ -461,6 +461,7 @@
             '<label for="kop-gl-fb-contact">Email, if we may ask you about it <span>optional</span></label>' +
             '<input id="kop-gl-fb-contact" name="contact" type="email" maxlength="200" autocomplete="email">' +
             '</div>' +
+            (window.kopFollowup ? '<div class="kop-gl-fb-field">' + window.kopFollowup.html('kop-gl-fb-followup', 'kop-gl-fb-contact') + '</div>' : '') +
             '<div class="kop-gl-fb-hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>' +
             '<p class="kop-gl-fb-note">Everything is read by a person before anything changes on the page. Your email is never published.</p>' +
             '<p class="kop-gl-fb-status" role="status" aria-live="polite"></p>' +
@@ -506,6 +507,9 @@
             fbEntry = entry;
             fbOpener = opener;
             fbForm.reset();
+            if (window.kopFollowup) {
+                window.kopFollowup.reset(fbForm);
+            }
             fbSay('', '');
             fbSend.disabled = false;
             fbSend.hidden = false;
@@ -558,6 +562,13 @@
                 contact: fbForm.elements.contact.value.trim(),
                 website: fbForm.elements.website.value
             };
+            /* "Email me when this has been reviewed" (js/submission-followup.js) */
+            var followup = window.kopFollowup ? window.kopFollowup.value(fbForm) : { ok: true, email: '' };
+            if (!followup.ok) {
+                fbSay(followup.message, 'error');
+                return;
+            }
+            fields.notify_email = followup.email;
             if (fbKind === 'used_at' && !fields.program) {
                 fbSay('Please name the facility or program.', 'error');
                 fbProgram.focus();

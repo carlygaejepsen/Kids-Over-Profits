@@ -416,6 +416,9 @@ try {
                 'Reference'    => '#' . (int)$submissionId,
             ]);
         }
+        if (!$kop_is_admin && $status === 'submitted' && function_exists('kop_followup_register')) {
+            kop_followup_register('wiki', (int)$submissionId, $data);
+        }
 
         echo json_encode([
             'success' => true,
@@ -461,6 +464,10 @@ try {
                 'Notes'        => $submissionNotes,
                 'Reference'    => '#' . (int)$newId,
             ]);
+        }
+        // "Email me when this has been reviewed" (inc/submission-followup.php).
+        if (!$kop_is_admin && $status === 'submitted' && function_exists('kop_followup_register')) {
+            kop_followup_register('wiki', (int)$newId, $data);
         }
 
         echo json_encode([

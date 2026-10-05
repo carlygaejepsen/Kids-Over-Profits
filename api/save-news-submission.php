@@ -388,6 +388,11 @@ try {
             ]);
         }
 
+        // "Email me when this has been reviewed" (inc/submission-followup.php).
+        if (function_exists('kop_followup_register')) {
+            kop_followup_register('news', $newId, $data);
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission saved successfully',
