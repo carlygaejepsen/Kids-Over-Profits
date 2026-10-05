@@ -5,7 +5,8 @@
  * mtReportsData.jsonFileUrls): Department of Public Health and Human Services
  * licensing surveys (statements of deficiencies) for youth care facilities,
  * therapeutic group homes and private alternative adolescent residential
- * programs, extracted from PDF text. The API has no Montana rows.
+ * programs, extracted from PDF text. The page reads only this file; the
+ * serious findings scan reads the copy api/lib-mt-reports.php puts in the database.
  *
  * What the extraction gives reliably, and what it does not:
  *   - The list of cited rules (Issues[].Rule) is reliable, and a statement of

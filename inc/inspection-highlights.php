@@ -14,7 +14,7 @@
  *   store    candidates go to inspection_highlights as pending; a re-run
  *            adds new ones and never touches a row a person has reviewed
  *
- * Five gates keep the queue short (owner rules, 2026-09-21 and 2026-09-28):
+ * Seven gates keep the queue short (owner rules, 2026-09-21, 2026-09-28 and 2026-10-05):
  *
  *   substantiated  only findings the state itself confirmed are queued: a
  *                  Texas citation, a California deficiency, or a California
@@ -32,6 +32,14 @@
  *                  medical care always is.
  *   elopement      a child running away is not queued on its own, only when
  *                  the same finding records a death or a serious injury.
+ *   paperwork      a citation whose fault is only records, notices or
+ *                  training (kop_ih_paperwork_only) keeps what staff did to a
+ *                  child and medical neglect, nothing else; a sentence that
+ *                  mentions harm only as what went unrecorded or was reported
+ *                  late does not count it (kop_ih_paperwork_pattern).
+ *   on staff       a resident assaulting staff is not abuse, nor the hospital
+ *                  visit or police call after it (kop_ih_assault_on_staff_pattern),
+ *                  unless staff hurt the child in the same sentence.
  *
  * Nothing here publishes anything. A candidate names a facility and
  * describes harm, so it stays pending until an admin approves it.
@@ -44,7 +52,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Bump when the rules change; the scanner then looks at every report again. */
     function kop_ih_scanner_version() {
-        return 6;
+        return 7;
     }
 
     /** Candidates scoring below this are not queued. */
@@ -134,18 +142,23 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'exclude'  => kop_ih_peer_pattern() . '|\b(?:assault\w*|aggress\w*|attack\w*|violen\w+)\s+(?:against|on|toward|towards)\s+(?:the |a |an |facility |program )?(?:staff|personnel|employees?|caregivers?|nurses?)\b',
                 'patterns' => array(
                     // Staff by role, or by the labels the states use: S1 (California), E1 (Arizona).
-                    '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|[SE]\d{1,2})s?\b[^.]{0,80}\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|dragg\w+|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b[^.]{0,80}\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
                     '\bphysical(?:ly)? (?:abus\w+|assault\w*)',
                     '\bcorporal punishment\b',
+                    // Picked up or pulled by the shirt or hair, more force than a hold.
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|[SE]\d{1,2})s?\b[^.]{0,60}\b(?:pick\w*|pull\w*|lift\w*|grabb\w*)\s+(?:\w+\s+){0,8}?by (?:his|her|their|the) (?:hair|shirt|collar|neck|throat|hood\w*|ear)s?\b',
+                    '\b(?:excessive|unnecessary|inappropriate|unreasonable) (?:physical )?force\b|\bphysical force\b[^.]{0,80}\bby (?:the )?staff\b',
                 ),
             ),
             'restraint_injury' => array(
                 'label'    => 'Restraint or seclusion causing injury',
                 'weight'   => 75,
+                // Staff hurt during the hold is not a child hurt by it (owner rule, 2026-10-05).
+                'exclude'  => kop_ih_staff_injured_pattern(),
                 'patterns' => array(
                     '\b(?:restrain\w*|seclu\w+|physical holds?|prone|take-?downs?|emergency behavior intervention|EBI|personal restraint)\b',
                 ),
-                'requires' => '\b(?:injur\w+|bruis\w+|fractur\w+|broken?|bleed\w*|blood\w*|concussion|abrasions?|rug burns?|carpet burns?|swollen|swelling|lacerat\w+|unconscious|(?:could not|couldn\'t|unable to) breathe|dislocat\w+|sprain\w*|scratch\w*|marks?)\b',
+                'requires' => '\b(?:being hurt|hurt (?:him|her|them)|injur\w+|bruis\w+|fractur\w+|broken?|bleed\w*|blood\w*|concussion|abrasions?|rug burns?|carpet burns?|swollen|swelling|lacerat\w+|unconscious|(?:could not|couldn\'t|unable to) breathe|dislocat\w+|sprain\w*|scratch\w*|marks?)\b',
             ),
             // A suicide attempt and self-harm are told apart (owner, 2026-09-30):
             // cutting or swallowing an object is not labelled a suicide attempt.
@@ -191,6 +204,8 @@ if (!function_exists('kop_ih_scanner_version')) {
             'hospitalization' => array(
                 'label'    => 'Hospitalisation',
                 'weight'   => 55,
+                // A staff member taken to hospital (after a child assaulted them) is not a child's hospital visit.
+                'exclude'  => '\b' . kop_ih_staff_word() . '\s+(?:(?:was|were|had been|has been|got|being|needed to be|had to be)\s+)?(?:taken|transported|sent|admitted|rushed|brought|went|treated) (?:to|at) (?:the |a |an )?(?:local |nearest )?(?:hospital|ER|emergency|urgent care)',
                 'patterns' => array(
                     '\b(?:hospitali[sz]\w+|emergency (?:room|department)|urgent care|ambulance|paramedics?|EMS|life[- ]?flight\w*|stitches|sutures)\b',
                     '\b(?:taken|transported|sent|admitted|rushed|brought) to (?:the |a |an )?(?:local |nearest |psychiatric |children\'s )?(?:hospital|ER)\b',
@@ -235,7 +250,8 @@ if (!function_exists('kop_ih_scanner_version')) {
     function kop_ih_adult_took_part($sentence) {
         $adult = '\b(?:staff(?: members?)?|caregivers?|employees?|volunteers?|adults?|counselors?|supervisors?|house ?parents?|administrators?|teachers?|therapists?|directors?|owners?|nurses?|coach(?:es)?|mentors?|(?:foster|resource) (?:parent|mother|father)s?|personnel|[SE]\d{1,2}|(?:unidentified|unknown|adult|older) (?:male|female|man|woman)|m[ae]n|wom[ae]n)\b';
         $act = '\b(?:sex\w*|touch\w*|kiss\w*|fondl\w+|grop\w+|intercourse|massag\w+|nude|naked|propositi\w+|groom\w+|flirt\w*|private (?:parts|areas?)|genital\w*|relationships?)\b';
-        $block = '/\b(?:supervis|unaware|aware|monitor|allow|permit|fail|result|led to|lead to|while|when|check|asleep|slept|sleep|prevent|protect|separat|interven|report(?!edly)|notif|inform|discover|observ|caught|witness|walk|notic|saw|seen|learn|look|oblivious|redirect|stat(?:ed|es)|said|told|interview|describ|explain|indicat|confirm)\w*|\./iu';
+        // Also a numbered child in between ("reported to staff that Youth #2 and Youth #3 engaged"), or the adult's view ("hid from staff's view and engaged").
+        $block = '/^(?:\x{2019}|\')s\b|\b(?:Client|Child|Youth|Resident|Minor|Participant|Patient|Student) ?#\s?\d+|\bP ?#\d+|\b[CRY]\d{1,2}\b|\b(?:supervis|unaware|aware|monitor|allow|permit|fail|result|led to|lead to|while|when|check|asleep|slept|sleep|prevent|protect|separat|interven|report(?!edly)|notif|inform|discover|observ|caught|witness|walk|notic|saw|seen|learn|look|oblivious|redirect|stat(?:ed|es)|said|told|interview|describ|explain|indicat|confirm)\w*|\./iu';
         if (!preg_match_all('/' . $adult . '/iu', $sentence, $adults, PREG_OFFSET_CAPTURE)) return false;
         if (!preg_match_all('/' . $act . '/iu', $sentence, $acts, PREG_OFFSET_CAPTURE)) return false;
         foreach ($adults[0] as $a) {
@@ -281,6 +297,11 @@ if (!function_exists('kop_ih_scanner_version')) {
     /** Words that, shortly before a match in the same sentence, mean it did not happen. */
     function kop_ih_negation_pattern() {
         return '\b(?:no|not|never|without|none|neither|nor|denied|denies|deny|unfounded|unsubstantiated|ruled out|free (?:of|from)|absence of|lack of evidence|did not|didn\'t|does not|was not|wasn\'t|were not|weren\'t|cannot|could not be)\b';
+    }
+
+    /** A report, notice or record not made, which negates the telling and not the event told. */
+    function kop_ih_unreported_pattern() {
+        return '\b(?:did not|didn\'t|does not|do not|was not|were not|has not|had not|have not|not|never|failed to|unable to)\s+(?:\w+\s+){0,2}?(?:report|notify|inform|tell|disclose|document|record|log|submit)\w*\b';
     }
 
     /** Words that mean the sentence talks about a possibility, a rule or a plan, not an event. */
@@ -329,6 +350,11 @@ if (!function_exists('kop_ih_scanner_version')) {
         return 60;
     }
 
+    /** How far back from a match a paperwork cue is looked for: "failed to provide written notification to the Department of a resident's death". */
+    function kop_ih_paperwork_window() {
+        return 120;
+    }
+
     /**
      * A sentence in which the other party is a child: "by another child",
      * "between the residents", "C1 ... with C2" (California labels clients
@@ -338,8 +364,9 @@ if (!function_exists('kop_ih_scanner_version')) {
     function kop_ih_peer_pattern() {
         // A client label: "C1", "Y2", "Client #2", "Child 1 (C1)", each maybe followed by a
         // form reference in brackets. Staff are S1, S2 and never match.
-        $label = '(?:(?:Client|Child|Youth|Resident|Minor) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\b[CYR]\d+\b)(?:\s*\([^)]{0,60}\))?';
-        $second = '(?:(?:Client|Child|Youth|Resident|Minor) ?)?\(?' . $label;
+        $label = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\bP ?#\d+|\b[CYR]\d+\b)(?:\s*\([^)]{0,60}\))?';
+        // "Participant #1 and #2", "Youth #2 and Youth #3": a bare "#2" after a label is the second child.
+        $second = '(?:(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?)?\(?(?:' . $label . '|#\s?\d+)';
         $verb = '(?:hit|hitting|struck|punch|slapp|kick|chok|shov|assault|attack|fought|fight|beat|touch|grop|fondl|rape|raping|molest|sexual|engag|had sex)';
         $noun = '(?:child|children|client|clients|resident|residents|youth|youths|minor|minors|student|students|peer|peers|kids?|roommates?)';
         $other = '(?:another|other|fellow|younger|older) ' . $noun;
@@ -359,6 +386,109 @@ if (!function_exists('kop_ih_scanner_version')) {
             . '|' . $label . '[\])]?\s+(?:\w+\s+){0,4}' . $verb . '\w*[^.]{0,40}?\s(?:by|with|on|against|toward|towards|and)\s+' . $second
             . '|' . $label . '[\])]?\s+(?:\w+\s+){0,2}' . $verb . '\w*\s+' . $second
             . '|' . $label . '[\])]?\s+and\s+' . $second . '[\])]?\s+(?:\w+\s+){0,3}' . $verb;
+    }
+
+    /** Staff, by role or by the labels the states use (S1 in California, E1 in Arizona). */
+    function kop_ih_staff_word() {
+        return '(?:staff(?: members?| persons?)?|[SE]\d{1,2}|employees?|caregivers?|counselors?|nurses?|teachers?|personnel|supervisors?|house ?parents?|direct care (?:staff|workers?)|youth care workers?|(?:mental health )?technicians?|aides?|MHTs?|officers?|administrators?|therapists?)';
+    }
+
+    /** A child in care, by word or by the labels the states use (C1, R1, Y1, "Client #2"). */
+    function kop_ih_child_word() {
+        return '(?:child(?:ren)?|clients?|residents?|youths?|minors?|students?|patients?|participants?|peers?|juveniles?|boys?|girls?|kids?|[CRY]\d{1,2}|P ?#\d+|(?:Client|Child|Youth|Resident|Minor|Participant|Patient) ?#?\s?\d+)';
+    }
+
+    /**
+     * A child assaulting staff (owner rule, 2026-10-05: assaults by residents
+     * on staff do not count): "C1 punched a staff member", "assaulted staff",
+     * "staff was struck by a resident", "S1 restrained C1 after being hit by
+     * C1". kop_ih_match_sentence sets such a sentence aside unless it also
+     * has staff hurting a child (kop_ih_staff_hurt_child_pattern).
+     */
+    function kop_ih_assault_on_staff_pattern() {
+        $staff = kop_ih_staff_word();
+        $child = kop_ih_child_word();
+        $det = '(?:a |an |the |two |three |several |multiple |another |one |other |their |his |her |female |male |facility |program |overnight |night |day )?';
+        $hit = '(?:hit|hitting|struck|strik\w+|punch\w*|kick\w*|slapp\w+|slap|assault\w*|attack\w*|bit|bite|biting|spit (?:on|at)|spat (?:on|at)|spitting (?:on|at)|scratch\w*|chok\w+|head-?butt\w*|shov\w+|push\w*|elbow\w*|injur\w+|hurt|(?:swung|swinging|swing|lung\w+|charg\w+|threw [^.]{0,30}?|throw\w* [^.]{0,30}?) at|aggress\w* (?:toward|towards|against|on))';
+        $hit_pp = '(?:hit|struck|punched|kicked|slapped|assaulted|attacked|bitten|bit|spit on|spat on|scratched|choked|head-?butted|shoved|pushed|elbowed|injured|hurt)';
+        $by_child = 'by ' . $det . '(?:\w+ )?' . $child . '\b';
+        return '\b' . $hit . '\s+' . $det . $staff . '\b'
+            . '|\b(?:assault\w*|attack\w*|aggress\w*|violen\w+|batter\w*)\s+(?:against|on|toward|towards|of)\s+' . $det . $staff . '\b'
+            . '|\b' . $staff . '\s+(?:(?:was|were|got|had been|has been|have been|being|became)\s+(?:\w+\s+){0,2})?' . $hit_pp . '\s+(?:\w+\s+){0,4}?' . $by_child
+            . '|\b' . $staff . '\b[^.]{0,80}\b(?:after|when|while|as) (?:being|getting|he was|she was|they were|he got|she got) ' . $hit_pp . '\s+(?:\w+\s+){0,3}?' . $by_child;
+    }
+
+    /** Staff hurting a child: the staff member the actor, the child the object ("S1 then punched C1"). */
+    function kop_ih_staff_hurt_child_pattern() {
+        $hit = '(?:hit|hitting|struck|strik\w+|punch\w*|kick\w*|slapp\w+|slap|assault\w*|attack\w*|bit|biting|chok\w+|shov\w+|push\w*|threw|throw\w*|slamm\w+|dragg\w+|beat|beating|injur\w+|hurt|restrain\w*)';
+        return '\b' . kop_ih_staff_word() . '\b\s+(?:(?!(?:and|or|who|which|that|was|were|is|are|had|has|been|being|got)\b)\w+\s+){0,2}?' . $hit
+            . '\s+(?:a |an |the |another |one |two |both |several |his |her |their )?(?:\w+ )?' . kop_ih_child_word() . '\b';
+    }
+
+    /** Staff named as the one hurt: "staff sustained a scratch", "injuries to a staff member". */
+    function kop_ih_staff_injured_pattern() {
+        $staff = kop_ih_staff_word();
+        $hurt = '(?:injur\w+|bruis\w+|fractur\w+|broken|bleed\w*|blood\w*|concussion|abrasions?|lacerat\w+|scratch\w*|swollen|swelling|sprain\w*|bite marks?|marks?)';
+        return '\b' . $staff . '\b(?:\s+\w+){0,3}?\s+(?:was|were|sustained|suffered|received|had|got)\b[^.]{0,30}\b' . $hurt
+            . '|\b' . $hurt . '\s+(?:to|on|of)\s+(?:a |the |two |several |one |another )?' . $staff . '\b';
+    }
+
+    /**
+     * A failure that is only paperwork or training (owner rule, 2026-10-05):
+     * not documenting, recording, logging, signing or filing; notifying the
+     * state, a guardian or a parent late or not at all; staff not trained or
+     * certified. Shortly before a mention of harm (kop_ih_cue_window) it means
+     * the sentence is about the paperwork, not the harm: "failed to notify
+     * the Department of a resident's death within one working day".
+     */
+    function kop_ih_paperwork_pattern() {
+        $verb = '(?:document\w*|record\w*|log\w*|chart\w*|sign\w*|notif\w*|submit\w*|file\w*|complet\w+|train\w*|certif\w*|inform\w*|written|in writing)';
+        return '\b(?:fail\w*|neglect\w*|late|untimely|delay\w*|without)\s+(?:to\s+)?(?:\w+\s+){0,2}?' . $verb . '\b'
+            // Not "the child did not tell staff": only the program's records and notices.
+            . '|\b(?:did not|didn\'t|does not|was not|were not|has not|had not|have not|never)\s+(?:\w+\s+){0,2}?(?:report|notify|document|record|log|submit|chart)\w*\b'
+            . '|\b(?:did not|didn\'t|does not|do not|was not|were not|has not|had not|fail\w* to|not)\s+(?:\w+\s+){0,3}?(?:provide|submit|send|complete|file|have|contain|include|show|maintain|keep|obtain)\s+(?:\w+\s+){0,4}?(?:written|documentation|documented|reports?|records?|copy|copies|logs?|forms?|signatures?|notices?|notifications?)\b'
+            . '|\b(?:no|missing|lack\w*|incomplete|absent)\s+(?:\w+\s+){0,2}?(?:documentation|paperwork|signatures?|written (?:report|notice|notification|documentation))\b'
+            . '|\b(?:report\w*|notif\w*|submit\w*|contact\w*)\b[^.]{0,80}\b(?:within (?:\S+ ){1,2}(?:hours?|days?)|timely|in writing|(?:\w+ ){0,2}(?:hours?|days?) late)\b'
+            . '|\b(?:untrained|not (?:been |yet )?trained|(?:lack\w*|without|no) (?:\w+ )?(?:training|certification)|(?:training|certification)s? (?:was |were |had |has )?(?:expired|missing|incomplete|overdue|lapsed|out of date)|(?:expired|missing|incomplete|overdue|lapsed) (?:\w+ ){0,3}(?:training|certification)s?)\b';
+    }
+
+    /**
+     * The same, just after a mention of harm: "the child's death was not
+     * reported to the Department", "the hospital visit was documented late",
+     * "the restraint was not recorded in the log".
+     */
+    function kop_ih_paperwork_after_pattern() {
+        $paper = '(?:documented|recorded|logged|charted|reported|submitted|signed|filed|completed|written up|noted)';
+        return '^[^.]{0,80}?\b(?:(?:was|were|is|are|had|has|have)\s+(?:not|never)\s+(?:been\s+)?' . $paper
+            . '|' . $paper . '\s+(?:\w+\s+){0,4}?(?:late|untimely|after the (?:required|deadline)|outside (?:of )?the|beyond the|past the)'
+            . '|without (?:being\s+)?(?:documented|reported|recorded|logged|a written)'
+            . '|(?:documentation|records?|reports?|forms?|logs?|notifications?)\s+(?:\w+\s+){0,3}?(?:was|were)\s+(?:not (?:completed|submitted|found|made|sent)|missing|incomplete|blank|unsigned|late))\b';
+    }
+
+    /** Categories a paperwork cue never removes: what staff did to a child is the finding, however it was cited. */
+    function kop_ih_paperwork_exempt() {
+        return array('physical_abuse', 'sexual_abuse');
+    }
+
+    /**
+     * A failure of care, not of paperwork: supervision, protection, medical
+     * care, following a plan. A finding that has one is never paperwork only.
+     */
+    function kop_ih_care_failure_pattern() {
+        return '\b(?:fail\w*|did not|didn\'t|does not|neglected|unable)\s+to\s+(?:\w+\s+){0,2}?(?:supervis\w*|protect\w*|monitor\w*|ensure (?:the |a |each |that )?(?:\w+ )?(?:safety|health|well-?being|protection)|follow (?:\w+ ){0,2}(?:safety|treatment|supervision|service|behavior|crisis) plans?|seek|obtain|get (?:\w+ )?(?:medical|treatment)|provide (?:\w+ ){0,2}(?:care|supervision|treatment|medical|medications?|protection)|administer|intervene|prevent|keep (?:\w+ ){0,2}safe|maintain (?:\w+ ){0,2}(?:supervision|ratios?|sight)|conduct (?:\w+ ){0,2}checks|search|secure|separate|respond)\b'
+            . '|\b(?:inadequate|insufficient|lack of|lapse in|no) (?:\w+ )?(?:supervision|staffing|monitoring)\b|\bout of ratio\b|\bunsupervised\b|\bleft alone\b|\bunattended\b';
+    }
+
+    /**
+     * A rule cited that is about records, reporting or training, and not
+     * also about protection or care: "Serious incident reporting",
+     * "Personnel records", "Staff training", "Notification of the Department".
+     */
+    function kop_ih_paperwork_standard($standard) {
+        $standard = (string) $standard;
+        if ($standard === '') return false;
+        if (!preg_match('/\b(?:records?|record-?keeping|documentation|reports?|reporting|notif\w*|notice|training|trained|orientation|certificat\w+|personnel files?|files?|logs?|forms?|paperwork|signatures?)\b/iu', $standard)) return false;
+        return !preg_match('/\b(?:abus\w*|neglect\w*|protect\w*|supervis\w*|safety|safe|harm|restrain\w*|seclu\w*|care|rights|discipline|punish\w*|ratio)\b/iu', $standard);
     }
 
     /** The ways a state says an allegation did not hold up. */
@@ -404,15 +534,29 @@ if (!function_exists('kop_ih_scanner_version')) {
             . '|stitches|sutures|surgery|(?:hit|struck) by a (?:car|vehicle|truck|train)|hypothermia|frostbite|drown\w*)\b';
     }
 
-    /** Whether a sentence has a match of $pattern with no negation or hypothetical cue shortly before it. */
-    function kop_ih_sentence_has($sentence, $pattern) {
+    /**
+     * Whether a sentence has a match of $pattern with no negation or
+     * hypothetical cue shortly before it. With $paperwork, a match the
+     * sentence only mentions as the subject of paperwork or training
+     * (kop_ih_paperwork_pattern before it, kop_ih_paperwork_after_pattern
+     * after it) does not count either.
+     */
+    function kop_ih_sentence_has($sentence, $pattern, $paperwork = false) {
         if (!preg_match_all('/' . $pattern . '/iu', $sentence, $m, PREG_OFFSET_CAPTURE)) return false;
         $neg = '/' . kop_ih_negation_pattern() . '/iu';
         $hyp = '/' . kop_ih_hypothetical_pattern() . '/iu';
+        $paper = '/' . kop_ih_paperwork_pattern() . '/iu';
+        $paper_after = '/' . kop_ih_paperwork_after_pattern() . '/iu';
         foreach ($m[0] as $hit) {
             $start = max(0, $hit[1] - kop_ih_cue_window());
             $before = substr($sentence, $start, $hit[1] - $start);
+            // "did not report that a caregiver slapped a child": what was not reported still happened.
+            $before = (string) preg_replace('/' . kop_ih_unreported_pattern() . '/iu', ' ', $before);
             if (preg_match($neg, $before) || preg_match($hyp, $before)) continue;
+            if ($paperwork) {
+                $p_start = max(0, $hit[1] - kop_ih_paperwork_window());
+                if (preg_match($paper, substr($sentence, $p_start, $hit[1] - $p_start)) || preg_match($paper_after, substr($sentence, $hit[1] + strlen($hit[0])))) continue;
+            }
             return $hit[0];
         }
         return false;
@@ -453,11 +597,18 @@ if (!function_exists('kop_ih_scanner_version')) {
      */
     function kop_ih_match_sentence($sentence) {
         $found = array();
+        // A child assaulting staff is not counted, nor the police or hospital visit
+        // that followed; a death, or the child hurt in the hold, still is.
+        $on_staff = preg_match('/' . kop_ih_assault_on_staff_pattern() . '/iu', $sentence)
+            && !preg_match('/' . kop_ih_staff_hurt_child_pattern() . '/iu', $sentence);
+        $exempt = kop_ih_paperwork_exempt();
         foreach (kop_ih_categories() as $key => $cat) {
+            if ($on_staff && !in_array($key, array('death', 'restraint_injury'), true)) continue;
             if (!empty($cat['requires']) && !preg_match('/' . $cat['requires'] . '/iu', $sentence)) continue;
             if (!empty($cat['exclude']) && preg_match('/' . $cat['exclude'] . '/iu', $sentence)) continue;
+            $paperwork = !in_array($key, $exempt, true);
             foreach ($cat['patterns'] as $pattern) {
-                $words = kop_ih_sentence_has($sentence, $pattern);
+                $words = kop_ih_sentence_has($sentence, $pattern, $paperwork);
                 if ($words === false) continue;
                 $found[$key] = $words;
                 break;
@@ -467,7 +618,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $met = isset($group['test']) ? call_user_func($group['test'], $sentence) : preg_match('/' . $group['requires'] . '/iu', $sentence);
                 if (!$met) continue;
                 foreach ($group['patterns'] as $pattern) {
-                    $words = kop_ih_sentence_has($sentence, $pattern);
+                    $words = kop_ih_sentence_has($sentence, $pattern, $paperwork);
                     if ($words === false) continue;
                     $found[$key] = $words;
                     break 2;
@@ -482,14 +633,17 @@ if (!function_exists('kop_ih_scanner_version')) {
     // -----------------------------------------------------------------------
 
     /**
-     * States with an adapter. Washington waits for its scraper (the PDF
-     * columns come out interleaved) and Nevada stores no finding text.
-     * Oregon's site visit findings are almost all the rule's own wording
-     * run together with what the licensor saw (a dry run on 2026-09-28
-     * queued 90, nearly every one a quoted rule), so it is left out.
+     * States with an adapter. Washington's statements of deficiencies come
+     * out of its scraper with the rule, the finding and the facility's plan
+     * interleaved line by line, and Nevada stores no finding text. Oregon's
+     * site visit findings are almost all the rule's own wording run together
+     * with what the licensor saw (a dry run on 2026-09-28 queued 90, nearly
+     * every one a quoted rule), so it is left out. Montana's surveys reach
+     * inspection_reports through api/lib-mt-reports.php, not a scraper.
      */
     function kop_ih_supported_states() {
-        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK');
+        return array('TX', 'CA', 'UT', 'AZ', 'CT', 'NC', 'GA', 'MN', 'AR', 'FL', 'OK',
+            'PA', 'MI', 'MT', 'NH', 'WY', 'ID', 'ME', 'OH', 'WV', 'IA', 'MD', 'SD', 'VA');
     }
 
     /**
@@ -528,6 +682,19 @@ if (!function_exists('kop_ih_scanner_version')) {
             case 'AR': return kop_ih_extract_ar($data, (string) ($row['raw_content'] ?? ''));
             case 'FL': return kop_ih_extract_fl($data, (string) ($row['raw_content'] ?? ''));
             case 'OK': return kop_ih_extract_ok($data);
+            case 'NH': return kop_ih_extract_nh($data);
+            case 'WY': return kop_ih_extract_wy($data);
+            case 'ID': return kop_ih_extract_id($data);
+            case 'ME': return kop_ih_extract_me($data);
+            case 'OH': return kop_ih_extract_oh($data);
+            case 'WV': return kop_ih_extract_wv($data);
+            case 'IA': return kop_ih_extract_ia($data);
+            case 'MD': return kop_ih_extract_md($data);
+            case 'SD': return kop_ih_extract_sd($data);
+            case 'VA': return kop_ih_extract_va($data);
+            case 'MI': return kop_ih_extract_mi($data, (string) ($row['raw_content'] ?? ''));
+            case 'PA': return kop_ih_extract_pa($data);
+            case 'MT': return kop_ih_extract_mt($data);
         }
         return array();
     }
@@ -872,6 +1039,624 @@ if (!function_exists('kop_ih_scanner_version')) {
     }
 
     /**
+     * New Hampshire (nh_scraper.py): one report per Child Care Licensing Unit
+     * visit. categories.items lists only the rules found not met, each with
+     * the licensing coordinator's observations (the state's finding), the
+     * state's directed corrective action and the program's own plan; neither
+     * of the last two is a finding, and rule_text is the rule's wording, so
+     * only the observations are read. "Founded, Problem Resolved" is a
+     * founded complaint allegation the program had already put right when the
+     * coordinator arrived. A rule the state marks high risk, a founded
+     * allegation, or any rule found not met on a complaint visit keeps the
+     * full score.
+     */
+    function kop_ih_extract_nh(array $data) {
+        $items = is_array($data['items'] ?? null) ? $data['items'] : array();
+        $type = trim((string) ($data['visit_type'] ?? ''));
+        $complaint = !empty($data['is_complaint']) || preg_match('/complaint/i', $type);
+        $visit = strtolower(trim((string) preg_replace('/^Licen[sc]ed\s+/i', '', $type)));
+        $out = array();
+        foreach ($items as $item) {
+            if (!is_array($item)) continue;
+            $result = kop_ih_clean_text($item['result'] ?? '');
+            if ($result === '' || strcasecmp($result, 'Compliant') === 0) continue;
+            $text = kop_ih_clean_text($item['observations'] ?? '');
+            if (mb_strlen($text) < 40) continue;
+            $founded = (bool) preg_match('/^Founded\b/i', $result);
+            $high = !empty($item['high_risk']);
+            $label = ($founded ? 'Founded, problem resolved' : 'Non-compliant') . ($high ? ', high-risk rule' : '') . ($visit !== '' ? ', ' . $visit : '');
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim((string) ($item['rule'] ?? '') . ' ' . (string) ($item['rule_text'] ?? ''))),
+                'state_label' => kop_ih_short_standard($label, 110),
+                'factor' => ($high || $founded) ? 1.0 : kop_ih_citation_factor($complaint),
+                'corrected_on_site' => $founded ? true : null,
+                'kind' => $founded ? 'complaint' : 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Wyoming (wy_scraper.py), two agencies. Family Services (source DFS):
+     * a notice of non-compliance (SCL-305, read by OCR) is the state's answer
+     * to an allegation it investigated, and counts only when its finding says
+     * the evidence supports non-compliance; the text is the allegation, as
+     * Oklahoma's substantiated complaints are. Visits are handwritten and
+     * never transcribed, and the other documents are the providers' plans.
+     * The Department of Health (source WDH): federal CMS-2567 surveys of the
+     * psychiatric residential treatment facilities, read by column into tags;
+     * a tag's evidence is the surveyor's finding, and a survey naming a
+     * complaint intake is the Department confirming what was reported.
+     */
+    function kop_ih_extract_wy(array $data) {
+        $kind = (string) ($data['kind'] ?? '');
+        if ($kind === 'notice') {
+            if (empty($data['non_compliance'])) return array();
+            $text = kop_ih_clean_text($data['allegation'] ?? '');
+            if (mb_strlen($text) < 20) return array();
+            $rules = array();
+            foreach ((array) ($data['rules'] ?? array()) as $r) {
+                if (!is_array($r)) continue;
+                $rules[] = trim((($r['chapter'] ?? '') !== '' ? 'Chapter ' . $r['chapter'] . ', ' : '') . 'Section ' . ($r['section'] ?? '') . ' ' . ($r['title'] ?? ''));
+            }
+            return array(array(
+                'text' => $text, 'standard' => kop_ih_short_standard(implode('; ', array_slice($rules, 0, 3))),
+                'state_label' => 'Evidence supports non-compliance, DFS notice',
+                'factor' => 1.0, 'corrected_on_site' => null, 'kind' => 'complaint',
+            ));
+        }
+        if ($kind !== 'survey') return array();
+        $type = kop_ih_clean_text($data['survey_type'] ?? '');
+        $complaint = preg_match('/complaint/i', $type) || !empty($data['complaint_intakes']);
+        $label = 'Deficiency cited' . (($type !== '' && strcasecmp($type, 'Survey') !== 0) ? ', ' . strtolower($type) : '')
+            . (($complaint && !preg_match('/complaint/i', $type)) ? ', complaint survey' : '') . (!empty($data['is_revisit']) ? ', revisit' : '');
+        $out = array();
+        foreach ((array) ($data['tags'] ?? array()) as $t) {
+            if (!is_array($t)) continue;
+            $evidence = (string) ($t['evidence'] ?? '');
+            if (trim((string) ($t['regulation'] ?? '')) === '') {
+                // The split line was not read (a scan): the evidence still holds the quoted regulation.
+                if (!preg_match('/not\s+met\s+as\s+evidenced\s+by\s*:?\s*(.*)$/isu', $evidence, $m)) continue;
+                $evidence = $m[1];
+            }
+            $text = kop_ih_clean_text($evidence);
+            if (mb_strlen($text) < 40) continue;
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim(($t['tag'] ?? '') . ' ' . ($t['title'] ?? '') . (!empty($t['cfr']) ? ' (' . $t['cfr'] . ')' : ''))),
+                'state_label' => kop_ih_short_standard($label, 110),
+                'factor' => kop_ih_citation_factor((bool) $complaint), 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Idaho (id_scraper.py): Children's Residential Licensing statements of
+     * deficiencies, read from the state's four-column table into
+     * categories.deficiencies (rule, the surveyor's finding, the facility's
+     * plan, the date). The plan is the facility's own answer and is not read;
+     * a no-deficiency letter has nothing to read. A repeat deficiency, a
+     * Bronze rating (2026 on: areas of non-compliance) or a provisional
+     * license keeps the full score. Idaho does not say which surveys follow
+     * a complaint.
+     */
+    function kop_ih_extract_id(array $data) {
+        if (($data['kind'] ?? '') !== 'deficiencies') return array();
+        $risk = trim((string) ($data['risk_assessment'] ?? ''));
+        $provisional = (bool) preg_match('/provisional/i', (string) ($data['license_granted'] ?? ''));
+        $investigation = (bool) preg_match('/complain|investigat/i', ($data['survey_dates'] ?? '') . ' ' . ($data['document_name'] ?? ''));
+        $out = array();
+        foreach ((array) ($data['deficiencies'] ?? array()) as $d) {
+            if (!is_array($d)) continue;
+            $text = kop_ih_clean_text($d['finding'] ?? '');
+            $text = trim((string) preg_replace('/^(?:This\s+(?:is|was)\s+an?\s+)?repeat(?:ed)?\s+deficienc(?:y|ies)\.?\s*/iu', '', $text));
+            if (mb_strlen($text) < 40) continue;
+            $repeat = !empty($d['repeat']);
+            $label = 'Deficiency cited' . ($repeat ? ', repeat deficiency' : '') . ($provisional ? ', provisional license' : '')
+                . ($risk !== '' ? ', risk assessment ' . $risk : '');
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim((string) ($d['rule'] ?? '') . ' ' . (string) ($d['rule_text'] ?? ''))),
+                'state_label' => $label,
+                'factor' => ($repeat || $provisional || strcasecmp($risk, 'Bronze') === 0) ? 1.0 : kop_ih_citation_factor($investigation),
+                'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Maine (me_scraper.py): Division of Licensing and Certification surveys
+     * of the behavioral health licences of the youth operators on the
+     * allowlist. The licence is the organization's, so a survey may cover an
+     * adult or outpatient program: a report marked adult_program is skipped,
+     * and so is a finding that speaks of adults and never of children or
+     * youth. Each deficiency is a section of 10-144 CMR Ch. 123, the rule's
+     * wording, and the state's finding after "This has not been met as
+     * evidenced by"; the plan is the organization's. Rule wording the parser
+     * could not tell from the finding is dropped. Maine records no severity.
+     */
+    function kop_ih_extract_me(array $data) {
+        if (!empty($data['adult_program'])) return array();
+        $complaint = !empty($data['is_complaint']);
+        $kind = $complaint ? 'complaint survey' : strtolower(kop_ih_clean_text(($data['survey_kind'] ?? '') !== '' ? $data['survey_kind'] : ($data['inspection_type'] ?? '')));
+        $label = kop_ih_short_standard('Deficiency cited' . ($kind !== '' ? ', ' . $kind : ''), 110);
+        $out = array();
+        foreach ((array) ($data['deficiencies'] ?? array()) as $d) {
+            if (!is_array($d)) continue;
+            $kept = array();
+            foreach (kop_ih_split_sentences(preg_replace('/^\s*Finding\s*:\s*/iu', '', (string) ($d['finding'] ?? ''))) as $s) {
+                if (preg_match('/^(?:\W*[A-Z0-9]{1,2}[.)]\s+)?(?:The\s+)?(?:organization|agency|provider|licensee)\s+(?:must|shall)\b/u', $s)) continue;
+                $kept[] = $s;
+            }
+            $text = kop_ih_clean_text(implode(' ', $kept));
+            if (mb_strlen($text) < 40) continue;
+            if (preg_match('/\badults?\b/iu', $text) && !preg_match('/\b(?:child(?:ren)?|youths?|adolescents?|minors?|juveniles?|students?|teen(?:s|agers?)?|guardians?)\b/iu', $text)) continue;
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim((string) ($d['section'] ?? '') . ' ' . (string) ($d['rule_text'] ?? ''))),
+                'state_label' => $label,
+                'factor' => kop_ih_citation_factor($complaint), 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Ohio (oh_scraper.py): one report per Department of Children and Youth
+     * compliance review of an agency (review number AR-00001359; Full, Focused
+     * or Other), the main PDF and its "Additional Findings" PDF read together.
+     * Each entry of categories.findings is a review question answered "N" for
+     * at least one record: 'question' is the state's checklist wording, 'rule'
+     * the Administrative Code rule (5180:2-9-42(B)(9)), and 'comments' the
+     * licensing specialist's note on each record found out of compliance
+     * ({record, reason, comment}). Only those notes are the state's own words:
+     * a finding without one (every Additional Findings row, a table row the
+     * summaries did not carry) is the rule's wording alone and is skipped, as
+     * is technical assistance (categories.detail, advice, never a finding).
+     * A review covers the whole agency, its foster care and adoption work as
+     * well, so only findings the scraper marks residential (a residential
+     * review tool, or rules in chapter 5180:2-9) are read. Nothing in a review
+     * says what prompted it, so none counts as an investigation; one the state
+     * requires a corrective action plan for keeps the routine citation weight,
+     * one it does not ranks below.
+     */
+    function kop_ih_extract_oh(array $data) {
+        $type = trim((string) ($data['review_type'] ?? ''));
+        $out = array();
+        foreach ((array) ($data['findings'] ?? array()) as $f) {
+            if (!is_array($f) || empty($f['residential'])) continue;
+            $question = (string) preg_replace('/^\d{1,3}\s*\.?\s*(?=[A-Z])/u', '', kop_ih_clean_text($f['question'] ?? ''));
+            $rule = kop_ih_clean_text($f['rule'] ?? '');
+            $standard = kop_ih_short_standard(trim(($rule !== '' ? 'OAC ' . $rule . ' ' : '') . $question));
+            $cap = ($f['cap_needed'] ?? null) === true;
+            $label = 'Noncompliance cited' . ($type !== '' ? ', ' . strtolower($type) . ' review' : '')
+                . ($cap ? ', corrective action plan required' : '');
+            $seen = array();
+            foreach ((array) ($f['comments'] ?? array()) as $c) {
+                $text = kop_ih_clean_text(is_array($c) ? ($c['comment'] ?? '') : '');
+                if (mb_strlen($text) < 30 || isset($seen[$text])) continue;
+                $seen[$text] = true;
+                $out[] = array(
+                    'text' => $text, 'standard' => $standard, 'state_label' => $label,
+                    'factor' => kop_ih_citation_factor(false) * ($cap ? 1.0 : 0.85),
+                    'corrected_on_site' => null, 'kind' => 'citation',
+                );
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * West Virginia (wv_scraper.py): OHFLAC statements of deficiencies, the
+     * state form or the federal CMS-2567 of a psychiatric residential
+     * treatment facility, one report per survey. The scraper has already
+     * split each tag into rule and surveyor's finding at "is not met as
+     * evidenced by" (or at "Based on ..."): categories.tags holds the short
+     * form (tag, title, the SS= scope and severity on federal forms, whether
+     * the tag is only listed as corrected) and categories.detail.tags the
+     * full finding, in the same order. The opening comments (tag 0000) are
+     * never in either list. A tag a revisit lists as corrected is not a new
+     * finding. Where the split failed the finding starts with the rule's own
+     * words; the text is then taken from "Based on" when it has one, and the
+     * tag is left out when it has no surveyor's evidence at all. A federal
+     * severity letter G or above records actual harm or immediate jeopardy,
+     * D to F the potential for more than minimal harm; a state form has none,
+     * and a complaint survey is the Office confirming what was reported.
+     */
+    function kop_ih_extract_wv(array $data) {
+        $short = is_array($data['tags'] ?? null) ? $data['tags'] : array();
+        $full = is_array($data['detail']['tags'] ?? null) ? $data['detail']['tags'] : array();
+        $type = trim((string) ($data['survey_type'] ?? ''));
+        $investigation = !empty($data['is_complaint']) || preg_match('/complaint|incident|investigat/i', $type);
+        $out = array();
+        foreach ($short as $i => $t) {
+            if (!is_array($t) || !empty($t['corrected'])) continue;
+            $d = (is_array($full[$i] ?? null) && ($full[$i]['tag'] ?? '') === ($t['tag'] ?? '')) ? $full[$i] : array();
+            $text = kop_ih_clean_text($d ? ($d['finding'] ?? '') : ($t['finding'] ?? ''));
+            $title = kop_ih_clean_text($t['regulation'] ?? '');
+            if ($d && kop_ih_clean_text($d['regulation'] ?? '') === $title) {
+                // No rule paragraph was split off: the finding may open with the rule.
+                if (preg_match('/^(?!Based on\b).+?\s(Based on\b.*)$/su', $text, $b)) $text = $b[1];
+                elseif (!preg_match('/\b(?:Based on|interview|observ|record review|review of|revealed|confirmed|stated|reported|failed to)\b/iu', $text)) continue;
+            }
+            if (mb_strlen($text) < 40) continue;
+            $severity = preg_match('/SS\s*=\s*([A-L])\b/u', (string) ($t['scope'] ?? ''), $m) ? $m[1] : '';
+            $factor = $severity !== '' ? ($severity >= 'G' ? 1.0 : ($severity >= 'D' ? 0.85 : 0.7)) : kop_ih_citation_factor($investigation);
+            $label = 'Deficiency cited' . ($severity !== '' ? ', severity ' . $severity : '')
+                . ($type !== '' ? ', ' . strtolower($type) : '');
+            $out[] = array(
+                'text' => $text, 'standard' => kop_ih_short_standard(trim(($t['tag'] ?? '') . ' ' . $title)),
+                'state_label' => $label, 'factor' => $factor, 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Iowa (ia_scraper.py): DIAL survey visits to psychiatric medical
+     * institutions for children, each a federal CMS-2567. categories.tags
+     * lists the tags cited (tag "N 145", regulation "483.358(f) ORDERS FOR
+     * USE OF RESTRAINT OR SECLUSION", finding cut to 800 characters) and
+     * categories.detail.tags holds, at the same index, the whole finding
+     * (the surveyor's text after "This REQUIREMENT is not met as evidenced
+     * by:") and the rule's wording (requirement), which is not read. The
+     * initial comments (N 000) are not a deficiency and are not in tags; the
+     * provider's plan of correction is in raw_content and never read. E tags
+     * (emergency preparedness plans) are left out. A complaint or incident
+     * visit, or a recertification that names complaint numbers (130840-C),
+     * is DIAL investigating. Where OCR read a line of the finding as a rule
+     * title (the regulation is a sentence fragment) the entry continues the
+     * one before it, as the page's cleanTags() joins it.
+     */
+    function kop_ih_extract_ia(array $data) {
+        $tags = is_array($data['tags'] ?? null) ? $data['tags'] : array();
+        $detail = is_array($data['detail']['tags'] ?? null) ? $data['detail']['tags'] : array();
+        if (!$tags) return array();
+        $type = trim((string) ($data['visit_type'] ?? ''));
+        $investigation = !empty($data['is_complaint']) || !empty($data['complaint_numbers']) || preg_match('/complaint|incident/i', $type);
+        $label = 'Deficiency cited' . ($type !== '' ? ', ' . strtolower($type) . ' survey' : '');
+        if (trim((string) ($data['enforcement']['fineNumber'] ?? '')) !== '') $label .= ', fine imposed';
+        // The CMS-2567 footnote that OCR reads into the text beside it.
+        $footer = '/\b(?:Any deficiency statement ending with an asterisk.*?(?:instructions|reverse for)\.?\)?|If deficiencies are cited, an approved plan of correction is requisite to continued program participation\.?|(?:Except for nursing homes, )?the findings stated above are disclosable.*?(?:provided|facility)\.?|HEALTH FACILITIES\s*-\s*STATE OF IOWA|TITLE \(X8\) DATE)/isu';
+        $out = array();
+        foreach ($tags as $i => $t) {
+            if (!is_array($t)) continue;
+            $tag = trim((string) ($t['tag'] ?? ''));
+            $regulation = kop_ih_clean_text($t['regulation'] ?? '');
+            $full = is_array($detail[$i] ?? null) ? $detail[$i] : array();
+            $text = (string) ($full['finding'] ?? '') !== '' ? (string) $full['finding'] : (string) ($t['finding'] ?? '');
+            $text = kop_ih_clean_text(preg_replace($footer, ' ', $text));
+            // No "not met as evidenced by" line was read: the rule's wording runs into the finding.
+            if (trim((string) ($full['requirement'] ?? '')) === '' && preg_match('/\b(?:Based on|Record review|Review of|Interviews? with|Observations? (?:of|on))\b/u', $text, $m, PREG_OFFSET_CAPTURE) && $m[0][1] > 0) {
+                $text = substr($text, $m[0][1]);
+            }
+            $fragment = $regulation !== '' && !preg_match('/^(?:§\s*)?(?:481-)?\d{2,3}\.\d/u', $regulation)
+                && !(preg_match('/[A-Z]{3}/u', $regulation) && mb_strtoupper($regulation) === $regulation)
+                && !(count(preg_split('/\s+/u', $regulation)) <= 5 && preg_match('/^[A-Z][^.,:;!#\d]*$/u', $regulation));
+            if ($fragment && $out && !preg_match('/^Based on\b/iu', $text)) {
+                $out[count($out) - 1]['text'] .= ' ' . $regulation . ' ' . $text;
+                continue;
+            }
+            if ($fragment) {
+                $text = $regulation . ' ' . $text;
+                $regulation = '';
+            }
+            if (preg_match('/^E\s?\d/u', $tag) || mb_strlen($text) < 40) continue;
+            $out[] = array(
+                'text' => $text, 'standard' => kop_ih_short_standard(trim($tag . ' ' . $regulation)), 'state_label' => $label,
+                'factor' => kop_ih_citation_factor($investigation), 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Maryland (md_scraper.py): DHS Office of Licensing and Monitoring
+     * "Residential Child Care Report Summary" PDFs, read into categories. Each
+     * citation is a COMAR number and a one-line comment ({site, citation,
+     * comment, status}), in one of three lists: safety_citations, which the
+     * state rates as violations that "may present safety risks for children"
+     * (10/2021 form on); other_citations, violations that "do not present
+     * imminent safety risks" (the only block on the 2019-2021 form); and
+     * unrated_citations (the form used until mid-2019). Status is CAP or
+     * Resolved, neither of which undoes the citation. The inspections are
+     * routine (quarterly, re-licensure, mid-licensure, periodic); the state
+     * posts no complaint investigations here.
+     */
+    function kop_ih_extract_md(array $data) {
+        $blocks = array(
+            'safety_citations'  => array('Violation that may present safety risks for children', 1.0),
+            'unrated_citations' => array('COMAR violation cited', kop_ih_citation_factor(false)),
+            'other_citations'   => array('Violation that does not present imminent safety risks', 0.7),
+        );
+        $type = trim((string) ($data['inspection_type'] ?? ''));
+        $out = array();
+        foreach ($blocks as $key => $block) {
+            foreach ((array) ($data[$key] ?? array()) as $item) {
+                if (!is_array($item)) continue;
+                $text = kop_ih_clean_text($item['comment'] ?? '');
+                if (mb_strlen($text) < 20) continue;
+                $site = kop_ih_clean_text($item['site'] ?? '');
+                $status = kop_ih_clean_text($item['status'] ?? '');
+                $out[] = array(
+                    'text' => $text,
+                    'standard' => kop_ih_short_standard(trim('COMAR ' . ltrim(kop_ih_clean_text($item['citation'] ?? ''), '[') . ($site !== '' ? ' (' . $site . ')' : ''))),
+                    'state_label' => $block[0] . ($type !== '' ? ', ' . strtolower($type) . ' inspection' : '') . ($status !== '' ? ' (' . $status . ')' : ''),
+                    'factor' => $block[1], 'corrected_on_site' => null, 'kind' => 'citation',
+                );
+            }
+        }
+        return $out;
+    }
+
+    /**
+     * South Dakota (sd_scraper.py): the documents DSS's Office of Licensing
+     * and Accreditation posts per provider, categories.kind one of
+     * licensing_study, corrective_action_plan or inspection. Only a
+     * corrective action plan holds the state's own finding: per item
+     * "Summary of Non-Compliance Finding" (2025 form) or "Non-Compliance
+     * Finding" (2024 form), read into items[].finding; the provider's
+     * correction (corrective_action, evidence, maintained) and the rule's
+     * wording (rule_text) are not read. A licensing study's not-met items
+     * are the checklist's questions, the rule, with a reviewer comment that
+     * mostly points to the plan; an inspection's failed items are fire and
+     * health questions. A compliance plan (plan_type "compliance") answers a
+     * fire, health or food service inspection and is left out. The portal
+     * posts no complaint or investigation documents, so every plan follows a
+     * routine licensing review.
+     */
+    function kop_ih_extract_sd(array $data) {
+        if (($data['kind'] ?? '') !== 'corrective_action_plan' || ($data['plan_type'] ?? '') === 'compliance') return array();
+        $out = array();
+        foreach ((array) ($data['items'] ?? array()) as $item) {
+            if (!is_array($item)) continue;
+            $text = kop_ih_clean_text($item['finding'] ?? '');
+            if (mb_strlen($text) < 30) continue;
+            $rule = kop_ih_clean_text($item['rule'] ?? '');
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim(($rule !== '' ? 'ARSD ' . $rule . ' ' : '') . kop_ih_clean_text($item['rule_text'] ?? ''))),
+                'state_label' => 'Non-compliance finding, corrective action plan',
+                'factor' => kop_ih_citation_factor(false), 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Virginia (va_scraper.py), two agencies under one state, told apart by
+     * categories.source.
+     *
+     * vdss: a Department of Social Services inspection page. Each of
+     * violations[] has the standard cited (22VAC40-151-...), the description
+     * (the inspector's statement of what was violated) and the findings (the
+     * numbered evidence); plan is the facility's own plan of correction and
+     * is not read, nor are the inspector's comments (the visit's scope, and
+     * on a complaint visit the allegation, whatever its outcome). A
+     * complaint inspection (complaint_related, set by the scraper also from
+     * "Type of inspection: Complaint" in the comments) is VDSS investigating.
+     *
+     * dbhds: an Office of Licensing inspection or investigation, whose
+     * findings exist only in the finalized corrective action plan. citations[]
+     * and detail.citations[] run in step, one row per standard: comp is the
+     * state's rating, N (non-compliance), NS (non-compliance, systemic), C
+     * (substantial compliance) or ND (not determined), and only N and NS are
+     * findings; detail noncompliance is the licensing specialist's text after
+     * "This regulation was NOT MET as evidenced by:" (citations[] keeps 240
+     * characters of it). The provider's actions and the Office of Licensing's
+     * response to them are not read. A plan that reads "No Violation"
+     * (no_violation) has no rows. An investigation, or an inspection made
+     * because of a death, serious incident or complaint, is the state
+     * looking into a report.
+     */
+    function kop_ih_extract_va(array $data) {
+        $out = array();
+        if (($data['source'] ?? '') === 'vdss') {
+            $type = trim((string) ($data['inspection_type'] ?? ''));
+            $complaint = !empty($data['complaint_related']) || preg_match('/^complaint/i', $type);
+            $label = 'Violation cited by VDSS' . ($complaint ? ', complaint inspection' : ($type !== '' ? ', ' . strtolower($type) . ' inspection' : ''));
+            foreach ((array) ($data['violations'] ?? array()) as $v) {
+                if (!is_array($v)) continue;
+                $text = kop_ih_clean_text(($v['description'] ?? '') . ' ' . ($v['findings'] ?? ''));
+                if (mb_strlen($text) < 30) continue;
+                $out[] = array(
+                    'text' => $text, 'standard' => kop_ih_short_standard($v['standard'] ?? ''), 'state_label' => $label,
+                    'factor' => kop_ih_citation_factor($complaint), 'corrected_on_site' => null, 'kind' => 'citation',
+                );
+            }
+            return $out;
+        }
+        if (($data['source'] ?? '') !== 'dbhds' || !empty($data['no_violation'])) return array();
+        $rows = is_array($data['citations'] ?? null) ? $data['citations'] : array();
+        $detail = is_array($data['detail']['citations'] ?? null) ? $data['detail']['citations'] : array();
+        $investigation = ($data['kind'] ?? '') === 'investigation'
+            || preg_match('/death|serious incident|complaint|investigat/i', (string) ($data['purpose'] ?? ''));
+        $what = ($data['kind'] ?? '') === 'investigation' ? 'investigation' : (strtolower(trim((string) ($data['purpose'] ?? ''))) ?: 'inspection');
+        foreach ($rows as $i => $c) {
+            if (!is_array($c)) continue;
+            $comp = strtoupper((string) (preg_split('/\s+/', trim((string) ($c['comp'] ?? '')))[0] ?? ''));
+            if (in_array($comp, array('C', 'ND'), true)) continue;
+            $full = is_array($detail[$i] ?? null) ? $detail[$i] : array();
+            $text = kop_ih_clean_text((string) ($full['noncompliance'] ?? '') !== '' ? $full['noncompliance'] : ($c['noncompliance'] ?? ''));
+            // A cell the scraper could not split keeps the location in front of the finding.
+            $text = (string) preg_replace('/^.*?This regulation was NOT MET as evidenced by:\s*/isu', '', $text);
+            if (mb_strlen($text) < 30) continue;
+            if ($comp === 'NS') {
+                $label = 'Non-compliance, systemic';
+                $factor = 1.0;
+            } else {
+                $label = 'Non-compliance';
+                $factor = kop_ih_citation_factor($investigation);
+            }
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim(($c['standard'] ?? '') . ' ' . ($full['standard_text'] ?? ''))),
+                'state_label' => $label . ', DBHDS ' . $what,
+                'factor' => $factor, 'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /** Michigan's conclusion as the state's label, or '' when it establishes nothing. */
+    function kop_ih_mi_established($conclusion) {
+        $c = kop_ih_clean_text($conclusion);
+        if (!preg_match('/^(?:Allegations?\s*#?\s*\d+(?:\s*(?:and|&|,)\s*(?:Allegations?\s*#?\s*)?\d+)*\s*[^\w\s]*\s*)?((?:Repeat(?:ed)?\s+)?(?:No\s+|Not\s+)?Viola?t\w*(?:\s+(?:Not\s+)?Estab\w*)?)/iu', $c, $m)) return '';
+        $words = strtolower($m[1]);
+        if (preg_match('/\b(?:no|not)\b/', $words)) return '';
+        if (preg_match('/^repeat/', $words)) return 'Repeat violation established';
+        return strpos($words, 'estab') !== false ? 'Violation established' : '';
+    }
+
+    /**
+     * Michigan (mi_scraper.py): MDHHS child welfare licensing documents, in
+     * categories.doc_type. Only special investigations are read: per
+     * allegation the rule, the allegation, the interviews, the investigator's
+     * analysis and a conclusion. An analysis is a finding only when its own
+     * conclusion establishes a violation ("Violation Established", "Repeat
+     * Violation Established"). The allegation itself is not queued: one
+     * allegation is weighed against several rules, and a violation
+     * established under the reporting rule says nothing of an abuse claim
+     * that was not. The interviews are what people said, not what the
+     * Department found. The analysis is in categories.detail.allegations when
+     * the scraper keeps it, otherwise read from the text, each ANALYSIS label
+     * to the CONCLUSION label, whose line gives the outcome. Inspections
+     * (renewal, interim, original) are left out. Youth are "Youth A", staff
+     * "Staff 1".
+     */
+    function kop_ih_extract_mi(array $data, $raw) {
+        if (($data['doc_type'] ?? '') !== 'special_investigation') return array();
+        $allegations = array_values(array_filter((array) ($data['allegations'] ?? array()), 'is_array'));
+        $detail = $data['detail']['allegations'] ?? null;
+        $runs = array();
+        if (is_array($detail) && count($detail) === count($allegations)) {
+            foreach ($allegations as $i => $a) {
+                $runs[] = array((string) ($detail[$i]['analysis'] ?? ''), (string) ($a['conclusion'] ?? ''), $a);
+            }
+        } else {
+            $label = '[ \t]*(?:%s)(?:[ \t]*:|[ \t]*$|[ \t]+(?=[A-Z]))';
+            $pattern = '/^' . sprintf($label, 'ANALYSIS|Analysis') . '[ \t]*(.*?)^'
+                . sprintf($label, 'CONCLUSIONS?|Conclusions?') . '[ \t]*([^\r\n]*(?:\r?\n[^\r\n]*)?)/msu';
+            preg_match_all($pattern, (string) $raw, $m, PREG_SET_ORDER);
+            foreach ($m as $i => $x) {
+                $runs[] = array($x[1], $x[2], count($m) === count($allegations) ? $allegations[$i] : array());
+            }
+        }
+        $out = array();
+        foreach ($runs as $run) {
+            list($analysis, $conclusion, $a) = $run;
+            $label = kop_ih_mi_established($conclusion);
+            if ($label === '') continue;
+            $text = kop_ih_clean_text($analysis);
+            if (mb_strlen($text) < 40) continue;
+            $out[] = array(
+                'text' => $text, 'standard' => kop_ih_short_standard(trim((string) ($a['rule'] ?? '') . ' ' . (string) ($a['rule_title'] ?? ''))),
+                'state_label' => $label . ', special investigation',
+                'factor' => 1.0, 'corrected_on_site' => null, 'kind' => 'complaint',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Pennsylvania (pa_scraper.py): one DHS "Licensing Inspection Summary -
+     * Public" per document, in categories.kind (citation, followup, sanction,
+     * clean, licence, waiver, other). Each citation's "Description of
+     * Violation" is the inspector's finding, substantiated by nature; the
+     * requirement text and the provider's plan of correction beside it are not
+     * read. categories.citations keeps 240 characters of each violation; the
+     * whole text, when longer, is in categories.detail.citations in the same
+     * order. Only documents the page counts (counts_as_violation) are read, so
+     * a follow-up of a citation summary that is also listed is not queued
+     * twice. Scans of about 2009 to 2012 (form 'table') are left out: OCR
+     * reads that table column by column and the finding is a guess. A licence
+     * action and a repeat violation keep the full score.
+     */
+    function kop_ih_extract_pa(array $data) {
+        if (empty($data['counts_as_violation']) || ($data['form'] ?? '') === 'table') return array();
+        $citations = is_array($data['citations'] ?? null) ? $data['citations'] : array();
+        $detail = is_array($data['detail']['citations'] ?? null) ? $data['detail']['citations'] : array();
+        $type = trim((string) ($data['inspection_type'] ?? ''));
+        $sanction = ($data['kind'] ?? '') === 'sanction';
+        $investigation = (bool) preg_match('/complaint|incident|investigat/i', $type);
+        $out = array();
+        foreach ($citations as $i => $c) {
+            if (!is_array($c)) continue;
+            $full = is_array($detail[$i] ?? null) ? (string) ($detail[$i]['violation'] ?? '') : '';
+            $text = kop_ih_clean_text($full !== '' ? $full : preg_replace('/\x{2026}$/u', '', (string) ($c['violation'] ?? '')));
+            if (mb_strlen($text) < 30) continue;
+            $repeat = !empty($c['repeat']);
+            $regulation = trim((string) ($c['regulation'] ?? ''));
+            $out[] = array(
+                'text' => $text,
+                'standard' => kop_ih_short_standard(trim(($regulation !== '' ? '55 Pa. Code § ' . $regulation : '') . ' ' . (string) ($c['title'] ?? ''))),
+                'state_label' => kop_ih_short_standard('Citation' . ($type !== '' ? ', ' . strtolower($type) . ' inspection' : '')
+                    . ($repeat ? ', repeat violation' : '') . ($sanction ? ', licence action taken' : ''), 110),
+                'factor' => ($sanction || $repeat) ? 1.0 : kop_ih_citation_factor($investigation),
+                'corrected_on_site' => null, 'kind' => 'citation',
+            );
+        }
+        return $out;
+    }
+
+    /**
+     * Montana (api/lib-mt-reports.php copies js/data/mt_reports.json into the
+     * database): DPHHS statements of deficiencies for youth care facilities,
+     * therapeutic group homes and private alternative adolescent residential
+     * programs, as Header and Issues. Every rule listed is one not met, but
+     * the findings are not reliably under their rule (185 of 749 describe the
+     * previous rule), so each distinct findings passage is a finding with no
+     * standard. Header.Description repeats a passage on about a third of
+     * surveys and is read once. A passage opens with the form's "The intent of
+     * this rule or law has not been met as evidenced by" and "Findings:",
+     * which are cut. The plan of correction is the program's own text and is
+     * never read. A complaint inspection is the Department confirming what
+     * was reported; a survey with a repeat deficiency keeps the full score.
+     */
+    function kop_ih_extract_mt(array $data) {
+        $header = is_array($data['Header'] ?? null) ? $data['Header'] : array();
+        $issues = is_array($data['Issues'] ?? null) ? $data['Issues'] : array();
+        if (!$issues && trim((string) ($header['Description'] ?? '')) === '') return array();
+        $type = '';
+        foreach ($header as $key => $value) {
+            if (in_array($key, array('Facility', 'Administrator', 'Description'), true) || !is_scalar($value)) continue;
+            if (preg_match('/^(?:Renewal|Complaint|Follow[\s-]?Up|Provisional Status|Initial|Annual)\b.*Inspection$/iu', trim((string) $value))) {
+                $type = trim((string) $value);
+                break;
+            }
+        }
+        $repeat = false;
+        foreach ($issues as $issue) if (is_array($issue) && !empty($issue['Repeat Deficiency'])) $repeat = true;
+        $complaint = (bool) preg_match('/complaint/i', $type);
+        $label = 'Deficiency cited' . ($type !== '' ? ', ' . strtolower($type) : '') . ($repeat ? ', repeat deficiency' : '');
+        $sources = array((string) ($header['Description'] ?? ''));
+        foreach ($issues as $issue) {
+            if (is_array($issue)) $sources[] = (string) ($issue['Findings'] ?? '');
+        }
+        $seen = array();
+        $out = array();
+        foreach ($sources as $source) {
+            // The program's plan, where the extraction ran it into the findings, up to the next rule's findings.
+            $source = (string) preg_replace('/\bPROVIDER\W{0,3}S\W*PLAN OF CORRECTION\b.*?(?=\bThe intent of this rule|\bFINDINGS?\s*:|$)/isu', ' ', $source);
+            foreach ((array) preg_split('/\bThe intent of this rule(?: or law)? has not been met as evidenced\s+by\b[^\n]*|\bFINDINGS?\s*:/iu', $source) as $passage) {
+                $text = kop_ih_clean_text($passage);
+                if (mb_strlen($text) < 40) continue;
+                $key = mb_strtolower((string) preg_replace('/\W+/u', '', $text));
+                if (isset($seen[$key])) continue;
+                $seen[$key] = true;
+                $out[] = array(
+                    'text' => $text, 'standard' => '', 'state_label' => $label,
+                    'factor' => ($complaint || $repeat) ? 1.0 : kop_ih_citation_factor(false), 'corrected_on_site' => null, 'kind' => 'citation',
+                );
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Texas: every row is one citation, with HHSC's own risk level. A
      * citation is a deficiency the inspector found, so it is substantiated
      * by nature; there is no complaint outcome to read.
@@ -990,12 +1775,16 @@ if (!function_exists('kop_ih_scanner_version')) {
                 if ($v !== null) $verdicts[$i] = $v;
             }
         }
+        // A citation for paperwork or training only (owner rule, 2026-10-05) keeps
+        // what staff did to a child and medical neglect, and nothing else.
+        $keep = kop_ih_paperwork_only($finding, $sentences) ? array_merge(kop_ih_paperwork_exempt(), array('medical_neglect')) : null;
         foreach ($sentences as $i => $sentence) {
             // A sentence that itself says the allegation failed is not a finding; nor is a quoted policy or an instruction.
             if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) continue;
             if (preg_match('/' . kop_ih_noise_pattern() . '/iu', $sentence)) continue;
             if (!empty($finding['require_verdict']) && !kop_ih_verdict_near($verdicts, $i)) continue;
             $found = kop_ih_match_sentence($sentence);
+            if ($keep !== null) $found = array_intersect_key($found, array_flip($keep));
             if (!$found) continue;
             $top = 0;
             foreach ($found as $key => $words) {
@@ -1051,6 +1840,27 @@ if (!function_exists('kop_ih_scanner_version')) {
             'corrected_on_site' => $finding['corrected_on_site'],
             'kind'              => (string) $finding['kind'],
         );
+    }
+
+    /**
+     * Whether a finding is a citation for paperwork or training only: the rule
+     * cited is about records, reporting or training (kop_ih_paperwork_standard),
+     * or the text of a citation names a paperwork failure, and nowhere names a
+     * failure of care (kop_ih_care_failure_pattern). A substantiated complaint
+     * is about the harm alleged, so only its rule is read.
+     */
+    function kop_ih_paperwork_only(array $finding, array $sentences) {
+        $paper = kop_ih_paperwork_standard($finding['standard'] ?? '');
+        if (!$paper && ($finding['kind'] ?? '') !== 'complaint') {
+            foreach ($sentences as $sentence) {
+                if (preg_match('/' . kop_ih_paperwork_pattern() . '/iu', $sentence)) { $paper = true; break; }
+            }
+        }
+        if (!$paper) return false;
+        foreach ($sentences as $sentence) {
+            if (preg_match('/' . kop_ih_care_failure_pattern() . '/iu', $sentence)) return false;
+        }
+        return true;
     }
 
     /** Candidates for one report row, each with a key that is stable across runs. */

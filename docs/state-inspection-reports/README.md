@@ -20,7 +20,7 @@ Twenty-seven tracker pages, one per state, at `/xx-reports/` (Michigan's, Oklaho
 | Maryland (`MD`) | `md-reports` | shared engine | API (`md_scraper.py`; residential child care inspection summaries since 2019, one row per provider, citations split by safety risk; PDFs archived to the Drive folder `md_pdfs/`) |
 | Michigan (`MI`) | `mi-reports` | shared engine | API (`mi_scraper.py`; archived PDFs in `uploads/inspection-reports/mi/`) |
 | Minnesota (`MN`) | `mn-reports` | shared engine | API |
-| Montana (`MT`) | `mt-reports` | shared engine | `js/data/mt_reports.json` only (the API has no Montana rows) |
+| Montana (`MT`) | `mt-reports` | shared engine | `js/data/mt_reports.json` (the page reads only the file; `api/lib-mt-reports.php` copies it into the database for the serious findings scan) |
 | Nevada (`NV`) | `nv-reports` | shared engine | API |
 | New Hampshire (`NH`) | `nh-reports` | shared engine | API (`nh_scraper.py`; every licensing visit with observations and corrective action plans; the state's pages kept in the Drive folder `nh_html/`, statements of findings archived to `nh_pdfs/`; the state shows three years) |
 | North Carolina (`NC`) | `nc-reports` | shared engine | API |

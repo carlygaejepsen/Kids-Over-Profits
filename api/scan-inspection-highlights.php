@@ -10,6 +10,9 @@
  * CLI (cron; use the CLI binary, /opt/cpanel/ea-php82/root/usr/bin/php):
  *   php api/scan-inspection-highlights.php [apply] [--limit=5000] [--states=TX,CA]
  *
+ * Montana's surveys are copied into the database from js/data/mt_reports.json
+ * first (api/lib-mt-reports.php); a dry run only counts them.
+ *
  * Browser, as an administrator: a dry run by default, ?apply=1 to save. A
  * browser run is one batch; reload until it reports 0 remaining.
  */
@@ -18,6 +21,7 @@ $kop_ih_cli = php_sapi_name() === 'cli';
 
 require_once __DIR__ . '/config.php';
 require_once dirname(__DIR__) . '/inc/inspection-highlights.php';
+require_once __DIR__ . '/lib-mt-reports.php';
 
 if ($kop_ih_cli) {
     while (ob_get_level() > 0) ob_end_clean();
@@ -47,6 +51,12 @@ if (!$pdo) {
 }
 
 try {
+    // Montana has no scraper posting to the database: copy its surveys from js/data/mt_reports.json first.
+    if (!$states || in_array('MT', array_map('strtoupper', $states), true)) {
+        $mt = kop_mt_reports_import($pdo, $apply);
+        echo 'Montana surveys' . ($apply ? '' : ' (dry run, nothing copied)') . ": {$mt['added']} new, {$mt['updated']} changed, {$mt['unchanged']} already in the database"
+            . ($apply ? '' : '; new ones are scanned once copied by an applied run') . ".\n";
+    }
     do {
         $result = kop_ih_scan($pdo, $limit, $apply, $states);
         echo ($apply ? 'Saved' : 'Dry run') . ": scanned {$result['scanned']} reports, {$result['remaining']} remaining";

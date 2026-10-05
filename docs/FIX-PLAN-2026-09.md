@@ -628,6 +628,32 @@ nothing can be until a person approves it.
   the rule text; the narrative is in 68 KB PDF text), Washington (PDF
   columns interleaved by the scraper), Nevada (grade only), and the
   raw-text states NC, GA, AR, MN, OR.
+- **2026-10-05, scanner version 7: twelve more states, paperwork and
+  assaults on staff.** Adapters for PA (citations' "Description of
+  Violation", only documents the page counts, no table-form scans), MI
+  (special investigations, only the analysis under a "Violation
+  Established" conclusion), NH (coordinator's observations), WY (DFS
+  notices the evidence supports; WDH CMS-2567 tags), ID, ME (adult programs
+  left out), OH (residential review comments), WV (federal SS= letter
+  weighted as Georgia's), IA (PMIC CMS-2567, no E tags), MD (the state's
+  safety rating: 1.0 / 0.7), SD (corrective action plans only) and VA (VDSS
+  violations; DBHDS rows rated N or NS). Montana too: it has no scraper
+  posting to the database, so `api/lib-mt-reports.php` copies
+  `js/data/mt_reports.json` (292 surveys, 28 programs) into
+  `inspection_facilities` / `inspection_reports` before every applied scan
+  (unchanged surveys are left alone; a changed one is rescanned). Its
+  findings passages are read without a rule (they are often under the wrong
+  one) and with the program's plan cut out; against the file, 9 candidates.
+  Still out: WA (rule, finding and plan interleaved), NV (no text), OR (rule
+  wording). Owner rules: a citation whose fault is only
+  paperwork or training (`kop_ih_paperwork_only`: the rule cited is about
+  records, reporting or training, or the text names only such a failure and
+  no failure of care) keeps physical and sexual abuse by staff and medical
+  neglect, nothing else; a late or missing notice, record or log is not the
+  harm it was about. A sentence where a resident assaults staff counts for
+  nothing but a death or the child's own restraint injury, unless staff hurt
+  the child in the same sentence. Not yet run against the mirror: dry-run
+  the new states before applying.
 - Scoring is per sentence, never per report. Nine categories with starter
   weights: death 100, sexual abuse 90, physical abuse or assault 80,
   restraint or seclusion with an injury named in the same sentence 75,
