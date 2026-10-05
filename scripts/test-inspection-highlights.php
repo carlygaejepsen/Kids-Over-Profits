@@ -137,6 +137,7 @@ $noise_cases = array_merge($noise_cases, array(
     'Twelve out of twelve staff interviewed state that they do get continuous training\'s to help clients who engage in self injurious behaviors.',
     'Staff reviewed the self-harm training materials during orientation.',
     'The Penal Code Section 11165.6 defines child abuse or neglect as a physical injury or death inflicted by other than accidental means upon a child by another person.',
+    'The rule for incident reporting to DCWL for AWOL\'s, youth involvement with law enforcement, youth hospitalizations, etc. also states immediate reporting, but not more than 24 hours.',
     '"As a reminder, Serious Occurrences are any event that result in Restraint or Seclusion, Resident\'s Death, Any Serious Injury to a Resident, and a Resident\'s Suicide Attempt.',
 ));
 foreach ($noise_cases as $s) check((bool) preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is set aside');
@@ -195,6 +196,20 @@ $sentence_cases = array_merge($sentence_cases, array(
     array('On 08/19/2024, Youth #1 reported to staff that Youth #2 and Youth #3 engaged in sexual activity.', array()),
     array('P#1 suffered injuries of multiple bruises, bite marks, and scratches that were done by participant #2 during this incident.', array()),
     array('Staff did not report an incident of child abuse or neglect that occurred on 9/6/2013 to the state child abuse hotline within 24 hours of the incident.', array()),
+    // Michigan's special investigations (labels "Youth A", "Staff 1"), from the 2026-09-30 mirror.
+    array('Although Staff 2 followed, Youth A was separated from staff long enough to kick the door several times before he exited the building.', array()),
+    array('Being alone in the lounge provided Youth A the opportunity to seriously physically assault Youth B.', array()),
+    array('Staff 1 denied punching Youth A and reported she put up her arms as Youth A went to swing on her again.', array()),
+    array('Staff 1 denied being physically assaulted by a Wayne County Juvenile Detention youth.', array()),
+    array('The facility is found in noncompliance as staff reported they did not feel safe intervening to attempt to take the cell phones away from the youth as staff felt Youth A and Youth B would assault them.', array()),
+    array('Administrator 1 reported observing Staff 1 and Staff 3 engage in inappropriate touching/pushing of Youth A and Youth B when trying to keep them from fighting.', array()),
+    array('The facility is found in noncompliance as per interviews with youth and staff, Youth A and Youth C engaged in sexual activity while at the facility as Youth C snuck into Youth A\'s bedroom for a few minutes while Staff 4 was working.', array()),
+    array('This was unwarranted as this was not a response to a life-threatening injury or serious bodily harm when other interventions were ineffective and does not align with seclusion variance granted.', array()),
+    array('Staff 1 kicked and pushed Youth A during the incident that occurred on 10/20/2025.', array('physical_abuse')),
+    array('The facility is found in noncompliance as per interviews and video review Staff 1 grabbed Youth A by the collar area of his shirt and pushed Youth A against the wall.', array('physical_abuse')),
+    array('Both staff were aware of concerns of Youth A being physically hit by Staff 2 and there was no report made to Child Protective Services.', array('physical_abuse')),
+    array('It is found that Former Staff 1 hit Youth A with a walkie talkie more than once and pulled out strands of Youth A\'s hair.', array('physical_abuse')),
+    array('Youth C reported having sexual intercourse with Staff 1 while he was at the facility.', array('sexual_abuse')),
     // Owner rule, 2026-10-05: a resident assaulting staff does not count.
     array('C1 punched a staff member in the face.', array()),
     array('The resident assaulted staff and police were called.', array()),
@@ -316,6 +331,11 @@ check($ca_mixed('The allegation that staff sexually abused a minor in care canno
     'CA: "cannot be substantiated" is unsubstantiated');
 check($ca_mixed('Interviews did not substantiate the allegation that staff hit a youth in care.') === array(),
     'CA: "did not substantiate" is unsubstantiated');
+foreach (array('The facility is found in compliance as Staff 3 reported being present and Staff 1 did not slap Youth A.',
+    'It does not appear as though Staff Person 1 and Resident A met outside of the facility or engaged in any form of sexual contact.',
+    'Upon completing interviews with staff and youth, there was no indications of an inappropriate relationship.') as $s) {
+    check((bool) preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $s), 'cleared: "' . $s . '"');
+}
 check($ca_mixed('Staff physically abused a client in care. Based on the interviews the allegation is inconclusive.') === array(),
     'CA: an inconclusive complaint is not queued');
 $ca_inc = $ca;
