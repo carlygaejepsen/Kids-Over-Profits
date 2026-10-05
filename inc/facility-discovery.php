@@ -964,13 +964,21 @@ function kop_facdisc_unlink(PDO $pdo, $candidate_id, $reviewer) {
  * since changed is left alone.
  */
 add_action('init', function () {
-    if (get_option('kop_facdisc_undo_20261005') || !function_exists('kop_closure_pdo')) {
+    // The first run fell in the middle of a deploy and undid nothing; this one
+    // counts as done only when every link is gone, and tries at most five times.
+    $state = get_option('kop_facdisc_undo_20261005_v2');
+    if ((is_array($state) && (!empty($state['done']) || (int) ($state['tries'] ?? 0) >= 5)) || !function_exists('kop_closure_pdo')) {
         return;
     }
-    update_option('kop_facdisc_undo_20261005', gmdate('c'), false);
+    $state = array('tries' => (int) (is_array($state) ? ($state['tries'] ?? 0) : 0) + 1, 'at' => gmdate('c'), 'done' => false, 'undone' => array(), 'errors' => array());
+    update_option('kop_facdisc_undo_20261005_v2', $state, false);
     try {
         $pdo = kop_closure_pdo();
+        if (!$pdo) {
+            throw new RuntimeException('no records DB connection');
+        }
         $row = $pdo->prepare('SELECT decision, reviewed_by FROM news_facility_candidates WHERE id = ?');
+        $left = 0;
         foreach (array(506, 504, 496, 487, 477, 475, 455, 433, 426, 421, 486) as $id) {
             $row->execute(array($id));
             $c = $row->fetch(PDO::FETCH_ASSOC);
@@ -980,13 +988,17 @@ add_action('init', function () {
             }
             try {
                 kop_facdisc_unlink($pdo, $id, 'admin (undo of 2026-10-05 links)');
+                $state['undone'][] = $id;
             } catch (Throwable $e) {
-                error_log('kop facility discovery undo ' . $id . ': ' . $e->getMessage());
+                $left++;
+                $state['errors'][] = $id . ': ' . $e->getMessage();
             }
         }
+        $state['done'] = $left === 0;
     } catch (Throwable $e) {
-        error_log('kop facility discovery undo: ' . $e->getMessage());
+        $state['errors'][] = $e->getMessage();
     }
+    update_option('kop_facdisc_undo_20261005_v2', $state, false);
 }, 40);
 
 /** Create a record for a name the scan held back, with the fields an admin filled in. */
