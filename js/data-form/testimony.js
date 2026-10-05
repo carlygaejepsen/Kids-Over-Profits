@@ -18,8 +18,9 @@
  * submission is sourced "Submitted by a survivor (submission #N)"; older
  * "Submission #N" entries read and save that way.
  *
- * Nothing is public by default: publish stays false until the "OK to publish"
- * box is ticked, and only then does /facility/<slug>/ show the entry
+ * Every account on the site has already been published elsewhere, so an
+ * entry starts with "OK to publish" ticked and /facility/<slug>/ shows it;
+ * unticking the box hides it
  * (inc/facility-pages.php). Stored by kop_facility_testimony_list() in
  * inc/facility-store.php (v2TestimonyList() in data-normalizer.js).
  */
@@ -305,7 +306,7 @@
                     source,
                     date,
                     movedFrom: item.label,
-                    publish: false
+                    publish: true
                 });
                 result = 'new';
             }
@@ -331,7 +332,7 @@
             ? 'Removed the copy. The text is still in Survivor Testimony.'
             : result === 'added'
                 ? `Added to testimony ${testimonyList(facility).indexOf(target) + 1}.${target.publish === true ? ' That account is published, so this shows on the public page too.' : ''}`
-                : 'Moved to Survivor Testimony. It stays private until "OK to publish" is ticked.');
+                : 'Moved to Survivor Testimony. It is published; untick "OK to publish" to hide it.');
     }
 
     /** Every note at once, into the chosen entry (copies are removed). */
@@ -387,7 +388,7 @@
         if (count < 2) return;
         if (!confirm(`Combine all ${count} testimony entries into one account? Their text is kept, in order, as paragraphs.`)) return;
         const merged = combineAll(facility);
-        refresh(`Combined ${count} entries into one account.${merged.publish ? '' : ' It stays private until "OK to publish" is ticked.'}`);
+        refresh(`Combined ${count} entries into one account.${merged.publish ? '' : ' One of them was hidden, so the account stays hidden until "OK to publish" is ticked.'}`);
     }
 
     // ------------------------------------------------------------------
@@ -536,7 +537,7 @@
         const facility = currentFacility();
         if (!facility) return;
         const { source, date } = currentSource();
-        testimonyList(facility).push({ id: newId(), text: '', source, date, movedFrom: '', publish: false });
+        testimonyList(facility).push({ id: newId(), text: '', source, date, movedFrom: '', publish: true });
         render();
         const last = document.getElementById(`testimony-${testimonyList(facility).length - 1}-text`);
         if (last) last.focus();

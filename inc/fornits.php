@@ -17,8 +17,8 @@
  *   - hourly, Groq and Gemini (free tiers, taking turns) read waiting topics
  *     (kop_fornits_read_batch, kop_fornits_ask) and propose
  *     staff (the Woodbury Facts add_staff change), incidents (customIncidents
- *     lines), survivor accounts (survivorTestimony, never published until an
- *     admin ticks "OK to publish") and leads (news or court links to their
+ *     lines), survivor accounts (survivorTestimony, published, an admin can
+ *     untick "OK to publish") and leads (news or court links to their
  *     queues, a reported closure, or a note). Every quote is checked against
  *     the post it cites; one that is not there is kept but never preselected;
  *   - KOP Tools > Fornits shows one card per facility and kind; Add, Skip and
@@ -985,7 +985,7 @@ function kop_fornits_doc_apply(array &$doc, array $r, $target) {
             }
         }
         $doc['survivorTestimony'][] = array('id' => $id, 'text' => (string) $r['quote'], 'source' => kop_fornits_cite($r),
-            'date' => substr((string) $r['post_date'], 0, 10), 'movedFrom' => '', 'publish' => false);
+            'date' => substr((string) $r['post_date'], 0, 10), 'movedFrom' => '', 'publish' => true);
         return array('via' => 'testimony', 'id' => $id);
     }
     // A lead kept on the record: a closure or a note.

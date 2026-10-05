@@ -299,7 +299,7 @@ if (!function_exists('kop_preserve_hidden_testimony')) {
                 $texts[trim((string) ($entry['text'] ?? ''))] = true;
             }
             foreach ($existing as $entry) {
-                if (!is_array($entry) || ($entry['publish'] ?? false) === true) continue;
+                if (!is_array($entry) || ($entry['publish'] ?? true) === true) continue;
                 $id = (string) ($entry['id'] ?? '');
                 if (($id !== '' && isset($ids[$id])) || isset($texts[trim((string) ($entry['text'] ?? ''))])) continue;
                 $list[] = $entry;

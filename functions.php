@@ -168,6 +168,7 @@ require_once get_stylesheet_directory() . '/inc/doc-placement.php';
 require_once get_stylesheet_directory() . '/inc/drive-docs.php';
 // What the old Fornits survivor forum says about each facility (scripts/fornits-crawl.py, fornits-process.py), reviewed at KOP Tools > Fornits
 require_once get_stylesheet_directory() . '/inc/fornits.php';
+require_once get_stylesheet_directory() . '/inc/testimony-publish.php';
 
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';

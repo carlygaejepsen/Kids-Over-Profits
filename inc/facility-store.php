@@ -118,7 +118,8 @@ if (!function_exists('kop_facility_testimony_list')) {
             if (!is_array($entry)) continue;
             $text = kop_facility_str($entry['text'] ?? '');
             if ($text === '') continue;
-            $publish = $entry['publish'] ?? false;
+            // Published unless an editor unticked "OK to publish" (inc/testimony-publish.php).
+            $publish = $entry['publish'] ?? true;
             $out[] = array(
                 'id'        => kop_facility_str($entry['id'] ?? ''),
                 'text'      => $text,
@@ -213,7 +214,7 @@ if (!function_exists('kop_facility_testimony_redact')) {
         $out = array();
         foreach ($list as $entry) {
             if ($entry instanceof stdClass) $entry = (array) $entry;
-            if (is_array($entry) && ($entry['publish'] ?? false) === true) $out[] = $entry;
+            if (is_array($entry) && ($entry['publish'] ?? true) === true) $out[] = $entry;
         }
         return $out;
     }

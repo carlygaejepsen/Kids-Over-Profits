@@ -1725,9 +1725,9 @@ if (!function_exists('kop_facility_pages_checklist_items')) {
 
 if (!function_exists('kop_facility_pages_testimony')) {
     /**
-     * Published survivor testimony as [{text, date_label, submitted}]. Only
-     * entries an admin marked "OK to publish" (publish === true) are
-     * returned. The source stays internal; submitted says it came from a
+     * Published survivor testimony as [{text, date_label, submitted}]. Entries
+     * are published by default; one an editor unticked ("OK to publish",
+     * publish false) is left out. The source stays internal; submitted says it came from a
      * survivor's own submission ("Submitted by a survivor (submission #50)",
      * or the older "Submission #50"), which the caption names.
      */
@@ -1735,7 +1735,7 @@ if (!function_exists('kop_facility_pages_testimony')) {
         $out = array();
         if (!is_array($value)) return $out;
         foreach ($value as $entry) {
-            if (!is_array($entry) || ($entry['publish'] ?? false) !== true) continue;
+            if (!is_array($entry) || ($entry['publish'] ?? true) !== true) continue;
             $text = trim((string) ($entry['text'] ?? ''));
             if ($text === '') continue;
             $date = trim((string) ($entry['date'] ?? ''));
@@ -2709,7 +2709,7 @@ if (!function_exists('kop_facility_page_data')) {
         // their number, which the page shows to editors.
         $testimony_private = 0;
         foreach ((array) ($doc['survivorTestimony'] ?? array()) as $t) {
-            if (is_array($t) && trim((string) ($t['text'] ?? '')) !== '' && ($t['publish'] ?? false) !== true) $testimony_private++;
+            if (is_array($t) && trim((string) ($t['text'] ?? '')) !== '' && ($t['publish'] ?? true) !== true) $testimony_private++;
         }
         // What survivors and families wrote on the Fornits forum is testimony, not a finding of the record:
         // its incident lines, leads and discussion links leave their sections and join the survivor testimony.

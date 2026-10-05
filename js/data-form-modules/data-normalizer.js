@@ -882,7 +882,8 @@
             if (!isPlainObject(entry)) return;
             const text = v2Str(entry.text);
             if (text === '') return;
-            const publish = entry.publish;
+            // Published unless an editor unticked "OK to publish".
+            const publish = entry.publish === undefined || entry.publish === null ? true : entry.publish;
             out.push({
                 id: v2Str(entry.id),
                 text,

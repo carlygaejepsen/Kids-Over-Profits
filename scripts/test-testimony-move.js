@@ -116,7 +116,7 @@ function load(formData, extra = {}) {
     check('other TTI practices emptied', facility.providerDetails.otherTtiPractices.length === 0,
         JSON.stringify(facility.providerDetails.otherTtiPractices));
     check('both in one account', facility.survivorTestimony.length === 1, `${facility.survivorTestimony.length}`);
-    check('moved entry stays private', facility.survivorTestimony.every(e => e.publish === false));
+    check('moved entry is published', facility.survivorTestimony.every(e => e.publish === true));
     check('moved text trimmed, as paragraphs',
         facility.survivorTestimony[0].text === SMOCK.trim() + '\n\n' + FOOD, JSON.stringify(facility.survivorTestimony[0].text));
 
