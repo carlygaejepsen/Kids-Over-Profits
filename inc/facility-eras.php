@@ -14,7 +14,10 @@
  * (inc/network-renames.php: a saved rename year, a swapped line) over Map
  * Years and graph.json. A rename with no usable year (both names carrying the
  * same years, overlapping years, none at all) leaves the page whole, as does
- * a name that became two or two that became one.
+ * a name that became two or two that became one. A rename saved at Map
+ * Renames without its year is still a rename: its names get their sections,
+ * and since nothing can be sorted by date each record's items stand under
+ * that record's name (so it shows where each name has its own record).
  *
  * The names can be one record or several. Where another name has its own
  * record, that record's items are shown here too, and its page shows this
@@ -41,14 +44,16 @@ if (!function_exists('kop_facility_eras_map')) {
      * The map's rename lines as the page reads them, held for the request:
      * 'nodes' id => node, 'years' id => array(start|null, end|null),
      * 'next' / 'prev' id => ids, 'cut' "earlier>later" => year a saved
-     * rename gives (0 = none), 'operators' id => names, 'facility' facility
+     * rename gives (0 = none), 'confirmed' "earlier>later" => true for a
+     * saved rename, 'operators' id => names, 'facility' facility
      * id => ids of its names on a rename line. Lines the owner skipped at
      * Map Renames are left out.
      */
-    function kop_facility_eras_map() {
+    function kop_facility_eras_map($reset = false) {
         static $memo = null;
+        if ($reset) $memo = null;
         if ($memo !== null) return $memo;
-        $memo = array('nodes' => array(), 'years' => array(), 'next' => array(), 'prev' => array(), 'cut' => array(), 'operators' => array(), 'facility' => array());
+        $memo = array('nodes' => array(), 'years' => array(), 'next' => array(), 'prev' => array(), 'cut' => array(), 'confirmed' => array(), 'operators' => array(), 'facility' => array());
         $graph = function_exists('kop_network_map_graph') ? kop_network_map_graph() : null;
         if (!$graph || !function_exists('kop_network_renames_decisions')) return $memo;
 
@@ -78,6 +83,7 @@ if (!function_exists('kop_facility_eras_map')) {
             $memo['next'][$earlier][] = $later;
             $memo['prev'][$later][] = $earlier;
             $memo['cut'][$earlier . '>' . $later] = $saved ? (int) ($d['year'] ?? 0) : 0;
+            if ($saved) $memo['confirmed'][$earlier . '>' . $later] = true;
             $on_line[$a] = $on_line[$b] = true;
         }
         $base = kop_network_renames_base_years($graph);
@@ -100,7 +106,8 @@ if (!function_exists('kop_facility_eras_chain')) {
      * page cannot be cut: [{node, name, start, end, cut, facility_id,
      * operators}]. start and end are the name's years (null = not known);
      * cut is the year the name came into use (null for the first), which is
-     * what dated items are sorted by.
+     * what dated items are sorted by; 0 when the rename was saved without
+     * its year and the names' own years do not tell it.
      */
     function kop_facility_eras_chain($facility_id) {
         $map = kop_facility_eras_map();
@@ -145,16 +152,23 @@ if (!function_exists('kop_facility_eras_chain')) {
                 $was = $map['years'][$before];
                 $cut = (int) ($map['cut'][$before . '>' . $id] ?? 0);
                 if (!$cut) {
-                    // No saved rename: the names' own years must say when.
-                    if ($was === $years) return array();
-                    if ($was[1] && $years[0] && $years[0] < $was[1]) return array();
-                    $cut = (int) ($years[0] && $years[0] > (int) $was[0] ? $years[0] : $was[1]);
+                    // No saved year: the names' own years must say when.
+                    $clear = $was !== $years && !($was[1] && $years[0] && $years[0] < $was[1]);
+                    $cut = $clear ? (int) ($years[0] && $years[0] > (int) $was[0] ? $years[0] : $was[1]) : 0;
                 }
-                if (!$cut || $cut < $last_cut) return array();
-                $last_cut = $cut;
-                $chain[$i - 1]['end'] = $chain[$i - 1]['end'] ?: $cut;
-                // The board gave many earlier names the later name's first year: not a start.
-                if ($chain[$i - 1]['start'] && $chain[$i - 1]['start'] >= $cut) $chain[$i - 1]['start'] = null;
+                if ($cut && $cut < $last_cut) $cut = 0;
+                // Only a rename the owner saved stands without a year.
+                if (!$cut && empty($map['confirmed'][$before . '>' . $id])) return array();
+                if ($cut) {
+                    $last_cut = $cut;
+                    $chain[$i - 1]['end'] = $chain[$i - 1]['end'] ?: $cut;
+                    // The board gave many earlier names the later name's first year: not a start.
+                    if ($chain[$i - 1]['start'] && $chain[$i - 1]['start'] >= $cut) $chain[$i - 1]['start'] = null;
+                } else {
+                    // The board's years for the two names cannot be told apart: neither is shown.
+                    $chain[$i - 1]['start'] = $chain[$i - 1]['end'] = null;
+                    $years = array(null, null);
+                }
             }
             $start = $years[0] && (!$cut || $years[0] >= $cut) ? (int) $years[0] : $cut;
             $chain[] = array(
@@ -297,6 +311,12 @@ if (!function_exists('kop_facility_eras_build')) {
             }
         }
 
+        // A rename saved without its year: nothing is sorted by date, each record keeps to its name.
+        $dated = true;
+        foreach ($chain as $i => $era) {
+            if ($i > 0 && !$era['cut']) $dated = false;
+        }
+
         $kinds = kop_facility_eras_kinds();
         $list = array();
         foreach ($chain as $i => $era) {
@@ -331,7 +351,7 @@ if (!function_exists('kop_facility_eras_build')) {
                 foreach ((array) ($lists[$kind] ?? array()) as $item) {
                     $key = $kind . ':' . (isset($item['id']) ? (int) $item['id'] : md5((string) ($item['text'] ?? serialize($item))));
                     if (isset($seen[$key])) continue;
-                    $year = kop_facility_eras_item_year($kind, $item);
+                    $year = $dated ? kop_facility_eras_item_year($kind, $item) : 0;
                     $at = kop_facility_eras_place($chain, $year, kop_facility_eras_item_text($kind, $item), $home);
                     // Another record's undated item with no name to stand under is not this page's.
                     if ($at < 0 && $fid !== $facility_id) continue;

@@ -104,10 +104,13 @@ foreach ($ids as $fid) {
     }
     // The names are in order and every cut is a year.
     $last = 0;
+    $undated = false;
     foreach ($chain as $i => $era) {
         if ($i === 0) continue;
-        if (!$era['cut'] || $era['cut'] < $last) $bad[] = "$fid $name: cut " . json_encode($era['cut']);
-        $last = (int) $era['cut'];
+        // 0: a rename saved without its year.
+        if ($era['cut'] && $era['cut'] < $last) $bad[] = "$fid $name: cut " . json_encode($era['cut']);
+        if (!$era['cut']) $undated = true;
+        $last = max($last, (int) $era['cut']);
     }
     $data = kop_facility_page_data($fid);
     if (!$data) continue;
@@ -141,7 +144,7 @@ foreach ($ids as $fid) {
         }
     }
     // Every dated item stands inside its name's years.
-    foreach ($eras['list'] as $i => $entry) {
+    foreach ($undated ? array() : $eras['list'] as $i => $entry) {
         foreach (array('memorials', 'violations', 'lawsuits', 'incidents', 'news') as $kind) {
             foreach ($entry[$kind] as $item) {
                 $y = kop_facility_eras_item_year($kind, $item);
@@ -196,6 +199,40 @@ foreach ($ids as $fid) {
 $check('records on a rename line were found', count($ids) > 30, count($ids) . ' records');
 $check('some pages are cut into name sections', count($cut) > 0, count($cut) . ' cut, ' . count($whole) . ' left whole');
 $check('every cut page is sound', !$bad, implode("\n      ", array_slice($bad, 0, 12)));
+
+// A rename saved without its year still gives each record's name its section.
+$no_year = null;
+foreach ($map['cut'] as $key => $year) {
+    list($a, $b) = explode('>', $key);
+    $fa = (int) ($map['nodes'][$a]['facilityId'] ?? 0);
+    $fb = (int) ($map['nodes'][$b]['facilityId'] ?? 0);
+    if ($year && $fa && $fb && $fa !== $fb && count(kop_facility_eras_chain($fa)) === 2) { $no_year = array($key, $fa, $fb); break; }
+}
+$check('a saved rename between two records was found to test with', $no_year !== null);
+if ($no_year) {
+    list($key, $fa, $fb) = $no_year;
+    $stored = $GLOBALS['kop_test_options']['kop_network_rename_review'];
+    $board_key = isset($stored[$key]) ? $key : implode('>', array_reverse(explode('>', $key)));
+    $GLOBALS['kop_test_options']['kop_network_rename_review'][$board_key]['year'] = 0;
+    kop_facility_eras_map(true);
+    $chain = kop_facility_eras_chain($fb);
+    $check('a rename saved without a year keeps its two names in order', count($chain) === 2 && $chain[0]['facility_id'] === $fa && $chain[1]['facility_id'] === $fb, json_encode(array_column($chain, 'name')));
+    $data = kop_facility_page_data($fb);
+    $ok = true;
+    foreach ((array) ($data['eras']['list'] ?? array()) as $i => $entry) {
+        foreach (array('memorials', 'violations', 'lawsuits', 'incidents', 'news') as $kind) {
+            foreach ($entry[$kind] as $item) {
+                if ($chain[1]['cut'] === 0 && (int) $item['_fid'] !== $chain[$i]['facility_id']) $ok = false;
+            }
+        }
+    }
+    $check('...and with no year to sort by, each record has its items under its own name', $ok);
+    // Taken away altogether, the line is as the board drew it.
+    unset($GLOBALS['kop_test_options']['kop_network_rename_review'][$board_key]);
+    kop_facility_eras_map(true);
+    $GLOBALS['kop_test_options']['kop_network_rename_review'] = $stored;
+    kop_facility_eras_map(true);
+}
 
 // A page nobody renamed is as it was.
 $plain = (int) $wpdb->get_var('SELECT id FROM facilities_v2 WHERE id NOT IN (' . implode(',', array_map('intval', $ids)) . ') ORDER BY id LIMIT 1');

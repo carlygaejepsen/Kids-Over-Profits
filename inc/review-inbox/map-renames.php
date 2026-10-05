@@ -2,8 +2,8 @@
 /**
  * Review inbox source: programs that changed their name, drawn on the network
  * map as two names joined by a line (KOP Tools > Map Renames,
- * inc/network-renames.php). Save the rename year (and, if the line points
- * the wrong way, swap it), "Not a rename" and Undo all store the decision
+ * inc/network-renames.php). Save the rename, with its year when known (and,
+ * if the line points the wrong way, swap it), "Not a rename" and Undo all store the decision
  * through kop_network_renames_decide(); the map shows it at once.
  *
  * Keys: "earlier>later", the line as the board drew it. The year and the
@@ -22,7 +22,7 @@ kop_rinbox_register('map-renames', function () {
     return array(
         'label'    => 'Map renames',
         'group'    => 'Suggestions to check',
-        'help'     => 'Programs that changed their name. Each name belongs to its own years, so give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline. If the arrow points the wrong way, choose "the other way round". Undo on the Saved and Not a rename tabs.',
+        'help'     => 'Programs that changed their name. Each name belongs to its own years, so give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline. The year can be left blank and added later. If the arrow points the wrong way, choose "the other way round". Undo on the Saved and Not a rename tabs.',
         'views'    => array('review' => 'To review', 'saved' => 'Saved', 'skipped' => 'Not a rename'),
         'tool_url' => admin_url('admin.php?page=kop-network-renames'),
         'count'    => function () {
@@ -197,10 +197,10 @@ function kop_rinbox_mren_item(array $r) {
 
     if ($view === 'review') {
         $actions = array(
-            array('id' => 'save', 'label' => 'Save the rename year', 'style' => 'approve',
-                'help' => 'On the network map timeline, the first name (picked below) ends in the year you give and the other starts then; the change is live at once.',
+            array('id' => 'save', 'label' => 'Save the rename', 'style' => 'approve',
+                'help' => 'On the network map timeline, the first name (picked below) ends in the year you give and the other starts then; the change is live at once. With the year left blank the rename and its order are still saved, and the year can be added later at KOP Tools > Map Renames.',
                 'params' => array(
-                array('name' => 'year', 'label' => 'Year of the rename', 'type' => 'number', 'value' => $a['suggest'] ? (string) $a['suggest'] : ''),
+                array('name' => 'year', 'label' => 'Year of the rename (blank if not known)', 'type' => 'number', 'value' => $a['suggest'] ? (string) $a['suggest'] : '', 'optional' => true),
                 array('name' => 'swapped', 'label' => 'Which name came first', 'type' => 'select', 'value' => $swapped ? '1' : '0', 'options' => array(
                     '0' => $r['earlier']['name'] . ' first, then ' . $r['later']['name'],
                     '1' => 'The other way round: ' . $r['later']['name'] . ' first, then ' . $r['earlier']['name'],
@@ -213,10 +213,10 @@ function kop_rinbox_mren_item(array $r) {
     } else {
         $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
             'help' => $view === 'saved'
-                ? 'Takes the saved rename year off the map; the rename waits for review again.'
+                ? 'Takes the saved rename off the map; the rename waits for review again.'
                 : 'Nothing on the site changes; the rename waits for review again.'));
         $label = $view === 'saved'
-            ? 'Saved: renamed in ' . (int) $d['year'] . (!empty($d['swapped']) ? ', the other way round' : '')
+            ? (!empty($d['year']) ? 'Saved: renamed in ' . (int) $d['year'] : 'Saved without a year') . (!empty($d['swapped']) ? ', the other way round' : '')
             : 'Not a rename';
     }
     $fid = $r['later']['facilityId'] ?: $r['earlier']['facilityId'];
@@ -227,7 +227,8 @@ function kop_rinbox_mren_item(array $r) {
             ? ($problems ? 'Looks wrong: ' . implode('; ', $problems) : ($a['suggest'] ? 'Suggested year: ' . $a['suggest'] . ($from_research ? ' (research)' : '') : ''))
             : (!empty($d['by']) ? 'by ' . $d['by'] : ''),
         'text'         => $view === 'saved'
-            ? 'On the map the earlier name ends in ' . (int) $d['year'] . ' and the later one starts then.'
+            ? (!empty($d['year']) ? 'On the map the earlier name ends in ' . (int) $d['year'] . ' and the later one starts then.'
+                : 'The rename is saved without its year, which can be added at KOP Tools > Map Renames.')
             : ($view === 'skipped' ? 'Marked not a rename. The map is unchanged.'
                 : 'Each name belongs to its own years. Give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline.'),
         'compare'      => kop_rinbox_mren_compare($first, $second),
@@ -262,7 +263,9 @@ function kop_rinbox_mren_act($key, $action, array $params) {
     if (!$r) throw new RuntimeException('That rename is no longer on the map.');
     if (!empty($r['error'])) throw new RuntimeException($r['error']);
     if ($action === 'save') {
-        return array('message' => 'Saved. On the map the earlier name now ends in ' . $r['year'] . ' and the later one starts then'
+        return array('message' => (!empty($r['year'])
+                ? 'Saved. On the map the earlier name now ends in ' . $r['year'] . ' and the later one starts then'
+                : 'Saved without a year; add it at KOP Tools > Map Renames when it is known')
             . (!empty($r['swapped']) ? ', with the line turned round' : '') . '. Undo is on the Saved tab.');
     }
     if ($action === 'skip') return array('message' => 'Marked not a rename. The map is unchanged.');

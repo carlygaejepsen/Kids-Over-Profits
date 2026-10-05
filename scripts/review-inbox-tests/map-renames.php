@@ -36,6 +36,15 @@ function kop_rinbox_test_map_renames(array $src, array $item, callable $check) {
         kop_rinbox_test_skip('map-renames: save, skip and undo', 'update_option does not store in this harness');
         return;
     }
+    // The year is not needed to save a rename.
+    $res = call_user_func($src['act'], $key, 'save', array('year' => '', 'swapped' => '1'));
+    $d = kop_network_renames_decisions()[$key] ?? array();
+    $check('map-renames: a rename saves with the year left blank, order kept', ($d['decision'] ?? '') === 'saved' && (int) $d['year'] === 0 && !empty($d['swapped']), $res['message']);
+    $check('map-renames: saved without a year, the map keeps both names as they were',
+        kop_network_renames_apply_years(array(explode('>', $key, 2)[0] => '1990-2000', explode('>', $key, 2)[1] => ''), array($key => $d)) === array());
+    $it = kop_rinbox_get_item('map-renames', $key);
+    $check('map-renames: its card says it was saved without a year', $it['status'] === 'saved' && strpos($it['status_label'], 'without a year') !== false, $it['status_label']);
+    call_user_func($src['act'], $key, 'undo', array());
     $res = call_user_func($src['act'], $key, 'save', array('year' => '2004', 'swapped' => '1'));
     $d = kop_network_renames_decisions()[$key] ?? array();
     $check('map-renames: save stores the year and the swap', ($d['decision'] ?? '') === 'saved' && (int) $d['year'] === 2004 && !empty($d['swapped']), $res['message']);

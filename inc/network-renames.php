@@ -13,7 +13,11 @@
  *
  * This screen lists every rename with both names' operators and years and
  * what looks wrong, and asks for the year of the rename (and, where the line
- * is backwards, a swap). A saved rename takes effect at once, as Map Years'
+ * is backwards, a swap). The year can be left blank: the rename is then saved
+ * as confirmed, with its order, and the year (0) can be added later from the
+ * Saved tab; the names' years on the map stay as they were, and the facility
+ * pages still give each name its own section (inc/facility-eras.php).
+ * A saved rename takes effect at once, as Map Years'
  * decisions do: the earlier name ends in that year and the later one starts
  * in it, over graph.json and over Map Years' accepted years
  * (kop_network_map_year_overrides filter), and a swap reverses the line and
@@ -260,7 +264,7 @@ add_filter('kop_network_map_year_overrides', function ($overrides) {
 if (!function_exists('kop_network_renames_ajax')) {
     /**
      * POST action=kop_network_renames_decide, nonce, items: JSON list of
-     * {key, decision: save|skip|undo, year, swapped}. Answers with the stored
+     * {key, decision: save|skip|undo, year (0 = not known), swapped}. Answers with the stored
      * state of each item and the years each name now has on the map.
      */
     function kop_network_renames_ajax() {
@@ -306,9 +310,10 @@ if (!function_exists('kop_network_renames_decide')) {
                 continue;
             }
             if ($decision === 'save') {
+                // No year is fine: the rename and its order are saved, the year can follow.
                 $year = (int) ($item['year'] ?? 0);
-                if ($year < 1800 || $year > $this_year) {
-                    $out[$key] = array('error' => 'Give the year of the rename.');
+                if ($year !== 0 && ($year < 1800 || $year > $this_year)) {
+                    $out[$key] = array('error' => 'That year is not between 1800 and ' . $this_year . '. Leave it blank if you do not know it.');
                     continue;
                 }
                 $decisions[$key] = array('decision' => 'saved', 'year' => $year, 'swapped' => !empty($item['swapped']),
@@ -407,6 +412,7 @@ if (!function_exists('kop_network_renames_page')) {
                 as two names joined by a line. Each name belongs to its own years and operator, so the timeline shows the name
                 it had that year: Copper Canyon Academy under Aspen until the rename, Sedona Sky Academy under Family Help &amp; Wellness after.
                 Give the year of the rename and save; the earlier name then ends that year and the later one starts it, on the map at once.
+                <strong>If you do not know the year, leave it blank and save anyway</strong>: the rename and its order are kept, and the year can be added later on the Saved tab.
                 If the arrow points the wrong way, press <strong>Swap order</strong> first. Everything saves as you click.
             </p>
             <div class="kop-ren__bar">
@@ -511,7 +517,7 @@ if (!function_exists('kop_network_renames_page')) {
                             r.swapped = !!s.swapped;
                         });
                         if (json.data.years) years = json.data.years;
-                        status.textContent = errors ? errors + ' not saved; see the red note.' : 'Saved. On the map now.';
+                        status.textContent = errors ? errors + ' not saved; see the red note.' : 'Saved.';
                         render();
                     })
                     .catch(function (e) { status.textContent = 'Not saved: ' + e.message; });
@@ -558,7 +564,24 @@ if (!function_exists('kop_network_renames_page')) {
 
                 var actions = el('div', 'kop-ren__actions');
                 if (r.decision === 'saved') {
-                    actions.appendChild(el('span', 'kop-ren__done', 'Saved: renamed in ' + r.year + (swapped ? ' (order swapped)' : '') + '. On the map now.'));
+                    actions.appendChild(el('span', 'kop-ren__done', r.year
+                        ? 'Saved: renamed in ' + r.year + (swapped ? ' (order swapped)' : '') + '. On the map now.'
+                        : 'Saved without a year' + (swapped ? ' (order swapped)' : '') + '.'));
+                    if (!r.year) {
+                        // The year can follow whenever it turns up.
+                        var later = el('input'); later.type = 'number'; later.min = 1800; later.max = new Date().getFullYear();
+                        later.placeholder = 'year'; later.value = r.suggest || '';
+                        var laterLab = el('label', '', 'Renamed in '); laterLab.appendChild(later);
+                        actions.appendChild(laterLab);
+                        var add = el('button', 'button', 'Add the year');
+                        add.type = 'button';
+                        add.addEventListener('click', function () {
+                            if (!Number(later.value)) { r.error = 'Type the year first.'; render(); return; }
+                            save([{ key: r.key, decision: 'save', year: Number(later.value), swapped: swapped }]);
+                        });
+                        actions.appendChild(add);
+                        if (r.error) actions.appendChild(el('span', 'kop-ren__error', r.error));
+                    }
                 } else if (r.decision === 'skipped') {
                     actions.appendChild(el('span', 'kop-ren__done', 'Marked not a rename. The map is unchanged.'));
                 }
@@ -572,9 +595,10 @@ if (!function_exists('kop_network_renames_page')) {
                 }
 
                 var year = el('input'); year.type = 'number'; year.min = 1800; year.max = new Date().getFullYear();
-                year.placeholder = 'year'; year.value = r.suggest || '';
+                year.placeholder = 'not known'; year.value = r.suggest || '';
                 var lab = el('label', '', 'Renamed in '); lab.appendChild(year);
                 actions.appendChild(lab);
+                actions.appendChild(el('span', 'kop-ren__hint', 'Blank is fine.'));
                 var ok = el('button', 'button button-primary', 'Save');
                 ok.type = 'button';
                 ok.addEventListener('click', function () {
