@@ -59,7 +59,7 @@ if (!function_exists('kop_ih_scanner_version')) {
      * only that state's reports. With no state, the base alone.
      */
     function kop_ih_scanner_version($state = '') {
-        $base = 9;
+        $base = 10;
         $states = kop_ih_state_rule_versions();
         return $base * 100 + (int) ($states[strtoupper((string) $state)] ?? 0);
     }
@@ -146,6 +146,8 @@ if (!function_exists('kop_ih_scanner_version')) {
                     '\b(?:non-? ?consensual|unwanted)\b[^.]{0,30}\bsex(?!ual (?:advances?|comments?|remarks?|gestures?|talk|language|jokes?))',
                     '\bsex\w*\b[^.]{0,40}\b(?:against (?:his|her|their) will|without (?:his|her|their )?consent)',
                     '\bforc\w+\b[^.]{0,30}\bsex',
+                    // A victim did not consent, whoever the other was: "C1 being the victim of inappropriate sexual contact by C2".
+                    '\bvictims? of (?:an? )?(?:\w+ ){0,2}sexual (?:contact|touching|acts?|activit\w+|abuse|assault|misconduct)\b',
                 ),
                 // Sexual activity, contact or talk counts only when an adult took part:
                 // children with each other, or a child left unsupervised, is not severe.
@@ -164,11 +166,19 @@ if (!function_exists('kop_ih_scanner_version')) {
                 'label'    => 'Physical abuse or assault',
                 'weight'   => 80,
                 // Another child, or a child assaulting staff, is not staff assaulting a child.
-                'exclude'  => kop_ih_peer_pattern() . '|\b(?:assault\w*|aggress\w*|attack\w*|violen\w+)\s+(?:against|on|toward|towards)\s+(?:the |a |an |facility |program )?(?:staff|personnel|employees?|caregivers?|nurses?)\b',
+                'exclude'  => '\b(?:assault\w*|aggress\w*|attack\w*|violen\w+)\s+(?:against|on|toward|towards)\s+(?:the |a |an |facility |program )?(?:staff|personnel|employees?|caregivers?|nurses?)\b',
+                'exclude_test' => 'kop_ih_is_peer',
                 'patterns' => array(
                     // Staff by role, or by the labels the states use: S1 (California), E1 (Arizona).
                     // Nothing between staff and the act that denies it, supposes it, or names a child as the one acting.
-                    '(?<!\bfrom )(?<!\bwith )(?<!\bto )(?<!\btoward )(?<!\btowards )(?<!\bby )(?<!\btold )(?<!\basked )(?<!\binformed )(?<!\bnotified )\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b' . kop_ih_actor_gap(80) . '\b(?:hit(?! the (?:brakes?|button|alarm|switch|gas|road|ball))|hitting|struck|(?<!hole )punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault(?!ive)\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
+                    '(?<!\bfrom )(?<!\bwith )(?<!\bto )(?<!\btoward )(?<!\btowards )(?<!\bby )(?<!\btold )(?<!\basked )(?<!\binformed )(?<!\bnotified )(?<!\bafter )(?<!\bat )\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?\b' . kop_ih_actor_gap(80) . '\b(?:hit(?! the (?:brakes?|button|alarm|switch|gas|road|ball))|hitting|struck|(?<!hole )punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|(?<!\bwas )(?<!\bwere )(?<!\bbeen )(?<!\bbeing )(?<!\bgot )(?<!\ba )push(?:ed|es|ing)?(?!-?ups?\b)(?!\s+(?:the |a |an |his |her |their )?(?:\w+ )?(?:door|button|alarm|cart|wheelchair|stroller|chair|table|desk|car|vehicle|gate|bed|lever|swing|furniture)s?\b)(?![^.]*\b(?:from fighting|break(?:ing)? (?:it |them )?up|separat\w+|apart)\b)|threw|thrown|slamm\w+|drag|drags|dragg\w+|yank\w*|assault(?!ive)\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
+                    // A threat to hit a child is the abuse (Texas cites it under corporal punishment): "S1 threatened to hit C1".
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher|technician|aide|MHT|[SE]\d{1,2})s?(?: members?| persons?)?\s+(?:(?:was|were|had|has|also|then|allegedly|repeatedly)\s+)?threat\w*\s+(?:to\s+)?(?:\w+\s+){0,2}?(?:hit|beat|kick|punch|slap|spank|whip|choke|assault|harm|hurt|strike|smack|kill)\b',
+                    '\b(?:would|will|gonna|going to) (?:have )?(?:beat|whoop|kick) (?:his|her|their|your) (?:ass|butt)\b',
+                    // Force with no label for it: "S1 grabbed C1 aggressively by the arm", "handled C1 in a rough manner".
+                    '\b(?:staff|caregiver|employee|counselor|supervisor|[SE]\d{1,2})s?\b' . kop_ih_actor_gap(40) . '\b(?:grabb\w+|handl\w+|pull\w+|push\w+|yank\w*)\b[^.]{0,40}?\b(?:aggressive(?:ly)?|forceful(?:ly)?|violent(?:ly)?|rough(?:ly)?|in a rough manner)\b',
+                    // A hold staff were not allowed to use: "placed the child in an inappropriate restraint".
+                    '\b(?:inappropriate(?:ly)?|improper(?:ly)?|unauthori[sz]ed|prohibited|unapproved) (?:physical |manual |prone )?restrain\w*\b|\brestraints? that (?:was|were) (?:not appropriate|inappropriate|improper|not approved)\b',
                     '\bphysical(?:ly)? (?:abus\w+|assault\w*)',
                     // The child hit by staff: "Youth A being physically hit by Staff 2".
                     '\b(?:hit|struck|punched|slapped|kicked|choked|shoved|pushed|assaulted|beaten|thrown|slammed|dragged|bitten)\s+by\s+(?:a |the |another |one |former )?(?:staff|caregiver|employee|counselor|supervisor|[SE]\d{1,2})\b',
@@ -218,6 +228,8 @@ if (!function_exists('kop_ih_scanner_version')) {
                     '\b(?:not|never) (?:\w+ )?(?:received?|given|provided|taken to|seen by) (?:any |a |the )?(?:medical|treatment|doctor|physician|dentist)\b(?!\s+(?:records?|documentation|information|history|charts?|files?|consents?|releases?|forms?|reports?))',
                     '\b(?:medical neglect|denied (?:medical|medications?)|withh[eo]ld\w* (?:\w+ )?medications?)\b',
                     '\bdelay\w* (?:in )?(?:seeking |obtaining |getting )?(?:medical|treatment)\b',
+                    // "Requests/submitted consults from nursing staff were declined leading to the child having to be sent to the ER."
+                    '\b(?:consults?|consultations?|(?:medical|dental|doctor\'?s?|physician|psychiatric|therapy|health ?care) appointments?)\b[^.]{0,40}\b(?:was|were) (?:declined|denied|ignored|refused|cancell?ed)\b',
                 ),
                 // A single medication error is not queued, only a pattern of them (owner rule, 2026-09-28).
                 'conditional' => array(array(
@@ -227,6 +239,14 @@ if (!function_exists('kop_ih_scanner_version')) {
                         // Not a missing log, count or entry: that is paperwork.
                         '\b(?:medication errors?|(?:wrong|incorrect) (?:medications?|doses?|dosages?)|missed (?:a |the |their |his |her )?(?:doses?|dosages?|medications?)|missing (?:a |the )?(?:doses?|dosages?)|doses? omitted)\b(?! (?:counts?|logs?|records?|entr(?:y|ies)|documentation))',
                         '\b(?:was|were) not (?:given|administered|provided) (?:his |her |their |the )?(?:prescribed )?medications?\b',
+                    ),
+                ), array(
+                    // Missed doses for several children are neglect even where the rule cited is the
+                    // record of them: "errors were not documented for missed dosages ... for six children".
+                    'requires'  => '\b(?:\d+|two|three|four|five|six|seven|eight|nine|ten|several|multiple|many|numerous)\s+(?:\w+\s+){0,2}(?:children|clients|residents|youths|minors)\b',
+                    'paperwork' => false,
+                    'patterns'  => array(
+                        '\bmissed (?:\w+ ){0,2}?(?:doses|dosages|medications)\b',
                     ),
                 )),
             ),
@@ -283,6 +303,8 @@ if (!function_exists('kop_ih_scanner_version')) {
         $block = '/^(?:\x{2019}|\')s\b|\b(?:Client|Child|Youth|Resident|Minor|Participant|Patient|Student) ?#\s?\d+|\b(?:Youth|Resident|Child|Client|Minor|Student) [A-Z]\b|\bP ?#\d+|\b[CRY]\d{1,2}\b|\b(?:supervis|unaware|aware|monitor|allow|permit|fail|result|led to|lead to|while|when|check|asleep|slept|sleep|prevent|protect|separat|interven|report(?!edly)|notif|inform|discover|observ|caught|witness|walk|notic|saw|seen|learn|look|oblivious|redirect|stat(?:ed|es)|said|told|interview|describ|explain|indicat|confirm)\w*|\./iu';
         // Touching or pushing children to keep them from fighting is not sexual.
         if (preg_match('/\b(?:fight\w*|fought|altercation|break(?:ing)? (?:it |them )?up|separat\w+)\b/iu', $sentence) && !preg_match('/\bsex|genital|private (?:parts|areas?)|fondl|grop|kiss/iu', $sentence)) return false;
+        // The adult is the one "engaging": "Staff did not notify the operation ... while engaging in an inappropriate relationship with the child".
+        if (preg_match('/^\W*(?:an? |the )?(?:staff(?: members?| persons?)?|caregivers?|employees?|counselors?|supervisors?|[SE]\d{1,2})\b[^.]{0,160}\b(?:while|by) (?:also )?engag\w+ in (?:an? )?inappropriate (?:\w+ )?relationship with (?:a |the |this )?(?:child|client|resident|youth|minor|student)\b/iu', $sentence)) return true;
         if (!preg_match_all('/' . $adult . '/iu', $sentence, $adults, PREG_OFFSET_CAPTURE)) return false;
         if (!preg_match_all('/' . $act . '/iu', $sentence, $acts, PREG_OFFSET_CAPTURE)) return false;
         foreach ($adults[0] as $a) {
@@ -337,7 +359,10 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Words that mean the sentence talks about a possibility, a rule or a plan, not an event. */
     function kop_ih_hypothetical_pattern() {
-        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|lead(?:s|ing)? to|in (?:the )?(?:case|event) (?:of|that)|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|accus\w+|known or suspected|jok\w+|histor(?:y|ies) of)\b';
+        return '\b(?:risk of|at risk|potential(?:ly)?|possib\w+|could|can|may|might|would|should|shall|must|leads? to|in (?:the )?(?:case|event) (?:of|that)|if|prevent\w*|polic(?:y|ies)|procedures?|training on|trained (?:on|in)|how to|requires?|required to report|hop(?:ed|es|ing)|wish\w*|threat\w*|claim\w*|accus\w+|known or suspected|jok\w+)\b'
+            // "a history of self-injury" is the past, until a verb starts what happened since:
+            // "a child with a history of self-injury was able to obtain a razor and self-harm".
+            . '|\bhistor(?:y|ies) of\b(?![^.]*\b(?:was|were|did|then|later|subsequently)\b)';
     }
 
     /**
@@ -424,6 +449,21 @@ if (!function_exists('kop_ih_scanner_version')) {
             . '|' . $label . '[\])]?\s+(?:\w+\s+){0,2}' . $verb . '\w*\s+' . $second
             . '|' . $label . '[\])]?\s+(?:(?!staff|[SE]\d|employee|caregiver)[^.]){0,60}?\b' . $verb . '\w*\s+(?:\w+\s+){0,2}?' . $second
             . '|' . $label . '[\])]?\s+and\s+' . $second . '[\])]?\s+(?:\w+\s+){0,3}' . $verb;
+    }
+
+    /**
+     * Whether the sentence has one child acting on another (kop_ih_peer_pattern).
+     * One label said twice is one child, not two: "S1 dragged C1 up to the
+     * steps and kicked C1" is staff hurting C1.
+     */
+    function kop_ih_is_peer($sentence) {
+        if (!preg_match_all('/' . kop_ih_peer_pattern() . '/iu', $sentence, $m)) return false;
+        foreach ($m[0] as $hit) {
+            preg_match_all('/\b[CYR]\d{1,2}\b/u', $hit, $labels);
+            $same = count($labels[0]) >= 2 && count(array_unique($labels[0])) === 1;
+            if (!$same || preg_match('/\b(?:another|other|fellow|peers?|each other|one another|between)\b|#/iu', $hit)) return true;
+        }
+        return false;
     }
 
     /**
@@ -525,7 +565,9 @@ if (!function_exists('kop_ih_scanner_version')) {
      */
     function kop_ih_care_failure_pattern() {
         return '\b(?:fail\w*|did not|didn\'t|does not|neglected|unable)\s+to\s+(?:\w+\s+){0,2}?(?:supervis\w*|protect\w*|monitor\w*|ensure (?:the |a |each |that )?(?:\w+ )?(?:safety|health|well-?being|protection)|follow (?:\w+ ){0,2}(?:safety|treatment|supervision|service|behavior|crisis) plans?|seek|obtain|get (?:\w+ )?(?:medical|treatment)|provide (?:\w+ ){0,2}(?:care|supervision|treatment|medical|medications?|protection)|administer|intervene|prevent|keep (?:\w+ ){0,2}safe|maintain (?:\w+ ){0,2}(?:supervision|ratios?|sight)|conduct (?:\w+ ){0,2}checks|search|secure|separate|respond)\b'
-            . '|\b(?:inadequate|insufficient|lack of|lapse in|no) (?:\w+ )?(?:supervision|staffing|monitoring)\b|\bout of ratio\b|\bunsupervised\b|\bleft alone\b|\bunattended\b';
+            . '|\b(?:inadequate|insufficient|lack of|lapse in|no) (?:\w+ )?(?:supervision|staffing|monitoring)\b|\bout of ratio\b|\bunsupervised\b|\bleft alone\b|\bunattended\b'
+            // "FC #6, who needed 1:1 supervision, was able to obtain a knife"; "left without a backup staff".
+            . '|\b(?:was|were) able to (?:obtain|get|access|take|find|grab) (?:a |an |the |some )?(?:\w+ )?(?:knife|knives|razors?|blades?|scissors|lighters?|weapons?|guns?|firearms?|medications?|pills|drugs|cords?|belts?|ropes?|glass|sharps?)\b|\bwithout (?:a |any )?(?:backup|back-up|relief|second|other|additional) staff\b';
     }
 
     /**
@@ -544,7 +586,7 @@ if (!function_exists('kop_ih_scanner_version')) {
     function kop_ih_unsubstantiated_pattern() {
         return '\bun-?substantiated\b|\bunfounded\b|\bnot substantiated\b|\binconclusive\b|\bnot (?:been )?determined\b'
             // Michigan: "found in compliance", "does not appear as though", "does not establish".
-            . '|\bfound (?:to be )?in compliance\b|\b(?:does|did) not (?:appear|establish|show|support|indicate)\b|\bthere (?:is|was|were) no (?:evidence|indications?|video|footage)\b|\bno indications? (?:of|that)\b|\bno evidence (?:that|of)\b|\b(?:violation|allegation) (?:was |is )?not established\b'
+            . '|\bfound (?:to be )?in compliance\b|\b(?:does|did) not (?:appear|establish|show|support|indicate)\b(?! (?:a |any )?(?:reasons?|why|when|what time|the time|the date)\b)|\bthere (?:is|was|were) no (?:evidence|indications?|video|footage)\b|\bno indications? (?:of|that)\b|\bno evidence (?:that|of)\b|\b(?:violation|allegation) (?:was |is )?not established\b'
             . '|\b(?:cannot|can ?not|could not|couldn\'t|unable to|not|never|(?:has|have|had) not) be(?:en)? substantiated\b'
             . '|\b(?:unable|insufficient(?: evidence)?|not enough(?: evidence)?|fail\w*) to substantiate\b'
             . '|\b(?:did|does|do) not substantiate\b';
@@ -556,7 +598,13 @@ if (!function_exists('kop_ih_scanner_version')) {
      * both is read as unsubstantiated, so it can never carry a finding.
      */
     function kop_ih_sentence_verdict($sentence) {
-        if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) return 'unsubstantiated';
+        if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) {
+            // The softer wordings ("did not appear", "there is no evidence") are a verdict only
+            // about an allegation; in the narrative they describe what was seen: "the pushing
+            // did not appear to have enough force to cause C1 to fall".
+            if (preg_match('/\b(?:un-?substantiated|unfounded|inconclusive|substantiat\w*|alleg\w*|violations?|rules?|established|compliance|happened|occurred|took place)\b/iu', $sentence)) return 'unsubstantiated';
+            return null;
+        }
         if (preg_match('/\bsubstantiated\b/iu', $sentence)) return 'substantiated';
         return null;
     }
@@ -574,6 +622,13 @@ if (!function_exists('kop_ih_scanner_version')) {
         for ($j = $i; $j <= $i + kop_ih_verdict_window(); $j++) {
             if (!isset($verdicts[$j])) continue;
             return $verdicts[$j] === 'substantiated';
+        }
+        // After the last verdict comes the citation, which says what was found:
+        // "... are SUBSTANTIATED. The facility was cited ... On at least one occasion,
+        // S1 struck a youth in care with a belt." It takes the verdict just before it.
+        if (array_filter(array_keys($verdicts), static function ($j) use ($i) { return $j > $i; })) return false;
+        for ($j = $i - 1; $j >= max(0, $i - kop_ih_verdict_window()); $j--) {
+            if (isset($verdicts[$j])) return $verdicts[$j] === 'substantiated';
         }
         return false;
     }
@@ -657,6 +712,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             if ($on_staff && !in_array($key, array('death', 'restraint_injury'), true)) continue;
             if (!empty($cat['requires']) && kop_ih_sentence_has($sentence, $cat['requires']) === false) continue;
             if (!empty($cat['exclude']) && preg_match('/' . $cat['exclude'] . '/iu', $sentence)) continue;
+            if (!empty($cat['exclude_test']) && call_user_func($cat['exclude_test'], $sentence)) continue;
             $paperwork = !in_array($key, $exempt, true) || ($key === 'sexual_abuse' && !kop_ih_adult_took_part($sentence));
             foreach ($cat['patterns'] as $pattern) {
                 $words = kop_ih_sentence_has($sentence, $pattern, $paperwork);
@@ -669,7 +725,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $met = isset($group['test']) ? call_user_func($group['test'], $sentence) : preg_match('/' . $group['requires'] . '/iu', $sentence);
                 if (!$met) continue;
                 foreach ($group['patterns'] as $pattern) {
-                    $words = kop_ih_sentence_has($sentence, $pattern, $paperwork);
+                    $words = kop_ih_sentence_has($sentence, $pattern, $group['paperwork'] ?? $paperwork);
                     if ($words === false) continue;
                     $found[$key] = $words;
                     break 2;
@@ -1877,10 +1933,13 @@ if (!function_exists('kop_ih_scanner_version')) {
             }
         }
         // A citation for paperwork or training only (owner rule, 2026-10-05) keeps
-        // what staff did to a child, medical neglect and a death (deaths are always
-        // cited, owner rule 2026-10-05), and nothing else.
+        // what staff did to a child, medical neglect and
+        // a death (deaths are always cited, owner rule 2026-10-05), and nothing else.
         $keep = kop_ih_paperwork_only($finding, $sentences) ? array_merge(kop_ih_paperwork_exempt(), array('medical_neglect', 'death')) : null;
         foreach ($sentences as $i => $sentence) {
+            // "Although findings were inconclusive regarding X, there is evidence that Y": Y is the finding.
+            if (preg_match('/^\W*(?:although|though|even though|while)\b([^,]{0,200}),\s*(.+)$/iu', $sentence, $clause)
+                && preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $clause[1])) $sentence = $clause[2];
             // A sentence that itself says the allegation failed is not a finding; nor is a quoted policy or an instruction.
             if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) continue;
             if (preg_match('/' . kop_ih_noise_pattern() . '/iu', $sentence)) continue;

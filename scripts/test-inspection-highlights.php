@@ -244,6 +244,25 @@ $sentence_cases = array_merge($sentence_cases, array(
     array('After the youth assaulted staff, staff restrained the youth in a prone hold, resulting in a fractured arm.', array('restraint_injury')),
     array('Staff punched a resident who was taken to the emergency room.', array('physical_abuse', 'hospitalization')),
     array('A youth had a panic attack and staff slapped him.', array('physical_abuse')),
+    // Staff abuse the scanner missed on approved findings (owner review, 2026-10-05).
+    array('A staff threatened to physically assault a child in care.', array('physical_abuse')),
+    array('Specifically, it was reported that S1 threatened to hit C1 and also called C1 "bitch".', array('physical_abuse')),
+    array('During the review staff reported that he told victim he was lucky he wasnt 18 because he would have beat his ass.', array('physical_abuse')),
+    array('The youth threatened to hit staff.', array()),
+    array('Administrator sent IB investigator an audio recording where C2 confirms that S1 dragged C1 up to the steps" and kicked C1.', array('physical_abuse')),
+    array('A staff members actions presented a genuine threat of substantial harm from physical injury to the child when the staff member placed the child in an inappropriate restraint.', array('physical_abuse')),
+    array('A child in care was inappropriately restrained leading to injuries.', array('physical_abuse', 'restraint_injury')),
+    array('Confidential interviews and documents reviewed confirmed S1 grabbed C1 aggressively by the arm while in the shower.', array('physical_abuse')),
+    array('Staff pushed resident down on the ground, causing bruising.', array('physical_abuse')),
+    array('Staff #14 had told him to do "Burpees" (push-ups, then stand and jump toward the ceiling);', array()),
+    array('A staff member attempted to intervene, extending her arm, but was pushed aside.', array()),
+    array('Staff A reported that Resident A immediately escalated and ran after Staff A, pushed them into the wall.', array()),
+    array('Both staff members tried to talk to the consumer he pushed the screen door open and walked out of the house.', array()),
+    array('It was found that a child with a history of self-injury was able to obtain a razor and self-harm.', array('self_harm')),
+    array('The "Integrated Service Plan" revealed a history of substance abuse and self-harm.', array()),
+    array('C1 being the victim of inappropriate sexual contact by C2.', array('sexual_abuse')),
+    array('Requests/submitted consults from nursing staff were declined leading to the child having to be sent to the ER.', array('medical_neglect', 'hospitalization')),
+    array('Youths repeatedly requested a room search; these requests were denied.', array()),
 ));
 foreach ($sentence_cases as $case) {
     $got = array();
@@ -253,6 +272,19 @@ foreach ($sentence_cases as $case) {
     sort($want);
     check($got === $want, 'sentence: "' . $case[0] . '" expected [' . implode(',', $want) . '] got [' . implode(',', $got) . ']');
 }
+
+// A soft wording is a verdict only about an allegation; the citation after the last verdict takes it.
+check(kop_ih_sentence_verdict('And though the pushing did not appear to have enough force to cause C1 to fall, the action was not trauma-informed.') === null, 'verdict: "did not appear" in the narrative is no verdict');
+check(kop_ih_sentence_verdict('There is no evidence any of this happened and S1 failed to provide a statement.') === 'unsubstantiated', 'verdict: "no evidence any of this happened" is a verdict');
+check(kop_ih_verdict_near(array(21 => 'unsubstantiated', 29 => 'substantiated'), 31), 'verdict: the citation after the last verdict takes it');
+check(!kop_ih_verdict_near(array(5 => 'substantiated', 40 => 'unsubstantiated'), 7), 'verdict: a sentence with a later verdict does not take the one before');
+check(kop_ih_is_peer('C1 hit C2 in the face.') && !kop_ih_is_peer('S1 dragged C1 up the steps and kicked C1.'), 'peer: two labels are two children, one label said twice is one');
+// "Although X was inconclusive, there is evidence that Y": Y is the finding.
+$c = kop_ih_score_finding(array('text' => 'Although findings were inconclusive regarding a staff\'s inappropriate contact with a child, there is evidence that a staff member engaged in sexual contact with a resident.', 'standard' => '', 'state_label' => '', 'kind' => 'citation', 'corrected_on_site' => null, 'factor' => 1.0));
+check($c !== null && $c['category'] === 'sexual_abuse', 'a concession that one thing was inconclusive keeps what the main clause found');
+// Missed doses for several children are neglect even under a records rule.
+$c = kop_ih_score_finding(array('text' => 'Medication errors were not documented for missed dosages of prescription medication for six children in care.', 'standard' => '748.2203(c)(2) - Medication Error-Document the medication error', 'state_label' => '', 'kind' => 'citation', 'corrected_on_site' => null, 'factor' => 1.0));
+check($c !== null && $c['category'] === 'medical_neglect', 'missed doses for six children are medical neglect, however cited');
 
 check(count(kop_ih_split_sentences('Dr. Smith met Mr. Jones at 9 a.m. on Monday. They left.')) === 2, 'abbreviations do not end a sentence');
 check(count(kop_ih_split_sentences('Review of an incident report revealed: -On 1/31/26 Client #1 walked off. -Staff #2 called law enforcement - 17 year old male')) === 4, 'a bullet is a sentence of its own');
