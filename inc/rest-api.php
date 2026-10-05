@@ -4559,8 +4559,8 @@ function kop_state_normalize_deficiencies(array $deficiencies) {
  * Index of Utah inspection details from the ut_reports*.json datasets:
  * findings ({rule, excerpt, evidence}) and checklist PDF links, keyed by
  * Utah facility ID and by normalized facility name, then by Y-m-d date.
- * PDFs link to the archived copy in uploads/inspection-reports/ut/ (copied
- * from the Drive ut_checklists folder by api/sync-inspection-archive.php),
+ * PDFs link to the copy in the Drive ut_checklists folder (indexed by
+ * api/sync-inspection-archive.php in uploads/inspection-reports/ut/index.json),
  * then to an older copy left in the theme's js/data/ut_checklists/ (the PDFs
  * are no longer in git), otherwise to the state's checklist download.
  *
@@ -4575,8 +4575,8 @@ function kop_state_ut_inspection_details() {
     $uri = get_stylesheet_directory_uri() . '/js/data/ut_checklists';
     $files = glob($dir . '/ut_reports*.json') ?: array();
     $uploads = wp_upload_dir(null, false);
-    $archive_dir = $uploads['basedir'] . '/inspection-reports/ut';
-    $archive_uri = $uploads['baseurl'] . '/inspection-reports/ut';
+    $archive = json_decode((string)@file_get_contents($uploads['basedir'] . '/inspection-reports/ut/index.json'), true);
+    $archive = is_array($archive['files'] ?? null) ? $archive['files'] : array();
 
     foreach ($files as $file) {
         $data = json_decode((string)file_get_contents($file), true);
@@ -4614,9 +4614,10 @@ function kop_state_ut_inspection_details() {
                 foreach ((array)($insp['checklists'] ?? array()) as $cl) {
                     if (!is_array($cl)) continue;
                     $base = basename(str_replace('\\', '/', (string)($cl['pdf_file'] ?? '')));
-                    $archived = preg_replace('/[^A-Za-z0-9._-]/', '_', $base);
-                    if ($archived !== '' && file_exists($archive_dir . '/' . $archived)) {
-                        $pdf_urls[] = $archive_uri . '/' . rawurlencode($archived);
+                    $key = !empty($cl['checklist_id']) ? 'checklist_' . (int)$cl['checklist_id']
+                        : strtolower(preg_replace('/[^A-Za-z0-9._-]/', '_', $base));
+                    if ($key !== '' && !empty($archive[$key])) {
+                        $pdf_urls[] = (string)$archive[$key];
                     } elseif ($base !== '' && file_exists($dir . '/' . $base)) {
                         $pdf_urls[] = $uri . '/' . rawurlencode($base);
                     } elseif (!empty($cl['pdf_url'])) {

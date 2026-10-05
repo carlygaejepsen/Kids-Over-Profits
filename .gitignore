@@ -1,4 +1,4 @@
-# Environment files
+﻿# Environment files
 .env
 
 # Never track Git metadata directories/files from nested repos
@@ -44,12 +44,12 @@ update_organizations.sql
 # Claude Code temp files
 tmpclaude-*
 
-# MN scraper — local state (browser profile, progress cache, temp)
+# MN scraper â€” local state (browser profile, progress cache, temp)
 .tmp/
 scripts/.mn-browser-profile/
 scripts/mn_progress.json
 
-# Article discovery — runtime state written by the nightly cron on the server
+# Article discovery â€” runtime state written by the nightly cron on the server
 # (seen-URL cache + rejected log). Never tracked: a committed copy would be
 # overwritten by every deploy (.cpanel.yml copies scripts/ wholesale).
 scripts/.discovery-state.json
@@ -81,5 +81,5 @@ scripts/history/*.outline.txt
 .aider*
 node_modules
 
-# Utah checklist PDFs live in Drive (FileBird Cloud/ut_checklists), copied to the site by api/sync-inspection-archive.php
+# Utah checklist PDFs live in Drive (FileBird Cloud/ut_checklists), linked from the site via the index api/sync-inspection-archive.php writes
 js/data/ut_checklists/*.pdf

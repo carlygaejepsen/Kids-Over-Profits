@@ -1,28 +1,30 @@
 <?php
 /**
- * Copy the inspection report PDFs the scrapers archive in the Drive FileBird
- * folder onto this site, so the state report pages can offer "Archived copy"
- * next to the state's own link. States take reports down (WA and NC links
- * already 404), and the Drive folder itself is not public.
+ * Index the inspection report PDFs the scrapers archive in the Drive FileBird
+ * folder, so the state report pages can offer "Archived copy" next to the
+ * state's own link. States take reports down (WA and NC links already 404).
+ * The PDFs stay in Drive: the site keeps only the index and links each report
+ * to its Drive page.
  *
  *   From      The scraper folders at the top of the Drive FileBird folder
  *             (report_store.py in the tools repo writes them).
- *   To        wp-content/uploads/inspection-reports/<state>/, outside the media
- *             library: no attachment rows, previews or FileBird folders.
- *   Index     <state>/index.json maps each file's lookup key (see
- *             kop_inspection_archive_key()) to its file name. The report pages
- *             load it and link only files the site has. Rebuilt on every apply
- *             run from what is on disk.
- *   Skipped   Anything that is not a PDF, over --max-mb, or already here at the
- *             same size. Nothing is ever deleted.
+ *   Sharing   A folder is indexed only when it is shared "Anyone with the
+ *             link" (its files inherit that). A private folder is reported
+ *             and its old index removed, so no page links a file visitors
+ *             cannot open.
+ *   Index     wp-content/uploads/inspection-reports/<state>/index.json maps
+ *             each file's lookup key (see kop_inspection_archive_key()) to its
+ *             Drive URL. js/inspections/report-page.js and
+ *             kop_state_ut_inspection_details() read it.
  *
  * CLI only:
- *   php api/sync-inspection-archive.php                       report only
- *   php api/sync-inspection-archive.php apply                 copy (2000 per run)
- *   php api/sync-inspection-archive.php apply --only=nc --limit=500 --minutes=25
+ *   php api/sync-inspection-archive.php                  report only
+ *   php api/sync-inspection-archive.php apply            write the indexes
+ *   php api/sync-inspection-archive.php apply --only=ut
  *
- * Meant for cron: each run copies up to --limit files within --minutes and the
- * next run carries on. A lock file stops two runs overlapping.
+ * Meant for nightly cron. Listing Drive is all it does, so a run takes a
+ * minute or two. --limit, --minutes and --max-mb from the copying version are
+ * accepted and ignored.
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -30,10 +32,10 @@ if (php_sapi_name() !== 'cli') {
     exit('CLI only.');
 }
 
-$opts = array('limit' => 2000, 'minutes' => 25, 'max-mb' => 60, 'only' => '');
+$opts = array('only' => '');
 foreach (array_slice($argv, 1) as $arg) {
-    if (preg_match('/^--(limit|minutes|max-mb|only)=(.*)$/', $arg, $m)) {
-        $opts[$m[1]] = $m[1] === 'only' ? strtolower(trim($m[2])) : max(0, (int)$m[2]);
+    if (preg_match('/^--only=(.*)$/', $arg, $m)) {
+        $opts['only'] = strtolower(trim($m[1]));
     }
 }
 $apply = in_array('apply', $argv, true);
@@ -105,7 +107,7 @@ function kop_sia_children($folder_id, $folders_only = false) {
         $query = array(
             'q'        => "'" . $folder_id . "' in parents and trashed = false"
                 . ($folders_only ? " and mimeType = 'application/vnd.google-apps.folder'" : ''),
-            'fields'   => 'nextPageToken, files(id, name, mimeType, md5Checksum, size)',
+            'fields'   => 'nextPageToken, files(id, name, mimeType)',
             'pageSize' => '1000',
         );
         if ($page) {
@@ -120,41 +122,50 @@ function kop_sia_children($folder_id, $folders_only = false) {
     return $out;
 }
 
-/** Rewrite <dir>/index.json from the PDFs in the directory. */
-function kop_sia_write_index($dir) {
-    $files = array();
-    foreach (glob($dir . '/*.pdf') ?: array() as $path) {
-        $name = basename($path);
-        $files[kop_inspection_archive_key($name)] = $name;
+/** Whether anyone with the link can open the folder (and so the files in it). */
+function kop_sia_link_shared($folder_id) {
+    $res = kop_sd_drive_get('files/' . $folder_id, array('fields' => 'permissions(type, role)'));
+    foreach ((array)($res['permissions'] ?? array()) as $p) {
+        if (($p['type'] ?? '') === 'anyone') return true;
+    }
+    return false;
+}
+
+/** The index for one folder's PDFs: lookup key => Drive URL. */
+function kop_sia_index_entries(array $files) {
+    $out = array();
+    foreach ($files as $f) {
+        if (($f['mimeType'] ?? '') !== 'application/pdf' || !preg_match('/\.pdf$/i', $f['name'])) {
+            continue;
+        }
+        $url = 'https://drive.google.com/file/d/' . rawurlencode($f['id']) . '/view';
+        $out[kop_inspection_archive_key($f['name'])] = $url;
         // Utah checklists are looked up by checklist id alone: the page knows
         // the id but not the state's facility number in the file name.
-        if (preg_match('/_checklist_(\d+)\.pdf$/i', $name, $m)) {
-            $files['checklist_' . $m[1]] = $name;
+        if (preg_match('/_checklist_(\d+)\.pdf$/i', $f['name'], $m)) {
+            $out['checklist_' . $m[1]] = $url;
         }
     }
-    ksort($files);
-    $json = json_encode(array('generated' => gmdate('c'), 'files' => $files), JSON_UNESCAPED_SLASHES);
+    ksort($out);
+    return $out;
+}
+
+function kop_sia_write_index($dir, array $entries) {
+    if (!is_dir($dir) && !wp_mkdir_p($dir)) {
+        throw new RuntimeException('could not create ' . $dir);
+    }
+    $json = json_encode(array('generated' => gmdate('c'), 'files' => $entries), JSON_UNESCAPED_SLASHES);
     $tmp = $dir . '/index.json.' . getmypid() . '.tmp';
     if (@file_put_contents($tmp, $json) === false || !@rename($tmp, $dir . '/index.json')) {
         @unlink($tmp);
         throw new RuntimeException('could not write ' . $dir . '/index.json');
     }
-    return count($files);
 }
 
 $started = time();
 $uploads = wp_upload_dir();
 $base = trailingslashit($uploads['basedir']) . 'inspection-reports';
 $counts = array();
-$lines = array();
-$copied = 0;
-$budget_hit = '';
-$bump = function ($state, $what, $detail = '') use (&$counts, &$lines) {
-    $counts[$state][$what] = ($counts[$state][$what] ?? 0) + 1;
-    if ($detail !== '') {
-        $lines[] = array('state' => $state, 'result' => $what . ': ' . $detail);
-    }
-};
 
 try {
     $root = njfb_cloud_get_main_folder('google_drive');
@@ -170,79 +181,22 @@ try {
 
 foreach ($FOLDERS as $folder => $state) {
     if ($opts['only'] !== '' && $opts['only'] !== $state) continue;
-    if (!isset($top[$folder])) {
-        $counts[$state]['no Drive folder'] = 1;
-        continue;
-    }
     $dir = $base . '/' . $state;
-    if ($apply && !is_dir($dir) && !wp_mkdir_p($dir)) {
-        fwrite(STDERR, "could not create {$dir}\n");
-        exit(1);
-    }
-    foreach (glob($dir . '/*.part') ?: array() as $stale) {
-        @unlink($stale);
-    }
-
-    try {
-        $files = kop_sia_children($top[$folder]);
-    } catch (Throwable $e) {
-        $bump($state, 'failed', 'listing ' . $folder . ': ' . $e->getMessage());
+    if (!isset($top[$folder])) {
+        $counts[$state] = 'no Drive folder';
         continue;
     }
-
-    foreach ($files as $f) {
-        if ($f['mimeType'] !== 'application/pdf' || !preg_match('/\.pdf$/i', $f['name'])) {
+    try {
+        if (!kop_sia_link_shared($top[$folder])) {
+            $counts[$state] = 'not shared: set ' . $folder . ' to "Anyone with the link" in Drive';
+            if ($apply && is_file($dir . '/index.json')) @unlink($dir . '/index.json');
             continue;
         }
-        $name = preg_replace('/[^A-Za-z0-9._-]/', '_', $f['name']);
-        if ($name === '' || $name[0] === '.') {
-            $bump($state, 'skipped', $f['name']);
-            continue;
-        }
-        $dest = $dir . '/' . $name;
-        $size = (int)($f['size'] ?? 0);
-        if (is_file($dest) && filesize($dest) === $size) {
-            $bump($state, 'already here');
-            continue;
-        }
-        if ($size > $opts['max-mb'] * 1024 * 1024) {
-            $bump($state, 'too big', $f['name'] . ' (' . round($size / 1048576) . ' MB)');
-            continue;
-        }
-        if (!$apply) {
-            $bump($state, 'to copy');
-            continue;
-        }
-        if ($copied >= $opts['limit'] || time() - $started > $opts['minutes'] * 60) {
-            $budget_hit = $budget_hit ?: ($copied >= $opts['limit'] ? "reached --limit={$opts['limit']}" : "reached --minutes={$opts['minutes']}");
-            $bump($state, 'left for the next run');
-            continue;
-        }
-
-        $part = $dest . '.part';
-        try {
-            kop_sd_download($f['id'], $part);
-            $md5 = $f['md5Checksum'] ?? '';
-            if ($md5 !== '' && md5_file($part) !== $md5) throw new RuntimeException('download was incomplete (md5 differs)');
-            $head = (string)file_get_contents($part, false, null, 0, 4);
-            if ($head !== '%PDF') throw new RuntimeException('not a PDF');
-            if (!@rename($part, $dest)) throw new RuntimeException('could not move the file into place');
-            @chmod($dest, 0644);
-            $copied++;
-            $bump($state, 'copied');
-        } catch (Throwable $e) {
-            $bump($state, 'failed', $f['name'] . ': ' . $e->getMessage());
-        } finally {
-            if (file_exists($part)) @unlink($part);
-        }
-    }
-
-    if ($apply) {
-        try {
-            $counts[$state]['index entries'] = kop_sia_write_index($dir);
-        } catch (Throwable $e) {
-            $bump($state, 'failed', $e->getMessage());
-        }
+        $entries = kop_sia_index_entries(kop_sia_children($top[$folder]));
+        if ($apply) kop_sia_write_index($dir, $entries);
+        $counts[$state] = count($entries) . ' index entries' . ($apply ? ' written' : '');
+    } catch (Throwable $e) {
+        $counts[$state] = 'failed: ' . $e->getMessage();
     }
 }
 
@@ -251,6 +205,4 @@ echo json_encode(array(
     'applied' => $apply,
     'seconds' => time() - $started,
     'counts'  => $counts,
-    'stopped' => $budget_hit,
-    'items'   => $lines,
 ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

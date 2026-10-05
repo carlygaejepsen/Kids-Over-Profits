@@ -181,10 +181,14 @@ def capture(args):
     caps = load_json(CAPTURES, {})
     index = load_json(INDEX, {})
     rows = [r for r in todo_rows(kinds) if r['key'] not in caps or (args.retry_thin and caps[r['key']].get('thin'))]
+    # News first (the rows that go to the news queue), then by the mirror each link names.
+    order = {k: i for i, k in enumerate(kinds)}
+    rows.sort(key=lambda r: (order.get(r['kind'], 99), re.match(r'^https?://([^/]+)', r['url']).group(1).lower(), r['key']))
     if args.limit:
         rows = rows[:args.limit]
     print('%d archive.today links to read (%d read before)' % (len(rows), len(caps)), flush=True)
     done = captchas = 0
+    last_at = (0, time.time())
     with sync_playwright() as p:
         ctx = p.chromium.launch_persistent_context(os.path.join(OUT, 'profile'), channel='chrome', headless=False, viewport=None)
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
@@ -201,7 +205,11 @@ def capture(args):
                 print('  could not open %s: %s' % (row['url'], str(e).splitlines()[0][:120]), flush=True)
                 time.sleep(hi)
                 continue
-            captchas += is_captcha(page)
+            if is_captcha(page):
+                captchas += 1
+                print('  %s CAPTCHA #%d after %d pages and %.1f minutes since the last one'
+                      % (time.strftime('%H:%M:%S'), captchas, done - last_at[0], (time.time() - last_at[1]) / 60), flush=True)
+                last_at = (done, time.time())
             if is_captcha(page) and not wait_for_person(page):
                 print('No answer to the CAPTCHA for %d minutes; stopping. Run again to carry on.' % (CAPTCHA_WAIT // 60))
                 break

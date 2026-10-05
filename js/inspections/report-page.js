@@ -49,10 +49,10 @@
  *   violationsNote     For states whose data carries no findings: shown instead
  *                      of an empty list when a violations sort is chosen, so
  *                      "no results" is not mistaken for "no violations".
- *   archiveState       Two-letter code of the state's copies on this site
- *                      (wp-content/uploads/inspection-reports/<code>/, copied
- *                      from Drive by api/sync-inspection-archive.php). Its
- *                      index.json loads with the data; report() then adds
+ *   archiveState       Two-letter code of the state's archived copies in Drive,
+ *                      indexed by api/sync-inspection-archive.php in
+ *                      wp-content/uploads/inspection-reports/<code>/index.json
+ *                      (key => Drive URL). It loads with the data; report() then adds
  *                      ctx.archiveLink(urlOrName) to its links.
  *
  * Tones: 'flagged' (violations), 'clean' (inspected, none found), 'repeat'
@@ -60,8 +60,8 @@
  *
  * ctx: { escapeHtml, countFlagged, reports, formatDate, ui, archiveLink }.
  *
- * ctx.archiveLink(urlOrName, text) -> { href, text: 'Archived copy' } when this
- * site holds a copy of that document, else null (links skips nulls). It looks
+ * ctx.archiveLink(urlOrName, text) -> { href, text: 'Archived copy' } when the
+ * Drive archive holds a copy of that document, else null (links skips nulls). It looks
  * the file up by archiveKey(), which must match kop_inspection_archive_key() in
  * api/sync-inspection-archive.php.
  */
@@ -94,7 +94,11 @@
             .then(function (data) {
                 var files = (data && data.files) || {};
                 var out = {};
-                Object.keys(files).forEach(function (key) { out[key] = dir + encodeURIComponent(files[key]); });
+                // Entries are Drive URLs; a bare file name is an older copy on this site.
+                Object.keys(files).forEach(function (key) {
+                    var v = String(files[key]);
+                    out[key] = /^https:\/\//.test(v) ? v : dir + encodeURIComponent(v);
+                });
                 return out;
             })
             .catch(function () { return {}; });
