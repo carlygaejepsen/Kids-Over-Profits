@@ -258,6 +258,11 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply, $text = '') {
     // 'auto': Groq and Gemini take turns, and the other reads the article when one fails.
     // $text: the article as pasted by a reviewer (a Drive file or paywall the reader cannot open).
     $text = trim((string) $text);
+    if ($text === '') {
+        // An archive.today page the owner's browser read (api/lib-archive-captures.php).
+        require_once __DIR__ . '/lib-archive-captures.php';
+        $text = kop_archive_capture_text($row['article_url']);
+    }
     $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'articleText' => $text, 'provider' => 'auto', 'customInstructions' => ''), 120);
     if (!$ai['ok'] || empty($ai['body']['success']) || !is_array($ai['body']['data'] ?? null)) {
         $why = (string) ($ai['body']['error'] ?? ('HTTP ' . $ai['status']));
@@ -387,6 +392,12 @@ function kop_enrich_lawsuit_ids(PDO $pdo, $limit, array $ids = array()) {
 
 /** A page or PDF as plain text ('' when nothing readable came back). */
 function kop_enrich_document_text($url) {
+    // archive.today pages read by the owner's browser (CAPTCHA): api/lib-archive-captures.php.
+    require_once __DIR__ . '/lib-archive-captures.php';
+    $captured = kop_archive_capture_text($url);
+    if ($captured !== '') {
+        return $captured;
+    }
     $res = wp_remote_get($url, array('timeout' => 45, 'redirection' => 5,
         'user-agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'));
     $type = is_wp_error($res) ? '' : (string) wp_remote_retrieve_header($res, 'content-type');

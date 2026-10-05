@@ -32,7 +32,9 @@ Rules (owner decisions 2026-10-01, PLAN.md Waiting on the owner item 18):
     Sent In records, a published post, the Google Docs, HEAL or wiki links files, or
     a news headline already in news_submissions.
   - News goes in under its original address where the Wayback link gives it
-    (the archived copy rides along for the reviewer and the queue note).
+    (the archived copy rides along for the reviewer and the queue note), or
+    where scripts/archive-today-capture.py read it from an archive.today page
+    (tmp/archive-today/captures.json; such a row keeps its archive.today key).
 
 The output names private documents' collections, so it is never committed:
 copy it to ~/kop-import/gdocs/sciad-links.json on the server. Nothing reaches a
@@ -400,6 +402,9 @@ def main():
             for fid, name, st in con.execute('SELECT id, name, state FROM facilities_v2')}
     ops = {oid: name for oid, name in con.execute('SELECT id, name FROM wpdl_kop_operators')}
     programs = json.load(open(os.path.join(SCIAD, 'programs.json'), encoding='utf-8'))
+    cap_path = os.path.join(ROOT, 'tmp', 'archive-today', 'captures.json')
+    captures = json.load(open(cap_path, encoding='utf-8')) if os.path.exists(cap_path) else {}
+    print('%d archive.today pages read with their original address' % sum(1 for c in captures.values() if c.get('original')))
     print('%d URLs on file, %d news titles, %d post URLs, %d already offered by Google Docs/HEAL/wiki'
           % (len(on_file), len(news_titles), len(post_urls), len(queued)))
 
@@ -432,6 +437,12 @@ def main():
         if orig:
             orig = strip_fragment(orig)
         url = strip_fragment(url)
+        # A short archive.today link names no address; the owner's browser read it from the page
+        # (scripts/archive-today-capture.py). The row keeps the archive key so a decided row stays decided.
+        captured = False
+        if not orig and ARCHIVE_TODAY.match(url):
+            orig = strip_fragment(captures.get(gx.normalize_url(url), {}).get('original') or '')
+            captured = bool(orig)
         target_url = orig or url
         h = sc.host(target_url)
         if PIRACY.search(h) or PIRACY.search(sc.host(url)):
@@ -527,7 +538,7 @@ def main():
                  'credit': CREDIT, 'credit_url': CREDIT_URL}
                 for cp in cats_paths[:12]]
         it = {
-            'key': gx.normalize_url(final),
+            'key': gx.normalize_url(url if captured else final),
             'url': final,
             'original': orig if final == url else '',
             'domain': gx.domain_of(final) + (' (archived)' if final == url and (orig or ARCHIVE_TODAY.match(url)) else ''),
