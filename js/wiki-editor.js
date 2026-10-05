@@ -299,9 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return '/wp-content/themes/child/api/wiki-stubs.php';
     }
 
-    // Which saved entries differ from their r/troubledteens wiki page
-    // (api/wiki-reddit-diff.php), keyed by lowercase program name. Loaded once;
-    // the index list redraws when it arrives.
+    // Which saved entries differ from their live r/troubledteens wiki page
+    // (api/wiki-reddit-diff.php, from scripts/reddit-wiki-live.py), keyed by the
+    // page slug. Loaded once; the index list redraws when it arrives.
     let redditDiffMap = null;
     async function loadRedditDiffMap() {
         if (redditDiffMap) return redditDiffMap;
@@ -319,16 +319,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function buildRedditDiffBadge(entry) {
-        if (!redditDiffMap) return null;
-        const diff = redditDiffMap[String(entry.name || '').trim().toLowerCase()]
-            || redditDiffMap[String(entry.normalizedName || '').trim().toLowerCase()];
-        if (!diff || !diff.differs) return null;
+        const slug = getSlugFromEntryUrl(entry.url);
+        const diff = redditDiffMap && slug ? redditDiffMap[slug.toLowerCase()] : null;
+        if (!diff || diff.state === 'same') return null;
+        const checked = diff.checked ? ` (checked ${diff.checked})` : '';
+        const labels = {
+            differs: diff.edited ? 'Edited here, differs from Reddit' : 'Differs from Reddit',
+            missing: 'Not on the Reddit wiki',
+            changed: 'Saved here since the Reddit check'
+        };
+        if (!labels[diff.state]) return null;
         const badge = document.createElement('span');
         badge.className = 'reddit-diff-badge';
-        badge.textContent = diff.edited ? 'Edited here, differs from Reddit' : 'Differs from Reddit';
-        badge.title = diff.edited
-            ? 'Someone saved changes to this entry here that are not on the r/troubledteens wiki page.'
-            : 'The text saved here does not match the r/troubledteens wiki page (the contact line and formatting are not counted).';
+        badge.textContent = labels[diff.state];
+        let title = {
+            differs: `The words saved here do not match the live r/troubledteens wiki page${checked}. The contact line, link addresses and formatting are not counted.`,
+            missing: `The r/troubledteens wiki has no page at this address${checked}; only the copy here has this entry.`,
+            changed: `This entry was saved here after the r/troubledteens wiki page was checked${checked}; run the check again to compare.`
+        }[diff.state];
+        (diff.samples || []).forEach((sample) => {
+            title += `
+Reddit: ${sample.reddit || '(nothing)'}
+Here: ${sample.ours || '(nothing)'}`;
+        });
+        badge.title = title;
         return badge;
     }
 

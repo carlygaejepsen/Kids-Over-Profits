@@ -205,8 +205,9 @@ get_header();
                     }
                 }
 
-                // Does this copy still match the r/troubledteens wiki page?
-                $reddit = $markdown !== '' ? kop_wiki_reddit_compare($item, $markdown) : null;
+                // Does this entry still match the live r/troubledteens wiki page?
+                // (scripts/reddit-wiki-live.py; no result = no note)
+                $reddit = kop_wiki_reddit_compare($item);
 
                 $btnLabel = $isOriginal ? 'View Wiki Entry' : 'View Generated Wiki Entry';
                 if ($markdown === '') $btnLabel = 'No Entry Content Available';
@@ -255,10 +256,19 @@ get_header();
 
                     <div class="wiki-card-footer">
                         Added on <?php echo esc_html($dateAdded); ?>
-                        <?php if ($reddit) : ?>
-                            <span class="wiki-reddit-status<?php echo $reddit['differs'] ? ' is-different' : ''; ?>">
-                                <?php echo $reddit['differs'] ? 'Differs from' : 'Same as'; ?>
-                                <a href="<?php echo esc_url($reddit['reddit_url']); ?>" target="_blank" rel="noopener noreferrer">the r/troubledteens wiki page</a>
+                        <?php if ($reddit) :
+                            $reddit_lead = array(
+                                'same'    => 'Same as',
+                                'differs' => 'Differs from',
+                                'missing' => 'Not on',
+                                'changed' => 'Updated here since we compared it with',
+                            )[$reddit['state']];
+                            $reddit_page = $reddit['state'] === 'missing' ? 'the r/troubledteens wiki' : 'the r/troubledteens wiki page';
+                            ?>
+                            <span class="wiki-reddit-status<?php echo $reddit['state'] === 'same' ? '' : ' is-different'; ?>">
+                                <?php echo esc_html($reddit_lead); ?>
+                                <a href="<?php echo esc_url($reddit['reddit_url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($reddit_page); ?></a><?php
+                                if ($reddit['checked'] !== '') echo esc_html(' (checked ' . $reddit['checked'] . ')'); ?>
                             </span>
                         <?php endif; ?>
                     </div>

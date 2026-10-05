@@ -41,10 +41,6 @@ $cases = array(
 foreach ($cases as $in => $want) {
     $check(kop_wiki_contact_normalize($in) === $want, 'rewrite: ' . $in);
 }
-$check(kop_wiki_reddit_norm("# **A**\n\nText. please contact [u/Signal-Strain9810](/u/Signal-Strain9810).\n\nLast revised by x")
-    === kop_wiki_reddit_norm("# A\n\n***\n\nText.  please contact $link."), 'compare ignores contact, footer, emphasis, rules');
-$check(kop_wiki_reddit_norm('He ran it.') !== kop_wiki_reddit_norm('He runs it.'), 'compare sees a changed word');
-
 // --- 2. PHP == JS ----------------------------------------------------------------
 $node = trim((string) shell_exec('node --version 2>&1'));
 if (preg_match('/^v\d+/', $node)) {
@@ -107,15 +103,29 @@ $check($before_updated === $pdo->query('SELECT id, updated_at FROM wiki_submissi
 $with_link = (int) $pdo->query("SELECT COUNT(*) FROM wiki_submissions WHERE generated_markdown LIKE '%message/compose?to=/r/troubledteens%'")->fetchColumn();
 echo "entries whose text now names modmail: $with_link\n";
 
-// --- 4. against Reddit ---------------------------------------------------------------
+// --- 4. against Reddit (scripts/reddit-wiki-live.py's result) ----------------------
+$fixture = tempnam(sys_get_temp_dir(), 'kopwl');
+file_put_contents($fixture, json_encode(array(
+    'checked' => '2026-10-05',
+    'pages' => array('same' => array('exists' => true, 'revised' => '2022-03-08', 'fetched' => '2026-10-05'),
+                     'diff' => array('exists' => true, 'revised' => '2023-01-01', 'fetched' => '2026-10-05'),
+                     'gone' => array('exists' => false, 'revised' => '', 'fetched' => '2026-10-05')),
+    'rows' => array('1' => array('slug' => 'same', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => false, 'samples' => array()),
+                    '2' => array('slug' => 'diff', 'updated_at' => '2026-06-08 19:38:15', 'edited' => true, 'differs' => true, 'samples' => array(array('reddit' => 'a', 'ours' => 'b'))),
+                    '3' => array('slug' => 'gone', 'updated_at' => '2026-06-08 19:38:15', 'edited' => false, 'differs' => true, 'samples' => array())),
+)));
+define('KOP_WIKI_REDDIT_LIVE_FILE', $fixture);
+$at = '2026-06-08 19:38:15';
+$state = function ($id, $updated) { $c = kop_wiki_reddit_compare(array('id' => $id, 'updated_at' => $updated)); return $c ? $c['state'] : null; };
+$check($state(1, $at) === 'same', 'matching entry reads same');
+$check($state(2, $at) === 'differs', 'differing entry reads differs');
+$check($state(3, $at) === 'missing', 'entry whose page is gone reads missing');
+$check($state(1, '2026-10-06 10:00:00') === 'changed', 'entry saved after the check reads changed, not same');
+$check($state(99, $at) === null, 'entry the check never reached gets no mark');
+$check(strpos(kop_wiki_reddit_compare(array('id' => 3, 'updated_at' => $at))['reddit_url'], '/gone') === false, 'missing page links the wiki index, not a dead page');
 $all = kop_wiki_reddit_compare_all($pdo);
-$differs = array_filter($all, function ($c) { return $c['differs']; });
-$edited = array_filter($differs, function ($c) { return $c['edited']; });
-echo 'entries with a Reddit page: ' . count($all) . ', differ: ' . count($differs) . ' (' . count($edited) . " edited here)\n";
-$check(count($all) > 200 && count($differs) < count($all) / 2, 'most imported entries match their Reddit page');
-if (in_array('--list', $argv, true)) {
-    foreach ($differs as $name => $c) echo '  ' . ($c['edited'] ? '[edited] ' : '') . $name . '  ' . $c['reddit_url'] . "\n";
-}
+echo 'compare_all on the mirror with the fixture: ' . count($all) . " slugs\n";
+unlink($fixture);
 
 echo $fail ? "\n$fail failed\n" : "\nall passed\n";
 exit($fail ? 1 : 0);

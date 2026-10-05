@@ -115,9 +115,12 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-volunteers
 # else the plugin form's groups
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-followup.php
 # Program wiki entries (wiki editor, /wiki-feed/): the contact is the r/troubledteens modmail (js/wiki-generation.js CONTACT_LINK ==
-# api/lib-wiki-contact.php; saved rows rewritten once by inc/wiki-contact.php, bump KOP_WIKI_CONTACT_VERSION to rerun); each entry
-# is compared with its Reddit page in markdown_output/ (editor index badge, feed card note; api/wiki-reddit-diff.php)
-php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, Reddit diffs
+# api/lib-wiki-contact.php; saved rows rewritten once by inc/wiki-contact.php, bump KOP_WIKI_CONTACT_VERSION to rerun). Each entry
+# is compared with its LIVE Reddit page (never markdown_output/, which is stale): fetch reads the pages in a real Chrome window
+# (solve Reddit's human check when it asks; resumable), compare pairs entries by the page they were imported from, never by name
+# -> js/data/reddit-wiki/live-compare.json (commit it) -> editor index badge + /wiki-feed/ note; no result = no mark
+python scripts/reddit-wiki-live.py fetch [--slugs a b] [--refresh] && python scripts/reddit-wiki-live.py compare [--list]   # sync tmp/prod.sqlite first
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, live-result states
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite

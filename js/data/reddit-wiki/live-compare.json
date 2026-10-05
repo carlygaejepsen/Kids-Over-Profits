@@ -1,0 +1,134 @@
+{
+ "about": "Program wiki entries against the live r/troubledteens wiki, from scripts/reddit-wiki-live.py",
+ "checked": "2026-10-05",
+ "pages": {
+  "gatewaytc": {
+   "exists": true,
+   "revised": "2023-06-07",
+   "fetched": "2026-10-05"
+  },
+  "hydect": {
+   "exists": false,
+   "revised": "",
+   "fetched": "2026-10-05"
+  },
+  "ironwoodme": {
+   "exists": true,
+   "revised": "2025-10-08",
+   "fetched": "2026-10-05"
+  },
+  "lakeland": {
+   "exists": true,
+   "revised": "2022-03-08",
+   "fetched": "2026-10-05"
+  },
+  "mountainsprings": {
+   "exists": true,
+   "revised": "2021-04-17",
+   "fetched": "2026-10-05"
+  },
+  "northwest": {
+   "exists": true,
+   "revised": "2023-11-27",
+   "fetched": "2026-10-05"
+  },
+  "sanmarcos": {
+   "exists": true,
+   "revised": "2022-03-02",
+   "fetched": "2026-10-05"
+  },
+  "youthvillages": {
+   "exists": false,
+   "revised": "",
+   "fetched": "2026-10-05"
+  }
+ },
+ "rows": {
+  "540": {
+   "slug": "gatewaytc",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": false,
+   "changed": 2,
+   "samples": []
+  },
+  "564": {
+   "slug": "ironwoodme",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": false,
+   "changed": 0,
+   "samples": []
+  },
+  "579": {
+   "slug": "lakeland",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": true,
+   "changed": 4,
+   "samples": [
+    {
+     "reddit": "u shroomskillet",
+     "ours": ""
+    },
+    {
+     "reddit": "u shroomskillet",
+     "ours": ""
+    }
+   ]
+  },
+  "610": {
+   "slug": "mountainsprings",
+   "updated_at": "2026-06-24 18:55:06",
+   "edited": false,
+   "differs": false,
+   "changed": 0,
+   "samples": []
+  },
+  "627": {
+   "slug": "northwest",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": false,
+   "changed": 2,
+   "samples": []
+  },
+  "673": {
+   "slug": "sanmarcos",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": false,
+   "changed": 0,
+   "samples": []
+  },
+  "776": {
+   "slug": "sanmarcos",
+   "updated_at": "2026-06-08 19:38:15",
+   "edited": false,
+   "differs": false,
+   "changed": 0,
+   "samples": []
+  },
+  "798": {
+   "slug": "mountainsprings",
+   "updated_at": "2026-08-29 00:58:24",
+   "edited": true,
+   "differs": true,
+   "changed": 164,
+   "samples": [
+    {
+     "reddit": "",
+     "ours": "information about the founders or notable staff at mountain springs preparatory academy..."
+    },
+    {
+     "reddit": "",
+     "ours": "information about the program structure at mountain springs preparatory academy has not..."
+    },
+    {
+     "reddit": "",
+     "ours": "neglect or lawsuits involving mountain springs preparatory academy has not been added y..."
+    }
+   ]
+  }
+ }
+}
