@@ -445,9 +445,9 @@
                 bits.push(labelEl);
             }
             var rowKey = e.key || (e.keys && e.keys.length === 1 ? e.keys[0] : '');
-            if (e.rename && rowKey) {
+            var src = item.source || state.source;
+            if (rowKey && (e.rename || (state.byKey[src] || {}).can_save)) {
                 // "Rename" on a link row saves just that link's label (the queue's own save), without redrawing the card.
-                var src = item.source || state.source;
                 var input = el('input', { type: 'text', class: 'rinbox-rename-name', 'aria-label': 'Name for this link', value: e.label || '' });
                 var form = el('form', { class: 'rinbox-rename rinbox-rename-row', hidden: true });
                 var rowMsg = el('span', { class: 'rinbox-rename-msg', role: 'status' });

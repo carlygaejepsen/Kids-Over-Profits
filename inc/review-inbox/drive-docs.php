@@ -208,9 +208,6 @@ function kop_rinbox_gdl_item(array $r) {
     $pending = $r['status'] === 'pending';
 
     $lines = array();
-    if (!empty($first['text'])) {
-        $lines[] = '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 420) . '"';
-    }
     if ($pending && (int) $r['facility_id'] > 0 && !kop_gdl_sure_match($r)) {
         $lines[] = 'Matched by a close name (' . $r['facility_how'] . '): check it is this facility.';
     }
@@ -543,7 +540,8 @@ function kop_rinbox_gdl_group_item($key) {
         $sub = ($kinds[$r['kind']] ?? $r['kind']) . ' · goes to ' . kop_rinbox_gdl_goes($r['kind'])
             . (!empty($sources[$r['source']]['label']) ? ' · ' . $sources[$r['source']]['label'] : '')
             . ((int) $r['facility_id'] > 0 && !kop_gdl_sure_match($r) ? ' · close name (' . $r['facility_how'] . '), check it' : '');
-        $note = !empty($first['text']) ? '"' . kop_rinbox_excerpt(preg_replace('#https?://\S+#', '[link]', (string) $first['text']), 200) . '"' : '';
+        // The words around the link in the doc are never shown: a link is named by its label alone.
+        $note = '';
         return array('key' => (string) $r['pkey'], 'label' => $r['label'] !== '' ? (string) $r['label'] : (string) $r['url'],
             'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note, 'rename' => true);
     };
