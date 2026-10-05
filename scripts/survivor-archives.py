@@ -11,7 +11,7 @@ linked to the site itself. Nothing is copied to this site.
   wwasp  WWASP Survivors (wwaspsurvivors.com): the Ben Trane trial record,
          WWASP seminar manuals, a parent manual, a lawsuit
   straights  thestraights.net (http only), nhym  nhym-alumni.org
-  sciad  SCIAD NET, the WWASP Survivor Truth archive: a Zotero library whose
+  sciad  SCIAD NET: a Zotero library whose
          Google Drive files (state records, court records, program documents,
          clippings) are listed; not crawled, read from the survey in tmp/sciad/
          (docs/PLAN.md 3.10), see build_sciad()
@@ -67,7 +67,7 @@ SITES = {
     'nhym': {'label': 'New Horizons Alumni Association', 'url': 'https://www.nhym-alumni.org/', 'host': 'nhym-alumni.org'},
     # SCIAD NET is a Zotero library whose documents sit on Google Drive (docs.google.com for
     # its few Google Docs); the credit links to the archive's page (decision 18).
-    'sciad': {'label': 'SCIAD NET, the WWASP Survivor Truth archive', 'url': 'https://wwaspsurvivorstruth.com/program-archive/',
+    'sciad': {'label': 'SCIAD NET', 'url': 'https://web.archive.org/web/20221007171605/https://www.sciad.net/',
               'host': 'drive.google.com'},
 }
 
@@ -611,8 +611,7 @@ def cmd_selftest(args):
 
 
 # ---- SCIAD NET -------------------------------------------------------------------
-# SCIAD NET (https://api.zotero.org/groups/4552235) is a Zotero library kept by WWASP
-# Survivor Truth; three quarters of its items are Google Drive files. It is not crawled:
+# SCIAD NET (https://api.zotero.org/groups/4552235) is a Zotero library; three quarters of its items are Google Drive files. It is not crawled:
 # the survey (docs/PLAN.md 3.10 step 3, tmp/sciad/survey.md) fetched every item, and its
 # analysis writes what the build reads:
 #   tmp/sciad/items.jsonl    one row per item: title, url, date, category, privacy class,

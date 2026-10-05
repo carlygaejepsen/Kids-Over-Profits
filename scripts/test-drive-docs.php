@@ -183,7 +183,7 @@ foreach ($by as $fid => $rows) {
         $credited = 0;
         foreach ($g['credits'] as $c) {
             $credited += $c['count'];
-            if ($c['url'] !== 'https://wwaspsurvivorstruth.com/program-archive/' || $c['label'] !== 'SCIAD NET, the WWASP Survivor Truth archive') {
+            if ($c['url'] !== 'https://web.archive.org/web/20221007171605/https://www.sciad.net/' || $c['label'] !== 'SCIAD NET') {
                 $credit_bad++;
             }
         }
@@ -226,7 +226,7 @@ foreach (array_slice($examples, 0, 12) as $e) {
 }
 
 echo "-- Where a link came from --\n";
-$credit = 'SCIAD NET, the WWASP Survivor Truth archive';
+$credit = 'SCIAD NET';
 $check('a Google Docs row names its doc', kop_gdl_source_line(array('source' => 'gdocs', 'source_doc' => 'Doc A')) === 'Google Doc: Doc A'
     && kop_gdl_source_line(array('source_doc' => 'Doc A')) === 'Google Doc: Doc A');
 $check('HEAL and wiki rows name themselves', kop_gdl_source_line(array('source' => 'heal', 'source_doc' => 'HEAL archive: heal-online.org/x.pdf')) === 'HEAL archive: heal-online.org/x.pdf'
@@ -238,10 +238,10 @@ $check('a Google Docs queue note is as before', $gnote === "Google Doc: Doc A\n\
 $snote = kop_gdl_queue_note(array('source' => 'sciad', 'source_doc' => 'SCIAD NET: Utah / X / News'),
     array('text' => 'News article filed in SCIAD NET', 'archive' => 'https://web.archive.org/web/2004/http://example.com/a'));
 $check('a SCIAD NET queue note credits it with its link and gives the archived copy',
-    strpos($snote, 'Found in ' . $credit . ' (https://wwaspsurvivorstruth.com/program-archive/)') === 0
+    strpos($snote, 'Found in ' . $credit . ' (https://web.archive.org/web/20221007171605/https://www.sciad.net/)') === 0
     && strpos($snote, 'Archived copy: https://web.archive.org/web/2004/http://example.com/a') !== false
     && strpos($snote, 'Utah / X') === false, str_replace("\n", ' | ', $snote));
-$check('the page credit is only for SCIAD NET', kop_facility_pages_resource_link_credit('SCIAD NET, the WWASP Survivor Truth archive') !== null
+$check('the page credit is only for SCIAD NET', kop_facility_pages_resource_link_credit('SCIAD NET') !== null
     && kop_facility_pages_resource_link_credit('Google Doc: X') === null && kop_facility_pages_resource_link_credit('') === null);
 
 if (is_array($sciad)) {
@@ -276,7 +276,7 @@ if (is_array($sciad)) {
         $by_kind[$it['category']] = ($by_kind[$it['category']] ?? 0) + 1;
         if (($it['source'] ?? '') !== 'sciad') $bad_source++;
         foreach ((array) $it['seen'] as $s) {
-            if (($s['credit'] ?? '') !== $credit || ($s['credit_url'] ?? '') !== 'https://wwaspsurvivorstruth.com/program-archive/'
+            if (($s['credit'] ?? '') !== $credit || ($s['credit_url'] ?? '') !== 'https://web.archive.org/web/20221007171605/https://www.sciad.net/'
                 || strpos((string) $s['doc'], 'SCIAD NET: ') !== 0) {
                 $bad_source++;
             }

@@ -2243,15 +2243,16 @@ if (!function_exists('kop_facility_pages_resource_links')) {
 
 if (!function_exists('kop_facility_pages_resource_link_credit')) {
     /**
-     * The credit a resource link's source asks for, linked: SCIAD NET, the
-     * WWASP Survivor Truth archive (owner decision 2026-10-01, added through
-     * KOP Tools > Drive Docs). Null for every other source.
+     * The credit a resource link's source asks for, linked: SCIAD NET, to its
+     * archived page (owner decision 2026-10-01, added through KOP Tools > Drive
+     * Docs; records added before 2026-10-05 carry a longer source label, which
+     * the prefix still matches). Null for every other source.
      *
      * @return array{label: string, url: string}|null
      */
     function kop_facility_pages_resource_link_credit($source) {
         if (stripos((string) $source, 'SCIAD NET') === 0) {
-            return array('label' => 'SCIAD NET, the WWASP Survivor Truth archive', 'url' => 'https://wwaspsurvivorstruth.com/program-archive/');
+            return array('label' => 'SCIAD NET', 'url' => 'https://web.archive.org/web/20221007171605/https://www.sciad.net/');
         }
         return null;
     }

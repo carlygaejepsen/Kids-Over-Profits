@@ -122,7 +122,7 @@ $check('hosts: drive and docs for sciad alone',
 mkdir($fixture . '/sciad/f', 0777, true);
 mkdir($fixture . '/sciad/o', 0777, true);
 $D = 'https://drive.google.com/file/d/';
-$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET, the WWASP Survivor Truth archive',
+$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET',
     'url' => 'https://evil.example/', 'facilities' => array('7' => 6), 'operators' => array('3' => 1)));
 $put('sciad/f/7.json', array('files' => array(
     array('url' => $D . 'AAAAAAAAAAAAAAAAAAAAAAAAA/view', 'name' => 'State record, 2019-02-26', 'group' => 'DHS Records'),
@@ -138,7 +138,7 @@ $put('ssi/f/8.json', array('files' => array(array('url' => $D . 'EEEEEEEEEEEEEEE
 $put('ssi/index.json', array('built' => '2026-10-01', 'label' => 'Surviving Straight Inc.',
     'facilities' => array('7' => 4, '8' => 1), 'operators' => array()));
 kop_survivor_archives_index(true);
-$check('sciad index url is the archive page, not the build', kop_survivor_archives_index()['sciad']['url'] === 'https://wwaspsurvivorstruth.com/program-archive/');
+$check('sciad index url is the archive page, not the build', kop_survivor_archives_index()['sciad']['url'] === 'https://web.archive.org/web/20221007171605/https://www.sciad.net/');
 $check('another site keeps its home page', kop_survivor_archives_index()['ssi']['url'] === 'https://survivingstraightinc.com/');
 $check('a Drive link on another site is dropped', kop_survivor_archives('f', 8) === array());
 $a = kop_survivor_archives('f', 7);
@@ -148,7 +148,7 @@ $check('sciad lists its https Drive and Docs links once each', $sc && $sc['count
     && array_column($sc['groups'], 'group') === array('DHS Records', 'Program Documents'), $sc ? $sc['count'] . ' files' : 'none');
 $html = kop_survivor_archives_render($a, 'Program & Co');
 $check('sciad block credits the archive, linked',
-    strpos($html, '<h3 class="kop-fp-subhead">From <a href="https://wwaspsurvivorstruth.com/program-archive/" target="_blank" rel="noopener">SCIAD NET, the WWASP Survivor Truth archive</a></h3>') !== false
+    strpos($html, '<h3 class="kop-fp-subhead">From <a href="https://web.archive.org/web/20221007171605/https://www.sciad.net/" target="_blank" rel="noopener">SCIAD NET</a></h3>') !== false
     && strpos($html, '2 documents about Program &amp; Co that Kids Over Profits does not hold a copy of. SCIAD NET keeps them on Google Drive') !== false);
 $check('the other sites keep their own heading', strpos($html, '<h3 class="kop-fp-subhead">From Surviving Straight Inc.</h3>') !== false
     && strpos($html, 'Surviving Straight Inc. published and Kids Over Profits') !== false);
@@ -162,7 +162,7 @@ for ($i = 0; $i < 600; $i++) {
     $many[] = array('url' => $D . sprintf('F%024d', $i) . '/view', 'name' => 'Doc ' . $i, 'group' => $i % 2 ? 'Court records' : 'DHS Records');
 }
 $put('sciad/f/7.json', array('files' => $many));
-$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET, the WWASP Survivor Truth archive', 'facilities' => array('7' => 600), 'operators' => array()));
+$put('sciad/index.json', array('built' => '2026-10-01', 'label' => 'SCIAD NET', 'facilities' => array('7' => 600), 'operators' => array()));
 kop_survivor_archives_index(true);
 $t0 = microtime(true);
 $a = kop_survivor_archives('f', 7);

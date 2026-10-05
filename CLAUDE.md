@@ -224,7 +224,7 @@ php scripts/test-drive-docs.php --links=tmp/wiki/wiki-links.json
 # resourceLinks ({url, label, kind, source}, listed on the /facility/ page under "Materials and links")
 python scripts/gdocs-extract.py
 php scripts/test-drive-docs.php                   # every link on its real record, validator, exact undo, the page list
-# SCIAD NET (WWASP Survivor Truth's Zotero archive, survey in tmp/sciad/survey.md) links that are not Drive documents: news
+# SCIAD NET (a Zotero archive, survey in tmp/sciad/survey.md) links that are not Drive documents: news
 # (Wayback unwrapped), court records (neutral titles, never a party's name), program pages, media; private classes and what
 # KOP holds dropped -> tmp/sciad/sciad-links.json (report sciad-links-report.md), copied to ~/kop-import/gdocs/, never
 # committed; reviewed at Drive Docs (source filter, Add all per facility), every row it fills credits SCIAD NET, linked

@@ -26,7 +26,7 @@
  *
  * Three files feed it (kop_gdl_sources()): links.json (Google Docs),
  * heal-links.json (scripts/heal-docs.py) and sciad-links.json
- * (scripts/sciad-links.py: SCIAD NET, the WWASP Survivor Truth archive, about
+ * (scripts/sciad-links.py: SCIAD NET, about
  * 13,000 links). A source with a credit puts it, not a doc name, on every
  * record and queue row it fills; the facility page shows it linked. At that
  * volume the screen filters by source, caps each card at KOP_GDL_CARD_ROWS
@@ -112,8 +112,8 @@ function kop_gdl_sources() {
         'sciad' => array(
             'label'      => 'SCIAD NET',
             'file'       => 'sciad-links.json',
-            'credit'     => 'SCIAD NET, the WWASP Survivor Truth archive',
-            'credit_url' => 'https://wwaspsurvivorstruth.com/program-archive/',
+            'credit'     => 'SCIAD NET',
+            'credit_url' => 'https://web.archive.org/web/20221007171605/https://www.sciad.net/',
             'submitter'  => 'SCIAD NET import',
         ),
     );
@@ -859,7 +859,7 @@ function kop_render_drive_docs_page() {
     }
     echo '<p>Links from your Google Docs and Sheets, documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine), '
         . 'links on the r/troubledteens wiki\'s pages, and the news, court records, program pages and media in '
-        . '<a href="' . esc_url($sources['sciad']['credit_url']) . '" target="_blank" rel="noopener">SCIAD NET, the WWASP Survivor Truth archive</a>, '
+        . '<a href="' . esc_url($sources['sciad']['credit_url']) . '" target="_blank" rel="noopener">SCIAD NET</a>, '
         . 'that the database does not have yet, one card per facility. '
         . 'Each shows where it came from and the words around it. Pick a source to work through one at a time.</p>'
         . '<ol class="kop-gdl-how"><li><strong>Read down a card.</strong> Links whose facility is a sure match start ticked; untick anything that is not about this place.</li>'

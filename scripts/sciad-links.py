@@ -7,7 +7,7 @@ offered at KOP Tools > Drive Docs beside the Google Docs and HEAL links
     python scripts/sciad-links.py [--out tmp/sciad/sciad-links.json]
 
 Inputs (tmp/sciad/, gitignored; the survey built them, see tmp/sciad/survey.md):
-  4552235/, 772277/  the Zotero pages of SCIAD NET (WWASP Survivor Truth's
+  4552235/, 772277/  the Zotero pages of SCIAD NET (the
                      archive) and of the WWASP Survivors group
   items.jsonl        one row per SCIAD NET item: category, privacy class,
                      program collections, record targets, duplicate flags
@@ -58,8 +58,8 @@ spec = importlib.util.spec_from_file_location('gdocs_extract', os.path.join(ROOT
 gx = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gx)
 
-CREDIT = 'SCIAD NET, the WWASP Survivor Truth archive'
-CREDIT_URL = 'https://wwaspsurvivorstruth.com/program-archive/'
+CREDIT = 'SCIAD NET'
+CREDIT_URL = 'https://web.archive.org/web/20221007171605/https://www.sciad.net/'
 
 ARCHIVE_TODAY = re.compile(r'^https?://archive\.(?:ph|today|is|li|vn|fo|md)/', re.I)
 # Sub-collections whose items are private by what they are (beyond the survey's classes).

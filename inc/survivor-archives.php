@@ -14,7 +14,7 @@
  *   js/data/survivor-archives/<site>/o/<id>.json  the same for an operator
  *
  * The facility and operator pages list them in their Documents section,
- * linked to the site. SCIAD NET (the WWASP Survivor Truth archive) keeps its
+ * linked to the site. SCIAD NET keeps its
  * collection on Google Drive: its documents link to Drive, and its block credits
  * the archive's page. Nothing is copied to this site.
  */
@@ -51,7 +51,7 @@ if (!function_exists('kop_survivor_archives_hosts')) {
 if (!function_exists('kop_survivor_archives_home')) {
     /** The page a site's block links: its home page; for SCIAD NET the archive's own page (the credit). */
     function kop_survivor_archives_home($site) {
-        if ($site === 'sciad') return 'https://wwaspsurvivorstruth.com/program-archive/';
+        if ($site === 'sciad') return 'https://web.archive.org/web/20221007171605/https://www.sciad.net/';
         $sites = kop_survivor_archives_sites();
         return kop_survivor_archives_scheme($site) . '://' . ($site === 'nhym' ? 'www.' : '') . ($sites[$site] ?? '') . '/';
     }
