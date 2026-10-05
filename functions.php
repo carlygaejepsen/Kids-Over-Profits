@@ -149,6 +149,8 @@ require_once get_stylesheet_directory() . '/inc/facility-suggest.php';
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links)
 require_once get_stylesheet_directory() . '/inc/inspection-links.php';
+// What the inspection reports add up to, by company, facility and state (KOP Tools > Inspection Rankings)
+require_once get_stylesheet_directory() . '/inc/inspection-rollup.php';
 // Pictures in editor content fill the text column or sit centred (css/content-images.css)
 require_once get_stylesheet_directory() . '/inc/content-images.php';
 // Links read as words, never as long web addresses (the_content filter + js/url-labels.js)

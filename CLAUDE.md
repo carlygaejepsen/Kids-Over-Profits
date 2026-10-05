@@ -90,6 +90,12 @@ php scripts/test-operator-history-seed.php      # fill, replace untouched drafts
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes.php   # suggestions, group Newport Academy CA, pages, undo, on a temp copy
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
+# Inspection rankings (KOP Tools > Inspection Rankings, inc/inspection-rollup.php): worst companies, facilities and states by
+# approved serious findings (deaths, staff assaults, ...) and the states' own verdicts (citations, high-risk, repeat,
+# substantiated complaints; kop_irl_state_measures() says which state publishes what, the rest show a dash). An hourly batch
+# counts each report once into inspection_report_counts (bump kop_irl_version() after changing a rule); records and companies
+# take inspection rows by the facility pages' name rule + Inspection Links. Pending findings are admin-only, never public
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-inspection-rollup.php [--list]   # rules, full count on an in-memory copy, page parity, the screen
 # Duplicate facility records (KOP Tools > Merge Duplicates, inc/facility-merge.php + facility-merge-match.php): pairs found
 # automatically (same words, one word apart, spelling, company name in front, same street address; renamed programs never),
 # merged with one click: doc fields join, every table/JSON/option pointing at the dropped id moves (kop_fmerge_ref_tables(),
@@ -371,6 +377,7 @@ to the program aggregate otherwise.
 - `{prefix}kop_volunteers` / `{prefix}kop_volunteer_recs` - Volunteer reviewers (name, hash of their link's token) and their approve/reject/not sure recommendations on review inbox items, closed with the admin's decision (`inc/review-volunteers.php`)
 - `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named on a staff list (`personId` on each `facilities_v2` staff entry) and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
+- `inspection_report_counts` - Each inspection report's state verdicts (citations, high-risk, repeat, complaints, substantiated) as JSON, its year and a content hash so a report stored twice counts once; filled hourly (`inc/inspection-rollup.php`)
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
 - `news_facility_candidates` / `news_facility_scans` - Every facility name from the news with no record and what the scan decided (created, matched, possible duplicate, provider, not a facility), one row per name, and which articles it has read (`inc/facility-discovery.php`)
 - `indigenous_schools` / `indigenous_school_news` - Indian boarding, residential and mission schools, kept out of the facility tables (never on facility pages, hubs, map, search or open data), and which articles are about each (school_id 0 = the schools in general); the news scan files a school it finds as `review = 'pending'` (`inc/indigenous-schools.php`)

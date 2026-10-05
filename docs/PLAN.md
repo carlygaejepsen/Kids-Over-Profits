@@ -599,6 +599,21 @@ updated.
    plans clean. **Owner:** approve
    each state's first post (run it from the launcher), then publish its page.
 
+7. **Inspection rankings** (started 2026-10-05, `inc/inspection-rollup.php`,
+   KOP Tools > Inspection Rankings). Built: the hourly count of every report's
+   state verdicts into `inspection_report_counts`, the rollup by company,
+   facility and state, and the admin screen (pending findings shown there
+   only). Owner rule: public numbers are approved findings plus the states'
+   own verdicts. Against the 2026-09-30 mirror only 22 companies and 876
+   records reach any inspection row, because `kop_operator_facilities` links
+   643 facilities to 47 companies; the company view is only as complete as
+   those links. Next, in order: (a) look over the screen once prod has
+   counted (about a day of hourly runs, or "Count the next reports now");
+   (b) review the North Carolina queue (782 pending), since no NC finding is
+   approved yet; (c) a public page, ranked within each state, with the source
+   table under it; (d) a block on each facility and company page; (e)
+   per-bed rates where the state gives capacity.
+
 The FL/NC lite list has one standing rule: the PHP readers in
 `api/lib-inspection-text-signals.php` must match `nc.js` and `fl.js`
 exactly. Change both, bump `kop_its_version()`, and run
