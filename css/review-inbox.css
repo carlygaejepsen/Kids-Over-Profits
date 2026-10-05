@@ -533,6 +533,34 @@ button.rinbox-tag-x:focus-visible {
     margin-top: 2px;
 }
 
+.rinbox-row-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    flex-basis: 100%;
+}
+
+.rinbox-row-tools button.rinbox-btn {
+    padding: 2px 10px;
+    font-size: 13px;
+}
+
+.rinbox-row-tools select.rinbox-row-kind {
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    padding: 2px 6px;
+    font: inherit;
+    font-size: 13px;
+    max-width: 100%;
+}
+
+.rinbox-rename-msg.is-error {
+    color: var(--kop-coral-pink-ink, #B3261E);
+}
+
 .rinbox-rename-msg {
     font-size: 13px;
     color: var(--kop-text-muted, #4A5568);

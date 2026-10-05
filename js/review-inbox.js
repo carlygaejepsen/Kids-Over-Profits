@@ -418,6 +418,22 @@
      * ({keys, label, url?, sub, note?, checked, items?}). The card's actions
      * get the ticked links' keys as params.picked (paramsOf).
      */
+    /** Draw a checklist card again after one of its rows changed, keeping what was ticked and which rows were open. */
+    function refreshChecklistCard(node, item, src, message) {
+        var picked = node.kopPicked ? node.kopPicked() : [];
+        var open = [];
+        node.querySelectorAll('.rinbox-check-more').forEach(function (d, i) { if (d.open) open.push(i); });
+        return api('item', null, { source: src, key: item.key }).then(function (res) {
+            var next = res.item;
+            if (!next) { fillCard(node, item, state.byKey[src], src, message); return; }
+            (next.checklist || []).forEach(function (e) {
+                e.checked = (e.keys || []).some(function (k) { return picked.indexOf(k) !== -1; });
+            });
+            fillCard(node, next, state.byKey[src], src, message);
+            node.querySelectorAll('.rinbox-check-more').forEach(function (d, i) { if (open.indexOf(i) !== -1) d.open = true; });
+        });
+    }
+
     function checklistBox(item, node, pane, prefix) {
         var boxes = [];
         var count = el('span', { class: 'rinbox-check-count' });
@@ -446,19 +462,36 @@
             }
             var rowKey = e.key || (e.keys && e.keys.length === 1 ? e.keys[0] : '');
             var src = item.source || state.source;
+            var tools = item.row_tools || {};
             if (rowKey && (e.rename || (state.byKey[src] || {}).can_save)) {
-                // "Rename" on a link row saves just that link's label (the queue's own save), without redrawing the card.
+                // Each link row has the card tools for that one link: Rename, Kind and "Name it with AI".
+                // A change saves through the queue's own save/ai, then the card is drawn again with its ticks kept.
+                var bar = el('div', { class: 'rinbox-row-tools' });
+                var rowMsg = el('span', { class: 'rinbox-rename-msg', role: 'status' });
                 var input = el('input', { type: 'text', class: 'rinbox-rename-name', 'aria-label': 'Name for this link', value: e.label || '' });
                 var form = el('form', { class: 'rinbox-rename rinbox-rename-row', hidden: true });
-                var rowMsg = el('span', { class: 'rinbox-rename-msg', role: 'status' });
                 var btn = el('button', { type: 'button', class: 'rinbox-btn rinbox-btn-undo rinbox-rename-toggle', text: 'Rename', 'aria-expanded': 'false' });
+                var busy = function (on, text) {
+                    bar.querySelectorAll('button, select').forEach(function (b) { b.disabled = on; });
+                    form.querySelectorAll('button, input').forEach(function (b) { b.disabled = on; });
+                    rowMsg.className = 'rinbox-rename-msg';
+                    rowMsg.textContent = text || '';
+                };
+                var change = function (kind, body, working) {
+                    busy(true, working);
+                    api(kind, Object.assign({ source: src, key: rowKey }, body)).then(function (res) {
+                        return refreshChecklistCard(node, item, src, res.message || 'Saved.');
+                    }).catch(function (err) {
+                        busy(false, err.message);
+                        rowMsg.className = 'rinbox-rename-msg is-error';
+                    });
+                };
                 form.appendChild(input);
                 form.appendChild(el('button', { type: 'submit', class: 'rinbox-btn rinbox-btn-neutral', text: 'Save name' }));
                 form.appendChild(el('button', {
                     type: 'button', class: 'rinbox-btn rinbox-btn-undo', text: 'Cancel',
                     onclick: function () { form.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
                 }));
-                form.appendChild(rowMsg);
                 btn.addEventListener('click', function () {
                     form.hidden = !form.hidden;
                     btn.setAttribute('aria-expanded', form.hidden ? 'false' : 'true');
@@ -468,16 +501,26 @@
                     ev.preventDefault();
                     var v = input.value.trim();
                     if (!v) { input.focus(); return; }
-                    rowMsg.textContent = 'Saving…';
-                    api('save', { source: src, key: rowKey, fields: { label: v } }).then(function () {
-                        labelEl.textContent = v;
-                        e.label = v;
-                        form.hidden = true;
-                        btn.setAttribute('aria-expanded', 'false');
-                        rowMsg.textContent = '';
-                    }).catch(function (err) { rowMsg.textContent = err.message; });
+                    change('save', { fields: { label: v } }, 'Saving…');
                 });
-                bits.push(btn);
+                bar.appendChild(btn);
+                if (tools.kinds && e.kind) {
+                    var kindSel = el('select', { class: 'rinbox-row-kind', 'aria-label': 'Kind of link' });
+                    Object.keys(tools.kinds).forEach(function (k) {
+                        kindSel.appendChild(el('option', { value: k, text: tools.kinds[k], selected: k === e.kind }));
+                    });
+                    kindSel.addEventListener('change', function () { change('save', { fields: { kind: kindSel.value } }, 'Saving…'); });
+                    bar.appendChild(kindSel);
+                }
+                if (tools.ai && (state.byKey[src] || {}).can_ai) {
+                    bar.appendChild(el('button', {
+                        type: 'button', class: 'rinbox-btn rinbox-btn-neutral rinbox-ai', text: 'Name it with AI',
+                        title: 'Reads the page this link points to and replaces the name with its own neutral title',
+                        onclick: function () { change('ai', {}, 'Reading the link…'); }
+                    }));
+                }
+                bar.appendChild(rowMsg);
+                bits.push(bar);
                 bits.push(form);
             }
             return bits;

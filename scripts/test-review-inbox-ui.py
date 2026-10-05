@@ -106,7 +106,7 @@ SOURCES = {"sources": [
      "help": "Articles that say a facility closed.", "can_save": True, "can_ai": True, "has_origins": True,
      "tools": [{"id": "scan", "label": "Scan the next articles now", "params": [{"name": "count", "label": "How many", "type": "number", "value": 10}]}]},
     {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting", "applied": "Added"}, "count": 2,
-     "native": False, "tool_url": "", "help": "", "can_save": False, "can_ai": False,
+     "native": False, "tool_url": "", "help": "", "can_save": True, "can_ai": True,
      "filters": [{"name": "kind", "label": "Kind", "options": {"news": "News article", "court": "Court record"}}]},
 ], "tags": ["follow up", "needs source", "Neglect"], "admins": [{"id": 1, "name": "Dani"}, {"id": 2, "name": "Pat"}],
     "me": 1, "held": {"mine": 1, "snoozed": 0}}
@@ -128,17 +128,24 @@ def drive_item(key, sure):
     }
 
 
+DRIVE_ROWS = {}   # label/kind changes the mocked save and ai make to the facility card's links
+
+
 def drive_card():
     """One card per facility: a link and three from one website folded into a row, Add/Skip the ticked ones."""
+    def row(k, label, kind="news"):
+        return dict({"label": label, "kind": kind}, **DRIVE_ROWS.get(k, {}))
     return {
         "key": "g:f9::", "title": "Sunrise Ranch", "subtitle": "4 links: 4 news articles", "status": "pending", "status_label": "Waiting",
         "selected": False, "fields": [], "moves": [], "links": [], "tags": [],
         "checklist": [
-            {"keys": ["k1"], "label": "Ranch under investigation", "url": "https://www.ksl.com/a", "sub": "News article · goes to news, live at once",
-             "note": "\"the ranch was cited\"", "checked": True, "rename": True},
+            dict({"keys": ["k1"], "url": "https://www.ksl.com/a", "sub": "News article · goes to news, live at once",
+                  "note": "", "checked": True, "rename": True}, **row("k1", "Ranch under investigation")),
             {"keys": ["k2", "k3", "k4"], "label": "sltrib.com: 3 news articles", "sub": "goes to news, live at once", "checked": True,
-             "items": [{"key": k, "label": "Tribune story " + k, "url": "https://www.sltrib.com/" + k, "sub": "", "note": "", "rename": True} for k in ("k2", "k3", "k4")]},
+             "items": [dict({"key": k, "url": "https://www.sltrib.com/" + k, "sub": "", "note": "", "rename": True}, **row(k, "Tribune story " + k))
+                       for k in ("k2", "k3", "k4")]},
         ],
+        "row_tools": {"kinds": {"news": "News article", "court": "Court record", "other": "Other"}, "ai": True},
         "actions": [{"id": "add_picked", "label": "Add ticked links", "style": "approve",
                      "params": [{"name": "facility", "label": "Record", "type": "facility", "value": 9, "optional": True}]},
                     {"id": "skip_picked", "label": "Skip ticked links", "style": "reject"}],
@@ -183,6 +190,14 @@ def main():
                     out = {"items": [closure_item("applied")], "total": 1}
                 else:
                     out = {"items": [closure_item(), closure_item(name="Canyon House", key="37")], "total": 2}
+            elif path == "item" and "source=drive" in url:
+                out = {"item": drive_card()}
+            elif path in ("save", "ai") and body["source"] == "drive":
+                if path == "ai":
+                    DRIVE_ROWS.setdefault(body["key"], {})["label"] = "AI title for " + body["key"]
+                else:
+                    DRIVE_ROWS.setdefault(body["key"], {}).update(body["fields"])
+                out = {"message": "Saved." if path == "save" else "Named.", "item": drive_item(body["key"], True)}
             elif path == "save":
                 f = body["fields"]
                 if body["source"] == "news":
@@ -415,8 +430,17 @@ def main():
             pg.wait_for_function("() => /Ranch cited by the state/.test(document.querySelector(\"[data-key='g:f9::'] .rinbox-check a\").textContent)")
             check(any(c[0] == "save" and c[1]["key"] == "k1" and c[1]["fields"] == {"label": "Ranch cited by the state"} for c in calls),
                   f"@{width} a link in the facility card is renamed from its row")
-            group.locator(".rinbox-check-bundle .rinbox-check-items li").first.locator(".rinbox-rename-toggle").click()
-            check(group.locator(".rinbox-check-items .rinbox-rename-name").first.is_visible(), f"@{width} links inside a folded website row can be renamed too")
+            check(group.locator(".rinbox-check-count").inner_text() == "1 of 4 links ticked", f"@{width} the card keeps its ticks after a row changes",
+                  group.locator(".rinbox-check-count").inner_text())
+            check(group.locator(".rinbox-check-more").first.get_attribute("open") is not None, f"@{width} an open website row stays open after a change")
+            row.locator("select.rinbox-row-kind").select_option("court")
+            pg.wait_for_function("() => document.querySelector(\"[data-key='g:f9::'] .rinbox-check select.rinbox-row-kind\").value === 'court'")
+            check(any(c[0] == "save" and c[1]["key"] == "k1" and c[1]["fields"] == {"kind": "court"} for c in calls), f"@{width} a link's kind changes from its row")
+            inner = group.locator(".rinbox-check-items li").first
+            inner.locator("button", has_text="Name it with AI").click()
+            pg.wait_for_function("() => /AI title for k2/.test(document.querySelector(\"[data-key='g:f9::'] .rinbox-check-items\").textContent)")
+            check(any(c[0] == "ai" and c[1]["source"] == "drive" and c[1]["key"] == "k2" for c in calls), f"@{width} Name it with AI runs on one link inside a folded row")
+            DRIVE_ROWS.clear()
             pg.screenshot(path=str(shots / f"drive-card-{width}.png"), full_page=True)
             group.locator("button", has_text="Add ticked links").click()
             pg.wait_for_function("() => /Added 1 link/.test(document.querySelector(\"[data-key='g:f9::']\").textContent)")

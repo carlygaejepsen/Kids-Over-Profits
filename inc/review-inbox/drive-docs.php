@@ -72,6 +72,7 @@ kop_rinbox_register('drive-docs', function () {
         'origins'  => 'kop_rinbox_gdl_origins',
         'act'      => 'kop_rinbox_gdl_act',
         'save'     => 'kop_rinbox_gdl_save',
+        'ai_fill'  => 'kop_rinbox_gdl_ai_name',
     );
 });
 
@@ -315,6 +316,45 @@ function kop_rinbox_gdl_item(array $r) {
     );
 }
 
+/**
+ * "Name it with AI": reads the page or PDF the link points to (or text the reviewer pasted) and replaces
+ * the label with a short neutral title, since labels copied from the docs are notes, not titles. A link
+ * still marked "Other" also gets a kind. Saved through kop_rinbox_gdl_save().
+ */
+function kop_rinbox_gdl_ai_name($key, $text = '') {
+    if (strncmp((string) $key, 'g:', 2) === 0) throw new RuntimeException('Use "Name it with AI" on one link of the card.');
+    $r = kop_rinbox_gdl_row($key);
+    if ($r['status'] !== 'pending') throw new RuntimeException('Undo it (or put it back to review) before editing.');
+    $page = trim((string) $text);
+    if ($page === '' && kop_rinbox_load_enrich()) {
+        try {
+            $page = trim((string) kop_enrich_document_text((string) $r['url']));
+        } catch (Throwable $e) {
+            $page = '';
+        }
+    }
+    if ($page === '') {
+        throw new RuntimeException('The AI could not open this link. Rename it by hand, or open it as its own card ("Show: one card per link") and paste its text.');
+    }
+    $kinds = kop_gdl_kinds();
+    $ask_kind = (string) $r['kind'] === 'other';
+    $prompt = "You name links for Kids Over Profits, a site documenting abuse in the troubled teen industry.\n"
+        . "Write a short, neutral, factual title (at most 90 characters) for the page below: for a news article or court record, its own headline or case title; "
+        . "otherwise say plainly what the page is (\"Instagram account of <program>\", \"<program> listing on <site>\").\n"
+        . "Use only what the page says. No crude words, no insults, no opinions. Never name a young person.\n"
+        . 'Answer with one JSON object and nothing else: {"label": "..."' . ($ask_kind ? ', "kind": one of ' . implode(', ', array_keys($kinds)) : '') . "}\n\n"
+        . 'Address: ' . $r['url'] . "\n\nPage text:\n" . mb_substr($page, 0, 12000);
+    kop_rinbox_load_ai();
+    $answer = kop_ai_extract_json(kop_ai_generate_alternating($prompt, array('maxTokens' => 300, 'temperature' => 0.1)));
+    $label = is_array($answer) ? trim(preg_replace('/\s+/u', ' ', (string) ($answer['label'] ?? ''))) : '';
+    if ($label === '') throw new RuntimeException('The AI answer was not readable. Try again.');
+    $fields = array('label' => mb_substr($label, 0, 200));
+    $kind = is_array($answer) ? (string) ($answer['kind'] ?? '') : '';
+    if ($ask_kind && $kind !== '' && $kind !== 'other' && isset($kinds[$kind])) $fields['kind'] = $kind;
+    kop_rinbox_gdl_save($key, $fields);
+    return array('message' => 'Named "' . $fields['label'] . '"' . (isset($fields['kind']) ? ' (' . $kinds[$fields['kind']] . ')' : '') . '.', 'label' => $fields['label']);
+}
+
 /** The row, or a helpful error. */
 function kop_rinbox_gdl_row($key) {
     $rows = kop_gdl_rows(array($key));
@@ -543,14 +583,14 @@ function kop_rinbox_gdl_group_item($key) {
         // The words around the link in the doc are never shown: a link is named by its label alone.
         $note = '';
         return array('key' => (string) $r['pkey'], 'label' => $r['label'] !== '' ? (string) $r['label'] : (string) $r['url'],
-            'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note, 'rename' => true);
+            'url' => (string) $r['url'], 'sub' => $sub, 'note' => $note, 'rename' => true, 'kind' => (string) $r['kind']);
     };
     $checklist = array();
     foreach ($bundles as $list) {
         $sure = kop_gdl_sure_match($list[0]) || (int) $list[0]['facility_id'] === 0;
         if (count($list) === 1) {
             $e = $describe($list[0]);
-            $checklist[] = array('keys' => array($e['key']), 'label' => $e['label'], 'url' => $e['url'], 'sub' => $e['sub'], 'note' => $e['note'], 'checked' => $sure, 'rename' => true);
+            $checklist[] = array('keys' => array($e['key']), 'label' => $e['label'], 'url' => $e['url'], 'sub' => $e['sub'], 'note' => $e['note'], 'checked' => $sure, 'rename' => true, 'kind' => $e['kind']);
             continue;
         }
         $counts = array();
@@ -584,6 +624,8 @@ function kop_rinbox_gdl_group_item($key) {
         'facility'     => $g['fid'] > 0 ? kop_rinbox_facility($g['fid']) : null,
         'fields'       => array(),
         'checklist'    => $checklist,
+        // Each link row edits its own name and kind and can be named by the AI (kop_rinbox_gdl_ai_name).
+        'row_tools'    => array('kinds' => $kinds, 'ai' => true),
         'actions'      => array(
             array('id' => 'add_picked', 'label' => 'Add ticked links', 'style' => 'approve',
                 'help' => 'Puts every ticked link where its kind goes, in one go: news, court records and bills straight onto the site (no second approval), '
