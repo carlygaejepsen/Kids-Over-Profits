@@ -246,7 +246,7 @@ function kop_enrich_post_json($url, array $body, $timeout) {
  * Read one news row's article and fill its empty fields. Returns
  * ['ok' => bool, 'id', 'title', 'filled' => [field...], 'error'].
  */
-function kop_enrich_news_row(PDO $pdo, $id, $apply) {
+function kop_enrich_news_row(PDO $pdo, $id, $apply, $text = '') {
     $st = $pdo->prepare('SELECT * FROM news_submissions WHERE id = ?');
     $st->execute(array((int) $id));
     $row = $st->fetch(PDO::FETCH_ASSOC);
@@ -255,7 +255,9 @@ function kop_enrich_news_row(PDO $pdo, $id, $apply) {
     }
     $api = get_stylesheet_directory_uri() . '/api/';
     // 'auto': Groq and Gemini take turns, and the other reads the article when one fails.
-    $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'provider' => 'auto', 'customInstructions' => ''), 120);
+    // $text: the article as pasted by a reviewer (a Drive file or paywall the reader cannot open).
+    $text = trim((string) $text);
+    $ai = kop_enrich_post_json($api . 'process-news-ai.php', array('url' => $row['article_url'], 'articleText' => $text, 'provider' => 'auto', 'customInstructions' => ''), 120);
     if (!$ai['ok'] || empty($ai['body']['success']) || !is_array($ai['body']['data'] ?? null)) {
         $why = (string) ($ai['body']['error'] ?? ('HTTP ' . $ai['status']));
         if (kop_enrich_rate_limited($why)) {
@@ -415,7 +417,7 @@ function kop_enrich_document_text($url) {
     return $text;
 }
 
-function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
+function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply, $text = '') {
     require_once __DIR__ . '/lawsuit-extraction-lib.php';
     $st = $pdo->prepare('SELECT * FROM lawsuits WHERE id = ?');
     $st->execute(array((int) $id));
@@ -431,10 +433,14 @@ function kop_enrich_lawsuit_row(PDO $pdo, $id, $apply) {
         }
         return array('ok' => false, 'id' => $id, 'error' => $why);
     };
-    if ($url === '') {
-        return $fail('no source address');
+    // $text: the complaint as pasted by a reviewer, read instead of the source address.
+    $text = trim((string) $text);
+    if ($text === '') {
+        if ($url === '') {
+            return $fail('no source address');
+        }
+        $text = kop_enrich_document_text($url);
     }
-    $text = kop_enrich_document_text($url);
     if (mb_strlen($text) < 400) {
         return $fail('the page gave no readable text (' . mb_strlen($text) . ' characters)');
     }

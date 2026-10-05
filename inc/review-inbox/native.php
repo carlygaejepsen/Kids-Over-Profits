@@ -129,9 +129,9 @@ foreach (array_keys(kop_rinbox_native_types()) as $kop_rinbox_native_key) {
             $spec['save'] = function ($key, array $fields) use ($type) { return kop_rinbox_native_save($type, $key, $fields); };
         }
         if ($type === 'news') {
-            $spec['ai_fill'] = function ($key) { return kop_rinbox_native_ai_enrich('news', $key); };
+            $spec['ai_fill'] = function ($key, $text = '') { return kop_rinbox_native_ai_enrich('news', $key, $text); };
         } elseif ($type === 'lawsuit') {
-            $spec['ai_fill'] = function ($key) { return kop_rinbox_native_ai_enrich('lawsuit', $key); };
+            $spec['ai_fill'] = function ($key, $text = '') { return kop_rinbox_native_ai_enrich('lawsuit', $key, $text); };
         }
         if ($t['tags'] === 'json') {
             $spec['tags_get'] = function ($key) use ($type) {
@@ -380,10 +380,10 @@ function kop_rinbox_native_unmove($type, $key) {
 }
 
 /** News and lawsuits: the site's own readers, which fill only empty fields. */
-function kop_rinbox_native_ai_enrich($type, $key) {
+function kop_rinbox_native_ai_enrich($type, $key, $text = '') {
     if (!kop_rinbox_load_enrich()) throw new RuntimeException('The AI reader is not installed.');
     $pdo = kop_rinbox_pdo();
-    $res = $type === 'news' ? kop_enrich_news_row($pdo, (int) $key, true) : kop_enrich_lawsuit_row($pdo, (int) $key, true);
+    $res = $type === 'news' ? kop_enrich_news_row($pdo, (int) $key, true, $text) : kop_enrich_lawsuit_row($pdo, (int) $key, true, $text);
     if (empty($res['ok'])) throw new RuntimeException('The AI could not fill it: ' . ($res['error'] ?? 'unknown error'));
     $filled = (array) ($res['filled'] ?? array());
     return array('filled' => $filled, 'message' => $filled

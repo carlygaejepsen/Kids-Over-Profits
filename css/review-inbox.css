@@ -365,6 +365,39 @@ button.rinbox-tag-x:focus-visible {
     color: var(--kop-midnight-blue, #000435);
 }
 
+/* "Paste text for the AI" (aiTextBox in js/review-inbox.js) */
+.rinbox-ai-paste {
+    flex-basis: 100%;
+    margin-top: 8px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-ai-paste summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.rinbox-ai-paste-help {
+    display: block;
+    margin: 6px 0 4px;
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.rinbox-ai-paste textarea.rinbox-ai-text {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font: inherit;
+    font-size: 14px;
+}
+
 .rinbox-native .rinbox-message {
     flex-basis: 100%;
     margin: 0;

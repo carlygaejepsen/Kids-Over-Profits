@@ -681,6 +681,24 @@
         draw();
     }
 
+    /**
+     * "Text for the AI": a folded box to paste what the link holds when the
+     * AI cannot open it (a Drive file, a paywall, a scan). Sent as 'text' to
+     * review-inbox/ai, which reads it instead of the link.
+     */
+    function aiTextBox(prefix) {
+        var area = el('textarea', { id: prefix + 'ai-text', rows: 6, class: 'rinbox-ai-text',
+            placeholder: 'Paste the article, document or page text here. Leave it empty to read the link.' });
+        var box = el('details', { class: 'rinbox-ai-paste' }, [
+            el('summary', { text: 'Paste text for the AI' }),
+            el('label', { for: prefix + 'ai-text', class: 'rinbox-ai-paste-help',
+                text: 'When the AI cannot open the link, paste its text here and click "Fill empty fields with AI".' }),
+            area
+        ]);
+        box.kopValue = function () { return area.value.trim(); };
+        return box;
+    }
+
     function previewButton(url, pane) {
         return el('button', {
             type: 'button', class: 'rinbox-pv-btn', text: 'Preview', 'aria-label': 'Preview ' + linkLabel(url) + ' here',
@@ -1014,12 +1032,14 @@
             });
             editor.appendChild(grid);
             var saveBtn = el('button', { type: 'submit', class: 'btn-save-edits', text: 'Save' });
+            var aiText = s.can_ai ? aiTextBox(prefix) : null;
             var aiBtn = s.can_ai ? el('button', {
                 type: 'button', class: 'btn-secondary rinbox-ai', text: 'Fill empty fields with AI',
-                title: 'Reads this item and the page it links to, and fills only the fields that are empty',
-                onclick: function () { run(node, item, s, src, 'ai', {}, aiBtn); }
+                title: 'Reads this item and the page it links to (or the text pasted below), and fills only the fields that are empty',
+                onclick: function () { run(node, item, s, src, 'ai', { text: aiText.kopValue() }, aiBtn); }
             }) : null;
             editor.appendChild(el('div', { class: 'rinbox-editor-actions' }, [saveBtn, aiBtn]));
+            if (aiText) editor.appendChild(aiText);
             editor.addEventListener('submit', function (e) {
                 e.preventDefault();
                 var fields = {};
@@ -1098,7 +1118,7 @@
         if (btn) btn.classList.add('is-busy');
         var payload = Object.assign({ source: src, key: item.key }, body);
         var busy = node.querySelector('.rinbox-message');
-        if (busy) { busy.hidden = false; busy.className = 'rinbox-message'; busy.textContent = kind === 'ai' ? 'Reading the item and its link…' : 'Working…'; }
+        if (busy) { busy.hidden = false; busy.className = 'rinbox-message'; busy.textContent = kind === 'ai' ? (body && body.text ? 'Reading the pasted text…' : 'Reading the item and its link…') : 'Working…'; }
         return api(kind, payload).then(function (res) {
             var next = res.item || null;
             if (next) {
@@ -1247,7 +1267,7 @@
             if (btn) btn.classList.add('is-busy');
             msg.hidden = false;
             msg.className = 'rinbox-message';
-            msg.textContent = kind === 'ai' ? 'Reading the article and filling empty fields…' : 'Working…';
+            msg.textContent = kind === 'ai' ? (body && body.text ? 'Reading the pasted text and filling empty fields…' : 'Reading the article and filling empty fields…') : 'Working…';
             api(kind, Object.assign({ source: src, key: item.key }, body)).then(function (res) {
                 if (decided) res.kopDecided = true;
                 after(res);
@@ -1295,11 +1315,13 @@
             }));
         });
         if (s.can_ai) {
+            var nativeText = aiTextBox('rinbox-n' + item.key + '-');
             row.appendChild(el('button', {
                 type: 'button', class: 'rinbox-btn rinbox-btn-neutral rinbox-ai', text: 'Fill empty fields with AI',
-                title: 'Reads the item and the page it links to, and fills only the fields that are empty',
-                onclick: function (e) { go('ai', {}, e.currentTarget); }
+                title: 'Reads the item and the page it links to (or the text pasted below), and fills only the fields that are empty',
+                onclick: function (e) { go('ai', { text: nativeText.kopValue() }, e.currentTarget); }
             }));
+            row.appendChild(nativeText);
         }
         row.appendChild(laterControl(item, src, row));
         row.kopAfterHold = function (res, next) {

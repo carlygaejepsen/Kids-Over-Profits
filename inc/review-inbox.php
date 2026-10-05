@@ -27,9 +27,10 @@
  *   'act'      fn(string $key, string $action, array $params): ['message' => ...]
  *              (throws on failure)
  *   'save'     fn(string $key, array $fields): ['message' => ...]   optional
- *   'ai_fill'  fn(string $key): ['filled' => [...]]                 optional;
+ *   'ai_fill'  fn(string $key, string $text): ['filled' => [...]]   optional;
  *              without it the generic filler reads the item's link and fills
- *              its empty editable fields through save
+ *              its empty editable fields through save. $text is what the
+ *              reviewer pasted in "Paste text for the AI", read instead of the link
  *   'tags_get' / 'tags_set'  fn(key) / fn(key, tags)   optional; else the
  *              shared {prefix}kop_review_tags table
  *   'origins'  fn(array $q): [{key, label, count}]   optional; the "Came from"
@@ -355,14 +356,16 @@ function kop_rinbox_is_empty($v) {
  * Gemini in turn), which answers JSON for those fields only. A select field
  * only takes one of its options. Saves through the source's save.
  */
-function kop_rinbox_ai_fill_generic($source, $key) {
+function kop_rinbox_ai_fill_generic($source, $key, $text = '') {
     $src = kop_rinbox_source($source);
     if (empty($src['save'])) throw new RuntimeException('This queue has no fields to fill.');
     $item = kop_rinbox_get_item($source, $key);
     $want = array();
     foreach ($item['fields'] as $f) {
         if (in_array($f['type'] ?? 'text', array('facility', 'number'), true) || !empty($f['readonly'])) continue;
-        if (kop_rinbox_is_empty($f['value'] ?? '')) $want[$f['name']] = $f;
+        // A name that is only the item's own address (a Drive Docs link with no label) counts as empty.
+        $bare = !is_array($f['value'] ?? '') && $item['url'] !== '' && trim((string) ($f['value'] ?? '')) === $item['url'];
+        if ($bare || kop_rinbox_is_empty($f['value'] ?? '')) $want[$f['name']] = $f;
     }
     if (!$want) return array('filled' => array(), 'message' => 'Every field already has something in it.');
 
@@ -373,15 +376,18 @@ function kop_rinbox_ai_fill_generic($source, $key) {
             $context .= "\n" . $f['label'] . ': ' . mb_substr($v, 0, 600);
         }
     }
-    $page = '';
-    if ($item['url'] !== '' && function_exists('kop_rinbox_load_enrich') && kop_rinbox_load_enrich()) {
+    // Pasted text stands in for the link (a Drive file or paywall the reader cannot open).
+    $page = trim((string) $text);
+    if ($page !== '') {
+        $context .= "\n\nText the reviewer pasted:\n" . mb_substr($page, 0, 12000);
+    } elseif ($item['url'] !== '' && function_exists('kop_rinbox_load_enrich') && kop_rinbox_load_enrich()) {
         try {
             $page = (string) kop_enrich_document_text($item['url']);
         } catch (Throwable $e) {
             $page = '';
         }
+        if ($page !== '') $context .= "\n\nText of " . $item['url'] . ":\n" . mb_substr($page, 0, 12000);
     }
-    if ($page !== '') $context .= "\n\nText of " . $item['url'] . ":\n" . mb_substr($page, 0, 12000);
 
     $spec = array();
     foreach ($want as $name => $f) {
@@ -654,7 +660,8 @@ function kop_rinbox_rest_ai(WP_REST_Request $req) {
         $source = (string) $req->get_param('source');
         $key = (string) $req->get_param('key');
         $src = kop_rinbox_source($source);
-        $res = !empty($src['ai_fill']) ? call_user_func($src['ai_fill'], $key) : kop_rinbox_ai_fill_generic($source, $key);
+        $text = mb_substr(trim((string) $req->get_param('text')), 0, 60000);
+        $res = !empty($src['ai_fill']) ? call_user_func($src['ai_fill'], $key, $text) : kop_rinbox_ai_fill_generic($source, $key, $text);
         $res = is_array($res) ? $res : array();
         return $res + array('message' => 'Done.', 'item' => kop_rinbox_after($source, $key));
     });
