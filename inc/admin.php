@@ -505,20 +505,20 @@ function kop_tool_page_specs() {
         // Ohio (owner, 2026-10-02).
         array('template' => 'page-state-reports.php', 'title' => 'Ohio Inspection Reports', 'slug' => 'oh-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Ohio Department of Children and Youth, which certifies group homes and children&#8217;s residential centers and, since July 2025, posts each agency&#8217;s compliance review reports in <a href="https://odjfs2.my.site.com/FindFosterCareAdoptionAgencies/s/">its agency search</a>: each rule found not in compliance, with any additional findings. Earlier reports are not online and need a public records request.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>A review belongs to the agency, not to one of its facilities. Where an agency also certifies foster or adoptive homes, those findings appear beside the residential ones, and the report does not say which facility a record came from. Technical assistance the state gives is shown apart and never counted as a finding. Ohio&#8217;s behavioral health licence has no public reports.</p><!-- /wp:paragraph -->'),
-        // West Virginia (owner review pending; do not publish before scope sign-off).
-        array('template' => 'page-state-reports.php', 'title' => 'West Virginia Inspection Reports', 'slug' => 'wv-reports', 'status' => 'draft', 'shared' => true,
-              'content' => '<!-- wp:paragraph --><p>These reports come from the West Virginia Department of Health and Human Resources, Office of Health Facility Licensure and Certification (OHFLAC), which licenses psychiatric residential treatment facilities and behavioral health services and publishes surveys in <a href="https://ohflac.wvdhhr.org/Apps/Lookup/FacilitySearch">its facility lookup</a>.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>OHFLAC licenses a provider&#8217;s health services. A group home&#8217;s own licence is held by the Bureau for Social Services, which does not publish inspection reports. Some surveys cover an agency rather than one location. This tracker is under review and will be published after its coverage is confirmed.</p><!-- /wp:paragraph -->'),
-        // Iowa (owner approval of the first post pending; published once it posts).
-        array('template' => 'page-state-reports.php', 'title' => 'Iowa Inspection Reports', 'slug' => 'ia-reports', 'status' => 'draft', 'shared' => true,
+        // West Virginia (owner, 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'West Virginia Inspection Reports', 'slug' => 'wv-reports', 'status' => 'publish', 'shared' => true,
+              'content' => '<!-- wp:paragraph --><p>These reports come from the West Virginia Department of Health and Human Resources, Office of Health Facility Licensure and Certification (OHFLAC), which licenses psychiatric residential treatment facilities and behavioral health services and publishes surveys in <a href="https://ohflac.wvdhhr.org/Apps/Lookup/FacilitySearch">its facility lookup</a>.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>OHFLAC licenses a provider&#8217;s health services. A group home&#8217;s own licence is held by the Bureau for Social Services, which does not publish inspection reports. Some surveys cover an agency rather than one location.</p><!-- /wp:paragraph -->'),
+        // Iowa (owner, 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'Iowa Inspection Reports', 'slug' => 'ia-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Iowa Department of Inspections, Appeals and Licensing, which surveys psychiatric medical institutions for children (PMICs) and posts every survey visit since 2018 in <a href="https://dia-hfd.iowa.gov/">its health facilities database</a>, including complaint and incident investigations: the federal statement of deficiencies, with what the surveyors found and the institution&#8217;s plan of correction. Institutions that have closed keep their reports here.</p><!-- /wp:paragraph -->'),
-        // Maryland (owner approval of the first post pending; published once it posts).
-        array('template' => 'page-state-reports.php', 'title' => 'Maryland Inspection Reports', 'slug' => 'md-reports', 'status' => 'draft', 'shared' => true,
+        // Maryland (owner, 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'Maryland Inspection Reports', 'slug' => 'md-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the Maryland Department of Human Services, Office of Licensing and Monitoring, which posts a summary of each licensing inspection of a residential child care program in <a href="https://dhs.maryland.gov/licensing-and-monitoring/">its public reports folder</a>.</p><!-- /wp:paragraph --><!-- wp:paragraph --><p>Each summary is one or two pages: the sites inspected, the type of inspection and each regulation cited with a one-line comment, split into violations that may present safety risks to children and those that do not. They are not full inspection narratives.</p><!-- /wp:paragraph -->'),
-        // South Dakota (owner approval of the first post pending; published once it posts).
-        array('template' => 'page-state-reports.php', 'title' => 'South Dakota Inspection Reports', 'slug' => 'sd-reports', 'status' => 'draft', 'shared' => true,
+        // South Dakota (owner, 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'South Dakota Inspection Reports', 'slug' => 'sd-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from the South Dakota Department of Social Services, Office of Licensing and Accreditation, which posts each youth care provider&#8217;s licensing studies, corrective action and compliance plans and fire, health and safety inspections in <a href="https://olapublic.sd.gov/youth-care-provider-search/">its public provider search</a>. Residential treatment, intensive residential treatment, group care, shelter care and independent living programs are listed. The state posts no complaint or investigation documents, and providers that leave its list keep their reports here.</p><!-- /wp:paragraph -->'),
-        // Virginia (owner approval of the first post pending; published once it posts).
-        array('template' => 'page-state-reports.php', 'title' => 'Virginia Inspection Reports', 'slug' => 'va-reports', 'status' => 'draft', 'shared' => true,
+        // Virginia (owner, 2026-10-05).
+        array('template' => 'page-state-reports.php', 'title' => 'Virginia Inspection Reports', 'slug' => 'va-reports', 'status' => 'publish', 'shared' => true,
               'content' => '<!-- wp:paragraph --><p>These reports come from two Virginia agencies. The Department of Behavioral Health and Developmental Services licenses psychiatric residential treatment facilities, therapeutic group homes and other residential services for children and posts its inspections and investigations, with the provider&#8217;s corrective action plan once finalized, in <a href="https://vadbhdsv7prod.glsuite.us/GLSuiteWeb/Clients/vadbhds/Public/ProviderSearch/ProviderSearchSearch.aspx">its provider search</a>. The Department of Social Services licenses the other children&#8217;s residential facilities and posts each inspection with the violations cited in <a href="https://www.dss.virginia.gov/licensed-care/search-licensing-programs/childrens-residential-facility-search/">its facility search</a>.</p><!-- /wp:paragraph -->'),
     );
 }
@@ -710,6 +710,37 @@ function kop_maybe_ensure_tool_pages() {
 }
 add_action('admin_init', 'kop_maybe_ensure_tool_pages');
 add_action('init', 'kop_maybe_ensure_tool_pages', 20);
+
+/**
+ * kop_ensure_tool_pages() never changes a page that already exists, so the
+ * trackers first created as drafts stay drafts after their spec says publish.
+ * Publish them once (owner, 2026-10-05), and drop the "under review" sentence
+ * West Virginia's draft was created with. A page someone has since trashed or
+ * set private is left alone.
+ */
+function kop_maybe_publish_draft_trackers() {
+    $version = '1';
+    if (get_option('kop_draft_trackers_published') === $version) {
+        return;
+    }
+    $review_note = ' This tracker is under review and will be published after its coverage is confirmed.';
+    foreach (array('wv-reports', 'ia-reports', 'md-reports', 'sd-reports', 'va-reports') as $slug) {
+        $page = get_page_by_path($slug);
+        if (!$page || $page->post_status !== 'draft') {
+            continue;
+        }
+        $update  = array('ID' => $page->ID, 'post_status' => 'publish');
+        $content = str_replace($review_note, '', $page->post_content);
+        if ($content !== $page->post_content) {
+            $update['post_content'] = wp_slash($content);
+        }
+        wp_update_post($update);
+    }
+    update_option('kop_draft_trackers_published', $version);
+}
+add_action('admin_init', 'kop_maybe_publish_draft_trackers');
+add_action('init', 'kop_maybe_publish_draft_trackers', 21);
+
 /**
  * Pages whose template is fixed by slug. Unlike kop_tool_page_specs(), several
  * pages can share one template here (state and country hubs), so nothing is
