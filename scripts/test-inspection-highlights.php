@@ -686,6 +686,52 @@ $wv = array('report_date' => '2024-11-12', 'raw_content' => '', 'categories_json
 $f = kop_ih_extract('WV', $wv);
 check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['state_label'], 'severity G') !== false, 'WV: a corrected tag is skipped; severity G is full weight');
 
+// Iowa (ia_scraper.py): the full finding from detail; E tags and the rule wording left out.
+$ia = array('report_date' => '2024-02-02', 'raw_content' => '', 'categories_json' => json_encode(array('visit_type' => 'Recertification, Complaint', 'complaint_numbers' => array('130840-C'),
+    'tags' => array(
+        array('tag' => 'N 145', 'regulation' => '483.358(f) ORDERS FOR USE OF RESTRAINT OR SECLUSION', 'finding' => 'cut'),
+        array('tag' => 'E 0001', 'regulation' => '483.475 EMERGENCY PREPAREDNESS', 'finding' => 'Based on record review, the facility had no emergency plan for residents.'),
+    ),
+    'detail' => array('tags' => array(
+        array('requirement' => 'Each order must ...', 'finding' => 'Based on record review and staff interview, staff held Resident 2 in a prone restraint and Resident 2 sustained a fractured collarbone.'),
+        array('requirement' => '', 'finding' => 'Based on record review, the facility had no emergency plan for residents.'),
+    )))));
+$f = kop_ih_extract('IA', $ia);
+check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['standard'], 'N 145') === 0, 'IA: one N tag, complaint numbers make it an investigation');
+$c = kop_ih_candidates('IA', $ia);
+check(count($c) === 1 && $c[0]['category'] === 'restraint_injury', 'IA: the restraint injury is queued');
+
+// Maryland (md_scraper.py): one-line comments, weighted by the state's own safety rating.
+$md = array('report_date' => '2023-06-01', 'raw_content' => '', 'categories_json' => json_encode(array('inspection_type' => 'Quarterly',
+    'safety_citations' => array(array('site' => 'Main', 'citation' => '[07.05.01.10C(2)', 'comment' => 'Staff member slapped a youth during a verbal altercation.', 'status' => 'CAP')),
+    'other_citations' => array(array('site' => 'Main', 'citation' => '07.05.01.15', 'comment' => 'Two smoke detectors lacked batteries.', 'status' => 'Resolved')),
+)));
+$f = kop_ih_extract('MD', $md);
+check(count($f) === 2 && $f[0]['factor'] === 1.0 && $f[1]['factor'] === 0.7 && strpos($f[0]['standard'], 'COMAR 07.05') === 0, 'MD: both blocks, the safety block at full weight');
+check(count(kop_ih_candidates('MD', $md)) === 1, 'MD: only the slap is queued');
+
+// South Dakota (sd_scraper.py): only corrective action plans, never compliance (fire, health) plans.
+$sd = static function (array $cats) { return array('report_date' => '2025-01-01', 'raw_content' => '', 'categories_json' => json_encode($cats)); };
+$items = array(array('rule' => '67:42:07:15', 'finding' => 'A staff member kicked a resident in the leg while escorting him to his room.', 'corrective_action' => 'Staff terminated.'));
+check(count(kop_ih_extract('SD', $sd(array('kind' => 'corrective_action_plan', 'plan_type' => 'corrective_action', 'items' => $items)))) === 1, 'SD: a corrective action plan finding is read');
+check(kop_ih_extract('SD', $sd(array('kind' => 'corrective_action_plan', 'plan_type' => 'compliance', 'items' => $items))) === array(), 'SD: a fire or health compliance plan is not');
+check(kop_ih_extract('SD', $sd(array('kind' => 'licensing_study', 'items' => $items))) === array(), 'SD: a licensing study is not');
+
+// Virginia (va_scraper.py): VDSS violations; DBHDS rows rated N or NS, never C or ND or a "No Violation" plan.
+$va = static function (array $cats) { return array('report_date' => '2024-09-09', 'raw_content' => '', 'categories_json' => json_encode($cats)); };
+$f = kop_ih_extract('VA', $va(array('source' => 'vdss', 'complaint_related' => true, 'comments' => 'Complaint alleged staff hit a child.',
+    'violations' => array(array('standard' => '22VAC40-151-680', 'description' => 'The facility did not protect a resident from harm.', 'findings' => 'Staff #1 pushed Resident #3 to the floor, causing a cut above the eye.', 'plan' => 'Retrain.')))));
+check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['text'], 'Retrain') === false && strpos($f[0]['text'], 'Complaint alleged') === false, 'VA: VDSS reads description and findings, not plan or comments');
+$dbhds = array('source' => 'dbhds', 'kind' => 'inspection', 'purpose' => 'Unannounced',
+    'citations' => array(array('standard' => '12VAC35-46-1000', 'comp' => 'NS N'), array('standard' => '12VAC35-46-320', 'comp' => 'C'), array('standard' => '12VAC35-46-330', 'comp' => 'ND')),
+    'detail' => array('citations' => array(
+        array('noncompliance' => 'Unit 2 This regulation was NOT MET as evidenced by: Staff used a prone restraint on a resident who then sustained a bloody nose.'),
+        array('noncompliance' => 'Staff hit a resident.'), array('noncompliance' => 'Staff hit a resident.'))));
+$f = kop_ih_extract('VA', $va($dbhds));
+check(count($f) === 1 && $f[0]['factor'] === 1.0 && strpos($f[0]['text'], 'Staff used') === 0 && strpos($f[0]['state_label'], 'systemic') !== false, 'VA: DBHDS NS row only, cut after NOT MET');
+$dbhds['no_violation'] = true;
+check(kop_ih_extract('VA', $va($dbhds)) === array(), 'VA: a "No Violation" plan has no findings');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------
