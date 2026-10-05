@@ -69,11 +69,12 @@ COMPANY_WORDS = re.compile(r'\b(inc|llc|l\.l\.c|ltd|group|education|services|hea
 AGREED_TYPES = [
     'Residential Treatment Center', 'Psychiatric Residential Treatment Facility', 'Therapeutic Boarding School',
     'Wilderness Therapy', 'Boot Camp', 'Therapeutic Group Home', 'Group Home', 'Transitional Living Program',
-    'Substance Abuse Treatment', 'Maternity Home', 'Fundamentalist Religious Home', 'Specialty Boarding School',
+    'Substance Abuse Treatment', 'Eating Disorder Treatment Center', 'Maternity Home', 'Fundamentalist Religious Home', 'Specialty Boarding School',
     'Juvenile Detention Facility', 'Juvenile Correctional Facility', 'Juvenile Justice RTC', 'Other',
 ]
 TYPES = [
     (r'psychiatric residential treatment|\bprtf\b', 'Psychiatric Residential Treatment Facility'),
+    (r'eating disorder|anorexi|bulimi', 'Eating Disorder Treatment Center'),
     (r'juvenile detention|detention (center|facility)', 'Juvenile Detention Facility'),
     (r'juvenile correction|correctional', 'Juvenile Correctional Facility'),
     (r'wilderness', 'Wilderness Therapy'),

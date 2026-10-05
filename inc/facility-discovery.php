@@ -60,7 +60,7 @@ function kop_facdisc_types() {
     return array(
         'Residential Treatment Center', 'Psychiatric Residential Treatment Facility', 'Therapeutic Boarding School',
         'Wilderness Therapy', 'Boot Camp', 'Therapeutic Group Home', 'Group Home', 'Transitional Living Program',
-        'Substance Abuse Treatment', 'Maternity Home', 'Fundamentalist Religious Home', 'Specialty Boarding School',
+        'Substance Abuse Treatment', 'Eating Disorder Treatment Center', 'Maternity Home', 'Fundamentalist Religious Home', 'Specialty Boarding School',
         'Juvenile Detention Facility', 'Juvenile Correctional Facility', 'Juvenile Justice RTC', 'Other',
     );
 }

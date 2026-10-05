@@ -209,8 +209,10 @@ re-saved every document on 2026-09-18.
   Residential Treatment Facility`; `Wilderness`, `Wilderness Program` and
   `Wilderness Therapy Program` are `Wilderness Therapy`; `Juvenile Justice
   Residential Treatment Center` is `Juvenile Justice RTC`; `Therapeutic
-  Residential School` and `TBS` are `Therapeutic Boarding School`. Other
-  values are kept as entered.
+  Residential School` and `TBS` are `Therapeutic Boarding School`; `Eating
+  Disorder Center`, `Eating Disorder Program`, `Eating Disorder Treatment` and
+  `Eating Disorder Treatment Program` are `Eating Disorder Treatment Center`.
+  Other values are kept as entered.
 - **Operator block** (`provenance.sourceOperator`, and the `operator` block
   of a `kop_operators` row, which takes the same shape on save): `name`,
   `currentName`,

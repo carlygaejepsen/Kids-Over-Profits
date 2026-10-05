@@ -45,6 +45,7 @@ const DEFAULT_FACILITY_TYPES = [
     'Therapeutic Group Home',
     'Specialty Boarding School',
     'Psychiatric Hospital',
+    'Eating Disorder Treatment Center',
     'Juvenile Detention Center',
     'Adventure Therapy Program',
     'Emotional Growth Boarding School',

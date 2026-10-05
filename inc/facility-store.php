@@ -1257,6 +1257,10 @@ if (!function_exists('kop_facility_type')) {
             'juvenile justice residential treatment center' => 'Juvenile Justice RTC',
             'therapeutic residential school' => 'Therapeutic Boarding School',
             'tbs' => 'Therapeutic Boarding School',
+            'eating disorder center' => 'Eating Disorder Treatment Center',
+            'eating disorder program' => 'Eating Disorder Treatment Center',
+            'eating disorder treatment' => 'Eating Disorder Treatment Center',
+            'eating disorder treatment program' => 'Eating Disorder Treatment Center',
         );
         $key = mb_strtolower(preg_replace('/\s+/u', ' ', $s));
         return $map[$key] ?? $s;
