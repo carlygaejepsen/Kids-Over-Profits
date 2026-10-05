@@ -1814,3 +1814,14 @@ p.kop-op-draft {
     padding: 0;
     border: 0;
 }
+
+/* Editors only: what the record holds that the public page leaves out. */
+.kop-fp-generated-body .kop-fp-editor-note {
+    margin: 0 0 1rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 2px dashed var(--kop-midnight-blue, #000435);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}

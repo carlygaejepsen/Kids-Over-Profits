@@ -3,7 +3,6 @@
 (function () {
     'use strict';
 
-    var OPEN_BY_DEFAULT = ['memorials', 'violations', 'lawsuits', 'incidents', 'testimony', 'videos', 'news', 'network', 'documents'];
 
     function sectionOf(el) {
         while (el && el !== document.body) {
@@ -67,7 +66,8 @@
             btn.addEventListener('click', function () {
                 setOpen(section, btn.getAttribute('aria-expanded') !== 'true');
             });
-            setOpen(section, OPEN_BY_DEFAULT.indexOf(section.id) !== -1);
+            // Every section starts open: the page is the record, nothing hides behind a click.
+            setOpen(section, true);
             made.push(section);
         });
         if (made.length < 3) return;

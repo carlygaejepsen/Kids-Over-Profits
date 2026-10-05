@@ -401,7 +401,7 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'merged:' . implode(',', kop_facility_pages_merged_profiles());
         // Homes grouped under a program record (inc/program-homes.php).
         $parts[] = 'program-homes:' . (function_exists('kop_program_homes_cache_key') ? kop_program_homes_cache_key() : '-');
-        $parts[] = 'v:5';
+        $parts[] = 'v:6';
         return md5(implode(';', $parts));
     }
 }
@@ -1636,6 +1636,49 @@ if (!function_exists('kop_facility_checklist_labels')) {
             'criticalIncidents.hasStaffArrests'       => 'Staff arrests',
             'criticalIncidents.hasStudentHospitalizations' => 'Student hospitalizations',
             'criticalIncidents.hasRiots'              => 'Riots',
+            'ttiPractices.hasLevelSystem'               => 'Level or point system',
+            'ttiPractices.hasRestraint'                 => 'Physical or chemical restraint',
+            'ttiPractices.hasSeclusion'                 => 'Seclusion or isolation rooms',
+            'ttiPractices.hasCommunicationRestrictions' => 'Communication restrictions',
+            'ttiPractices.hasConfrontationGroups'       => 'Confrontation or hot-seat groups',
+            'ttiPractices.hasBehaviorContracts'         => 'Behavior contracts or loss of privileges',
+            'ttiPractices.hasStripSearches'             => 'Strip searches',
+            'ttiPractices.hasForcedMedication'          => 'Forced or coerced medication',
+            'targetedDiagnoses.hasADHD'                          => 'ADHD',
+            'targetedDiagnoses.hasAutismSpectrumDisorder'        => 'Autism spectrum disorder',
+            'targetedDiagnoses.hasBipolarDisorder'               => 'Bipolar disorder',
+            'targetedDiagnoses.hasDepression'                    => 'Depression',
+            'targetedDiagnoses.hasAnxiety'                       => 'Anxiety',
+            'targetedDiagnoses.hasOCD'                           => 'OCD',
+            'targetedDiagnoses.hasPTSD'                          => 'PTSD',
+            'targetedDiagnoses.hasOppositionalDefiantDisorder'   => 'Oppositional defiant disorder (ODD)',
+            'targetedDiagnoses.hasConductDisorder'               => 'Conduct disorder',
+            'targetedDiagnoses.hasEatingDisorder'                => 'Eating disorder',
+            'targetedDiagnoses.hasSubstanceAbuse'                => 'Substance abuse',
+            'targetedDiagnoses.hasBorderlinePersonalityDisorder' => 'Borderline personality disorder (BPD)',
+            'targetedDiagnoses.hasPsychiatricDisorders'          => 'Psychiatric disorders',
+            'targetedDiagnoses.hasBehavioralDisorders'           => 'Behavioral disorders',
+            'targetedDiagnoses.hasEmotionalDisorders'            => 'Emotional disorders',
+            'targetedDiagnoses.hasCoOccurringDisorders'          => 'Co-occurring disorders',
+            'targetedDiagnoses.hasReactiveAttachmentDisorder'    => 'Reactive attachment disorder (RAD)',
+            'targetedDiagnoses.hasPersonalityDisorders'          => 'Personality disorders',
+            'targetedBehaviors.hasDefiance'                      => 'Defiance',
+            'targetedBehaviors.hasAggression'                    => 'Aggression',
+            'targetedBehaviors.hasSelfHarm'                      => 'Self-harm',
+            'targetedBehaviors.hasRunningAway'                   => 'Running away',
+            'targetedBehaviors.hasTruancy'                       => 'Truancy',
+            'targetedBehaviors.hasAcademicStruggles'             => 'Academic struggles',
+            'targetedBehaviors.hasSocialProblems'                => 'Social problems',
+            'targetedBehaviors.hasFamilyConflict'                => 'Family conflict',
+            'targetedBehaviors.hasSexuallyInappropriateBehavior' => 'Sexually inappropriate behavior',
+            'targetedBehaviors.hasLying'                         => 'Lying',
+            'targetedBehaviors.hasManipulation'                  => 'Manipulation',
+            'targetedBehaviors.hasStealing'                      => 'Stealing',
+            'targetedBehaviors.hasEmotionalDysregulation'        => 'Emotional dysregulation',
+            'targetedBehaviors.hasImpulsiveBehavior'             => 'Impulsive behavior',
+            'targetedBehaviors.hasAttachment'                    => 'Attachment issues',
+            'targetedBehaviors.hasAdoption'                      => 'Adoption issues',
+            'targetedBehaviors.hasTrafficking'                   => 'Trafficking',
         );
     }
 }
@@ -1655,15 +1698,16 @@ if (!function_exists('kop_facility_pages_humanize_key')) {
 if (!function_exists('kop_facility_pages_checklist_items')) {
     /**
      * Labels of the checked entries in a checklist map (treatmentTypes,
-     * philosophy, conditions, criticalIncidents), plus any custom or legacy
-     * free-text entries it carries.
+     * philosophy, conditions, ttiPractices, targetedDiagnoses,
+     * targetedBehaviors, criticalIncidents), plus any custom, "other" or
+     * legacy free-text entries it carries.
      */
     function kop_facility_pages_checklist_items($map, $section = '') {
         $out = array();
         if (!is_array($map)) return $out;
         $labels = kop_facility_checklist_labels();
         foreach ($map as $k => $v) {
-            if ($k === '_legacy' || strpos((string) $k, 'custom') === 0) {
+            if ($k === '_legacy' || strpos((string) $k, 'custom') === 0 || $k === 'other' || (is_array($v) && array_is_list($v))) {
                 foreach (kop_facility_pages_text_items($v) as $t) $out[] = $t;
                 continue;
             }
@@ -1873,7 +1917,7 @@ if (!function_exists('kop_facility_page_signals')) {
                 : ($k === 'notes' ? kop_facility_pages_clean_notes($v) : kop_facility_pages_text_items($v));
             if ($items) $s[] = $k;
         }
-        foreach (array('treatmentTypes', 'philosophy', 'conditions', 'criticalIncidents') as $k) {
+        foreach (array('treatmentTypes', 'philosophy', 'conditions', 'ttiPractices', 'targetedDiagnoses', 'targetedBehaviors', 'criticalIncidents') as $k) {
             if (kop_facility_pages_checklist_items($doc[$k] ?? null, $k)) $s[] = $k;
         }
         if (kop_facility_pages_field_notes($doc['fieldNotes'] ?? null)) $s[] = 'fieldNotes';
@@ -2643,7 +2687,15 @@ if (!function_exists('kop_facility_page_data')) {
 
         // ---- Practices, staff, notes, links --------------------------------------
         $practices = array();
-        foreach (array('treatmentTypes' => 'Treatment methods', 'philosophy' => 'Program philosophy', 'conditions' => 'Conditions treated') as $k => $label) {
+        $practice_groups = array(
+            'ttiPractices'      => 'Common TTI practices',
+            'treatmentTypes'    => 'Treatment methods',
+            'philosophy'        => 'Program philosophy',
+            'conditions'        => 'Conditions treated',
+            'targetedDiagnoses' => 'Diagnoses it targets',
+            'targetedBehaviors' => 'Behaviors it targets',
+        );
+        foreach ($practice_groups as $k => $label) {
             $items = kop_facility_pages_checklist_items($doc[$k] ?? null, $k);
             if ($items) $practices[] = array('label' => $label, 'items' => $items);
         }
@@ -2653,6 +2705,12 @@ if (!function_exists('kop_facility_page_data')) {
         $fact_sources = kop_facility_pages_note_sources($notes);
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
         $testimony = kop_facility_pages_testimony($doc['survivorTestimony'] ?? null);
+        // Accounts on the record nobody has marked "OK to publish" yet: only
+        // their number, which the page shows to editors.
+        $testimony_private = 0;
+        foreach ((array) ($doc['survivorTestimony'] ?? array()) as $t) {
+            if (is_array($t) && trim((string) ($t['text'] ?? '')) !== '' && ($t['publish'] ?? false) !== true) $testimony_private++;
+        }
         // What survivors and families wrote on the Fornits forum is testimony, not a finding of the record:
         // its incident lines, leads and discussion links leave their sections and join the survivor testimony.
         $forum_incidents = array();
@@ -2808,6 +2866,7 @@ if (!function_exists('kop_facility_page_data')) {
             'notes'         => $notes,
             'field_notes'   => $field_notes,
             'testimony'     => $testimony,
+            'testimony_private' => $testimony_private,
             'forum'         => $forum,
             'videos'        => kop_facility_pages_videos($doc),
             'resources'     => $resources,

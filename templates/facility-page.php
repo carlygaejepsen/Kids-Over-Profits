@@ -144,6 +144,9 @@ $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
 $kop_fp_has_notes = !empty($page['notes']) || !empty($page['field_notes']);
 $kop_fp_has_testimony = !empty($page['testimony']) || !empty($page['forum']);
+// Editors also see the section when the record holds accounts not yet marked "OK to publish".
+$kop_fp_testimony_private = (function_exists('kop_ie_can') && kop_ie_can()) ? (int) ($page['testimony_private'] ?? 0) : 0;
+$kop_fp_has_testimony = $kop_fp_has_testimony || $kop_fp_testimony_private > 0;
 $kop_fp_has_videos = !empty($page['videos']);
 $kop_fp_has_news = !empty($page['news']);
 $kop_fp_has_lawsuits = !empty($page['lawsuits']);
@@ -869,6 +872,9 @@ get_header();
                 <?php echo $kop_fp_alias('testimony', 'testimony'); ?>
                 <h2><?php echo $kop_fp_icon('users'); ?><?php echo esc_html($kop_fp_title('testimony', 'Survivor testimony')); ?></h2>
                 <p class="kop-fp-testimony-lead">What people who lived or worked here say happened. Survivors' own words are published with their permission; forum accounts are what was posted publicly and are reported as claims, not findings.</p>
+                <?php if ($kop_fp_testimony_private > 0) : ?>
+                    <p class="kop-fp-editor-note">Only editors see this: <?php echo (int) $kop_fp_testimony_private; ?> survivor account<?php echo $kop_fp_testimony_private === 1 ? ' on this record is' : 's on this record are'; ?> not published. Tick "OK to publish" on each one the survivor agreed to share (the pencil on this section, or the record in the data form).</p>
+                <?php endif; ?>
                 <?php if (isset($kop_fp_psec['testimony'])) $kop_fp_render_items($kop_fp_psec['testimony']['items']); ?>
                 <?php foreach ((array) ($page['testimony'] ?? array()) as $kop_fp_t) : ?>
                     <figure class="kop-fp-testimony">
