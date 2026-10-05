@@ -55,7 +55,7 @@ function kop_ischools_set_aside_names(PDO $pdo) {
     try {
         $rows = $pdo->query("SELECT c.id, c.mention, c.news_id, c.decision, n.article_title, n.article_url
                              FROM news_facility_candidates c LEFT JOIN news_submissions n ON n.id = c.news_id
-                             WHERE c.decision IN ('not_facility', 'needs_place', 'possible_duplicate', 'other_era')
+                             WHERE c.decision IN ('not_facility', 'needs_place', 'unquoted', 'possible_duplicate', 'other_era')
                              ORDER BY c.id DESC")->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         return array();

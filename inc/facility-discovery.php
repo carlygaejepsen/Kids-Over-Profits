@@ -43,10 +43,11 @@ define('KOP_FACILITY_DISCOVERY_DB_VERSION', '1');
 function kop_facdisc_decisions() {
     return array(
         'created'      => 'Created',
-        'matched'      => 'Already in the database',
+        'matched'      => 'Linked to a record',
         'possible_duplicate' => 'Possible duplicate',
         'other_era'    => 'Earlier or later name',
         'needs_place'  => 'No place given',
+        'unquoted'     => 'Not found in the article',
         'provider'     => 'Provider, not a facility',
         'not_facility' => 'Not a facility',
         'indigenous_school' => 'Indigenous residential school',
@@ -139,9 +140,9 @@ function kop_facdisc_unresolved(PDO $pdo, array $news, array $index, array &$dec
         if (kop_resolve_mention_to_facility($name, $index) !== null) {
             continue;
         }
-        // A name held for want of a place is asked again: another article,
-        // or a better prompt, may place it.
-        if (isset($news['known'][$key]) && $news['known'][$key]['decision'] !== 'needs_place') {
+        // A name held for want of a place, or not found in the article, is
+        // asked again: another article, or a better prompt, may place it.
+        if (isset($news['known'][$key]) && !in_array($news['known'][$key]['decision'], array('needs_place', 'unquoted'), true)) {
             $decided[$key] = $news['known'][$key];
             continue;
         }
@@ -399,6 +400,17 @@ function kop_facdisc_record_scan(PDO $pdo, $news_id, $hash, $outcome, $detail = 
 
 /* ---- Asking the AI ------------------------------------------------- */
 
+/** Lower case words and digits only, padded with spaces, for "is this in the article" checks. */
+function kop_facdisc_norm_text($text) {
+    return ' ' . trim(preg_replace('/[^\p{L}\p{N}]+/u', ' ', mb_strtolower((string) $text, 'UTF-8'))) . ' ';
+}
+
+/** Whether $needle (a name, a quote) appears in $source as whole words; $source from kop_facdisc_norm_text(). */
+function kop_facdisc_in_source($needle, $source) {
+    $n = kop_facdisc_norm_text($needle);
+    return trim($n) !== '' && strpos($source, $n) !== false;
+}
+
 function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, $text) {
     $p  = "You maintain a research database of youth residential programs in the troubled teen industry: residential treatment centers, therapeutic boarding schools, wilderness programs, boot camps, group homes, religious homes for youth, and juvenile detention and correctional facilities.\n\n";
     $p .= 'Article: ' . $news['article_title'] . ' (' . ($news['publication_name'] ?: 'unknown outlet') . ', ' . ($news['publication_date'] ?: 'date unknown') . ")\n";
@@ -629,7 +641,11 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
         kop_facdisc_record($pdo, $entry['name'], $news, 'indigenous_school', null, $detail);
         return array('indigenous_school', null);
     }
-    if ($entry['kind'] === 'facility' && $entry['sameAs']) {
+    if ($entry['kind'] === 'facility' && isset($entry['quoted']) && !$entry['quoted']) {
+        // Not in the article it read: held for a person, with the record it looked like.
+        $decision = 'unquoted';
+        $fid = $entry['sameAs'] ?: ($entry['renameOf'] ?: null);
+    } elseif ($entry['kind'] === 'facility' && $entry['sameAs']) {
         $decision = 'matched';
         $fid = $entry['sameAs'];
     } elseif ($entry['kind'] === 'facility' && !empty($entry['renameOf'])) {
@@ -655,7 +671,7 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
         $fid = null;
     }
     if ($write) {
-        if ($fid && !in_array($decision, array('possible_duplicate', 'other_era'), true)) {
+        if ($fid && !in_array($decision, array('possible_duplicate', 'other_era', 'unquoted'), true)) {
             kop_facdisc_link($pdo, $news['id'], $fid);
         }
         kop_facdisc_record($pdo, $entry['name'], $news, $decision, $fid, $detail);
@@ -705,12 +721,27 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
         }
         return array('none', $out, '');
     }
+    $text = kop_closure_article_text($news['article_url'] ?? '');
+    // Without the article's text the model has only the title and summary; a
+    // name in neither is a guess (an archived company page listing its sites
+    // by town once became "Kissimmee, FL" and a new "Owens Cross Roads"
+    // record). Those wait for a fetch that works, up to the three tries.
+    $head = kop_facdisc_norm_text(($news['article_title'] ?? '') . ' ' . ($news['summary'] ?? ''));
+    if ($text === '') {
+        $asked = array_values(array_filter($asked, function ($name) use ($head) { return kop_facdisc_in_source($name, $head); }));
+        if (!$asked) {
+            if ($write) {
+                kop_facdisc_record_scan($pdo, $news['id'], $news['hash'], 'error', 'no article text, and the names are not in the title or summary');
+            }
+            return array('error', $out, 'no article text');
+        }
+    }
+    $source = $text === '' ? $head : kop_facdisc_norm_text(($news['article_title'] ?? '') . ' ' . ($news['summary'] ?? '') . ' ' . $text);
     $names = array_slice($asked, 0, 12);
     $lookalikes = array();
     foreach ($names as $name) {
         $lookalikes[$name] = kop_facdisc_lookalikes($pdo, $name, $index);
     }
-    $text = kop_closure_article_text($news['article_url'] ?? '');
     try {
         $raw = kop_closure_ai(kop_facdisc_build_prompt($news, $names, $lookalikes, $text), 3000);
     } catch (Throwable $e) {
@@ -728,6 +759,11 @@ function kop_facdisc_scan_article(PDO $pdo, array $news, $write) {
     }
     $created = false;
     foreach ($entries as $name => $entry) {
+        // What the article says, not what the model made up: the name or the
+        // quote has to be in what it read, or nothing is created or linked.
+        $entry['evidenceQuoted'] = $entry['evidence'] !== '' && kop_facdisc_in_source($entry['evidence'], $source);
+        $entry['quoted'] = kop_facdisc_in_source($name, $source) || $entry['evidenceQuoted'];
+        $entry['noText'] = $text === '';
         try {
             list($decision, $fid) = kop_facdisc_apply_entry($pdo, $entry, $news, $write);
         } catch (Throwable $e) {
@@ -870,8 +906,48 @@ function kop_facdisc_link_by_hand(PDO $pdo, $candidate_id, $facility_id, $review
         throw new RuntimeException('No such facility.');
     }
     kop_facdisc_link($pdo, $c['news_id'], $fid);
-    $pdo->prepare("UPDATE news_facility_candidates SET decision = 'matched', facility_id = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?")
-        ->execute(array($fid, $reviewer, (int) $candidate_id));
+    // Where the name was before, so Remove the link (kop_facdisc_unlink()) can put it back.
+    $detail = json_decode((string) $c['detail'], true) ?: array();
+    if ($c['decision'] !== 'matched') {
+        $detail['linked_from'] = array('decision' => $c['decision'], 'facility_id' => $c['facility_id'] !== null ? (int) $c['facility_id'] : null);
+    }
+    $pdo->prepare("UPDATE news_facility_candidates SET decision = 'matched', facility_id = ?, detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?")
+        ->execute(array($fid, wp_json_encode($detail), $reviewer, (int) $candidate_id));
+    return $fid;
+}
+
+/**
+ * Take back a link to a record: the article leaves that facility's page
+ * (unless another name from the same article is still linked to it) and the
+ * name goes back to where it was before, "To decide" when that is not known.
+ * Only the link the news scan made is removed; one added elsewhere stays.
+ */
+function kop_facdisc_unlink(PDO $pdo, $candidate_id, $reviewer) {
+    $stmt = $pdo->prepare('SELECT * FROM news_facility_candidates WHERE id = ?');
+    $stmt->execute(array((int) $candidate_id));
+    $c = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$c || $c['decision'] !== 'matched' || (int) $c['facility_id'] <= 0) {
+        throw new RuntimeException('This name is not linked to a record.');
+    }
+    $fid = (int) $c['facility_id'];
+    $others = $pdo->prepare("SELECT COUNT(*) FROM news_facility_candidates WHERE news_id = ? AND facility_id = ? AND id <> ? AND decision IN ('matched', 'created')");
+    $others->execute(array((int) $c['news_id'], $fid, (int) $c['id']));
+    if (!(int) $others->fetchColumn()) {
+        $pdo->prepare("DELETE FROM news_facility_links WHERE news_id = ? AND facility_id = ? AND created_by = 'news-discovery'")
+            ->execute(array((int) $c['news_id'], $fid));
+    }
+    $detail = json_decode((string) $c['detail'], true) ?: array();
+    $from = (array) ($detail['linked_from'] ?? array());
+    unset($detail['linked_from']);
+    $decision = (string) ($from['decision'] ?? '');
+    if (!in_array($decision, array('possible_duplicate', 'other_era', 'needs_place', 'unquoted', 'provider', 'not_facility', 'removed'), true)) {
+        $decision = 'possible_duplicate';
+    }
+    // The record stays as the suggestion the card offers, unless the name had none before.
+    $suggest = array_key_exists('facility_id', $from) ? $from['facility_id'] : $fid;
+    $pdo->prepare('UPDATE news_facility_candidates SET decision = ?, facility_id = ?, detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
+        ->execute(array($decision, $suggest ? (int) $suggest : null, wp_json_encode($detail), $reviewer, (int) $c['id']));
+    do_action('kop_facility_status_changed', $fid);
     return $fid;
 }
 
@@ -1100,7 +1176,7 @@ function kop_render_facilities_from_news_page() {
                 . '<button type="submit" class="button button-small" onclick="return confirm(\'Remove the record the scan created for this?\')">Remove the record it created</button></form>';
         } elseif ($r['decision'] === 'indigenous_school') {
             echo 'Filed at <a href="' . esc_url(admin_url('admin.php?page=kop-indigenous-schools')) . '">Indigenous Schools</a>, not as a facility.';
-        } elseif (in_array($r['decision'], array('possible_duplicate', 'other_era', 'needs_place', 'provider', 'not_facility', 'removed'), true)) {
+        } elseif (in_array($r['decision'], array('possible_duplicate', 'other_era', 'needs_place', 'unquoted', 'provider', 'not_facility', 'removed'), true)) {
             echo '<form method="post" class="kop-fd-box">';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="link"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'

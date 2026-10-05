@@ -39,7 +39,7 @@ kop_rinbox_register('facilities-from-news', function () {
         'count'    => function () {
             $pdo = kop_closure_pdo();
             kop_facdisc_ensure_tables($pdo);
-            return (int) $pdo->query("SELECT COUNT(*) FROM news_facility_candidates WHERE decision IN ('possible_duplicate','other_era','needs_place')")->fetchColumn();
+            return (int) $pdo->query("SELECT COUNT(*) FROM news_facility_candidates WHERE decision IN ('possible_duplicate','other_era','needs_place','unquoted')")->fetchColumn();
         },
         'list'     => 'kop_rinbox_facdisc_list',
         'get'      => function ($key) {
@@ -54,7 +54,7 @@ kop_rinbox_register('facilities-from-news', function () {
 /** The decisions each view lists ('all' lists every one). */
 function kop_rinbox_facdisc_view_decisions() {
     return array(
-        'held'    => array('possible_duplicate', 'other_era', 'needs_place'),
+        'held'    => array('possible_duplicate', 'other_era', 'needs_place', 'unquoted'),
         'created' => array('created'),
         'aside'   => array('provider', 'not_facility', 'indigenous_school'),
         'matched' => array('matched'),
@@ -123,7 +123,7 @@ function kop_rinbox_facdisc_record_now(PDO $pdo, $fid) {
 
 /** The decisions a person can still turn into a record (what kop_facdisc_create_by_hand() accepts). */
 function kop_rinbox_facdisc_open_decisions() {
-    return array('possible_duplicate', 'other_era', 'needs_place', 'provider', 'not_facility', 'removed');
+    return array('possible_duplicate', 'other_era', 'needs_place', 'unquoted', 'provider', 'not_facility', 'removed');
 }
 
 function kop_rinbox_facdisc_row(PDO $pdo, $id) {
@@ -169,10 +169,16 @@ function kop_rinbox_facdisc_item(array $r) {
         'possible_duplicate' => 'Looks like the record linked below. ',
         'other_era'          => 'May be an earlier or later name of the record linked below; each name gets its own record. ',
         'needs_place'        => 'The article gives no state or country. ',
+        'unquoted'           => 'The scan could not find this name in the article it read, so nothing was linked or created. Open the article before you link or create anything. ',
     )[$r['decision']] ?? '';
+    if (!empty($e['noText'])) {
+        $hint = 'The scan could not read this article, only its title and summary. ' . $hint;
+    }
     $evidence = trim((string) ($e['evidence'] ?? ''));
+    // A quote the scan could not find in the article is the model's own words, never shown as a quote.
+    $quoted = !isset($e['evidenceQuoted']) || $e['evidenceQuoted'];
     $text = $hint
-        . ($evidence !== '' ? '"' . kop_rinbox_excerpt($evidence, 2000) . '"' : '')
+        . ($evidence !== '' ? ($quoted ? '"' . kop_rinbox_excerpt($evidence, 2000) . '"' : 'The scan\'s own note (not in the article): ' . kop_rinbox_excerpt($evidence, 2000)) : '')
         . ($r['article_title'] ? "\nFrom: " . $r['article_title'] . ($r['publication_name'] ? ' (' . $r['publication_name'] . ($r['publication_date'] ? ', ' . $r['publication_date'] : '') . ')' : '') : '');
 
     $open = in_array($r['decision'], kop_rinbox_facdisc_open_decisions(), true);
@@ -185,8 +191,11 @@ function kop_rinbox_facdisc_item(array $r) {
         $has_record = (int) $r['facility_id'] > 0;
         $fac = kop_rinbox_facility($r['facility_id']);
         $new_name = (string) (($e['officialName'] ?? '') ?: $r['mention']);
-        $actions[] = array('id' => 'link', 'label' => 'Link the article to this record', 'style' => $has_record ? 'approve' : 'neutral',
-            'help' => 'Lists this article on the facility page of ' . ($fac ? $fac['name'] : 'the record you pick') . '; no new record is made.',
+        // The main button only when the article was read and quotes the name; otherwise nothing is the default.
+        $solid = $has_record && empty($e['noText']) && (!isset($e['evidenceQuoted']) || $e['evidenceQuoted']) && $r['decision'] !== 'unquoted';
+        $actions[] = array('id' => 'link', 'label' => $fac ? 'Yes: this article is about ' . $fac['name'] : 'Yes: link it to the record I pick', 'style' => $solid ? 'approve' : 'neutral',
+            'help' => 'Only when the article is about this program: lists it on the facility page of ' . ($fac ? $fac['name'] : 'the record you pick')
+                . ' and links later articles naming "' . $r['mention'] . '" there too; no new record is made. Remove the link (on the Linked tab) takes it back.',
             'params' => array(array('name' => 'facility_id', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id'])));
         // The old screen's "Not in the database? Create it" form: the details as the scan read them, changeable here.
         $types = kop_rinbox_options(array_combine(kop_facdisc_types(), kop_facdisc_types()));
@@ -211,8 +220,8 @@ function kop_rinbox_facdisc_item(array $r) {
         );
     }
     if ($held) {
-        $actions[] = array('id' => 'dismiss', 'label' => 'Reject: not a facility', 'style' => 'reject',
-            'help' => 'No record is made or linked; the name moves to "Set aside (not a facility)" and later scans leave it alone.');
+        $actions[] = array('id' => 'dismiss', 'label' => 'No: leave it (not a program we track)', 'style' => 'reject',
+            'help' => 'Nothing is linked or created; the name moves to "Set aside (not a facility)" and later scans leave it alone. Use this when the article is not about the record suggested here.');
     } elseif ($r['decision'] === 'not_facility' && !empty($detail['dismissed_from'])) {
         $actions[] = array('id' => 'undismiss', 'label' => 'Back to review', 'style' => 'undo',
             'help' => 'Nothing on the site changes; the name goes back to "To decide".');
@@ -222,6 +231,10 @@ function kop_rinbox_facdisc_item(array $r) {
             'help' => 'Deletes the record the scan made for ' . (kop_rinbox_facility($r['facility_id'])['name'] ?? $r['mention'])
                 . ' and its article links, as long as nobody has edited it; later scans will not create it again.',
             'confirm' => 'Remove the record the scan created for this? The scan will not create it again.');
+    } elseif ($r['decision'] === 'matched' && (int) $r['facility_id'] > 0) {
+        $actions[] = array('id' => 'unlink', 'label' => 'Remove the link', 'style' => 'undo',
+            'help' => 'Takes the article off the facility page of ' . (kop_rinbox_facility($r['facility_id'])['name'] ?? 'this record')
+                . ' and puts the name back in "To decide". No record is changed or deleted.');
     } elseif ($r['decision'] === 'indigenous_school') {
         $links[] = array('label' => 'Filed at Indigenous Schools', 'url' => admin_url('admin.php?page=kop-indigenous-schools'));
     }
@@ -299,6 +312,11 @@ function kop_rinbox_facdisc_act($key, $action, array $params) {
             return array('message' => $action === 'dismiss'
                 ? 'Set aside as not a facility. No record was made; "Back to review" on the Set aside tab brings it back.'
                 : 'Back in "To decide".');
+        case 'unlink':
+            $was = wp_strip_all_tags(kop_facility_finder_label($pdo, (int) $r['facility_id']));
+            kop_facdisc_unlink($pdo, $id, $user);
+            kop_rinbox_flush_counts();
+            return array('message' => 'Took ' . $article . ' off the page of ' . $was . '. The name is back in "To decide".');
         case 'remove':
             $was = $r['facility_id'] ? wp_strip_all_tags(kop_facility_finder_label($pdo, (int) $r['facility_id'])) : '"' . $r['mention'] . '"';
             kop_facdisc_remove($pdo, $id, $user);

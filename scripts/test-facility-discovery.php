@@ -158,6 +158,17 @@ $check('a facility abroad keeps its country and no state', $foreign['location'][
     json_encode(array($foreign['location']['country'], $foreign['location']['state'])));
 
 // ---------------------------------------------------------------------------
+echo "-- Only what the article says --\n";
+$head = kop_facdisc_norm_text('Mingus Mountain Academy The requested web page could not be retrieved.');
+$check('a name in the title is in the source', kop_facdisc_in_source('Mingus Mountain Academy', $head));
+$check('a town the page only listed is not', !kop_facdisc_in_source('Kissimmee', $head));
+$check('whole words only ("Madison" is not in "Madisonville")', !kop_facdisc_in_source('Madison', kop_facdisc_norm_text('Madisonville Academy')));
+$check('punctuation and case do not matter', kop_facdisc_in_source('Sequel TSI - Kissimmee', kop_facdisc_norm_text('the SEQUEL TSI Kissimmee campus')));
+$unq = kop_facdisc_apply_entry($pdo, array('name' => 'Kissimmee', 'kind' => 'facility', 'sameAs' => 11129, 'renameOf' => null, 'officialName' => 'Kissimmee',
+    'state' => 'FL', 'country' => '', 'city' => 'Kissimmee', 'quoted' => false), array('id' => 628), false);
+$check('a name not in the article is held, not linked', $unq === array('unquoted', 11129), json_encode($unq));
+
+// ---------------------------------------------------------------------------
 echo "-- The prompt --\n";
 $prompt = kop_facdisc_build_prompt($article + array('summary' => 'S'), $asked, $lookalikes, 'body');
 $check('lists each name with its look-alikes', strpos($prompt, '11656 | Asheville Academy for Girls | Black Mountain, NC | Closed') !== false
