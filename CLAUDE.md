@@ -108,6 +108,10 @@ python scripts/test-review-inbox-ui.py           # the page in a browser against
 # inc/newsletter-signup.php -> MailerLite via the plugin's API key, group = KOP_NEWSLETTER_GROUP_ID / kop_newsletter_group_id option,
 # else the plugin form's groups
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-followup.php
+# Program wiki entries (wiki editor, /wiki-feed/): the contact is the r/troubledteens modmail (js/wiki-generation.js CONTACT_LINK ==
+# api/lib-wiki-contact.php; saved rows rewritten once by inc/wiki-contact.php, bump KOP_WIKI_CONTACT_VERSION to rerun); each entry
+# is compared with its Reddit page in markdown_output/ (editor index badge, feed card note; api/wiki-reddit-diff.php)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, Reddit diffs
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite

@@ -1,0 +1,121 @@
+<?php
+/**
+ * Offline test for api/lib-wiki-contact.php: the program wiki entries' contact
+ * becomes the r/troubledteens modmail, and each entry is compared with its
+ * Reddit wiki page.
+ *
+ *   php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]
+ *
+ * Copies wiki_submissions from tmp/prod.sqlite into memory, runs the migration
+ * twice (the second run must change nothing), checks no old handle is left
+ * and every json_data still decodes, checks the PHP rewrite gives the same
+ * text as normalizeContactTag() in js/wiki-generation.js (needs node), and
+ * prints how many entries differ from their Reddit page. --list names them.
+ * Nothing is written to tmp/prod.sqlite.
+ */
+
+if (PHP_SAPI !== 'cli') {
+    exit("CLI only.\n");
+}
+
+$root = dirname(__DIR__);
+require $root . '/api/lib-wiki-contact.php';
+
+$fail = 0;
+$check = function ($ok, $label) use (&$fail) {
+    echo ($ok ? 'ok   ' : 'FAIL ') . $label . "\n";
+    if (!$ok) $fail++;
+};
+
+// --- 1. the rewrite on fixtures ------------------------------------------------
+$link = kop_wiki_contact_link();
+$cases = array(
+    'please contact [u/Signal-Strain9810](/u/Signal-Strain9810).' => "please contact $link.",
+    'please contact [u/Miss_Nobody89](/u/Miss_Nobody89).'         => "please contact $link.",
+    'please contact [u/Signal-Strain8910](/u/Signal-Strain8910) .' => "please contact $link .",
+    'please contact u/Signal-Strain8910.'                          => "please contact $link.",
+    'contact /user/Miss_Nobody89/ today'                           => "contact $link today",
+    "please contact $link."                                        => "please contact $link.",
+    'Link to [u/Greedy_Guarantee_166\'s testimony](https://reddit.com/x)' => 'Link to [u/Greedy_Guarantee_166\'s testimony](https://reddit.com/x)',
+);
+foreach ($cases as $in => $want) {
+    $check(kop_wiki_contact_normalize($in) === $want, 'rewrite: ' . $in);
+}
+$check(kop_wiki_reddit_norm("# **A**\n\nText. please contact [u/Signal-Strain9810](/u/Signal-Strain9810).\n\nLast revised by x")
+    === kop_wiki_reddit_norm("# A\n\n***\n\nText.  please contact $link."), 'compare ignores contact, footer, emphasis, rules');
+$check(kop_wiki_reddit_norm('He ran it.') !== kop_wiki_reddit_norm('He runs it.'), 'compare sees a changed word');
+
+// --- 2. PHP == JS ----------------------------------------------------------------
+$node = trim((string) shell_exec('node --version 2>&1'));
+if (preg_match('/^v\d+/', $node)) {
+    $inputs = array_keys($cases);
+    $tmp = tempnam(sys_get_temp_dir(), 'kopwc');
+    file_put_contents($tmp, json_encode($inputs));
+    $js = 'const {normalizeContactTag}=require(' . json_encode($root . '/js/wiki-generation.js') . ');'
+        . 'const a=JSON.parse(require("fs").readFileSync(' . json_encode($tmp) . ',"utf8"));'
+        . 'process.stdout.write(JSON.stringify(a.map(normalizeContactTag)));';
+    $script = $tmp . '.js';
+    file_put_contents($script, $js);
+    $out = json_decode((string) shell_exec('node ' . escapeshellarg($script)), true);
+    unlink($tmp);
+    unlink($script);
+    $same = is_array($out) && count($out) === count($inputs);
+    foreach ($inputs as $i => $in) {
+        if (!$same || $out[$i] !== kop_wiki_contact_normalize($in)) { $same = false; break; }
+    }
+    $check($same, 'PHP rewrite == normalizeContactTag() in js/wiki-generation.js');
+} else {
+    echo "skip PHP == JS (no node)\n";
+}
+
+// --- 3. the real rows -------------------------------------------------------------
+$db = $root . '/tmp/prod.sqlite';
+if (!is_file($db)) {
+    echo "skip real rows (no tmp/prod.sqlite)\n";
+    exit($fail ? 1 : 0);
+}
+$pdo = new PDO('sqlite::memory:');
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->exec('ATTACH DATABASE ' . $pdo->quote($db) . ' AS prod');
+$pdo->exec('CREATE TABLE wiki_submissions AS SELECT * FROM prod.wiki_submissions');
+$pdo->exec('DETACH DATABASE prod');
+
+$old = '~Miss_Nobody89|Signal-Strain(?:9810|8910)~';
+$count_old = function () use ($pdo, $old) {
+    $n = 0;
+    foreach ($pdo->query('SELECT generated_markdown, original_markdown, json_data FROM wiki_submissions') as $r) {
+        foreach ($r as $v) if (is_string($v) && preg_match($old, $v)) $n++;
+    }
+    return $n;
+};
+$before_updated = $pdo->query('SELECT id, updated_at FROM wiki_submissions')->fetchAll(PDO::FETCH_KEY_PAIR);
+echo 'fields naming an old handle: ' . $count_old() . "\n";
+$dry = kop_wiki_contact_migrate($pdo, false);
+$first = kop_wiki_contact_migrate($pdo, true);
+echo "migration: {$first['rows']} rows, {$first['fields']} fields\n";
+$check(empty($first['error']), 'migration ran without error' . (empty($first['error']) ? '' : ': ' . $first['error']));
+$check($dry['rows'] === $first['rows'], 'dry run counts what the run changes');
+$check($count_old() === 0, 'no field names an old handle');
+$second = kop_wiki_contact_migrate($pdo, true);
+$check($second['rows'] === 0, 'second run changes nothing');
+$bad_json = 0;
+foreach ($pdo->query("SELECT json_data FROM wiki_submissions WHERE json_data IS NOT NULL AND json_data != ''") as $r) {
+    if (!is_array(json_decode($r['json_data'], true))) $bad_json++;
+}
+$check($bad_json === 0, 'every json_data decodes');
+$check($before_updated === $pdo->query('SELECT id, updated_at FROM wiki_submissions')->fetchAll(PDO::FETCH_KEY_PAIR), 'updated_at untouched');
+$with_link = (int) $pdo->query("SELECT COUNT(*) FROM wiki_submissions WHERE generated_markdown LIKE '%message/compose?to=/r/troubledteens%'")->fetchColumn();
+echo "entries whose text now names modmail: $with_link\n";
+
+// --- 4. against Reddit ---------------------------------------------------------------
+$all = kop_wiki_reddit_compare_all($pdo);
+$differs = array_filter($all, function ($c) { return $c['differs']; });
+$edited = array_filter($differs, function ($c) { return $c['edited']; });
+echo 'entries with a Reddit page: ' . count($all) . ', differ: ' . count($differs) . ' (' . count($edited) . " edited here)\n";
+$check(count($all) > 200 && count($differs) < count($all) / 2, 'most imported entries match their Reddit page');
+if (in_array('--list', $argv, true)) {
+    foreach ($differs as $name => $c) echo '  ' . ($c['edited'] ? '[edited] ' : '') . $name . '  ' . $c['reddit_url'] . "\n";
+}
+
+echo $fail ? "\n$fail failed\n" : "\nall passed\n";
+exit($fail ? 1 : 0);

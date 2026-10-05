@@ -278,6 +278,20 @@ button.category-tab:not(.active):active {
     font-size: 14px;
 }
 
+/* "Differs from Reddit": our copy of the entry is not the r/troubledteens wiki page's text */
+.reddit-diff-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid #EF9034;
+    background: #FFF5CB;
+    color: #000435;
+    font-size: 11px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
 .index-entry-actions {
     display: flex;
     gap: 5px;

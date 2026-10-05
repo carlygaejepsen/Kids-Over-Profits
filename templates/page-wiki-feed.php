@@ -35,6 +35,7 @@ get_header();
     <?php
     // Database connection
     require_once get_stylesheet_directory() . '/api/config.php';
+    require_once get_stylesheet_directory() . '/api/lib-wiki-contact.php';
 
     $status_filter = ['published', 'approved'];
     $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
@@ -204,6 +205,9 @@ get_header();
                     }
                 }
 
+                // Does this copy still match the r/troubledteens wiki page?
+                $reddit = $markdown !== '' ? kop_wiki_reddit_compare($item, $markdown) : null;
+
                 $btnLabel = $isOriginal ? 'View Wiki Entry' : 'View Generated Wiki Entry';
                 if ($markdown === '') $btnLabel = 'No Entry Content Available';
             ?>
@@ -251,6 +255,12 @@ get_header();
 
                     <div class="wiki-card-footer">
                         Added on <?php echo esc_html($dateAdded); ?>
+                        <?php if ($reddit) : ?>
+                            <span class="wiki-reddit-status<?php echo $reddit['differs'] ? ' is-different' : ''; ?>">
+                                <?php echo $reddit['differs'] ? 'Differs from' : 'Same as'; ?>
+                                <a href="<?php echo esc_url($reddit['reddit_url']); ?>" target="_blank" rel="noopener noreferrer">the r/troubledteens wiki page</a>
+                            </span>
+                        <?php endif; ?>
                     </div>
                 </article>
             <?php endforeach; ?>

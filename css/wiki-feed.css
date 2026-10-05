@@ -291,6 +291,27 @@
     font-size: 0.85rem;
     color: var(--kop-text-secondary, #000080);
 }
+/* Whether this copy matches the r/troubledteens wiki page */
+.wiki-reddit-status {
+    display: inline-block;
+    margin-left: 0.75rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.wiki-reddit-status a {
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+}
+
+.wiki-reddit-status.is-different {
+    padding: 0.1rem 0.6rem;
+    border: 1px solid var(--kop-orange, #EF9034);
+    border-radius: 999px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight, #000435);
+    font-weight: 600;
+}
+
 /* Toolbar (count + sort) and pagination */
 .wiki-feed-toolbar {
     display: flex;

@@ -198,3 +198,6 @@ require_once get_stylesheet_directory() . '/inc/staging-links.php';
 
 // Featured and in-article photos placed from seeds/page-images.json
 require_once get_stylesheet_directory() . '/inc/page-images.php';
+
+// Program wiki entries: contact is the r/troubledteens modmail (saved entries rewritten once)
+require_once get_stylesheet_directory() . '/inc/wiki-contact.php';

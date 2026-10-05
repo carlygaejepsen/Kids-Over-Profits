@@ -1884,6 +1884,7 @@ function kop_enqueue_wiki_editor_assets() {
             'nonce' => wp_create_nonce('kop_wiki_editor'),
             'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php',
             'stubsApi' => get_stylesheet_directory_uri() . '/api/wiki-stubs.php',
+            'redditDiffApi' => get_stylesheet_directory_uri() . '/api/wiki-reddit-diff.php',
             'facilitySearchUrl' => get_stylesheet_directory_uri() . '/api/facility-search.php',
             'facilityPickerApi' => get_stylesheet_directory_uri() . '/api/facility-picker.php',
             'foldersUrl' => rest_url('kop/v1/folders'),

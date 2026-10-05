@@ -299,6 +299,39 @@ document.addEventListener('DOMContentLoaded', () => {
         return '/wp-content/themes/child/api/wiki-stubs.php';
     }
 
+    // Which saved entries differ from their r/troubledteens wiki page
+    // (api/wiki-reddit-diff.php), keyed by lowercase program name. Loaded once;
+    // the index list redraws when it arrives.
+    let redditDiffMap = null;
+    async function loadRedditDiffMap() {
+        if (redditDiffMap) return redditDiffMap;
+        redditDiffMap = {};
+        try {
+            const url = editorSettings.redditDiffApi
+                || (editorSettings.saveApi ? editorSettings.saveApi.replace(/[^\/]*$/, 'wiki-reddit-diff.php') : '/wp-content/themes/child/api/wiki-reddit-diff.php');
+            const resp = await fetch(url, { cache: 'no-cache' });
+            const result = resp.ok ? await resp.json() : null;
+            if (result && result.success && result.entries) redditDiffMap = result.entries;
+        } catch (error) {
+            console.warn('Wiki Editor: could not load the Reddit comparison:', error);
+        }
+        return redditDiffMap;
+    }
+
+    function buildRedditDiffBadge(entry) {
+        if (!redditDiffMap) return null;
+        const diff = redditDiffMap[String(entry.name || '').trim().toLowerCase()]
+            || redditDiffMap[String(entry.normalizedName || '').trim().toLowerCase()];
+        if (!diff || !diff.differs) return null;
+        const badge = document.createElement('span');
+        badge.className = 'reddit-diff-badge';
+        badge.textContent = diff.edited ? 'Edited here, differs from Reddit' : 'Differs from Reddit';
+        badge.title = diff.edited
+            ? 'Someone saved changes to this entry here that are not on the r/troubledteens wiki page.'
+            : 'The text saved here does not match the r/troubledteens wiki page (the contact line and formatting are not counted).';
+        return badge;
+    }
+
     async function loadEmptySlugMapping() {
         emptySlugSet = new Set();
         completedNamesSet = new Set();
@@ -3065,6 +3098,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         updateIndexEntriesMessage('Loading index data...');
+        loadRedditDiffMap().then(() => { if (selectedIndexState) renderIndexEntries(); });
         
         try {
             // 1. Load Master Index (States/Counts)
@@ -3252,6 +3286,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const nameSpan = document.createElement('span');
         nameSpan.className = 'index-entry-name';
         nameSpan.appendChild(document.createTextNode(entryName));
+        const diffBadge = isStub ? null : buildRedditDiffBadge(entry);
+        if (diffBadge) nameSpan.appendChild(diffBadge);
 
         const actions = document.createElement('div');
         actions.className = 'index-entry-actions';
