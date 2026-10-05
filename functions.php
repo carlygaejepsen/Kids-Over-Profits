@@ -166,6 +166,8 @@ require_once get_stylesheet_directory() . '/inc/people-admin.php';
 require_once get_stylesheet_directory() . '/inc/people-merge.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
+// Facilities a state's published list names that our records do not: link, create or dismiss (KOP Tools > State Lists)
+require_once get_stylesheet_directory() . '/inc/state-lists.php';
 // Woodbury Reports pages about a program, cut by scripts/woodbury-scan.py, reviewed and filed in its doc library
 require_once get_stylesheet_directory() . '/inc/woodbury-mentions.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-create.php';

@@ -220,6 +220,12 @@ php scripts/test-journalists.php [--list]
 # tmp/state-lists/<st>/<date>/ (MO vanishing from the registry is news). Writes tmp/state-lists/report.md + report.json, no DB writes
 py -3 scripts/state-lists-check.py [--state MO ...] [--refresh] [--full]   # --refresh refetches (1 request/s) and adds today's snapshot
 py -3 scripts/state-lists-check.py --selftest     # parsers + matcher + diff on made-up fixtures
+# Rows with no record (or more than one) carry candidates (record + why: part of the name, one name holds the other, spelling,
+# shared words; same town only adds); the export is reviewed at KOP Tools > State Lists (inc/state-lists.php, {prefix}kop_state_list_rows):
+# link (one click per candidate or the finder; the listed name becomes an other name only when ticked), create (kop_facdisc_create(),
+# citing the list), not TTI, later, exact Undo on Done; "Left the list" never changes a record. Keys: list + licence, else name key + town
+py -3 scripts/state-lists-check.py --export tmp/state-lists/state-lists.json   # copy to ~/kop-import/state-lists/state-lists.json on the server
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-state-lists.php   # PHP/script key parity, import, link/create/undo, re-import, left; writes a preview
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
 # seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
 python scripts/build-media-subfolders.py

@@ -607,13 +607,14 @@ function kop_facdisc_record(PDO $pdo, $name, array $news, $decision, $facility_i
  * Create the record for one entry, unless the identity rule finds it
  * (same name and place). Returns array(decision, facility id).
  */
-function kop_facdisc_create(PDO $pdo, array $entry, array $news) {
+function kop_facdisc_create(PDO $pdo, array $entry, array $news, array $more_opts = array()) {
     global $wpdb;
     require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';
     if (!kop_v2_writes_active($pdo, $wpdb->prefix)) {
         throw new RuntimeException('Facility saves are not on facilities_v2 yet.');
     }
-    $opts = array('pdo' => $pdo, 'prefix' => $wpdb->prefix);
+    // $more_opts: kop_facility_save() options a caller adds (skip_memberships on a test copy).
+    $opts = array('pdo' => $pdo, 'prefix' => $wpdb->prefix) + $more_opts;
     return kop_v2_with_write_lock($pdo, function () use ($pdo, $opts, $entry, $news) {
         $doc = kop_facdisc_build_doc($entry, $news);
         $found = kop_facility_resolve_identity($doc['identification']['name'], $doc['location']['state'], $doc['location']['city'], $opts);

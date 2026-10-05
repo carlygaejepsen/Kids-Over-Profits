@@ -1,0 +1,100 @@
+/* KOP Tools > State Lists (inc/state-lists.php, js/state-lists.js). Admin screen: every panel sets its
+   own background and text, every button names colour and background in each state (Kadence colour traps). */
+
+.kop-sl { max-width: 1100px; color: var(--kop-midnight-blue, #000435); }
+.kop-sl__intro { max-width: 62em; font-size: 14px; }
+.kop-sl__file,
+.kop-sl__bar,
+.kop-sl__covers {
+    box-sizing: border-box; margin: 12px 0; padding: 10px 12px; background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435); border: 1px solid #c3c4c7; border-radius: 6px;
+}
+.kop-sl__file code { word-break: break-all; }
+.kop-sl__bar { position: sticky; top: 32px; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.kop-sl__tabs { display: flex; flex-wrap: wrap; gap: 4px; }
+.kop-sl__status { font-weight: 600; color: #14532d; }
+.kop-sl__status.is-bad { color: #b32d2e; }
+.kop-sl__field { display: inline-flex; align-items: center; gap: 6px; }
+.kop-sl__field input,
+.kop-sl__field select { max-width: 100%; color: var(--kop-midnight-blue, #000435); background: var(--kop-white, #fff); }
+.kop-sl__field select option { color: var(--kop-midnight-blue, #000435); background: var(--kop-white, #fff); }
+.kop-sl__covers { font-size: 13px; color: var(--kop-text-muted, #4A5568); }
+.kop-sl__list { display: grid; gap: 12px; }
+.kop-sl__card {
+    box-sizing: border-box; padding: 14px 16px; background: var(--kop-white, #fff); color: var(--kop-midnight-blue, #000435);
+    border: 1px solid #c3c4c7; border-left: 4px solid var(--kop-teal-ink, #24757F); border-radius: 6px; min-width: 0;
+}
+.kop-sl__card.is-left { border-left-color: var(--kop-orange-ink, #A3570D); }
+.kop-sl__card.is-seen { opacity: .8; border-left-color: #c3c4c7; }
+.kop-sl__card.is-busy { opacity: .55; pointer-events: none; }
+.kop-sl__name { margin: 0 0 4px; font-size: 16px; color: var(--kop-midnight-blue, #000435); overflow-wrap: anywhere; }
+.kop-sl__h { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--kop-midnight-blue, #000435); cursor: default; }
+summary.kop-sl__h { cursor: pointer; }
+.kop-sl__meta { display: block; margin: 2px 0; color: var(--kop-text-muted, #4A5568); font-size: 13px; }
+.kop-sl__src { margin: 4px 0 0; font-size: 13px; color: var(--kop-midnight-blue, #000435); }
+.kop-sl a { color: var(--kop-navy-blue, #000080); text-decoration: underline; }
+.kop-sl a:hover,
+.kop-sl a:focus { color: var(--kop-midnight-blue, #000435); }
+.kop-sl__note {
+    margin: 10px 0; padding: 8px 10px; background: #fff5cb; color: var(--kop-midnight-blue, #000435);
+    border-left: 3px solid var(--kop-orange-ink, #A3570D); border-radius: 4px;
+}
+.kop-sl__box { margin: 10px 0; padding: 10px 12px; background: #f6f7f7; color: var(--kop-midnight-blue, #000435); border-radius: 6px; }
+.kop-sl__cand { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px;
+    padding: 8px 0; border-bottom: 1px solid #dcdcde; }
+.kop-sl__cand-who { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; }
+.kop-sl__why { display: block; font-size: 12px; color: var(--kop-text-muted, #4A5568); }
+.kop-sl__other { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 10px; }
+.kop-sl__other .kop-ff-q { width: 220px; max-width: 100%; }
+.kop-sl__label { font-weight: 600; }
+.kop-sl__check { display: block; margin-top: 10px; }
+.kop-sl__form { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 6px 0 10px; }
+.kop-sl__form .kop-sl__field { flex-direction: column; align-items: flex-start; }
+.kop-sl__form input[type="text"] { width: 240px; max-width: 100%; }
+.kop-sl__form input.kop-sl__short { width: 4em; }
+.kop-sl__acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.kop-sl__help { margin: 6px 0 0; font-size: 12px; color: var(--kop-text-muted, #4A5568); max-width: 62em; }
+.kop-sl__decided { margin: 8px 0 0; overflow-wrap: anywhere; }
+.kop-sl__empty { padding: 24px; background: var(--kop-white, #fff); color: var(--kop-midnight-blue, #000435);
+    border: 1px dashed #c3c4c7; border-radius: 6px; text-align: center; }
+
+/* Buttons: colour and background named in every state. */
+button.kop-sl__btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 4px 12px; border-radius: 4px;
+    font-size: 13px; line-height: 1.3; cursor: pointer; border: 1px solid var(--kop-navy-blue, #000080);
+    color: var(--kop-navy-blue, #000080); background: var(--kop-white, #fff);
+}
+button.kop-sl__btn:hover,
+button.kop-sl__btn:focus,
+button.kop-sl__btn:active { color: var(--kop-white, #fff); background: var(--kop-navy-blue, #000080); border-color: var(--kop-navy-blue, #000080); }
+button.kop-sl__btn--go { color: var(--kop-white, #fff); background: var(--kop-teal-fill, #24757F); border-color: var(--kop-teal-fill, #24757F); }
+button.kop-sl__btn--go:hover,
+button.kop-sl__btn--go:focus,
+button.kop-sl__btn--go:active { color: var(--kop-white, #fff); background: var(--kop-navy-blue, #000080); border-color: var(--kop-navy-blue, #000080); }
+button.kop-sl__btn--no { color: #8a1f11; background: var(--kop-white, #fff); border-color: #8a1f11; }
+button.kop-sl__btn--no:hover,
+button.kop-sl__btn--no:focus,
+button.kop-sl__btn--no:active { color: var(--kop-white, #fff); background: #8a1f11; border-color: #8a1f11; }
+button.kop-sl__btn:focus-visible { outline: 2px solid var(--kop-midnight-blue, #000435); outline-offset: 2px; }
+button.kop-sl__btn .kop-icon { width: 1em; height: 1em; flex: 0 0 auto; }
+button.kop-sl__tab {
+    padding: 6px 12px; border: 1px solid #8c8f94; border-radius: 999px; font-size: 13px; cursor: pointer;
+    color: var(--kop-midnight-blue, #000435); background: #f6f7f7;
+}
+button.kop-sl__tab:hover,
+button.kop-sl__tab:focus,
+button.kop-sl__tab:active { color: var(--kop-midnight-blue, #000435); background: #dcdcde; border-color: var(--kop-navy-blue, #000080); }
+button.kop-sl__tab[aria-selected="true"],
+button.kop-sl__tab[aria-selected="true"]:hover,
+button.kop-sl__tab[aria-selected="true"]:focus,
+button.kop-sl__tab[aria-selected="true"]:active { color: var(--kop-white, #fff); background: var(--kop-navy-blue, #000080); border-color: var(--kop-navy-blue, #000080); }
+
+@media (max-width: 782px) {
+    .kop-sl__bar { position: static; }
+    .kop-sl__field { display: flex; width: 100%; }
+    .kop-sl__field input,
+    .kop-sl__field select { flex: 1 1 auto; min-width: 0; }
+    .kop-sl__cand button.kop-sl__btn { width: 100%; justify-content: center; }
+    .kop-sl__form input[type="text"] { width: 100%; }
+    .kop-sl__form .kop-sl__field { width: 100%; }
+}

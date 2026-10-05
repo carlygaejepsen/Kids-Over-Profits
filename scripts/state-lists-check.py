@@ -20,6 +20,7 @@ Usage:
   python scripts/state-lists-check.py --state MO --state KY
   python scripts/state-lists-check.py --refresh        # refetch (one request a second)
   python scripts/state-lists-check.py --selftest
+  python scripts/state-lists-check.py --export tmp/state-lists/state-lists.json
 
 Files: tmp/state-lists/<ST>/<YYYY-MM-DD>/ holds the fetched files, meta.json
 (URLs, fetch date, list date) and rows.json. Every fetch makes a snapshot for
@@ -27,12 +28,19 @@ its date; the added/gone diff compares a state's newest snapshot with the one
 before it.
 
 Matching mirrors scripts/match-inspection-names.php and
-kop_facility_pages_inspections(): the same name key (kop_normalize_facility_name_rules
-without the curated alias map), a match when the keys are equal or the
+kop_facility_pages_inspections(): the same name key (kop_project_facility_name_key:
+the rules plus the curated alias map, read out of inc/rest-api.php), a match when the keys are equal or the
 RECORD's key extends the listed key (both 12+ characters), against a record's
 name, current name, other names and past names, inside the list's state.
 More than one record reaching one listed name is reported as ambiguous and
-never picked. "Near misses" (shared words) are hints only.
+never picked. A row with no record carries its candidates (record, why: part of the name is
+the record's name, one name holds the other, spelled almost the same, shared words; the same town
+only adds) as suggestions, never matches.
+
+--export FILE writes what KOP Tools > State Lists (inc/state-lists.php) imports: every listed row
+with no record or more than one, keyed list + licence (else name key + town), with its candidates,
+and the rows gone since the previous snapshot. Keep it in tmp/; copy it to the server as
+~/kop-import/state-lists/state-lists.json.
 """
 import argparse
 import datetime
@@ -58,14 +66,58 @@ _TITLES = re.compile(
     r'date\s+of\s+site\s+visit|site\s+visit|visit\s+date|inspection\s+date|licensee|licensed\s+capacity).*$')
 
 
+REST_API = os.path.join(ROOT, 'inc', 'rest-api.php')
+_ALIASES = [None]
+
+
+def load_aliases(path=REST_API):
+    """kop_facility_name_aliases() read out of inc/rest-api.php itself (never a copy, so the two cannot
+    drift): {variant: canonical} as written there, commented-out rows skipped."""
+    with open(path, encoding='utf-8') as f:
+        text = f.read()
+    m = re.search(r'function kop_facility_name_aliases\(\)\s*\{(.*?)\n\}', text, re.S)
+    if not m:
+        raise SystemExit('kop_facility_name_aliases() not found in %s' % path)
+    out = {}
+    for v, c in re.findall(r"^\s*'((?:[^'\\]|\\.)*)'\s*=>\s*'((?:[^'\\]|\\.)*)'\s*,", m.group(1), re.M):
+        out[v.replace("\\'", "'").replace('\\\\', '\\')] = c.replace("\\'", "'").replace('\\\\', '\\')
+    return out
+
+
+def alias_lookup():
+    """kop_normalize_facility_name()'s lookup: rules key of a variant -> rules key of its canonical,
+    chains resolved (capped at 10 hops, as in PHP)."""
+    if _ALIASES[0] is None:
+        look = {}
+        for v, c in load_aliases().items():
+            vk, ck = rules_key(v), rules_key(c)
+            if vk and ck and vk != ck:
+                look[vk] = ck
+        for frm, to in list(look.items()):
+            hops = 0
+            while to in look and look[to] != to and hops < 10:
+                to = look[to]
+                hops += 1
+            look[frm] = to
+        _ALIASES[0] = look
+    return _ALIASES[0]
+
+
 def name_key(name):
-    """kop_facility_pages_name_key(): trailing (...) off, then the rules of
-    kop_normalize_facility_name_rules() (no curated alias map)."""
+    """kop_project_facility_name_key() (what kop_facility_pages_name_key() calls): trailing (...) off, then
+    kop_normalize_facility_name() = the rules of kop_normalize_facility_name_rules() + the curated alias map.
+    scripts/test-state-lists.php recomputes every exported key in PHP and fails on any difference."""
     name = (name or '').strip()
     if not name:
         return ''
     name = re.sub(r'\s*\([^)]*\)\s*$', '', name)
-    s = name.lower().strip()
+    k = rules_key(name)
+    return alias_lookup().get(k, k) if k else ''
+
+
+def rules_key(name):
+    """kop_normalize_facility_name_rules()."""
+    s = (name or '').lower().strip()
     if not s:
         return ''
     cp = s.find(':')
@@ -125,22 +177,93 @@ def match_rows(rows, records):
         elif len(found) > 1:
             res['status'] = 'ambiguous'
             res['records'] = [_rec_brief(r) for r in found]
+            for b in res['records']:
+                b['why'] = 'one of %d records whose name begins with the listed name' % len(found)
             for r in found:
                 hit.add(r['id'])
         else:
             res['status'] = 'none'
             res['records'] = []
-            lw = words(lk)
-            scored = []
-            if lw:
-                for rec in records:
-                    best = max((len(lw & words(rk)) for rk in rec['keys']), default=0)
-                    if best >= 2 or (best >= 1 and len(lw) == 1):
-                        scored.append((best, rec))
-            scored.sort(key=lambda x: -x[0])
-            res['near'] = [_rec_brief(r) for _, r in scored[:3]]
+            res['near'] = candidates(row, records)
         results.append(res)
     return results, hit
+
+
+# Separators a listed name puts between a company and its program or home ("Brighton Center - Homeward
+# Bound", "LONGWELL GROUP HOME - DAMAR", "Principia- Aron House", "X dba Y", "X aka Y").
+_PARTS = re.compile(r'\s+[-–—]\s*|\s*[-–—]\s+|(?<=[a-z\.])-(?=[A-Z])|,\s+|\s+(?:d/?b/?a|aka)\s+', re.I)
+
+
+def name_parts(name):
+    """The listed name's parts' keys (only when it has more than one), each 6+ characters."""
+    raw = re.sub(r'\s*\([^)]*\)\s*$', '', name or '')
+    parts = [p for p in _PARTS.split(raw) if p and p.strip()]
+    if len(parts) < 2:
+        return []
+    out = []
+    for p in parts:
+        k = name_key(p)
+        if len(k) >= 6 and words(k) and k not in out:
+            out.append(k)
+    return out
+
+
+def _inside(short, long_):
+    """short is long_'s words in a row (whole words), short 8+ characters with a distinctive word."""
+    return len(short) >= 8 and short != long_ and words(short) and (' ' + short + ' ') in (' ' + long_ + ' ')
+
+
+def _place_key(s):
+    return re.sub(r'[^a-z0-9]+', ' ', (s or '').lower()).strip()
+
+
+def candidates(row, records, limit=4):
+    """Records the listed row may be, best first, each with why: never a match, only a suggestion the
+    review screen offers as a one-click link. Reasons: a part of the listed name is a record's name, one
+    name holds the other whole, spelled almost the same, distinctive words in common; the same town adds
+    to any of those but is never a reason alone."""
+    import difflib
+    lk = name_key(row['name'])
+    if not lk:
+        return []
+    parts = name_parts(row['name'])
+    lw = words(lk)
+    town = _place_key(row.get('city'))
+    scored = []
+    for rec in records:
+        best, why, tie = 0, '', 0
+        for rk in rec['keys']:
+            s, w = 0, ''
+            hit_part = next((p for p in parts if p == rk or key_matches(p, rk)), None)
+            if hit_part:
+                s, w = 4, ('part of the listed name ("%s") is the record\'s name' if hit_part == rk
+                           else 'part of the listed name ("%s") begins the record\'s name') % hit_part
+            elif _inside(rk, lk):
+                s, w = 3, 'the listed name holds the record\'s whole name'
+            elif _inside(lk, rk):
+                s, w = 3, 'the record\'s name holds the whole listed name'
+            elif min(len(lk), len(rk)) >= 8 and difflib.SequenceMatcher(None, lk, rk).ratio() >= 0.88:
+                s, w = 3, 'spelled almost the same'
+            else:
+                shared = lw & words(rk)
+                if len(shared) >= 2 or (shared and len(lw) == 1 and len(words(rk)) <= 2):
+                    s, w = len(shared), 'shares the words ' + ', '.join(sorted(shared))
+                elif shared and max(len(x) for x in shared) >= 5:
+                    s, w = 1, 'shares the word ' + next(iter(shared))   # offered only in the same town (below)
+            if s > best or (s == best and s and len(lw & words(rk)) > tie):
+                best, why, tie = s, w, len(lw & words(rk))
+        if not best:
+            continue
+        same_town = bool(town) and _place_key(rec.get('city')) == town
+        if best < 2 and not same_town:
+            continue
+        b = _rec_brief(rec)
+        b['why'] = why + ('; same town' if same_town else '')
+        b['score'] = best + (1 if same_town else 0)
+        b['tie'] = tie
+        scored.append(b)
+    scored.sort(key=lambda b: (-b['score'], -b.pop('tie'), b['name'].lower()))
+    return scored[:limit]
 
 
 def _rec_brief(r):
@@ -594,7 +717,8 @@ SOURCES = {
                absent_meaningful=True, discover=discover_ak, parse=parse_ak_files, ext=['.xlsx']),
     'LA': dict(label='Louisiana DCFS licensed facilities, Residential Home rows',
                covers='Licensed residential homes (Type IV, Type B/I). Child placing agencies and maternity homes dropped. '
-                      'The page lists a short set; the Class B (Type I) list is a separate PDF not used here.',
+                      'The page lists a short set. The "Residential Home Type I (formerly Class B)" PDF on the licensing page is the '
+                      '46-page regulations (checked 2026-10-05), not a list of homes, so there is no second list to read.',
                absent_meaningful=True, discover=discover_la, parse=parse_la_files, ext=['.html']),
     'IN': dict(label='Indiana DCS active residential licenses (child caring institutions and group homes)',
                covers='Licensed child caring institutions and group homes. No city is published, only the county. '
@@ -702,6 +826,9 @@ def check_state(st, records, date, meta, rows, prev):
     out['matched'] = [r for r in results if r['status'] == 'match']
     out['ambiguous'] = [r for r in results if r['status'] == 'ambiguous']
     out['no_record'] = [r for r in results if r['status'] == 'none']
+    out['counts'] = {'matched': len(out['matched']), 'ambiguous': len(out['ambiguous']),
+                     'no_record_with_candidate': sum(1 for r in out['no_record'] if r.get('near')),
+                     'no_record_without': sum(1 for r in out['no_record'] if not r.get('near'))}
     open_not_listed = [_rec_brief(r) for r in records[st] if r['status'] == 'Open' and r['id'] not in hit]
     out['open_records'] = sum(1 for r in records[st] if r['status'] == 'Open')
     out['open_not_on_list'] = open_not_listed
@@ -713,6 +840,101 @@ def check_state(st, records, date, meta, rows, prev):
         out['diff'] = {'previous': pm['fetched_on'], 'previous_list_date': pm.get('list_date', ''),
                        'added': a, 'gone': g}
     return out
+
+
+# ---------------------------------------------------------------- export (KOP Tools > State Lists)
+
+EXPORT_FORMAT = 'kop-state-lists/1'
+
+
+def row_key(lst, r):
+    """The row's key on the review screen, stable between runs: list + licence number when the list has
+    one, else list + name key + town (county where the list has no town). A later import with the same key
+    keeps the decision made on it."""
+    if r.get('license_id'):
+        return '%s|lic:%s' % (lst, r['license_id'])
+    place = (r.get('city') or (r.get('extra') or {}).get('county') or r.get('zip') or '').lower().strip()
+    return '%s|nm:%s|%s' % (lst, name_key(r['name']), place)
+
+
+def excluded_names():
+    """Young adult programs and Indigenous schools by name key (never TTI facilities): the screen says so
+    on a listed name that is one of them, and offers no facility record for it."""
+    out = {}
+    if not os.path.exists(DB):
+        return out
+    con = sqlite3.connect(DB)
+    for table, label, state_col in (('young_adult_programs', 'Young adult program (18+)', 'state'),
+                                    ('indigenous_schools', 'Indigenous residential school', 'region')):
+        try:
+            rows = con.execute('SELECT id, name, other_names, %s FROM %s' % (state_col, table)).fetchall()
+        except sqlite3.Error:
+            continue
+        for rid, nm, other, st in rows:
+            names = [nm]
+            try:
+                names += [x if isinstance(x, str) else (x or {}).get('name', '') for x in json.loads(other or '[]')]
+            except (ValueError, TypeError):
+                names += re.split(r'[;\n]', other or '')
+            for n in names:
+                k = name_key(n or '')
+                if k:
+                    out.setdefault(k, []).append({'table': table, 'label': label, 'id': rid, 'name': nm, 'state': (st or '').upper()[:2]})
+    con.close()
+    return out
+
+
+def _export_row(lst, o, r, status, cands, excluded):
+    ex = r.get('extra') or {}
+    k = name_key(r['name'])
+    hit = [e for e in excluded.get(k, []) if not e['state'] or e['state'] == (r.get('state') or lst)]
+    return {
+        'key': row_key(lst, r), 'list': lst, 'state': r.get('state') or lst, 'name': r['name'], 'name_key': k,
+        'city': r.get('city') or '', 'county': ex.get('county', ''), 'zip': r.get('zip') or '', 'address': r.get('address') or '',
+        'type': r.get('type') or '', 'capacity': r.get('capacity'), 'license_id': r.get('license_id') or '',
+        'source_url': r.get('source_url') or (o['urls'][0] if o['urls'] else ''), 'list_date': o.get('list_date') or '',
+        'status': status,
+        'candidates': [{'id': c['id'], 'name': c['name'], 'city': c.get('city', ''), 'status': c.get('status', ''), 'why': c.get('why', '')}
+                       for c in cands],
+        'excluded': hit[0] if hit else None,
+    }
+
+
+def build_export(report, records, today):
+    """What the review screen imports: per list, every listed row with no record (or more than one), with
+    its candidates; and every row gone since the previous snapshot, naming the record it matches now."""
+    excluded = excluded_names()
+    lists, rows, gone, seen = {}, [], [], {}
+    for o in report:
+        lst = o['state']
+        lists[lst] = {'label': o['label'], 'covers': o['covers'], 'urls': o['urls'], 'list_date': o['list_date'],
+                      'list_date_basis': o['list_date_basis'], 'fetched_on': o['fetched_on'], 'snapshot': o['snapshot'],
+                      'previous': o['diff'].get('previous'), 'counts': o['counts'], 'rows': o['rows']}
+        for res in o['no_record'] + o['ambiguous']:
+            status = 'none' if res['status'] == 'none' else 'ambiguous'
+            cands = (res.get('near') or []) if status == 'none' else res['records']
+            e = _export_row(lst, o, res['row'], status, cands, excluded)
+            n = seen.get(e['key'], 0) + 1   # the same name and town listed twice (MO's St. Nicholas Academy)
+            seen[e['key']] = n
+            if n > 1:
+                e['key'] += '#%d' % n
+            rows.append(e)
+        if o['diff'].get('gone'):
+            by_state = {}
+            for r in o['diff']['gone']:
+                by_state.setdefault(r.get('state') or lst, []).append(r)
+            for s, rs in by_state.items():
+                if s not in records:
+                    records[s] = load_records([s])[s]
+                res, _ = match_rows(rs, records[s])
+                for x in res:
+                    e = _export_row(lst, o, x['row'], 'gone', [], excluded)
+                    e['list_date'] = o['diff'].get('previous_list_date') or ''
+                    e['left_by'] = o.get('list_date') or o['snapshot']
+                    e['record'] = ({'id': x['records'][0]['id'], 'name': x['records'][0]['name']}
+                                   if x['status'] == 'match' else None)
+                    gone.append(e)
+    return {'format': EXPORT_FORMAT, 'generated': today, 'lists': lists, 'rows': rows, 'gone': gone}
 
 
 def _fmt_row(r):
@@ -787,6 +1009,7 @@ def main():
     ap.add_argument('--refresh', action='store_true', help='refetch the lists (one request a second) and make today\'s snapshot')
     ap.add_argument('--selftest', action='store_true')
     ap.add_argument('--full', action='store_true', help='print every no-record name (default: first 40 per state; the files always have all)')
+    ap.add_argument('--export', metavar='FILE', help='also write what KOP Tools > State Lists imports (tmp/ only: copy it to ~/kop-import/state-lists/state-lists.json on the server)')
     a = ap.parse_args()
     if a.selftest:
         return selftest()
@@ -820,6 +1043,15 @@ def main():
     with open(os.path.join(OUT, 'report.json'), 'w', encoding='utf-8') as f:
         json.dump({'generated': today, 'states': report, 'failed': failed}, f, indent=1, ensure_ascii=False)
     print('Wrote tmp/state-lists/report.md and report.json' + ('; failed: ' + ', '.join(failed) if failed else ''))
+    for o in report:
+        c = o['counts']
+        print('%s: %d listed, %d matched, %d ambiguous, %d no record with a candidate, %d no record without' %
+              (o['state'], o['rows'], c['matched'], c['ambiguous'], c['no_record_with_candidate'], c['no_record_without']))
+    if a.export:
+        exp = build_export(report, records, today)
+        with open(a.export, 'w', encoding='utf-8') as f:
+            json.dump(exp, f, indent=1, ensure_ascii=False)
+        print('Wrote %s: %d rows to review, %d gone from their list' % (a.export, len(exp['rows']), len(exp['gone'])))
     return 1 if failed else 0
 
 
@@ -841,6 +1073,35 @@ def selftest():
     ok(key_matches('discovery ranch', 'discovery ranch south'), 'record extends listed (14 chars)')
     ok(not key_matches('discovery ranch south', 'discovery ranch'), 'reverse is not a match')
     ok(not key_matches('smc', 'smc knob noster unit'), 'short key never prefix-matches')
+
+    # the curated alias map, read from inc/rest-api.php
+    al = load_aliases()
+    ok(al.get('NWBHS') == 'Northwest Behavioral Healthcare Services' and len(al) >= 8, 'alias map read from rest-api.php')
+    ok(not any(k.startswith('Provo Canyon') for k in al), 'commented-out alias rows skipped')
+    ok(name_key('NWBHS') == name_key('Northwest Behavioral Healthcare Services') == 'northwest behavioral healthcare services', 'alias applied')
+    ok(name_key('CT Clnical Services dba Turnbridge') == name_key('CT Clinical Services DBA Turnbridge'), 'alias variant collapses')
+
+    # candidates: suggestions with reasons, never matches
+    crecs = [
+        {'id': 21, 'name': 'Damar Services – Longwell Group Home', 'city': 'Indianapolis', 'status': 'Open', 'keys': [name_key('Damar Services – Longwell Group Home')]},
+        {'id': 22, 'name': 'Brighton Center’s Homeward Bound Shelter', 'city': 'Covington', 'status': 'Open', 'keys': [name_key('Brighton Center’s Homeward Bound Shelter')]},
+        {'id': 23, 'name': 'Hope Hill Youth Services', 'city': 'Hope', 'status': 'Open', 'keys': [name_key('Hope Hill Youth Services')]},
+        {'id': 24, 'name': 'Rutherford Houses', 'city': 'Shreveport', 'status': 'Open', 'keys': [name_key('Rutherford Houses')]},
+    ]
+    c = candidates(_row('LONGWELL GROUP HOME - DAMAR', 'u'), crecs)
+    ok(c and c[0]['id'] == 21 and 'damar' in c[0]['why'], 'company-program name finds its home record %s' % c)
+    c = candidates(_row('Brighton Center - Homeward Bound', 'u', city='Covington'), crecs)
+    ok(c and c[0]['id'] == 22 and c[0]['why'].endswith('same town'), 'part of the name + same town')
+    c = candidates(_row('Hope Hill', 'u', city='Hope'), crecs)
+    ok(c and c[0]['id'] == 23 and 'holds the whole listed name' in c[0]['why'], 'record name holds the listed name')
+    ok(candidates(_row('Rutherford House III', 'u', city='Shreveport'), crecs)[0]['id'] == 24, 'one shared word counts in the same town')
+    ok(candidates(_row('Rutherford House III', 'u', city='Monroe'), crecs) == [], '... and not in another town')
+    ok(candidates(_row('Totally Unknown Camp', 'u'), crecs) == [], 'no reason, no candidate')
+
+    # the export's stable keys
+    ok(row_key('KY', _row('Hope Hill', 'u', license_id='500763')) == 'KY|lic:500763', 'key by licence')
+    ok(row_key('MO', _row('The Key Inc.', 'u', city='Troy')) == 'MO|nm:key|troy', 'key by name + town')
+    ok(row_key('IN', _row('X Home', 'u', extra={'county': 'Allen'})) == 'IN|nm:x home|allen', 'key by name + county')
 
     # matcher: match, ambiguous, none, past name, near miss
     recs = [

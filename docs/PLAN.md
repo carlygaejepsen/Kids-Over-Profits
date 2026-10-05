@@ -195,6 +195,23 @@ The date is when each was last confirmed open.
     now waits and retries; paste the regenerated `tmp/gdocs/export.gs` and
     Run once more (it skips the 182).
 
+13. **State Lists** (2026-10-05). Facilities that seven state-published lists
+    (MO license-exempt registry, KY, AK, LA, IN, KS and MS PRTF) name but our
+    records do not: 168 rows, 81 with a suggested record and 13 that several fit. Ask Claude for
+    `tmp/state-lists/state-lists.json` (`py -3 scripts/state-lists-check.py
+    --export tmp/state-lists/state-lists.json`; it stays out of git) and put
+    it on the server as `~/kop-import/state-lists/state-lists.json`: in
+    cPanel File Manager make the folder `kop-import/state-lists` in the home
+    directory (beside `public_html`, where `kop-import/gdocs` already is) and
+    upload the file there. Then open
+    [KOP Tools > State Lists](https://kidsoverprofits.org/wp-admin/admin.php?page=kop-state-lists):
+    it reads the file on opening. Per card: Link to this record (tick "Also
+    add" only when the listed name should become an other name), Create
+    record, Not a TTI facility (Missouri's ordinary boarding schools), or
+    Later; Undo on Done. After each `--refresh` (monthly for Missouri) export
+    and upload again: decisions are kept, and "Left the list" shows what
+    dropped off.
+
 ### Hosting
 
 9. **Close `/staging/`.** It answers 200 and its inner pages carry no
