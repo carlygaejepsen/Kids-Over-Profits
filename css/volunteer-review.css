@@ -1,0 +1,349 @@
+/* /volunteer-review/ (templates/volunteer-review.php, js/volunteer-review.js).
+   Every piece of text sits on a solid panel; buttons name colour and
+   background in every state (Kadence colours button:hover / :focus). */
+
+.kop-vol-page {
+    max-width: 860px;
+    margin: 24px auto 48px;
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.kop-vol-panel {
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #1A202C);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 0 0 16px;
+    box-shadow: 0 1px 4px rgba(0, 4, 53, 0.12);
+    overflow-wrap: anywhere;
+}
+
+.kop-vol-panel h1,
+.kop-vol-panel h2,
+.kop-vol-panel h3 {
+    color: var(--kop-midnight-blue, #000435);
+    margin: 0 0 10px;
+    line-height: 1.25;
+}
+
+.kop-vol-panel h1 { font-size: 1.8rem; }
+.kop-vol-panel h2 { font-size: 1.35rem; }
+.kop-vol-panel h3 { font-size: 1.15rem; }
+
+.kop-vol-panel p { margin: 0 0 10px; }
+.kop-vol-panel p:last-child { margin-bottom: 0; }
+
+.kop-vol-panel a {
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+}
+
+.kop-vol-panel a:hover,
+.kop-vol-panel a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-vol-intro {
+    border-top: 6px solid var(--kop-teal, #33A7B5);
+}
+
+.kop-vol-guide {
+    background: var(--kop-sand, #F2EEDF);
+}
+
+/* Tabs */
+
+.kop-vol-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+button.kop-vol-tab,
+button.kop-vol-tab:hover,
+button.kop-vol-tab:focus,
+button.kop-vol-tab:active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 2px solid var(--kop-navy, #000080);
+    border-radius: 999px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy, #000080);
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+button.kop-vol-tab:hover,
+button.kop-vol-tab:focus {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+button.kop-vol-tab:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+button.kop-vol-tab.is-active,
+button.kop-vol-tab.is-active:hover,
+button.kop-vol-tab.is-active:focus {
+    background: var(--kop-navy, #000080);
+    color: var(--kop-white, #fff);
+}
+
+.kop-vol-count {
+    display: inline-block;
+    min-width: 1.6em;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* Cards */
+
+.kop-vol-meta {
+    color: var(--kop-text-muted, #4A5568);
+    font-size: 0.9rem;
+}
+
+.kop-vol-status {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-vol-links {
+    list-style: none;
+    margin: 0 0 10px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+}
+
+.kop-vol-text {
+    white-space: pre-line;
+}
+
+.kop-vol-facts {
+    display: grid;
+    grid-template-columns: minmax(110px, max-content) 1fr;
+    gap: 4px 14px;
+    margin: 0 0 12px;
+    font-size: 0.95rem;
+}
+
+.kop-vol-facts dt {
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-vol-facts dd {
+    margin: 0;
+    white-space: pre-line;
+}
+
+.kop-vol-compare-wrap {
+    overflow-x: auto;
+    margin: 0 0 12px;
+}
+
+.kop-vol-compare {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 100%;
+}
+
+.kop-vol-compare th,
+.kop-vol-compare td {
+    border: 1px solid var(--kop-border-secondary, #CBD5E0);
+    padding: 4px 8px;
+    text-align: left;
+    vertical-align: top;
+    color: var(--kop-text-primary, #1A202C);
+}
+
+.kop-vol-what {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin: 0 0 12px;
+    font-size: 0.92rem;
+}
+
+.kop-vol-what-head {
+    font-weight: 700;
+}
+
+.kop-vol-decide label {
+    display: block;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-vol-decide textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #1A202C);
+    font: inherit;
+}
+
+.kop-vol-decide textarea::placeholder {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-vol-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0 0;
+}
+
+/* Buttons: colour and background named in every state. */
+
+button.kop-vol-btn,
+button.kop-vol-btn:hover,
+button.kop-vol-btn:focus,
+button.kop-vol-btn:active {
+    padding: 9px 16px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    box-shadow: none;
+}
+
+button.kop-vol-btn:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+button.kop-vol-btn-approve,
+button.kop-vol-btn-approve:hover,
+button.kop-vol-btn-approve:focus,
+button.kop-vol-btn-approve:active {
+    background: var(--kop-teal-fill, #24757F);
+    border-color: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white, #fff);
+}
+
+button.kop-vol-btn-approve:hover,
+button.kop-vol-btn-approve:focus {
+    background: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
+}
+
+button.kop-vol-btn-reject,
+button.kop-vol-btn-reject:hover,
+button.kop-vol-btn-reject:focus,
+button.kop-vol-btn-reject:active {
+    background: var(--kop-white, #fff);
+    border-color: var(--kop-coral-pink-ink, #D9020F);
+    color: var(--kop-coral-pink-ink, #D9020F);
+}
+
+button.kop-vol-btn-reject:hover,
+button.kop-vol-btn-reject:focus {
+    background: var(--kop-coral-pink-fill, #D9020F);
+    color: var(--kop-white, #fff);
+}
+
+button.kop-vol-btn-plain,
+button.kop-vol-btn-plain:hover,
+button.kop-vol-btn-plain:focus,
+button.kop-vol-btn-plain:active {
+    background: var(--kop-white, #fff);
+    border-color: var(--kop-navy, #000080);
+    color: var(--kop-navy, #000080);
+}
+
+button.kop-vol-btn-plain:hover,
+button.kop-vol-btn-plain:focus {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+button.kop-vol-btn[disabled],
+button.kop-vol-btn[disabled]:hover,
+button.kop-vol-btn[disabled]:focus {
+    background: var(--kop-white, #fff);
+    border-color: var(--kop-text-muted, #4A5568);
+    color: var(--kop-text-muted, #4A5568);
+    cursor: not-allowed;
+}
+
+button.kop-vol-btn-small,
+button.kop-vol-btn-small:hover,
+button.kop-vol-btn-small:focus {
+    padding: 3px 10px;
+    font-size: 0.85rem;
+}
+
+.kop-vol-msg {
+    margin: 8px 0 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-vol-msg.is-error {
+    color: var(--kop-coral-pink-ink, #D9020F);
+    font-weight: 600;
+}
+
+.kop-vol-card.is-done {
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-vol-done {
+    margin: 0 0 8px;
+}
+
+.kop-vol-more {
+    text-align: center;
+}
+
+.kop-vol-more button[hidden] {
+    display: none;
+}
+
+.kop-vol-more .kop-vol-btn {
+    background: var(--kop-white, #fff);
+}
+
+.kop-vol-mine {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.kop-vol-mine li {
+    padding: 10px 0;
+    border-top: 1px solid var(--kop-border-secondary, #CBD5E0);
+}
+
+.kop-vol-outcome {
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+@media (max-width: 600px) {
+    .kop-vol-panel { padding: 14px; }
+    .kop-vol-panel h1 { font-size: 1.5rem; }
+    .kop-vol-facts { grid-template-columns: 1fr; }
+    .kop-vol-facts dd { margin-bottom: 6px; }
+    .kop-vol-buttons .kop-vol-btn { flex: 1 1 100%; }
+}

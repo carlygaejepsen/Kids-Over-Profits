@@ -212,6 +212,7 @@ class wpdb {
     public $postmeta = 'wpdl_postmeta';
     public $last_error = '';
     public $queries = 0;
+    public $insert_id = 0;
     private $pdo;
     public function __construct(PDO $pdo) { $this->pdo = $pdo; }
     public function suppress_errors($suppress = true) { return false; }
@@ -267,7 +268,9 @@ class wpdb {
         }
     }
     public function insert($table, array $data) {
-        return $this->write("INSERT INTO `$table` (`" . implode('`, `', array_keys($data)) . '`) VALUES (' . implode(', ', array_fill(0, count($data), '?')) . ')', array_values($data));
+        $n = $this->write("INSERT INTO `$table` (`" . implode('`, `', array_keys($data)) . '`) VALUES (' . implode(', ', array_fill(0, count($data), '?')) . ')', array_values($data));
+        if ($n) $this->insert_id = (int) $this->pdo->lastInsertId();
+        return $n;
     }
     public function update($table, array $data, array $where) {
         $set = implode(', ', array_map(function ($k) { return "`$k` = ?"; }, array_keys($data)));

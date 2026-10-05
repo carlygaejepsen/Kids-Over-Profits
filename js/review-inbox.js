@@ -113,6 +113,7 @@
     var SPECIAL = {
         _mine: { label: 'Assigned to you', count: function () { return state.held.mine; } },
         _snoozed: { label: 'Snoozed', count: function () { return state.held.snoozed; } },
+        _volunteers: { label: 'Volunteers recommend', count: function () { return state.held.volunteers || 0; } },
         _done: { label: 'Recently done', count: function () { return 0; } }
     };
 
@@ -800,6 +801,19 @@
         })]);
     }
 
+    /** What volunteer reviewers recommended: "Volunteers: Sam recommends approve: note". */
+    function recNote(item) {
+        var box = el('div', { class: 'rinbox-recs' }, [el('strong', { text: 'Volunteers: ' })]);
+        item.recs.forEach(function (r, i) {
+            box.appendChild(el('span', { class: 'rinbox-rec rinbox-rec-' + String(r.verdict).replace(/[^a-z]/g, '') }, [
+                (i ? '; ' : '') + r.name + ' says ',
+                el('em', { text: String(r.verdict_label).toLowerCase() }),
+                r.note ? ' (' + r.note + ')' : ''
+            ]));
+        });
+        return box;
+    }
+
     function setHold(item, src, node, days, assign, note) {
         var m = node.querySelector('.rinbox-message');
         api('hold', { source: src, key: item.key, title: item.title || '', days: days, assign: assign, note: note }).then(function (res) {
@@ -865,16 +879,18 @@
         panel.hidden = false;
         renderTabs();
         setUrl();
-        if (k === '_done') renderDone(); else renderHeld(k === '_mine' ? 'mine' : 'snoozed');
+        if (k === '_done') renderDone(); else renderHeld(k === '_mine' ? 'mine' : k === '_volunteers' ? 'volunteers' : 'snoozed');
     }
 
     function renderHeld(which) {
         panel.innerHTML = '';
         panel.appendChild(el('div', { class: 'rinbox-head' }, [
-            el('h2', { text: which === 'mine' ? 'Assigned to you' : 'Snoozed' }),
+            el('h2', { text: which === 'mine' ? 'Assigned to you' : which === 'volunteers' ? 'Volunteers recommend' : 'Snoozed' }),
             el('p', { class: 'rinbox-help', text: which === 'mine'
                 ? 'Items from any queue that someone handed to you. Approve or reject them here; that takes them off this list.'
-                : 'Items set aside for later. Each comes back to its queue on the date shown, or now with "Put back in the list".' })
+                : which === 'volunteers'
+                    ? 'Items volunteer reviewers have looked at, the most recommended first. Their advice is on each card; your Approve or Reject is the decision and takes the item off this list. Volunteers and their links: KOP Tools > Volunteer Reviewers.'
+                    : 'Items set aside for later. Each comes back to its queue on the date shown, or now with "Put back in the list".' })
         ]));
         statusEl = el('p', { class: 'rinbox-status', role: 'status', text: 'Loading…' });
         listEl = el('div', { class: 'rinbox-list' });
@@ -888,7 +904,7 @@
             items.forEach(function (it) {
                 listEl.appendChild(card(it));
                 if (it.native) listEl.lastChild.appendChild(el('p', { class: 'rinbox-help' }, [
-                    which === 'mine' ? 'Approve or reject this one on the ' : 'Put it back in the list, then approve or reject it on the ',
+                    which === 'snoozed' ? 'Put it back in the list, then approve or reject it on the ' : 'Approve or reject this one on the ',
                     el('button', { type: 'button', class: 'rinbox-pv-btn', text: it.source_label + ' tab', onclick: function () {
                         var tab = page.querySelector('.type-tabs [data-type="' + it.source + '"]');
                         if (tab) tab.click();
@@ -1021,6 +1037,7 @@
         node.kopParams = {};
         node.appendChild(el('header', { class: 'rinbox-card-head' }, [pick ? el('span', { class: 'rinbox-title-row' }, [pick, title]) : title, meta]));
         if (item.hold) node.appendChild(holdNote(item, src, node));
+        if (item.recs && item.recs.length) node.appendChild(recNote(item));
         if (links.childNodes.length) node.appendChild(links);
         node.appendChild(pane);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
@@ -1411,6 +1428,7 @@
         var oldEv = card.querySelector(':scope > .rinbox-native-evidence');
         var ev = el('div', { class: 'rinbox-native-evidence' });
         if (item.hold) ev.appendChild(holdNote(item, src, row));
+        if (item.recs && item.recs.length) ev.appendChild(recNote(item));
         var pane = previewPane();
         if (safeHref(item.url)) {
             ev.appendChild(el('div', { class: 'rinbox-links' }, [el('span', { class: 'rinbox-link' }, [

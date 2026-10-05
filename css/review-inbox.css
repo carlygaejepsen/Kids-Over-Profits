@@ -904,6 +904,27 @@ button.rinbox-pv-btn:focus-visible {
     font-size: 13px;
 }
 
+/* What volunteer reviewers recommended (inc/review-volunteers.php). */
+.rinbox-recs {
+    margin: 8px 0;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border-left: 4px solid var(--kop-teal-ink, #24757F);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 13px;
+}
+
+.rinbox-rec-approve em {
+    color: var(--kop-teal-ink, #24757F);
+    font-weight: 600;
+}
+
+.rinbox-rec-reject em {
+    color: var(--kop-coral-pink-ink, #D9020F);
+    font-weight: 600;
+}
+
 .rinbox-hold button.rinbox-btn {
     padding: 3px 10px;
     font-size: 12px;

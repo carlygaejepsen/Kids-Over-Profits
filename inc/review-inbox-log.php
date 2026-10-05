@@ -94,6 +94,11 @@ function kop_rinbox_log_insert(array $row) {
         'user_login'   => kop_rinbox_reviewer(),
         'created_at'   => current_time('mysql', true),
     ));
+    // An approve or reject closes what volunteers recommended on the item, with this outcome.
+    $style = (string) ($row['style'] ?? '');
+    if (($style === 'approve' || $style === 'reject') && function_exists('kop_vol_resolve')) {
+        kop_vol_resolve((string) $row['source'], (string) $row['item_key'], $style, kop_rinbox_reviewer());
+    }
 }
 
 /**
@@ -223,6 +228,7 @@ function kop_rinbox_log_undo($id) {
         throw $e;
     }
     kop_rinbox_flush_counts();
+    if (in_array($r['style'], array('approve', 'reject'), true) && function_exists('kop_vol_reopen')) kop_vol_reopen($r['source'], $r['item_key']);
     $res = is_array($res) ? $res : array();
     return array('message' => ($res['message'] ?? '') !== '' ? $res['message'] : 'Undone.');
 }
@@ -558,7 +564,9 @@ function kop_rinbox_rest_hold(WP_REST_Request $req) {
 
 function kop_rinbox_rest_held(WP_REST_Request $req) {
     return kop_rinbox_rest(function () use ($req) {
-        return kop_rinbox_held_items($req->get_param('which') === 'snoozed' ? 'snoozed' : 'mine');
+        $which = (string) $req->get_param('which');
+        if ($which === 'volunteers' && function_exists('kop_vol_admin_items')) return kop_vol_admin_items();
+        return kop_rinbox_held_items($which === 'snoozed' ? 'snoozed' : 'mine');
     });
 }
 

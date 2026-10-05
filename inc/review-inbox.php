@@ -71,6 +71,8 @@
  * REST (manage_options, wp_rest nonce): kop/v1/review-inbox/{sources, items,
  * act, save, tags, ai}; inc/review-inbox-log.php adds {log, undo, hold, held,
  * preview}: Recently done with Undo, snooze / assign, and link previews.
+ * Every item carries 'recs': what volunteer reviewers recommended
+ * (inc/review-volunteers.php; held?which=volunteers lists those items).
  * Tested by scripts/test-review-inbox.php.
  */
 
@@ -89,6 +91,8 @@ function kop_rinbox_register($key, callable $build) {
 require_once __DIR__ . '/review-destinations.php';
 // Recently done (with Undo), snooze / assign, link previews.
 require_once __DIR__ . '/review-inbox-log.php';
+// Volunteers recommend approve / reject through a personal link (/volunteer-review/).
+require_once __DIR__ . '/review-volunteers.php';
 
 foreach (glob(__DIR__ . '/review-inbox/*.php') ?: array() as $kop_rinbox_file) {
     require_once $kop_rinbox_file;
@@ -300,6 +304,8 @@ function kop_rinbox_finish_items($source, array $items) {
     $keys = array();
     foreach ($items as $it) $keys[] = (string) $it['key'];
     $tags = kop_rinbox_tags_for($source, $keys);
+    // What volunteer reviewers recommended (inc/review-volunteers.php).
+    $recs = function_exists('kop_vol_recs_for') ? kop_vol_recs_for($source, $keys) : array();
     foreach ($items as &$it) {
         $it += array('subtitle' => '', 'url' => '', 'text' => '', 'created' => '', 'status' => '', 'status_label' => '',
             'facility' => null, 'fields' => array(), 'actions' => array(), 'moves' => array(), 'links' => array(),
@@ -307,6 +313,7 @@ function kop_rinbox_finish_items($source, array $items) {
         $it['key'] = (string) $it['key'];
         $it['tags'] = $tags[$it['key']] ?? array();
         $it['hold'] = kop_rinbox_hold_info($source, $it['key']);
+        $it['recs'] = $recs[$it['key']] ?? array();
     }
     unset($it);
     return $items;
@@ -500,7 +507,7 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
             );
         }
         return array('sources' => $out, 'tags' => kop_rinbox_known_tags(), 'admins' => kop_rinbox_admins(),
-            'me' => get_current_user_id(), 'held' => kop_rinbox_held_counts());
+            'me' => get_current_user_id(), 'held' => kop_rinbox_held_counts() + array('volunteers' => function_exists('kop_vol_open_count') ? kop_vol_open_count() : 0));
     });
 }
 

@@ -101,6 +101,12 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.ph
 # (review-inbox/preview: framed where allowed, else a reading copy)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
+# Volunteer reviewers (inc/review-volunteers.php, /volunteer-review/, js/volunteer-review.js): KOP Tools > Volunteer Reviewers makes a
+# personal link per name (no account; only the token's hash stored, cookie kop_vol), turns one off, picks the queues they see
+# (kop_vol_never_sources() can never open). Volunteers only recommend approve/reject/not sure ({prefix}kop_volunteer_recs); items reach
+# them as kop_vol_item() copies (no fields/actions/tags, emails and phones blanked). Inbox cards show 'recs', "Volunteers recommend"
+# lists them; an approve/reject in the log closes them (agreement rate per volunteer), Undo reopens them
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-volunteers.php [--list]   # links, copies, recommend, resolve, holds
 # "Email me when this has been reviewed" on every public form (inc/submission-followup.php, js/submission-followup.js): forms post
 # notify_email, the endpoint calls kop_followup_register(); a 10-minute cron reads each item's own status and mails once the decision
 # has stood 10 minutes (an Undo inside that cancels it), then blanks the address. A new public form adds the block and a kind there.
@@ -343,6 +349,7 @@ to the program aggregate otherwise.
 - `locations_master` / `referrers_master` - Related data
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
+- `{prefix}kop_volunteers` / `{prefix}kop_volunteer_recs` - Volunteer reviewers (name, hash of their link's token) and their approve/reject/not sure recommendations on review inbox items, closed with the admin's decision (`inc/review-volunteers.php`)
 - `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named on a staff list (`personId` on each `facilities_v2` staff entry) and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
