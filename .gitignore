@@ -1,4 +1,4 @@
-﻿# Environment files
+# Environment files
 .env
 
 # Never track Git metadata directories/files from nested repos
@@ -44,12 +44,12 @@ update_organizations.sql
 # Claude Code temp files
 tmpclaude-*
 
-# MN scraper â€” local state (browser profile, progress cache, temp)
+# MN scraper — local state (browser profile, progress cache, temp)
 .tmp/
 scripts/.mn-browser-profile/
 scripts/mn_progress.json
 
-# Article discovery â€” runtime state written by the nightly cron on the server
+# Article discovery — runtime state written by the nightly cron on the server
 # (seen-URL cache + rejected log). Never tracked: a committed copy would be
 # overwritten by every deploy (.cpanel.yml copies scripts/ wholesale).
 scripts/.discovery-state.json
