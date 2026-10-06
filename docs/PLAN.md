@@ -1364,8 +1364,16 @@ workflow; anything that runs on the server later goes through
    record fixes it raised: Clark Harman's memorial date (Feb 1 vs Feb 3,
    2024), Turn-About Ranch operator Acadia and status Transferred, Kelly
    Corey / Kelly Cole and Jeff Johnson (one name, several people), a Fornits
-   link on kidsoverprofits.org, Oakley's 2007 closing year. Earlier plan
-   text:) Picked for the most gaps across kinds (closure,
+   link on kidsoverprofits.org, Oakley's 2007 closing year. Owner
+   2026-10-05: a closed program's entry must read in the past tense, so
+   step 3 has a tense pass (Sonnet) for entries whose record is Closed, that
+   are about an earlier name, or whose header has a closing year:
+   ops-tense.json pairs each line with its past-tense form, and the
+   assembler takes a line only when the sole changes are verbs put in the
+   past ("is" -> "was", "must" -> "had to", irregular verbs listed) and
+   dropped "current"/"still"/"now"; quotes, testimony, titles, links and
+   facts still true (pending suits, people's jobs elsewhere) stay as
+   written. Pilot: 51 lines in 4 entries. Earlier plan text:) Picked for the most gaps across kinds (closure,
    rename, lawsuit, death, finding). Owner reads them on the screen in
    step 5; prompts are adjusted; then the rest (about 290 once linked) in
    batches of 25 from a background workflow, resumable by entry id.
