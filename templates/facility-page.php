@@ -52,7 +52,7 @@ $kop_fp_sources = static function ($sources, $tag = 'dd', $short = false) {
         // At a glance: the word "source" (source 1, source 2 ...), the citation in its preview.
         foreach (array_values($sources) as $n => $src) {
             $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
-            $preview = trim($src['source'] . ($src['cite'] !== '' && $src['cite'] !== $src['source'] ? ' | ' . $src['cite'] : ''));
+            $preview = $src['cite'] !== '' ? $src['cite'] : $src['source'];
             $links[] = $src['url'] !== ''
                 ? kop_citation_link($src['url'], $label, $preview, true, '', true)
                 : '<span title="' . esc_attr($preview) . '">' . esc_html($label) . '</span>';

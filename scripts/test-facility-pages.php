@@ -474,8 +474,8 @@ if ($picks) {
     $html = ob_get_clean();
     // At a glance links the word "source" (source 1, source 2); each citation is in its link's preview.
     $check('two sources of one fact are two "source" links, each citation in its preview',
-        preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007 \| [^"]*p\. 20"[^>]*>source 1</a>, <a#', $html)
-        && preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007 \| [^"]*p\. 31"[^>]*>source 2</a>#', $html)
+        preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 20"[^>]*>source 1</a>, <a#', $html)
+        && preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 31"[^>]*>source 2</a>#', $html)
         && preg_match('#post by a, March 2005"[^>]*>source 1</a>, <a[^>]*post by b, March 2005"[^>]*>source 2</a>#', $html)
         && strpos($html, '<dd class="kop-fp-src">Source: ') === false);
 }
