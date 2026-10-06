@@ -213,9 +213,10 @@ function kop_hs_prompt($excerpt) {
         . "- Never use a person's name. Say \"a staff member\", \"a child in the program\", \"the director\". If two people of one kind matter, say \"one staff member\" and \"another staff member\". Words in square brackets such as [Staff 1] or [Child 2] stand for numbered people, not names; do not copy the numbers or the brackets.\n"
         . "- Spell out abbreviations or leave them out. No codes such as S1, C1, FC #3, SP or AV.\n"
         . "- No quotation marks, no introduction, no list, no heading, and do not mention that you are an AI.\n"
-        . "- If the text is too garbled or incomplete to tell what happened, answer with the single word UNCLEAR.\n\n"
-        . "- Reply with the summary sentences only: no JSON, no curly braces, no square brackets.\n\n"
-        . "Text:\n<<<\n" . $text . "\n>>>\n\nSummary:";
+        . "- No square brackets in the summary.\n"
+        . "- If the text is too garbled or incomplete to tell what happened, use the single word UNCLEAR as the summary.\n\n"
+        . "Answer with a JSON object only, in this form: {\"summary\": \"your summary here\"}\n\n"
+        . "Text:\n<<<\n" . $text . "\n>>>";
 }
 
 /**
