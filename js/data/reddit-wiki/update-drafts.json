@@ -1,5 +1,260 @@
 {
  "entries": {
+  "93": {
+   "program": "Ascent Wilderness Program",
+   "place": "Naples, ID",
+   "years": "1994-2005/2010",
+   "column": "original_markdown",
+   "base_sha1": "a70aebd0602e362162d2734da202ec67f0efe0e0",
+   "record": {
+    "id": 9688,
+    "name": "Ascent Wilderness Program",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "1994-2005",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Ascent Wilderness Program closed in 2005. It was formerly called Caribou Ridge Intervention.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Chris Ankney** was an Executive Director of Ascent Wilderness Program in 2008 ([Woodbury Reports, October 2008 (#170), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=31)). Ankney was also Interim Executive Director, Executive Director of Ascent Inc. and Interim Executive Director of Ascent Intervention.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Brian Rossiter** was the Program Director of Ascent Wilderness Program in 1997 ([r/troubledteens wiki, page \"SageWalk Wilderness\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk)). Rossiter was also Program Director of [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk), Executive Director of [Evoke Cascades](https://www.reddit.com/r/troubledteens/wiki/index/evokecascades), Director of Admissions/Marketing, Admissions Director of SeaChange Hawaii and Executive Director of [Santiam Crossing](https://www.reddit.com/r/troubledteens/wiki/index/santiamxing).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dan Kemp** was an Admissions Director, Director of Admissions of Ascent Wilderness Program in 2008 ([Woodbury Reports, February 2008 (#162), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)). Kemp was also Admissions Director of [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor), Director of Admissions of Suws, admissions director of Northwest Academy and Director of Program Development of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jim Powell** was the Clinical Director of Ascent Wilderness Program in 2008 ([Woodbury Reports, October 2008 (#170), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=31)). Powell was also Clinical Director of KidsQuest Wagon Train, Co-Founder, Powell & Elliott Collaborative of LLC and Co-Founder of Friends of Families with Children in Crisis Foundation.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Guy Hardcastle** was the Director of Business Development of Ascent Wilderness Program in 2008 ([Woodbury Reports, October 2008 (#170), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=31)). Hardcastle was also Director of Business Development of Ascent Inc., Director of Business Development, Director of Admissions of West Ridge Academy and Director of Operations of [Wilderness Quest](https://www.reddit.com/r/troubledteens/wiki/index/wildernessquest).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Matthew Fitzgerald** was an Admissions Director of Ascent Wilderness Program in 1994 ([r/troubledteens wiki, page \"Northwoods\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/northwoods)). Fitzgerald was also Senior Counselor/Admissions Counselor of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain), Director of Northwest Academy, Co-Owner and President of [Northwoods](https://www.reddit.com/r/troubledteens/wiki/index/northwoods) and co-owner/president of Northwoods Boarding School.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Ascent Wilderness Program on Kids Over Profits](https://kidsoverprofits.org/facility/ascent-wilderness-program-id/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Ascent Wilderness Program was opened as part of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) in 1994 and operated briefly in Montana. Shortly after [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) opened in Naples, ID later that same year, Ascent moved its program to NWA's 200-acre campus at [139 Success Ln, Naples, ID 83847](https://www.google.com/maps/place/Northwest+Academy/@48.6252389,-116.4086204,331m/data=!3m1!1e3!4m8!1m2!2m1!1snorthwest+academy+!3m4!1s0x536395c81cb23a63:0x195bda7e24c3bddb!8m2!3d48.6247516!4d-116.4078424) . It was marketed as a 6-week co-ed \"wilderness adventure\" program for \"intensely troubled\" teens aged 13-17. They had a maximum enrollment of 40, and the average length of stay was around 46 days. The daily tuition was reported to be $340, and the six-week tuition was over $15,000.",
+     "new": "Ascent Wilderness Program was opened as part of [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) in 1994 and operated briefly in Montana. Shortly after [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) opened in Naples, ID later that same year, Ascent moved its program to NWA's 200-acre campus at [139 Success Ln, Naples, ID 83847](https://www.google.com/maps/place/Northwest+Academy/@48.6252389,-116.4086204,331m/data=!3m1!1e3!4m8!1m2!2m1!1snorthwest+academy+!3m4!1s0x536395c81cb23a63:0x195bda7e24c3bddb!8m2!3d48.6247516!4d-116.4078424) . It was marketed as a 6-week co-ed \"wilderness adventure\" program for \"intensely troubled\" teens aged 13-17. They had a maximum enrollment of 40, and the average length of stay was around 46 days. The daily tuition was reported to be $340, and the six-week tuition was over $15,000."
+    },
+    {
+     "id": "t1.2",
+     "old": "** Larry Blakey** was the Executive Director of Ascent Wilderness. He formerly worked for [On Track](https://www.reddit.com/r/troubledteens/wiki/index/ontrack) in Texas, and [VisionQuest](https://www.reddit.com/r/troubledteens/wiki/index/visionquest) in Arizona. In 2001, Rob Spear (of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and later COO of CEDU) and Larry Blakey started \"SquareOne,\" which was designed as an \"early intervention to serve as a bridge to other outpatient or residential services the family may need. However, it was also able to serve long-term emotional growth programs with those youth whose family issues may be blocking effective progress and who need an intensive family intervention to assist them to move forward in their current program.\" ([Source](https://strugglingteens.com/archives/2001/3/np01.html) .",
+     "new": "** Larry Blakey** was the Executive Director of Ascent Wilderness. He formerly worked for [On Track](https://www.reddit.com/r/troubledteens/wiki/index/ontrack) in Texas, and [VisionQuest](https://www.reddit.com/r/troubledteens/wiki/index/visionquest) in Arizona. In 2001, Rob Spear (of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and later COO of CEDU) and Larry Blakey started \"SquareOne,\" which was designed as an \"early intervention to serve as a bridge to other outpatient or residential services the family may need. However, it was also able to serve long-term emotional growth programs with those youth whose family issues may be blocking effective progress and who need an intensive family intervention to assist them to move forward in their program.\" ([Source](https://strugglingteens.com/archives/2001/3/np01.html) ."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "100": {
+   "program": "Change Academy at Lake of the Ozarks (CALO)",
+   "place": "Lake Ozark, MO",
+   "years": "2007-present",
+   "column": "original_markdown",
+   "base_sha1": "db9d25c29e275745e2f84a2c6ee6f60b540a812a",
+   "record": {
+    "id": 11355,
+    "name": "CALO Programs",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jenn McMurry** has been an Admissions director of Change Academy at Lake of the Ozarks (CALO). McMurry was also admissions director of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest) and operations director of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Rob Gent** has been the Clinical director of Change Academy at Lake of the Ozarks (CALO). Gent was also founder & chief clinical officer of Embark Behavioral Health.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Takeaways from inside a teen treatment center for adoptees, funded by taxpayers: runaways, assaults](https://www.kctv5.com/2026/05/29/takeaways-inside-teen-treatment-center-adoptees-funded-by-taxpayers-runaways-assaults/) (KCTV5, 5/29/2026)\n\n[Investigation Raises Concerns Over Troubled Teen Treatment Center in Missouri](https://news.ssbcrack.com/investigation-raises-concerns-over-troubled-teen-treatment-center-in-missouri/) (SSBCrack News, 5/29/2026)\n\n[Inside a taxpayer-funded treatment center for adoptees, tales of abuse, neglect and little oversight](https://abcnews.com/Business/wireStory/inside-taxpayer-funded-treatment-center-adoptees-tales-abuse-133412068) (ABC News, 5/29/2026)\n\n['Welcome to hell': Kids allege physical, sexual abuse at Missouri treatment center](https://www.stlpr.org/law-order/2026-06-03/calo-students-abused-missouri-lake-ozarks-trauma-troubled-teens-lawsuits) (St. Louis Public Radio, 6/3/2026)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Change Academy at Lake of the Ozarks (CALO) on Kids Over Profits](https://kidsoverprofits.org/facility/calo-programs-mo/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In June 2026, St. Louis Public Radio reported that 15 former CALO residents have filed lawsuits since 2024 alleging that staff threw them to the ground or against walls, denied them medical care and misused restraints, and that they were sexually assaulted by other residents. CALO denied the claims and called the lawsuits without merit ([St. Louis Public Radio, 6/3/2026](https://www.stlpr.org/law-order/2026-06-03/calo-students-abused-missouri-lake-ozarks-trauma-troubled-teens-lawsuits)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Made specific per the article: 15 former residents, suits since 2024, physical abuse by staff, sexual assaults by other residents (not staff); 'emotional abuse' not confirmed, removed."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In May 2026, an Associated Press investigation reported that law enforcement is often called to CALO to investigate assaults or track down runaways, that parents and former employees describe minimal treatment and barely any schooling with young, poorly trained staff, and that state agencies have questioned its operations, training and transparency. CALO has charged up to $20,000 a month, often paid by taxpayers. Families whose daughters said they were sexually assaulted by another girl at CALO are among those suing the company ([AP via MyNorthwest, 5/29/2026](https://mynorthwest.com/national/inside-a-taxpayer-funded-treatment-center-for-adoptees-tales-of-abuse-neglect-and-little-oversight/4242917); [KCTV5, 5/29/2026](https://www.kctv5.com/2026/05/29/takeaways-inside-teen-treatment-center-adoptees-funded-by-taxpayers-runaways-assaults/)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The abcnews.com link returns 404; cited the same AP story on MyNorthwest. Per the AP text: concerns about training/transparency came from state agencies; the families named allege sexual assault by another girl (not 'physical and sexual assault'); added the $20,000-a-month fee and taxpayer funding as reported."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "105": {
+   "program": "Diamond Ranch Academy",
+   "place": "Hurricane, UT",
+   "years": "1999-2023",
+   "column": "original_markdown",
+   "base_sha1": "c63b3333c2182d47c04a52507d965d233abcfd6c",
+   "record": {
+    "id": 10425,
+    "name": "Diamond Ranch Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Their kids died in Utah teen treatment programs. Now, these parents are asking Utah lawmakers to beef up oversight.](https://www.sltrib.com/news/health/2025/02/21/troubled-teen-industry-utah/) (The Salt Lake Tribune, 2/21/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Diamond Ranch Academy on Kids Over Profits](https://kidsoverprofits.org/facility/diamond-ranch-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In a complaint dated April 29, 2021, former student Shayrena Penn sued Diamond Ranch Academy in Utah's Fifth Judicial District Court in Washington County. The suit alleges that during a four- or five-month stay that began when she was 15, staff restrained her as punishment using pressure points, held her down and increased the pressure when she said she could not breathe, and pressed her face into the ground so hard that she suffered paralysis on the left side of her face, which she says she still has. It also alleges sleep deprivation, strip searches, forced exercise with water withheld, a t-shirt, shorts and flip flops in the Utah winter, and isolation lasting weeks at a time. The complaint names five staff members and brings claims of negligent hiring and supervision, assault, battery and intentional infliction of emotional distress ([complaint](https://kidsoverprofits.org/wp-content/uploads/DRA-Complaint-1.pdf)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Read the complaint PDF: all claims hold. Tightened to its wording: the fourth claim is intentional infliction of emotional distress; 'lasting' paralysis now 'which she says she still has'; clothing and isolation as the complaint describes them."
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "In 2001, Diamond Ranch moved to a 200-acre ranch located at [1500 E 2700 S, Hurricane, UT 84737](https://www.google.com/maps/search/Hurricane/@37.1282603,-113.2554746,539m/data=!3m1!1e3?hl=en) . This location is the current location of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) , and the former location of [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) . In 2012, it moved again to [433 Diamond Ranch Pkwy, Hurricane, UT 84737](https://www.google.com/maps/place/Diamond+Ranch+Academy/@37.1598434,-113.3843612,15z/data=!4m2!3m1!1s0x0:0xd643668d0a5a2c79?sa=X&ved=2ahUKEwikxY2V6PrsAhWxUt8KHdUqCmUQ_BIwDXoECA4QBQ) , where it remained until its closure.",
+     "new": "In 2001, Diamond Ranch moved to a 200-acre ranch located at [1500 E 2700 S, Hurricane, UT 84737](https://www.google.com/maps/search/Hurricane/@37.1282603,-113.2554746,539m/data=!3m1!1e3?hl=en) . This location was the location of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) , and the former location of [Olympus Academy](https://www.reddit.com/r/troubledteens/wiki/index/olympusacademy) . In 2012, it moved again to [433 Diamond Ranch Pkwy, Hurricane, UT 84737](https://www.google.com/maps/place/Diamond+Ranch+Academy/@37.1598434,-113.3843612,15z/data=!4m2!3m1!1s0x0:0xd643668d0a5a2c79?sa=X&ved=2ahUKEwikxY2V6PrsAhWxUt8KHdUqCmUQ_BIwDXoECA4QBQ) , where it remained until its closure."
+    },
+    {
+     "id": "t1.2",
+     "old": "Diamond Ranch Academy was founded as part of the [WWASP organization](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . It allegedly ended its partnership with WWASP around the time WWASP started recieving negative media attention and allegations of abuse in its programs. However, it is important to note that while the legal partnership with WWASP may have ended, it is to be assumed that its affiliation with WWASP and use of the WWASP program model was unchanged by this.",
+     "new": "Diamond Ranch Academy was founded as part of the [WWASP organization](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . It allegedly ended its partnership with WWASP around the time WWASP started recieving negative media attention and allegations of abuse in its programs. However, it was important to note that while the legal partnership with WWASP may have ended, it was to be assumed that its affiliation with WWASP and use of the WWASP program model was unchanged by this."
+    },
+    {
+     "id": "t1.3",
+     "old": "** Rob Dias** was the Founder/CEO/Owner of Diamond Ranch Academy. He is married to Sherri Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.",
+     "new": "** Rob Dias** was the Founder/CEO/Owner of Diamond Ranch Academy. He was married to Sherri Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016."
+    },
+    {
+     "id": "t1.4",
+     "old": "** Sherri Dias** was an Executive Director at Diamond Ranch Academy. She is married to Rob Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016.",
+     "new": "** Sherri Dias** was an Executive Director at Diamond Ranch Academy. She was married to Rob Dias. There are allegations that they were involved in the opening of [Three Points Center](https://www.reddit.com/r/troubledteens/wiki/index/threepoints) in 2016."
+    },
+    {
+     "id": "t1.5",
+     "old": "** Fotu Soliai** was an Executive Director at Diamond Ranch Academy. He is currently a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) .",
+     "new": "** Fotu Soliai** was an Executive Director at Diamond Ranch Academy. He was a Therapist at Eagle Ranch Academy. He has also served as Executive Director at several other programs, including [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse/) , [Sedona Sky Academy](https://www.reddit.com/r/troubledteens/wiki/index/sedonasky/) , and [Ashcreek Ranch Academy](https://www.reddit.com/r/troubledteens/wiki/index/achreekranch/) . He previously worked as a Therapist at [RedCliff Ascent](https://www.reddit.com/r/troubledteens/wiki/index/redcliffascent/) ."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
   "106": {
    "program": "Elevations RTC",
    "place": "Syracuse, UT",
@@ -77,6 +332,634 @@
      "note": "name corrected to Jordan Killpack at the owner's request (2026-10-06); Elevations RTC and his professional listings use Killpack"
     }
    ],
+   "conflicts": []
+  },
+  "191": {
+   "program": "Aspen Achievement Academy",
+   "place": "Loa, UT",
+   "years": "1989-2011",
+   "column": "original_markdown",
+   "base_sha1": "238cb289c49d806c7846ec9527bef2b98841c671",
+   "record": {
+    "id": 10389,
+    "name": "Aspen Achievement Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Madolyn M. Liebing** was the Co-Founder of Aspen Achievement Academy in 2010 ([Woodbury Reports, June 2010, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=10)). Liebing was also Co-Founder of The Journey: Blazing New Trails Impact Ranch.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Shawn Farrell** was the Program Director/Executive Director of Aspen Achievement Academy in 2005 ([r/troubledteens wiki, page \"SUWS of the Carolinas\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc)). Farrell was also Program Director/Executive Director of Lone Star Expeditions, Program Director/Executive Director of [Passages to Recovery](https://www.reddit.com/r/troubledteens/wiki/index/passagesrecovery), Executive Director/CEO of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) and Executive Director of [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Larry Bray** was the Program Director of Aspen Achievement Academy in 2017 ([HEAL, staff list for Aspen Achievement Academy](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)). Bray was also Academic Director of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) and Operations Director of Legacy Outdoor Adventures.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**John Dupuy** was the Founder/Coordinator of Aspen Achievement Academy in 2000-2017 ([HEAL, staff list for Aspen Achievement Academy](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jason York** was the Field Instructor, later Director of Admissions of three Aspen programs of Aspen Achievement Academy in 1995 ([Woodbury Reports, November 2011, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1111.pdf#page=10)). York was also Admissions of Second Nature Wilderness Program, Director of Admissions of Expedition Therapy and Admissions and Marketing of Second Nature.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Anthony Mautz** was the Clinical Director of Aspen Achievement Academy in 2003 ([Woodbury Reports, November 2007 (#159), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1107.pdf#page=30)). Mautz was also Counseling Director of [Pacific Quest](https://www.reddit.com/r/troubledteens/wiki/index/pacificquest) and Primary Therapist of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Aaron Fernandes** was the Former Field Director (before 2004, r/troubledteens wiki) of Aspen Achievement Academy ([r/troubledteens wiki, page \"Explorations\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/explorations)). Fernandes was also Wilderness Director of Explorations Montana and Executive Director, CEO of [Open Sky Wilderness Therapy](https://www.reddit.com/r/troubledteens/wiki/index/openskywild).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Stephen Marty** was an Asst. Field Director of Aspen Achievement Academy in 2000-2017 ([HEAL, staff list for Aspen Achievement Academy](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)). Marty was also Staff of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Richard Meeves** was the Former Clinical Director, Primary Therapist (before 2025, r/troubledteens wiki) of Aspen Achievement Academy ([r/troubledteens wiki, page \"Aspiro Wilderness Adventure Therapy\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/aspiro)). Meeves was also CEO of [Aspiro Wilderness Adventure Therapy](https://www.reddit.com/r/troubledteens/wiki/index/aspiro), Vice President and National Director of Clinical Quality, Director of Clinical Services of CRC Health Group, Founder, Co-Owner and CEO of [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) and Clinical Director of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Sandy New** was the Medical Director of Aspen Achievement Academy in 1992-2017 ([HEAL, staff list for Aspen Achievement Academy](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c11",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael E. Berrett** was the Former Clinical director (before 2020, HEAL) of Aspen Achievement Academy ([HEAL, staff list for Center for Change](https://web.archive.org/web/20200223033726/http://www.heal-online.org/center.htm)). Berrett was also CEO, Founder/CEO of Center for Change Residential Eating Disorder Treatment Center.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c12",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Clare Cady** was an Asst. Field Director of Aspen Achievement Academy in 2006-2017 ([HEAL, staff list for Aspen Achievement Academy](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Aspen Achievement Academy on Kids Over Profits](https://kidsoverprofits.org/facility/aspen-achievement-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Like other behavior-modification programs, AAA used a level system consisting of 6 levels. Although it was encouraged that the detained teenager completed all 6 levels, it is reported that many residents were allowed to \"graduate\" when they had only completed as few as three levels. The levels were:",
+     "new": "Like other behavior-modification programs, AAA used a level system consisting of 6 levels. Although it was encouraged that the detained teenager completed all 6 levels, it was reported that many residents were allowed to \"graduate\" when they had only completed as few as three levels. The levels were:"
+    },
+    {
+     "id": "t1.2",
+     "old": "**Mouse:** On this pahse, the teenagers were taken to camp site of one of the teams, where the ceremony of introduction takes place. People in Mouse phase are not allowed to talk during. This phase typically lasted around 48 hours. After a short introduction they are taken to a place where they must remain isolated at a shelter and observe how the group function. Any need and food is cared for by the group. They must write about why they think that they are sent there and what they expect to offer the group and what they thinks need to alter in themselves. With the help of a staff person, they have selected, they will undergo a second ceremony blindfolded after they have shown a desire to move up to the next phase. A lot historically inaccurate references Indigenous peoples are also reported to have been part of this phase. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020212094025/http://www.aspenacademy.com/mouse.html) .",
+     "new": "**Mouse:** On this pahse, the teenagers were taken to camp site of one of the teams, where the ceremony of introduction took place. People in Mouse phase were not allowed to talk during. This phase typically lasted around 48 hours. After a short introduction they were taken to a place where they must remain isolated at a shelter and observe how the group function. Any need and food was cared for by the group. They must write about why they think that they are sent there and what they expect to offer the group and what they thinks need to alter in themselves. With the help of a staff person, they have selected, they will undergo a second ceremony blindfolded after they have shown a desire to move up to the next phase. A lot historically inaccurate references Indigenous peoples were also reported to have been part of this phase. For more information on this phase, please follow the link provided [here](https://web.archive.org/web/20020212094025/http://www.aspenacademy.com/mouse.html) ."
+    },
+    {
+     "id": "t1.3",
+     "old": "**Coyote:** During this phase, which normal last about 14 days, the detainee must do chores and that behavior has consequences. It is also in this phase where the student must read the impact letter to the group. A letter from the parents which given the poor family structure of a typical detainee often is the first time the detainee learns of the motive for forcing the person to the program. As listed on the program website the tasks that a detainee must be able to handle are:",
+     "new": "**Coyote:** During this phase, which normal last about 14 days, the detainee had to do chores and that behavior had consequences. It was also in this phase where the student must read the impact letter to the group. A letter from the parents which given the poor family structure of a typical detainee often was the first time the detainee learns of the motive for forcing the person to the program. As listed on the program website the tasks that a detainee must be able to handle are:"
+    },
+    {
+     "id": "t1.4",
+     "old": "**Buffalo:** This phase also last about 14 days and after the old self image of the detainee should have broken down, it is time for the person to develop a kind of family / community relation to the team and a higher sense of consequence. Tasks in this phase are:",
+     "new": "**Buffalo:** This phase also last about 14 days and after the old self image of the detainee should have broken down, it was time for the person to develop a kind of family / community relation to the team and a higher sense of consequence. Tasks in this phase are:"
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "196": {
+   "program": "Atlantis Leadership Academy",
+   "place": "Treasure Beach, Jamaica",
+   "years": "2014-2023",
+   "column": "original_markdown",
+   "base_sha1": "8cbf34aaeb6f00214e077d1398f49cbcdc26d089",
+   "record": {
+    "id": 14130,
+    "name": "Atlantis Leadership Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Matt Bevin’s Despicable Legacy: From White Savior Adoptive Parent to Child Abandoner](https://therealadopteamoxie.substack.com/p/matt-bevins-despicable-legacy-from?r=1qajz5&utm_medium=ios&triedRedirect=true) (The Real Adoptea Moxie Blog, 8/9/2024)\n\n[Abandoned by parents in Jamaica, Traverse City teen finds hope in foster care](https://upnorthlive.com/news/local/abandoned-by-parents-in-jamaica-traverse-city-teen-finds-hope-in-foster-care-adoption-advocacy-grand-traverse-county) (Up North Live, 9/11/2024)\n\n[Former Kentucky Gov. Matt Bevin arrested in Bourbon County](https://www.courier-journal.com/story/news/crime/2026/09/03/former-kentucky-gov-matt-bevin-arrested/90426784007/) (Louisville Courier Journal, 9/3/2026)\n\n[Former Governor’s Adopted Son Claims Abuse at Jamaican Youth Facility](https://atlantablackstar.com/2026/09/24/ex-kentucky-gov-black-son-alleges-severe-abuse/) (Atlanta Black Star, 9/24/2026)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Atlantis Leadership Academy on Kids Over Profits](https://kidsoverprofits.org/facility/atlantis-leadership-academy-jamaica/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "On September 3, 2026, former Kentucky Governor Matt Bevin was arrested by the Bourbon County Sheriff's Office on a civil contempt warrant in a child-support case involving his adopted son, Jonah Bevin, who has alleged abuse at boarding schools including Atlantis Leadership Academy ([Louisville Courier Journal](https://www.courier-journal.com/story/news/crime/2026/09/03/former-kentucky-gov-matt-bevin-arrested/90426784007/) ).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "Courier Journal blocks fetching; checked against Louisville Public Media 2026-09-03 (Bourbon County Sheriff's Office arrest on a Jefferson Family Court bench warrant, Jonah seeking support after being left at the Jamaican facility) and the gap summary."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Jonah Bevin testified at a July 28, 2026 hearing in Jefferson Family Court about abuse he says began days after he arrived at Atlantis Leadership Academy; advocates who helped remove the children from the program have said its punishments included regular beatings and waterboarding. As of September 2026 the judge had not ruled ([Atlanta Black Star](https://atlantablackstar.com/2026/09/24/ex-kentucky-gov-black-son-alleges-severe-abuse/) ).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The article attributes the beatings and waterboarding to advocates describing the punishments, not to Jonah's own testimony; added the hearing date (July 28) and court, and 'judge has not ruled' instead of 'pending'."
+    },
+    {
+     "id": "s3",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "A former student who had been left in Jamaica by his adoptive parents had a Grand Traverse County, Michigan family court hearing on September 11, 2024; the hearing was waived and he was placed with Child Protective Services, followed by foster care ([Up North Live](https://upnorthlive.com/news/local/abandoned-by-parents-in-jamaica-traverse-city-teen-finds-hope-in-foster-care-adoption-advocacy-grand-traverse-county) ).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "Matches Up North Live 2024-09-11 (teen named only as Elijah, Atlantis in Treasure Beach; hearing waived, CPS then foster placement)."
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Atlantis Leadership Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior modification program that was founded around 2014/2015 by former [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) resident, Randall Cook, who attended PC when it opened in 1994. It was marketed as Therapeutic Boarding School for teenage boys (12-17) who were dealing with issues such as \"their parent's divorce, academic issues, adoption problems, substance use, sports and friends, ADD/ADHD, being expelled, low self-confidence, and turning 18.\" The program was very small, with its maximum enrollment being only 10 students. The length of stay was reported to be between 18-24 months. The cost of ALA's tuition is also presently unknown.",
+     "new": "Atlantis Leadership Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior modification program that was founded around 2014/2015 by former [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) resident, Randall Cook, who attended PC when it opened in 1994. It was marketed as Therapeutic Boarding School for teenage boys (12-17) who were dealing with issues such as \"their parent's divorce, academic issues, adoption problems, substance use, sports and friends, ADD/ADHD, being expelled, low self-confidence, and turning 18.\" The program was very small, with its maximum enrollment being only 10 students. The length of stay was reported to be between 18-24 months. The cost of ALA's tuition was also unknown."
+    },
+    {
+     "id": "t1.2",
+     "old": "** Randall Cook** is the Founder of Atlantis Leadership Academy. When Cook was a teenager, he was sent to [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, when the program first opened in 1994. He was reportedly only the 24th student to be enrolled at Paradise Cove, and he spent a tota of 19 months there. He is also the son of the Editor of WWASP’s Newsletter “The Source”, Glenda Cook. In addition, Randall founded a company called [Core Solutions](https://corebb.blogspot.com/) , a consulting company which made vast profits by referring families to [Midwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/midwest) (another WWASP facility).",
+     "new": "** Randall Cook** was the Founder of Atlantis Leadership Academy. When Cook was a teenager, he was sent to [Paradise Cove](https://www.reddit.com/r/troubledteens/wiki/index/paradisecove) , a notoriously abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program, when the program first opened in 1994. He was reportedly only the 24th student to be enrolled at Paradise Cove, and he spent a tota of 19 months there. He was also the son of the Editor of WWASP’s Newsletter “The Source”, Glenda Cook. In addition, Randall founded a company called [Core Solutions](https://corebb.blogspot.com/) , a consulting company which made vast profits by referring families to [Midwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/midwest) (another WWASP facility)."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "197": {
+   "program": "Azleway Boys Ranch",
+   "place": "Tyler, TX",
+   "years": "1979-present",
+   "column": "original_markdown",
+   "base_sha1": "c0783435ff4af50935667ebfe9435133a1d1bba7",
+   "record": {
+    "id": 10648,
+    "name": "Azleway Boys Ranch",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Azleway Boys Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/azleway-boys-ranch-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "Christopher Ladell Hill, 17, and Harry Tyrone Rutledge, 15, wards of the state, ran away from Azleway Boys' Ranch on September 16, 2006, and were struck and killed by a train in Hawkins, Texas, on September 21. A justice of the peace ruled the deaths suicides; the medical examiner wrote that it was unclear whether they were an accident, a homicide or a suicide, and Rutledge's sister said she did not believe the two had killed themselves. In early 2007 the Texas Rangers were investigating; state regulators said Azleway had given the two youths proper care ([Houston Chronicle](https://www.chron.com/news/houston-texas/article/texas-rangers-join-probe-of-double-suicide-1834212.php) ).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Date was wrong (they died September 21, 2006, not September 1); the source calls it an apparent suicide that the medical examiner could not classify and the family disputes; merged both deaths into one line with ages, runaway date and the Rangers probe."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "223": {
+   "program": "San Marcos Treatment Center",
+   "place": "San Marcos, TX",
+   "years": "1940-present",
+   "column": "original_markdown",
+   "base_sha1": "a4a755e9e66de90f1198d1a3d662316673edcea2",
+   "record": {
+    "id": 10618,
+    "name": "San Marcos Treatment Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "San Marcos Treatment Center was formerly called The Brown Schools at San Marcos. It is operated by [Universal Health Services (UHS)](https://www.reddit.com/r/troubledteens/wiki/index/universalhealth).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Lakshmi Kaza** has been an Unit medical director of San Marcos Treatment Center. Kaza was also medical director of [Waco Center for Youth](https://www.reddit.com/r/troubledteens/wiki/index/wacoyouth).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Shephali Sharma** has been the Medical director, unit medical director of San Marcos Treatment Center.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mack Wigley** has been the CEO of San Marcos Treatment Center. Wigley was also mental health worker of [The Brown Schools](https://www.reddit.com/r/troubledteens/wiki/index/brown).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated March 8, 2022, Texas inspectors found: \"A staff members actions were noted to have presented a genuine threat of substantial harm from physical injury to the child when the staff member placed the child in an inappropriate restraint.\" (Texas licensing inspection report, March 8, 2022)\n\nIn a report dated July 4, 2024, Texas inspectors found: \"During the review of this investigation, interviews reported that a staff member slapped a child in care during a restraint.\" (Texas licensing inspection report, July 4, 2024)\n\nIn a report dated September 17, 2025, Texas inspectors found: \"This allowed the child to be exposed to contraband and swallowed 2 magnets while off unit.\" (Texas licensing inspection report, September 17, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[San Marcos Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/san-marcos-treatment-center-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "248": {
+   "program": "Cinnamon Hills Youth Crisis Center",
+   "place": "St. George, UT",
+   "years": "1994-present",
+   "column": "original_markdown",
+   "base_sha1": "18527070e320022bc4c35329d9cac3645821b09e",
+   "record": {
+    "id": 10417,
+    "name": "Cinnamon Hills Youth Crisis Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Investigations",
+     "text": "### **State Inspection Findings**\n\nIn a report dated December 26, 2023, Utah inspectors found: \"During an investigation inspection, staff and client interviews and provider documentation substantiated that a staff yelled at a client, grabbed the client by their shirt, shook the client, and hit the client in the forehead with an open palm.\" (Utah licensing inspection report, December 26, 2023)\n\nIn a report dated February 26, 2025, Utah inspectors found: \"During an investigation, the information gathered substantiated that a staff attempted to physically confront a client and threw a flip flop at a client’s head.\" (Utah licensing inspection report, February 26, 2025)\n\nIn a report dated September 10, 2025, Utah inspectors found: \"The provider was out of compliance with R380-80-4(2) by a staff member, who witnessed child abuse, not immediately notifying Child Protective Services intake or law enforcement. During the investigation, the evidence substantiated that a staff member witnessed another staff member forcefully hit a client in the stomach and did not report it to the provider or to CPS. The staff member hit a client in the stomach, a use of unapproved and non-trauma-informed behavior management.\" (Utah licensing inspection report, September 10, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Former employee of St. George youth facility accused of giving drugs to minors, showing nude photos](https://www.stgeorgeutah.com/arrests/former-employee-of-st-george-youth-facility-accused-of-giving-drugs-to-minors-showing-nude/article_33c17b33-2671-474b-932d-d45fd25f3bbb.html) (St. George News, 4/22/2025)\n\n[‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Cinnamon Hills Youth Crisis Center on Kids Over Profits](https://kidsoverprofits.org/facility/cinnamon-hills-youth-crisis-center-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Investigations",
+     "text": "In April of 2025, Trey Andrew Mickelson, a 22-year-old youth mentor at Cinnamon Hills, was arrested. According to charging documents, he is accused of giving THC and nicotine vapes to residents, giving psilocybin mushrooms to a student, showing nude images of a former resident who was still a minor to current students, and filming fights between students. He was charged with one second-degree felony and 13 misdemeanors. ([St. George News, 4/22/2025](https://www.stgeorgeutah.com/arrests/former-employee-of-st-george-youth-facility-accused-of-giving-drugs-to-minors-showing-nude/article_33c17b33-2671-474b-932d-d45fd25f3bbb.html))",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Matched the article: vapes and mushrooms went to residents/a student (not 'distributing'), the nude images were of a former resident shown to current students (not 'sharing nude images of a minor'), the felony is second-degree; framed as charging-document accusations; added his age"
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "512": {
+   "program": "Discovery Ranch",
+   "place": "Mapleton, UT",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "01801e39f151ccc090b5717c95e24f57b5e6345c",
+   "record": {
+    "id": 10335,
+    "name": "Discovery Ranch",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tori K. Ballard** was an Admissions Director of Discovery Ranch in 2006 ([Woodbury Reports, October 2006 (#146), p. 26](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=26)). Ballard was also Director of Marketing of [Willow Creek School](https://www.reddit.com/r/troubledteens/wiki/index/willowcreek).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Their kids died in Utah teen treatment programs. Now, these parents are asking Utah lawmakers to beef up oversight.](https://www.sltrib.com/news/health/2025/02/21/troubled-teen-industry-utah/) (The Salt Lake Tribune, 2/21/2025)\n\n[Parents say Discovery Ranch Academy’s negligence led to their son’s death in new lawsuit](https://www.sltrib.com/news/health/2025/05/17/parents-sue-utahs-discovery-ranch/) (Salt Lake Tribune, 5/17/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Discovery Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/discovery-ranch-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "In May of 2026, Landen Giovanni Liparote filed a lawsuit against Discovery Ranch, Inc. and others in the United States District Court for the District of Utah (case 2:26-cv-00503-JNP-DBP). The suit alleges that during a three-month placement at Discovery Ranch for Boys in 2021, when he was 15, he was repeatedly sexually assaulted by other residents and subjected to forced unpaid labor and food deprivation, and accuses the defendants, including the facility operators and a therapist, of negligence, fraud and violations of federal trafficking law. ([Complaint](https://kidsoverprofits.org/wp-content/uploads/Liparote-v-Discovery-Ranch-Complaint.pdf))",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Read the complaint (filed 05/28/26): added month filed, 2021 placement, his age then, and that the alleged assaults were by other residents; claims list matches the causes of action"
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "In November of 2024, 17-year-old Biruk Silvers died by suicide at Discovery Ranch. In May of 2025 his parents sued the program, the University of Utah (which employs the psychiatrist who treated him at Discovery Ranch) and Pilcrow Advisors, the consulting company that advised them to send him there. The suit alleges that he told the psychiatrist of suicidal thoughts days before his death and told a therapist two weeks before about a self-harm game involving oxygen deprivation, yet staff left him alone and let him have a belt. State regulators found that Discovery Ranch did not create a care plan after he expressed suicidal thoughts, did not provide enough supervision and did not follow its suicide prevention policy; it was ordered to pay more than $10,000 in civil penalties, and its license was in good standing as of May 2025. ([The Salt Lake Tribune, 5/17/2025](https://www.sltrib.com/news/health/2025/05/17/parents-sue-utahs-discovery-ranch/)) In February of 2026 the court dismissed the case with prejudice on a joint motion. ([Daily Herald, 3/4/2026](https://www.heraldextra.com/news/2026/mar/04/civil-suit-filed-by-family-of-boy-who-died-at-mapleton-treatment-center-resolved/))",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Cited article (SLTrib 11/19/2024) is about the parents' notice of claim and has no lawsuit, Pilcrow, state findings or fine; recited from the SLTrib 5/17/2025 lawsuit article (Schreifels, the one KOP's record was imported from), corrected 'fined' to the $10,000+ civil penalty and 'remains licensed' to good standing as of May 2025, added the Feb 25, 2026 joint dismissal with prejudice (Daily Herald)"
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "533": {
+   "program": "The Family Foundation School",
+   "place": "Hancock, NY",
+   "years": "1979-2014",
+   "column": "original_markdown",
+   "base_sha1": "4cb8d6c4c8ced4a3334fe022889b7d290e557019",
+   "record": {
+    "id": 12050,
+    "name": "Family Foundation School",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Richard Reeve** was the Scholarship fund development, Executive Director, Director of The Family Foundation School in 2007-2008 ([Woodbury Reports, July 2007 (#155), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=31)). Reeve was also CHAT presenter of [Allynwood Academy](https://www.reddit.com/r/troubledteens/wiki/index/allynwood).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Sidney F. Parham** was the NATSAP Board Member, Vice President of Academic Affairs, Drama Department Head of The Family Foundation School in 2006-2011 ([Woodbury Reports, February 2007 (#150), p. 28](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=28)). Parham was also Chairman, Education Committee of Natsap.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jason Garnar** was the Chairman of the History Department and Middle States Internal Coordinator; Director of College Counseling, Admissions Counselor, History Department Chairman, Director of the FFS Bridge Program of The Family Foundation School in 2009-2013 ([Woodbury Reports, September 2009 (#181), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0909.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jan Cheripko** was the Middle School Principal and English Teacher, English teacher of The Family Foundation School in 2007-2013 ([Woodbury Reports, September 2007 (#157), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Robin Ducey** was the Principal, Chair of the Fine Arts Department of The Family Foundation School in 2007-2012 ([Woodbury Reports, January 2008 (#161), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bill Musgrove** was an Athletic Director of The Family Foundation School in 2007 ([Woodbury Reports, April 2007 (#152), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0407.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tom Kovaleski** was the Show Choir Director, Choreographer, Director and Choreographer of The Family Foundation School in 2009-2011 ([Woodbury Reports, June 2009 (#178), p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0609.pdf#page=19)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Paul Geer** was the Choir Director, Family Singers Director, Choral Director, Musical Director, Music director of The Family Foundation School in 2009-2012 ([Woodbury Reports, April 2009 (#176), p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0409.pdf#page=19)). Geer was also Music Director of [Allynwood Academy](https://www.reddit.com/r/troubledteens/wiki/index/allynwood).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**James** was an Athletic Department Director of The Family Foundation School in 2009 ([Woodbury Reports, November 2009 (#183), p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=15)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Willy Williamson** was an Athletic Director of The Family Foundation School in 2010 ([Woodbury Reports, June 2010, p. 13](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=13)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c11",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Susan Runge** was the Chair, Counseling Department of The Family Foundation School in 2006 ([Woodbury Reports, February 2006 (#138), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c12",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bob Runge** was the Student Advisor, Human Relations Director of The Family Foundation School in 1990-2008 ([Woodbury Reports, October 2008 (#170), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c13",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Kids forced to 'dig own graves,' eat vomit at hellish NY boarding school: survivor](https://nypost.com/2026/06/20/us-news/kids-were-forced-to-dig-their-own-graves-eat-vomit-at-hellish-upstate-ny-boarding-school-survivor/) (New York Post, 6/20/2026)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[The Family Foundation School on Kids Over Profits](https://kidsoverprofits.org/facility/family-foundation-school-ny/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Deaths, and Lawsuits",
+     "text": "In June of 2026, a former student filed a federal lawsuit against the school's former operators and local authorities, alleging that students were physically and sexually abused, made to dig what they were told were their own graves and made to eat vomit, and that local authorities ignored reports of abuse because of the influence of the school's owners. ([New York Post, 6/20/2026](https://nypost.com/2026/06/20/us-news/kids-were-forced-to-dig-their-own-graves-eat-vomit-at-hellish-upstate-ny-boarding-school-survivor/))",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "NY Post blocks fetching; checked against the gap summary plus Hoodline and HelpingSurvivors coverage of the same suit (filed June 5, 2026, federal court, operators + village/police named): the graves and vomit are alleged of students generally, not only the plaintiff; moved from History to the lawsuits section"
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "** Emmanuel \"Mike\" Argiros** worked as the President/CEO of the Family Foundation School. He is the son of the founders, Tony and Betty Argiros. He currently appears to be the CEO of two companies, Education Plus Corp and Kasos, Inc, where he works as a tax preparer.",
+     "new": "** Emmanuel \"Mike\" Argiros** worked as the President/CEO of the Family Foundation School. He was the son of the founders, Tony and Betty Argiros. He appeared to be the CEO of two companies, Education Plus Corp and Kasos, Inc, where he worked as a tax preparer."
+    },
+    {
+     "id": "t1.2",
+     "old": "** Ann Janauer** worked as the Dean of Students/Director of Human Resources of the Family Foundation School from 2011 until 2014. She currently works as the Director of G & A Janauer Inc., which is a Vermont Corporation that is about to purchase an RV park and campground.",
+     "new": "** Ann Janauer** worked as the Dean of Students/Director of Human Resources of the Family Foundation School from 2011 until 2014. She worked as the Director of G & A Janauer Inc., which is a Vermont Corporation that was about to purchase an RV park and campground."
+    },
+    {
+     "id": "t1.3",
+     "old": "** Iris Maclean** worked as the Assistant Dean of Admissions at the Family Foundation School from 2007 until 2014. After this, she worked as the Regional Outreach Manager East Coast Division for Sovereign Health Group from 2014 until 2016. She currently works as Clinical Outreach Director at [Newport Healthcare, which owns [Newport Academy](https://www.reddit.com/r/troubledteens/wiki/index/newport) . She also currently works as a Family Ambassador at Family First Adolescent Services.",
+     "new": "** Iris Maclean** worked as the Assistant Dean of Admissions at the Family Foundation School from 2007 until 2014. After this, she worked as the Regional Outreach Manager East Coast Division for Sovereign Health Group from 2014 until 2016. She worked as Clinical Outreach Director at [Newport Healthcare, which owns [Newport Academy](https://www.reddit.com/r/troubledteens/wiki/index/newport) . She also worked as a Family Ambassador at Family First Adolescent Services."
+    }
+   ],
+   "fixes": [],
    "conflicts": []
   },
   "545": {
@@ -259,6 +1142,294 @@
    "tense": [],
    "conflicts": []
   },
+  "569": {
+   "program": "Judge Rotenberg Center",
+   "place": "Canton, MA",
+   "years": "1971-present",
+   "column": "original_markdown",
+   "base_sha1": "c472b8979742a7e35d8f861bc67ba2ac59b128ee",
+   "record": {
+    "id": 12008,
+    "name": "Judge Rotenberg Educational Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Two Former Judge Rotenberg Center Employees Charged with Assault](https://www.wbur.org/news/2016/12/14/rotenberg-assault-allegations) (WBUR News, 12/14/2016)\n\n[Call to End Use of Electric Shock at Judge Rotenberg Center](https://www.huffpost.com/entry/abuse-is-not-the-answer-shut-down-the-judge-rotenberg_b_585be5dde4b068764965bab3) (HuffPost, 12/22/2016)\n\n[Disability Rights Activists Protest FDA to Demand Ban on Aversive Electric Shock Therapy](https://www.dcmediagroup.us/2018/03/22/stop-shock-fda-directors-home-beseiged-disability-rights-activists/) (DC Media Group, 3/22/2018)\n\n[Massachusetts allows school to continue with electric shocks](https://www.theguardian.com/education/2018/jul/12/judge-rotenberg-educational-center-electric-shocks) (The Guardian, 7/12/2018)\n\n[School Shocks Students With Disabilities. The FDA Is Moving To Ban The Practice](https://www.npr.org/2019/01/23/687636057/massachusetts-school-defends-use-of-electric-shock-treatments) (NPR, 1/23/2019)\n\n[FDA Bans Shock Device Used For 'Aggressive Behavior' On Mentally Disabled Patients At Massachusetts School](https://www.wgbh.org/news/local/2020-03-04/fda-bans-shock-device-used-for-aggressive-behavior-on-mentally-disabled-patients-at-massachusetts-school) (WGBH, 3/4/2020)\n\n[Time to end public funding of Judge Rotenberg Center](https://commonwealthbeacon.org/education/time-to-end-public-funding-of-judge-rotenberg-center/) (Commonwealth Beacon, 4/20/2021)\n\n[Decades-long fight over electric shock treatment led to an FDA ban](https://www.nbcnews.com/health/health-care/decades-long-fight-over-electric-shock-treatment-led-fda-ban-n1265546) (NBC News, 9/2/2021)\n\n[Massachusetts Supreme Judicial Court Weighs Legality of Electric Shock Treatment at Judge Rotenberg Center](https://www.bostonglobe.com/2023/05/21/opinion/judge-rotenberg-center-skin-shocks-sjc-massachusetts/) (Boston Globe, 5/21/2023)\n\n[Supreme Judicial Court allows Judge Rotenberg Educational Center in Canton to keep using skin shocks — and reminds state how it can stop them](https://www.bostonglobe.com/2023/09/11/opinion/jrc-sjc-rotenberg-center-skin-shocks-aversives/) (Boston Globe, 9/11/2023)\n\n[Top court in Massachusetts permits use of shock devices on institutionalized patients](https://www.abajournal.com/web/article/top-court-in-massachusetts-permits-use-of-shock-devices-on-institutionalized-patients) (ABA Journal, 9/11/2023)\n\n[Massachusetts Department of Children and Families Places Youth at Judge Rotenberg Center Amid Ongoing Controversy](https://www.boston25news.com/news/local/25-investigates-dcf-placing-kids-controversial-judge-rotenberg-center/XLPTRG57I5C6VIN75G4OQ7PTME/) (Boston 25 News, 9/21/2023)\n\n[I have had nightmares for 14 years: Former Canton school student testifies for bill to ban shock devices](https://www.wgbh.org/news/local/2023-11-13/i-have-had-nightmares-for-14-years-former-canton-school-student-testifies-for-bill-to-ban-shock-devices) (WGBH, 11/13/2023)\n\n[Once troubled youths, 2 New Yorkers describe time in Mass. facility that uses shocks for therapy](https://www.wcvb.com/article/inside-stories-of-judge-rotenberg-center-shock-therapy/60828351) (WCVB, 5/18/2024)\n\n[Long Effort to Ban Shocks as an Autism Treatment Faces Uncertainty](https://www.nytimes.com/2025/05/13/us/electric-shock-ban-disability.html) (The New York Times, 5/13/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Judge Rotenberg Center on Kids Over Profits](https://kidsoverprofits.org/facility/judge-rotenberg-educational-center-ma/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "*Judge Rotenberg Educational Center, Inc. v. Commissioners of the Department of Developmental Services and the Department of Early Education and Care* (Commonwealth of Massachusetts Bristol, ss Probate and Family Court Department, No. 86E-0018-GI) began as a challenge to emergency orders and licensing actions by the state Office for Children that sought to suspend the center's license and restrict its use of behavioral intervention techniques. The parties entered into a consent decree in 1987. Later, the defendants moved to vacate the decree under Rule 60(b)(5), arguing that its original purposes had been fulfilled, that changed circumstances and professional standards on aversive interventions made continued enforcement inequitable, and that the decree infringed on executive functions under the separation of powers (Judge Rotenberg Educational Center, Inc. v. Commissioners of the Department of Developmental Services and the Department of Early Education and Care, Commonwealth of Massachusetts Bristol, ss Probate and Family Court Department, No. 86E-0018-GI).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "No source link on the lawsuit record; checked against the record summary (detail.summary) only, every claim matches it."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "On September 7, 2023, the Massachusetts Supreme Judicial Court ruled that the Judge Rotenberg Educational Center may keep using electric skin shocks under the 1987 consent decree. It affirmed a judge's 2018 finding that the state had failed to prove the shocks, as a method of last resort, were outside the standard of care. Under the decree, the shocks may be used \"only where it is the least intrusive, most appropriate treatment,\" after a physician develops an individual treatment plan, and with a probate court's permission for residents unable to consent. The court said it was not ruling on the propriety of the treatment in 2023 and did not rule out that new scientific developments could show a change in the standard of care ([ABA Journal](https://www.abajournal.com/web/article/top-court-in-massachusetts-permits-use-of-shock-devices-on-institutionalized-patients)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Date was wrong: the court ruled Sept. 7, 2023 (Sept. 11 is the article date). 'Last resort' was the 2018 trial finding, not a condition the court set; conditions now as the article gives them (decree wording, physician plan, probate court permission). Added the court's own limit on the ruling."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "585": {
+   "program": "LifeLine for Youth",
+   "place": "North Salt Lake, UT",
+   "years": "1990-present",
+   "column": "original_markdown",
+   "base_sha1": "73502694d00fe6115b69d77f3e88329884197446",
+   "record": {
+    "id": 10466,
+    "name": "Lifeline for Youth",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "1990-2024",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "LifeLine for Youth closed in 2024.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[LifeLine for Youth on Kids Over Profits](https://kidsoverprofits.org/facility/lifeline-for-youth-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "In a complaint dated October 19, 2018, for the Bountiful Judicial District Court in Davis County, Utah, Joseph Kennefick and Hillary Whitcomb, individually and for the estate of their son Joseph Hunter Kennefick, sued Lifeline for Youth and related entities. The complaint alleges that in 2011, while their son was 13 or 14 and in residential treatment at Lifeline, two of his counselors took him and other youths out, supplied them alcohol and drugs, and encouraged them to use; it alleges this set off years of relapse and caused or contributed to his death in September 2018 at age 21. The complaint says his cause of death was unknown and that he died overnight in his sleep. It brings thirteen claims, including breach of contract, fraud, negligent hiring and wrongful death. The copy on file shows no case number, filing stamp or outcome ([court filing](https://kidsoverprofits.org/wp-content/uploads/Whitcomb-vs-LifeLine-Behavioral-Health-Complaint.pdf) ).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Read the PDF: the copy has no filing stamp or case number, so 'filed in' became 'for' the court; added the complaint's own statement that the cause of death was unknown (died in his sleep, para. 37) so readers do not infer an overdose; 'caused or contributed' as pleaded."
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "LifeLine for Youth (also called \"Life-Line, Inc.\" and \"LifeLine RTC\") is a behavior-modification program that was founded in 1990. This program is confirmed to be the re-brand of the confirmedly abusive [KIDS Centers of America](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) program, \"KIDS of Greater Salt Lake\", which was a direct spin-off of [Straight Inc](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . KIDS of Greater Salt Lake's license was revoked amid allegations of abuse, negligence, and fraud, and the program closed in 1990. However, it was immediately reopened on the same day as Life-line, Inc. By reviewing LifeLine's [business license](http://lifelinelies.com/wp-content/uploads/2020/06/BES_3.png) and LifeLine's [1990 Annual Report](http://lifelinelies.com/wp-content/uploads/2020/08/1990-lifeline.pdf) , it is** confirmed that LifeLine is, in fact, the re-branding of the notoriously abusive KIDS**.",
+     "new": "LifeLine for Youth (also called \"Life-Line, Inc.\" and \"LifeLine RTC\") was a behavior-modification program that was founded in 1990. This program is confirmed to be the re-brand of the confirmedly abusive [KIDS Centers of America](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) program, \"KIDS of Greater Salt Lake\", which was a direct spin-off of [Straight Inc](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . KIDS of Greater Salt Lake's license was revoked amid allegations of abuse, negligence, and fraud, and the program closed in 1990. However, it was immediately reopened on the same day as Life-line, Inc. By reviewing LifeLine's [business license](http://lifelinelies.com/wp-content/uploads/2020/06/BES_3.png) and LifeLine's [1990 Annual Report](http://lifelinelies.com/wp-content/uploads/2020/08/1990-lifeline.pdf) , it is** confirmed that LifeLine was, in fact, the re-branding of the notoriously abusive KIDS**."
+    },
+    {
+     "id": "t1.2",
+     "old": "LifeLine for Youth is marketed as a Residential Treatment Center for troubled teenagers between the ages of 12 and 18. The program states that it enrolls teens with a wide variety of challenges, including Substance Abuse, Addictions, Depression or Dysthymia, Oppositional Defiant Disorder, ADHD, Pornography, Bi-Polar Disorder, Suicidal, Post Traumatic Stress Disorder, Family Conflict, Legal Involvement, Anxiety Disorders, Victims of Sexual Abuse and Trauma, Grief and Bereavement, Declining School, Low Self-Esteem, Body Image Issues, Manipulation, Hopelessness, Compulsive Lying, Peer Problems, and Adoption Issues. The average length of stay is reported to be between 12 and 18 months, and the program has a maximum enrollment of about 95.",
+     "new": "LifeLine for Youth was marketed as a Residential Treatment Center for troubled teenagers between the ages of 12 and 18. The program states that it enrolls teens with a wide variety of challenges, including Substance Abuse, Addictions, Depression or Dysthymia, Oppositional Defiant Disorder, ADHD, Pornography, Bi-Polar Disorder, Suicidal, Post Traumatic Stress Disorder, Family Conflict, Legal Involvement, Anxiety Disorders, Victims of Sexual Abuse and Trauma, Grief and Bereavement, Declining School, Low Self-Esteem, Body Image Issues, Manipulation, Hopelessness, Compulsive Lying, Peer Problems, and Adoption Issues. The average length of stay was reported to be between 12 and 18 months, and the program had a maximum enrollment of about 95."
+    },
+    {
+     "id": "t1.3",
+     "old": "** Dan Scholz** currently works as the Clinical Director of LifeLine for Youth. he has worked at Lifeline since May 1998, when he was apparently still in High School. After graduating High School in 1999, he attended Weber State University and graduated in 2005 with a B.A. in Social Work, Gerontology, and Psychology. In 2006, he graduated from Utah State University with a Master's Degree in Social Work (MSW).",
+     "new": "** Dan Scholz** worked as the Clinical Director of LifeLine for Youth. he had worked at Lifeline since May 1998, when he was apparently still in High School. After graduating High School in 1999, he attended Weber State University and graduated in 2005 with a B.A. in Social Work, Gerontology, and Psychology. In 2006, he graduated from Utah State University with a Master's Degree in Social Work (MSW)."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "593": {
+   "program": "Maryville Academy",
+   "place": "Des Plaines, IL",
+   "years": "1883-present",
+   "column": "original_markdown",
+   "base_sha1": "cd72df42d9df484b786b563ab0286a0647beacff",
+   "record": {
+    "id": 13505,
+    "name": "Maryville Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Maryville Academy on Kids Over Profits](https://kidsoverprofits.org/facility/maryville-academy-il/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "**Victoria Petersilka**, 14, died by suicide at Maryville in February 2002 ([source](https://qconline.com/news/illinois/psychologist-says-state-blew-suicide-probe-at-youth-home/article_0f963282-ee15-5858-b6a4-48c4a99a4d3e.html)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "KOP's source (6abc.com/archive/7771690) is about Michael Owens at Daystar in Texas and never names Petersilka; replaced with the AP story on the state's probe of her suicide (paywalled for fetch, confirmed through search results). Exact day dropped: KOP says Feb 9, Find a Grave says Feb 10, 2002; age 14 from both."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "**Waketta Roy Wallace** died on July 11, 1989, after Maryville staff held him face down for more than four hours, according to his mother's lawsuit, which said he died of positional asphyxia ([source](https://www.illinoiscourts.gov/Resources/ac1a32f6-95cd-4d4c-ac43-8f35464d8a7d/93144.htm)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Illinois Supreme Court opinion Wallace v. Smyth (No. 93144, filed Dec 19, 2002) gives the name as Waketta Roy Wallace, a boy, and states the restraint and death as the complaint's allegations; cause (positional asphyxia after a 4+ hour prone restraint) is the complaint's. KOP labels this source 'Federal Court'; it is the Illinois Supreme Court."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "595": {
+   "program": "Meridell Achievement Center",
+   "place": "Liberty Hill, TX",
+   "years": "1961-present",
+   "column": "original_markdown",
+   "base_sha1": "a2f70fc6a62f01c211165207d473b0060bf8e5f4",
+   "record": {
+    "id": 10617,
+    "name": "Meridell Achievement Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Arrests",
+     "text": "### **State Inspection Findings**\n\nIn a report dated August 23, 2021, Texas inspectors found: \"A staff member was observed on video to swing and hit a child in care multiple times, wrestled with the child and placed the child in an improper restraint where the child appeared to be knocked to the ground and have the staff member's arm across their neck. Several nurses were observed on video to not intervene when a child was placed in a supine hold and when another caregiver was hitting a child.\" (Texas licensing inspection report, August 23, 2021)\n\nIn a report dated August 30, 2022, Texas inspectors found: \"During the course of the investigation, it was determined a child in care was physically abused by a caregiver when he was choked.\" (Texas licensing inspection report, August 30, 2022)\n\nIn a report dated December 21, 2025, Texas inspectors found: \"Despite earlier instructions from a doctor that the child needed emergency room treatment, the child was not taken to the ER until 9:37 PM.\" (Texas licensing inspection report, December 21, 2025)\n\nIn a report dated May 5, 2026, Texas inspectors found: \"A staff member pushed a child after the child hit them with a stuffed animal.\" (Texas licensing inspection report, May 5, 2026)\n\nIn a report dated June 20, 2026, Texas inspectors found: \"Through interviews it was determined that a staff threatened to kick a child due to allergies, after a child attempted to hug her after animal therapy.\" (Texas licensing inspection report, June 20, 2026)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Meridell Achievement Center on Kids Over Profits](https://kidsoverprofits.org/facility/meridell-achievement-center-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "599": {
+   "program": "Mingus Mountain Academy",
+   "place": "Prescott Valley, AZ",
+   "years": "1985-present",
+   "column": "original_markdown",
+   "base_sha1": "571bebddb78615ad34cd041df52c90270ba706f8",
+   "record": {
+    "id": 12163,
+    "name": "Mingus Mountain Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mike McFarland** has been an Executive Director of Mingus Mountain Academy. McFarland was also VP of Operations 2009-2020 of Sequel Youth and Family Services.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Shaun Mohon** has been an Executive Director of Mingus Mountain Academy. Mohon was also CEO (2020–2023) of Vivant Behavioral Healthcare.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[COVID-19 Outbreak Affects Dozens of Residents and Staff at Mingus Mountain Academy](https://www.azcentral.com/story/news/local/arizona/2020/05/07/mingus-mountain-academy-arizona-has-42-teens-covid-19/5172243002/) (The Arizona Republic, 5/7/2020)\n\n[COVID-19 Outbreak Reported at Mingus Mountain Academy](https://www.dcourier.com/archives/84-students-20-staff-test-positive-at-mingus-mountain-academy/article_678ddd5d-7226-5608-9844-8c4de0f63e95.html) (Daily Courier, 5/14/2020)\n\n[Mingus Mountain Academy Reports Staff Injuries and Student Custody After Incident](https://www.12news.com/video/news/local/arizona/2-staff-members-injured-5-students-in-custody-after-attack/75-3b406a73-148e-4686-9206-c80704bd7e46) (12News, 7/23/2020)\n\n[Five Students Detained Following Disturbance and Assaults at Mingus Mountain Academy](https://theprescotttimes.com/juvenile-students-at-mingus-mountain-academy-attack-staff-resulting-in-injuries-and-5-in-custody/article_8aea4c61-da4d-5996-89f4-c536e0187034.html) (The Prescott Times, 7/23/2020)\n\n[Prescott Valley police: Runaway teen still missing after 5 months](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/) (Arizona Republic, 3/31/2022)\n\n[Arizona lawmaker calls for investigation after ABC15 reports into facility for troubled teens](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens) (ABC 15 Arizona, 4/30/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Mingus Mountain Academy on Kids Over Profits](https://kidsoverprofits.org/facility/mingus-mountain-academy-az/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In August 2021, Diane Onofrio filed an employment discrimination lawsuit under the Americans with Disabilities Act against Mingus Mountain Academy and Sequel Youth Services of Arizona LLC in federal court in Arizona (case 3:21-cv-08173). The defendants filed a notice of settlement, and the case was dismissed with prejudice in August 2022 ([court record](https://www.pacermonitor.com/public/case/41251382/Onofrio_v_Mingus_Mountain_Academy_et_al)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Filing month (Aug 3, 2021) and settlement wording per the PACER Monitor docket; claims otherwise confirmed."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In April 2025, Arizona State Senator T.J. Shope called for an investigation into Mingus Mountain Academy after ABC15 reported allegations of abuse there. A lawsuit names 13 former residents who allege sexual assault or abuse by staff between 2011 and 2022, and state health regulators have cited the facility 40 times since January 2022 for deficiencies, including improper restraint. Mingus and its management company, [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh), were also named in a 2024 U.S. Senate investigation into youth residential treatment facilities. Mingus Mountain called the allegations unproven ([ABC15, 4/30/2025](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Per the article: the complaint names 13 alleged victims (not 'filed by'), alleges sexual assault or abuse by staff (kept as allegation), citations were for deficiencies since January 2022 (not 'policy violations'); added the facility's denial; dropped 'widespread'."
+    },
+    {
+     "id": "s3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In October 2021, Aunum Conyers, 14, ran away while on a pass from Mingus Mountain Academy in her father's custody. Prescott Valley police were still searching for her in March 2022, more than five months later ([The Arizona Republic, 3/31/2022](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/)). She was later found safe ([Daily Courier](https://www.dcourier.com/news/prescott-valley-girl-missing-since-october-2021-has-been-found-safe/article_b6766e0e-dcf7-5df8-af99-9d352405863f.html)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "azcentral blocks fetching; circumstances (ran away on a pass in her father's custody, Oct 2021) from Daily Courier/KAFF coverage found by search. Added that she was later found safe (Daily Courier headline 'Prescott Valley girl, missing since October 2021, has been found safe') so the entry does not leave a named child missing."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "607": {
    "program": "Mountain Home Academy",
    "place": "---",
@@ -303,6 +1474,161 @@
     }
    ],
    "tense": [],
+   "conflicts": []
+  },
+  "627": {
+   "program": "Northwest Academy",
+   "place": "Bonners Ferry/Naples, ID",
+   "years": "1994-2005/2019",
+   "column": "original_markdown",
+   "base_sha1": "169ebb24f0c08730636fbcd8527c4dba6cc7946b",
+   "record": {
+    "id": 9691,
+    "name": "Northwest Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "1994-2019",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Northwest Academy closed in 2019.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**John Schrom** was an Acting School Director, Executive Director of Northwest Academy in 2006-2008 ([Woodbury Reports, December 2006 (#148), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1206.pdf#page=30)). Schrom was also Owner and Operator, Founder/Owner of Schrom Therapeutic Home Care for Boys and Owner, Founder of Hawk’s Landing Therapeutic Home for Boys.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Paul Johnson** was an Interim Executive Director of Northwest Academy in 2008 ([Woodbury Reports, February 2008 (#162), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)). Johnson was also Executive Director of Idaho Educational Services, School Director, Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) and exec director of CEDU Family of Services.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jane May** was the Director of business services of Northwest Academy. May was also director of operations and human resources of [Cherokee Creek Boys School](https://www.reddit.com/r/troubledteens/wiki/index/cherokeecreek), director of business services of CEDU Family of Services, director of business services of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and director of business services of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Matthew Fitzgerald** was the Director of Northwest Academy. Fitzgerald was also Admissions Director (1994) of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild), Co-owner, President, Co-Owner and Director (2007-2009) of [Northwoods](https://www.reddit.com/r/troubledteens/wiki/index/northwoods), co-owner/president of Northwoods Boarding School and admissions counselor of [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**David Brinkman** was an Admissions Director, Admissions of Northwest Academy in 2007-2008 ([Woodbury Reports, October 2007 (#158), p. 28](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1007.pdf#page=28)). Brinkman was also Co-owner, Owner of Brinkman House.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Devorah McIntosh** was an Academic Director of Northwest Academy in 2008 ([Woodbury Reports, August 2008 (#168), p. 27](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0808.pdf#page=27)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nikole Brown** was the Clinical Director of Northwest Academy in 2007 ([Woodbury Reports, October 2007 (#158), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1007.pdf#page=30)). Brown was also Clinical Director of Ascent Inc. and Clinical Director (1998), left of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ruth McKnight** was the School Director of Northwest Academy in 2006 ([Woodbury Reports, December 2006 (#148), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1206.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dan Kemp** was an Admissions director of Northwest Academy. Kemp was also Admissions Director, Director of Admissions (2008) of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild), Admissions Director (2006) of [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor), Director of Program Development of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and Headmaster and director of admissions of [The Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c11",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**John Sarchio** was an Academic director of Northwest Academy. Sarchio was also cofounder of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Northwest Academy on Kids Over Profits](https://kidsoverprofits.org/facility/northwest-academy-id/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "** Adam Mclain** was the Executive Director of Northwest Academy. Prior to NWA, he was previously the Clinical Director of [Peninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) in Louisville, Tennessee. He now works as the Group Director and CEO of the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) .",
+     "new": "** Adam Mclain** was the Executive Director of Northwest Academy. Prior to NWA, he was previously the Clinical Director of [Peninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) in Louisville, Tennessee. He worked as the Group Director and CEO of the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) ."
+    },
+    {
+     "id": "t1.2",
+     "old": "** Julia Andrick** worked as the Admissions Director of Northwest Academy and [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) until NWA closed in 2018. She currently works as the Admissions and Outreach Director for [Trails Carolina](https://www.reddit.com/r/troubledteens/wiki/index/trailscarolina) , which is a wilderness program owned by [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) .",
+     "new": "** Julia Andrick** worked as the Admissions Director of Northwest Academy and [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) until NWA closed in 2018. She worked as the Admissions and Outreach Director for [Trails Carolina](https://www.reddit.com/r/troubledteens/wiki/index/trailscarolina) , which is a wilderness program owned by [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) ."
+    },
+    {
+     "id": "t1.3",
+     "old": "** Brandi Elliot** worked as the Admissions Director of Northwest Academy until at least 2009. Before this (from 1998-2004) she worked as the Director of [CEDU Middle School](https://www.reddit.com/r/troubledteens/wiki/index/cedums) . She now owns her own Educational Consulting company and works as an Educational Consultant.",
+     "new": "** Brandi Elliot** worked as the Admissions Director of Northwest Academy until at least 2009. Before this (from 1998-2004) she worked as the Director of [CEDU Middle School](https://www.reddit.com/r/troubledteens/wiki/index/cedums) . She owned her own Educational Consulting company and works as an Educational Consultant."
+    }
+   ],
+   "fixes": [],
    "conflicts": []
   },
   "632": {
@@ -419,6 +1745,267 @@
      "source_url": "https://kidsoverprofits.org/facility/oakley-school-ut/"
     }
    ]
+  },
+  "633": {
+   "program": "Oak Plains Academy",
+   "place": "Ashland City, TN",
+   "years": "2008-present",
+   "column": "original_markdown",
+   "base_sha1": "9cf8bf59bd6711dbcc9383dcd570d38ba6c1df58",
+   "record": {
+    "id": 100023,
+    "name": "Chad Youth Enhancement Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Oak Plains Academy on Kids Over Profits](https://kidsoverprofits.org/facility/chad-youth-enhancement-center-tn/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "**Raiden Toms-Moonin**, 15, died on November 30, 2022 ([obituary](https://www.nashvillefuneralandcremation.com/obituaries/raiden-toms-moonin)), after she and another 15-year-old girl took medication from the facility's nurse's station and overdosed ([source](https://www.newschannel5.com/news/mother-of-teen-who-died-in-the-care-of-oak-plains-academy-speaks-out)). The Montgomery County Sheriff's Office said the medication was believed to be Benadryl ([source](https://clarksvillenow.com/local/two-15-year-old-girls-overdose-at-oak-plains-academy-one-dead-the-other-in-critical-condition/)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "NewsChannel 5 names her and the stolen-medication overdose but gives no date; the date is from her funeral home obituary. Benadryl and the nurse's station from the sheriff's office via ClarksvilleNow (which names neither girl)."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "**Summer Rose Lambert**, 15, a patient at Oak Plains Academy, died on November 29, 2022, at a hospital in Clarksville ([obituary](https://www.freemanfuneralhomeinc.com/obituary/Summer-Lambert)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The obituary (403 to fetch; text confirmed through search results and its copies) gives the date, Clarksville hospital and that she was an Oak Plains patient, but no cause, so 'overdose of medication from the facility' was removed. KOP links her to the Nov 2022 Benadryl overdose; the sheriff's timeline fits (one girl died Nov 29, the other the next day), but no source checked names her."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "637": {
+   "program": "Olympus Academy",
+   "place": "Hurricane, UT",
+   "years": "2013-2017",
+   "column": "original_markdown",
+   "base_sha1": "1d04a1c48e78436a1e6980002bb4353ac906fb28",
+   "record": {
+    "id": 10496,
+    "name": "Olympus Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Olympus Academy on Kids Over Profits](https://kidsoverprofits.org/facility/olympus-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Olympus Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior modification program that reportedly opened in 2013. It was marketed as a Co-Ed Residential Treatment Center for teenagers aged 12-17 years old. They claimed to help teens who were struggling with \"ADD/ADHD (attentional disorders), Addiction (substances/gaming/etc), Alcohol abuse, Anger, Bipolar disorder, Bullying or bullied, Conduct disorder, Defiance/ODD (oppositional defiant disorder), Depression, Drug abuse, (including prescription/over-the-counter), Eating Disorders, Lack of motivation, Learning difficulties, Negative peer association, Problems with authority, and Substance abuse.\"",
+     "new": "Olympus Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior modification program that reportedly opened in 2013. It was marketed as a Co-Ed Residential Treatment Center for teenagers aged 12-17 years old. They claimed to help teens who were struggling with \"ADD/ADHD (attentional disorders), Addiction (substances/gaming/etc), Alcohol abuse, Anger, Bipolar disorder, Bullying or bullied, Conduct disorder, Defiance/ODD (oppositional defiant disorder), Depression, Drug abuse, (including prescription/over-the-counter), Eating Disorders, Lack of motivation, Learning difficulties, Negative peer association, Problems with authority, and Substance abuse.\""
+    },
+    {
+     "id": "t1.2",
+     "old": "Like other WWASP facilities, Olympus Academy used a level system with 4 levels. The levels were:",
+     "new": "Like other WWASP facilities, Olympus Academy used a level system with 4 levels. The levels were:"
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "640": {
+   "program": "Outback Therapeutic Expeditions",
+   "place": "Lehi, UT",
+   "years": "2001-present",
+   "column": "original_markdown",
+   "base_sha1": "7bc14ce53fbf2417202c35b86f1286330f0da1fe",
+   "record": {
+    "id": 10350,
+    "name": "Outback Therapeutic Expeditions",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "2001-2023",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Outback Therapeutic Expeditions closed in 2023.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Andrew Powell** was an Executive Director of Outback Therapeutic Expeditions in 2011-2014 ([Woodbury Reports, October 2011, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1011.pdf#page=10)). Powell was also Core management team member of [Elements Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/elementswild) and Country Director of VisionSpring.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Arwynn Harris Jensen** was an Admissions Director of Outback Therapeutic Expeditions in 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)). Jensen was also Admissions, Experiential Education teacher of [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Neal Christensen** was the Clinical Director of Outback Therapeutic Expeditions in 2008 ([Woodbury Reports, November 2008 (#171), p. 22](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=22)). Christensen was also Therapist of Marillac Center for Children and Clinical team member of [Elements Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/elementswild).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Brad Matheson** was an Admissions director of Outback Therapeutic Expeditions. Matheson was also Director of Admissions, Admissions Director/Partner, Director of Admissions and Partner, Director of Admissions/Partner, Admissions Director (2008-2010) of Wingate Wilderness Therapy and cofounder, director of marketing of Monuments RTC.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Erin Grover** was the Field director of Outback Therapeutic Expeditions. Grover was also clinical director of WinGate Wilderness Therapy and MSW intern of Vista Treatment Centers.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jodi Escalante** was the Field director of Outback Therapeutic Expeditions. Escalante was also business administration director of [Daniels Academy](https://www.reddit.com/r/troubledteens/wiki/index/daniels), mentor of Telos Academy and field director of Vantage Point.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Joshua Cluff** was the Clinical director of Outback Therapeutic Expeditions. Cluff was also clinical director of [Daniels Academy](https://www.reddit.com/r/troubledteens/wiki/index/daniels).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael Bednarz** was the Field director of Outback Therapeutic Expeditions. Bednarz was also Executive Director (2008) of Lone Star Expeditions, Executive Director (2009) of [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk), senior field staff of [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) and senior field staff of Second Nature.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Shayne Gallagher** was the Helped found of Outback Therapeutic Expeditions. Gallagher was also Program Director, Executive Director (2008-2010) of Wingate Wilderness Therapy, program director of ANASAZI Foundation and field instructor of [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Outback Therapeutic Expeditions on Kids Over Profits](https://kidsoverprofits.org/facility/outback-therapeutic-expeditions-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Outback Therapeutic Expeditions is a behavior-modification program founded in 2001 and owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . It was originally named \"Walkabout\" but changed its name to Outback Therapeutic Expeditions in 2004. It is marketed as a \"wilderness therapy\" program for teenagers aged 13-17 who are dealing with a multitude of issues including: Depression, Anxiety, Learning disabilities, Social isolation, Identity Development, Academic Issues, Dangerous/Risky Behaviors, Peer Dependence, Defiance, Emotional Outbursts, Electronics Addictions, Substance Abuse, Traumatic Events, and Bullying. The average length of stay is reported to be between 6 and 10 weeks. It has been a member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) since 2002. It also claims to be accredited by the [Outdoor Behavioral Healthcare Industry Council (OBHIC)](https://www.reddit.com/r/troubledteens/wiki/index/obhic) .",
+     "new": "Outback Therapeutic Expeditions was a behavior-modification program founded in 2001 and owned by [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) . It was originally named \"Walkabout\" but changed its name to Outback Therapeutic Expeditions in 2004. It was marketed as a \"wilderness therapy\" program for teenagers aged 13-17 who are dealing with a multitude of issues including: Depression, Anxiety, Learning disabilities, Social isolation, Identity Development, Academic Issues, Dangerous/Risky Behaviors, Peer Dependence, Defiance, Emotional Outbursts, Electronics Addictions, Substance Abuse, Traumatic Events, and Bullying. The average length of stay was reported to be between 6 and 10 weeks. It had been a member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) since 2002. It also claimed to be accredited by the [Outdoor Behavioral Healthcare Industry Council (OBHIC)](https://www.reddit.com/r/troubledteens/wiki/index/obhic) ."
+    },
+    {
+     "id": "t1.2",
+     "old": "In 2005, the tuition was reported to be $380 per day ($21,280 for 8 weeks), which included gear. In 2006, the price had been raised to $445 per day ($24,920 for 8 weeks) plus a one-time $1,450 enrollment/gear fee, bringing the total cost to $26,370 total for 8 weeks. In 2020, they no longer list their daily rate for tuition on their website, but they do note that they have an additional one-time enrollment fee of $3,500, so it is likely that the daily rate has also increased substantially. There is now also a fee for a physical examination upon enrollment.",
+     "new": "In 2005, the tuition was reported to be $380 per day ($21,280 for 8 weeks), which included gear. In 2006, the price had been raised to $445 per day ($24,920 for 8 weeks) plus a one-time $1,450 enrollment/gear fee, bringing the total cost to $26,370 total for 8 weeks. In 2020, they no longer listed their daily rate for tuition on their website, but they did note that they had an additional one-time enrollment fee of $3,500, so it was likely that the daily rate had also increased substantially. There was also a fee for a physical examination upon enrollment."
+    },
+    {
+     "id": "t1.3",
+     "old": "In 2011, six other Aspen Education Group programs ([Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [New Leaf Academy of Oregon](https://www.reddit.com/r/troubledteens/wiki/index/newleaforegon) , [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) , [Bromley Brook School](https://www.reddit.com/r/troubledteens/wiki/index/bromelybrook) , [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) , and [NorthStar Center](https://www.reddit.com/r/troubledteens/wiki/index/northstar) ) merged into Outback Therapeutic Expeditions. Outback Therapeutic Expeditions remains in operation today.",
+     "new": "In 2011, six other Aspen Education Group programs ([Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) , [New Leaf Academy of Oregon](https://www.reddit.com/r/troubledteens/wiki/index/newleaforegon) , [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) , [Bromley Brook School](https://www.reddit.com/r/troubledteens/wiki/index/bromelybrook) , [SunHawk Academy](https://www.reddit.com/r/troubledteens/wiki/index/sunhawk) , and [NorthStar Center](https://www.reddit.com/r/troubledteens/wiki/index/northstar) ) merged into Outback Therapeutic Expeditions. Outback Therapeutic Expeditions remained in operation."
+    },
+    {
+     "id": "t1.4",
+     "old": "** McKay Deveraux** is the current Executive Director of Outback Therapeutic Expeditions. He has worked at the program since 2002 in several positions, including Primary Therapist, Program Director, Field Director, and Field Staff. He reports that he was a \"troubled youth\" which is partially what drew him to begin working in wilderness programs. Prior to joining OTE, he worked at an unnamed wilderness program for roughly 3 years.",
+     "new": "** McKay Deveraux** was the Executive Director of Outback Therapeutic Expeditions. He had worked at the program since 2002 in several positions, including Primary Therapist, Program Director, Field Director, and Field Staff. He reports that he was a \"troubled youth\" which is partially what drew him to begin working in wilderness programs. Prior to joining OTE, he worked at an unnamed wilderness program for roughly 3 years."
+    },
+    {
+     "id": "t1.5",
+     "old": "** Greg Burnham** is the current Clinical Director and a Primary Therapist at Outback Therapeutic Expeditions. He began his career in the TTI as a Therapist at the** confirmedly abusive** [Cedar Ridge RTC](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) , where he worked from 1999 until 2002. He then worked at an outpatient counseling center from 2002 until 2005. After this, he worked as a Therapist and later as the Assistant Clinical Director of the** confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2005 until 2013. He then went on to work as a Therapist and Clinical Director of the reportedly abusive [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2014 until 2017, when he joined OTE.",
+     "new": "** Greg Burnham** was the Clinical Director and a Primary Therapist at Outback Therapeutic Expeditions. He began his career in the TTI as a Therapist at the** confirmedly abusive** [Cedar Ridge RTC](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) , where he worked from 1999 until 2002. He then worked at an outpatient counseling center from 2002 until 2005. After this, he worked as a Therapist and later as the Assistant Clinical Director of the** confirmedly abusive** [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) from 2005 until 2013. He then went on to work as a Therapist and Clinical Director of the reportedly abusive [Wingate Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/wingate) from 2014 until 2017, when he joined OTE."
+    },
+    {
+     "id": "t1.6",
+     "old": "** Richard Meeves** is the current Co-Owner and CEO of Outback Therapeutic Expeditions. He formerly worked as the Executive Director of the program. He had previously worked as as Primary Therapist at [Second Nature Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) in Duchesne, UT and [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) in Loa, UT. He also worked as the Clinical Director at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in Loa, UT. He is now the Director of Clinical Services for CRC Health Group, [Aspen Education Group’s](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) parent company, as well as the CEO of [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) .",
+     "new": "** Richard Meeves** was the Co-Owner and CEO of Outback Therapeutic Expeditions. He formerly worked as the Executive Director of the program. He had previously worked as as Primary Therapist at [Second Nature Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/snuintas) in Duchesne, UT and [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement) in Loa, UT. He also worked as the Clinical Director at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in Loa, UT. He was the Director of Clinical Services for CRC Health Group, [Aspen Education Group’s](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) parent company, as well as the CEO of [Aspiro Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/aspiro) ."
+    },
+    {
+     "id": "t1.7",
+     "old": "** Theresa Wardle** is the current Admissions Director of Outback Therapeutic Expeditions. She began her career in the TTI working at several notorious and** confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. She worked as a Therapist at CEDU's [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , and later worked as the Admissions Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) . Around 2003, Theresa and her husband, Patrick, opened a \"therapeutic foster care\" program for teenage girls called [The Wardle Home](https://www.reddit.com/r/troubledteens/wiki/index/wardle) in Naples, Idaho. She has worked at OTE since April of 2018.",
+     "new": "** Theresa Wardle** was the Admissions Director of Outback Therapeutic Expeditions. She began her career in the TTI working at several notorious and** confirmedly abusive** [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) programs. She worked as a Therapist at CEDU's [Rocky Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/rockymountain) and [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwest) , and later worked as the Admissions Director of [Boulder Creek Academy](https://www.reddit.com/r/troubledteens/wiki/index/bouldercreek) . Around 2003, Theresa and her husband, Patrick, opened a \"therapeutic foster care\" program for teenage girls called [The Wardle Home](https://www.reddit.com/r/troubledteens/wiki/index/wardle) in Naples, Idaho. She had worked at OTE since April of 2018."
+    },
+    {
+     "id": "t1.8",
+     "old": "** Daniel Hazen** is the current Program Director of Outback Therapeutic Expeditions. His prior employment is presently unknown.",
+     "new": "** Daniel Hazen** was the Program Director of Outback Therapeutic Expeditions. His prior employment was unknown."
+    },
+    {
+     "id": "t1.9",
+     "old": "Very little is known about the program structure at Outback Therapeutic Expeditions. It likely uses a level-system which is common in many behavior-modification programs.",
+     "new": "Very little is known about the program structure at Outback Therapeutic Expeditions. It likely used a level-system which is common in many behavior-modification programs."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
   },
   "657": {
    "program": "Provo Canyon School",
@@ -667,6 +2254,42 @@
    "fixes": [],
    "conflicts": []
   },
+  "680": {
+   "program": "Shiloh Treatment Center",
+   "place": "Manvel, TX",
+   "years": "1995-present",
+   "column": "original_markdown",
+   "base_sha1": "3c9023502b2f6149c08a88285aa56a3e063807ce",
+   "record": {
+    "id": 10900,
+    "name": "Shiloh Treatment Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse, Deaths, and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated May 18, 2022, Texas inspectors found: \"A staff member grabbed a child by the arm and dragged them off a couch and down a hallway.\" (Texas licensing inspection report, May 18, 2022)\n\nIn a report dated October 29, 2024, Texas inspectors found: \"The staff used corporal punishment as a means to get a child to comply.\" (Texas licensing inspection report, October 29, 2024)\n\nIn a report dated June 25, 2025, Texas inspectors found: \"A caregiver aggressively shoved a 13-year-old child in care on three occasions during a struggle over the caregiver's personal items.\" (Texas licensing inspection report, June 25, 2025)\n\nIn a report dated September 20, 2025, Texas inspectors found: \"Two operational staff members completed an EBI transport for a child by dragging the child across the living room area of the home.\" (Texas licensing inspection report, September 20, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Shiloh Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/shiloh-treatment-center-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "684": {
    "program": "Second Nature Entrada",
    "place": "Santa Clara, UT",
@@ -742,6 +2365,222 @@
      "new": "Second Nature was reported by many survivors to be an abusive program. Allegations of abuse and neglect which have been reported by survivors include severe medical neglect, solitary confinement, over-medication, humiliation tactics, and restriction of food. Many survivors report that they have been diagnosed with PTSD following their time at Second Nature."
     }
    ],
+   "conflicts": []
+  },
+  "691": {
+   "program": "Spring Ridge Academy",
+   "place": "Mayer, AZ",
+   "years": "1997-present",
+   "column": "original_markdown",
+   "base_sha1": "cc023e3cea6bca935cb1693d261df6bf6d363840",
+   "record": {
+    "id": 12293,
+    "name": "Spring Ridge Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "1997-2023",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Spring Ridge Academy closed in 2023 ([Arizona Mirror, 2024-07-15](https://azmirror.com/2024/07/15/it-was-a-cult-traumatizing-troubled-teens-spring-ridge-academy/)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Susan Coatney** was an Admissions Director, Administrator of Spring Ridge Academy in 2011-2013 ([Woodbury Reports, July 2011, p. 7](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0711.pdf#page=7)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Guinevere Hilton** was the Community life director of Spring Ridge Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Gary D. Hees** was the Clinical Director of Spring Ridge Academy in 2011-2013 ([Woodbury Reports, June 2011, p. 6](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0611.pdf#page=6)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nancy Kelly** was the Clinical Director of Spring Ridge Academy in 2013 ([Woodbury Reports, September 2013, p. 8](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=8)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "['It was a cult': Traumatizing troubled teens](https://azmirror.com/2024/07/15/it-was-a-cult-traumatizing-troubled-teens-spring-ridge-academy/) (Arizona Mirror, 7/15/2024)\n\n[Spring Ridge Academy students claim harsh treatment at boarding school](https://www.azcentral.com/picture-gallery/news/local/arizona-education/2024/07/19/spring-ridge-academy-yavapai-county-arizona-lawsuit/74465954007/) (azcentral, 7/19/2024)\n\n[Spring Ridge Academy students describe harsh treatment after lawsuit](https://www.azcentral.com/story/news/local/arizona-education/2024/07/19/spring-ridge-academy-students-arizona-describe-harsh-treatment-after-lawsuit/74461275007/#) (Arizona Republic, 7/19/2024)\n\n[Why some say AZ's 'troubled teen industry' needs more accountability](https://www.kjzz.org/kjzz-news/2024-07-25/why-some-say-azs-troubled-teen-industry-needs-more-accountability) (KJZZ, 7/25/2024)\n\n[Former students describe Spring Ridge Academy as 'treated like we were criminals'](https://www.fox10phoenix.com/news/former-students-describe-spring-ridge-academy-treated-like-we-were-criminals) (FOX 10 Phoenix, 10/29/2024)\n\n[Former Spring Ridge Academy Students Say School Inflicted Abuse, Trauma](https://www.huffpost.com/entry/troubled-teens-spring-ridge-academy_n_68cc1b68e4b0df2833ccfa2c) (HuffPost, 10/10/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Spring Ridge Academy on Kids Over Profits](https://kidsoverprofits.org/facility/spring-ridge-academy-az/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "In June 2024, at the end of a federal civil trial, a jury awarded Kimberly Sweidy $2.5 million in her lawsuit against Spring Ridge Academy, finding that the school had defrauded consumers by misrepresenting the program's practices ([FOX 10 Phoenix](https://www.fox10phoenix.com/news/former-students-describe-spring-ridge-academy-treated-like-we-were-criminals); [Arizona Mirror](https://azmirror.com/2024/07/15/it-was-a-cult-traumatizing-troubled-teens-spring-ridge-academy/)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Dropped the Arizona Republic sentence ('liable on multiple counts of fraud', 'more than $2.5 million in punitive damages'): azcentral would not open (403, no archive text) and FOX 10 and the Arizona Mirror both give $2.5 million without calling it punitive. Wording of the finding now from FOX 10; Arizona Mirror (federal lawsuit, $2.5 million) cited beside it."
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Spring Ridge Academy is a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior-modification program founded in 1997 by Jeannie Courtney. It is marketed as a Therapeutic Boarding School for teenage girls aged 13-17, although there have been reports of 18 and sometimes 19-year-olds at SRA. According to their [website](https://springridgeacademy.com/therapy/) , Spring Ridge Academy claims to help girls dealing with \"Trauma, Substance Abuse, Grief & Loss, Depression, Anxiety, Parent/Child, Relational Problems, Substance Use, Self Harm, and Developmental & Maturity Issues\". The program has a maximum enrollment of 76 girls. The average length of stay is between 15-18 months, although it can be much longer if the resident is deemed resistant. The tuition & fees at SRA are reported to be in excess of $8,800 per month. Spring Ridge Academy was one of the original six [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) members, and had been a member of NATSAP since 2011.",
+     "new": "Spring Ridge Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior-modification program founded in 1997 by Jeannie Courtney. It was marketed as a Therapeutic Boarding School for teenage girls aged 13-17, although there have been reports of 18 and sometimes 19-year-olds at SRA. According to their [website](https://springridgeacademy.com/therapy/) , Spring Ridge Academy claimed to help girls dealing with \"Trauma, Substance Abuse, Grief & Loss, Depression, Anxiety, Parent/Child, Relational Problems, Substance Use, Self Harm, and Developmental & Maturity Issues\". The program had a maximum enrollment of 76 girls. The average length of stay was between 15-18 months, although it can be much longer if the resident is deemed resistant. The tuition & fees at SRA were reported to be in excess of $8,800 per month. Spring Ridge Academy was one of the original six [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) members, and had been a member of NATSAP since 2011."
+    },
+    {
+     "id": "t1.2",
+     "old": "The campus is located at [13690 S Burton Rd, Mayer, AZ 86333](https://www.google.com/maps/place/Spring+Ridge+Academy/@34.3458064,-112.1682218,392m/data=!3m1!1e3!4m5!3m4!1s0x0:0x92f899ddf294a36!8m2!3d34.345952!4d-112.168291) in Mayer, AZ. Before SRA moved there, the campus was originally a house with an attached barn.",
+     "new": "The campus was located at [13690 S Burton Rd, Mayer, AZ 86333](https://www.google.com/maps/place/Spring+Ridge+Academy/@34.3458064,-112.1682218,392m/data=!3m1!1e3!4m5!3m4!1s0x0:0x92f899ddf294a36!8m2!3d34.345952!4d-112.168291) in Mayer, AZ. Before SRA moved there, the campus was originally a house with an attached barn."
+    },
+    {
+     "id": "t1.3",
+     "old": "Although not directly affiliated with [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , Spring Ridge Academy has several connections to other WWASP programs and staff. The founder of SRA, Jeannie Courtney, is the ex-wife of the WWASP and [LifeSpring](https://en.wikipedia.org/wiki/Lifespring) facilitator David Gilcrease. In addition, Jeannie Courtney previously worked for WWASP's [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) programs in Utah. To this day, SRA also uses the Gilcrease terms “working” and “non-working” behaviors.",
+     "new": "Although not directly affiliated with [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) , Spring Ridge Academy has several connections to other WWASP programs and staff. The founder of SRA, Jeannie Courtney, is the ex-wife of the WWASP and [LifeSpring](https://en.wikipedia.org/wiki/Lifespring) facilitator David Gilcrease. In addition, Jeannie Courtney previously worked for WWASP's [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) programs in Utah. To this day, SRA also used the Gilcrease terms “working” and “non-working” behaviors."
+    },
+    {
+     "id": "t1.4",
+     "old": "On June 23^(rd) 2022, SRA's Executive Director, Suzanne Courtney, received a [business license](https://ecorp.azcc.gov/BusinessSearch/BusinessInfo?entityNumber=23390107) for a new company** New Day Rising LLC**. According to the company's [articles of organization](https://ecorp.azcc.gov/CommonHelper/GetFilingDocuments?barcode=22062309513751) , New Day Rising is in the business of Health Care and Social Assistance. The address listed for New Day Rising in the [Joint Commission Accreditation Quality Report](https://web.archive.org/web/20220626023241/https://cdn.fbsbx.com/v/t59.2708-21/288313683_1948236045373929_8791341626384644153_n.pdf/210616-SRA-Quality-Report-download-220625.pdf?_nc_cat=109&ccb=1-7&_nc_sid=0cab14&_nc_ohc=wJ5IaKRQiGYAX-PUZhB&_nc_ht=cdn.fbsbx.com&oh=03_AVKMor04MmNzA6y73eraZe_ij4P3jV8o63OQWVvY-5HqaA&oe=62B93E68&dl=1) is the same address of Spring Ridge Academy's current campus. For these reasons, it is believed that Spring Ridge Academy is attempting to rebrand itself as New Day Rising.*This information will be updated as more details become available.*",
+     "new": "On June 23^(rd) 2022, SRA's Executive Director, Suzanne Courtney, received a [business license](https://ecorp.azcc.gov/BusinessSearch/BusinessInfo?entityNumber=23390107) for a new company** New Day Rising LLC**. According to the company's [articles of organization](https://ecorp.azcc.gov/CommonHelper/GetFilingDocuments?barcode=22062309513751) , New Day Rising was in the business of Health Care and Social Assistance. The address listed for New Day Rising in the [Joint Commission Accreditation Quality Report](https://web.archive.org/web/20220626023241/https://cdn.fbsbx.com/v/t59.2708-21/288313683_1948236045373929_8791341626384644153_n.pdf/210616-SRA-Quality-Report-download-220625.pdf?_nc_cat=109&ccb=1-7&_nc_sid=0cab14&_nc_ohc=wJ5IaKRQiGYAX-PUZhB&_nc_ht=cdn.fbsbx.com&oh=03_AVKMor04MmNzA6y73eraZe_ij4P3jV8o63OQWVvY-5HqaA&oe=62B93E68&dl=1) was the same address of Spring Ridge Academy's campus. For these reasons, it is believed that Spring Ridge Academy was attempting to rebrand itself as New Day Rising.*This information will be updated as more details become available.*"
+    },
+    {
+     "id": "t1.5",
+     "old": "** Jeannie Courtney (née Brinkerhoff)** is the founder of Spring Ridge Academy. She is also the ex-wife of the WWASP and [LifeSpring](https://en.wikipedia.org/wiki/Lifespring) facilitator David Gilcrease. Although Jeannie and David divorced in 1988, Jeannie continued to administer Lifespring seminars at WWASP programs with David until 1995. In addition, Jeannie Courtney previously worked for the confirmedly abusive [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , a now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program in Utah. Jean Courtney has a B.A. in Elementary Education from Arizona State University, despite the fact that SRA is a Secondary Education school.",
+     "new": "** Jeannie Courtney (née Brinkerhoff)** was the founder of Spring Ridge Academy. She was also the ex-wife of the WWASP and [LifeSpring](https://en.wikipedia.org/wiki/Lifespring) facilitator David Gilcrease. Although Jeannie and David divorced in 1988, Jeannie continued to administer Lifespring seminars at WWASP programs with David until 1995. In addition, Jeannie Courtney previously worked for the confirmedly abusive [Cross Creek](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) , a now-closed [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program in Utah. Jean Courtney had a B.A. in Elementary Education from Arizona State University, despite the fact that SRA was a Secondary Education school."
+    },
+    {
+     "id": "t1.6",
+     "old": "** Brandon Courtney** is Jeannie's son and currently works as the Program Director and General Manager at Spring Ridge Academy. He began working at SRA in 2001 as the Community Director. He earned his Bachelor's degree in Political Science and Government in 2002 from Northern Arizona University, and his Mental Health Counseling license from Prescott College in 2006. He reportedly began working with adolescents in 1994, but his prior places of employment are presently unknown.",
+     "new": "** Brandon Courtney** was Jeannie's son and worked as the Program Director and General Manager at Spring Ridge Academy. He began working at SRA in 2001 as the Community Director. He earned his Bachelor's degree in Political Science and Government in 2002 from Northern Arizona University, and his Mental Health Counseling license from Prescott College in 2006. He reportedly began working with adolescents in 1994, but his prior places of employment are presently unknown."
+    },
+    {
+     "id": "t1.7",
+     "old": "** Suzanne (Suzie) Courtney** is Jeannie's daughter and currently works as the Executive Director/Admissions at Spring Ridge Academy. She previously worked as a Parent Liason at SRA. She began working at SRA in 1999.",
+     "new": "** Suzanne (Suzie) Courtney** was Jeannie's daughter and worked as the Executive Director/Admissions at Spring Ridge Academy. She previously worked as a Parent Liason at SRA. She began working at SRA in 1999."
+    },
+    {
+     "id": "t1.8",
+     "old": "** Susan Dougherty** is the current Residential Director of Spring Ridge Academy. Dougherty started working at Spring Ridge Academy only six months after the school opened in 1998 and has previuosly served as a community coach, a community supervisor, and the assistant residential director. Her prior employment is unknown, but she reportedly earned her Bachelor's degree in 2013.",
+     "new": "** Susan Dougherty** was the Residential Director of Spring Ridge Academy. Dougherty started working at Spring Ridge Academy only six months after the school opened in 1998 and has previuosly served as a community coach, a community supervisor, and the assistant residential director. Her prior employment is unknown, but she reportedly earned her Bachelor's degree in 2013."
+    },
+    {
+     "id": "t1.9",
+     "old": "** Leslie Filsinger** is the current Clinical Director of Spring Ridge Academy. She has worked at SRA since 2014. She previously worked at [Lutheran Jamestown](https://www.lutheran-jamestown.org/) as a Psychology Assistant and Therapist from 1989 until 2014.",
+     "new": "** Leslie Filsinger** was the Clinical Director of Spring Ridge Academy. She has worked at SRA since 2014. She previously worked at [Lutheran Jamestown](https://www.lutheran-jamestown.org/) as a Psychology Assistant and Therapist from 1989 until 2014."
+    },
+    {
+     "id": "t1.10",
+     "old": "** Beth Ragland** is the current Director Of Admissions at Spring Ridge Academy. She began her career in the Troubled Teen Industry working in Customer Relations at the reportedly abusive [Three Springs](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) from 1994 until 2002. She then worked as the Director of Marketing at Pathway, Inc from 2003 until 2005. She then became the Vice President of Marketing and Admissions at the reportedly abusive [The Pinnacle School](https://www.reddit.com/r/troubledteens/wiki/index/elkriver) from 2005 until 2008. After this, she worked as the Director of Admissions, Outreach and Business Development at the reportedly abusive [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbrier) from 2008 until 2017. She then worked as the Director of Admissions, Marketing & Outreach at the reportedly abusive [Auldern Academy](https://www.reddit.com/r/troubledteens/wiki/index/auldernacademy) from 2018 until 2020. She began working at SRA in January 2021.",
+     "new": "** Beth Ragland** was the Director Of Admissions at Spring Ridge Academy. She began her career in the Troubled Teen Industry working in Customer Relations at the reportedly abusive [Three Springs](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) from 1994 until 2002. She then worked as the Director of Marketing at Pathway, Inc from 2003 until 2005. She then became the Vice President of Marketing and Admissions at the reportedly abusive [The Pinnacle School](https://www.reddit.com/r/troubledteens/wiki/index/elkriver) from 2005 until 2008. After this, she worked as the Director of Admissions, Outreach and Business Development at the reportedly abusive [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbrier) from 2008 until 2017. She then worked as the Director of Admissions, Marketing & Outreach at the reportedly abusive [Auldern Academy](https://www.reddit.com/r/troubledteens/wiki/index/auldernacademy) from 2018 until 2020. She began working at SRA in January 2021."
+    },
+    {
+     "id": "t1.11",
+     "old": "** Cindy Fogel** currently works as a Therapist at Spring Ridge Academy. Her career in the TTI began when she worked as a Therapist at the** confirmedly abusive** [Obsidian Trails Outdoor School](https://www.reddit.com/r/troubledteens/wiki/index/obsidiantrails) , where a child was killed during a violent restraint in 2000, from 2001 until 2002. She then worked as a Therapist at the** confirmedly abusive** [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk) from 2002 until 2006, another program where child was killed in 2009. She then worked as a Therapist at the reportedly abusive [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) from 2006 until 2013, when she began working at SRA.",
+     "new": "** Cindy Fogel** worked as a Therapist at Spring Ridge Academy. Her career in the TTI began when she worked as a Therapist at the** confirmedly abusive** [Obsidian Trails Outdoor School](https://www.reddit.com/r/troubledteens/wiki/index/obsidiantrails) , where a child was killed during a violent restraint in 2000, from 2001 until 2002. She then worked as a Therapist at the** confirmedly abusive** [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk) from 2002 until 2006, another program where child was killed in 2009. She then worked as a Therapist at the reportedly abusive [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades) from 2006 until 2013, when she began working at SRA."
+    },
+    {
+     "id": "t1.12",
+     "old": "** Belle Shook** currently works as a Therapist at Spring Ridge Academy. She began her career as a Trauma-Focused Equine Therapist at the reportedly abusive [Mingus Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/mingus) from 2007 until 2012. She then worked as an Equine Therapist at the** confirmedly abusive** [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) from 2012 until 2015.",
+     "new": "** Belle Shook** worked as a Therapist at Spring Ridge Academy. She began her career as a Trauma-Focused Equine Therapist at the reportedly abusive [Mingus Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/mingus) from 2007 until 2012. She then worked as an Equine Therapist at the** confirmedly abusive** [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) from 2012 until 2015."
+    },
+    {
+     "id": "t1.13",
+     "old": "** Erin Smith** is the current Director of Operational Excellence at SRA. She has worked at SRA since 2008, beginning as the Vice Prinicipal and English Instructor. Despite this, she only received her certification in Arizona as a Prinicipal in Junary of 2016 and as a Secondary Education teacher in June of 2017.",
+     "new": "** Erin Smith** was the Director of Operational Excellence at SRA. She has worked at SRA since 2008, beginning as the Vice Prinicipal and English Instructor. Despite this, she only received her certification in Arizona as a Prinicipal in Junary of 2016 and as a Secondary Education teacher in June of 2017."
+    }
+   ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "702": {
+   "program": "Sunset Bay Academy",
+   "place": "Tijuana, Baja California, Mexico",
+   "years": "2006-present",
+   "column": "original_markdown",
+   "base_sha1": "a477944e08daf47dcd629e518c20b8f0d5a3a147",
+   "record": {
+    "id": 14144,
+    "name": "Sunset Bay Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "2006-2009",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Closing year from the record."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Sunset Bay Academy closed in 2009. It was formerly called Centro de Bienestar Familiar de BC. It was operated by [World Wide Association of Specialty Programs and Schools (WWASPS)](https://www.reddit.com/r/troubledteens/wiki/index/wwasp).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Sunset Bay Academy on Kids Over Profits](https://kidsoverprofits.org/facility/sunset-bay-academy-mexico/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Sunset Bay Academy is a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior-modification program that originally opened in 2006. It is marketed as a residential treatment center for boys and girls aged 12-17 with behavioral issues. They claim to \"help\" troubled teens with a history of the following: \"Running Away, Unhealthy Sexual Conduct, Adoption Issues, Impulsiveness and Obsessive Behaviors, Low Self Esteem, Substance abuse issues, Mood disorders, ADD/ ADHD, Self Harm and Self Defeating Behaviors, Reactive Attachment Disorder, Divorce Issues, Family Issues, Oppositional defiant disorder.\" In 2008, the program's tuition was $1,995 per month ($23,940 annually) plus an initial one-time processing fee of $2,500.",
+     "new": "Sunset Bay Academy was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) -affiliated behavior-modification program that originally opened in 2006. It was marketed as a residential treatment center for boys and girls aged 12-17 with behavioral issues. They claimed to \"help\" troubled teens with a history of the following: \"Running Away, Unhealthy Sexual Conduct, Adoption Issues, Impulsiveness and Obsessive Behaviors, Low Self Esteem, Substance abuse issues, Mood disorders, ADD/ ADHD, Self Harm and Self Defeating Behaviors, Reactive Attachment Disorder, Divorce Issues, Family Issues, Oppositional defiant disorder.\" In 2008, the program's tuition was $1,995 per month ($23,940 annually) plus an initial one-time processing fee of $2,500."
+    }
+   ],
+   "fixes": [],
    "conflicts": []
   },
   "721": {
@@ -1057,6 +2896,105 @@
    "tense": [],
    "conflicts": []
   },
+  "763": {
+   "program": "Yellowstone Boys and Girls Ranch",
+   "place": "Billings, MT",
+   "years": "1956-present",
+   "column": "original_markdown",
+   "base_sha1": "e12776c175283e76dc3bc489d356850d1735c981",
+   "record": {
+    "id": 12739,
+    "name": "Yellowstone Boys and Girls Ranch",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Glenn W. McFarlane** was the President and CEO of Yellowstone Boys and Girls Ranch in 2006 ([Woodbury Reports, December 2006 (#148), p. 29](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1206.pdf#page=29)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ryland Sorensen** was the President and CEO of Yellowstone Boys and Girls Ranch in 2006 ([Woodbury Reports, December 2006 (#148), p. 29](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1206.pdf#page=29)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Andrea Kenney** was the Director of Public Relations, Media & Grants, Director of Public Relations, Media and Grants of Yellowstone Boys and Girls Ranch in 2007 ([Woodbury Reports, September 2007 (#157), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Former Yellowstone Boys and Girls Ranch staffer sentenced for child sex abuse](https://www.bozemandailychronicle.com/news/big-sky/former-yellowstone-boys-and-girls-ranch-staffer-timothy-westervelt-sentenced-for-child-sex-abuse/article_3bef73ab-23c4-5918-93e0-ca53675a6471.html) (Bozeman Daily Chronicle, 10/12/2023)\n\n[Man charged with sexual assault of girls at Yellowstone Boys and Girls Ranch](https://www.ktvq.com/news/crime-watch/man-charged-with-sexual-assault-of-girls-at-yellowstone-boys-and-girls-ranch) (Q2 News, 2/20/2025)\n\n[Man admits to raping girl at Billings Youth Care Facility](https://billingsgazette.com/news/local/crime-courts/article_b2d3557c-9812-405a-8c3f-6c7308326162.html) (Billings Gazette, 4/4/2025)\n\n[Ex-Yellowstone Boys and Girls Ranch worker charged with sexual assault of minors](https://www.ktvq.com/news/crime-watch/ex-yellowstone-boys-and-girls-ranch-worker-charged-with-sexual-assault-of-minors) (KQTV, 7/28/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Yellowstone Boys and Girls Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/yellowstone-boys-and-girls-ranch-mt/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In February 2025, former Yellowstone Boys and Girls Ranch employee Timothy Allen Westervelt was charged with sexually assaulting two girls at the ranch in Billings while he worked there. In late January he had been charged in a separate case involving a 13-year-old ([Q2 News, 2/20/2025](https://www.ktvq.com/news/crime-watch/man-charged-with-sexual-assault-of-girls-at-yellowstone-boys-and-girls-ranch)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Name as the source gives it (Timothy Allen Westervelt); 'charged with' kept as an allegation; added 'late January' for the earlier case per the article. Moved before s1 so the charge precedes the sentencing."
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "Westervelt later pleaded guilty to child sex abuse, sexual assault and tampering with a witness and was sentenced to 30 years in prison with 10 suspended ([Bozeman Daily Chronicle](https://www.bozemandailychronicle.com/news/big-sky/former-yellowstone-boys-and-girls-ranch-staffer-timothy-westervelt-sentenced-for-child-sex-abuse/article_3bef73ab-23c4-5918-93e0-ca53675a6471.html)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The draft said he was sentenced in October 2023 at the ranch 'in Big Sky': wrong. He was charged in January/February 2025, so the sentencing came later ('big-sky' is only the paper's section); KOP's date 10/12/2023 for this article is wrong. Article blocks fetching (429); charges and sentence from the Bozeman/Billings Gazette/Helena IR copies via search. No date given since the sentencing date could not be confirmed."
+    },
+    {
+     "id": "s3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In April 2025, Drew Alec Kinnin, a former staff member at River's Edge Youth Home in Billings, admitted to raping a teenage girl in his care there in 2023. The home was run by Youth Dynamics, which has since merged with Yellowstone Boys and Girls Ranch ([Billings Gazette, 4/4/2025](https://billingsgazette.com/news/local/crime-courts/article_b2d3557c-9812-405a-8c3f-6c7308326162.html)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Gazette is paywalled; plea (April 3, 2025), 2023 abuse and the Youth Dynamics merger confirmed by search snippets of the article and KULR8 (8/6/2025). Removed 'a related civil lawsuit was filed and later settled': only in KOP's summary, not confirmable. Kept: River's Edge was a Youth Dynamics home, not YBGR at the time."
+    },
+    {
+     "id": "s4",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In July 2025, John Wesley Whiteside, 26, pleaded not guilty to four felonies and two misdemeanors related to the sexual abuse of minors at Yellowstone Boys and Girls Ranch, where he had worked for about a month in spring 2025. The investigation began when a resident told a therapist about his alleged behavior; deputies interviewed three girls, ages 14, 15 and 16, who said they were victims. He was held on $100,000 bail ([KTVQ, 7/28/2025](https://www.ktvq.com/news/crime-watch/ex-yellowstone-boys-and-girls-ranch-worker-charged-with-sexual-assault-of-minors)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "'Three more residents later came forward' was wrong: three girls in all (14, 15, 16), the first included. Charges stated as the article gives them."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "768": {
    "program": "Laurel Ridge Treatment Center",
    "place": "San Antonio, TX",
@@ -1136,6 +3074,52 @@
     }
    ],
    "tense": [],
+   "conflicts": []
+  },
+  "776": {
+   "program": "San Marcos Treatment Center",
+   "place": "San Marcos, TX",
+   "years": "1940-present",
+   "column": "original_markdown",
+   "base_sha1": "39a4f65dd32715fe3183034adf966672afc38e9b",
+   "record": {
+    "id": 10618,
+    "name": "San Marcos Treatment Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "San Marcos Treatment Center was formerly called The Brown Schools at San Marcos.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated March 8, 2022, Texas inspectors found: \"A staff members actions were noted to have presented a genuine threat of substantial harm from physical injury to the child when the staff member placed the child in an inappropriate restraint.\" (Texas licensing inspection report, March 8, 2022)\n\nIn a report dated July 4, 2024, Texas inspectors found: \"During the review of this investigation, interviews reported that a staff member slapped a child in care during a restraint.\" (Texas licensing inspection report, July 4, 2024)\n\nIn a report dated September 17, 2025, Texas inspectors found: \"This allowed the child to be exposed to contraband and swallowed 2 magnets while off unit.\" (Texas licensing inspection report, September 17, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[San Marcos Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/san-marcos-treatment-center-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": []
   }
  }

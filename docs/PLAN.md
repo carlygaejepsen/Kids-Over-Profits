@@ -1400,6 +1400,24 @@ workflow; anything that runs on the server later goes through
    keeping the old text in option `kop_wiki_draft_old_<id>` for an exact
    Undo (refused if the entry was edited after). Tested by
    `scripts/test-review-inbox.php --source=wiki-updates`.
+   Pilot accepted by the owner 2026-10-06, after these rules (each now in
+   code): KOP's own record is a source (written without a KOP link,
+   `kop_record`), names link to their r/troubledteens wiki pages, never KOP
+   profiles; the entry's KOP facility page is the last Related Media item;
+   the text is put back in Reddit's markdown (KOP's copies were converted
+   from rendered pages: `reddit_format()`); heal-online.org links go to
+   HEAL's own pre-2023 Wayback capture (the domain is now spam); a closed
+   program's own description is always past tense; corrections of existing
+   lines go in `ops-fix.json`.
+   **Full run, cheap and in priority order (2026-10-06):**
+   `scripts/wiki-update-order.py` ranks entries by what KOP adds (closure
+   10, death 8, lawsuit 6, finding 5, newer news 4, name/operator 3, staff
+   0.5; 194 entries); `scripts/wiki-script-drafts.py` writes every gap with
+   a fixed form (staff, news links, names, operators, closures, findings);
+   models only write lawsuits, deaths and news events (Sonnet, from
+   `model-gaps.json` and `excerpt.md`, not the whole entry), Opus checks
+   only those lines, Haiku does the past tense. Batches of 25 from
+   `order.json`.
 6. **Keep them current**. A daily cron reruns step 2's gap check for
    linked entries; an entry whose record gained a confirmed closure,
    approved news, a lawsuit, a death or a finding since its last update
