@@ -1297,33 +1297,120 @@ if (!function_exists('kop_facility_pages_wiki_url')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_woodbury_clean')) {
+    /**
+     * Text without the Woodbury Reports wording: "(Woodbury Reports, February 2009, p. 20)" goes,
+     * "(2009-2010, Woodbury Reports)" keeps its years. The citation is the "source" link, which opens our
+     * copy of the issue; the newsletter's name, date and page add nothing a reader needs beside it.
+     */
+    function kop_facility_pages_woodbury_clean($text) {
+        $text = (string) $text;
+        if (stripos($text, 'Woodbury Reports') === false) return $text;
+        $words = '#(?:,\s*)?Woodbury Reports(?:,\s*[A-Za-z]+\.?\s+\d{4})?(?:\s*\(\#\d+\))?(?:,\s*pp?\.\s*[\d\x{2013}-]+)?(?:,\s*)?#iu';
+        $out = preg_replace_callback('#\(((?:[^()]|\([^()]*\))*)\)#', static function ($m) use ($words) {
+            if (stripos($m[1], 'Woodbury Reports') === false) return $m[0];
+            $kept = trim(preg_replace('/\s+/', ' ', (string) preg_replace($words, ' ', $m[1])), " \t\n,;");
+            return $kept !== '' ? '(' . $kept . ')' : '';
+        }, $text);
+        $out = preg_replace('/[ \t]{2,}/', ' ', (string) $out);
+        return trim((string) preg_replace('/\s+([.,;:])/', '$1', $out));
+    }
+}
+
+if (!function_exists('kop_facility_pages_is_own_source')) {
+    /**
+     * A citation that only points back to us ("Kids Over Profits network map", a page of this site) says
+     * nothing a reader can check, so it is not shown. Our copies of other people's documents in the media
+     * library (/wp-content/uploads/) still count: they are the issue, report or filing itself.
+     * $src: {source, cite, url}.
+     */
+    function kop_facility_pages_is_own_source($src) {
+        if (!is_array($src)) return false;
+        $words = trim((string) ($src['cite'] ?? '') . ' ' . (string) ($src['source'] ?? ''));
+        if ($words !== '' && stripos($words, 'woodbury') === false && preg_match('/kids over profits|\bnetwork map\b|\bKOP\b/i', $words)) return true;
+        $url = trim((string) ($src['url'] ?? ''));
+        if ($url === '') return false;
+        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
+        $own = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_HOST));
+        $relative = $host === '' && strpos($url, '/') === 0;
+        if (!$relative && ($host === '' || preg_replace('/^www\./', '', $host) !== preg_replace('/^www\./', '', $own))) return false;
+        $path = (string) wp_parse_url($url, PHP_URL_PATH);
+        return strpos($path, '/wp-content/') !== 0;
+    }
+}
+
+if (!function_exists('kop_facility_pages_tidy_citations')) {
+    /**
+     * Entries ({text, source, cite, url, also[]}) with the citations that are just us removed and the
+     * Woodbury wording taken out of their text. A list of plain strings is cleaned the same way.
+     */
+    function kop_facility_pages_tidy_citations(array $items) {
+        foreach ($items as $k => $it) {
+            if (is_string($it)) {
+                $items[$k] = kop_facility_pages_woodbury_clean($it);
+                continue;
+            }
+            if (!is_array($it)) continue;
+            if (isset($it['text']) && is_string($it['text'])) $it['text'] = kop_facility_pages_woodbury_clean($it['text']);
+            if (isset($it['role']) && is_string($it['role'])) $it['role'] = kop_facility_pages_woodbury_clean($it['role']);
+            if (kop_facility_pages_is_own_source($it)) {
+                foreach (array('source', 'cite', 'url') as $f) if (array_key_exists($f, $it)) $it[$f] = '';
+            }
+            if (isset($it['also']) && is_array($it['also'])) {
+                $it['also'] = array_values(array_filter($it['also'], static function ($a) { return !kop_facility_pages_is_own_source($a); }));
+            }
+            $items[$k] = $it;
+        }
+        return $items;
+    }
+}
+
 if (!function_exists('kop_facility_pages_cited_html')) {
     /**
      * A note's text as HTML with each web address shown as a "source" link
      * (kop_citation_link(), the citation before it as the preview), never the
      * address itself: "(Form 10-K for 2003: https://...)" reads
-     * "(Form 10-K for 2003, source)". Everything else is escaped.
+     * "(Form 10-K for 2003, source)". Everything else is escaped. A Woodbury Reports
+     * citation is only the link: "(Woodbury Reports, May 2007, p. 20) https://..." and
+     * "(Woodbury Reports, May 2007, p. 20: https://...)" both read "(source)".
      */
     function kop_facility_pages_cited_html($text) {
         $text = (string) $text;
         if (!preg_match_all('#(:\s*)?(https?://[^\s<>"]+)#', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
-            return esc_html($text);
+            return esc_html(kop_facility_pages_woodbury_clean($text));
         }
         $out = '';
         $at = 0;
+        $link = static function ($url, $cite) {
+            return function_exists('kop_citation_link')
+                ? kop_citation_link($url, 'source', $cite, true, '', true)
+                : '<a href="' . esc_url($url) . '" target="_blank" rel="noopener nofollow">source</a>';
+        };
+        $woodbury_open = '#\(\s*(?:[^()]|\([^()]*\))*Woodbury Reports(?:[^()]|\([^()]*\))*$#i';        // "(Woodbury Reports, ...: " then the address
+        $woodbury_closed = '#\s*\((?:[^()]|\([^()]*\))*Woodbury Reports(?:[^()]|\([^()]*\))*\)\s*$#i'; // "(Woodbury Reports, ...) " then the address
         foreach ($m as $hit) {
             $url = rtrim($hit[2][0], '.,;)');
             $start = $hit[0][1];
             $before = substr($text, $at, $start - $at);
+            if ($hit[1][0] !== '' && preg_match($woodbury_open, $before)) {
+                $before = preg_replace($woodbury_open, '', $before);
+                $out .= esc_html(kop_facility_pages_woodbury_clean($before)) . '(' . $link($url, '');
+                $at = $hit[2][1] + strlen($url);
+                continue;
+            }
+            if ($hit[1][0] === '' && preg_match($woodbury_closed, $before)) {
+                $before = preg_replace($woodbury_closed, '', $before);
+                $out .= esc_html(kop_facility_pages_woodbury_clean($before)) . ' (' . $link($url, '') . ')';
+                $at = $hit[2][1] + strlen($url);
+                continue;
+            }
             // The citation the address belongs to: from the last "(" or ";" before it.
             $cite = trim(preg_replace('#^.*[(;]#s', '', $before), " \t\n)");
-            $out .= esc_html($before) . ($hit[1][0] !== '' ? ', ' : '');
-            $out .= function_exists('kop_citation_link')
-                ? kop_citation_link($url, 'source', $cite, true, '', true)
-                : '<a href="' . esc_url($url) . '" target="_blank" rel="noopener nofollow">source</a>';
+            $out .= esc_html(kop_facility_pages_woodbury_clean($before)) . ($hit[1][0] !== '' ? ', ' : '');
+            $out .= $link($url, stripos($cite, 'Woodbury Reports') !== false ? '' : $cite);
             $at = $hit[2][1] + strlen($url);
         }
-        return $out . esc_html(substr($text, $at));
+        return $out . esc_html(kop_facility_pages_woodbury_clean(substr($text, $at)));
     }
 }
 
@@ -2747,7 +2834,15 @@ if (!function_exists('kop_facility_page_data')) {
         $staff = kop_facility_pages_add_map_people(kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id), $facility_id);
         $notes = array_merge(kop_facility_pages_clean_notes($doc['notes'] ?? null), kop_facility_pages_clean_notes($op['notes'] ?? null));
         $fact_sources = kop_facility_pages_note_sources($notes);
+        foreach ($fact_sources as $key => $list) {
+            $fact_sources[$key] = array_values(array_filter($list, static function ($s) { return !kop_facility_pages_is_own_source($s); }));
+            if (!$fact_sources[$key]) unset($fact_sources[$key]);
+        }
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
+        // Citations that are just us leave and the Woodbury wording goes from the text; the "source" link stays.
+        $incidents = kop_facility_pages_tidy_citations($incidents);
+        $field_notes = kop_facility_pages_tidy_citations($field_notes);
+        foreach ($staff as $group => $people) $staff[$group] = kop_facility_pages_tidy_citations($people);
         $testimony = kop_facility_pages_testimony($doc['survivorTestimony'] ?? null);
         // What survivors and families wrote on the Fornits forum is testimony, not a finding of the record:
         // its incident lines, leads and discussion links leave their sections and join the survivor testimony.
@@ -2758,6 +2853,7 @@ if (!function_exists('kop_facility_page_data')) {
                 unset($incidents[$i]);
             }
         }
+        $forum_incidents = kop_facility_pages_tidy_citations($forum_incidents);
         $incidents = array_values($incidents);
         $forum_leads = array();
         foreach ($notes as $i => $note) {

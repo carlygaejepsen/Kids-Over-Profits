@@ -47,11 +47,15 @@ $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
 // Where a fact, staff entry or incident came from: the word "source" (source 1, source 2 ...) linking to
 // the page it cites, the full citation in the link's preview.
 $kop_fp_sources = static function ($sources, $tag = 'dd') {
+    // A citation that only points back to us is not shown (kop_facility_pages_is_own_source()).
+    $sources = array_values(array_filter((array) $sources, static function ($s) { return !kop_facility_pages_is_own_source($s); }));
     if (!$sources) return;
     $links = array();
     foreach (array_values($sources) as $n => $src) {
         $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
         $preview = $src['cite'] !== '' ? $src['cite'] : $src['source'];
+        // The Woodbury Reports name, issue and page add nothing beside the link to our copy of the issue.
+        if (stripos($preview, 'Woodbury Reports') !== false) $preview = '';
         // A wiki citation with no address links the page it names.
         $url = $src['url'] !== '' ? $src['url'] : kop_facility_pages_wiki_url($src['cite']);
         $links[] = $url !== ''

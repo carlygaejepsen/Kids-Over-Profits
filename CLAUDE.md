@@ -67,6 +67,10 @@ php api/clean-nc-inspections.php [apply]      # on the server (ea-php82): dry ru
 # Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
 # Facility Profile posts listed in kop_facility_pages_merged_profiles() (hyde) print unchanged on their /facility/ page, the post 301s there
 php scripts/test-facility-pages.php
+# Citations on those pages read as a small "source" link and nothing more: one that only points back to us (the network map, a page of
+# this site; kop_facility_pages_is_own_source()) is not shown, and the Woodbury Reports wording ("Woodbury Reports, May 2007, p. 20") is
+# not printed or put in a preview, only the link to our copy of the issue (kop_facility_pages_woodbury_clean(), _tidy_citations(), _cited_html())
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-citation-cleanup.php [--no-db] [--id=9607]   # functions, then real pages from tmp/prod.sqlite
 # The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>
 # and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
