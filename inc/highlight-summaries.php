@@ -214,6 +214,7 @@ function kop_hs_prompt($excerpt) {
         . "- Spell out abbreviations or leave them out. No codes such as S1, C1, FC #3, SP or AV.\n"
         . "- No quotation marks, no introduction, no list, no heading, and do not mention that you are an AI.\n"
         . "- If the text is too garbled or incomplete to tell what happened, answer with the single word UNCLEAR.\n\n"
+        . "- Reply with the summary sentences only: no JSON, no curly braces, no square brackets.\n\n"
         . "Text:\n<<<\n" . $text . "\n>>>\n\nSummary:";
 }
 
@@ -224,10 +225,26 @@ function kop_hs_prompt($excerpt) {
  */
 function kop_hs_clean_summary($raw) {
     $s = trim((string) $raw);
+    // Some answers come wrapped like data: a code fence, or { summary: "..." } / {"summary": "..."}.
+    $s = trim(preg_replace('/^```\w*\s*|\s*```$/', '', $s));
+    if ($s !== '' && $s[0] === '{') {
+        $json = json_decode($s, true);
+        if (is_array($json) && isset($json['summary']) && is_string($json['summary'])) {
+            $s = $json['summary'];
+        } elseif (preg_match('/^\{\s*"?summary"?\s*:\s*(.*?)\s*\}$/su', $s, $m)) {
+            $s = $m[1];
+        }
+    }
+    // Numbered people the AI copied from the text become plain words; two of one kind stay "a staff member", which a reviewer reads against the text.
+    $s = preg_replace(array('/\[(?:the )?staff(?: person| member)?(?: \d{1,2})?\]/iu', '/\[(?:the )?alleged victim(?: \d{1,2})?\]/iu', '/\[(?:Child|Minor|Student)(?: \d{1,2})?\]/u',
+        '/\[Youth(?: \d{1,2})?\]/u', '/\[Resident(?: \d{1,2})?\]/u', '/\[Former client(?: \d{1,2})?\]/u', '/\[Former staff(?: \d{1,2})?\]/u',
+        '/\[Deceased client(?: \d{1,2})?\]/u', '/\[Qualified professional(?: \d{1,2})?\]/u', '/\[Mental health technician(?: \d{1,2})?\]/u'),
+        array('a staff member', 'the child', 'a child in the program', 'a young person', 'a resident', 'a former client', 'a former staff member',
+        'a client who died', 'a qualified professional', 'a mental health technician'), $s);
     $s = preg_replace('/^(?:summary|plain[- ]language summary|in plain words)\s*:\s*/iu', '', $s);
     $s = trim(preg_replace('/\s+/u', ' ', str_replace(array('**', '__', "\u{201C}", "\u{201D}", '"'), '', $s)));
     if ($s === '' || preg_match('/^UNCLEAR\b/i', $s)) throw new RuntimeException('The AI could not tell what happened.');
-    if (preg_match('/\[|\]|<|>|https?:|@/u', $s)) throw new RuntimeException('The summary still has brackets, markup or a link.');
+    if (preg_match('/[\[\]{}<>]|https?:|@/u', $s)) throw new RuntimeException('The summary still has brackets, markup or a link.');
     if (preg_match('/\b(?:[SECYR]\d{1,2}|(?:FC|FS|DC|QP|MHT) ?#?\d|SP|AV)\b/u', $s)) throw new RuntimeException('The summary still has the state\'s codes.');
     if (preg_match('/\b(?:as an AI|language model|I cannot|I can\'t|I am unable|here is|here\'s)\b/iu', $s)) throw new RuntimeException('The AI answered about itself.');
     $words = str_word_count(preg_replace('/[^\p{L}\p{N}\s\'\-]/u', ' ', $s));
@@ -241,6 +258,21 @@ function kop_hs_ai($prompt) {
     if (!empty($GLOBALS['kop_hs_ai']) && is_callable($GLOBALS['kop_hs_ai'])) return (string) call_user_func($GLOBALS['kop_hs_ai'], $prompt);
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
     return kop_ai_generate_alternating($prompt, array('maxTokens' => 400, 'temperature' => 0.2));
+}
+
+/**
+ * One summary from the AI. An answer that is refused for its form (codes,
+ * brackets, length) gets one more try with the reason; "could not tell what
+ * happened" does not.
+ */
+function kop_hs_draft($excerpt) {
+    $prompt = kop_hs_prompt($excerpt);
+    try {
+        return kop_hs_clean_summary(kop_hs_ai($prompt));
+    } catch (RuntimeException $e) {
+        if (strpos($e->getMessage(), 'could not tell') !== false) throw $e;
+        return kop_hs_clean_summary(kop_hs_ai($prompt . ' ' . "\n\nYour last answer was refused: " . $e->getMessage() . ' Answer again with plain sentences only.'));
+    }
 }
 
 /** Write or replace the draft for a finding. It waits as 'pending'. */
@@ -261,7 +293,7 @@ function kop_hs_store(PDO $pdo, $id, $hash, $summary, array $reasons, $provider)
 
 /** Ask the AI about one finding (a row with id and excerpt) and store the draft. Returns the summary. */
 function kop_hs_write(PDO $pdo, array $row) {
-    $summary = kop_hs_clean_summary(kop_hs_ai(kop_hs_prompt($row['excerpt'])));
+    $summary = kop_hs_draft($row['excerpt']);
     kop_hs_store($pdo, (int) $row['id'], kop_hs_hash($row['excerpt']), $summary, kop_hs_reasons($row['excerpt']), (string) ($GLOBALS['kop_ai_last_provider'] ?? ''));
     return $summary;
 }
@@ -280,7 +312,7 @@ function kop_hs_run_batch(PDO $pdo, $limit = 6, array $only_ids = array(), $appl
     $failures = 0;
     foreach (array_slice($queue, 0, $limit) as $r) {
         try {
-            $summary = $apply ? kop_hs_write($pdo, $r) : kop_hs_clean_summary(kop_hs_ai(kop_hs_prompt($r['excerpt'])));
+            $summary = $apply ? kop_hs_write($pdo, $r) : kop_hs_draft($r['excerpt']);
             $counts['written']++;
             $counts['items'][] = array('id' => (int) $r['id'], 'summary' => $summary);
             $failures = 0;

@@ -71,12 +71,25 @@ check(kop_hs_clean_summary($good) === $good, 'a plain answer is kept');
 check(kop_hs_clean_summary("Summary: \"A girl in the program said two staff members hurt her.\" The director knew.") === 'A girl in the program said two staff members hurt her. The director knew.', 'a label and quotation marks are removed');
 foreach (array(
     'UNCLEAR' => 'UNCLEAR', 'empty' => '', 'codes' => 'S1 hurt C1 in the hallway and was fired.', 'FC' => 'FC #3 said she was hurt by staff.',
-    'brackets' => 'A [Staff 1] hurt a child in the program.', 'link' => 'Read more at https://example.com about this child.',
+    'brackets' => 'A [redacted] hurt a child in the program.', 'link' => 'Read more at https://example.com about this child.',
     'chatter' => 'Here is a summary: a staff member hurt a child.', 'AI' => 'As an AI I cannot tell what happened to the child.',
     'short' => 'Staff hurt her.', 'long' => str_repeat('A staff member hurt a child in the program. ', 20),
 ) as $what => $bad) {
     try { kop_hs_clean_summary($bad); check(false, "refused: $what"); } catch (RuntimeException $e) { check(true, "refused: $what"); }
 }
+
+// Answers the AI wrapped in data, or with the text's numbered people copied in, are repaired, not thrown away.
+check(kop_hs_clean_summary('{ summary: The state found that a staff member punched a child in the program. }') === 'The state found that a staff member punched a child in the program.', 'an answer wrapped in { summary: ... } is unwrapped');
+check(kop_hs_clean_summary('{"summary": "A staff member hit a child in the program, the state said."}') === 'A staff member hit a child in the program, the state said.', 'a JSON answer is unwrapped');
+check(kop_hs_clean_summary('[Staff 1] hit [Child 2] in the hallway and the state found it true.') === 'a staff member hit a child in the program in the hallway and the state found it true.', 'copied person brackets become plain words');
+check(kop_hs_clean_summary("```\nA staff member hit a child in the program and the state found it true.\n```") === 'A staff member hit a child in the program and the state found it true.', 'a code fence is removed');
+$tries = 0;
+$GLOBALS['kop_hs_ai'] = function ($prompt) use (&$tries) { $tries++; return $tries === 1 ? 'S1 hit C1 in the hallway and was fired.' : 'A staff member hit a child in the program and was fired.'; };
+check(kop_hs_draft($nc) === 'A staff member hit a child in the program and was fired.' && $tries === 2, 'an answer refused for its form gets one more try with the reason');
+$tries = 0;
+$GLOBALS['kop_hs_ai'] = function ($prompt) use (&$tries) { $tries++; return 'UNCLEAR'; };
+try { kop_hs_draft($nc); check(false, 'UNCLEAR is final'); } catch (RuntimeException $e) { check($tries === 1, 'UNCLEAR is final: no second try'); }
+unset($GLOBALS['kop_hs_ai']);
 
 // How an approved summary prints.
 $html = kop_hs_plain_html('A staff member hit a child & ran <b>away</b>.');

@@ -39,7 +39,7 @@ function kop_rinbox_test_highlight_summaries(array $src, array $item, callable $
     $check('highlight-summaries: the card shows why it was picked and the state\'s wording', strpos($item['subtitle'], 'Hard to read') !== false && strpos($item['text'], "state's wording") !== false, $item['subtitle']);
 
     // Editing: the same checks as an AI draft.
-    foreach (array('[Staff 1] hit [Child 1] and ran away.', 'S1 hit C1 and ran away from the facility.', 'Too short.', 'See https://example.com for what the report says about it.') as $bad) {
+    foreach (array('A [redacted] hit a child and ran away from the facility.', 'S1 hit C1 and ran away from the facility.', 'Too short.', 'See https://example.com for what the report says about it.') as $bad) {
         try {
             call_user_func($src['save'], $item['key'], array('summary' => $bad));
             $check('highlight-summaries: an edit with codes, brackets, a link or too few words is refused: ' . $bad, false);
