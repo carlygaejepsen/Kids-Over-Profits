@@ -69,6 +69,9 @@ echo "\n-- Matching --\n";
 $cands_of = function ($name) use ($entry, $pdo) { $e = $entry($name); return $e ? kop_wiki_upd_candidates($e, $pdo) : null; };
 $c = $cands_of('Telos RTC');
 $check('a differently worded name in the same town (Telos RTC -> Telos Academy)', $c && $c[0]['name'] === 'Telos Academy', $c ? $c[0]['reason'] : 'no entry');
+$c = $cands_of('Laurel Ridge Treatment Center');
+$check('a record named after the entry ranks above the earlier name\'s record that lists it as current (Laurel Ridge, not The Brown Schools at Laurel Ridge)',
+    $c && strpos($c[0]['name'], 'Laurel Ridge Treatment Center') === 0, json_encode(array_column(array_slice((array) $c, 0, 3), 'name')));
 $c = $cands_of('Woodland Hills Academy');
 $check('a town\'s name alone matches nothing (Woodland Hills Academy)', is_array($c) && !in_array('Woodland Hills Maternity Home', array_column($c, 'name'), true), json_encode(array_column((array) $c, 'name')));
 $c = $cands_of('Clearview Horizon');

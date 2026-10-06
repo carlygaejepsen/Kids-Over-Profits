@@ -308,12 +308,18 @@ function kop_wiki_upd_candidates(array $entry, PDO $pdo = null) {
                     $tokens = array_diff($tokens, kop_wiki_upd_tokens($rec['city']));
                     $all = !array_diff($want, $tokens);
                     $some = (bool) array_intersect($want, $tokens);
-                    if ($all) $score = $town ? 75 : 65;
+                    // The record's own name is the entry's name plus a word ("Laurel Ridge Treatment
+                    // Center" -> "... Center RTC"): above a record that only lists the entry's name as
+                    // its current name, which is the earlier name's record of a renamed program.
+                    $prefix = mb_strpos(kop_wiki_upd_key($rec['name']) . ' ', kop_wiki_upd_key($n) . ' ') === 0;
+                    if ($prefix) $score = $town ? 105 : 95;
+                    elseif ($all) $score = $town ? 75 : 65;
                     elseif ($some && $town) $score = 55;
                     else continue;
                     $out[$id] = array('id' => $id, 'unique_name' => $rec['unique_name'], 'name' => $rec['name'],
                         'place' => trim($rec['city'] . ($rec['city'] !== '' ? ', ' : '') . $rec['state']), 'status' => $rec['status'],
-                        'reason' => ($all ? 'every word of the name' : 'a word of the name') . ($town ? ', same town' : ', same state'), 'score' => $score - ($i > 0 ? 5 : 0));
+                        'reason' => ($prefix ? 'the record\'s name begins with the entry\'s name' : ($all ? 'every word of the name' : 'a word of the name'))
+                            . ($town ? ', same town' : ', same state'), 'score' => $score - ($i > 0 ? 5 : 0));
                 }
             }
         }
