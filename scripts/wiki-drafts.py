@@ -33,10 +33,11 @@ SEPARATOR = re.compile(r'^\s*(-{3,}|\*{3,}|_{3,})\s*$')
 HEADING = re.compile(r'^\s*#{1,6}\s')
 # A source with no page of its own, cited by name: an inspection report (state and date) or a case (name v. name, number).
 TEXT_CITE = re.compile(r'\([^()]*(inspection report|\sv\.\s|No\.\s?\d)[^()]*\)')
-# KOP is a primary source: its facility, company, lawsuit and memorial pages are cited for what KOP's own record holds
-# (the drafters cite an outside source instead wherever the record names one). Only KOP's lists and search pages,
-# which hold no fact of their own, are refused.
-KOP_PAGE = re.compile(r'^https?://(www\.)?kidsoverprofits\.org/(wiki-feed|tti-program-index|location-index|search|open-data|phpbb)(/|#|\?|$)', re.I)
+# A wiki entry links the programs, companies and people it names to their own r/troubledteens wiki pages, never to KOP's
+# profile pages. A fact whose only source is KOP's record is written without a KOP link: its op carries "kop_record": true,
+# which lets its lines stand without a citation. KOP's articles and media-library documents are cited as usual.
+KOP_PAGE = re.compile(r'^https?://(www\.)?kidsoverprofits\.org/(facility|operator|network-map|wiki-feed|tti-program-index|location-index|'
+                      r'search|open-data|phpbb)(/|#|\?|$)', re.I)
 
 
 def norm(heading):
@@ -120,7 +121,7 @@ def apply(md, ops):
     return '\n'.join(lines) + '\n', applied, errors
 
 
-def check(original, draft, header_changed):
+def check(original, draft, header_changed, kop_lines=frozenset()):
     """Every original line is still there, in order (the header may only change its years); every added line cites a link."""
     o = original.replace('\r\n', '\n').rstrip('\n').split('\n')
     d = draft.rstrip('\n').split('\n')
@@ -143,11 +144,11 @@ def check(original, draft, header_changed):
         t = line.strip()
         if not t or HEADING.match(t) or SEPARATOR.match(t):
             continue
-        if '](' not in t and not TEXT_CITE.search(t):
+        if '](' not in t and not TEXT_CITE.search(t) and t not in kop_lines:
             problems.append(f'added line without a source: {t[:80]!r}')
         for url in re.findall(r'\]\((https?://[^)\s]+)\)', t):
             if KOP_PAGE.match(url):
-                problems.append(f'cites a KOP list or search page, not a record: {url}')
+                problems.append(f'links a KOP page, not the wiki page or the original source: {url}')
     if re.search(r'[\U0001F300-\U0001FAFF☀-➿]', '\n'.join(added)):
         problems.append('an emoji in the added text')
     return problems, added
@@ -276,7 +277,9 @@ def run(ids, write):
         base, tensed, tense_errors = apply_tense(md, tense_ops)
         draft, applied, errors = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
-        problems, added = check(base, draft, header)
+        kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
+                              for l in (o.get('text') or '').split('\n') if l.strip())
+        problems, added = check(base, draft, header, kop_lines)
         problems = tense_errors + errors + problems
         status = 'OK' if not problems else 'REFUSED'
         print(f'{i}: {status}, {len(applied)} ops applied, {sum(1 for a in added if a.strip())} lines added, {tensed} put in the past tense'
@@ -328,7 +331,7 @@ def selftest():
 
 
 EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
-OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note')
+OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note', 'kop_record')
 
 
 def export(ids):

@@ -16,10 +16,11 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Jonathan Griffith** has worked as the Director of Recreation & Experiential Education of Elevations RTC. Griffith was previously the Recreation Director of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) in 2009 ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Tamra Foy** has worked as an Admissions Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jennifer Suiter** has worked as an Admissions Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Cynthia Byerly** has worked as the Director of Nursing of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Sajid Faizi** has worked as the Medical Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Stephanie Martinez** has worked as an Assistant Program Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Casey Foy** has worked as an Assistant Program Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jason Danciak** has worked as the Olympus and Everest Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Sue Colgate** has worked as the Matterhorn Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Skyler Munson** has worked as the Zenith Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Kevin Uncapher** has worked as a Recreation Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jordan Killpack**, named Jordan Kilpatrick above, has also worked as the Clinical Director of [Viewpoint Center](https://www.reddit.com/r/troubledteens/wiki/index/viewpoint) ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)). Elevations RTC spells his name Killpack ([Elevations RTC](https://www.elevationsrtc.com/jordan-killpack/)).",
+     "text": "** Jonathan Griffith** has worked as the Director of Recreation & Experiential Education of Elevations RTC. Griffith was previously the Recreation Director of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) in 2009.\n\n** Tamra Foy** has worked as an Admissions Director of Elevations RTC.\n\n** Jennifer Suiter** has worked as an Admissions Director of Elevations RTC.\n\n** Cynthia Byerly** has worked as the Director of Nursing of Elevations RTC.\n\n** Sajid Faizi** has worked as the Medical Director of Elevations RTC.\n\n** Stephanie Martinez** has worked as an Assistant Program Director of Elevations RTC.\n\n** Casey Foy** has worked as an Assistant Program Director of Elevations RTC.\n\n** Jason Danciak** has worked as the Olympus and Everest Team Director of Elevations RTC.\n\n** Sue Colgate** has worked as the Matterhorn Team Director of Elevations RTC.\n\n** Skyler Munson** has worked as the Zenith Team Director of Elevations RTC.\n\n** Kevin Uncapher** has worked as a Recreation Director of Elevations RTC.\n\n** Jordan Killpack**, named Jordan Kilpatrick above, has also worked as the Clinical Director of [Viewpoint Center](https://www.reddit.com/r/troubledteens/wiki/index/viewpoint). Elevations RTC spells his name Killpack ([Elevations RTC](https://www.elevationsrtc.com/jordan-killpack/)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's staff list has no years, so 'has worked as' rather than 'is the current'. Jordan Killpack is the entry's 'Jordan Kilpatrick' (Clinical Director, earlier a Provo Canyon therapist); Elevations' own bio page spells it Killpack, so only his Viewpoint role is added, tied to the name the entry already uses."
+     "note": "KOP's staff list has no years, so 'has worked as' rather than 'is the current'. Jordan Killpack is the entry's 'Jordan Kilpatrick' (Clinical Director, earlier a Provo Canyon therapist); Elevations' own bio page spells it Killpack, so only his Viewpoint role is added, tied to the name the entry already uses. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p2",
@@ -34,7 +35,7 @@
      "id": "p3",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In February 2014, Ben Hinman, a former resident of Island View and then Provo Canyon School, sued both schools in the U.S. District Court for the District of Utah, claiming negligence and breach of fiduciary duty in his care (Hinman v. Island View Academy, D. Utah, No. 1:14-cv-00015). On May 13, 2015, the court granted both schools summary judgment, ruling that the claims were barred by the two-year statute of limitations of the Utah Health Care Malpractice Act ([U.S. District Court ruling, May 13, 2015](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf)).",
+     "text": "In February 2014, Ben Hinman, a former resident of [Island View](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and then [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon), sued both schools in the U.S. District Court for the District of Utah, claiming negligence and breach of fiduciary duty in his care (Hinman v. Island View Academy, D. Utah, No. 1:14-cv-00015). On May 13, 2015, the court granted both schools summary judgment, ruling that the claims were barred by the two-year statute of limitations of the Utah Health Care Malpractice Act ([U.S. District Court ruling, May 13, 2015](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf)).",
      "by": "opus",
      "verdict": "ok",
      "note": "From the court's ruling on govinfo: Wade Taylor was Hinman's therapist at Provo Canyon, not a defendant (KOP's summary says he was named among them), and the outcome is known (summary judgment for both schools). Not the Dr. Phil suit the entry already describes."
@@ -236,19 +237,21 @@
      "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Mountain Home Academy, in Mountain Home, Idaho, was also known as Sequel TSI of Idaho and as Three Springs of Mountain Home ([Kids Over Profits](https://kidsoverprofits.org/facility/mountain-home-academy-id/)).\n\nIn April 2022, APM Reports wrote: \"In June, Sequel announced it was shutting down its 60-bed treatment center in Mountain Home, Idaho, a city of 16,000 people located about 40 miles southeast of Boise\" ([APM Reports](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
+     "text": "Mountain Home Academy, in Mountain Home, Idaho, was also known as Sequel TSI of Idaho and as Three Springs of Mountain Home.\n\nIn April 2022, APM Reports wrote: \"In June, Sequel announced it was shutting down its 60-bed treatment center in Mountain Home, Idaho, a city of 16,000 people located about 40 miles southeast of Boise\" ([APM Reports](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
      "by": "sonnet",
      "verdict": "fixed",
-     "note": "One citation for both names, with a subject; quote checked against the article. The article does not say which June, so no closing year goes in the header (haiku skipped g1 for the same reason)."
+     "note": "One citation for both names, with a subject; quote checked against the article. The article does not say which June, so no closing year goes in the header (haiku skipped g1 for the same reason). Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Kelly Stone** was the Executive Director of Mountain Home Academy from 2015 to 2017. Stone was also the Executive Director of Lexington Academy from 2013 to 2016 and worked at Three Springs of Englishton Park ([Kids Over Profits](https://kidsoverprofits.org/facility/mountain-home-academy-id/)).",
+     "text": "** Kelly Stone** was the Executive Director of Mountain Home Academy from 2015 to 2017. Stone was also the Executive Director of Lexington Academy from 2013 to 2016 and worked at Three Springs of Englishton Park.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP gives no role at Englishton Park, so none is stated. The two Executive Director spans overlap (2015-2016)."
+     "note": "KOP gives no role at Englishton Park, so none is stated. The two Executive Director spans overlap (2015-2016). Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     }
    ],
    "tense": [],
@@ -270,7 +273,7 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Paul Taylor** became the Executive Director of the Oakley School in 2013. At the time, Taylor was the Executive Director of Copper Canyon Academy in Arizona ([Woodbury Reports, September 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=10)).",
+     "text": "** Paul Taylor** became the Executive Director of the Oakley School in 2013. At the time, Taylor was the Executive Director of [Copper Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/coppercanyon) in Arizona ([Woodbury Reports, September 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=10)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -278,19 +281,21 @@
      "id": "p2",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Ron S. Tuinei** worked as a Program Director of the Oakley School. Tuinei also worked as a program supervisor at Heritage Schools (Heritage RTC), as program director of Cottonwood Treatment Center, as Program Director and then Executive Director (2016-2020) of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon), as CEO of Copper Hills Youth Center, and at San Marcos Treatment Center ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)).",
+     "text": "** Ron S. Tuinei** worked as a Program Director of the Oakley School. Tuinei also worked as a program supervisor at [Heritage Schools](https://www.reddit.com/r/troubledteens/wiki/index/heritageschools) (Heritage RTC), as program director of [Cottonwood Treatment Center](https://www.reddit.com/r/troubledteens/wiki/index/cottonwood), as Program Director and then Executive Director (2016-2020) of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon), as CEO of [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills), and at San Marcos Treatment Center.",
      "by": "opus",
      "verdict": "ok",
-     "note": "Cited to KOP's own record; no outside source given for these roles."
+     "note": "Cited to KOP's own record; no outside source given for these roles. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p3",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Carrie Shoumatoff** worked as the Director of Admissions of the Oakley School from 2009 to 2011 ([Woodbury Reports, August 2009, p. 18](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=18)). Shoumatoff also worked as the Admission Director of Gateway Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)).",
+     "text": "** Carrie Shoumatoff** worked as the Director of Admissions of the Oakley School from 2009 to 2011 ([Woodbury Reports, August 2009, p. 18](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=18)). Shoumatoff also worked as the Admission Director of Gateway Academy.",
      "by": "opus",
      "verdict": "ok",
-     "note": "The Gateway Academy role is from KOP's record, not the Woodbury page, so it cites KOP."
+     "note": "The Gateway Academy role is from KOP's record, not the Woodbury page, so it cites KOP. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p4",
@@ -320,10 +325,11 @@
      "id": "p7",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Dan Kemp** worked as the Headmaster and Director of Admissions of the Oakley School. Kemp also worked as the Director of Program Development of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview), a division director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) and an admissions director of Northwest Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)). He was the Admissions Director of Phoenix Outdoor in 2006 ([Woodbury Reports, February 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=31)), of Ascent Wilderness Program from 2008 ([Woodbury Reports, February 2008, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)) and of SUWS Adolescent and Youth Programs from 2009 ([Woodbury Reports, August 2009, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=17)).",
+     "text": "** Dan Kemp** worked as the Headmaster and Director of Admissions of the Oakley School. Kemp also worked as the Director of Program Development of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview), a division director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) and an admissions director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy). He was the Admissions Director of [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) in 2006 ([Woodbury Reports, February 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=31)), of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild) from 2008 ([Woodbury Reports, February 2008, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)) and of [SUWS Adolescent and Youth Programs](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) from 2009 ([Woodbury Reports, August 2009, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=17)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Oakley role and the Island View, Aspen and Northwest Academy roles cited to KOP's record; Phoenix Outdoor, Ascent and SUWS to the Woodbury notices, each read."
+     "note": "Oakley role and the Island View, Aspen and Northwest Academy roles cited to KOP's record; Phoenix Outdoor, Ascent and SUWS to the Woodbury notices, each read. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     }
    ],
    "tense": [
@@ -380,7 +386,7 @@
      "id": "s2",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "In July 2026, the Utah Department of Health and Human Services revoked the licenses of both Provo Canyon School campuses, ordering the Springville girls' campus to stop providing services by August 6 and the Provo campus by August 16. Universal Health Services appealed both revocations; the appeals did not change the closure deadlines ([The Salt Lake Tribune, 7/27/2026](https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/)).\n\nIn August 2026, YouTuber \"Reckless Ben\" released hidden-camera footage from an undercover stay at the school, posing as a teenager; it shows staff training sessions that discuss the use of physical restraints on residents ([The Salt Lake Tribune, 8/19/2026](https://www.sltrib.com/news/2026/08/19/reckless-ben-went-undercover-utahs/)).",
+     "text": "In July 2026, the Utah Department of Health and Human Services revoked the licenses of both Provo Canyon School campuses, ordering the Springville girls' campus to stop providing services by August 6 and the Provo campus by August 16. [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) appealed both revocations; the appeals did not change the closure deadlines ([The Salt Lake Tribune, 7/27/2026](https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/)).\n\nIn August 2026, YouTuber \"Reckless Ben\" released hidden-camera footage from an undercover stay at the school, posing as a teenager; it shows staff training sessions that discuss the use of physical restraints on residents ([The Salt Lake Tribune, 8/19/2026](https://www.sltrib.com/news/2026/08/19/reckless-ben-went-undercover-utahs/)).",
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Rewritten from the Tribune appeal article (opened 2026-10-06): Springville revoked July 6, end of services August 6; Provo revoked July 17, August 16; UHS appealed both and DHHS said the appeals do not change the deadlines. Reckless Ben sentence kept from the Tribune summary, dates in M/D/YYYY."
@@ -389,7 +395,7 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In June 2026, the mother of a 13-year-old boy sued Provo Canyon School and Universal Health Services. The suit claims that staff ignored his warnings that he was not safe before another resident slammed his head into the ground on May 14, 2026, knocking him unconscious; he suffered a fractured jaw and a traumatic brain injury, and staff drove him to the emergency room themselves instead of calling 911, delaying his treatment by an hour ([The Salt Lake Tribune, 6/15/2026](https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/)). Utah licensers sanctioned the school over the same incident ([The Salt Lake Tribune, 6/2/2026](https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/)).",
+     "text": "In June 2026, the mother of a 13-year-old boy sued Provo Canyon School and [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs). The suit claims that staff ignored his warnings that he was not safe before another resident slammed his head into the ground on May 14, 2026, knocking him unconscious; he suffered a fractured jaw and a traumatic brain injury, and staff drove him to the emergency room themselves instead of calling 911, delaying his treatment by an hour ([The Salt Lake Tribune, 6/15/2026](https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/)). Utah licensers sanctioned the school over the same incident ([The Salt Lake Tribune, 6/2/2026](https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Gap summary checked against The Salt Lake Tribune, 6/15/2026 (opened 2026-10-06): 13-year-old, head slammed into the ground by another resident on May 14, knocked unconscious, fractured jaw and traumatic brain injury, no 911 call, staff drove him to the ER, a one-hour delay. \"Brain bleed\" in the gap -> the article's \"traumatic brain injury\". The 6/2 Tribune article (gap source) reported the state sanction."
@@ -425,19 +431,21 @@
      "id": "p5",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Denise Westman** was the Midwest Regional Director of Provo Canyon School. Westman was also the Director of Admissions and Marketing and the Director of Development (2006-2009) at [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) and a co-founder of Silverado Boys Ranch ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "text": "**Denise Westman** was the Midwest Regional Director of Provo Canyon School. Westman was also the Director of Admissions and Marketing and the Director of Development (2006-2009) at [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) and a co-founder of Silverado Boys Ranch.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source (the owner's research), cited to the facility page."
+     "note": "KOP's own record is the source (the owner's research), cited to the facility page. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Ken Huey** was the Business Director of Provo Canyon School. Huey was also the Clinical Director of [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) (2006), the founder of CALO Programs, Red Mountain Colorado and Kokua Recovery, and the CEO of HOPE Group and Havenwood Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "text": "**Ken Huey** was the Business Director of Provo Canyon School. Huey was also the Clinical Director of [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) (2006), the founder of [CALO Programs](https://www.reddit.com/r/troubledteens/wiki/index/calo), Red Mountain Colorado and Kokua Recovery, and the CEO of [HOPE Group](https://www.reddit.com/r/troubledteens/wiki/active-programs/hopegroup) and [Havenwood Academy](https://www.reddit.com/r/troubledteens/wiki/index/havenwood).",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source, cited to the facility page."
+     "note": "KOP's own record is the source, cited to the facility page. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p7",
@@ -461,7 +469,7 @@
      "id": "p9",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Tim Marshall** became the Director of Business Development of Provo Canyon School in 2009. Marshall had also worked for Brown Schools/[CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and Cornell Companies ([Woodbury Reports, November 2009, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=11)).",
+     "text": "**Tim Marshall** became the Director of Business Development of Provo Canyon School in 2009. Marshall had also worked for [Brown Schools](https://www.reddit.com/r/troubledteens/wiki/index/brown)/[CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and Cornell Companies ([Woodbury Reports, November 2009, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=11)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Woodbury November 2009 p. 11: Director of Business Development, had worked at Provo Canyon School as a Unit Counselor and with the Brown Schools/CEDU and Cornell Companies."
@@ -470,10 +478,11 @@
      "id": "p10",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Nick Pakidko** was the Academic Director of Provo Canyon School. Pakidko was also the Principal of [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) in 2007 and worked at Silverado Boys Ranch ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "text": "**Nick Pakidko** was the Academic Director of Provo Canyon School. Pakidko was also the Principal of [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) in 2007 and worked at Silverado Boys Ranch.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source, cited to the facility page."
+     "note": "KOP's own record is the source, cited to the facility page. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "h2",
@@ -605,10 +614,11 @@
      "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Second Nature Entrada later operated under the name Evoke Entrada ([Kids Over Profits](https://kidsoverprofits.org/facility/evoke-entrada-ut/)).",
+     "text": "Second Nature Entrada later operated under the name [Evoke Entrada](https://www.reddit.com/r/troubledteens/wiki/index/evokeentrada).",
      "by": "sonnet",
      "verdict": "ok",
-     "note": "One line for the later name, nothing about Evoke Entrada today; KOP record cited."
+     "note": "One line for the later name, nothing about Evoke Entrada today; KOP record cited. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     }
    ],
    "tense": [
@@ -715,7 +725,7 @@
      "id": "p3",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "On October 11, 2024, a young man identified as John Doe M.D.Y. sued Trails Academy, Trails Carolina and their Oregon parent companies, which do business as Family Help & Wellness, in federal court in Asheville (1:24-cv-00253). He had enrolled at 18 in the Trails Momentum young-adult wilderness program and stayed 93 days in 2021; the suit claims he was strip searched on arrival by a staff member who touched his genitals, isolated in a cabin for two weeks, made to do unpaid cleaning, cooking and landscaping, kept in freezing weather with limited food and water, and threatened with arrest if he left. On December 30, 2024, the defendants moved to dismiss or compel arbitration ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails-lawsuit-john-doe.pdf); [defendants' motion](https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe-v-Trails-123024-32-Defendants-ask-for-arbitration.pdf)).",
+     "text": "On October 11, 2024, a young man identified as John Doe M.D.Y. sued Trails Academy, Trails Carolina and their Oregon parent companies, which do business as [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp), in federal court in Asheville (1:24-cv-00253). He had enrolled at 18 in the Trails Momentum young-adult wilderness program and stayed 93 days in 2021; the suit claims he was strip searched on arrival by a staff member who touched his genitals, isolated in a cabin for two weeks, made to do unpaid cleaning, cooking and landscaping, kept in freezing weather with limited food and water, and threatened with arrest if he left. On December 30, 2024, the defendants moved to dismiss or compel arbitration ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails-lawsuit-john-doe.pdf); [defendants' motion](https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe-v-Trails-123024-32-Defendants-ask-for-arbitration.pdf)).",
      "by": "opus",
      "verdict": "ok",
      "note": "From the gap summary, as allegations; cites the complaint and the December 30, 2024 motion in KOP's media library."
@@ -733,7 +743,7 @@
      "id": "p5",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "In June 2025, a South Carolina woman filed a federal lawsuit against Asheville Academy for Girls, Trails Carolina and 15 related entities owned by Family Help & Wellness, alleging abuse, humiliation, sexual assault, forced labor and false advertising during her time as a teen resident ([Asheville Watchdog](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/)).\n\nIn January 2026, four young adults filed a federal lawsuit against Wilderness Training & Consulting LLC alleging that they were abused, neglected and forced into unpaid labor while minors at Trails Carolina and Solstice East; the suit claims violations of the federal Trafficking Victims Protection Reauthorization Act ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/); [Asheville Citizen Times](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/)).",
+     "text": "In June 2025, a South Carolina woman filed a federal lawsuit against [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy), Trails Carolina and 15 related entities owned by Family Help & Wellness, alleging abuse, humiliation, sexual assault, forced labor and false advertising during her time as a teen resident ([Asheville Watchdog](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/)).\n\nIn January 2026, four young adults filed a federal lawsuit against Wilderness Training & Consulting LLC alleging that they were abused, neglected and forced into unpaid labor while minors at Trails Carolina and Solstice East; the suit claims violations of the federal Trafficking Victims Protection Reauthorization Act ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/); [Asheville Citizen Times](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Sonnet skipped the 2025 suit as mainly Asheville Academy's, but it names Trails Carolina as a defendant, so it stays; the January 2026 suit moved here from Sonnet's s2. fbclid tracking tail removed from the Asheville Watchdog link."
@@ -742,7 +752,7 @@
      "id": "p6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Beth Venable** became the Referral Relations Director of Trails Carolina in 2012, after six years at Cherokee Creek Boys School ([Woodbury Reports, October 2012, p. 16](https://kidsoverprofits.org/wp-content/uploads/woodbury-1012.pdf#page=16)). At Cherokee Creek she had been the Communication and Development Specialist ([Woodbury Reports, July 2008, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)), head of the Cherokee Creek Family Center ([Woodbury Reports, March 2012, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0312.pdf#page=10)) and Family Activity Coordinator/Communicator ([Woodbury Reports, June 2012, p. 9](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0612.pdf#page=9)).",
+     "text": "**Beth Venable** became the Referral Relations Director of Trails Carolina in 2012, after six years at [Cherokee Creek Boys School](https://www.reddit.com/r/troubledteens/wiki/index/cherokeecreek) ([Woodbury Reports, October 2012, p. 16](https://kidsoverprofits.org/wp-content/uploads/woodbury-1012.pdf#page=16)). At Cherokee Creek she had been the Communication and Development Specialist ([Woodbury Reports, July 2008, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)), head of the Cherokee Creek Family Center ([Woodbury Reports, March 2012, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0312.pdf#page=10)) and Family Activity Coordinator/Communicator ([Woodbury Reports, June 2012, p. 9](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0612.pdf#page=9)).",
      "by": "opus",
      "verdict": "ok",
      "note": "The October 2012 page gives the new role and \"her last six years at Cherokee Creek Boys School\"; the three Cherokee Creek roles are each cited to the Woodbury issue that names them (July 2008 p. 31, March 2012 p. 10, June 2012 p. 9; read in tmp/woodbury-extract/text)."
@@ -760,7 +770,7 @@
      "id": "p8",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Mark Oerther** worked in admissions at Trails Carolina when it began accepting students in 2009 ([Woodbury Reports, February 2009, p. 21](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0209.pdf#page=21)) and was its Admissions Director later that year ([Woodbury Reports, August 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=19)). Oerther had been the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) ([Woodbury Reports, September 2007, p. 16](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=16)) and later joined InnerChange as a Clinical Outreach Manager ([Woodbury Reports, December 2011, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1211.pdf#page=12)).",
+     "text": "**Mark Oerther** worked in admissions at Trails Carolina when it began accepting students in 2009 ([Woodbury Reports, February 2009, p. 21](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0209.pdf#page=21)) and was its Admissions Director later that year ([Woodbury Reports, August 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=19)). Oerther had been the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) ([Woodbury Reports, September 2007, p. 16](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=16)) and later joined [InnerChange](https://www.reddit.com/r/troubledteens/wiki/active-programs/innerchange) as a Clinical Outreach Manager ([Woodbury Reports, December 2011, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1211.pdf#page=12)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Each role cited to the issue that states it (Feb 2009 p. 21: Admissions; Aug 2009 p. 19: Admissions Director; Sep 2007 p. 16: SUWS of the Carolinas Admissions Director; Dec 2011 p. 12: InnerChange Clinical Outreach Manager)."
@@ -769,10 +779,11 @@
      "id": "p9",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**John L Singleton** was the Director of Business Development of Trails Carolina. Singleton was also the academic director of Stone Mountain School, the Executive Director of [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) (2007-2009), on staff at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) (2002) and New Leaf Academy of North Carolina (2009), the owner and CEO of Whetstone Academy and Maple Hall Academy, and a member of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) board of directors ([Kids Over Profits](https://kidsoverprofits.org/facility/trails-carolina-nc/)).",
+     "text": "**John L Singleton** was the Director of Business Development of Trails Carolina. Singleton was also the academic director of [Stone Mountain School](https://www.reddit.com/r/troubledteens/wiki/index/stonemountain), the Executive Director of [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) (2007-2009), on staff at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) (2002) and [New Leaf Academy of North Carolina](https://www.reddit.com/r/troubledteens/wiki/index/newleafnc) (2009), the owner and CEO of [Whetstone Academy](https://www.reddit.com/r/troubledteens/wiki/index/whetstone) and [Maple Hall Academy](https://www.reddit.com/r/troubledteens/wiki/index/maplehall), and a member of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) board of directors.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source (the owner's research), cited to the facility page. Whetstone Academy's own bio of Dr. John Singleton says the same about Trails Carolina, Stone Mountain, Cedars Academy and NATSAP."
+     "note": "KOP's own record is the source (the owner's research), cited to the facility page. Whetstone Academy's own bio of Dr. John Singleton says the same about Trails Carolina, Stone Mountain, Cedars Academy and NATSAP. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "h2",
@@ -926,19 +937,21 @@
      "id": "p4",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Melodie Rose** worked as the Program Director of Turn-About Ranch. Rose was also the Executive Director of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in 2006 ([Kids Over Profits](https://kidsoverprofits.org/facility/turn-about-ranch-ut/)).",
+     "text": "**Melodie Rose** worked as the Program Director of Turn-About Ranch. Rose was also the Executive Director of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in 2006.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source, cited to the facility page. No years at Turn-About Ranch, so \"worked as\". A Woodbury announcement of December 2006 names Dr. Melodie Rose Executive Director of Aspen Ranch, but that issue is not in the media library to cite."
+     "note": "KOP's own record is the source, cited to the facility page. No years at Turn-About Ranch, so \"worked as\". A Woodbury announcement of December 2006 names Dr. Melodie Rose Executive Director of Aspen Ranch, but that issue is not in the media library to cite. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p5",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Dayna Rust** worked as the Clinical Director of Turn-About Ranch. Rust was also the assistant clinical director of New Haven RTC and the program director of Youth Care of Utah ([Kids Over Profits](https://kidsoverprofits.org/facility/turn-about-ranch-ut/)).",
+     "text": "**Dayna Rust** worked as the Clinical Director of Turn-About Ranch. Rust was also the assistant clinical director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) and the program director of Youth Care of Utah.",
      "by": "opus",
      "verdict": "ok",
-     "note": "KOP's own record is the source, cited to the facility page. No years; the entry names ReNae Singletary as the current Clinical Director, so \"worked as\"."
+     "note": "KOP's own record is the source, cited to the facility page. No years; the entry names ReNae Singletary as the current Clinical Director, so \"worked as\". Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     }
    ],
    "tense": [],
@@ -960,16 +973,17 @@
      "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Laurel Ridge Treatment Center was formerly called The Brown Schools at Laurel Ridge ([Kids Over Profits](https://kidsoverprofits.org/facility/laurel-ridge-treatment-center-rtc-tx/)). It is operated by Universal Health Services (UHS) ([Kids Over Profits](https://kidsoverprofits.org/operator/universal-health-services/)).",
+     "text": "Laurel Ridge Treatment Center was formerly called The Brown Schools at Laurel Ridge. It is operated by [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/universalhealth) (UHS).",
      "by": "sonnet",
      "verdict": "ok",
-     "note": "Both facts are KOP's own record (the owner's research), cited to the facility and company pages."
+     "note": "Both facts are KOP's own record (the owner's research), cited to the facility and company pages. Wiki links per the template; KOP profile link removed.",
+     "kop_record": true
     },
     {
      "id": "p1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Laurel Ridge was one of six inpatient behavioral health facilities that Psychiatric Solutions, Inc. bought from The Brown Schools, Inc. in April 2003 for $63.0 million in cash; Psychiatric Solutions listed it with 196 licensed beds ([Psychiatric Solutions, Inc., Form 10-K for 2003](https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)). Universal Health Services completed its acquisition of Psychiatric Solutions in November 2010 ([Universal Health Services, Form 10-K for 2010](https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)).",
+     "text": "Laurel Ridge was one of six inpatient behavioral health facilities that [Psychiatric Solutions, Inc.](https://www.reddit.com/r/troubledteens/wiki/active-programs/psi) bought from [The Brown Schools, Inc.](https://www.reddit.com/r/troubledteens/wiki/index/brown) in April 2003 for $63.0 million in cash; Psychiatric Solutions listed it with 196 licensed beds ([Psychiatric Solutions, Inc., Form 10-K for 2003](https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)). Universal Health Services completed its acquisition of Psychiatric Solutions in November 2010 ([Universal Health Services, Form 10-K for 2010](https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)).",
      "by": "opus",
      "verdict": "ok",
      "note": "The Brown Schools history the owner asked for in the first pilot, written again: the 2003 Psychiatric Solutions 10-K (opened 2026-10-06) says \"In April 2003, we consummated the acquisition of six inpatient behavioral health care facilities from The Brown Schools, Inc. ... for $63.0 million in cash\" and lists Laurel Ridge, San Antonio, 196 licensed beds, acquired 4/03. The UHS 10-K sentence (November 2010) was checked in the first pilot. The entry already names Psychiatric Solutions as the parent company in 2006."
