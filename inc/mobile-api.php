@@ -113,11 +113,13 @@ if (!function_exists('kop_mobile_facility_payload')) {
         if ($insp) {
             $reports = array_values((array) ($insp['reports'] ?? array()));
             $out['inspections'] = array(
-                'summary'  => $insp['summary'] ?? null,
-                'total'    => isset($insp['total']) ? (int) $insp['total'] : count($reports),
-                'reports'  => array_slice($reports, 0, KOP_MOBILE_API_MAX_REPORTS),
-                'more'     => max(0, count($reports) - KOP_MOBILE_API_MAX_REPORTS),
-                'page_url' => (string) ($insp['page_url'] ?? ''),
+                'summary'    => $insp['summary'] ?? null,
+                'total'      => isset($insp['total']) ? (int) $insp['total'] : count($reports),
+                'reports'    => array_slice($reports, 0, KOP_MOBILE_API_MAX_REPORTS),
+                'more'       => max(0, count($reports) - KOP_MOBILE_API_MAX_REPORTS),
+                // Approved serious findings (deaths, assaults, ...), the page's "Serious violations" section.
+                'violations' => array_values((array) ($insp['violations'] ?? array())),
+                'page_url'   => (string) ($insp['page_url'] ?? ''),
             );
         } else {
             $out['inspections'] = null;

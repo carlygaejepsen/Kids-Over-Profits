@@ -265,6 +265,7 @@ foreach ($sample_ids as $fid) {
     $check("facility $fid url is the page url", $payload['url'] === kop_facility_page_url($fid));
     if ($payload['inspections'] !== null) {
         $check("facility $fid inspections cut to " . KOP_MOBILE_API_MAX_REPORTS, count($payload['inspections']['reports']) <= KOP_MOBILE_API_MAX_REPORTS && isset($payload['inspections']['more']));
+        $check("facility $fid inspections keep the serious findings list", is_array($payload['inspections']['violations']));
     }
     foreach ($payload['news'] as $i => $card) {
         $check("facility $fid news card $i has title/outlet/url", isset($card['title'], $card['outlet'], $card['url'], $card['date']));
