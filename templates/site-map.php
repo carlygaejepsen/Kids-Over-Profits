@@ -30,7 +30,7 @@ get_header();
 
         <header class="entry-header kop-sm-header">
             <h1 class="entry-title">Site map</h1>
-            <p class="kop-sm-standfirst">Every public page of the site in one place. Type in the box to narrow the list, or search inside every record, report and document instead.</p>
+            <p class="kop-sm-standfirst">Every public page of the site in one place. Type in the box to narrow the list, or search inside every record, report and document instead.<?php if (function_exists('kop_how_to_use_url')) : ?> New here? Read <a href="<?php echo esc_url(kop_how_to_use_url()); ?>">how to use this site</a>.<?php endif; ?></p>
         </header>
 
         <form class="kop-sm-filter" role="search" action="<?php echo esc_url($kop_sm_search); ?>" method="get" data-kop-sm-filter>

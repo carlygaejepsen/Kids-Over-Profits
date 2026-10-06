@@ -240,6 +240,8 @@ php scripts/test-search-aliases.php               # against tmp/prod.sqlite
 # tools/redirected/password pages never), posts by category, every /facility/ and /operator/ page A to Z, a "Find a page" filter.
 # kop_site_map_quick_links() also fills the search popup before typing (js/global-search.js) and the 404 page (404.php: "Did you mean"
 # from the address's words). A new page template gets a section there. /sitemap/ 301s here; XML sitemaps stay Yoast's
+# How to use this site (/how-to-use-this-site/, a route too, inc/how-to-use.php + templates/how-to-use.php): the main destinations grouped by
+# what a reader came to do (kop_how_to_use_groups(), hand-picked: add new main pages there) and how to search; linked from the footer and the site map
 php scripts/test-site-map.php [--out=tmp/site-map-preview/site-map.html]   # placement, A to Z, cache, 404 helpers, PHP == JS filter folding
 # Search results link to the record's own page (/facility/, /operator/; wiki entries and inspection rows to the matching
 # facility page in the same state), falling back to the state hub or directory search: kop_search_v2_result_url() and

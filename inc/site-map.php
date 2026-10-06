@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_SITE_MAP_REWRITE_VERSION')) {
-    define('KOP_SITE_MAP_REWRITE_VERSION', '1');
+    define('KOP_SITE_MAP_REWRITE_VERSION', '3');
 }
 
 // ---------------------------------------------------------------------------
@@ -479,6 +479,9 @@ if (!function_exists('kop_site_map_build')) {
         // Generated pages that are not WordPress pages.
         if (function_exists('kop_operator_pages_base')) {
             $sections['records']['items'][] = kop_site_map_item('Parent companies', home_url('/' . kop_operator_pages_base() . '/'), 'Who owns and runs the programs');
+        }
+        if (function_exists('kop_how_to_use_url')) {
+            $sections['reference']['items'][] = kop_site_map_item('How to use this site', kop_how_to_use_url(), 'Where to start, and how to search');
         }
 
         foreach ($pages as $slug => $p) {

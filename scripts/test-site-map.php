@@ -41,6 +41,7 @@ function apply_filters($tag, $value, ...$args) {
     return $value;
 }
 function home_url($path = '/') { return 'https://kidsoverprofits.org' . $path; }
+function add_query_arg($args, $url) { return $url . (strpos($url, '?') === false ? '?' : '&') . http_build_query($args); }
 function esc_html($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
 function esc_attr($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
 function esc_url($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
@@ -190,6 +191,7 @@ function kop_v2_search($phrase, $f = 10, $o = 5, $p = 3) {
 function kop_search_v2_result_url($r) { return $r['profile_url'] ?? ''; }
 
 require ABSPATH . 'inc/site-map.php';
+require ABSPATH . 'inc/how-to-use.php';
 
 // ---- Placement --------------------------------------------------------------
 
@@ -212,7 +214,7 @@ check('directories: parent companies route + directory + map + 18+ programs (par
 check('inspections', $titles_in($s['inspections']['items']) === array('Inspection Reports', 'Utah Inspection Reports'));
 check('places', $titles_in($s['places']['items']) === array('Mexico', 'Wyoming'));
 check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'TTI News Feed'));
-check('reference (links by slug)', $titles_in($s['reference']['items']) === array('Links', 'Report Abuse', 'TTI Glossary'));
+check('reference (links by slug)', $titles_in($s['reference']['items']) === array('How to use this site', 'Links', 'Report Abuse', 'TTI Glossary'));
 check('boarding schools are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools')
     && stripos($s['outside']['title'], 'outside the troubled teen industry') !== false);
 check('take part', $titles_in($s['take-part']['items']) === array('Donate'));
@@ -310,12 +312,33 @@ check('the contents list each section', substr_count($html, 'href="#kop-sm-') >=
 check('no hidden page on the page', strpos($html, 'Lawsuit Admin') === false && strpos($html, '/no-access/') === false);
 check('quick links on the page', strpos($html, 'kop-sm-quick__link') !== false);
 check('nothing escaped twice', strpos($html, '&amp;amp;') === false);
+check('the site map points new readers to how to use this site', strpos($html, 'href="https://kidsoverprofits.org/how-to-use-this-site/"') !== false);
+
+// ---- How to use this site ----------------------------------------------------
+
+$htu = kop_how_to_use_build(kop_site_map_public_pages());
+$htu_groups = array();
+foreach ($htu['groups'] as $g) $htu_groups[$g['title']] = $titles_in($g['items']);
+check('how to use: groups by what a reader came to do', array_keys($htu_groups) === array('Look up a program', 'Records of harm', 'Get help or take action', 'Understand the industry', 'Written for you'));
+check('how to use: unpublished pages dropped, routes kept', $htu_groups['Look up a program'] === array('Facility directory', 'Programs by state or country', 'Parent companies', 'Network map', 'Young adult programs')
+    && $htu_groups['Records of harm'] === array('Inspection reports', 'Lawsuits', 'News feed'));
+check('how to use: the location tab carries its query', $htu['groups'][0]['items'][1]['url'] === 'https://kidsoverprofits.org/tti-program-index/?view=location');
+$GLOBALS['kop_how_to_use'] = $htu;
+ob_start();
+include ABSPATH . 'templates/how-to-use.php';
+$htu_html = ob_get_clean();
+check('how to use: page renders its groups, search tips and the site map link', substr_count($htu_html, 'class="kop-htu-group"') === 5
+    && strpos($htu_html, 'data-kop-open-search') !== false && strpos($htu_html, 'href="https://kidsoverprofits.org/site-map/"') !== false);
+check('how to use: listed in the site map', in_array('How to use this site', $titles_in($s['reference']['items']), true));
 
 if (!empty($opts['out'])) {
     $out = $opts['out'];
     @mkdir(dirname($out), 0777, true);
     file_put_contents($out, '<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="file://' . ABSPATH . 'css/colors.css"><link rel="stylesheet" href="file://' . ABSPATH . 'css/site-map.css"><body style="background:#eee">' . $html . '<script src="file://' . ABSPATH . 'js/site-map.js"></script>');
     echo "Wrote $out\n";
+    $htu_out = dirname($out) . '/how-to-use.html';
+    file_put_contents($htu_out, '<!doctype html><meta charset="utf-8"><link rel="stylesheet" href="file://' . ABSPATH . 'css/colors.css"><link rel="stylesheet" href="file://' . ABSPATH . 'css/site-map.css"><link rel="stylesheet" href="file://' . ABSPATH . 'css/how-to-use.css"><body style="background:#eee">' . $htu_html);
+    echo "Wrote $htu_out\n";
 }
 
 echo ($fails ? "$fails of $checks checks FAILED\n" : "All $checks checks passed\n");

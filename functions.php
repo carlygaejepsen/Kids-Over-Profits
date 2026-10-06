@@ -108,6 +108,9 @@ require_once get_stylesheet_directory() . '/inc/global-search.php';
 // /site-map/: every public page for readers, the quick links in the search popup, and the 404 page's suggestions.
 require_once get_stylesheet_directory() . '/inc/site-map.php';
 
+// /how-to-use-this-site/: where to start, the main destinations grouped by what a reader came to do.
+require_once get_stylesheet_directory() . '/inc/how-to-use.php';
+
 // Research & Reports card library (Academia + Government FileBird folders)
 require_once get_stylesheet_directory() . '/inc/research-library.php';
 

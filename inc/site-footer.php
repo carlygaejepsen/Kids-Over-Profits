@@ -37,6 +37,7 @@ function kop_site_footer_enqueue() {
  */
 function kop_site_footer_links() {
     $site_map = function_exists('kop_site_map_url') ? array('label' => 'Site map', 'url' => kop_site_map_url()) : null;
+    $how_to = function_exists('kop_how_to_use_url') ? array('label' => 'How to use this site', 'url' => kop_how_to_use_url()) : null;
     return apply_filters('kop_site_footer_links', array_filter(array(
         'report-abuse'      => 'Report abuse',
         'document-archive'  => 'Document archive',
@@ -46,6 +47,7 @@ function kop_site_footer_links() {
         'contact'           => 'Contact',
         'privacy-policy'    => 'Privacy policy',
         'terms-of-service'  => 'Terms of service',
+        'how-to-use'        => $how_to,
         'site-map'          => $site_map,
     )));
 }
