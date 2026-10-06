@@ -43,6 +43,21 @@ function kop_rinbox_test_wiki_links(array $src, array $item, callable $check) {
     $check('wiki-links: Set aside leaves it unlinked', kop_rinbox_get_item('wiki-links', (string) $key)['status'] === 'skip' && $row($key) == $before);
     call_user_func($src['act'], (string) $key, 'undo', array());
 
+    // Every card shows what the entry says and where each candidate can be looked at.
+    $card = kop_rinbox_get_item('wiki-links', (string) $key);
+    $says = array_values(array_filter($card['details'], function ($d) { return $d['label'] === 'The entry says'; }));
+    $unlinked = array_filter($card['details'], function ($d) { return preg_match('/^(Record|Company) /', $d['label']) && empty($d['url']); });
+    $check('wiki-links: the card shows what the entry says and links every candidate', $says && $says[0]['value'] !== '' && !$unlinked, $says[0]['value'] ?? '');
+
+    // A company: the list offers every company record and the link stores its name.
+    $companies = kop_rinbox_wlinks_companies();
+    $co = array_values(array_filter($card['actions'], function ($a) { return $a['id'] === 'link_company'; }))[0] ?? null;
+    $check('wiki-links: "Link to a company" lists every company', $co && count($co['params'][0]['options']) === count($companies) && count($companies) > 10, count($companies) . ' companies');
+    $pick = array_keys($companies)[0];
+    call_user_func($src['act'], (string) $key, 'link_company', array('company' => $pick));
+    $check('wiki-links: Link to a company stores the company', $row($key)['facility_unique_name'] === $pick && kop_rinbox_get_item('wiki-links', (string) $key)['status'] === 'linked');
+    call_user_func($src['act'], (string) $key, 'undo', array());
+
     // The finder: any record by id.
     $other = (int) $pdo->query("SELECT id FROM facilities_v2 WHERE unique_name <> '' ORDER BY id LIMIT 1")->fetchColumn();
     call_user_func($src['act'], (string) $key, 'link_other', array('facility' => (string) $other));

@@ -324,8 +324,46 @@ function kop_wiki_upd_candidates(array $entry, PDO $pdo = null) {
             }
         }
     }
+    // A company of the same name: some program pages are about the company that ran them.
+    $ops = kop_wiki_upd_operator_index($pdo);
+    foreach ($names as $n) {
+        $k = kop_wiki_upd_key($n);
+        if (isset($ops[$k]) && !isset($out['op:' . $ops[$k]])) {
+            $out['op:' . $ops[$k]] = array('id' => 0, 'unique_name' => $ops[$k], 'name' => $ops[$k], 'place' => '', 'status' => '',
+                'reason' => 'a company of this name', 'score' => 60, 'operator' => true);
+        }
+    }
     uasort($out, function ($a, $b) { return $b['score'] <=> $a['score'] ?: strcmp($a['name'], $b['name']); });
     return array_values($out);
+}
+
+/** Every company record: name => name, for a picker. */
+function kop_wiki_upd_operator_names(PDO $pdo) {
+    $prefix = isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : 'wpdl_';
+    $out = array();
+    try {
+        foreach ($pdo->query("SELECT name FROM {$prefix}kop_operators ORDER BY name")->fetchAll(PDO::FETCH_COLUMN) as $n) {
+            if (trim((string) $n) !== '') $out[(string) $n] = (string) $n;
+        }
+    } catch (Throwable $e) {
+        // No operators table on this copy.
+    }
+    return $out;
+}
+
+/** The start of an entry as plain text, for a card: no markdown, links as their words. */
+function kop_wiki_upd_excerpt(array $entry, $max = 420) {
+    $md = kop_wiki_upd_markdown($entry);
+    $lines = array();
+    foreach (preg_split('/\R/', $md) as $l) {
+        $l = trim($l);
+        if ($l === '' || preg_match('/^(-{3,}|\*{3,})$/', $l)) continue;
+        $l = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $l);
+        $l = trim(preg_replace('/[#*_>`]+/', '', $l));
+        if ($l !== '') $lines[] = $l;
+    }
+    $t = implode(' · ', $lines);
+    return mb_strlen($t) > $max ? rtrim(mb_substr($t, 0, $max - 1)) . '…' : $t;
 }
 
 /** Words that set a name apart: not generic program words, three letters or more. */

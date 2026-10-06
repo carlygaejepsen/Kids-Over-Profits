@@ -1471,6 +1471,81 @@ function kop_apply_directory_folder_links() {
  * names to add to operator.otherNames. Names already present (any case) are
  * skipped, so the step is idempotent and never removes a name.
  */
+/**
+ * Company records added offline (seeds/operator-records.json). Each entry is
+ * created once, the way KOP Tools creates a company (kop_v2_save_form_project),
+ * when no company has its name, then tied to the facility records it lists in
+ * kop_operator_facilities. The links carry the entry's relationship ('past'
+ * for a company that no longer runs the place) and a high sort order, so each
+ * facility keeps its own current company first. Idempotent: an existing
+ * company of that name is reused and existing links are left alone; a listed
+ * facility is linked only when its unique_name still matches.
+ */
+function kop_apply_operator_record_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/operator-records.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    $pdo     = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    $prefix = kop_seed_v2_prefix($pdo);
+    if ($prefix === null) {
+        return $done;
+    }
+    $find  = $pdo->prepare("SELECT id FROM `{$prefix}kop_operators` WHERE name = ? ORDER BY id LIMIT 1");
+    $check = $pdo->prepare('SELECT unique_name FROM facilities_v2 WHERE id = ?');
+    $has   = $pdo->prepare("SELECT COUNT(*) FROM `{$prefix}kop_operator_facilities` WHERE operator_id = ? AND facility_id = ?");
+    $link  = $pdo->prepare("INSERT INTO `{$prefix}kop_operator_facilities` (operator_id, facility_id, relationship, sort_order) VALUES (?, ?, ?, ?)");
+    foreach ($entries as $entry) {
+        $name = trim((string) ($entry['name'] ?? ''));
+        if ($name === '' || empty($entry['operator']) || !is_array($entry['operator'])) {
+            continue;
+        }
+        try {
+            $find->execute(array($name));
+            $id = (int) $find->fetchColumn();
+            if (!$id) {
+                if (kop_v2_name_taken($pdo, $prefix, $name)) {
+                    continue; // a program record has this name: leave it for a person to sort out
+                }
+                $data = array(
+                    'operator'   => array('name' => $name) + $entry['operator'],
+                    'facilities' => array(),
+                );
+                $result = kop_v2_save_form_project($pdo, $prefix, $name, $data, 'companies', array('partial' => true, 'timestamp' => gmdate('c')));
+                $id = (int) ($result['operator_id'] ?? 0);
+            }
+            if (!$id) {
+                continue;
+            }
+            foreach ((array) ($entry['facilities'] ?? array()) as $f) {
+                $fid = (int) ($f['id'] ?? 0);
+                $check->execute(array($fid));
+                if (!$fid || $check->fetchColumn() !== (string) ($f['unique_name'] ?? '')) {
+                    continue;
+                }
+                $has->execute(array($id, $fid));
+                if ((int) $has->fetchColumn()) {
+                    continue;
+                }
+                $rel = in_array($f['relationship'] ?? '', array('current', 'past', 'other'), true) ? $f['relationship'] : 'past';
+                $link->execute(array($id, $fid, $rel, 90));
+            }
+            $done[] = $id;
+        } catch (Throwable $e) {
+            // Leave it; the company can be made by hand at KOP Tools.
+        }
+    }
+    if ($done && function_exists('kop_operator_pages_index')) {
+        kop_operator_pages_index(true);
+    }
+    return $done;
+}
+
 function kop_apply_operator_alias_seeds() {
     $done = array();
     $path = trailingslashit(get_stylesheet_directory()) . 'seeds/operator-aliases.json';
@@ -2192,6 +2267,7 @@ function kop_apply_template_assignments() {
     $summary['seeded']       = kop_apply_seed_posts();
     $summary['facilities']   = kop_apply_facility_record_seeds();
     $summary['operators']    = kop_apply_operator_alias_seeds();
+    $summary['companies']    = kop_apply_operator_record_seeds();
     $summary['directory_folders'] = kop_apply_directory_folder_links();
     $summary['new_facilities'] = kop_apply_new_facility_seeds();
     if (function_exists('kop_facility_v2_request_sync')) {
@@ -2267,7 +2343,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '102';
+    $version = '103';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

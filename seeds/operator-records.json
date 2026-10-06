@@ -1,0 +1,108 @@
+[
+  {
+    "name": "Psychiatric Solutions, Inc.",
+    "note": "Company record created 2026-10-05 from SEC filings. Facilities: the ones its 10-K for 2003 lists (acquired 2001-2003) that have a KOP record under the name it used; it bought many more before 2010, not linked yet.",
+    "operator": {
+      "currentName": "",
+      "otherNames": [
+        "Psychiatric Solutions"
+      ],
+      "status": "Acquired",
+      "founded": "1988 (incorporated in Delaware)",
+      "operatingPeriod": "1988 to 2010",
+      "headquarters": "113 Seaboard Lane, Franklin, Tennessee",
+      "headquartersCity": "Franklin",
+      "headquartersState": "TN",
+      "location": "Franklin, TN",
+      "parentCompanies": [],
+      "notes": [
+        "Incorporated in Delaware in 1988; headquartered at 113 Seaboard Lane, Franklin, Tennessee (Psychiatric Solutions, Inc., Form 10-K for 2003, filed March 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
+        "April 2003: bought six inpatient behavioral health facilities from The Brown Schools, Inc. for $63.0 million: 895 licensed beds in Austin, San Antonio and San Marcos, Texas; Charlottesville, Virginia; Colorado Springs, Colorado; and Tulsa, Oklahoma (Form 10-K for 2003: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm; FTC premerger notice 20030407, Psychiatric Solutions / McCown De Leeuw & Co. III: https://www.ftc.gov/node/10021)",
+        "June 30, 2003: bought Ramsay Youth Services, Inc. (Nasdaq: RYOU) for about $81.3 million (Form 10-K for 2003: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
+        "November 2010: acquired by Universal Health Services (Universal Health Services, Form 10-K for 2010, filed February 2011: https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 10815,
+        "unique_name": "Laurel Ridge Treatment Center RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 10616,
+        "unique_name": "Laurel Ridge Treatment Center Child & Adolescent RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 10618,
+        "unique_name": "San Marcos Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 14159,
+        "unique_name": "West Oaks Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 10620,
+        "unique_name": "West Oaks Hospital PRTF",
+        "relationship": "past"
+      },
+      {
+        "id": 10943,
+        "unique_name": "Texas NeuroRehab Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13529,
+        "unique_name": "Riveredge Hospital Adolescent Treatment Program",
+        "relationship": "past"
+      },
+      {
+        "id": 100006,
+        "unique_name": "The Brown Schools at Cedar Springs (CO)",
+        "relationship": "past"
+      },
+      {
+        "id": 13595,
+        "unique_name": "Shadow Mountain Behavioral Health System",
+        "relationship": "past"
+      },
+      {
+        "id": 13670,
+        "unique_name": "Laurel Oaks Behavioral Health Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13661,
+        "unique_name": "Hill Crest RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 100045,
+        "unique_name": "Hill Crest Behavioral Health (AL)",
+        "relationship": "past"
+      },
+      {
+        "id": 13091,
+        "unique_name": "Havenwyck Hospital Residential Impulse Disorder Program",
+        "relationship": "past"
+      },
+      {
+        "id": 11358,
+        "unique_name": "Heartland Behavioral Health Services RTF",
+        "relationship": "past"
+      },
+      {
+        "id": 11711,
+        "unique_name": "Brynn Marr Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 10395,
+        "unique_name": "Benchmark Behavioral Health Systems",
+        "relationship": "past"
+      }
+    ]
+  }
+]

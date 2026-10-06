@@ -59,13 +59,13 @@ function kop_rinbox_wlinks_rows($reset = false) {
     if ($rows !== null) return $rows;
     $pdo = kop_wiki_upd_pdo();
     $entries = kop_wiki_upd_entries($pdo);
-    $cached = get_transient('kop_rinbox_wiki_links');
+    $cached = get_transient('kop_rinbox_wiki_links_v2');
     if (!is_array($cached)) {
         $cached = array();
         foreach ($entries as $id => $e) {
             if ($e['kind'] !== 'list') $cached[$id] = array_slice(kop_wiki_upd_candidates($e, $pdo), 0, 6);
         }
-        set_transient('kop_rinbox_wiki_links', $cached, HOUR_IN_SECONDS);
+        set_transient('kop_rinbox_wiki_links_v2', $cached, HOUR_IN_SECONDS);
     }
     $log = kop_wiki_upd_link_log();
     $rows = array();
@@ -79,6 +79,7 @@ function kop_rinbox_wlinks_rows($reset = false) {
             if ($state === 'linked' || $state === 'skip') continue;
             $e['view'] = $state;
         }
+        $e['excerpt'] = kop_wiki_upd_excerpt($e);
         unset($e['original_markdown'], $e['generated_markdown'], $e['json_data']);
         $rows[$id] = $e;
     }
@@ -109,16 +110,30 @@ function kop_rinbox_wlinks_label(array $c) {
     return $c['name'] . ($c['place'] !== '' ? ' (' . $c['place'] . ')' : '') . (!empty($c['operator']) ? ' (company)' : '');
 }
 
+/**
+ * Where a candidate can be looked at: a company's page, a facility's page,
+ * else the admin data form opened on the record (most records have no page).
+ */
+function kop_rinbox_wlinks_url(array $c) {
+    if (!empty($c['operator'])) {
+        $url = function_exists('kop_operator_page_url_for_name') ? (string) kop_operator_page_url_for_name($c['name']) : '';
+        return $url !== '' ? $url : home_url('/operator/');
+    }
+    $url = !empty($c['id']) && function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $c['id']) : '';
+    return $url !== '' ? $url : home_url('/admin-data/?find=' . rawurlencode((string) $c['name']));
+}
+
 function kop_rinbox_wlinks_item(array $e) {
     $view = $e['view'];
     $name = trim((string) $e['program_name']);
     $log = kop_wiki_upd_link_log()[$e['id']] ?? array();
     $kinds = array('program' => 'Program', 'operator' => 'Company', 'other' => 'Topic page');
     $details = array();
+    if (($e['excerpt'] ?? '') !== '') $details[] = array('label' => 'The entry says', 'value' => $e['excerpt']);
     foreach ($e['cands'] as $i => $c) {
-        $url = !empty($c['id']) && function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $c['id']) : '';
-        $details[] = array('label' => 'Record ' . ($i + 1), 'value' => kop_rinbox_wlinks_label($c) . ': ' . $c['reason']
-            . ($c['status'] !== '' ? '; ' . $c['status'] : ''), 'url' => $url);
+        $details[] = array('label' => !empty($c['operator']) ? 'Company ' . ($i + 1) : 'Record ' . ($i + 1),
+            'value' => kop_rinbox_wlinks_label($c) . ': ' . $c['reason'] . ($c['status'] !== '' ? '; ' . $c['status'] : ''),
+            'url' => kop_rinbox_wlinks_url($c));
     }
     if (!empty($log['name'])) $details[] = array('label' => 'Linked to', 'value' => $log['name'] . (!empty($log['by']) ? ' (by ' . $log['by'] . ')' : ''));
     $texts = array(
@@ -145,6 +160,10 @@ function kop_rinbox_wlinks_item(array $e) {
         $actions[] = array('id' => 'link_other', 'label' => $actions ? 'Link to another record' : 'Link to a record', 'style' => $actions ? 'neutral' : 'approve',
             'help' => 'Ties the wiki entry ' . $name . ' to the record picked in the finder.',
             'params' => array(array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => '')));
+        $actions[] = array('id' => 'link_company', 'label' => 'Link to a company', 'style' => 'neutral',
+            'help' => 'Ties the wiki entry ' . $name . ' to a company record (for a page about a company, not one program).',
+            'params' => array(array('name' => 'company', 'label' => 'Company', 'type' => 'select', 'value' => '',
+                'options' => kop_rinbox_wlinks_companies())));
         $actions[] = array('id' => 'skip', 'label' => 'Set aside', 'style' => 'reject',
             'help' => 'Leaves ' . $name . ' unlinked (a topic page, or a program KOP has no record of); it moves to Set aside.');
     }
@@ -182,7 +201,11 @@ function kop_rinbox_wlinks_act($key, $action, array $params) {
         kop_rinbox_wlinks_rows(true);
         return array('message' => 'Set aside. ' . $name . ' stays unlinked; Undo is on the Set aside tab.');
     }
-    if ($action === 'link_other') {
+    if ($action === 'link_company') {
+        $target = trim((string) ($params['company'] ?? ''));
+        if ($target === '' || !isset(kop_rinbox_wlinks_companies()[$target])) throw new RuntimeException('Pick a company first.');
+        $label = $target;
+    } elseif ($action === 'link_other') {
         $fid = (int) ($params['facility'] ?? 0);
         $st = $pdo->prepare('SELECT unique_name, name FROM facilities_v2 WHERE id = ?');
         $st->execute(array($fid));
@@ -199,6 +222,13 @@ function kop_rinbox_wlinks_act($key, $action, array $params) {
     kop_wiki_upd_link($pdo, $e['id'], $target, $by);
     kop_rinbox_wlinks_rows(true);
     return array('message' => 'Linked. ' . $name . ' is tied to ' . $label . '; Undo is on the Linked here tab.');
+}
+
+/** Every company record, for the "Link to a company" list. */
+function kop_rinbox_wlinks_companies() {
+    static $list = null;
+    if ($list === null) $list = kop_wiki_upd_operator_names(kop_wiki_upd_pdo());
+    return $list;
 }
 
 function kop_rinbox_wlinks_tool($id, array $params) {
