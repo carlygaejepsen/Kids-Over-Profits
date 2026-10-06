@@ -1469,6 +1469,63 @@ function kop_apply_directory_folder_links() {
  * skipped, so the step is idempotent and never removes a name.
  */
 /**
+ * A misspelled name corrected on deploy (seeds/name-corrections.json): each
+ * entry replaces "from" with "to" in the listed columns of a few known tables
+ * (pending Woodbury/wiki fact proposals, a wiki entry's editor copy). Records,
+ * People and the network map are fixed at their own sources; this reaches the
+ * copies they never read. Idempotent: once replaced, nothing matches.
+ */
+function kop_apply_name_correction_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/name-corrections.json';
+    $entries = file_exists($path) ? json_decode((string) file_get_contents($path), true) : null;
+    $pdo = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    $prefix = kop_seed_v2_prefix($pdo);
+    if ($prefix === null) {
+        return $done;
+    }
+    // Only these tables and columns, each with its row filter.
+    $allowed = array(
+        'woodbury_facts'   => array('table' => $prefix . 'kop_woodbury_facts', 'columns' => array('value', 'label', 'extra'), 'where' => "status = 'pending'"),
+        'wiki_submissions' => array('table' => 'wiki_submissions', 'columns' => array('json_data', 'generated_markdown'), 'where' => '1 = 1'),
+    );
+    foreach ($entries as $e) {
+        $from = (string) ($e['from'] ?? '');
+        $to   = (string) ($e['to'] ?? '');
+        if (mb_strlen($from) < 5 || $to === '' || $from === $to) {
+            continue;
+        }
+        foreach ((array) ($e['targets'] ?? array()) as $t) {
+            $spec = $allowed[$t['in'] ?? ''] ?? null;
+            if (!$spec) {
+                continue;
+            }
+            $where = $spec['where'];
+            $args  = array();
+            if (!empty($t['ids'])) {
+                $ids = array_map('intval', (array) $t['ids']);
+                $where .= ' AND id IN (' . implode(',', $ids) . ')';
+            }
+            foreach ($spec['columns'] as $col) {
+                try {
+                    $st = $pdo->prepare("UPDATE `{$spec['table']}` SET `$col` = REPLACE(`$col`, ?, ?) WHERE $where AND `$col` LIKE ?");
+                    $st->execute(array($from, $to, '%' . $from . '%'));
+                    if ($st->rowCount()) {
+                        $done[] = $spec['table'] . '.' . $col . ': ' . $st->rowCount();
+                    }
+                } catch (Throwable $ex) {
+                    error_log('kop_apply_name_correction_seeds: ' . $ex->getMessage());
+                }
+            }
+        }
+    }
+    return $done;
+}
+
+/**
  * Two records merged on deploy (seeds/facility-merges.json), for a pair the
  * Merge Duplicates screen never offers. Each runs once: only while both
  * records are on file under the names given and the dropped one was never
@@ -2336,6 +2393,7 @@ function kop_apply_template_assignments() {
     $summary['operators']    = kop_apply_operator_alias_seeds();
     $summary['companies']    = kop_apply_operator_record_seeds();
     $summary['merges']       = kop_apply_facility_merge_seeds();
+    $summary['names']        = kop_apply_name_correction_seeds();
     $summary['directory_folders'] = kop_apply_directory_folder_links();
     $summary['new_facilities'] = kop_apply_new_facility_seeds();
     if (function_exists('kop_facility_v2_request_sync')) {
@@ -2411,7 +2469,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '107';
+    $version = '108';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

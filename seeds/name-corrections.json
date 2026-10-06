@@ -1,0 +1,18 @@
+[
+  {
+    "from": "Jordan Kilpatrick",
+    "to": "Jordan Killpack",
+    "note": "Elevations RTC's former clinical director; the r/troubledteens wiki misspelled him, the owner confirmed Killpack 2026-10-06. Records, People and the map already say Killpack.",
+    "targets": [
+      {
+        "in": "woodbury_facts"
+      },
+      {
+        "in": "wiki_submissions",
+        "ids": [
+          106
+        ]
+      }
+    ]
+  }
+]
