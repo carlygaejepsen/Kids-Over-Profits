@@ -1321,8 +1321,27 @@ workflow; anything that runs on the server later goes through
    An entry about an earlier name of its record (Integrity House RTC, now
    Havenwood Academy) gets "Later operated as", nothing about today's
    status or operator, and only items dated in its own years. Staff: leaders
-   as `staff`, others only with a career elsewhere (`staff_other`). First
-   run (linked + clear entries): 268 compared, 214 with gaps, 9 conflicts.
+   as `staff`, others only with a career elsewhere (`staff_other`).
+   A Sonnet audit of 25 entries (351 gaps) found 59% right, 15% already in
+   the entry in other words, 5% another program's, 21% doubtful; 23 of 25
+   record matches right. Its rules are in: news must name the program or
+   one of its names (else `news_mention`, kept for the owner but not
+   drafted), same titles once, `newer_than_entry` marks news after the
+   entry's latest year; lawsuits must name the program, KOP's own "not a
+   case about" and money cases out; deaths inside the entry's years;
+   findings risk High / Medium High or weight 70+; label names (LLC, dba,
+   branch, "Academy at X") skipped; staff spelled one letter off or in
+   "X and Y Surname" count as named, duplicates once; operators compared
+   without Group/Inc/TSI; a one-year closing difference is no conflict.
+   After: 268 compared, 200 with gaps, 5 conflicts; gaps 519 staff,
+   377 staff_other, 147 news (+107 news_mention), 39 closure, 30 finding,
+   27 lawsuit, 26 death, 25 operator, 17 name. Left for step 3's check: a
+   record whose other names include another program at the same address
+   (Olympus Academy lists Diamond Ranch Academy, so Diamond Ranch suits
+   reach the Olympus entry). **Owner:** the closures behind Provo Canyon
+   School (Closed 2026) and the closing years of Oakley School (record
+   2007, wiki 2017), Old West Academy (2007 vs 2019) and Seneca Ranch
+   (2009 vs 2017) are worth a look before drafting.
 3. **Drafts** (subagents, per the table). Haiku makes the mechanical
    edits, Sonnet writes the new paragraphs, Opus checks the whole new
    entry against the gap file and the sources and returns a verdict per

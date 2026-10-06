@@ -448,11 +448,91 @@ function kop_wiki_upd_mentions($words, $phrase) {
     return $p !== '' && mb_strpos($words, ' ' . $p . ' ') !== false;
 }
 
-/** A person's name in the entry, with or without middle names and suffixes ("Alec Sanford Lansing" = "Alec Lansing"). */
-function kop_wiki_upd_mentions_person($words, $name) {
+/**
+ * A person's name in the entry, with or without middle names and suffixes
+ * ("Alec Sanford Lansing" = "Alec Lansing"). $loose also accepts a surname
+ * spelled one letter off with the same first initial a few words before it
+ * ("Joesph Gauld", "Tony and Betty Argiros"), for staff lists.
+ */
+function kop_wiki_upd_mentions_person($words, $name, $loose = false) {
     if (kop_wiki_upd_mentions($words, $name)) return true;
     $parts = preg_split('/\s+/', trim(preg_replace('/,?\s+(jr|sr|ii|iii|iv)\.?$/i', '', trim((string) $name))));
-    return count($parts) >= 3 && kop_wiki_upd_mentions($words, $parts[0] . ' ' . end($parts));
+    if (count($parts) >= 3 && kop_wiki_upd_mentions($words, $parts[0] . ' ' . end($parts))) return true;
+    if (!$loose || count($parts) < 2) return false;
+    $first = mb_strtolower(trim(kop_wiki_upd_words($parts[0])));
+    $last = mb_strtolower(trim(kop_wiki_upd_words(end($parts))));
+    if (mb_strlen($last) < 4 || $first === '') return false;
+    $w = explode(' ', trim($words));
+    foreach ($w as $i => $token) {
+        if (mb_strlen($token) < 4 || abs(mb_strlen($token) - mb_strlen($last)) > 2) continue;
+        $near = $token === $last || rtrim($token, 'e') === rtrim($last, 'e') || (mb_strlen($last) >= 5 && levenshtein($token, $last) <= 1);
+        if (!$near) continue;
+        for ($j = max(0, $i - 4); $j < $i; $j++) {
+            if (mb_substr($w[$j], 0, 1) === mb_substr($first, 0, 1)) return true;
+        }
+    }
+    return false;
+}
+
+/** Surname + first initial, to collapse one person listed twice ("Willy"/"James Williamson" stay two; "Kelly Cole"/"K. Cole" one). */
+function kop_wiki_upd_person_key($name) {
+    $parts = explode(' ', trim(kop_wiki_upd_words($name)));
+    return mb_substr($parts[0] ?? '', 0, 1) . ' ' . end($parts);
+}
+
+/**
+ * Names the program goes by, for "is this item about it": the entry's names,
+ * the record's name, past, other and current names, each also without a
+ * last generic word ("Provo Canyon School" -> "Provo Canyon").
+ */
+function kop_wiki_upd_aliases(array $entry, array $page) {
+    $names = kop_wiki_upd_entry_names($entry);
+    $names[] = (string) ($page['name'] ?? '');
+    $names[] = (string) ($page['current_name'] ?? '');
+    foreach (array('formerly', 'aka') as $f) {
+        foreach ((array) ($page[$f] ?? array()) as $n) $names[] = is_array($n) ? (string) ($n['name'] ?? '') : (string) $n;
+    }
+    $out = array();
+    foreach ($names as $n) {
+        $n = trim(preg_replace('/\s*\([^)]*\)\s*$/', '', $n));
+        $w = trim(kop_wiki_upd_words($n));
+        if (mb_strlen($w) < 4) continue;
+        $out[$w] = true;
+        $parts = explode(' ', $w);
+        if (count($parts) >= 3 && !kop_wiki_upd_tokens(end($parts))) {
+            array_pop($parts);
+            if (kop_wiki_upd_tokens(implode(' ', $parts))) $out[implode(' ', $parts)] = true;
+        }
+    }
+    return array_keys($out);
+}
+
+/** True when the text names one of the program's names. */
+function kop_wiki_upd_names_any($text, array $aliases) {
+    $w = kop_wiki_upd_words($text);
+    foreach ($aliases as $a) if (mb_strpos($w, ' ' . $a . ' ') !== false) return true;
+    return false;
+}
+
+/** The latest year the entry mentions (not after this year), 0 if none. */
+function kop_wiki_upd_newest_year($md) {
+    $max = 0;
+    if (preg_match_all('/\b(19[5-9]\d|20\d\d)\b/', (string) $md, $m)) {
+        foreach ($m[1] as $y) if ((int) $y <= (int) gmdate('Y') && (int) $y > $max) $max = (int) $y;
+    }
+    return $max;
+}
+
+/** A name that is only a label of the program: LLC/Inc/dba forms, a branch suffix, "Academy at X" of "X Academy". */
+function kop_wiki_upd_label_name($name, array $own_names) {
+    if (preg_match('/,?\s+(llc|inc|corp)\b\.?|\bdba\b|\s[-–]\s/iu', $name)) return true;
+    $mine = kop_wiki_upd_tokens($name);
+    if (!$mine) return true;
+    foreach ($own_names as $own) {
+        $theirs = kop_wiki_upd_tokens($own);
+        if ($theirs && !array_diff($mine, $theirs)) return true;
+    }
+    return false;
 }
 
 /** The live site's address for a page URL built offline or on a staging host. */
@@ -507,7 +587,7 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
             $add('closure', $page['name'] . ' closed' . ($k_end ? ' in ' . $k_end : '') . '.',
                 $closure['url'] ?: $kop_page, $closure['label'] ?: 'KOP facility page', $k_end ?: '',
                 array('entry_years' => (string) $entry['years_active'], 'end_year' => $k_end, 'quote' => $closure['quote']));
-        } elseif ($k_end && $w_end !== $k_end) {
+        } elseif ($k_end && abs($w_end - $k_end) > 1) {
             $add('closure', 'The entry gives ' . $w_end . ' as the closing year; KOP\'s record says ' . $k_end . '.',
                 $closure['url'] ?: $kop_page, $closure['label'] ?: 'KOP facility page', $k_end,
                 array('entry_years' => (string) $entry['years_active'], 'end_year' => $k_end), true);
@@ -518,18 +598,19 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     }
 
     // Names: past names, other names, the current name, and the eras' years.
-    $eras = array();
-    foreach ((array) ($page['eras']['list'] ?? array()) as $era) {
-        if (is_array($era) && !empty($era['name'])) $eras[kop_wiki_upd_key($era['name'])] = $era;
+    $sections = array();
+    foreach ((array) ($page['eras']['list'] ?? array()) as $section) {
+        if (is_array($section) && !empty($section['name'])) $sections[kop_wiki_upd_key($section['name'])] = $section;
     }
     $named = array();
     foreach ($era ? array() : array('formerly' => 'Formerly called', 'aka' => 'Also known as') as $field => $lead) {
         foreach ((array) ($page[$field] ?? array()) as $n) {
             $n = is_array($n) ? (string) ($n['name'] ?? '') : (string) $n;
             if ($n === '' || isset($named[kop_wiki_upd_key($n)]) || kop_wiki_upd_mentions($words, $n) || mb_strlen($n) < 4) continue;
+            if (kop_wiki_upd_label_name($n, array_merge(kop_wiki_upd_entry_names($entry), array($page['name'])))) continue;
             $named[kop_wiki_upd_key($n)] = true;
-            $era = $eras[kop_wiki_upd_key($n)] ?? null;
-            $years = $era ? trim((string) ($era['years'] ?? '')) : '';
+            $section = $sections[kop_wiki_upd_key($n)] ?? null;
+            $years = $section ? trim((string) ($section['years'] ?? '')) : '';
             $add('name', $lead . ' ' . $n . ($years !== '' ? ' (' . $years . ')' : '') . '.', $kop_page, 'KOP facility page', '',
                 array('name' => $n, 'how' => $field));
         }
@@ -545,19 +626,31 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     if ($op_name !== '' && !$era) {
         $short = trim(preg_replace('/\s*\([^)]*\)\s*$/', '', $op_name));
         $acr = preg_match('/\(([^)]+)\)\s*$/', $op_name, $m) ? $m[1] : '';
-        if (!kop_wiki_upd_mentions($words, $short) && ($acr === '' || !kop_wiki_upd_mentions($words, $acr))) {
+        $core = trim(preg_replace('/\b(group|companies|company|tsi|inc|llc|corp|corporation|holdings|& family services|and family services|family services)\b\.?/i', ' ', $short));
+        $core = trim(preg_replace('/\s+/', ' ', $core), ' ,&');
+        if (!kop_wiki_upd_mentions($words, $short) && ($core === '' || !kop_wiki_upd_mentions($words, $core))
+            && ($acr === '' || !kop_wiki_upd_mentions($words, $acr))) {
             $add('operator', 'Operated by ' . $op_name . '.', kop_wiki_upd_live_url($page['operator']['url'] ?? '') ?: $kop_page,
                 'KOP company page', '', array('operator' => $op_name));
         }
     }
 
     // News.
+    $aliases = kop_wiki_upd_aliases($entry, $page);
+    $newest = kop_wiki_upd_newest_year($md);
+    $titles = array();
     foreach ((array) ($page['news'] ?? array()) as $n) {
         $url = (string) ($n['url'] ?? '');
         if ($url === '' || $has_url($url) || !$in_era($n['date'] ?? '')) continue;
         if (!empty($n['title']) && mb_strlen($n['title']) > 20 && kop_wiki_upd_mentions($words, $n['title'])) continue;
-        $add('news', (string) $n['title'], $url, trim((string) ($n['outlet'] ?? '')), (string) ($n['date'] ?? ''),
-            array('summary' => (string) ($n['summary'] ?? ''), 'link_type' => (string) ($n['link_type'] ?? ''), 'type' => (string) ($n['type'] ?? '')));
+        $tk = trim(kop_wiki_upd_words($n['title'] ?? ''));
+        if ($tk !== '' && isset($titles[$tk])) continue;
+        $titles[$tk] = true;
+        $about = kop_wiki_upd_names_any(($n['title'] ?? '') . ' ' . ($n['summary'] ?? ''), $aliases);
+        $year = preg_match('/(\d{4})/', (string) ($n['date'] ?? ''), $m) ? (int) $m[1] : 0;
+        $add($about ? 'news' : 'news_mention', (string) $n['title'], $url, trim((string) ($n['outlet'] ?? '')), (string) ($n['date'] ?? ''),
+            array('summary' => (string) ($n['summary'] ?? ''), 'type' => (string) ($n['type'] ?? ''),
+                'newer_than_entry' => $year && $newest && $year > $newest));
     }
 
     // Lawsuits (no addresses of their own: the KOP lawsuits page cites them).
@@ -569,6 +662,9 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $party = trim((string) preg_split('/\s+v\.?\s+/i', $title)[0]);
         $generic = preg_match('/^(a |an |the |second |first |third |two |three |several |\w+ )?(family|families|parents?|students?|former students?|plaintiffs?|survivors?|minor|doe|john doe|jane doe)\b/i', $party);
         if ($party !== '' && !$generic && mb_strlen($party) >= 6 && kop_wiki_upd_mentions($words, $party)) continue;
+        $sum = (string) ($l['summary'] ?? '');
+        if (preg_match('/not (a |an )?(lawsuit|case|suit)s? (about|against|involving)|banking case|foreclos|\bliens?\b|\bUCC\b|ERISA|insurer|\bdebt\b/i', $sum)) continue;
+        if (!kop_wiki_upd_names_any(($l['case_name'] ?? '') . ' ' . $sum, $aliases)) continue;
         $add('lawsuit', (string) ($l['case_name'] ?? ''), kop_wiki_upd_live_url(home_url('/lawsuits/')) . '#lawsuit-' . (int) $l['id'],
             'KOP lawsuits', (string) ($l['year'] ?? ''),
             array('summary' => (string) ($l['summary'] ?? ''), 'status' => (string) ($l['status'] ?? ''), 'outcome' => (string) ($l['outcome'] ?? ''),
@@ -579,6 +675,8 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     foreach ((array) ($page['memorials'] ?? array()) as $v) {
         $name = trim((string) ($v['name'] ?? ''));
         if ($name === '' || kop_wiki_upd_mentions_person($words, $name) || !$in_era($v['date_label'] ?? '')) continue;
+        $dy = preg_match('/(\d{4})/', (string) ($v['date_label'] ?? ''), $m) ? (int) $m[1] : 0;
+        if ($dy && ((is_int($w_start) && $dy < $w_start - 1) || (is_int($w_end) && $dy > $w_end + 1))) continue;
         $add('death', $name . ($v['date_label'] ?? '' ? ' died ' . $v['date_label'] : '') . ($v['cause'] ?? '' ? ' (' . $v['cause'] . ')' : '') . '.',
             (string) ($v['kop_url'] ?? '') ?: (string) ($v['source_url'] ?? ''), 'KOP memorial', (string) ($v['date_label'] ?? ''),
             array('source_name' => (string) ($v['source_name'] ?? ''), 'source_url' => (string) ($v['source_url'] ?? ''), 'category' => (string) ($v['category'] ?? '')));
@@ -588,6 +686,8 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     foreach ((array) ($page['inspections']['violations'] ?? array()) as $f) {
         $date = (string) ($f['date'] ?? '');
         if (!$in_era($date)) continue;
+        $risk = (string) ($f['state_label'] ?? '');
+        if ((int) ($f['weight'] ?? 0) < 70 && !preg_match('/risk level: (high|medium high)/i', $risk)) continue;
         $ym = $date !== '' ? strtolower(date('F Y', strtotime($date))) : '';
         if ($ym !== '' && strpos($words, ' ' . $ym . ' ') !== false && strpos($words, ' inspect') !== false) continue;
         $add('finding', (string) ($f['label'] ?? '') . ': ' . (string) ($f['short'] ?? $f['excerpt'] ?? ''),
@@ -605,13 +705,18 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     }
 
     // Staff named on the record and not in the entry.
+    $seen_people = array();
     foreach ((array) ($page['staff'] ?? array()) as $group => $people) {
         foreach ((array) $people as $p) {
             $name = trim((string) ($p['name'] ?? ''));
-            if ($name === '' || mb_strlen($name) < 5 || strpos($name, ' ') === false || kop_wiki_upd_mentions_person($words, $name)) continue;
+            if ($name === '' || mb_strlen($name) < 5 || strpos($name, ' ') === false || kop_wiki_upd_mentions_person($words, $name, true)) continue;
+            $who = kop_wiki_upd_person_key($name);
+            if (isset($seen_people[$who])) continue;
+            $seen_people[$who] = true;
+            if (trim((string) ($p['role'] ?? '')) === '' && empty($p['career'])) continue;
             // Leaders as 'staff'; others only when they worked elsewhere in the industry ('staff_other').
             $lead = (bool) preg_match('/found|owner|director|ceo|president|chief|principal|administrator|headmaster|executive|superintendent|chair/i', (string) ($p['role'] ?? ''));
-            if (!$lead && empty($p['career'])) continue;
+            if (!$lead && (empty($p['career']) || trim((string) ($p['role'] ?? '')) === '')) continue;
             $add($lead ? 'staff' : 'staff_other', $name . (!empty($p['role']) ? ' (' . $p['role'] . ')' : ''),
                 kop_wiki_upd_live_url((string) ($p['url'] ?? '')) ?: $kop_page, (string) ($p['cite'] ?? '') ?: (string) ($p['source'] ?? '') ?: 'KOP facility page', '',
                 array('group' => (string) $group, 'role' => (string) ($p['role'] ?? ''),

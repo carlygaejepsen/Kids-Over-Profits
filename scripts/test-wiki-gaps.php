@@ -35,6 +35,14 @@ $check('url keys ignore scheme, www, tracking, fragment, slash and Reddit backsl
 $w = kop_wiki_upd_words("**Alec Lansing**, 17, died in 2014. The [Salt Lake Tribune](https://sltrib.com/x) reported it.");
 $check('a name is found in the words, in order', kop_wiki_upd_mentions($w, 'Salt Lake Tribune') && !kop_wiki_upd_mentions($w, 'Tribune Salt'));
 $check('a person is found without middle names', kop_wiki_upd_mentions_person($w, 'Alec Sanford Lansing') && !kop_wiki_upd_mentions_person($w, 'Alec Smith'));
+$s = kop_wiki_upd_words('Founded by **Joesph Gauld**; later **Tony and Betty Argiros** ran it.');
+$check('staff spelled one letter off, or in "X and Y Surname", count as named', kop_wiki_upd_mentions_person($s, 'Joseph Gauld', true)
+    && kop_wiki_upd_mentions_person($s, 'Tony Argiros', true) && kop_wiki_upd_mentions_person($s, 'Betty Argiros', true) && !kop_wiki_upd_mentions_person($s, 'Mark Gauld', true));
+$check('label names (LLC, dba, branch, "Academy at X") are not other names', kop_wiki_upd_label_name('UHS of Provo Canyon dba Provo Campus', array('Provo Canyon School'))
+    && kop_wiki_upd_label_name('Olympus Academy, LLC', array('Olympus Academy')) && kop_wiki_upd_label_name('Academy at Trails', array('Trails Carolina'))
+    && !kop_wiki_upd_label_name('Behavior Research Institute', array('Judge Rotenberg Center')));
+$al = kop_wiki_upd_aliases(array('program_name' => 'Provo Canyon School', 'original_markdown' => '', 'generated_markdown' => '', 'submitted_by' => 'bulk-upload'), array('name' => 'Provo Canyon School'));
+$check('news must name the program ("Provo Canyon" counts, "Provo" alone does not)', kop_wiki_upd_names_any('Survivors rally at Provo Canyon', $al) && !kop_wiki_upd_names_any('Provo city council votes', $al));
 $years = array(
     '2002-present' => array(2002, 'present'), '?-2017' => array(null, 2017), '1976-1993' => array(1976, 1993), '' => array(null, null),
 );
@@ -110,7 +118,7 @@ foreach ($entries as $e) {
     foreach (kop_wiki_upd_gaps($e, $page, $pdo) as $x) {
         $all++;
         if (trim($x['source_url']) === '') $no_source[] = $e['id'] . ':' . $x['kind'];
-        if (!in_array($x['kind'], array('closure', 'name', 'operator', 'news', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'staff_other'), true)) $bad_kind[] = $x['kind'];
+        if (!in_array($x['kind'], array('closure', 'name', 'operator', 'news', 'news_mention', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'staff_other'), true)) $bad_kind[] = $x['kind'];
         if (preg_match('#example\.test#', $x['source_url'])) $no_source[] = $e['id'] . ':' . $x['kind'] . ' (test host)';
     }
 }
