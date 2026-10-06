@@ -459,7 +459,7 @@ if ($picks) {
         && preg_match('#kop-fp-person-name">John Roe</p>\s*<p class="kop-fp-person-role">Therapist</p>#', $html)
         && strpos($html, 'data-kop-citation-preview="r/troubledteens wiki, page &quot;Test Academy&quot;') !== false
         && strpos($html, 'class="kop-fp-src">Source: ') === false);
-    // Two citations of one issue are told apart by page; of one date with no page, by number.
+    // Two citations of one issue are two numbered links; the page is in each link's address.
     $data['fact_sources']['Capacity'] = kop_facility_pages_note_sources(array(
         'Capacity: 35 (Woodbury Reports, May 2007 (#153), p. 20: https://example.org/w.pdf#page=20)',
         'Capacity: 40 (Woodbury Reports, May 2007 (#153), p. 31: https://example.org/w.pdf#page=31)',
@@ -473,10 +473,11 @@ if ($picks) {
     ob_start();
     include dirname(__DIR__) . '/templates/facility-page.php';
     $html = ob_get_clean();
-    // At a glance links the word "source" (source 1, source 2); each citation is in its link's preview.
-    $check('two sources of one fact are two "source" links, each citation in its preview',
-        preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 20"[^>]*>source 1</a>, <a#', $html)
-        && preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 31"[^>]*>source 2</a>#', $html)
+    // At a glance links the word "source" (source 1, source 2). A Woodbury Reports link has no Woodbury wording in
+    // its preview (the page is in the address it opens); any other citation is in its link's preview.
+    $check('two sources of one fact are two "source" links, a Woodbury one without its wording and another with its citation',
+        preg_match('#href="https://example\.org/w\.pdf\#page=20"[^>]*>source 1</a>, <a[^>]*href="https://example\.org/w\.pdf\#page=31"[^>]*>source 2</a>#', $html)
+        && stripos($html, 'data-kop-citation-preview="Woodbury Reports') === false
         && preg_match('#post by a, March 2005"[^>]*>source 1</a>, <a[^>]*post by b, March 2005"[^>]*>source 2</a>#', $html)
         && strpos($html, 'class="kop-fp-src">Source: ') === false);
 }
