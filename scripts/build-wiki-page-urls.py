@@ -35,7 +35,8 @@ def main():
         if not m:
             continue
         url, title = m.group(1), ast.literal_eval(m.group(2)).strip()
-        if not title or title == 'Page title':
+        # Wiki editor drafts (sub-<id>.txt) have no page of their own, only the wiki's front page: no link beats a wrong one.
+        if not title or title == 'Page title' or url.rstrip('/').endswith('/wiki/index'):
             continue
         by_title.setdefault(title, set()).add(url)
         d = ASOF.match(lines[2])

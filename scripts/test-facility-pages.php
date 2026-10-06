@@ -510,7 +510,9 @@ $check('wiki dates read and sort; one event written twice shows once, both sourc
 $check('a wiki citation with no address finds its page, by date when two pages share a title',
     kop_facility_pages_wiki_url('r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18)') === 'https://www.reddit.com/r/troubledteens/wiki/index/laurelridge'
     && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2026-01-08)') === 'https://www.reddit.com/r/troubledteens/wiki/index/BSlaurelridge'
-    && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Brown Schools Inc." (as of 2026-01-07)') !== ''
+    && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Brown Schools" (as of 2026-01-08)') === 'https://www.reddit.com/r/troubledteens/wiki/index/brown'
+    // A wiki editor draft (no Reddit page of its own) is not linked to the wiki's front page.
+    && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Brown Schools Inc." (as of 2026-01-07)') === ''
     && kop_facility_pages_wiki_url('Woodbury Reports, May 2007') === '');
 $cited = kop_facility_pages_cited_html('Ownership: sold in April 2003 (Form 10-K for 2003, filed March 2004: https://www.sec.gov/x/g87995e10vk.htm; FTC notice: https://www.ftc.gov/node/10021)');
 $check('a note\'s web addresses read as "source" links, never the address',
