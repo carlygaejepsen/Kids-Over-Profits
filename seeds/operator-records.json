@@ -1,7 +1,7 @@
 [
   {
     "name": "Psychiatric Solutions, Inc.",
-    "note": "Company record created 2026-10-05 from SEC filings. Facilities: the ones its 10-K for 2003 lists (acquired 2001-2003) that have a KOP record under the name it used; it bought many more before 2010, not linked yet.",
+    "note": "Company record created 2026-10-05 from SEC filings. Facilities: KOP records for the facilities its 10-Ks for 2003-2009 list, under the name it used (earlier-name records, e.g. The Brown Schools at ..., left out).",
     "operator": {
       "currentName": "",
       "otherNames": [
@@ -19,6 +19,12 @@
         "Incorporated in Delaware in 1988; headquartered at 113 Seaboard Lane, Franklin, Tennessee (Psychiatric Solutions, Inc., Form 10-K for 2003, filed March 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
         "April 2003: bought six inpatient behavioral health facilities from The Brown Schools, Inc. for $63.0 million: 895 licensed beds in Austin, San Antonio and San Marcos, Texas; Charlottesville, Virginia; Colorado Springs, Colorado; and Tulsa, Oklahoma (Form 10-K for 2003: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm; FTC premerger notice 20030407, Psychiatric Solutions / McCown De Leeuw & Co. III: https://www.ftc.gov/node/10021)",
         "June 30, 2003: bought Ramsay Youth Services, Inc. (Nasdaq: RYOU) for about $81.3 million (Form 10-K for 2003: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
+        "March 2004: bought Brentwood Behavioral Health's two inpatient psychiatric facilities (Shreveport, Louisiana and Flowood, Mississippi); May 2004: Palmetto Behavioral Health System, L.L.C. (North Charleston and Florence, South Carolina); June 2004: four facilities from Heartland Healthcare for $49.9 million (Summit, New Jersey; Fort Lauderdale, Florida; Arlington, Texas; Eden Prairie, Minnesota) and Piedmont Behavioral Health Center, Leesburg, Virginia, for about $10.7 million (Form 10-K for 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014405002497/g93779e10vk.htm)",
+        "July 1, 2005: bought Ardent Behavioral Health from Ardent Health Services, 20 inpatient facilities, for $500.0 million in cash plus stock (Form 10-K for 2005: https://www.sec.gov/Archives/edgar/data/829608/000095014406001725/g99869e10vk.htm)",
+        "December 1, 2006: bought Alternative Behavioral Services, Inc., which owned nine inpatient facilities (Form 10-K for 2006: https://www.sec.gov/Archives/edgar/data/829608/000095014407001669/g05715e10vk.htm)",
+        "May 31, 2007: bought Horizon Health Corporation (Form 10-K for 2007: https://www.sec.gov/Archives/edgar/data/829608/000095014408001496/g11922e10vk.htm)",
+        "March 2008: bought five facilities in Florida and Kentucky from United Medical Corporation (Form 10-K for 2008: https://www.sec.gov/Archives/edgar/data/829608/000095014409001620/g17806e10vk.htm)",
+        "2009: closed The Oaks Treatment Center (Austin, Texas), Cumberland Hall of Chattanooga and Nashville Rehabilitation Hospital and put them up for sale; bought Prairie St. John's (Fargo, North Dakota) and Emerald Coast Behavioral Hospital (Panama City, Florida). Its last annual report lists the facilities it held at the end of 2009 (Form 10-K for 2009: https://www.sec.gov/Archives/edgar/data/829608/000095012310016990/g22196e10vk.htm)",
         "November 2010: acquired by Universal Health Services (Universal Health Services, Form 10-K for 2010, filed February 2011: https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)"
       ]
     },
@@ -101,6 +107,226 @@
       {
         "id": 10395,
         "unique_name": "Benchmark Behavioral Health Systems",
+        "relationship": "past"
+      },
+      {
+        "id": 10707,
+        "unique_name": "Cypress Creek",
+        "relationship": "past"
+      },
+      {
+        "id": 11116,
+        "unique_name": "Gulf Coast Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13996,
+        "unique_name": "Palmetto Lowcountry Behavioral Health",
+        "relationship": "past"
+      },
+      {
+        "id": 13969,
+        "unique_name": "Palmetto Pee Dee Behavioral Health",
+        "relationship": "past"
+      },
+      {
+        "id": 13970,
+        "unique_name": "Palmetto Summerville Behavioral Health",
+        "relationship": "past"
+      },
+      {
+        "id": 12896,
+        "unique_name": "North Spring Behavioral Healthcare Inc",
+        "relationship": "past"
+      },
+      {
+        "id": 12805,
+        "unique_name": "North Spring Behavioral Healthcare Horizons Program",
+        "relationship": "past"
+      },
+      {
+        "id": 12806,
+        "unique_name": "North Spring Behavioral Healthcare Sunrise Program",
+        "relationship": "past"
+      },
+      {
+        "id": 12807,
+        "unique_name": "North Spring Behavioral Healthcare Trailblazers Program",
+        "relationship": "past"
+      },
+      {
+        "id": 13234,
+        "unique_name": "Belmont Pines RTC Program",
+        "relationship": "past"
+      },
+      {
+        "id": 13288,
+        "unique_name": "Columbus Behavioral Center",
+        "relationship": "past"
+      },
+      {
+        "id": 12800,
+        "unique_name": "Cumberland Hospital for Children and Adolescents",
+        "relationship": "past"
+      },
+      {
+        "id": 14160,
+        "unique_name": "Cumberland Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 13227,
+        "unique_name": "Fox Run Center for Children and Adolescents",
+        "relationship": "past"
+      },
+      {
+        "id": 9690,
+        "unique_name": "Intermountain Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 12454,
+        "unique_name": "Montevista Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 11469,
+        "unique_name": "Pinnacle Pointe Hospital Sub-Acute Inpatient Treatment",
+        "relationship": "past"
+      },
+      {
+        "id": 13291,
+        "unique_name": "Valle Vista Health System Residential Treatment",
+        "relationship": "past"
+      },
+      {
+        "id": 13363,
+        "unique_name": "Valle Vista Health System",
+        "relationship": "past"
+      },
+      {
+        "id": 12419,
+        "unique_name": "Willow Springs Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13366,
+        "unique_name": "Wellstone Regional Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 13924,
+        "unique_name": "Diamond Grove Center for Children Residential Psychiatric Program",
+        "relationship": "past"
+      },
+      {
+        "id": 11119,
+        "unique_name": "National Deaf Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11122,
+        "unique_name": "SandyPines RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 11233,
+        "unique_name": "University Behavioral Center",
+        "relationship": "past"
+      },
+      {
+        "id": 12808,
+        "unique_name": "Pines Residential Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 12900,
+        "unique_name": "Pines Residential RTC: Crawford Center",
+        "relationship": "past"
+      },
+      {
+        "id": 12901,
+        "unique_name": "Pines RTC: Brighton Campus",
+        "relationship": "past"
+      },
+      {
+        "id": 12802,
+        "unique_name": "Kempsville Center for Behavioral Health Adolescent Residential Treatment Program",
+        "relationship": "past"
+      },
+      {
+        "id": 13971,
+        "unique_name": "Three Rivers Midlands",
+        "relationship": "past"
+      },
+      {
+        "id": 10370,
+        "unique_name": "Copper Hills Youth Center",
+        "relationship": "past"
+      },
+      {
+        "id": 11617,
+        "unique_name": "Friends Hospital Adolescents Program",
+        "relationship": "past"
+      },
+      {
+        "id": 10808,
+        "unique_name": "Kingwood Pines Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 12496,
+        "unique_name": "Lighthouse Care Center of Augusta Psychiatric RTP",
+        "relationship": "past"
+      },
+      {
+        "id": 13289,
+        "unique_name": "Michiana Behavioral Health Residential Program",
+        "relationship": "past"
+      },
+      {
+        "id": 13334,
+        "unique_name": "Michiana Behavioral Health",
+        "relationship": "past"
+      },
+      {
+        "id": 12809,
+        "unique_name": "Poplar Springs Hospital RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 14015,
+        "unique_name": "River Park Hospital – The Roundtable Program",
+        "relationship": "past"
+      },
+      {
+        "id": 14016,
+        "unique_name": "River Park Hospital – The Bridge Program",
+        "relationship": "past"
+      },
+      {
+        "id": 14014,
+        "unique_name": "River Park Hospital – The Barboursville School",
+        "relationship": "past"
+      },
+      {
+        "id": 100377,
+        "unique_name": "River Park Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 12810,
+        "unique_name": "The Hughes Center",
+        "relationship": "past"
+      },
+      {
+        "id": 14164,
+        "unique_name": "River Point Behavioral Health",
+        "relationship": "past"
+      },
+      {
+        "id": 11230,
+        "unique_name": "The Vines PRTF",
         "relationship": "past"
       }
     ]

@@ -1518,6 +1518,22 @@ function kop_apply_operator_record_seeds() {
                 );
                 $result = kop_v2_save_form_project($pdo, $prefix, $name, $data, 'companies', array('partial' => true, 'timestamp' => gmdate('c')));
                 $id = (int) ($result['operator_id'] ?? 0);
+            } else {
+                // An existing company only gains the seed's notes it does not have yet; nothing else is touched.
+                $read = $pdo->prepare("SELECT json_data FROM `{$prefix}kop_operators` WHERE id = ?");
+                $read->execute(array($id));
+                $json = json_decode((string) $read->fetchColumn(), true);
+                if (is_array($json) && isset($json['operator']) && is_array($json['operator'])) {
+                    $notes = array_values((array) ($json['operator']['notes'] ?? array()));
+                    $add = array_values(array_diff((array) ($entry['operator']['notes'] ?? array()), $notes));
+                    if ($add) {
+                        // In the seed's (date) order, notes added by hand after them.
+                        $seed = array_values((array) $entry['operator']['notes']);
+                        $json['operator']['notes'] = array_merge($seed, array_values(array_diff($notes, $seed)));
+                        $pdo->prepare("UPDATE `{$prefix}kop_operators` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+                            ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
+                    }
+                }
             }
             if (!$id) {
                 continue;
@@ -2343,7 +2359,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '103';
+    $version = '104';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
