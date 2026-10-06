@@ -13,31 +13,48 @@
    },
    "ops": [
     {
+     "id": "p1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "** Jonathan Griffith** has worked as the Director of Recreation & Experiential Education of Elevations RTC. Griffith was previously the Recreation Director of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) in 2009 ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Tamra Foy** has worked as an Admissions Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jennifer Suiter** has worked as an Admissions Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Cynthia Byerly** has worked as the Director of Nursing of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Sajid Faizi** has worked as the Medical Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Stephanie Martinez** has worked as an Assistant Program Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Casey Foy** has worked as an Assistant Program Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jason Danciak** has worked as the Olympus and Everest Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Sue Colgate** has worked as the Matterhorn Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Skyler Munson** has worked as the Zenith Team Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Kevin Uncapher** has worked as a Recreation Director of Elevations RTC ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)).\n\n** Jordan Killpack**, named Jordan Kilpatrick above, has also worked as the Clinical Director of [Viewpoint Center](https://www.reddit.com/r/troubledteens/wiki/index/viewpoint) ([Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)). Elevations RTC spells his name Killpack ([Elevations RTC](https://www.elevationsrtc.com/jordan-killpack/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's staff list has no years, so 'has worked as' rather than 'is the current'. Jordan Killpack is the entry's 'Jordan Kilpatrick' (Clinical Director, earlier a Provo Canyon therapist); Elevations' own bio page spells it Killpack, so only his Viewpoint role is added, tied to the name the entry already uses."
+    },
+    {
      "id": "p2",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In February 2014, Ben Hinman, a former resident of Island View and then Provo Canyon School, sued both in the U.S. District Court for the District of Utah, claiming negligence and breach of fiduciary duty in his care (Hinman v. Island View Academy, D. Utah, No. 1:14-cv-00015). On May 13, 2015, the court granted both schools summary judgment, ruling that the claims were barred by the two-year statute of limitations of the Utah Health Care Malpractice Act, and closed the case ([U.S. District Court ruling, May 13, 2015](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf)).",
+     "text": "In August 2023, Ryan Faust entered a guilty plea for failure to report child abuse, a misdemeanor, according to court records ([NBC News](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783)).\n\nAccording to state records reported by NBC News in September 2024, Elevations reported at least 105 incidents of self-harm and 138 uses of physical restraints from May 2023 to May 2024. In October 2023, the California Department of Education found that Elevations had failed to refer \"allegations of sexual abuse to the appropriate authorities\" in a timely manner ([NBC News](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783)).",
      "by": "opus",
-     "verdict": "fixed",
-     "note": "Not the Dr. Phil suit the entry describes (that one was brought by the Myers family, per the Deseret News article): this may be the second of the 'two lawsuits in 2014' the entry mentions. Re-cited from /lawsuits/ to the court's ruling on govinfo, read in full. Corrected: Wade Taylor was not a defendant (he was Hinman's therapist at Provo Canyon; the only defendants were Island View Academy and Provo Canyon School); the outcome is known: summary judgment for both on the statute of limitations, case closed. Hinman was at Island View November 2007 to June 2008."
-    },
-    {
-     "id": "h1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "In September 2024, NBC News reported that, according to state records, Elevations reported at least 105 incidents of self-harm and 138 uses of physical restraints from May 2023 to May 2024, and that police calls to the facility rose from 15 in 2019 to 56 in 2023. NBC News also reported that in October 2023 the California Department of Education found that Elevations had failed to refer allegations of sexual abuse to the appropriate authorities in a timely manner, and that at least 28 school districts in seven states had paid to send students to Elevations ([NBC News](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783)).\n\nNBC News also reported that Ryan Faust, an Elevations therapist, entered a guilty plea in August 2023 for failure to report child abuse, a misdemeanor ([NBC News](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783)).",
-     "by": "haiku",
-     "verdict": "fixed",
-     "note": "Haiku added only a Related Media link, which wiki-drafts.py would have put after 'Last revised by' (last section). Rewritten as the article's new facts in the abuse section, each checked against the article; the 2018 lawsuit and capacity are already in the entry."
+     "verdict": "ok",
+     "note": "New facts from the NBC article, each checked against the article on 2026-10-06. The article names the January 2024 plaintiff Finn Pool (the entry: Finn Richardson), so the plea line names only Faust. KOP's news summary calls him David Faust; the article says Ryan."
     },
     {
      "id": "p3",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "### **State Inspection Findings**\n\nIn a report dated October 9, 2024, Utah inspectors found that during an incident on September 26, 2024, a staff member engaged in an inappropriate sexual conversation with multiple clients (Utah licensing inspection report, October 9, 2024).",
+     "text": "In February 2014, Ben Hinman, a former resident of Island View and then Provo Canyon School, sued both schools in the U.S. District Court for the District of Utah, claiming negligence and breach of fiduciary duty in his care (Hinman v. Island View Academy, D. Utah, No. 1:14-cv-00015). On May 13, 2015, the court granted both schools summary judgment, ruling that the claims were barred by the two-year statute of limitations of the Utah Health Care Malpractice Act ([U.S. District Court ruling, May 13, 2015](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Re-cited to the Utah inspection report by date instead of /severe-reports/."
+     "note": "From the court's ruling on govinfo: Wade Taylor was Hinman's therapist at Provo Canyon, not a defendant (KOP's summary says he was named among them), and the outcome is known (summary judgment for both schools). Not the Dr. Phil suit the entry already describes."
+    },
+    {
+     "id": "p4",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "### **State Inspection Findings**\n\nIn a report dated October 9, 2024, Utah inspectors found that during an incident on September 26, 2024, a staff member engaged in an inappropriate sexual conversation with multiple clients (Utah licensing inspection report, October 9, 2024).",
+     "by": "opus",
+     "verdict": "ok"
+    },
+    {
+     "id": "h1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Former students report injuries and isolation at Utah facility for troubled teens](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783) (NBC News, 9/2/2024)",
+     "by": "haiku",
+     "verdict": "fixed",
+     "note": "The article's own headline and the entry's date style (M/D/YYYY); section given by name."
     }
    ],
    "tense": [],
@@ -59,10 +76,10 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Death",
-     "text": "On May 20, 2021, M.F., a fifteen-year-old student at Grove School, died after being struck by a train. In September 2022 her parents filed a wrongful death suit in the U.S. District Court for the District of Connecticut against Grove School, Richard Chorney, Peter Chorney, her psychiatrist and her therapist, alleging that the defendants breached their duties of care ([Fontana v. Grove School, Inc., complaint](https://grenierlawgroup.com/wp-content/uploads/2022/11/2022.09.19-1-Complaint-court-stamped.pdf)).",
+     "text": "On May 20, 2021, M.F., a fifteen-year-old student at Grove School, died after being struck by a train. In September 2022, her parents filed a wrongful death suit in the U.S. District Court for the District of Connecticut against Grove School, Richard Chorney, Peter Chorney, her psychiatrist and her therapist, alleging that the defendants breached their duties of care ([Fontana v. Grove School, Inc., complaint](https://grenierlawgroup.com/wp-content/uploads/2022/11/2022.09.19-1-Complaint-court-stamped.pdf)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Read the complaint: it names her only as M.F. (the KOP memorial gives a full name), and gives the cause as being struck by a train; named as the cited source does."
+     "note": "The complaint names her only by her initials, M.F. (the case caption carries the family name); KOP's memorial gives the full name Mia Gabrielle Fontana and the cause as suicide. Written as the complaint gives it; the entry's existing paragraph reports the death without a name."
     },
     {
      "id": "p2",
@@ -71,13 +88,13 @@
      "text": "In April 1979, two students, Peter Cooper and Jonathan S. Lenoff, died in a fire in the school's Lodge building ([The New York Times, 4/24/1979](https://www.nytimes.com/1979/04/24/archives/the-region-2-students-killed-in-boys-school-fire.html)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Month only: the KOP date (April 24) is the article's date; another account gives the fire as April 23, 1979."
+     "note": "Month only: April 24 is the article's date; another account gives the fire as April 23, 1979."
     },
     {
      "id": "p3",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Dr. Richard Ruben** was the Medical Director of Grove School. In 2008, Woodbury Reports said he had worked at the school for 20 years ([Woodbury Reports, July 2008, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=15)).",
+     "text": "** Dr. Richard Ruben** was the Medical Director of Grove School. In July 2008, Woodbury Reports said he had worked at the school for 20 years ([Woodbury Reports, July 2008, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=15)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -85,16 +102,16 @@
      "id": "p4",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Kathy Kimmel** (named Kathy Kimmel-Rasmias in a 2009 notice) was the Admissions Director of Grove School for 15 years, until she resigned in May 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)).",
+     "text": "** Kathy Kimmel** was the Admissions Director of Grove School for 15 years, until she resigned in May 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)). A 2009 notice named her Kathy Kimmel-Rasmias ([Woodbury Reports, July 2009, p. 13](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0709.pdf#page=13)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Two KOP staff entries for one person, merged; the 15 years and the May 2010 resignation are on the cited page."
+     "note": "Two KOP staff entries for one person, merged; both pages read."
     },
     {
      "id": "p5",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Lauren Seltzer** became the Director of Admissions of Grove School in 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)).",
+     "text": "** Lauren Seltzer** became the Director of Admissions of Grove School in 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -102,7 +119,7 @@
      "id": "p6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Patricia Emmerich** was the Executive Secretary of Grove School; in 2008 the school recognized her for 32 years of service ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23)).",
+     "text": "** Patricia Emmerich** was the Executive Secretary of Grove School. In November 2008, the school recognized her for 32 years of service ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -110,7 +127,7 @@
      "id": "p7",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Janel Lynch** was a Residential Administrator at Grove School in 2008 and 2009 ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23)).",
+     "text": "** Janel Lynch** was an Administrator and Residential Administrator at Grove School in 2008 and 2009 ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23); [Woodbury Reports, April 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0409.pdf#page=19)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -118,7 +135,7 @@
      "id": "p8",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Jennifer Padovani** was hired as a Residential Administrator for Grove School's girls program in 2008 ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23)).",
+     "text": "** Jennifer Padovani** was hired in 2008 as a Residential Administrator working with Grove School's Girls Program ([Woodbury Reports, December 2008, p. 23](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=23)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -126,7 +143,7 @@
      "id": "p9",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Colin Davies** was the Assistant Director of Grove School in 2009 ([Woodbury Reports, April 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0409.pdf#page=19)).",
+     "text": "** Colin Davies** was the Assistant Director of Grove School in 2009 ([Woodbury Reports, April 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0409.pdf#page=19)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -134,7 +151,7 @@
      "id": "p10",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Robert Ruggiero** was the Principal of Grove School in 2010 ([Woodbury Reports, March 2010, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0310.pdf#page=15)).",
+     "text": "** Robert Ruggiero** was the Principal of Grove School in 2010 ([Woodbury Reports, March 2010, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0310.pdf#page=15)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -142,10 +159,10 @@
      "id": "p11",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Alice Durmmond-Hay** was a Residential Administrator at Grove School in 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)).",
+     "text": "** Alice Durmmond-Hay** was a Residential Administrator at Grove School in 2010 ([Woodbury Reports, June 2010, p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0610.pdf#page=14)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Spelled as Woodbury prints it; probably Drummond-Hay."
+     "note": "Spelled as Woodbury prints it (probably Drummond-Hay)."
     }
    ],
    "tense": [],
@@ -167,28 +184,37 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "** Don MacMillan** was the Headmaster of Hyde School. In January 2013, he announced that he would step down at the end of the school year, after nearly 30 years at Hyde, the last five as headmaster; Laura Gauld was named to succeed him as Head of School ([The Portland Press Herald](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/)).",
+     "text": "** Don MacMillan** was the Headmaster of Hyde School. In January 2013, he announced that he would step down at the end of the school year, after nearly 30 years at Hyde, the last five as headmaster. Laura Gauld was named to succeed him as Head of School ([The Portland Press Herald](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "A news gap, written as a staff line because MacMillan is not named in the entry."
+     "note": "A news gap written as a staff line: MacMillan is not named in the entry."
     },
     {
      "id": "p2",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "On July 11, 2025, Jessica Fuller, a former student who attended Hyde from about July 2014 to February 2015, filed a class action lawsuit, *Fuller v. Hyde School* (U.S. District Court for the District of Maine, 2:25-cv-00354-NT), under the federal Trafficking Victims Protection Reauthorization Act and Maine's human trafficking law ([Fuller v. Hyde School complaint, D. Me.](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf)). The suit claims that Hyde operated a system of forced labor and psychological abuse presented as character education, that students were emotionally and physically abused and denied medical care, and that they were made to do unpaid labor that the school and the Gauld family who ran it profited from, including work at Seguin Island and at the school's wilderness property in Eustis ([Fuller v. Hyde School complaint, D. Me.](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf); [WMTW](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063)). Fuller alleges that she was physically restrained and made to do manual labor as punishment ([Central Maine](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). The suit seeks class status for anyone who experienced forced labor at the school since 2015 ([Central Maine](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/)).\n\nIn July 2025, other former students described forced labor, shame-based group therapy and humiliating punishments at Hyde, while other former students and parents defended the school; Hyde called the claims \"patently false\" ([Central Maine](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/); [Central Maine](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/); [NEWS CENTER Maine](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335)).",
+     "text": "On July 11, 2025, Jessica Fuller, a former student who attended Hyde from about July 2014 to February 2015, filed a class action lawsuit, *Fuller v. Hyde School* (U.S. District Court for the District of Maine, No. 2:25-cv-00354-NT), under the federal Trafficking Victims Protection Reauthorization Act and Maine's human trafficking law ([Fuller v. Hyde School complaint](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf)). The suit claims that Hyde operated a system of forced labor and psychological abuse presented as character education, that students were emotionally and physically abused and denied medical care, and that they were made to do unpaid labor that the school and the Gauld family profited from, including work at Seguin Island and at the school's wilderness property in Eustis ([Fuller v. Hyde School complaint](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf); [WMTW](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063)). Fuller alleges that she was physically restrained and made to do manual labor as punishment ([Central Maine](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). The suit seeks class status for students who experienced forced labor at the school since 2015 ([Central Maine](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/)).\n\nIn July 2025, other former students described forced labor, shame-based group therapy and humiliating punishments at Hyde, while other former students and parents defended the school. The president of Hyde's Board of Governors said the allegations \"grossly mischaracterize Hyde's policies and practices over time or are patently false\" ([Central Maine](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/); [Central Maine](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/); [NEWS CENTER Maine](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Filing year given as 2025 (KOP's date); the first reports are from July 2025. The 'national precedent' line of the KOP summary is left out as framing. Re-cited from /lawsuits/ to the complaint (KOP media library copy, filed July 11, 2025): TVPRA (18 U.S.C. 1589) and 5 M.R.S. 4701 counts, Fuller at Hyde about July 2014 to February 2015, abuse, denial of medical care, forced labor, Seguin Island, Eustis. 'Benefited school leadership' reworded to the complaint's claim that the school and the Gauld family profited."
+     "note": "Complaint facts checked in KOP's copy of the complaint (Fuller at Hyde about July 2014 to February 2015, Seguin Island, Eustis, the Gauld family). KOP's 'could set national precedent' line left out as framing. Board president's words checked against Central Maine 7/13/2025."
     },
     {
      "id": "s1",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "Hyde School denied the allegations and asked the court to dismiss the case in October 2025 ([Central Maine](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). In December 2025, the case turned to errors in the plaintiff's filings, including inaccurate and unsupported legal citations ([Central Maine](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/); [NEWS CENTER Maine](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa)). In May 2026, the plaintiff's attorney was sanctioned for using artificial intelligence that produced inaccurate legal citations, and the case continued ([The Portland Press Herald](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/)). In July 2026, a federal judge allowed the suit to proceed ([The Portland Press Herald](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/)).",
+     "text": "Hyde School denied the allegations and in October 2025 asked the court to dismiss the case ([Central Maine](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). In December 2025, the defense pointed to errors in the plaintiff's filings, including two federal cases cited improperly and a misquoted Maine statute ([Central Maine](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/); [NEWS CENTER Maine](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa)). In May 2026, the plaintiff's attorney was sanctioned for using artificial intelligence that produced inaccurate legal citations, and the case continued ([The Portland Press Herald](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/)). In July 2026, U.S. District Judge Stacey Neumann denied the school's request to dismiss the case. She dismissed parts of two trafficking counts, removed three former school leaders as defendants because they did not work at the school while Fuller attended, and allowed the forced labor and class claims to go forward ([The Portland Press Herald](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/)).",
      "by": "sonnet",
      "verdict": "fixed",
-     "note": "Moved from History to the lawsuits section, after p2, which now introduces the suit (the filing sentence went there); added the motion to dismiss and the December 2025 filing errors."
+     "note": "Moved from History to the lawsuits section, after p2, which introduces the suit (sonnet's filing sentence is folded in there); added the motion to dismiss and the December 2025 filing errors; the July 2026 ruling's details checked against the Press Herald article."
+    },
+    {
+     "id": "h1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Hyde School headmaster to step down](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/) (The Portland Press Herald, 1/16/2013)\n\n[Former students of Hyde School allege decades of abuse](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335) (NEWS CENTER Maine, 7/11/2025)\n\n[Former students allege abuse and neglect at Hyde School in Bath](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/) (Central Maine, 7/13/2025)\n\n[Former student sues Maine boarding school, alleging forced child labor](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063) (WMTW, 7/15/2025)\n\n[More former Hyde School students allege mistreatment. Others say experience was positive](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/) (Central Maine, 7/18/2025)\n\n[Hyde School asks judge to dismiss lawsuit alleging forced labor and abuse](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/) (Central Maine, 10/8/2025)\n\n[Lawsuit against Hyde School at risk after attorney errors](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/) (Central Maine, 12/15/2025)\n\n[Revisiting Hyde: Former students say abuse allegations reopened painful memories](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/) (Central Maine, 12/24/2025)\n\n[Legal battle over Hyde School lawsuit zeroes in on filing errors](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa) (NEWS CENTER Maine, 12/24/2025)\n\n[Attorney in Hyde School lawsuit sanctioned for AI misuse, but case will continue](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/) (The Portland Press Herald, 5/7/2026)\n\n[Federal judge allows suit against Hyde School to proceed](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/) (The Portland Press Herald, 7/28/2026)",
+     "by": "haiku",
+     "verdict": "fixed",
+     "note": "Oldest first like the rest of the list, dates as M/D/YYYY like the entry; dropped the three letters to the editor (g4, g9, g10) and the 2014 WMTW item about an outsider on the campus (g15). Three headlines checked against the articles."
     }
    ],
    "tense": [],
@@ -207,13 +233,22 @@
    },
    "ops": [
     {
-     "id": "s2",
+     "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "APM Reports (April 2022) wrote: \"In June, Sequel announced it was shutting down its 60-bed treatment center in Mountain Home, Idaho, a city of 16,000 people located about 40 miles southeast of Boise\" ([APM Reports](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
+     "text": "Mountain Home Academy, in Mountain Home, Idaho, was also known as Sequel TSI of Idaho and as Three Springs of Mountain Home ([Kids Over Profits](https://kidsoverprofits.org/facility/mountain-home-academy-id/)).\n\nIn April 2022, APM Reports wrote: \"In June, Sequel announced it was shutting down its 60-bed treatment center in Mountain Home, Idaho, a city of 16,000 people located about 40 miles southeast of Boise\" ([APM Reports](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
      "by": "sonnet",
+     "verdict": "fixed",
+     "note": "One citation for both names, with a subject; quote checked against the article. The article does not say which June, so no closing year goes in the header (haiku skipped g1 for the same reason)."
+    },
+    {
+     "id": "p1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "** Kelly Stone** was the Executive Director of Mountain Home Academy from 2015 to 2017. Stone was also the Executive Director of Lexington Academy from 2013 to 2016 and worked at Three Springs of Englishton Park ([Kids Over Profits](https://kidsoverprofits.org/facility/mountain-home-academy-id/)).",
+     "by": "opus",
      "verdict": "ok",
-     "note": "Quote checked against the article. Which June (2020 or 2021) is not clear from the article, so no closing year is stated and the header is left alone."
+     "note": "KOP gives no role at Englishton Park, so none is stated. The two Executive Director spans overlap (2015-2016)."
     }
    ],
    "tense": [],
@@ -235,23 +270,33 @@
      "id": "p1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Paul Taylor** became the Executive Director of the Oakley School in 2013. Taylor had been the Executive Director of Copper Canyon Academy ([Woodbury Reports, September 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=10)).",
+     "text": "** Paul Taylor** became the Executive Director of the Oakley School in 2013. At the time, Taylor was the Executive Director of Copper Canyon Academy in Arizona ([Woodbury Reports, September 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=10)).",
      "by": "opus",
      "verdict": "ok"
+    },
+    {
+     "id": "p2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "** Ron S. Tuinei** worked as a Program Director of the Oakley School. Tuinei also worked as a program supervisor at Heritage Schools (Heritage RTC), as program director of Cottonwood Treatment Center, as Program Director and then Executive Director (2016-2020) of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon), as CEO of Copper Hills Youth Center, and at San Marcos Treatment Center ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Cited to KOP's own record; no outside source given for these roles."
     },
     {
      "id": "p3",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Carrie Shoumatoff** was the Director of Admissions of the Oakley School from 2009 to 2011. Shoumatoff was also the Admission Director of Gateway Academy ([Woodbury Reports, August 2009, p. 18](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=18)).",
+     "text": "** Carrie Shoumatoff** worked as the Director of Admissions of the Oakley School from 2009 to 2011 ([Woodbury Reports, August 2009, p. 18](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=18)). Shoumatoff also worked as the Admission Director of Gateway Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)).",
      "by": "opus",
-     "verdict": "ok"
+     "verdict": "ok",
+     "note": "The Gateway Academy role is from KOP's record, not the Woodbury page, so it cites KOP."
     },
     {
      "id": "p4",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Carrie Thompson** worked in admissions at the Oakley School in 2007 and 2008 ([Woodbury Reports, July 2007, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=31)).",
+     "text": "** Carrie Thompson** worked in admissions at the Oakley School in 2007 and 2008 ([Woodbury Reports, July 2007, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=31); [Woodbury Reports, November 2008, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=17)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -259,7 +304,7 @@
      "id": "p5",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Kori Mayeski** became the Director of Academics of the Oakley School in 2013 ([Woodbury Reports, November 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1113.pdf#page=10)).",
+     "text": "** Kori Mayeski** became the Director of Academics of the Oakley School in 2013 ([Woodbury Reports, November 2013, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1113.pdf#page=10)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -267,7 +312,7 @@
      "id": "p6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Mark G. Del Vecchio** became the Academic Director of the Oakley School in 2008 ([Woodbury Reports, November 2008, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=17)).",
+     "text": "** Mark G. Del Vecchio** became the Academic Director of the Oakley School in 2008 ([Woodbury Reports, November 2008, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=17)).",
      "by": "opus",
      "verdict": "ok"
     },
@@ -275,10 +320,10 @@
      "id": "p7",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Dan Kemp** was the Director of Admissions of the Oakley School in 2001 ([Woodbury Reports, School & Program Visits, October 2001](https://strugglingteens.com/archives/2001/10/visit01.html)). Kemp was later the Admissions Director of [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) in 2006 ([Woodbury Reports, February 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=31)), of Ascent Wilderness Program in 2008 ([Woodbury Reports, February 2008, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)) and of SUWS Adolescent and Youth Programs in 2009 ([Woodbury Reports, August 2009, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=17)).",
+     "text": "** Dan Kemp** worked as the Headmaster and Director of Admissions of the Oakley School. Kemp also worked as the Director of Program Development of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview), a division director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) and an admissions director of Northwest Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)). He was the Admissions Director of Phoenix Outdoor in 2006 ([Woodbury Reports, February 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=31)), of Ascent Wilderness Program from 2008 ([Woodbury Reports, February 2008, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=30)) and of SUWS Adolescent and Youth Programs from 2009 ([Woodbury Reports, August 2009, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=17)).",
      "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: network map replaced with Woodbury Reports (2001 Oakley visit report on strugglingteens.com, Feb 2006 p. 31, Feb 2008 p. 30, Aug 2009 p. 17; all read). Cut \"Headmaster\", Island View RTC, Aspen division director and Northwest Academy: no original source found."
+     "verdict": "ok",
+     "note": "Oakley role and the Island View, Aspen and Northwest Academy roles cited to KOP's record; Phoenix Outdoor, Ascent and SUWS to the Woodbury notices, each read."
     }
    ],
    "tense": [
@@ -303,7 +348,13 @@
      "new": "** James Meyer** was one of the Founders and the former Executive Director of the Oakley School. He continued to work as the Executive Director until 2013. he also served as a Board Member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) for 8 years, serving as Ethics Chair and later the Treasurer. He currently works as a the CEO and an Educational Consultant of Meyer Education and Family Services, which is an Ed Consultant firm that he founded with his wife in 2014."
     }
    ],
-   "conflicts": []
+   "conflicts": [
+    {
+     "text": "The entry gives 2017 as the closing year; KOP's record says 2007.",
+     "source_label": "Kids Over Profits",
+     "source_url": "https://kidsoverprofits.org/facility/oakley-school-ut/"
+    }
+   ]
   },
   "657": {
    "program": "Provo Canyon School",
@@ -323,7 +374,7 @@
      "years": "1971-2026",
      "by": "haiku",
      "verdict": "ok",
-     "note": "Confirmed: Utah revoked both campus licenses in July 2026 (Springville to stop by Aug 6, Provo by Aug 16); UHS appealed, the deadlines stood."
+     "note": "Utah revoked both campus licenses in July 2026 (Springville July 6, services to end Aug 6; Provo July 17, Aug 16); The Salt Lake Tribune, opened 2026-10-06."
     },
     {
      "id": "s2",
@@ -332,7 +383,97 @@
      "text": "In July 2026, the Utah Department of Health and Human Services revoked the licenses of both Provo Canyon School campuses, ordering the Springville girls' campus to stop providing services by August 6 and the Provo campus by August 16. Universal Health Services appealed both revocations; the appeals did not change the closure deadlines ([The Salt Lake Tribune, 7/27/2026](https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/)).\n\nIn August 2026, YouTuber \"Reckless Ben\" released hidden-camera footage from an undercover stay at the school, posing as a teenager; it shows staff training sessions that discuss the use of physical restraints on residents ([The Salt Lake Tribune, 8/19/2026](https://www.sltrib.com/news/2026/08/19/reckless-ben-went-undercover-utahs/)).",
      "by": "sonnet",
      "verdict": "fixed",
-     "note": "Sonnet wrote that the licenses were revoked in August 2026; the Tribune and Fashion Times say July (Springville July 6, Provo July 17), with services to end Aug 6 and Aug 16. Rewrote from the Tribune appeal article (opened). Dropped the bare 'closed in 2026' and the Jezebel quote, whose Aug 6 date is the Springville campus only."
+     "note": "Rewritten from the Tribune appeal article (opened 2026-10-06): Springville revoked July 6, end of services August 6; Provo revoked July 17, August 16; UHS appealed both and DHHS said the appeals do not change the deadlines. Reckless Ben sentence kept from the Tribune summary, dates in M/D/YYYY."
+    },
+    {
+     "id": "p1",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "In June 2026, the mother of a 13-year-old boy sued Provo Canyon School and Universal Health Services. The suit claims that staff ignored his warnings that he was not safe before another resident slammed his head into the ground on May 14, 2026, knocking him unconscious; he suffered a fractured jaw and a traumatic brain injury, and staff drove him to the emergency room themselves instead of calling 911, delaying his treatment by an hour ([The Salt Lake Tribune, 6/15/2026](https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/)). Utah licensers sanctioned the school over the same incident ([The Salt Lake Tribune, 6/2/2026](https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Gap summary checked against The Salt Lake Tribune, 6/15/2026 (opened 2026-10-06): 13-year-old, head slammed into the ground by another resident on May 14, knocked unconscious, fractured jaw and traumatic brain injury, no 911 call, staff drove him to the ER, a one-hour delay. \"Brain bleed\" in the gap -> the article's \"traumatic brain injury\". The 6/2 Tribune article (gap source) reported the state sanction."
+    },
+    {
+     "id": "p2",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "In June 2026, a second family sued the school, alleging that staff did not take a teenage girl to a hospital until nine days after she became ill, although she reported severe pain, cramps, dizziness and vomiting, and that she developed acute renal failure ([KUTV](https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "The gap summary (\"serious injury and health complications\") was vague; KUTV (opened 2026-10-06) reports a teenage girl with acute renal failure, pain she rated 10 out of 10, cramps, dizziness and severe vomiting, no 911 call, driven to the hospital nine days after she became ill."
+    },
+    {
+     "id": "p3",
+     "op": "append_to_section",
+     "section": "Abuse and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nOn March 23, 2026, Utah licensing found the school out of compliance after a staff member punched a client on February 18, 2026; the client was injured and got stitches in their mouth (Utah licensing inspection report, March 23, 2026).\n\nOn May 18, 2026, Utah licensing found that the provider failed to summon emergency medical services for a minor client who was rendered unconscious and sustained severe head and facial injuries during a physical assault, and instead called a non-medical transport company to take the client to the hospital, delaying medical treatment (Utah licensing inspection report, May 18, 2026).\n\nOn June 19, 2026, a Utah complaint investigation found that staff began a physical restraint after a client threw water on a staff member, and that during the restraint a staff member lay on the client's legs and the client sustained a fractured foot (Utah licensing inspection report, June 19, 2026).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "One line per finding, oldest first, close paraphrase of each excerpt. The May 18 finding is likely the same incident as the lawsuit in p1."
+    },
+    {
+     "id": "p4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**David Melear** was promoted to Chief Executive Officer of Provo Canyon School in 2006 ([Woodbury Reports, October 2006, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=30)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Woodbury October 2006 p. 30: \"announced the promotion of David Melear to the position of Chief Executive Officer\" (September 14, 2006)."
+    },
+    {
+     "id": "p5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Denise Westman** was the Midwest Regional Director of Provo Canyon School. Westman was also the Director of Admissions and Marketing and the Director of Development (2006-2009) at [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) and a co-founder of Silverado Boys Ranch ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source (the owner's research), cited to the facility page."
+    },
+    {
+     "id": "p6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ken Huey** was the Business Director of Provo Canyon School. Huey was also the Clinical Director of [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) (2006), the founder of CALO Programs, Red Mountain Colorado and Kokua Recovery, and the CEO of HOPE Group and Havenwood Academy ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source, cited to the facility page."
+    },
+    {
+     "id": "p7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**James Murray** was the Director of Business Development of Provo Canyon School in 2006 ([Woodbury Reports, October 2006, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=30)). Murray later founded and directed Breakthrough Interventions ([Woodbury Reports, August 2009, p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=17)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "October 2006 p. 30 names him Director of Business Development (2006); Breakthrough Interventions is cited to the issue that says it (August 2009 p. 17: \"James Murray, MS, Founder and Director of Breakthrough Interventions\"), not to the 2006 page."
+    },
+    {
+     "id": "p8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kelly Corey** was a Regional Director of Business Development for Provo Canyon School in 2005 ([Woodbury Reports, January 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0106.pdf#page=31)). Corey was later the school's California Director, and joined Paula Feldman as an educational consultant in 2009 ([Woodbury Reports, November 2009, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=15)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Kelly Corey and \"Kelly Cole\" are one person: Woodbury October 2009 p. 15 printed \"Kelly Cole\" and the November 2009 issue, p. 15, printed a correction: \"Kelly Corey joins Paula Feldman ... Prior to joining Paula, Kelly was the California Director at Provo Canyon School\". One line under Corey; the record's separate \"Kelly Cole\" staff entry is the misprint and should be merged."
+    },
+    {
+     "id": "p9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tim Marshall** became the Director of Business Development of Provo Canyon School in 2009. Marshall had also worked for Brown Schools/[CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and Cornell Companies ([Woodbury Reports, November 2009, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=11)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Woodbury November 2009 p. 11: Director of Business Development, had worked at Provo Canyon School as a Unit Counselor and with the Brown Schools/CEDU and Cornell Companies."
+    },
+    {
+     "id": "p10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nick Pakidko** was the Academic Director of Provo Canyon School. Pakidko was also the Principal of [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) in 2007 and worked at Silverado Boys Ranch ([Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source, cited to the facility page."
     },
     {
      "id": "h2",
@@ -341,76 +482,7 @@
      "text": "[Paris Hilton and More Survivors Win Fight to Shut Down Former ‘Troubled Teen’ Facility](https://www.jezebel.com/paris-hilton-and-more-survivors-win-fight-to-shut-down-former-troubled-teen-facility) (Jezebel, 7/9/2026)\n\n[Utah Shuts Down Provo Canyon School Paris Hilton Accused of Abuse](https://www.hollywoodreporter.com/news/general-news/provo-canyon-school-paris-hilton-shut-down-abuse-1236643448/) (The Hollywood Reporter, 7/9/2026)\n\n[State revokes license of Provo Canyon School's Provo campus amid lawsuit, abuse allegations](https://www.ksl.com/article/51599155/state-revokes-license-of-provo-canyon-schools-provo-campus-amid-lawsuit-abuse-allegations) (KSL, 7/17/2026)\n\n[Utah revokes Provo Canyon School's Provo campus license, orders facility to close](https://kutv.com/news/local/utah-revokes-provo-canyon-schools-provo-campus-license-orders-facility-to-close) (KUTV, 7/17/2026)\n\n[Utah officials shut down embattled Provo residential treatment facility Paris Hilton has fought for years to close](https://www.deseret.com/utah/2026/07/17/provo-canyon-school-license-revoked-shut-down-paris-hilton/) (Deseret News, 7/17/2026)\n\n[License revoked for boarding school in Utah where Paris Hilton says she was abused as a teen](https://www.greenevillesun.com/news/license-revoked-for-boarding-school-in-utah-where-paris-hilton-says-she-was-abused-as/article_5c77d774-8de9-540b-8b9d-97df53080f04.html) (The Associated Press, 7/19/2026)\n\n[Voices: Utah must stand firm on its closure of Provo Canyon School](https://web.archive.org/web/20260726051122/https://www.sltrib.com/opinion/commentary/2026/07/19/voices-utah-must-stand-firm-its/) (The Salt Lake Tribune, 7/19/2026)\n\n[Provo Canyon boarding forced to shut down after abuse lawsuits](https://baptistnews.com/article/provo-canyon-boarding-forced-to-shut-down-after-abuse-lawsuits/) (Baptist News Global, 7/24/2026)\n\n[Provo Canyon School appeals Utah’s order to shut down both troubled teen programs](https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/) (The Salt Lake Tribune, 7/27/2026)\n\n[Paris Hilton Celebrates Planned Closure of Utah Treatment School Where She Claims She Experienced 'Abuse'](https://ca.style.yahoo.com/paris-hilton-celebrates-planned-closure-100000397.html) (Yahoo Style Canada, 8/3/2026)\n\n[Paris Hilton: Utah must not let Provo Canyon School reopen](https://www.sltrib.com/opinion/commentary/2026/08/04/paris-hilton-utah-must-not-let/) (The Salt Lake Tribune, 8/4/2026)\n\n[Utah Youth Residential Treatment Facility Provo Canyon School Ordered to Close Amid Regulatory Violations](https://www.fashiontimes.co.uk/provo-canyon-school-closure-youth-residential-care-1762921) (Fashion Times, 8/19/2026)\n\n[Reckless Ben went undercover at Utah’s Provo Canyon School](https://www.sltrib.com/news/2026/08/19/reckless-ben-went-undercover-utahs/) (The Salt Lake Tribune, 8/19/2026)\n\n[Documentary exposes alleged abuse at Provo Canyon School](https://tribune.com.pk/story/2624206/reckless-ben-infiltrates-school-linked-to-paris-hilton-abuse-allegations) (The Express Tribune, 9/5/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Dates in the list's own M/D/YYYY form, oldest first like the existing list; restored the AP/Greeneville Sun URL (haiku had changed its path); removed g13 (Narvin Lichfield defamation suit over the Netflix series, not about this program)."
-    },
-    {
-     "id": "p1",
-     "op": "append_to_section",
-     "section": "Abuse and Lawsuits",
-     "text": "In June 2026, the mother of a teenage boy sued Provo Canyon School, alleging that staff disregarded his repeated safety concerns before another resident attacked him; he was knocked unconscious and suffered a fractured jaw and a traumatic brain injury, and staff drove him to the hospital themselves instead of calling 911, which state regulators found delayed his treatment by an hour ([The Salt Lake Tribune, 6/15/2026](https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/)). Utah licensers had sanctioned the school over the same incident in May 2026 ([The Salt Lake Tribune, 6/2/2026](https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: KOP lawsuits page replaced with the Tribune (6/15 lawsuit article and 6/2 sanction article, both opened). Sanction month corrected from June to May (the 6/2 article: sanctioned May 19). \"Brain bleed\" -> the lawsuit article's \"traumatic brain injury\"."
-    },
-    {
-     "id": "p2",
-     "op": "append_to_section",
-     "section": "Abuse and Lawsuits",
-     "text": "In June 2026, a second family sued the school, alleging that staff did not take a teenage girl to a hospital for nine days although she reported severe symptoms, and that she developed acute renal failure ([KUTV](https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: KOP lawsuits page replaced with KUTV (opened); the vague \"serious injury and health complications\" replaced with what KUTV reports (nine days, acute renal failure)."
-    },
-    {
-     "id": "p3",
-     "op": "append_to_section",
-     "section": "Abuse and Lawsuits",
-     "text": "### **State Inspection Findings**\n\nOn March 23, 2026, Utah licensing found the school out of compliance after a staff member punched a client on February 18, 2026; the client was injured and got stitches in their mouth (Utah licensing inspection report, March 23, 2026).\n\nOn May 18, 2026, Utah licensing found that the provider failed to summon emergency medical services for a minor client who was rendered unconscious and sustained severe head and facial injuries during a physical assault, and instead called a non-medical transport company (Utah licensing inspection report, May 18, 2026).\n\nOn June 19, 2026, a Utah complaint investigation found that staff began a physical restraint after a client threw water on a staff member, and that during the restraint a staff member lay on the client's legs and the client sustained a fractured foot (Utah licensing inspection report, June 19, 2026).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: severe-reports links replaced with text citations of the three Utah reports; wording matches the excerpts in gaps.json."
-    },
-    {
-     "id": "p4",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**David Melear** was promoted to Chief Executive Officer of Provo Canyon School in 2006 ([Woodbury Reports, October 2006, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=30)).",
-     "by": "opus",
-     "verdict": "ok"
-    },
-    {
-     "id": "p7",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**James Murray** was the Director of Business Development of Provo Canyon School in 2006 and 2007. Murray was also the founder and director of Breakthrough Interventions ([Woodbury Reports, October 2006, p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=30)).",
-     "by": "opus",
-     "verdict": "ok"
-    },
-    {
-     "id": "p8",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**Kelly Corey** was a Regional Director of Business Development for Provo Canyon School in 2005 ([Woodbury Reports, January 2006, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0106.pdf#page=31)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Cut to what the cited page says (Dec 2005 item). The record also gives Kelly Corey 'California Director (2006-2009)' and 'Educational Consultant, Paula Feldman'; Woodbury Oct 2009 p. 15 gives both to Kelly Cole, so they went on her line."
-    },
-    {
-     "id": "p9",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**Tim Marshall** became the Director of Business Development of Provo Canyon School in 2009. Marshall had also worked for Brown Schools/[CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) and Cornell Companies ([Woodbury Reports, November 2009, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=11)).",
-     "by": "opus",
-     "verdict": "ok"
-    },
-    {
-     "id": "p10",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**Kelly Cole** was the California Director of Provo Canyon School before joining Paula Feldman as an educational consultant in 2009 ([Woodbury Reports, October 2009, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1009.pdf#page=15)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Added the Paula Feldman detail and year from Woodbury Oct 2009 p. 15 (read), which the network map item lacked. Re-cite pass: removed the network map citation; the line rests on Woodbury Oct 2009 p. 15 alone."
+     "note": "Dates in the list's own M/D/YYYY form, oldest first like the existing list; removed g13 (Narvin Lichfield's defamation suit over the Netflix series, not about this program)."
     }
    ],
    "tense": [
@@ -528,7 +600,17 @@
     "name": "Evoke Entrada",
     "status": "Closed"
    },
-   "ops": [],
+   "ops": [
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Second Nature Entrada later operated under the name Evoke Entrada ([Kids Over Profits](https://kidsoverprofits.org/facility/evoke-entrada-ut/)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "One line for the later name, nothing about Evoke Entrada today; KOP record cited."
+    }
+   ],
    "tense": [
     {
      "id": "t1.1",
@@ -586,73 +668,84 @@
    },
    "ops": [
     {
-     "id": "h3",
+     "id": "h1",
      "op": "set_header_years",
      "years": "2008-2024",
      "by": "haiku",
      "verdict": "ok",
-     "note": "Confirmed: NC DHHS revoked the license May 17, 2024 (WBTV); children were removed in February 2024."
+     "note": "NCDHHS revoked the license on May 17, 2024 (WBTV, opened 2026-10-06)."
     },
     {
-     "id": "s3",
+     "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "On May 17, 2024, the North Carolina Department of Health and Human Services revoked Trails Carolina's license ([WBTV](https://www.wbtv.com/2024/05/17/trails-carolina-license-permanently-revoked-by-ncdhhs/)). In January 2026, news reports described Trails Carolina as closed ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/)).",
+     "text": "On May 17, 2024, the North Carolina Department of Health and Human Services revoked Trails Carolina's license, effective 60 days later ([WBTV](https://www.wbtv.com/2024/05/17/trails-carolina-license-permanently-revoked-by-ncdhhs/)). In January 2026, WSOC TV described Trails Carolina as closed ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/)).",
      "by": "sonnet",
      "verdict": "fixed",
-     "note": "Sonnet's closure line cited a 2026 article for a 2024 closure; added the May 17, 2024 revocation (WBTV, opened). Moved the 2025 and 2026 lawsuits to the lawsuits section (op p1); dropped the Asheville Academy closure sentence (another program)."
+     "note": "Sonnet's \"closed in 2024\" rested on a 2026 article's \"now-closed\". Added the revocation itself: WBTV (opened 2026-10-06) says NCDHHS revoked the license on May 17, 2024, taking effect 60 days later."
     },
     {
-     "id": "p2",
+     "id": "s2",
      "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "Gertie's suit, Siegel v. Trails Carolina, LLC (1:24-cv-00046, U.S. District Court for the Western District of North Carolina), also names the program's owner and manager, Wilderness Training & Consulting, and therapist Derry O'Kane. On August 5, 2024, the court denied the defendants' motions to dismiss and to strike ([court order, W.D.N.C., August 5, 2024](https://law.justia.com/cases/federal/district-courts/north-carolina/ncwdce/1:2024cv00046/115029/49/)).",
-     "by": "opus",
+     "section": "History and Background Information",
+     "text": "In February 2025, a year after the death of a 12-year-old at the program, WLOS reported that state regulators were investigating an unlicensed program run by the same management company ([WLOS](https://foxchattanooga.com/news/local/trails-carolina-therapeutic-camp-death-one-year-transylvania-county-state-investigation-civil-complaints-momentum-unlicensed-program)).",
+     "by": "sonnet",
      "verdict": "fixed",
-     "note": "Re-cite pass: KOP lawsuits page replaced with the court's order (Justia doc 49, read as PDF): names WTC as sole owner and manager, O'Kane as her primary therapist, motions to strike and dismiss denied, signed August 5, 2024."
-    },
-    {
-     "id": "p3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "In June 2024, the autopsy report ruled Clark's death a homicide; he had been sealed in a sleeping bag-like bivy bag on his first night at the program ([Daily Mail](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy)).",
-     "by": "opus",
-     "verdict": "ok"
-    },
-    {
-     "id": "p4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "On October 11, 2024, a young man identified as John Doe M.D.Y. sued Trails Academy, Trails Carolina and their Oregon parent companies, which do business as Family Help & Wellness, in federal court in Asheville (1:24-cv-00253). He had enrolled at 18 in the Trails Momentum young-adult wilderness program and stayed 93 days in 2021; the suit claims he was strip searched on arrival by a staff member who touched his genitals, isolated in a cabin for two weeks, made to do unpaid cleaning, cooking and landscaping, kept in freezing weather with limited food and water, and threatened with arrest if he left. On December 30, 2024, the defendants moved to dismiss or compel arbitration ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails-lawsuit-john-doe.pdf); [defendants' motion](https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe-v-Trails-123024-32-Defendants-ask-for-arbitration.pdf)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: KOP lawsuits page replaced with the complaint (OCR read: strip search touching genitals, two weeks in an isolated cabin, cleaning/cooking/landscaping, freezing boots, threat of arrest, 93 days March-June 2021, age 18, filed 10/11/24) and the 12/30/24 motion to dismiss or compel arbitration."
-    },
-    {
-     "id": "p5",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "The same day, two Florida parents filed a proposed class action against the same defendants (1:24-cv-00254), alleging that the companies misrepresented the Trails Momentum program, which their son attended in 2021, as safe and therapeutic, and seeking repayment of tuition for everyone in the United States who bought the defendants' residential program services ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails2.pdf)).",
-     "by": "opus",
-     "verdict": "fixed",
-     "note": "Re-cite pass: KOP lawsuits page replaced with the class action complaint (read: filed 10/11/24, 1:24-cv-00254, Florida plaintiffs, nationwide class of everyone in the US who bought the defendants' residential program services, tuition)."
+     "note": "Kept the unlicensed-program investigation (the revocation is now in s1); moved the January 2026 lawsuit sentence to the lawsuits section (p5). The article is WLOS's, carried on FOX Chattanooga's site."
     },
     {
      "id": "p1",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "In June 2025, a South Carolina woman filed a federal lawsuit against Asheville Academy for Girls, Trails Carolina and 15 related entities owned by Family Help & Wellness, alleging abuse, humiliation, sexual assault, forced labor and false advertising during her time as a teen resident ([Asheville Watchdog](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/)).\n\nIn January 2026, four young adults filed a federal lawsuit against Wilderness Training & Consulting LLC alleging that they were abused, neglected and forced into unpaid labor while minors at Trails Carolina and Solstice East; the suit claims violations of the federal Trafficking Victims Protection Reauthorization Act ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/)).",
+     "text": "Gertie's suit, Siegel v. Trails Carolina, LLC (1:24-cv-00046, U.S. District Court for the Western District of North Carolina), also names the program's owner and manager, Wilderness Training & Consulting, and therapist Derry O'Kane. On August 5, 2024, the court denied the defendants' motions to dismiss and to strike ([court order, W.D.N.C., August 5, 2024](https://law.justia.com/cases/federal/district-courts/north-carolina/ncwdce/1:2024cv00046/115029/49/)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Moved here from Sonnet's s3 (History section) with Sonnet's wording, which matches the gap summaries."
+     "note": "The entry already tells Gertie's suit; this adds its case name, the other defendants and the August 5, 2024 ruling from the gap (court order on Justia)."
+    },
+    {
+     "id": "p2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "In June 2024, the autopsy report ruled Clark Harman's death a homicide; he had been sealed in a sleeping bag-like bivy bag on his first night at the program ([Daily Mail](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "The entry already describes Clark Harman's death (February 3, 2024); this adds the autopsy ruling and the bivy bag (the restraint) from the Daily Mail article. The death gap's date, February 1, 2024, is wrong (owner's audit: February 3) and is not written."
+    },
+    {
+     "id": "p3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "On October 11, 2024, a young man identified as John Doe M.D.Y. sued Trails Academy, Trails Carolina and their Oregon parent companies, which do business as Family Help & Wellness, in federal court in Asheville (1:24-cv-00253). He had enrolled at 18 in the Trails Momentum young-adult wilderness program and stayed 93 days in 2021; the suit claims he was strip searched on arrival by a staff member who touched his genitals, isolated in a cabin for two weeks, made to do unpaid cleaning, cooking and landscaping, kept in freezing weather with limited food and water, and threatened with arrest if he left. On December 30, 2024, the defendants moved to dismiss or compel arbitration ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails-lawsuit-john-doe.pdf); [defendants' motion](https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe-v-Trails-123024-32-Defendants-ask-for-arbitration.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "From the gap summary, as allegations; cites the complaint and the December 30, 2024 motion in KOP's media library."
+    },
+    {
+     "id": "p4",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "The same day, two Florida parents filed a proposed class action against the same defendants (1:24-cv-00254), alleging that the companies misrepresented the Trails Momentum program, which their son attended in 2021, as safe and therapeutic, and seeking repayment of tuition for everyone in the United States who bought the defendants' residential program services ([complaint](https://kidsoverprofits.org/wp-content/uploads/2024/10/trails2.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "From the gap summary, as allegations."
+    },
+    {
+     "id": "p5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "text": "In June 2025, a South Carolina woman filed a federal lawsuit against Asheville Academy for Girls, Trails Carolina and 15 related entities owned by Family Help & Wellness, alleging abuse, humiliation, sexual assault, forced labor and false advertising during her time as a teen resident ([Asheville Watchdog](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/)).\n\nIn January 2026, four young adults filed a federal lawsuit against Wilderness Training & Consulting LLC alleging that they were abused, neglected and forced into unpaid labor while minors at Trails Carolina and Solstice East; the suit claims violations of the federal Trafficking Victims Protection Reauthorization Act ([WSOC TV](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/); [Asheville Citizen Times](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sonnet skipped the 2025 suit as mainly Asheville Academy's, but it names Trails Carolina as a defendant, so it stays; the January 2026 suit moved here from Sonnet's s2. fbclid tracking tail removed from the Asheville Watchdog link."
     },
     {
      "id": "p6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Beth Venable** became the Referral Relations Director of Trails Carolina in 2012. Venable had worked at Cherokee Creek Boys School for six years, as Family Activity Coordinator, Communication and Development Specialist and head of the Cherokee Creek Family Center ([Woodbury Reports, October 2012, p. 16](https://kidsoverprofits.org/wp-content/uploads/woodbury-1012.pdf#page=16)).",
+     "text": "**Beth Venable** became the Referral Relations Director of Trails Carolina in 2012, after six years at Cherokee Creek Boys School ([Woodbury Reports, October 2012, p. 16](https://kidsoverprofits.org/wp-content/uploads/woodbury-1012.pdf#page=16)). At Cherokee Creek she had been the Communication and Development Specialist ([Woodbury Reports, July 2008, p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)), head of the Cherokee Creek Family Center ([Woodbury Reports, March 2012, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0312.pdf#page=10)) and Family Activity Coordinator/Communicator ([Woodbury Reports, June 2012, p. 9](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0612.pdf#page=9)).",
      "by": "opus",
-     "verdict": "ok"
+     "verdict": "ok",
+     "note": "The October 2012 page gives the new role and \"her last six years at Cherokee Creek Boys School\"; the three Cherokee Creek roles are each cited to the Woodbury issue that names them (July 2008 p. 31, March 2012 p. 10, June 2012 p. 9; read in tmp/woodbury-extract/text)."
     },
     {
      "id": "p7",
@@ -661,24 +754,34 @@
      "text": "**Jeff Johnson** became the Admissions Director of Trails Carolina in 2012 ([Woodbury Reports, November 2012, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1112.pdf#page=11)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Other roles left out on purpose: the record's 20 roles for 'Jeff Johnson' (AMATS, SUWS, Mount Bachelor, Adirondack 2025, ...) look like several people with a common name."
+     "note": "Other roles left out: the record's 20 roles for \"Jeff Johnson\" (AMATS, SunHawk, Aspen, Adirondack 2025, ...) belong to more than one person with this name (owner's audit)."
     },
     {
      "id": "p8",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
-     "text": "**Mark Oerther** worked in admissions at Trails Carolina and was its Admissions Director in 2009 and 2010. Oerther was also the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) and a Clinical Outreach Manager for [InnerChange](https://www.reddit.com/r/troubledteens/wiki/index/innerchange) ([Woodbury Reports, February 2009, p. 21](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0209.pdf#page=21)).",
+     "text": "**Mark Oerther** worked in admissions at Trails Carolina when it began accepting students in 2009 ([Woodbury Reports, February 2009, p. 21](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0209.pdf#page=21)) and was its Admissions Director later that year ([Woodbury Reports, August 2009, p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=19)). Oerther had been the Admissions Director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) ([Woodbury Reports, September 2007, p. 16](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=16)) and later joined InnerChange as a Clinical Outreach Manager ([Woodbury Reports, December 2011, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1211.pdf#page=12)).",
      "by": "opus",
-     "verdict": "ok"
+     "verdict": "ok",
+     "note": "Each role cited to the issue that states it (Feb 2009 p. 21: Admissions; Aug 2009 p. 19: Admissions Director; Sep 2007 p. 16: SUWS of the Carolinas Admissions Director; Dec 2011 p. 12: InnerChange Clinical Outreach Manager)."
     },
     {
-     "id": "h4",
+     "id": "p9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**John L Singleton** was the Director of Business Development of Trails Carolina. Singleton was also the academic director of Stone Mountain School, the Executive Director of [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) (2007-2009), on staff at [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) (2002) and New Leaf Academy of North Carolina (2009), the owner and CEO of Whetstone Academy and Maple Hall Academy, and a member of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) board of directors ([Kids Over Profits](https://kidsoverprofits.org/facility/trails-carolina-nc/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source (the owner's research), cited to the facility page. Whetstone Academy's own bio of Dr. John Singleton says the same about Trails Carolina, Stone Mountain, Cedars Academy and NATSAP."
+    },
+    {
+     "id": "h2",
      "op": "append_to_section",
      "section": "Related Media",
-     "text": "[Shock coroner's report reveals death of boy, 12, at Trails Carolina 'wellness' camp was 'homicide' after he was sealed into sleeping bag-like 'burrito'](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy) (Daily Mail Online, 6/25/2024)\n\n[Federal lawsuit alleges abuse, exploitation of teen at Asheville Academy for Girls, Trails Carolina](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/) (Asheville Watchdog, 6/25/2025)\n\n[New lawsuit claims abuse, neglect at two Asheville-area teen centers](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/) (Asheville Citizen Times, 1/5/2026)\n\n[Federal lawsuit details alleged abuse, coercion at now-closed teen programs](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/) (WSOC TV, 1/7/2026)",
+     "text": "[Shock coroner's report reveals death of boy, 12, at Trails Carolina 'wellness' camp was 'homicide' after he was sealed into sleeping bag-like 'burrito'](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy) (Daily Mail Online, 6/25/2024)\n\n[1 year after 12-year-old's death, advocates urge stricter oversight of therapeutic camps](https://foxchattanooga.com/news/local/trails-carolina-therapeutic-camp-death-one-year-transylvania-county-state-investigation-civil-complaints-momentum-unlicensed-program) (WLOS, 2/4/2025)\n\n[Federal lawsuit alleges abuse, exploitation of teen at Asheville Academy for Girls, Trails Carolina](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/) (Asheville Watchdog, 6/25/2025)\n\n[New lawsuit claims abuse, neglect at two Asheville-area teen centers](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/) (Asheville Citizen Times, 1/5/2026)\n\n[Federal lawsuit details alleged abuse, coercion at now-closed teen programs](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/) (WSOC TV, 1/7/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Dates in the list's M/D/YYYY form, oldest first; removed the fbclid tracking tail from the Asheville Watchdog URL; removed g8 (WLOS on Asheville Academy's closure, a different program)."
+     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so they go there in that form. Removed g8 and g10 (Asheville Academy's closure and a death there: a different program) and the fbclid tail."
     }
    ],
    "tense": [
@@ -795,29 +898,47 @@
     {
      "id": "p1",
      "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "** Chris Christianson** was the Executive Director of Turn-About Ranch in 2013 ([Woodbury Reports, December 2013, p. 3](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1213.pdf#page=3)).",
+     "section": "Abuse/Neglect Allegations and Lawsuits",
+     "text": "On February 24, 2021, Hannah Archuleta, a former resident, filed a lawsuit against Turn-About Ranch. The suit claims that a staff member sexually assaulted her and that the ranch took no action after she reported it ([The Sun](https://www.thesun.co.uk/tvandshowbiz/14176941/dr-phil-guest-sexually-assaulted-ranch-hannah-archuleta/)), and that staff punished her after she reported it ([People](https://people.com/music/bhad-bhabie-says-she-was-abused-camp-she-was-sent-to-dr-phil/)).",
      "by": "opus",
-     "verdict": "fixed",
-     "note": "No years for Rose and Rust at Turn-About Ranch, so 'worked as a' rather than 'is the current' (the entry names other current holders of both roles). Re-cite pass: removed Melodie Rose and Dayna Rust, known only from the KOP network map (no court record, news article or state document found; only a contact-broker profile for Rust). Christianson kept: cited to the Woodbury Reports issue in KOP's media library."
+     "verdict": "ok",
+     "note": "The entry mentions Hannah's video and lists the Tribune article, but its lawsuits section does not describe the suit. From the two gap summaries (The Sun: filed February 24, 2021, sexual assault by a staff member, no action after she reported it; People: retaliation by staff)."
     },
     {
      "id": "p2",
-     "op": "append_to_section",
-     "section": "Abuse/Neglect Allegations and Lawsuits",
-     "text": "On February 24, 2021, Hannah Archuleta, a former resident, filed a lawsuit against Turn-About Ranch. The suit claims that she was sexually assaulted by a staff member and that the ranch did not act after she reported it ([The Sun](https://www.thesun.co.uk/tvandshowbiz/14176941/dr-phil-guest-sexually-assaulted-ranch-hannah-archuleta/)), and that she was punished by staff after reporting it ([People](https://people.com/music/bhad-bhabie-says-she-was-abused-camp-she-was-sent-to-dr-phil/)).",
-     "by": "opus",
-     "verdict": "ok",
-     "note": "The entry lists articles on this suit but its lawsuits section did not describe it."
-    },
-    {
-     "id": "p3",
      "op": "append_to_section",
      "section": "In the Media",
      "text": "In March 2021, BuzzFeed News published an investigation of the Dr. Phil show's practice of referring guests, including minors, to residential programs such as Turn-About Ranch ([BuzzFeed News](https://www.buzzfeednews.com/article/scaachikoul/dr-phil-mcgraw-mental-health-danielle-bregoli)).",
      "by": "opus",
      "verdict": "ok",
-     "note": ""
+     "note": "From the gap summary."
+    },
+    {
+     "id": "p3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Chris Christianson** was the Executive Director of Turn-About Ranch in 2013 ([Woodbury Reports, December 2013, p. 3](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1213.pdf#page=3)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Woodbury December 2013 p. 3 (visit report) names \"Chris Christianson the Executive Director\"."
+    },
+    {
+     "id": "p4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Melodie Rose** worked as the Program Director of Turn-About Ranch. Rose was also the Executive Director of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) in 2006 ([Kids Over Profits](https://kidsoverprofits.org/facility/turn-about-ranch-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source, cited to the facility page. No years at Turn-About Ranch, so \"worked as\". A Woodbury announcement of December 2006 names Dr. Melodie Rose Executive Director of Aspen Ranch, but that issue is not in the media library to cite."
+    },
+    {
+     "id": "p5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dayna Rust** worked as the Clinical Director of Turn-About Ranch. Rust was also the assistant clinical director of New Haven RTC and the program director of Youth Care of Utah ([Kids Over Profits](https://kidsoverprofits.org/facility/turn-about-ranch-ut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "KOP's own record is the source, cited to the facility page. No years; the entry names ReNae Singletary as the current Clinical Director, so \"worked as\"."
     }
    ],
    "tense": [],
@@ -836,40 +957,49 @@
    },
    "ops": [
     {
-     "id": "o1",
-     "op": "append_to_section",
-     "section": "History and Background Information",
-     "text": "Until 2003 the program was run by The Brown Schools, Inc. as The Brown Schools at Laurel Ridge ([Kids Over Profits](https://kidsoverprofits.org/facility/laurel-ridge-treatment-center-rtc-tx/)). It was one of six inpatient behavioral health facilities that Psychiatric Solutions, Inc. bought from The Brown Schools in April 2003 for $63.0 million in cash; Psychiatric Solutions listed it with 196 licensed beds ([Psychiatric Solutions, Inc., Form 10-K for 2003](https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)). Universal Health Services completed its acquisition of Psychiatric Solutions in November 2010 ([Universal Health Services, Form 10-K for 2010](https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)).",
-     "by": "opus",
-     "verdict": "ok",
-     "note": "Added at the owner's request (the entry never said the program belonged to The Brown Schools). The 2003 10-K text read: six facilities from The Brown Schools for $63.0 million in cash; Laurel Ridge, San Antonio, 196 licensed beds, acquired 4/03. The UHS 10-K for 2010 read: \"In November, 2010, we completed the acquisition of Psychiatric Solutions, Inc.\" (its summary does not name Laurel Ridge, so the sentence does not either). The name \"The Brown Schools at Laurel Ridge\" is cited to KOP's record (the owner's research); the 10-K supports the Brown Schools ownership."
-    },
-    {
      "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "In April 2026, KSAT reported that Laurel Ridge faced termination of its Medicare and Medicaid agreements after federal and state investigations into repeated safety violations, including staffing shortages that left patients waiting up to six hours to be checked in, and unsecured items that could be used for self-injury. Medicare and Medicaid payment for newly admitted patients was set to end on April 30, 2026 ([KSAT](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/)). Later that month, KSAT reported that the facility would lay off nearly 650 employees, effective June 26, after being cut off from Medicaid and Medicare payments ([KSAT](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/)).",
+     "text": "Laurel Ridge Treatment Center was formerly called The Brown Schools at Laurel Ridge ([Kids Over Profits](https://kidsoverprofits.org/facility/laurel-ridge-treatment-center-rtc-tx/)). It is operated by Universal Health Services (UHS) ([Kids Over Profits](https://kidsoverprofits.org/operator/universal-health-services/)).",
      "by": "sonnet",
-     "verdict": "fixed",
-     "note": "Kept the two closure-news sentences, wording checked against the KSAT article (waits of up to six hours to be checked in; unsecured items usable for self-injury; payment for new admissions ends April 30). Moved the Jacob Cuellar sentence (g8) to Founders and Notable Staff as p1."
+     "verdict": "ok",
+     "note": "Both facts are KOP's own record (the owner's research), cited to the facility and company pages."
     },
     {
      "id": "p1",
      "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "** Jacob Cuellar** is a former CEO of Laurel Ridge Treatment Center. In June 2025, KSAT reported that he had been arrested in North Carolina on six child sexual abuse charges involving offenses alleged to have occurred between 2001 and 2008, and that he also faced a pending charge in Bexar County, Texas, of continuous sexual abuse of a child ([KSAT 12 News](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/)).",
+     "section": "History and Background Information",
+     "text": "Laurel Ridge was one of six inpatient behavioral health facilities that Psychiatric Solutions, Inc. bought from The Brown Schools, Inc. in April 2003 for $63.0 million in cash; Psychiatric Solutions listed it with 196 licensed beds ([Psychiatric Solutions, Inc., Form 10-K for 2003](https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)). Universal Health Services completed its acquisition of Psychiatric Solutions in November 2010 ([Universal Health Services, Form 10-K for 2010](https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Moved here from s1: the section was empty and the article is about a former CEO. Charges confirmed in the KSAT article (six Durham County counts, two minors, 2001 to 2008; Bexar County continuous sexual abuse of a child under 14, awaiting trial). Written as charges, not findings."
+     "note": "The Brown Schools history the owner asked for in the first pilot, written again: the 2003 Psychiatric Solutions 10-K (opened 2026-10-06) says \"In April 2003, we consummated the acquisition of six inpatient behavioral health care facilities from The Brown Schools, Inc. ... for $63.0 million in cash\" and lists Laurel Ridge, San Antonio, 196 licensed beds, acquired 4/03. The UHS 10-K sentence (November 2010) was checked in the first pilot. The entry already names Psychiatric Solutions as the parent company in 2006."
+    },
+    {
+     "id": "s2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "In April 2026, KSAT reported that Laurel Ridge faced termination of its Medicare and Medicaid agreements after federal and state investigations into repeated safety violations ([KSAT](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/)), and that nearly 650 employees were to be laid off, effective June 26 ([KSAT](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "Each clause matches the two KSAT summaries (termination after federal and state investigations into repeated safety violations; nearly 650 layoffs effective June 26)."
     },
     {
      "id": "p2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jacob Cuellar** is a former CEO of Laurel Ridge Treatment Center. In June 2025, KSAT reported that he had been arrested in North Carolina on six child sexual abuse charges involving offenses alleged to have occurred between 2001 and 2008, and that he also faced a pending charge in Bexar County, Texas, of continuous sexual abuse of a child ([KSAT 12 News](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sonnet skipped this as not about the program; a former CEO facing child sex abuse charges belongs in the staff section, which was empty. Written as charges only, from the KSAT summary; the 1999 conviction in the summary left out."
+    },
+    {
+     "id": "p3",
      "op": "append_to_section",
      "section": "Abuse Allegations, Deaths, and Lawsuits",
      "text": "### **State Inspection Findings**\n\nIn a report dated March 18, 2021, Texas inspectors found that staff were aware of allegations made by a child in care of inappropriate touching by a staff member (Texas licensing inspection report, March 18, 2021).\n\nIn a report dated October 28, 2024, Texas inspectors found that allegations of inappropriate sexual comments made by a staff member were not reported to Licensing in a timely manner (Texas licensing inspection report, October 28, 2024).\n\nIn a report dated November 27, 2024, Texas inspectors found that a child in care was injured during an unnecessary restraint in which excessive physical force was used (Texas licensing inspection report, November 27, 2024).\n\nIn a report dated December 26, 2025, Texas inspectors found that a child in care had used a ribbon to attempt to hang themselves (Texas licensing inspection report, December 26, 2025).\n\nIn a report dated December 27, 2025, Texas inspectors found that requests and consults submitted by nursing staff were declined, and the child had to be sent to the emergency room (Texas licensing inspection report, December 27, 2025).",
      "by": "opus",
      "verdict": "ok",
-     "note": "One line per finding, oldest first, each a close paraphrase of the report excerpt in gaps.json, cited by the gap's cite_text."
+     "note": "One line per finding, oldest first, close paraphrase of each excerpt, cited by the report's state and date."
     },
     {
      "id": "h1",
@@ -878,7 +1008,7 @@
      "text": "[Ex-Laurel Ridge Treatment Center CEO faces 6 child sex charges in North Carolina, records indicate](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/) (KSAT 12 News, 6/10/2025)\n\n[Laurel Ridge Treatment Center faces Medicare, Medicaid termination over safety violations](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/) (KSAT, 4/17/2026)\n\n[Nearly 650 Laurel Ridge Treatment Center employees to be laid off](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/) (KSAT, 4/27/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Put in date order like the existing list (oldest first) and dropped the leading blank line; format matches the entry's '[Title](url) (Outlet, m/d/yyyy)' lines."
+     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles directly under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so the three links go there in that form."
     }
    ],
    "tense": [],
