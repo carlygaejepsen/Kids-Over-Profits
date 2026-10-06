@@ -1,0 +1,1082 @@
+{
+ "about": "NC inspection rows the old nc_scraper.py matcher filed wrongly (2026-10-06): adult-only facilities, one facility stored under several licences, wrong licence numbers. Applied by api/clean-nc-inspections.php.",
+ "delete": [
+  {
+   "id": 6719,
+   "name": "#3831 Staunton",
+   "license": "MHL-039-071",
+   "programs": [
+    "27G.5600F"
+   ]
+  },
+  {
+   "id": 6985,
+   "name": "A Caring Heart Independence Center-Clinton",
+   "license": "MHL-082-100",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 8561,
+   "name": "A Caring Heart Independence Center-Goldsboro",
+   "license": "MHL-096-290",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6586,
+   "name": "A Clear Path Group Home",
+   "license": "MHL-013-253",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6599,
+   "name": "A Clear Path Group Home",
+   "license": "MHL-018-109",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 8450,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-372",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6700,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-416",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6704,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-424",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6707,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-431",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6708,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-432",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6709,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-433",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6711,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-435",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6712,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-437",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6713,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-438",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6715,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-442",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6716,
+   "name": "Achieve Learning Center-Gastonia",
+   "license": "MHL-036-444",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6658,
+   "name": "Americares Health Services  (dba)  House of Blessings@",
+   "license": "MHL-035-094",
+   "programs": [
+    "27G.5600A"
+   ]
+  },
+  {
+   "id": 6674,
+   "name": "Belmont Group Home",
+   "license": "MHL-036-353",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6591,
+   "name": "Better Connections Midland Ct.",
+   "license": "MHL-013-267",
+   "programs": [
+    "27G.5600F"
+   ]
+  },
+  {
+   "id": 6568,
+   "name": "BlueWest Opportunities-Swannanoa Residential",
+   "license": "MHL-011-460",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6635,
+   "name": "Break Out  LLC",
+   "license": "MHL-032-641",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6938,
+   "name": "Brookwood",
+   "license": "MHL-076-149",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6753,
+   "name": "C&M Family Care Services  LLC.",
+   "license": "MHL-041-1341",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6868,
+   "name": "C&M Family Care Services  LLC.",
+   "license": "MHL-060-1633",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6904,
+   "name": "CASCADE Services",
+   "license": "MHL-060-982",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6813,
+   "name": "Carolina Outreach  LLC",
+   "license": "MHL-059-129",
+   "programs": [
+    "27G.4400"
+   ]
+  },
+  {
+   "id": 6605,
+   "name": "Carolinas Home Care Agency  Inc.",
+   "license": "MHL-024-105",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6794,
+   "name": "Clayton Family Home Care",
+   "license": "MHL-051-237",
+   "programs": [
+    "27G.5600F"
+   ]
+  },
+  {
+   "id": 6741,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1306",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6743,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1315",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6744,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1323",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6745,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1329",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6746,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1330",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6747,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1334",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6749,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1337",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6750,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1338",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6751,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1339",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6752,
+   "name": "Crossroads Treatment Center of Greensboro  P.C.",
+   "license": "MHL-041-1340",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6663,
+   "name": "Dorothy's Place",
+   "license": "MHL-036-296",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 7011,
+   "name": "Easter Seals UCP NC  Raleigh Group Home",
+   "license": "MHL-092-963",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6796,
+   "name": "Easter Seals UCP-Zebulon Group Home",
+   "license": "MHL-051-242",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 8491,
+   "name": "Erwin #2 Group Home",
+   "license": "MHL-043-108",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6569,
+   "name": "Fairview House",
+   "license": "MHL-011-461",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6614,
+   "name": "Fayetteville Treatment Center",
+   "license": "MHL-026-1005",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6615,
+   "name": "Fayetteville Treatment Center",
+   "license": "MHL-026-1006",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6616,
+   "name": "Fayetteville Treatment Center",
+   "license": "MHL-026-1009",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6781,
+   "name": "Fayetteville Treatment Center",
+   "license": "MHL-047-184",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6947,
+   "name": "First Image Inc. Grace Court",
+   "license": "MHL-078-229",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6933,
+   "name": "Greenville Loop Group Home",
+   "license": "MHL-074-292",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6934,
+   "name": "Greenville Loop Group Home",
+   "license": "MHL-074-297",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6554,
+   "name": "Haw River Group Home",
+   "license": "MHL-001-279",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6942,
+   "name": "Hope House",
+   "license": "MHL-078-150",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6777,
+   "name": "Hope Mills Home",
+   "license": "MHL-047-103",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6639,
+   "name": "IMPACT of the Piedmont-Sanford House",
+   "license": "MHL-033-146",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6980,
+   "name": "Independent Living Group Home at Old Salisbury Road",
+   "license": "MHL-080-251",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6981,
+   "name": "Independent Living Group Home at Old Salisbury Road",
+   "license": "MHL-080-253",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6593,
+   "name": "Lakewood",
+   "license": "MHL-013-270",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6957,
+   "name": "Lumberton Treatment Center",
+   "license": "MHL-078-346",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6563,
+   "name": "Mary Benson House",
+   "license": "MHL-011-384",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6587,
+   "name": "Monroe Road",
+   "license": "MHL-013-258",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6941,
+   "name": "Our House",
+   "license": "MHL-078-045",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6928,
+   "name": "Paradigm  Inc.",
+   "license": "MHL-074-255",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6931,
+   "name": "Paradigm  Inc.",
+   "license": "MHL-074-276",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6954,
+   "name": "Positive Progress Services Adult Center",
+   "license": "MHL-078-338",
+   "programs": [
+    "27G.1200"
+   ]
+  },
+  {
+   "id": 8500,
+   "name": "RAPHA Healthcare Services-Mooresville",
+   "license": "MHL-049-176",
+   "programs": [
+    "27G.4400",
+    "27G.4500"
+   ]
+  },
+  {
+   "id": 7001,
+   "name": "REDEC Palace",
+   "license": "MHL-090-234",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6788,
+   "name": "RHCC Cambridge Place Casaworks & Perinatal",
+   "license": "MHL-051-150",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6986,
+   "name": "Rainbow 66 Storehouse  Inc.",
+   "license": "MHL-083-029",
+   "programs": [
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 9067,
+   "name": "Redec Palace Concord Ave",
+   "license": "MHL-013-270",
+   "programs": [
+    "27G.5600C"
+   ]
+  },
+  {
+   "id": 6906,
+   "name": "SEIC Candor",
+   "license": "MHL-062-047",
+   "programs": [
+    "27G.5600A"
+   ]
+  },
+  {
+   "id": 7005,
+   "name": "SLHC Residential Program for Women and Children",
+   "license": "MHL-092-461",
+   "programs": [
+    "27G.3700",
+    "27G.4100",
+    "27G.4400",
+    "27G.4500"
+   ]
+  },
+  {
+   "id": 6799,
+   "name": "Skill Creations of Kinston",
+   "license": "MHL-054-198",
+   "programs": [
+    "27G.2100"
+   ]
+  },
+  {
+   "id": 6871,
+   "name": "The Center for Spiritual Emergence & Katharos Sanctuary",
+   "license": "MHL-060-1638",
+   "programs": [
+    "27G.1100",
+    "27G.3600",
+    "27G.3700",
+    "27G.4400",
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6925,
+   "name": "The Village II",
+   "license": "MHL-074-086",
+   "programs": [
+    "27G.4100"
+   ]
+  },
+  {
+   "id": 6774,
+   "name": "The Willows at Red Oak Recovery",
+   "license": "MHL-045-149",
+   "programs": [
+    "27G.4400",
+    "27G.4500",
+    "27G.5400"
+   ]
+  },
+  {
+   "id": 6889,
+   "name": "Villages of Hope Haven",
+   "license": "MHL-060-381",
+   "programs": [
+    "27G.4100",
+    "27G.4300"
+   ]
+  },
+  {
+   "id": 6641,
+   "name": "Wilson Home",
+   "license": "MHL-033-148",
+   "programs": [
+    "27G.5600F"
+   ]
+  },
+  {
+   "id": 7019,
+   "name": "Wilson Home",
+   "license": "MHL-098-216",
+   "programs": [
+    "27G.5600F"
+   ]
+  },
+  {
+   "id": 8439,
+   "name": "Winston-Salem Comprehensive Treatment Center",
+   "license": "MHL-034-319",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6654,
+   "name": "Winston-Salem Comprehensive Treatment Center",
+   "license": "MHL-034-435",
+   "programs": [
+    "27G.3600"
+   ]
+  },
+  {
+   "id": 6655,
+   "name": "Winston-Salem Comprehensive Treatment Center",
+   "license": "MHL-034-437",
+   "programs": [
+    "27G.3600"
+   ]
+  }
+ ],
+ "merge": [
+  {
+   "keep": 6573,
+   "drop": 6576,
+   "name": "A Place of My Own  LLC",
+   "drop_license": "MHL-013-229"
+  },
+  {
+   "keep": 6573,
+   "drop": 6577,
+   "name": "A Place of My Own  LLC",
+   "drop_license": "MHL-013-232"
+  },
+  {
+   "keep": 6573,
+   "drop": 6978,
+   "name": "A Place of My Own  LLC",
+   "drop_license": "MHL-080-248"
+  },
+  {
+   "keep": 6573,
+   "drop": 6979,
+   "name": "A Place of My Own  LLC",
+   "drop_license": "MHL-080-249"
+  },
+  {
+   "keep": 6846,
+   "drop": 6874,
+   "name": "A Step in the Right Direction LLC",
+   "drop_license": "MHL-060-1642"
+  },
+  {
+   "keep": 6582,
+   "drop": 6590,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-013-264"
+  },
+  {
+   "keep": 6582,
+   "drop": 6592,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-013-268"
+  },
+  {
+   "keep": 6582,
+   "drop": 6856,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1600"
+  },
+  {
+   "keep": 6582,
+   "drop": 6857,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1603"
+  },
+  {
+   "keep": 6582,
+   "drop": 6860,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1615"
+  },
+  {
+   "keep": 6582,
+   "drop": 6862,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1621"
+  },
+  {
+   "keep": 6582,
+   "drop": 6864,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1626"
+  },
+  {
+   "keep": 6582,
+   "drop": 6866,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1629"
+  },
+  {
+   "keep": 6582,
+   "drop": 6867,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1632"
+  },
+  {
+   "keep": 6582,
+   "drop": 6870,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1637"
+  },
+  {
+   "keep": 6582,
+   "drop": 6872,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1639"
+  },
+  {
+   "keep": 6582,
+   "drop": 6873,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1640"
+  },
+  {
+   "keep": 6582,
+   "drop": 6875,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1643"
+  },
+  {
+   "keep": 6582,
+   "drop": 6877,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1646"
+  },
+  {
+   "keep": 6582,
+   "drop": 6878,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1647"
+  },
+  {
+   "keep": 6582,
+   "drop": 6879,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1649"
+  },
+  {
+   "keep": 6582,
+   "drop": 6880,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1655"
+  },
+  {
+   "keep": 6582,
+   "drop": 6881,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1656"
+  },
+  {
+   "keep": 6582,
+   "drop": 6882,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1660"
+  },
+  {
+   "keep": 6582,
+   "drop": 6883,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1661"
+  },
+  {
+   "keep": 6582,
+   "drop": 6884,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "drop_license": "MHL-060-1665"
+  },
+  {
+   "keep": 6801,
+   "drop": 6930,
+   "name": "Amani Residential/Human Services  Inc.",
+   "drop_license": "MHL-074-267"
+  },
+  {
+   "keep": 6990,
+   "drop": 6999,
+   "name": "Anderson Health Services-Simmons",
+   "drop_license": "MHL-090-231"
+  },
+  {
+   "keep": 6680,
+   "drop": 6702,
+   "name": "Aubrey's Safe Haven",
+   "drop_license": "MHL-036-418"
+  },
+  {
+   "keep": 6737,
+   "drop": 6740,
+   "name": "Bridge 2 Success Group Home",
+   "drop_license": "MHL-041-1298"
+  },
+  {
+   "keep": 6778,
+   "drop": 6558,
+   "name": "Cornerstone Treatment Facility",
+   "drop_license": "MHL-004-016"
+  },
+  {
+   "keep": 6670,
+   "drop": 6675,
+   "name": "Cosby Counseling & Consulting  PLLC",
+   "drop_license": "MHL-036-357"
+  },
+  {
+   "keep": 6767,
+   "drop": 6912,
+   "name": "Family Advantage  LLC",
+   "drop_license": "MHL-066-024"
+  },
+  {
+   "keep": 6581,
+   "drop": 6671,
+   "name": "Harmony House",
+   "drop_license": "MHL-036-347"
+  },
+  {
+   "keep": 6645,
+   "drop": 6648,
+   "name": "Inspirationz",
+   "drop_license": "MHL-034-379"
+  },
+  {
+   "keep": 6845,
+   "drop": 6876,
+   "name": "Johnny B's  LLC",
+   "drop_license": "MHL-060-1645"
+  },
+  {
+   "keep": 6948,
+   "drop": 6955,
+   "name": "Johnson Center I",
+   "drop_license": "MHL-078-339"
+  },
+  {
+   "keep": 6548,
+   "drop": 6550,
+   "name": "Just In Time Youth Services",
+   "drop_license": "MHL-001-169"
+  },
+  {
+   "keep": 6548,
+   "drop": 6553,
+   "name": "Just In Time Youth Services",
+   "drop_license": "MHL-001-253"
+  },
+  {
+   "keep": 6837,
+   "drop": 6969,
+   "name": "Life-Way Homes  LLC",
+   "drop_license": "MHL-080-230"
+  },
+  {
+   "keep": 6837,
+   "drop": 6971,
+   "name": "Life-Way Homes  LLC",
+   "drop_license": "MHL-080-234"
+  },
+  {
+   "keep": 6636,
+   "drop": 6637,
+   "name": "Michael's Angels Home of Healing  LLC",
+   "drop_license": "MHL-033-143"
+  },
+  {
+   "keep": 6636,
+   "drop": 6638,
+   "name": "Michael's Angels Home of Healing  LLC",
+   "drop_license": "MHL-033-144"
+  },
+  {
+   "keep": 6636,
+   "drop": 6640,
+   "name": "Michael's Angels Home of Healing  LLC",
+   "drop_license": "MHL-033-147"
+  },
+  {
+   "keep": 6844,
+   "drop": 6594,
+   "name": "Next Level Family Solutions  LLC",
+   "drop_license": "MHL-013-273"
+  },
+  {
+   "keep": 6844,
+   "drop": 6595,
+   "name": "Next Level Family Solutions  LLC",
+   "drop_license": "MHL-013-274"
+  },
+  {
+   "keep": 6683,
+   "drop": 6656,
+   "name": "No Limits Resdential Care  LLC",
+   "drop_license": "MHL-034-439"
+  },
+  {
+   "keep": 6618,
+   "drop": 6622,
+   "name": "Precious Haven  Inc.",
+   "drop_license": "MHL-026-924"
+  },
+  {
+   "keep": 6618,
+   "drop": 6624,
+   "name": "Precious Haven  Inc.",
+   "drop_license": "MHL-026-959"
+  },
+  {
+   "keep": 6618,
+   "drop": 6779,
+   "name": "Precious Haven  Inc.",
+   "drop_license": "MHL-047-155"
+  },
+  {
+   "keep": 6710,
+   "drop": 6858,
+   "name": "Renewed Beginnings Home  Inc.",
+   "drop_license": "MHL-060-1608"
+  },
+  {
+   "keep": 6785,
+   "drop": 6798,
+   "name": "Safe Haven",
+   "drop_license": "MHL-054-196"
+  },
+  {
+   "keep": 6668,
+   "drop": 6723,
+   "name": "Serenity House",
+   "drop_license": "MHL-041-1142"
+  },
+  {
+   "keep": 6668,
+   "drop": 6787,
+   "name": "Serenity House",
+   "drop_license": "MHL-049-182"
+  },
+  {
+   "keep": 6768,
+   "drop": 6769,
+   "name": "Sierra's Residential Services  Inc.",
+   "drop_license": "MHL-043-039"
+  },
+  {
+   "keep": 6768,
+   "drop": 6770,
+   "name": "Sierra's Residential Services  Inc.",
+   "drop_license": "MHL-043-050"
+  },
+  {
+   "keep": 7013,
+   "drop": 6657,
+   "name": "Skyywell Health Inc.",
+   "drop_license": "MHL-035-093"
+  },
+  {
+   "keep": 7013,
+   "drop": 6659,
+   "name": "Skyywell Health Inc.",
+   "drop_license": "MHL-035-095"
+  },
+  {
+   "keep": 6953,
+   "drop": 6956,
+   "name": "Southeastern Integrated Care  LLC",
+   "drop_license": "MHL-078-340"
+  },
+  {
+   "keep": 6559,
+   "drop": 6910,
+   "name": "The Brown Home - A Caring Hands Site",
+   "drop_license": "MHL-064-175"
+  },
+  {
+   "keep": 6714,
+   "drop": 6869,
+   "name": "The Kid's Workshop",
+   "drop_license": "MHL-060-1636"
+  },
+  {
+   "keep": 6714,
+   "drop": 6885,
+   "name": "The Kid's Workshop",
+   "drop_license": "MHL-060-1667"
+  },
+  {
+   "keep": 6714,
+   "drop": 6887,
+   "name": "The Kid's Workshop",
+   "drop_license": "MHL-060-1669"
+  },
+  {
+   "keep": 6625,
+   "drop": 6627,
+   "name": "Viringia's Group Home",
+   "drop_license": "MHL-026-992"
+  },
+  {
+   "keep": 6611,
+   "drop": 6606,
+   "name": "Whiteville Group Home",
+   "drop_license": "MHL-024-130"
+  }
+ ],
+ "relabel": [
+  {
+   "id": 6582,
+   "name": "Alexander Youth Network - Charlotte Day Treatment",
+   "from": "MHL-013-245",
+   "to": ""
+  },
+  {
+   "id": 6778,
+   "name": "Cornerstone Treatment Facility",
+   "from": "MHL-047-131",
+   "to": "MHL-004-016"
+  },
+  {
+   "id": 6977,
+   "name": "Rockwell Development Center Day Treatment",
+   "from": "MHL-080-247",
+   "to": ""
+  },
+  {
+   "id": 6714,
+   "name": "The Kid's Workshop",
+   "from": "MHL-036-441",
+   "to": ""
+  }
+ ]
+}
