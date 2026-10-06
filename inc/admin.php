@@ -1472,6 +1472,55 @@ function kop_apply_directory_folder_links() {
  * skipped, so the step is idempotent and never removes a name.
  */
 /**
+ * Two records merged on deploy (seeds/facility-merges.json), for a pair the
+ * Merge Duplicates screen never offers. Each runs once: only while both
+ * records are on file under the names given and the dropped one was never
+ * merged; logged like a merge from the screen, so its Merged tab can undo it.
+ */
+function kop_apply_facility_merge_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/facility-merges.json';
+    if (!file_exists($path) || !function_exists('kop_fmerge_do_merge')) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    $pdo     = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    $prefix = kop_seed_v2_prefix($pdo);
+    if ($prefix === null) {
+        return $done;
+    }
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $name = $pdo->prepare('SELECT unique_name FROM facilities_v2 WHERE id = ?');
+    foreach ($entries as $e) {
+        $keep = (int) ($e['keep'] ?? 0);
+        $drop = (int) ($e['drop'] ?? 0);
+        $merged = kop_facility_merged_into();
+        if (!$keep || !$drop || $keep === $drop || isset($merged['ids'][$drop])) {
+            continue;
+        }
+        $name->execute(array($keep));
+        $k = $name->fetchColumn();
+        $name->execute(array($drop));
+        $d = $name->fetchColumn();
+        if ($k !== (string) ($e['keep_name'] ?? '') || $d !== (string) ($e['drop_name'] ?? '')) {
+            continue;
+        }
+        try {
+            $done[] = kop_fmerge_do_merge($pdo, $prefix, $keep, $drop, 'seed');
+        } catch (Throwable $ex) {
+            error_log('kop_apply_facility_merge_seeds: ' . $ex->getMessage());
+        }
+    }
+    if ($done && function_exists('kop_fmerge_flush')) {
+        kop_fmerge_flush();
+    }
+    return $done;
+}
+
+/**
  * Company records added offline (seeds/operator-records.json). Each entry is
  * created once, the way KOP Tools creates a company (kop_v2_save_form_project),
  * when no company has its name, then tied to the facility records it lists in
@@ -2284,6 +2333,7 @@ function kop_apply_template_assignments() {
     $summary['facilities']   = kop_apply_facility_record_seeds();
     $summary['operators']    = kop_apply_operator_alias_seeds();
     $summary['companies']    = kop_apply_operator_record_seeds();
+    $summary['merges']       = kop_apply_facility_merge_seeds();
     $summary['directory_folders'] = kop_apply_directory_folder_links();
     $summary['new_facilities'] = kop_apply_new_facility_seeds();
     if (function_exists('kop_facility_v2_request_sync')) {
@@ -2359,7 +2409,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '104';
+    $version = '105';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
