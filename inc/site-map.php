@@ -222,7 +222,7 @@ if (!function_exists('kop_site_map_section_titles')) {
             'reading'     => array('More articles', ''),
             'profiles'    => array('Written program profiles', 'Programs with a profile written by our researchers.'),
             'posts'       => array('Posts by category', ''),
-            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs, and kept apart from its records: institutional abuse of Indigenous children in government and church schools, and programs for adults 18 and older.'),
+            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs: institutional abuse of Indigenous children in government and church schools. Each page says where its history meets the troubled teen industry\'s and where it does not.'),
             'take-part'   => array('Take part', 'Send us what you know, volunteer or support the work.'),
             'about'       => array('About and legal', ''),
             'other'       => array('More pages', ''),
@@ -249,8 +249,10 @@ if (!function_exists('kop_site_map_template_sections')) {
             'page-referrer-index.php'          => 'records',
             'page-transporter-index.php'       => 'records',
             'page-provider-index.php'          => 'records',
-            // Not the TTI: their own labelled section.
-            'page-young-adult-programs.php'    => 'outside',
+            // Programs for adults 18+ are part of the industry (often the next
+            // step after a teen program), so they sit with the directories.
+            'page-young-adult-programs.php'    => 'records',
+            // Not the TTI: its own labelled section.
             'page-indian-boarding-schools.php' => 'outside',
             'page-memorial.php'                => 'records',
             'page-inspection-reports.php'      => 'inspections',

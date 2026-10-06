@@ -167,7 +167,8 @@ php api/scan-new-facilities.php --ids=502         # on the server: dry run; "app
 # Indigenous residential schools (inc/indigenous-schools.php): their own records, never TTI facilities; listed on
 # /indian-boarding-schools/ with their articles, managed at KOP Data Tools > Indigenous Schools (Move here, news scan names)
 php scripts/test-indigenous-schools.php          # the first move and the page, on an in-memory copy of tmp/prod.sqlite
-# Young adult programs (18+, inc/young-adult-programs.php): their own records, never TTI facilities; listed on
+# Young adult programs (18+, inc/young-adult-programs.php): part of the industry (same companies, often the next step after a teen
+# program), but kept in their own records, not facilities_v2; never grouped with the Indigenous schools as "outside the TTI"; listed on
 # /young-adult-programs/, managed at KOP Tools > Young Adult Programs, filled from Woodbury Facts' "Young adult programs (18+)" tab
 php scripts/test-young-adult-programs.php       # records, facts + exact undo, every no-record Woodbury item, the page
 php scripts/test-young-adult-move.php           # the first move of 18+ facility records, on an in-memory copy (sync the mirror first)
@@ -404,7 +405,7 @@ to the program aggregate otherwise.
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
 - `news_facility_candidates` / `news_facility_scans` - Every facility name from the news with no record and what the scan decided (created, matched, possible duplicate, provider, not a facility), one row per name, and which articles it has read (`inc/facility-discovery.php`)
 - `indigenous_schools` / `indigenous_school_news` - Indian boarding, residential and mission schools, kept out of the facility tables (never on facility pages, hubs, map, search or open data), and which articles are about each (school_id 0 = the schools in general); the news scan files a school it finds as `review = 'pending'` (`inc/indigenous-schools.php`)
-- `young_adult_programs` - Programs for people 18 and older, kept out of the facility tables like the Indigenous schools; `facts` is a JSON list of Woodbury items, each citing its issue page (`inc/young-adult-programs.php`; `ya` on `{prefix}kop_woodbury_facts` marks a no-record program's items for its tab)
+- `young_adult_programs` - Programs for people 18 and older, connected to the industry but kept in their own table, out of the facility tables; `facts` is a JSON list of Woodbury items, each citing its issue page (`inc/young-adult-programs.php`; `ya` on `{prefix}kop_woodbury_facts` marks a no-record program's items for its tab)
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)

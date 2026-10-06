@@ -208,12 +208,12 @@ check('an index article holds its own children', $titles_in($history['children']
 check('Survivors holds its article', $titles_in($s['hubs']['items'][1]['children']) === array('Common Survivor Experiences'));
 check('an article no hub holds is under More articles', $titles_in($s['reading']['items']) === array('An Article Nobody Placed'));
 check('placed articles are not listed twice', !in_array('Precursors in Antiquity', $titles_in($s['reading']['items']), true));
-check('directories: parent companies route + directory + map', $titles_in($s['records']['items']) === array('Network Map', 'Parent companies', 'TTI Program Index'));
+check('directories: parent companies route + directory + map + 18+ programs (part of the industry)', $titles_in($s['records']['items']) === array('Network Map', 'Parent companies', 'TTI Program Index', 'Young Adult Programs'));
 check('inspections', $titles_in($s['inspections']['items']) === array('Inspection Reports', 'Utah Inspection Reports'));
 check('places', $titles_in($s['places']['items']) === array('Mexico', 'Wyoming'));
 check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'TTI News Feed'));
 check('reference (links by slug)', $titles_in($s['reference']['items']) === array('Links', 'Report Abuse', 'TTI Glossary'));
-check('schools and 18+ programs are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools', 'Young Adult Programs')
+check('boarding schools are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools')
     && stripos($s['outside']['title'], 'outside the troubled teen industry') !== false);
 check('take part', $titles_in($s['take-part']['items']) === array('Donate'));
 check('about (contact by slug)', $titles_in($s['about']['items']) === array('Contact', 'Privacy Policy'));
