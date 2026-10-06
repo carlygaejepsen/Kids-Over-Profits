@@ -1294,6 +1294,17 @@ workflow; anything that runs on the server later goes through
    review inbox source with candidates (one click, or
    `kop_facility_finder_field()`), saving through
    `api/link-wiki-facility.php`. Operator entries link to `kop_operators`.
+   Built 2026-10-05: `inc/wiki-updates.php` + review inbox source
+   `wiki-links` (tabs One clear match / Pick the record / No record found /
+   Linked here / Set aside; tool "Link every clear match"; Undo restores the
+   entry's old link from option `kop_wiki_link_log`). Matching: name, past,
+   other and current names inside the entry's states, then every
+   distinctive word of the name in the same state (town words never count);
+   pages with no years or place match only an exact name or a company. On
+   the 2026-10-05 mirror: 415 current entries (334 programs, 21 topic
+   pages, 9 companies, 51 lists), 56 already linked, 225 clear, 25 to pick,
+   41 with no record. **Owner:** open Wiki links, press "Link every clear
+   match", then pick the 25.
 2. **Gaps per entry** (script, `scripts/wiki-gaps.php`, offline against
    `tmp/prod.sqlite`). For each linked entry, `kop_facility_page_data()`
    against the entry's markdown, into `tmp/wiki-updates/gaps/<id>.json`:
@@ -1306,6 +1317,12 @@ workflow; anything that runs on the server later goes through
    contradicts the entry (open vs closed, different years) is marked
    `conflict`, never written over. `tmp/wiki-updates/report.md` counts
    gaps by kind and lists the entries with the most.
+   Built 2026-10-05: `scripts/wiki-gaps.php`, `scripts/test-wiki-gaps.php`.
+   An entry about an earlier name of its record (Integrity House RTC, now
+   Havenwood Academy) gets "Later operated as", nothing about today's
+   status or operator, and only items dated in its own years. Staff: leaders
+   as `staff`, others only with a career elsewhere (`staff_other`). First
+   run (linked + clear entries): 268 compared, 214 with gaps, 9 conflicts.
 3. **Drafts** (subagents, per the table). Haiku makes the mechanical
    edits, Sonnet writes the new paragraphs, Opus checks the whole new
    entry against the gap file and the sources and returns a verdict per

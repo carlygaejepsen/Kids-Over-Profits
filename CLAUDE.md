@@ -132,6 +132,12 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-follow
 # -> js/data/reddit-wiki/live-compare.json (commit it) -> editor index badge + /wiki-feed/ note; no result = no mark
 python scripts/reddit-wiki-live.py fetch [--slugs a b] [--refresh] && python scripts/reddit-wiki-live.py compare [--list]   # sync tmp/prod.sqlite first
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, live-result states
+# Wiki entries brought up to date from KOP (docs/PLAN.md 3.12, inc/wiki-updates.php): each entry (newest row per Reddit page) is
+# linked to its facilities_v2 record at KOP Tools > Review inbox > Wiki links (wiki_submissions.facility_unique_name, 'suggested',
+# Undo); gaps = what kop_facility_page_data() holds that the entry's markdown lacks (closure, names, operator, news, lawsuits,
+# deaths, approved findings, incidents, staff); an entry about an earlier name gets only its own years, never today's status
+php -d extension=pdo_sqlite -d extension=mbstring scripts/wiki-gaps.php [--id=471] [--list]   # -> tmp/wiki-updates/{links.json,gaps/<id>.json,report.md}
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php                 # helpers, matching, gaps on real entries
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
