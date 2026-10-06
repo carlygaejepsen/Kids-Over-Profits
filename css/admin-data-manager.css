@@ -126,6 +126,31 @@
 .dm-cat-referrers { background: var(--kop-teal-fill, #24757F); }
 .dm-cat-transporters { background: var(--kop-orange-fill, #A3570D); }
 .dm-cat-locations { background: #666; }
+.dm-cat-providers { background: var(--kop-bubblegum-pink-fill, #CC0587); }
+.dm-cat-facilities { background: var(--kop-midnight-blue, #000435); }
+.dm-cat-young_adult { background: var(--kop-chartreuse-ink, #5C7401); }
+.dm-cat-indigenous_schools { background: var(--kop-text-muted, #4A5568); }
+
+/* Designation tag (home of / program / waiting for review) and page link */
+.dm-designation {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 1px 6px;
+    vertical-align: middle;
+    background: var(--kop-mint-green, #B6E3D4);
+    color: var(--kop-midnight-blue, #000435);
+}
+.dm-designation-program { background: var(--kop-soft-pastel-yellow, #FFF5CB); }
+.dm-designation-pending { background: var(--kop-sand, #F2EEDF); }
+a.dm-page-link, a.dm-page-link:visited { font-size: 0.78rem; color: var(--kop-teal-ink, #24757F); }
+a.dm-page-link:hover, a.dm-page-link:focus { color: var(--kop-midnight-blue, #000435); }
+
+/* Designation dialog */
+.dm-desig-block { border: 1px solid rgba(0,4,53,0.15); border-radius: 8px; padding: 10px 12px; margin: 12px 0; background: #fff; }
+.dm-desig-block legend { font-weight: 700; padding: 0 4px; color: var(--kop-midnight-blue, #000435); }
+.dm-desig-chosen { margin: 6px 0 10px; }
 
 .dm-wiki-confirmed { color: #1b7e3c; font-weight: 600; }
 .dm-wiki-suggested { color: #b8860b; font-weight: 600; }

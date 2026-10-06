@@ -6,7 +6,8 @@
  * A unified admin screen for managing master records: rename / change ID,
  * edit the document-library folder ID, move a record to a different category,
  * reassign a nested facility between operators, repoint/confirm/unlink wiki
- * links, and delete records.
+ * links, delete records, and set a facility record's designation (home of a
+ * program, young adult program, Indian boarding school).
  *
  * Backed by api/data-manager.php (+ save-master.php, facility-picker.php,
  * link-wiki-facility.php, facility-search.php). Admin-only.
@@ -21,9 +22,11 @@ get_header();
     <header class="kop-dm-head">
         <h1>Data Manager</h1>
         <p class="kop-dm-sub">
-            Search every master record across all categories. Use the row actions to rename
-            (change ID), edit the document-library folder ID, move a record to a different
-            category, reassign a facility, manage wiki links, or delete.
+            Search every record across all categories: companies, each facility record, young adult
+            programs and Indian boarding schools. Use the row actions to rename, edit the
+            document-library folder ID, move a company to a different category, reassign a facility,
+            manage wiki links, or delete. A facility's Designation says what it is: its own program,
+            a home of a program, a young adult program (18+) or an Indian boarding school.
         </p>
     </header>
 
@@ -32,6 +35,10 @@ get_header();
         <select id="dmCategory" class="kop-dm-category">
             <option value="">All categories</option>
             <option value="companies">Companies / Operators</option>
+            <option value="facilities">Facilities (each record)</option>
+            <option value="program_homes">Programs and their homes</option>
+            <option value="young_adult">Young adult programs (18+)</option>
+            <option value="indigenous_schools">Indian boarding schools</option>
             <option value="referrers">Referrers</option>
             <option value="transporters">Transporters</option>
             <option value="providers">Mental Health Providers</option>

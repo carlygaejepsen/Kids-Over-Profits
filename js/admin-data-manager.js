@@ -27,11 +27,17 @@
 
     var CATEGORY_LABELS = {
         companies: 'Company',
+        facilities: 'Facility',
+        program_homes: 'Facility',
+        young_adult: 'Young adult program (18+)',
+        indigenous_schools: 'Indian boarding school',
         referrers: 'Referrer',
         transporters: 'Transporter',
         providers: 'Mental Health Provider',
         locations: 'Location'
     };
+
+    function icon(name) { return (typeof kopIcon === 'function') ? kopIcon(name) : ''; }
 
     var state = { q: '', category: '', limit: 50, offset: 0, total: 0, items: [] };
 
@@ -130,6 +136,23 @@
         return (row.matched_kind === 'past' ? 'Formerly ' : row.matched_kind === 'current' ? 'Now known as ' : 'Also known as ') + row.matched_name;
     }
 
+    // Name cell: name, stub/designation tags, place, companies, alias hit, page link.
+    function nameCellHtml(it) {
+        var sub = [];
+        if (it.kind === 'facility' || it.kind === 'young_adult' || it.kind === 'indigenous_school') {
+            sub.push([it.place, it.status && it.status !== 'Unknown' ? it.status : '', '#' + it.id].filter(Boolean).join(' · '));
+            if (it.companies && it.companies.length) sub.push('Company: ' + it.companies.join(', '));
+        } else {
+            sub.push(it.unique_name);
+        }
+        return esc(it.display_name || it.unique_name) +
+            (it.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
+            (it.designation ? ' <span class="dm-designation dm-designation-' + esc(it.home_role || it.review || 'x') + '">' + esc(it.designation) + '</span>' : '') +
+            sub.map(function (s) { return '<div class="dm-uniquename">' + esc(s) + '</div>'; }).join('') +
+            (it.matched_name ? '<div class="dm-muted">' + esc(aliasLabel(it)) + '</div>' : '') +
+            (it.page_url ? '<div><a class="dm-page-link" href="' + esc(it.page_url) + '" target="_blank" rel="noopener">View page</a></div>' : '');
+    }
+
     // ---- table render ----
     function badge(category) {
         return '<span class="dm-cat dm-cat-' + esc(category) + '">' +
@@ -188,12 +211,9 @@
             var tr = el('tr');
             var facCell = it.facility_count > 0
                 ? '<button type="button" class="dm-fac-toggle" aria-expanded="false">▶ ' + esc(it.facility_count) + '</button>'
-                : '<span class="dm-muted">0</span>';
+                : '<span class="dm-muted">' + (it.kind === 'operator' || it.kind === 'legacy' || !it.kind ? '0' : '—') + '</span>';
             tr.innerHTML =
-                '<td class="dm-name">' + esc(it.display_name || it.unique_name) +
-                    (it.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
-                    '<div class="dm-uniquename">' + esc(it.unique_name) + '</div>' +
-                    (it.matched_name ? '<div class="dm-muted">' + esc(aliasLabel(it)) + '</div>' : '') + '</td>' +
+                '<td class="dm-name">' + nameCellHtml(it) + '</td>' +
                 '<td>' + badge(it.category) + '</td>' +
                 '<td class="dm-mono">#' + esc(it.id) + '</td>' +
                 '<td class="dm-center dm-fac-cell">' + facCell + '</td>' +
@@ -209,16 +229,29 @@
 
             var actions = el('td', 'dm-actions');
             var actionDefs = [];
-            // Auto-link only makes sense for actual programs, not location aggregates.
-            if (it.category !== 'locations') actionDefs.push([((typeof kopIcon === 'function') ? kopIcon('sparkles') + ' ' : '') + 'Auto', 'auto']);
-            actionDefs.push(
-                ['Rename', 'rename'],
-                ['Doc ID', 'docfolder'],
-                ['Category', 'category'],
-                ['Reassign', 'reassign'],
-                ['Wiki', 'wiki'],
-                ['Delete', 'delete']
-            );
+            if (it.kind === 'facility') {
+                // One facility record: what it is (its own program, a home of a
+                // program, young adult program, Indian boarding school), plus edits.
+                actionDefs.push(
+                    ['Designation', 'designation'],
+                    ['Rename', 'rename'],
+                    ['Doc ID', 'docfolder'],
+                    ['Wiki', 'wiki']
+                );
+            } else if (it.kind === 'young_adult' || it.kind === 'indigenous_school') {
+                actionDefs.push(['Rename', 'rename'], ['Edit details', 'edit']);
+            } else {
+                // Auto-link only makes sense for actual programs, not location aggregates.
+                if (it.category !== 'locations') actionDefs.push([icon('sparkles') + ' Auto', 'auto']);
+                actionDefs.push(
+                    ['Rename', 'rename'],
+                    ['Doc ID', 'docfolder'],
+                    ['Category', 'category'],
+                    ['Reassign', 'reassign'],
+                    ['Wiki', 'wiki'],
+                    ['Delete', 'delete']
+                );
+            }
             actionDefs.forEach(function (a) {
                 var label = a[0];
                 var cls = 'dm-act dm-act-' + a[1].replace(/\W/g, '');
@@ -300,16 +333,20 @@
                         (f.facility_id ? ' <span class="dm-id">id ' + esc(f.facility_id) + '</span>' : '') +
                         (f.document_folder_id ? ' <span class="dm-fac-doc">' + ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' ' + esc(f.document_folder_id) + '</span>' : '') +
                         (f.wiki_count ? ' <span class="dm-fac-wiki">' + ((typeof kopIcon === 'function') ? kopIcon('link') : '') + ' ' + esc(f.wiki_count) + '</span>' : '') +
+                        (f.designation ? ' <span class="dm-designation dm-designation-' + esc(f.home_role || 'x') + '">' + esc(f.designation) + '</span>' : '') +
+                        (f.page_url ? ' <a class="dm-page-link" href="' + esc(f.page_url) + '" target="_blank" rel="noopener">View page</a>' : '') +
                         '</span>';
                     var acts = el('span', 'dm-fac-item-acts');
-                    [
+                    (f.facility_id ? [['designation', 'Designation', function () {
+                        openDesignation(f.facility_id, f.name, function () { loadFacilitySubrows(operator, container); });
+                    }]] : []).concat([
                         ['auto', ((typeof kopIcon === 'function') ? kopIcon('sparkles') + ' ' : '') + 'Auto', function () { facilityAuto(operator, f, container); }],
                         ['rename', 'Rename', function () { facilityRename(operator, f, container); }],
                         ['docfolder', 'Doc ID', function () { facilityDocFolder(operator, f, container); }],
                         ['wiki', 'Wiki', function () { facilityWiki(operator, f, container); }],
                         ['move', 'Move', function () { facilityReassign(operator, f, container); }],
                         ['delete', 'Delete', function () { facilityDelete(operator, f, container); }]
-                    ].forEach(function (a) {
+                    ]).forEach(function (a) {
                         var key = a[0], label = a[1], handler = a[2];
                         var cls = 'dm-act';
                         if (key === 'delete') cls += ' dm-act-delete';
@@ -516,6 +553,15 @@
 
     // ---- actions ----
     function handleAction(kind, item) {
+        if (kind === 'designation') {
+            return openDesignation(item.id, item.display_name || item.unique_name, function (res) {
+                if (res && res.moved) { removeRowDom(item); state.total = Math.max(0, state.total - 1); renderPagination(); }
+                else refreshRow(item);
+            });
+        }
+        if (kind === 'edit') { window.open(item.admin_url, '_blank', 'noopener'); return; }
+        if (kind === 'rename' && item.kind && item.kind !== 'operator' && item.kind !== 'legacy') return actionRenameRecord(item);
+        if (kind === 'docfolder' && item.kind === 'facility') return actionDocFolder(item, true);
         if (kind === 'auto') return actionAuto(item);
         if (kind === 'rename') return actionRename(item);
         if (kind === 'docfolder') return actionDocFolder(item);
@@ -580,11 +626,7 @@
                         setStatus(esc(res.data.message || 'Renamed.'), 'ok');
                         // Update this row in place; keep everything else as-is.
                         item.unique_name = newName;
-                        if (item._nameCell) {
-                            item._nameCell.innerHTML = esc(item.display_name || newName) +
-                                (item.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
-                                '<div class="dm-uniquename">' + esc(newName) + '</div>';
-                        }
+                        if (item._nameCell) item._nameCell.innerHTML = nameCellHtml(item);
                         setTimeout(closeModal, 800);
                     } else {
                         setStatus(esc((res.data && (res.data.error || res.data.message)) || 'Rename failed.'), 'error');
@@ -594,7 +636,200 @@
         });
     }
 
-    function actionDocFolder(item) {
+    // asRecord: one facility record (facilities_v2 id), saved by data-manager.php
+    // so a company with the same unique name is never the one changed.
+    // Rename a facility record, young adult program or Indian boarding school
+    // (its shown name; a facility keeps its unique name, so links stay).
+    function actionRenameRecord(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<label>New name</label>' +
+            '<input type="text" class="dm-rename-input" value="' + esc(item.display_name || item.unique_name) + '">' +
+            '<div class="dm-form-actions">' +
+            '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Rename</button></div>';
+        openModal('Rename: ' + (item.display_name || item.unique_name), body);
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        body.querySelector('.dm-confirm').addEventListener('click', function () {
+            var newName = body.querySelector('.dm-rename-input').value.trim();
+            if (!newName || newName === item.display_name) { setStatus('Enter a different name.', 'error'); return; }
+            setStatus('Renaming…');
+            postJson(API.manager, { action: 'rename_record', kind: item.kind, id: item.id, new_name: newName })
+                .then(function (res) {
+                    if (res.data && res.data.success) {
+                        setStatus(esc(res.data.message || 'Renamed.'), 'ok');
+                        item.display_name = newName;
+                        if (item.kind !== 'facility') item.unique_name = newName;
+                        if (item._nameCell) item._nameCell.innerHTML = nameCellHtml(item);
+                        setTimeout(closeModal, 800);
+                    } else {
+                        setStatus(esc((res.data && res.data.error) || 'Rename failed.'), 'error');
+                    }
+                })
+                .catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    // Re-read one facility row's designation after a change, in place.
+    function refreshRow(item) {
+        getJson(API.manager + '?action=get_designation&facility_id=' + encodeURIComponent(item.id))
+            .then(function (d) {
+                if (!d || !d.success) return;
+                item.home_role = d.role;
+                item.designation = d.role === 'home' ? 'Home of ' + d.program_name
+                    : d.role === 'program' ? 'Program: ' + d.homes.length + ' home' + (d.homes.length === 1 ? '' : 's') : '';
+                if (item._nameCell) item._nameCell.innerHTML = nameCellHtml(item);
+            }).catch(function () {});
+    }
+
+    // ---- designation of one facility record ----
+    // Its own program (the default), a home of a program (Program Homes: keeps
+    // its record, listed on the program's page; Undo here), a young adult
+    // program (18+) or an Indian boarding school (both move it out of the
+    // facility records into their own lists). onDone(result) after a change.
+    function openDesignation(fid, label, onDone) {
+        var body = el('div', 'dm-form dm-designation-form');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Designation: ' + label, body);
+        getJson(API.manager + '?action=get_designation&facility_id=' + encodeURIComponent(fid))
+            .then(function (d) {
+                if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this record.') + '</p>'; return; }
+                renderDesignation(body, d, onDone);
+            })
+            .catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+    }
+
+    function renderDesignation(body, d, onDone) {
+        var now = d.role === 'home'
+            ? 'A <strong>home of ' + esc(d.program_name) + '</strong> (record #' + esc(d.program_id) + '). It keeps its own record and page, and is listed on the program\'s page.'
+            : d.role === 'program'
+                ? 'A <strong>program</strong> with ' + d.homes.length + ' home' + (d.homes.length === 1 ? '' : 's') + ' listed under it: ' +
+                    d.homes.map(function (h) { return esc(h.name); }).join(', ') + '.'
+                : 'Its <strong>own program</strong> (a TTI facility record, not a home of another program).';
+        var html = '<p>' + esc(d.name) + ' is now: ' + now + '</p>';
+        if (d.page_url) html += '<p><a href="' + esc(d.page_url) + '" target="_blank" rel="noopener">View its page</a></p>';
+
+        if (d.role === 'program') {
+            html += '<p class="dm-muted">A program\'s homes are managed at KOP Tools &gt; Program Homes. Take its homes off there before giving this record another designation.</p>';
+        } else if (d.homes_available) {
+            html += '<fieldset class="dm-desig-block"><legend>Home of a program</legend>' +
+                '<p class="dm-muted">For a licensed home or cottage that belongs to one program. It stays its own record (inspections, page); the program\'s page lists it with its news, lawsuits and findings.</p>' +
+                '<label>Program record</label><div class="dm-desig-finder"></div>' +
+                '<div class="dm-desig-chosen dm-muted">No program record picked.</div>' +
+                '<label>or a new program named</label><input type="text" class="dm-desig-newname" placeholder="e.g. Newport Academy">' +
+                '<div class="dm-form-actions">' +
+                (d.role === 'home' ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-desig-nothome">Not a home: its own program</button>' : '') +
+                '<button type="button" class="kop-dm-btn dm-desig-home">' + (d.role === 'home' ? 'Move to this program' : 'Make it a home of this program') + '</button></div>' +
+                '</fieldset>';
+        }
+        if (d.role !== 'program' && (d.young_adult_available || d.schools_available)) {
+            html += '<fieldset class="dm-desig-block"><legend>Not a TTI facility</legend>' +
+                '<p class="dm-muted">These move the record out of the facility records into its own list: off the directory, map, search and facility pages. ' +
+                'A record with a lawsuit linked (or, for young adult programs, an article) is refused until that is sorted out by hand. There is no one-click undo.</p>' +
+                '<div class="dm-form-actions">' +
+                (d.young_adult_available ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-desig-ya">Young adult program (18+)</button>' : '') +
+                (d.schools_available ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-desig-school">Indian boarding / residential school</button>' : '') +
+                '</div></fieldset>';
+        }
+        body.innerHTML = html;
+
+        var picked = null;
+
+        function send(payload, confirmText) {
+            if (confirmText && !confirm(confirmText)) return;
+            payload.action = 'set_designation';
+            payload.facility_id = d.facility_id;
+            setStatus('Saving…');
+            postJson(API.manager, payload).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not done.'), 'error'); return; }
+                setStatus(esc(res.data.message), 'ok');
+                if (onDone) onDone(res.data);
+                if (res.data.moved) { body.innerHTML = '<p class="dm-status-ok">' + esc(res.data.message) + '</p>'; return; }
+                showUndo(res.data.undo, res.data.message);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        }
+
+        function showUndo(undo, message) {
+            body.innerHTML = '<p class="dm-status-ok">' + esc(message) + '</p>' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-desig-undo">Undo</button>' +
+                '<button type="button" class="kop-dm-btn dm-done">Done</button></div>';
+            body.querySelector('.dm-done').addEventListener('click', closeModal);
+            body.querySelector('.dm-desig-undo').addEventListener('click', function () {
+                var p = { action: 'undo_home' };
+                Object.keys(undo || {}).forEach(function (k) { p[k] = undo[k]; });
+                setStatus('Undoing…');
+                postJson(API.manager, p).then(function (res) {
+                    if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Undo failed.'), 'error'); return; }
+                    setStatus(esc(res.data.message), 'ok');
+                    if (onDone) onDone(res.data);
+                    body.innerHTML = '<p class="dm-status-ok">' + esc(res.data.message) + '</p>';
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            });
+        }
+
+        var finderHost = body.querySelector('.dm-desig-finder');
+        if (finderHost) {
+            var chosen = body.querySelector('.dm-desig-chosen');
+            finderHost.appendChild(buildFacilityFinder(function (f) {
+                if (f.id === d.facility_id) { chosen.innerHTML = '<span class="dm-error">Pick the program\'s own record, not this one.</span>'; return; }
+                picked = f;
+                chosen.classList.remove('dm-muted');
+                chosen.innerHTML = 'Program: <strong>' + esc(f.name) + '</strong> #' + esc(f.id) +
+                    (f.designation ? ' <span class="dm-muted">(' + esc(f.designation) + ')</span>' : '');
+            }));
+            body.querySelector('.dm-desig-home').addEventListener('click', function () {
+                var newName = body.querySelector('.dm-desig-newname').value.trim();
+                if (!picked && !newName) { setStatus('Pick the program\'s record, or type a name for a new one.', 'error'); return; }
+                send(picked ? { designation: 'home', program_id: picked.id } : { designation: 'home', program_name: newName });
+            });
+            var notHome = body.querySelector('.dm-desig-nothome');
+            if (notHome) notHome.addEventListener('click', function () { send({ designation: 'not_home' }); });
+        }
+        var yaBtn = body.querySelector('.dm-desig-ya');
+        if (yaBtn) yaBtn.addEventListener('click', function () {
+            send({ designation: 'young_adult' }, 'Move ' + d.name + ' out of the facility records into Young Adult Programs (18+)? It stops being a facility record.');
+        });
+        var schoolBtn = body.querySelector('.dm-desig-school');
+        if (schoolBtn) schoolBtn.addEventListener('click', function () {
+            send({ designation: 'indigenous_school' }, 'Move ' + d.name + ' out of the facility records into Indian boarding schools? It stops being a facility record.');
+        });
+    }
+
+    // Search facility records by name, past name or id (data-manager.php
+    // find_facility = the admin facility finder). onPick(facility).
+    function buildFacilityFinder(onPick) {
+        var wrap = el('div', 'dm-progsearch');
+        var input = el('input', 'dm-progsearch-input');
+        input.type = 'search';
+        input.placeholder = 'Search facility records by name…';
+        var results = el('div', 'dm-progsearch-results');
+        wrap.appendChild(input);
+        wrap.appendChild(results);
+        input.addEventListener('input', debounce(function () {
+            var q = input.value.trim();
+            if (q.length < 2) { results.innerHTML = ''; return; }
+            results.innerHTML = '<div class="dm-muted">Searching…</div>';
+            getJson(API.manager + '?action=find_facility&q=' + encodeURIComponent(q))
+                .then(function (d) {
+                    results.innerHTML = '';
+                    if (!d || !d.success || !d.results || !d.results.length) { results.innerHTML = '<div class="dm-muted">No matches.</div>'; return; }
+                    d.results.forEach(function (f) {
+                        var said = f.matched ? aliasLabel({ matched_name: f.matched, matched_kind: f.matched_kind }) : '';
+                        var meta = [said, [f.city, f.state || f.country].filter(Boolean).join(', '), f.status, f.designation].filter(Boolean).join(' · ');
+                        var b = el('button', 'dm-progsearch-row',
+                            '<strong>' + esc(f.name) + '</strong>' + (meta ? ' <span class="dm-muted">' + esc(meta) + '</span>' : '') +
+                            ' <span class="dm-id">#' + esc(f.id) + '</span>');
+                        b.type = 'button';
+                        b.addEventListener('click', function () { results.innerHTML = ''; input.value = f.name; onPick(f); });
+                        results.appendChild(b);
+                    });
+                })
+                .catch(function () { results.innerHTML = '<div class="dm-error">Search failed.</div>'; });
+        }, 250));
+        return wrap;
+    }
+
+    function actionDocFolder(item, asRecord) {
         var body = el('div', 'dm-form');
         body.innerHTML =
             '<p class="dm-muted">FileBird folder for this record\'s document library. Browse to pick one, or leave blank to clear.</p>' +
@@ -629,8 +864,11 @@
         body.querySelector('.dm-cancel').addEventListener('click', closeModal);
         body.querySelector('.dm-confirm').addEventListener('click', function () {
             var val = body.querySelector('.dm-doc-input').value.trim();
+            var folder = val === '' ? null : parseInt(val, 10);
             setStatus('Saving…');
-            postJson(API.picker, { action: 'set_doc_folder', unique_name: item.unique_name, document_folder_id: val === '' ? null : parseInt(val, 10) })
+            (asRecord
+                ? postJson(API.manager, { action: 'set_record_doc_folder', kind: 'facility', id: item.id, document_folder_id: folder })
+                : postJson(API.picker, { action: 'set_doc_folder', unique_name: item.unique_name, document_folder_id: folder }))
                 .then(function (res) {
                     if (res.data && res.data.success) {
                         setStatus('Saved.', 'ok');

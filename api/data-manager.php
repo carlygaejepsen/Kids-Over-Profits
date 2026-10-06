@@ -23,6 +23,19 @@
  * GET  ?action=get_wiki_links&unique_name=...
  *      Wiki entries (submissions + master) linked to one program.
  *
+ *      list also takes category=facilities (each facilities_v2 record),
+ *      program_homes (programs and their homes), young_adult and
+ *      indigenous_schools; every row carries a 'kind' (operator, legacy,
+ *      facility, young_adult, indigenous_school).
+ *
+ * GET  ?action=get_designation&facility_id=   what one facility record is now
+ * GET  ?action=find_facility&q=               facility records by name (admin finder)
+ *
+ * POST {action:"set_designation", facility_id, designation: home|not_home|
+ *       young_adult|indigenous_school, program_id?, program_name?}
+ * POST {action:"undo_home", facility_id, program_id, before, before_name, new_group}
+ * POST {action:"rename_record"|"set_record_doc_folder", kind, id, new_name?|document_folder_id?}
+ *
  * POST {action:"move_category", unique_name, target_category}
  *      Move a record between facilities/referrers/transporters/providers tables.
  *
@@ -61,6 +74,12 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
     echo json_encode(['success' => false, 'error' => 'Admin access required.']);
     exit;
 }
+
+// The v2 helpers (kop_v2_writes_active() and the rest). Loaded here, not
+// lazily inside kop_dm_v2_prefix(): PHP looks a function up before it
+// evaluates the arguments, so kop_v2_writes_active($pdo, kop_dm_v2_prefix($pdo))
+// failed with "undefined function" whenever nothing had loaded this file yet.
+require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -325,7 +344,6 @@ function kop_dm_find_record(PDO $pdo, array $tables, string $uniqueName): ?array
 function kop_dm_v2_prefix(PDO $pdo): string {
     static $prefix = null;
     if ($prefix === null) {
-        require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
         $prefix = kop_v2_detect_prefix($pdo);
     }
     return $prefix;
@@ -388,6 +406,220 @@ function kop_dm_facility_unique_name(PDO $pdo, int $facilityId): ?string {
     $stmt->execute([$facilityId]);
     $name = $stmt->fetchColumn();
     return $name === false ? null : (string)$name;
+}
+
+// ---------------------------------------------------------------------------
+// Designations: each facility record, programs and their homes
+// (inc/program-homes.php), young adult programs (inc/young-adult-programs.php)
+// and Indian boarding schools (inc/indigenous-schools.php). The last two are
+// their own tables, never facility records.
+// ---------------------------------------------------------------------------
+
+/** Categories that are not one of the legacy master tables, with their row kind. */
+$EXTRA_CATEGORIES = [
+    'facilities'         => 'facility',
+    'program_homes'      => 'facility',
+    'young_adult'        => 'young_adult',
+    'indigenous_schools' => 'indigenous_school',
+];
+
+/** facilities_v2 id => name. */
+function kop_dm_v2_names(PDO $pdo, array $ids): array {
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    if (!$ids) return [];
+    $out = [];
+    $rows = $pdo->query('SELECT id, name, unique_name FROM facilities_v2 WHERE id IN (' . implode(',', $ids) . ')')->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($rows as $r) {
+        $out[(int)$r['id']] = (string)($r['name'] !== '' && $r['name'] !== null ? $r['name'] : $r['unique_name']);
+    }
+    return $out;
+}
+
+function kop_dm_homes_ready(): bool {
+    return function_exists('kop_program_homes_ready') && kop_program_homes_ready();
+}
+
+/**
+ * What a facility record is in Program Homes: {role: 'home'|'program'|'',
+ * program_id, program_name, homes: [{id, name}]}.
+ */
+function kop_dm_home_role(PDO $pdo, int $fid): array {
+    $out = ['role' => '', 'program_id' => null, 'program_name' => '', 'homes' => []];
+    if (!kop_dm_homes_ready()) return $out;
+    if ($in = kop_program_homes_program_of($fid)) {
+        $out['role'] = 'home';
+        $out['program_id'] = (int)$in[0];
+        $out['program_name'] = kop_dm_v2_names($pdo, [(int)$in[0]])[(int)$in[0]] ?? ('#' . (int)$in[0]);
+    } elseif ($homes = kop_program_homes_homes_of($fid)) {
+        $out['role'] = 'program';
+        $names = kop_dm_v2_names($pdo, $homes);
+        foreach ($homes as $h) $out['homes'][] = ['id' => (int)$h, 'name' => $names[(int)$h] ?? ('#' . (int)$h)];
+    }
+    return $out;
+}
+
+/** "Home of X" / "Program: N homes" / '' for a list row. */
+function kop_dm_designation_label(array $role): string {
+    if ($role['role'] === 'home') return 'Home of ' . $role['program_name'];
+    if ($role['role'] === 'program') return 'Program: ' . count($role['homes']) . ' home' . (count($role['homes']) === 1 ? '' : 's');
+    return '';
+}
+
+function kop_dm_facility_url(int $fid): string {
+    return function_exists('kop_facility_page_url') ? (string)kop_facility_page_url($fid) : '';
+}
+
+/**
+ * List rows for facilities_v2 records matching $q (name, unique name, or a
+ * past/other name); $homesOnly keeps programs and their homes. The heavier
+ * fields (folder, companies, designation) are filled for one page only by
+ * kop_dm_enrich_facility_items().
+ */
+function kop_dm_facility_items(PDO $pdo, string $q, bool $homesOnly): array {
+    $sql = 'SELECT id, unique_name, name, city, state, country, status' . ($q !== '' ? ', json_data' : '') . ' FROM facilities_v2';
+    $params = [];
+    if ($q !== '') {
+        $sql .= ' WHERE name LIKE ? OR unique_name LIKE ? OR json_data LIKE ?';
+        $params = ['%' . $q . '%', '%' . $q . '%', '%' . $q . '%'];
+    }
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+
+    $keep = null;
+    if ($homesOnly) {
+        $keep = [];
+        if (kop_dm_homes_ready()) {
+            $map = kop_program_homes_map();
+            foreach (array_keys($map['homes']) as $id) $keep[(int)$id] = true;
+            foreach (array_keys($map['programs']) as $id) $keep[(int)$id] = true;
+        }
+    }
+
+    $items = [];
+    while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $id = (int)$r['id'];
+        if ($keep !== null && !isset($keep[$id])) continue;
+        $name = (string)($r['name'] !== '' && $r['name'] !== null ? $r['name'] : $r['unique_name']);
+        $aka = null;
+        if ($q !== '' && mb_stripos($name, $q) === false && mb_stripos((string)$r['unique_name'], $q) === false) {
+            $doc = json_decode((string)$r['json_data'], true);
+            $aka = is_array($doc) ? kop_dm_alias_hit(['facilities' => [$doc]], $q) : null;
+            if (!$aka) continue; // the phrase was only in other text
+        }
+        $items[] = [
+            'id'                 => $id,
+            'unique_name'        => (string)$r['unique_name'],
+            'category'           => 'facilities',
+            'kind'               => 'facility',
+            'table'              => 'facilities_v2',
+            'display_name'       => $name,
+            'place'              => trim(implode(', ', array_filter([(string)$r['city'], (string)($r['state'] ?: $r['country'])]))),
+            'status'             => (string)$r['status'],
+            'facility_count'     => 0,
+            'document_folder_id' => null,
+            'is_stub'            => false,
+            'matched_name'       => $aka ? $aka[0] : null,
+            'matched_kind'       => $aka ? $aka[1] : null,
+        ];
+    }
+    return $items;
+}
+
+/** Folder, companies, designation and page link for the facility rows of one page. */
+function kop_dm_enrich_facility_items(PDO $pdo, array &$items): void {
+    $ids = [];
+    foreach ($items as $it) {
+        if (($it['kind'] ?? '') === 'facility') $ids[] = (int)$it['id'];
+    }
+    if (!$ids) return;
+    $in = implode(',', $ids);
+    $folders = [];
+    foreach ($pdo->query("SELECT id, json_data FROM facilities_v2 WHERE id IN ($in)")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        $doc = json_decode((string)$r['json_data'], true);
+        if (is_array($doc) && !empty($doc['documentFolderId'])) $folders[(int)$r['id']] = (int)$doc['documentFolderId'];
+    }
+    $companies = [];
+    try {
+        $t = kop_migration_tables(kop_dm_v2_prefix($pdo));
+        $rows = $pdo->query("SELECT j.facility_id, o.name, o.unique_name FROM `{$t['operator_facilities']}` j
+                              JOIN `{$t['operators']}` o ON o.id = j.operator_id
+                             WHERE j.facility_id IN ($in) ORDER BY j.sort_order")->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $r) {
+            $companies[(int)$r['facility_id']][] = (string)($r['name'] ?: $r['unique_name']);
+        }
+    } catch (PDOException $e) { /* operator tables missing */ }
+    foreach ($items as &$it) {
+        if (($it['kind'] ?? '') !== 'facility') continue;
+        $id = (int)$it['id'];
+        $it['document_folder_id'] = $folders[$id] ?? null;
+        $it['companies'] = $companies[$id] ?? [];
+        $role = kop_dm_home_role($pdo, $id);
+        $it['home_role'] = $role['role'];
+        $it['designation'] = kop_dm_designation_label($role);
+        $it['page_url'] = kop_dm_facility_url($id);
+    }
+    unset($it);
+}
+
+/** List rows for young adult programs or Indian boarding schools matching $q. */
+function kop_dm_side_items(string $kind, string $q): array {
+    if ($kind === 'young_adult') {
+        if (!function_exists('kop_ya_all') || !($xpdo = kop_ya_pdo())) return [];
+        $rows = kop_ya_all($xpdo, null);
+        $category = 'young_adult';
+        $admin = function_exists('kop_ya_admin_url') ? kop_ya_admin_url() : admin_url('admin.php?page=kop-young-adult-programs');
+        $page = defined('KOP_YA_PAGE') ? home_url('/' . KOP_YA_PAGE . '/') : '';
+    } else {
+        if (!function_exists('kop_ischools_all') || !($xpdo = kop_ischools_pdo())) return [];
+        $rows = kop_ischools_all($xpdo, null);
+        $category = 'indigenous_schools';
+        $admin = admin_url('admin.php?page=' . (defined('KOP_ISCHOOLS_ADMIN_PAGE') ? KOP_ISCHOOLS_ADMIN_PAGE : 'kop-indigenous-schools'));
+        $page = defined('KOP_ISCHOOLS_PAGE') ? home_url('/' . KOP_ISCHOOLS_PAGE . '/') : '';
+    }
+    $items = [];
+    foreach ($rows as $r) {
+        $aka = null;
+        if ($q !== '' && mb_stripos((string)$r['name'], $q) === false) {
+            foreach (preg_split('/\r\n|\r|\n/', (string)($r['other_names'] ?? '')) as $n) {
+                if (trim($n) !== '' && mb_stripos($n, $q) !== false) { $aka = [trim($n), 'other']; break; }
+            }
+            if (!$aka) continue;
+        }
+        $region = (string)($r['state'] ?? $r['region'] ?? '');
+        $items[] = [
+            'id'                 => (int)$r['id'],
+            'unique_name'        => (string)$r['name'],
+            'category'           => $category,
+            'kind'               => $kind,
+            'table'              => $kind === 'young_adult' ? 'young_adult_programs' : 'indigenous_schools',
+            'display_name'       => (string)$r['name'],
+            'place'              => trim(implode(', ', array_filter([(string)$r['city'], $region ?: (string)$r['country']]))),
+            'status'             => (string)$r['status'],
+            'review'             => (string)$r['review'],
+            'designation'        => $r['review'] === 'pending' ? 'Waiting for review' : '',
+            'facility_count'     => 0,
+            'document_folder_id' => null,
+            'is_stub'            => false,
+            'admin_url'          => $admin,
+            'page_url'           => $r['review'] === 'approved' ? $page : '',
+            'matched_name'       => $aka ? $aka[0] : null,
+            'matched_kind'       => $aka ? $aka[1] : null,
+        ];
+    }
+    return $items;
+}
+
+/** Who made a change, for the modules that keep it. */
+function kop_dm_by(): string {
+    $u = function_exists('wp_get_current_user') ? wp_get_current_user() : null;
+    return ($u && !empty($u->user_login)) ? (string)$u->user_login : 'data-manager';
+}
+
+/** The name a home goes by on its program's page: the part after "Program – " when the names match. */
+function kop_dm_home_name(string $name, string $programName): string {
+    $split = kop_program_homes_split_name($name);
+    if ($split[1] !== '' && kop_program_homes_key($split[0]) === kop_program_homes_key($programName)) return $split[1];
+    return trim($name);
 }
 
 // ---------------------------------------------------------------------------
@@ -460,11 +692,32 @@ try {
                 }
             } catch (PDOException $e) { /* table/column missing */ }
 
-            $tables = $category && isset($CATEGORY_TABLE[$category])
-                ? [$category => $CATEGORY_TABLE[$category]]
-                : $CATEGORY_TABLE;
+            if ($category !== '' && isset($EXTRA_CATEGORIES[$category])) {
+                $tables = [];
+            } elseif ($category !== '' && isset($CATEGORY_TABLE[$category])) {
+                $tables = [$category => $CATEGORY_TABLE[$category]];
+            } else {
+                $tables = $CATEGORY_TABLE;
+            }
 
             $items = [];
+            // Each facility record (or only programs and their homes), then the
+            // two kinds that live outside the facility tables.
+            if ($category === '' || $category === 'facilities' || $category === 'program_homes') {
+                $items = kop_dm_facility_items($pdo, $q, $category === 'program_homes');
+            }
+            if ($category === '' || $category === 'young_adult') {
+                $items = array_merge($items, kop_dm_side_items('young_adult', $q));
+            }
+            if ($category === '' || $category === 'indigenous_schools') {
+                $items = array_merge($items, kop_dm_side_items('indigenous_school', $q));
+            }
+            foreach ($items as &$it) {
+                $it['wiki_links'] = $wikiCounts[$it['unique_name']] ?? ['suggested' => 0, 'confirmed' => 0, 'total' => 0];
+                $it['name_match_unlinked'] = $it['kind'] === 'facility' ? ($nameUnlinked[strtolower($it['unique_name'])] ?? 0) : 0;
+            }
+            unset($it);
+
             foreach ($tables as $cat => $table) {
                 if ($table === 'facilities_master' && kop_dm_v2_writes($pdo)) {
                     $rows = kop_dm_master_rows($pdo);
@@ -508,6 +761,7 @@ try {
                         'id'                 => (int)$row['id'],
                         'unique_name'        => $un,
                         'category'           => $cat,
+                        'kind'               => $table === 'facilities_master' ? 'operator' : 'legacy',
                         'table'              => $table,
                         'display_name'       => $meta['display_name'] ?: $un,
                         'facility_count'     => $meta['facility_count'],
@@ -523,9 +777,10 @@ try {
             }
 
             // Stable sort by name then paginate in PHP.
-            usort($items, fn($a, $b) => strcasecmp($a['unique_name'], $b['unique_name']));
+            usort($items, fn($a, $b) => strcasecmp($a['display_name'] ?: $a['unique_name'], $b['display_name'] ?: $b['unique_name']));
             $total = count($items);
             $page  = array_slice($items, $offset, $limit);
+            kop_dm_enrich_facility_items($pdo, $page);
 
             echo json_encode([
                 'success' => true,
@@ -561,7 +816,9 @@ try {
                 if (is_array($f) && !empty($f['facility_id'])) $facIds[] = (int)$f['facility_id'];
             }
             $idToUnique = [];
-            if ($facIds) {
+            if ($facIds && kop_dm_v2_writes($pdo)) {
+                $idToUnique = kop_v2_pdo_names_by_id($pdo, kop_dm_v2_prefix($pdo), $facIds);
+            } elseif ($facIds) {
                 $in = implode(',', array_map('intval', array_unique($facIds)));
                 foreach ($pdo->query("SELECT id, unique_name FROM facilities_master WHERE id IN ($in)")->fetchAll(PDO::FETCH_ASSOC) as $r) {
                     $idToUnique[(int)$r['id']] = $r['unique_name'];
@@ -591,7 +848,11 @@ try {
                 $ident = is_array($f) && isset($f['identification']) ? $f['identification'] : [];
                 $fid = is_array($f) && isset($f['facility_id']) ? (int)$f['facility_id'] : null;
                 $funique = $fid && isset($idToUnique[$fid]) ? $idToUnique[$fid] : null;
+                $role = $fid ? kop_dm_home_role($pdo, $fid) : ['role' => '', 'homes' => []];
                 $out[] = [
+                    'home_role'            => $role['role'],
+                    'designation'          => kop_dm_designation_label($role + ['program_name' => '']),
+                    'page_url'             => $fid ? kop_dm_facility_url($fid) : '',
                     'index'                => $i,
                     'facility_id'          => $fid,
                     'facility_unique_name' => $funique,
@@ -602,6 +863,42 @@ try {
                 ];
             }
             echo json_encode(['success' => true, 'unique_name' => $uniqueName, 'facilities' => $out]);
+            exit;
+        }
+
+        // ---- get_designation ----
+        // What one facility record is now: its own program, a home of a
+        // program (which), or a program with homes (which).
+        if ($action === 'get_designation') {
+            $fid = (int)($_GET['facility_id'] ?? 0);
+            $names = kop_dm_v2_names($pdo, [$fid]);
+            if (!isset($names[$fid])) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'There is no facility record #' . $fid . '.']);
+                exit;
+            }
+            $role = kop_dm_home_role($pdo, $fid);
+            echo json_encode(['success' => true, 'facility_id' => $fid, 'name' => $names[$fid],
+                'homes_available' => kop_dm_homes_ready(),
+                'young_adult_available' => function_exists('kop_ya_move_facility'),
+                'schools_available' => function_exists('kop_ischools_move_facility'),
+                'page_url' => kop_dm_facility_url($fid)] + $role);
+            exit;
+        }
+
+        // ---- find_facility ----
+        // Facility records by name, past/other name or id (the admin finder's
+        // search), for picking a program record.
+        if ($action === 'find_facility') {
+            $results = function_exists('kop_facility_finder_search')
+                ? kop_facility_finder_search($pdo, (string)($_GET['q'] ?? ''), 12) : [];
+            foreach ($results as &$r) {
+                $role = kop_dm_home_role($pdo, (int)$r['id']);
+                $r['designation'] = kop_dm_designation_label($role);
+                $r['home_role'] = $role['role'];
+            }
+            unset($r);
+            echo json_encode(['success' => true, 'results' => $results]);
             exit;
         }
 
@@ -694,6 +991,164 @@ try {
     }
 
     $action = $input['action'] ?? '';
+
+    // ---- set_designation ----
+    // {facility_id, designation: home|not_home|young_adult|indigenous_school,
+    //  program_id?, program_name?}. A home keeps its own record and is listed
+    // under a program (Program Homes, with an Undo here); the other two move
+    // the record out of the facility tables through their own modules
+    // (kop_ya_move_facility(), kop_ischools_move_facility()).
+    if ($action === 'set_designation') {
+        $fid = (int)($input['facility_id'] ?? 0);
+        $to = (string)($input['designation'] ?? '');
+        $name = kop_dm_v2_names($pdo, [$fid])[$fid] ?? '';
+        if ($name === '') {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'There is no facility record #' . $fid . '.']);
+            exit;
+        }
+        try {
+            $role = kop_dm_home_role($pdo, $fid);
+            if (in_array($to, ['home', 'young_adult', 'indigenous_school'], true) && $role['role'] === 'program') {
+                throw new RuntimeException($name . ' is a program with ' . count($role['homes']) . ' home(s) listed under it. Take its homes off first (KOP Tools > Program Homes).');
+            }
+            $result = ['success' => true, 'facility_id' => $fid];
+
+            if ($to === 'home') {
+                if (!kop_dm_homes_ready()) throw new RuntimeException('Program Homes is not set up on this site.');
+                kop_program_homes_install();
+                $pid = (int)($input['program_id'] ?? 0);
+                $pname = trim((string)($input['program_name'] ?? ''));
+                if ($pid === $fid) throw new RuntimeException('Pick the program\'s own record, not this one.');
+                if ($pid > 0) {
+                    $pname = kop_dm_v2_names($pdo, [$pid])[$pid] ?? '';
+                    if ($pname === '') throw new RuntimeException('Program record #' . $pid . ' is not on file.');
+                    if (kop_program_homes_program_of($pid)) throw new RuntimeException($pname . ' is itself a home of a program. Pick that program instead.');
+                } elseif ($pname === '') {
+                    throw new RuntimeException('Pick the program\'s record, or type a name for a new one.');
+                }
+                // A new name can still find an existing record, so note every group first.
+                global $wpdb;
+                $groups = array_map('intval', (array)$wpdb->get_col('SELECT program_id FROM ' . kop_program_homes_table('groups')));
+                $was = kop_program_homes_program_of($fid);
+                $pid = (int)kop_program_homes_group([$fid => kop_dm_home_name($name, $pname)], $pid, $pname, kop_program_homes_opts());
+                $pname = kop_dm_v2_names($pdo, [$pid])[$pid] ?? $pname;
+                $result['message'] = $name . ' is now listed as a home of ' . $pname . ' (record #' . $pid . ').';
+                $result['undo'] = ['facility_id' => $fid, 'program_id' => $pid,
+                    'before' => $was ? (int)$was[0] : 0, 'before_name' => $was ? (string)$was[1] : '',
+                    'new_group' => !in_array($pid, $groups, true)];
+            } elseif ($to === 'not_home') {
+                if ($role['role'] !== 'home') throw new RuntimeException($name . ' is not a home of any program.');
+                $was = kop_program_homes_program_of($fid);
+                kop_program_homes_remove_home($fid);
+                $result['message'] = $name . ' is no longer listed as a home of ' . $role['program_name'] . '. It stays its own record.';
+                $result['undo'] = ['facility_id' => $fid, 'program_id' => (int)$was[0], 'before' => (int)$was[0], 'before_name' => (string)$was[1]];
+            } elseif ($to === 'young_adult') {
+                if (!function_exists('kop_ya_move_facility')) throw new RuntimeException('Young Adult Programs is not set up on this site.');
+                $ya = kop_ya_pdo();
+                kop_ya_install($ya);
+                $yid = kop_ya_move_facility($ya, $fid, kop_dm_by());
+                $p = kop_ya_get($ya, $yid);
+                $result['message'] = $name . ' is now the young adult program "' . ($p['name'] ?? $name) . '" and no longer a facility record. Its details are at KOP Tools > Young Adult Programs.';
+                $result['moved'] = ['kind' => 'young_adult', 'id' => $yid];
+            } elseif ($to === 'indigenous_school') {
+                if (!function_exists('kop_ischools_move_facility')) throw new RuntimeException('Indigenous Schools is not set up on this site.');
+                $is = kop_ischools_pdo();
+                kop_ischools_install($is);
+                $sid = kop_ischools_move_facility($is, $fid, kop_dm_by());
+                $s = kop_ischools_get($is, $sid);
+                $result['message'] = $name . ' is now the school "' . ($s['name'] ?? $name) . '" and no longer a facility record. Its details are at KOP Tools > Indigenous Schools.';
+                $result['moved'] = ['kind' => 'indigenous_school', 'id' => $sid];
+            } else {
+                throw new RuntimeException('Unknown designation "' . $to . '".');
+            }
+        } catch (RuntimeException $e) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
+        }
+        echo json_encode($result);
+        exit;
+    }
+
+    // ---- undo_home ----
+    // Puts a home link back as it was before set_designation home/not_home:
+    // under its earlier program, or on its own; a program record that change
+    // made goes too when nothing else uses it (kop_program_homes_undo()).
+    if ($action === 'undo_home') {
+        $fid = (int)($input['facility_id'] ?? 0);
+        $pid = (int)($input['program_id'] ?? 0);
+        $before = (int)($input['before'] ?? 0);
+        try {
+            if ($fid <= 0 || $pid <= 0 || !kop_dm_homes_ready()) throw new RuntimeException('Nothing to undo.');
+            $name = kop_dm_v2_names($pdo, [$fid])[$fid] ?? ('#' . $fid);
+            $now = kop_program_homes_program_of($fid);
+            if ($before > 0 && kop_dm_v2_names($pdo, [$before])) {
+                kop_program_homes_group([$fid => (string)($input['before_name'] ?? '')], $before, '', kop_program_homes_opts());
+            } elseif ($now && (int)$now[0] === $pid) {
+                kop_program_homes_remove_home($fid);
+            }
+            $gone = '';
+            if (!empty($input['new_group']) && !kop_program_homes_homes_of($pid)) {
+                $gone = kop_program_homes_undo($pid) === 'removed' ? ' The program record it made is deleted.' : '';
+            }
+        } catch (RuntimeException $e) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
+        }
+        echo json_encode(['success' => true,
+            'message' => 'Undone. ' . $name . ($before > 0 ? ' is back under its earlier program.' : ' is on its own again.') . $gone]);
+        exit;
+    }
+
+    // ---- rename_record / set_record_doc_folder ----
+    // For rows that are not operator projects: one facility record
+    // (facilities_v2), a young adult program or an Indian boarding school.
+    if ($action === 'rename_record' || $action === 'set_record_doc_folder') {
+        $kind = (string)($input['kind'] ?? '');
+        $id = (int)($input['id'] ?? 0);
+        try {
+            if ($id <= 0) throw new RuntimeException('Which record?');
+            if ($action === 'set_record_doc_folder' && $kind !== 'facility') throw new RuntimeException('Only facility records have a document folder here.');
+            $newName = trim((string)($input['new_name'] ?? ''));
+            if ($action === 'rename_record' && $newName === '') throw new RuntimeException('Type the new name.');
+
+            if ($kind === 'facility') {
+                $prefix = kop_dm_v2_prefix($pdo);
+                $folderRaw = $input['document_folder_id'] ?? null;
+                kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $id, $action, $newName, $folderRaw) {
+                    $stored = kop_facility_load($id, ['pdo' => $pdo, 'prefix' => $prefix]);
+                    if (!$stored) throw new RuntimeException('There is no facility record #' . $id . '.');
+                    $doc = $stored['doc'];
+                    if ($action === 'rename_record') {
+                        $doc['identification']['name'] = $newName;
+                    } else {
+                        $doc['documentFolderId'] = ($folderRaw !== null && $folderRaw !== '' && (int)$folderRaw > 0) ? (int)$folderRaw : null;
+                    }
+                    kop_facility_save($doc, ['pdo' => $pdo, 'prefix' => $prefix, 'skip_memberships' => true]);
+                });
+                if (function_exists('kop_facility_pages_flush_index')) kop_facility_pages_flush_index();
+            } elseif ($kind === 'young_adult' || $kind === 'indigenous_school') {
+                $ya = $kind === 'young_adult';
+                $xpdo = $ya ? kop_ya_pdo() : kop_ischools_pdo();
+                $row = $ya ? kop_ya_get($xpdo, $id) : kop_ischools_get($xpdo, $id);
+                if (!$row) throw new RuntimeException('That record is gone.');
+                // The save functions write every column, so start from what is stored.
+                $row['name'] = $newName;
+                $ya ? kop_ya_save($xpdo, $row, $id, kop_dm_by()) : kop_ischools_save($xpdo, $row, $id, kop_dm_by());
+            } else {
+                throw new RuntimeException('Unknown record kind "' . $kind . '".');
+            }
+        } catch (RuntimeException $e) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
+        }
+        echo json_encode(['success' => true,
+            'message' => $action === 'rename_record' ? 'Renamed to "' . $newName . '".' : 'Document folder updated.']);
+        exit;
+    }
 
     // ---- move_category ----
     if ($action === 'move_category') {
