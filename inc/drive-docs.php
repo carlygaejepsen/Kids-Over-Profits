@@ -26,10 +26,11 @@
  * Decisions live in {prefix}kop_gdoc_links, keyed by the link's address, so a
  * rebuild adds new links and never undoes a decision.
  *
- * Three files feed it (kop_gdl_sources()): links.json (Google Docs),
- * heal-links.json (scripts/heal-docs.py) and sciad-links.json
- * (scripts/sciad-links.py: SCIAD NET, about
- * 13,000 links). A source with a credit puts it, not a doc name, on every
+ * Five files feed it (kop_gdl_sources()): links.json (Google Docs),
+ * heal-links.json (scripts/heal-docs.py), wiki-links.json (scripts/wiki-links.py),
+ * sciad-links.json (scripts/sciad-links.py: SCIAD NET, about 13,000 links)
+ * and audit-links.json (scripts/data-audit-links.py: the outside sources the
+ * data audit read). A source with a credit puts it, not a doc name, on every
  * record and queue row it fills; the facility page shows it linked. At that
  * volume the screen filters by source, caps each card at KOP_GDL_CARD_ROWS
  * rows (the rest a click away), and a facility card can add all its sure
@@ -118,6 +119,8 @@ function kop_gdl_sources() {
             'credit_url' => 'https://web.archive.org/web/20221007171605/https://www.sciad.net/',
             'submitter'  => 'SCIAD NET import',
         ),
+        // The data audit's sources (docs/PLAN.md 3.13): KOP's own research, so no outside credit.
+        'audit' => array('label' => 'Data audit', 'file' => 'audit-links.json', 'submitter' => 'Data audit import'),
     );
 }
 
@@ -369,9 +372,14 @@ function kop_gdl_source_line(array $r) {
         return $src['credit'];
     }
     $doc = $r['source_doc'] !== '' ? $r['source_doc'] : 'a Google Doc';
-    // HEAL's documents and the wiki's links name their own source ("HEAL archive: heal-online.org/x.pdf, saved 2009",
-    // "r/troubledteens wiki: page "X" (as of 2025-12-18)").
-    return (strpos($doc, 'HEAL archive') === 0 || strpos($doc, 'r/troubledteens wiki') === 0) ? $doc : 'Google Doc: ' . $doc;
+    // HEAL's documents, the wiki's links and the data audit's sources name their own source ("HEAL archive:
+    // heal-online.org/x.pdf, saved 2009", "r/troubledteens wiki: page "X" (as of 2025-12-18)", "KOP data audit").
+    foreach (array('HEAL archive', 'r/troubledteens wiki', 'KOP data audit') as $own) {
+        if (strpos($doc, $own) === 0) {
+            return $doc;
+        }
+    }
+    return 'Google Doc: ' . $doc;
 }
 
 /**
@@ -907,7 +915,7 @@ function kop_render_drive_docs_page() {
             . '<code>tmp/gdocs/links.json</code> to <code>' . esc_html(dirname(kop_gdl_path())) . '</code>.</p></div>';
     }
     echo '<p>Links from your Google Docs and Sheets, documents saved on HEAL\'s old site (heal-online.org, through the Wayback Machine), '
-        . 'links on the r/troubledteens wiki\'s pages, and the news, court records, program pages and media in '
+        . 'links on the r/troubledteens wiki\'s pages, the outside sources the data audit read, and the news, court records, program pages and media in '
         . '<a href="' . esc_url($sources['sciad']['credit_url']) . '" target="_blank" rel="noopener">SCIAD NET</a>, '
         . 'that the database does not have yet, one card per facility. '
         . 'Each shows where it came from and the words around it. Pick a source to work through one at a time.</p>'

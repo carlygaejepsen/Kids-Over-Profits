@@ -449,6 +449,7 @@ function kop_rinbox_native_origins($type) {
         'heal'           => array('HEAL archive', "$by LIKE '%import)%' AND $notes LIKE 'HEAL archive%'"),
         'wiki'           => array('r/troubledteens wiki', "$by LIKE '%import)%' AND $notes LIKE 'r/troubledteens wiki%'"),
         'sciad'          => array('SCIAD NET', "$by LIKE '%(SCIAD NET import)%'"),
+        'audit'          => array('Data audit', "$by LIKE '%(Data audit import)%'"),
         'fornits'        => array('Fornits', "$by LIKE '%(Fornits import)%'"),
         'extension'      => array('Browser extension', "$by LIKE '%(browser extension)%'"),
         'moved'          => array('Moved from another queue', "($by LIKE '%(moved)%' OR $by LIKE '%(review inbox)%')"),

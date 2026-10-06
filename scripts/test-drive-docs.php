@@ -5,6 +5,7 @@
  *
  *   php scripts/test-drive-docs.php [--db=tmp/prod.sqlite] [--links=tmp/gdocs/links.json]
  *       [--sciad=tmp/sciad/sciad-links.json] [--items=tmp/sciad/items.jsonl] [--python=python]
+ *       [--audit=tmp/data-audit/audit-links.json]
  *
  * Every link scripts/gdocs-extract.py ties to a record, and that goes on the
  * record (resource links and program websites), is added to that record's
@@ -29,10 +30,11 @@ if (PHP_SAPI !== 'cli') {
     exit("CLI only.\n");
 }
 
-$args = getopt('', array('db::', 'links::', 'sciad::', 'items::', 'python::'));
+$args = getopt('', array('db::', 'links::', 'sciad::', 'items::', 'python::', 'audit::'));
 $db_path = $args['db'] ?? (dirname(__DIR__) . '/tmp/prod.sqlite');
 $links_path = $args['links'] ?? (dirname(__DIR__) . '/tmp/gdocs/links.json');
 $sciad_path = $args['sciad'] ?? (dirname(__DIR__) . '/tmp/sciad/sciad-links.json');
+$audit_path = $args['audit'] ?? (dirname(__DIR__) . '/tmp/data-audit/audit-links.json');
 $items_path = $args['items'] ?? (dirname(__DIR__) . '/tmp/sciad/items.jsonl');
 if (!file_exists($db_path) || !file_exists($links_path)) {
     fwrite(STDERR, "Need $db_path (scripts/sync-prod-sqlite.py) and $links_path (scripts/gdocs-extract.py).\n");
@@ -89,6 +91,9 @@ if (is_array($sciad)) {
     $files['sciad'] = $sciad_path;
 } else {
     echo "  (no $sciad_path: run python scripts/sciad-links.py for the SCIAD NET checks)\n";
+}
+if (file_exists($audit_path)) {
+    $files['audit'] = $audit_path; // The data audit's sources (scripts/data-audit-links.py)
 }
 $by = array();
 $skipped = 0;
@@ -231,6 +236,7 @@ $check('a Google Docs row names its doc', kop_gdl_source_line(array('source' => 
     && kop_gdl_source_line(array('source_doc' => 'Doc A')) === 'Google Doc: Doc A');
 $check('HEAL and wiki rows name themselves', kop_gdl_source_line(array('source' => 'heal', 'source_doc' => 'HEAL archive: heal-online.org/x.pdf')) === 'HEAL archive: heal-online.org/x.pdf'
     && kop_gdl_source_line(array('source' => 'wiki', 'source_doc' => 'r/troubledteens wiki: page "X"')) === 'r/troubledteens wiki: page "X"');
+$check('a data audit row names the audit', kop_gdl_source_line(array('source' => 'audit', 'source_doc' => 'KOP data audit')) === 'KOP data audit');
 $check('a SCIAD NET row carries the credit, never its collection path',
     kop_gdl_source_line(array('source' => 'sciad', 'source_doc' => 'SCIAD NET: Utah / X / News')) === $credit);
 $gnote = kop_gdl_queue_note(array('source' => 'gdocs', 'source_doc' => 'Doc A'), array('text' => 'words'));
@@ -441,8 +447,8 @@ file_put_contents("$dir/links.json", json_encode($fixture_gdocs));
 file_put_contents("$dir/sciad-links.json", json_encode($fixture_sciad));
 $n_sciad = count(array_unique(array_map(function ($it) { return kop_gdl_pkey($it['key']); }, $fixture_sciad)));
 
-$check('the screen reads Google Docs, HEAL, wiki and SCIAD NET files from one folder',
-    array_keys(kop_gdl_sources()) === array('gdocs', 'heal', 'wiki', 'sciad') && array_keys(kop_gdl_files()) === array('gdocs', 'sciad'));
+$check('the screen reads Google Docs, HEAL, wiki, SCIAD NET and data audit files from one folder',
+    array_keys(kop_gdl_sources()) === array('gdocs', 'heal', 'wiki', 'sciad', 'audit') && array_keys(kop_gdl_files()) === array('gdocs', 'sciad'));
 $s1 = kop_gdl_sync(true);
 $src_n = array();
 foreach ($mem->query('SELECT source, COUNT(*) n FROM wpdl_kop_gdoc_links GROUP BY source')->fetchAll(PDO::FETCH_ASSOC) as $r) {
