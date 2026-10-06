@@ -36,8 +36,7 @@
 
 .kop-site-map a:focus-visible,
 .kop-not-found a:focus-visible,
-.kop-sm-letter summary:focus-visible,
-.kop-sm-index summary:focus-visible {
+.kop-sm-letter summary:focus-visible {
     outline: 3px solid var(--kop-focus-color, #33A7B5);
     outline-offset: 2px;
 }
@@ -327,106 +326,6 @@ button.kop-sm-filter__button:focus-visible {
 .kop-sm-list--hubs > li > a {
     font-weight: 700;
     font-size: 1.05rem;
-}
-
-/* ---- Start here: the main destinations, grouped ------------------------- */
-
-.kop-sm-featured {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.kop-sm-featured__group {
-    padding: 1rem 1.1rem 0.6rem;
-    border: 1px solid var(--kop-border-secondary, #aee0ed);
-    border-top: 4px solid var(--kop-teal, #33A7B5);
-    border-radius: 6px;
-    background: var(--kop-white, #fff);
-}
-
-.kop-site-map .kop-sm-featured__group h3 {
-    margin: 0 0 0.6rem;
-    font-size: 1.1rem;
-    color: var(--kop-midnight-blue, #000435);
-}
-
-.kop-sm-list--featured {
-    margin: 0;
-}
-
-.kop-sm-list--featured li {
-    margin: 0 0 0.7rem;
-}
-
-.kop-sm-list--featured a {
-    font-weight: 700;
-}
-
-.kop-sm-list--featured .kop-sm-note {
-    display: block;
-    margin-top: 0.1rem;
-}
-
-/* ---- Full index: one collapsed group per kind of page ------------------- */
-
-.kop-sm-section--index .kop-sm-intro {
-    margin-bottom: 0.75rem;
-}
-
-.kop-sm-index {
-    border-top: 1px solid var(--kop-border-secondary, #aee0ed);
-    scroll-margin-top: 7rem;
-}
-
-.kop-sm-index:last-of-type {
-    border-bottom: 1px solid var(--kop-border-secondary, #aee0ed);
-}
-
-.kop-sm-index > summary {
-    display: flex;
-    align-items: baseline;
-    gap: 0.6rem;
-    padding: 0.75rem 0.25rem;
-    cursor: pointer;
-    list-style: none;
-    color: var(--kop-midnight-blue, #000435);
-}
-
-.kop-sm-index > summary::-webkit-details-marker {
-    display: none;
-}
-
-.kop-sm-index > summary::before {
-    content: "+";
-    flex: none;
-    width: 1.1rem;
-    font-weight: 700;
-    color: var(--kop-teal-ink, #24757f);
-}
-
-.kop-sm-index[open] > summary::before {
-    content: "\2212";
-}
-
-.kop-sm-index > summary:focus-visible {
-    outline: 3px solid var(--kop-focus-color, #33A7B5);
-    outline-offset: 2px;
-}
-
-.kop-site-map .kop-sm-index__title {
-    margin: 0;
-    font-size: 1.1rem;
-    color: var(--kop-midnight-blue, #000435);
-}
-
-.kop-sm-index__body {
-    padding: 0 0.25rem 1.1rem 1.85rem;
-}
-
-.kop-sm-index__body > .kop-sm-intro:first-child {
-    margin-top: 0;
 }
 
 /* ---- A to Z ------------------------------------------------------------ */

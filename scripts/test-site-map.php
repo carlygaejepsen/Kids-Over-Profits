@@ -41,7 +41,6 @@ function apply_filters($tag, $value, ...$args) {
     return $value;
 }
 function home_url($path = '/') { return 'https://kidsoverprofits.org' . $path; }
-function add_query_arg($args, $url) { return $url . (strpos($url, '?') === false ? '?' : '&') . http_build_query($args); }
 function esc_html($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
 function esc_attr($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
 function esc_url($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
@@ -82,9 +81,7 @@ $page('stray-article', 'An Article Nobody Placed', 'templates/page-article.php')
 $page('tti-program-index', 'TTI Program Index', 'templates/page-tti-program-index.php');
 $page('network-map', 'Network Map', 'templates/page-network-map.php');
 $page('inspection-reports', 'Inspection Reports', 'templates/page-inspection-reports.php');
-$page('ut-reports', 'Utah DHHS Inspection Reports', 'templates/page-state-reports.php');
-$page('az-reports', 'Arizona CareCheck Inspection Reports', 'templates/page-state-reports.php');
-$page('severe-reports', 'Severe Reports', 'templates/page-severe-reports.php');
+$page('ut-reports', 'Utah Inspection Reports', 'templates/page-state-reports.php');
 $page('wyoming', 'Wyoming', 'templates/page-state.php');
 $page('mexico', 'Mexico', 'templates/page-country.php');
 $page('indian-boarding-schools', 'Indian Boarding Schools and Residential Schools', 'templates/page-indian-boarding-schools.php');
@@ -180,7 +177,7 @@ function kop_operator_pages_index() {
 function kop_operator_pages_base() { return 'operator'; }
 function kop_operator_pages_url_for_slug($slug) { return home_url('/operator/' . $slug . '/'); }
 function kop_state_canonical_name($s) {
-    $m = array('CT' => 'Connecticut', 'ME' => 'Maine', 'MT' => 'Montana', 'ID' => 'Idaho', 'AZ' => 'Arizona', 'UT' => 'Utah');
+    $m = array('CT' => 'Connecticut', 'ME' => 'Maine', 'MT' => 'Montana', 'ID' => 'Idaho');
     return $m[strtoupper($s)] ?? $s;
 }
 function kop_v2_search($phrase, $f = 10, $o = 5, $p = 3) {
@@ -211,17 +208,10 @@ check('an index article holds its own children', $titles_in($history['children']
 check('Survivors holds its article', $titles_in($s['hubs']['items'][1]['children']) === array('Common Survivor Experiences'));
 check('an article no hub holds is under More articles', $titles_in($s['reading']['items']) === array('An Article Nobody Placed'));
 check('placed articles are not listed twice', !in_array('Precursors in Antiquity', $titles_in($s['reading']['items']), true));
-check('directories: parent companies route + directory (by its label) + map + 18+ programs (part of the industry)', $titles_in($s['records']['items']) === array('Facility directory', 'Network Map', 'Parent companies', 'Young Adult Programs'));
-check('inspections: the all-states pages first, then each state by its name', $titles_in($s['inspections']['items']) === array('Inspection reports, every state', 'Serious findings from inspections', 'Arizona', 'Utah'));
-check('index order: A to Z lists first, old posts last', array_slice(array_keys($s), 0, 3) === array('facilities', 'operators', 'hubs') && array_key_last($s) === 'posts');
-$featured = array();
-foreach ($data['featured'] as $g) $featured[$g['title']] = $titles_in($g['items']);
-check('start here: groups by what a reader came to do', array_keys($featured) === array('Look up a program', 'Records of harm', 'Get help or take action', 'Understand the industry', 'Written for you'));
-check('start here: unpublished pages dropped, routes kept', $featured['Look up a program'] === array('Facility directory', 'Programs by state or country', 'Parent companies', 'Network map')
-    && $featured['Records of harm'] === array('Inspection reports', 'Serious findings', 'Lawsuits', 'News feed'));
-check('start here: the location tab carries its query', $data['featured'][0]['items'][1]['url'] === 'https://kidsoverprofits.org/tti-program-index/?view=location');
+check('directories: parent companies route + directory + map + 18+ programs (part of the industry)', $titles_in($s['records']['items']) === array('Network Map', 'Parent companies', 'TTI Program Index', 'Young Adult Programs'));
+check('inspections', $titles_in($s['inspections']['items']) === array('Inspection Reports', 'Utah Inspection Reports'));
 check('places', $titles_in($s['places']['items']) === array('Mexico', 'Wyoming'));
-check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'News feed'));
+check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'TTI News Feed'));
 check('reference (links by slug)', $titles_in($s['reference']['items']) === array('Links', 'Report Abuse', 'TTI Glossary'));
 check('boarding schools are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools')
     && stripos($s['outside']['title'], 'outside the troubled teen industry') !== false);
@@ -316,9 +306,9 @@ check('company pages linked', strpos($html, '/operator/universal-health-services
 check('every link carries filter words', substr_count($html, '<li data-sm=') >= 30);
 check('the A to Z jump points at its group', strpos($html, 'href="#kop-sm-facilities-h"') !== false && strpos($html, 'id="kop-sm-facilities-h"') !== false);
 check('# has an id the address bar keeps', strpos($html, 'id="kop-sm-facilities-num"') !== false);
-check('every index group is collapsed until opened', substr_count($html, '<details class="kop-sm-index') === count($GLOBALS['kop_site_map']['sections']) && strpos($html, '<details class="kop-sm-index kop-sm-section--hubs" id="kop-sm-hubs" data-kop-sm-group data-kop-sm-section>') !== false);
+check('the contents list each section', substr_count($html, 'href="#kop-sm-') >= count($GLOBALS['kop_site_map']['sections']));
 check('no hidden page on the page', strpos($html, 'Lawsuit Admin') === false && strpos($html, '/no-access/') === false);
-check('start here on the page, before the index', strpos($html, 'Start here') !== false && strpos($html, 'Start here') < strpos($html, 'Full index'));
+check('quick links on the page', strpos($html, 'kop-sm-quick__link') !== false);
 check('nothing escaped twice', strpos($html, '&amp;amp;') === false);
 
 if (!empty($opts['out'])) {

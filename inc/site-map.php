@@ -18,10 +18,8 @@
  *                admin tools, private, draft and password pages are never listed
  *   cache        kop_site_map_data() is one transient, rebuilt when a post or page
  *                changes or the facility / operator indexes are rebuilt
- *   featured     kop_site_map_featured_specs(): the top of this page, the
- *                destinations that matter grouped by what a reader came to do;
- *                every list under it is a collapsed part of the full index
- *   quick links  kop_site_map_quick_links(): the most used destinations, shown in the search popup before anything
+ *   quick links  kop_site_map_quick_links(): the most used destinations, shown
+ *                at the top of this page, in the search popup before anything
  *                is typed (js/global-search.js) and on the 404 page (404.php)
  *
  * php scripts/test-site-map.php renders the page offline.
@@ -32,7 +30,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_SITE_MAP_REWRITE_VERSION')) {
-    define('KOP_SITE_MAP_REWRITE_VERSION', '2');
+    define('KOP_SITE_MAP_REWRITE_VERSION', '1');
 }
 
 // ---------------------------------------------------------------------------
@@ -215,21 +213,21 @@ if (!function_exists('kop_site_map_section_titles')) {
     /** Section key => array(title, one line saying what is in it), in page order. */
     function kop_site_map_section_titles() {
         return apply_filters('kop_site_map_section_titles', array(
-            'facilities'  => array('Facility pages, A to Z', 'Every program with its own page. Each lists its names, owners, staff, inspection findings, lawsuits, news and documents.'),
-            'operators'   => array('Parent company pages, A to Z', 'Every company with its own page: the programs it has run, its history and the documents filed under it.'),
-            'hubs'        => array('Sections and their articles', 'Each section gathers the pages, records and articles on one subject, with its articles listed under it.'),
-            'inspections' => array('Inspection reports by state', ''),
-            'places'      => array('State and country pages', 'Everything on file for one place: its programs, laws, reports and news.'),
-            'records'     => array('Directories and tools', ''),
-            'sources'     => array('News, court records and documents', ''),
+            'hubs'        => array('Sections', 'Each section gathers the pages, records and articles on one subject. Articles are listed under the section they are read in.'),
+            'records'     => array('Directories and tools', 'Look up programs, the companies behind them, the people who run them and how they connect.'),
+            'inspections' => array('Inspection reports', 'What state licensing agencies found when they inspected programs, state by state.'),
+            'places'      => array('States and countries', 'Everything on file for one place: its programs, laws, reports and news.'),
+            'sources'     => array('News, court records and documents', 'The primary sources: news coverage, lawsuits, bills and the document archive.'),
             'reference'   => array('Guides and reference', 'Where to report abuse, what the industry\'s words mean, and the data behind the site.'),
-            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs: institutional abuse of Indigenous children in government and church schools. Each page says where its history meets the troubled teen industry\'s and where it does not.'),
             'reading'     => array('More articles', ''),
             'profiles'    => array('Written program profiles', 'Programs with a profile written by our researchers.'),
+            'posts'       => array('Posts by category', ''),
+            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs: institutional abuse of Indigenous children in government and church schools. Each page says where its history meets the troubled teen industry\'s and where it does not.'),
             'take-part'   => array('Take part', 'Send us what you know, volunteer or support the work.'),
             'about'       => array('About and legal', ''),
             'other'       => array('More pages', ''),
-            'posts'       => array('Older posts by category', 'Blog posts from before the news feed and the lawsuit directory; most are copies of news articles.'),
+            'facilities'  => array('Facility pages, A to Z', 'Every program with its own page. Each lists its names, owners, staff, inspection findings, lawsuits, news and documents.'),
+            'operators'   => array('Parent company pages, A to Z', 'Every company with its own page: the programs it has run, its history and the documents filed under it.'),
         ));
     }
 }
@@ -386,29 +384,6 @@ if (!function_exists('kop_site_map_flush')) {
     add_action('deleted_post', 'kop_site_map_flush');
 }
 
-if (!function_exists('kop_site_map_labels')) {
-    /** Page slug => the name the site map uses, where the page's own title does not say what it is. */
-    function kop_site_map_labels() {
-        return apply_filters('kop_site_map_labels', array(
-            'tti-program-index'   => 'Facility directory',
-            'in-loving-memory'    => 'In Loving Memory: deaths in the industry',
-            'tti-news-feed'       => 'News feed',
-            'inspection-reports'  => 'Inspection reports, every state',
-            'severe-reports'      => 'Serious findings from inspections',
-            'legislative-efforts' => 'Legislation tracker',
-            'anon-submit'         => 'Send documents anonymously',
-            'tti-data-submission' => 'Add or correct a program',
-        ));
-    }
-}
-
-if (!function_exists('kop_site_map_page_title')) {
-    function kop_site_map_page_title($slug, $title) {
-        $labels = kop_site_map_labels();
-        return isset($labels[$slug]) ? $labels[$slug] : $title;
-    }
-}
-
 if (!function_exists('kop_site_map_item')) {
     function kop_site_map_item($title, $url, $note = '') {
         return array(
@@ -486,7 +461,7 @@ if (!function_exists('kop_site_map_build')) {
             foreach ($children_of[$slug] ?? array() as $child) {
                 if (!isset($pages[$child]) || isset($placed[$child])) continue;
                 $placed[$child] = true;
-                $item = kop_site_map_item(kop_site_map_page_title($child, $pages[$child]['title']), $pages[$child]['url']);
+                $item = kop_site_map_item($pages[$child]['title'], $pages[$child]['url']);
                 $item['children'] = $walk($child, $depth + 1);
                 $out[] = $item;
             }
@@ -496,7 +471,7 @@ if (!function_exists('kop_site_map_build')) {
             $placed[$slug] = true;
         }
         foreach ($hubs as $slug => $p) {
-            $item = kop_site_map_item(kop_site_map_page_title($slug, $p['title']), $p['url']);
+            $item = kop_site_map_item($p['title'], $p['url']);
             $item['children'] = $walk($slug, 1);
             $sections['hubs']['items'][] = $item;
         }
@@ -511,21 +486,11 @@ if (!function_exists('kop_site_map_build')) {
             $section = kop_site_map_section_for($slug, $p['template']);
             if ($section === 'hide' || $section === 'hubs' || !isset($sections[$section])) continue;
             if ($section === 'profiles' && isset($merged[$p['id']])) continue;
-            $title = kop_site_map_page_title($slug, $p['title']);
-            // State report pages go by the state's name, under the all-states pages.
-            $is_state_reports = (bool) preg_match('/^([a-z]{2})-reports$/', $slug, $m);
-            if ($section === 'inspections' && $is_state_reports && function_exists('kop_state_canonical_name')) {
-                $state = kop_state_canonical_name(strtoupper($m[1]));
-                if (is_string($state) && strcasecmp($state, $m[1]) !== 0) $title = $state;
-            }
-            $item = kop_site_map_item($title, $p['url']);
-            if ($section === 'inspections' && !$is_state_reports) $item['lead'] = true;
-            $sections[$section]['items'][] = $item;
+            $sections[$section]['items'][] = kop_site_map_item($p['title'], $p['url']);
         }
         foreach (array('records', 'inspections', 'places', 'sources', 'reference', 'reading', 'profiles', 'outside', 'take-part', 'about', 'other') as $k) {
             usort($sections[$k]['items'], static function ($a, $b) {
-                return ((int) !empty($b['lead']) - (int) !empty($a['lead']))
-                    ?: strnatcasecmp(kop_site_map_sort_name($a['title']), kop_site_map_sort_name($b['title']));
+                return strnatcasecmp(kop_site_map_sort_name($a['title']), kop_site_map_sort_name($b['title']));
             });
         }
 
@@ -579,7 +544,6 @@ if (!function_exists('kop_site_map_build')) {
             'built'    => time(),
             'sections' => $sections,
             'quick'    => kop_site_map_build_quick_links($pages),
-            'featured' => kop_site_map_build_featured($pages),
             'counts'   => array('pages' => count($pages), 'facilities' => $facility_count, 'operators' => $operator_count),
         );
     }
@@ -667,83 +631,6 @@ if (!function_exists('kop_site_map_quick_specs')) {
             array('label' => 'Report abuse',        'note' => 'Where to report, state by state',       'template' => 'page-report-abuse.php',     'icon' => 'shield'),
             array('label' => 'Glossary',            'note' => 'The industry\'s words, explained',      'template' => 'page-glossary.php',         'icon' => 'book'),
         ));
-    }
-}
-
-if (!function_exists('kop_site_map_featured_specs')) {
-    /**
-     * The top of the site map: the destinations that matter, grouped by what
-     * a reader came to do, each with a line saying what is there. A link is
-     * array('label', 'note', and 'slug' (dropped unless published, 'query'
-     * added to its address) or 'path'). Everything else is in the full index
-     * below, collapsed.
-     */
-    function kop_site_map_featured_specs() {
-        return apply_filters('kop_site_map_featured_specs', array(
-            array('title' => 'Look up a program', 'links' => array(
-                array('label' => 'Facility directory', 'slug' => 'tti-program-index', 'note' => 'Every program we track, grouped by the company that runs it'),
-                array('label' => 'Programs by state or country', 'slug' => 'tti-program-index', 'query' => array('view' => 'location'), 'note' => 'The same programs, by where they are'),
-                array('label' => 'Parent companies', 'path' => '/operator/', 'note' => 'The companies that own and run programs, and their histories'),
-                array('label' => 'Network map', 'slug' => 'network-map', 'note' => 'How programs, owners, staff and referrers connect'),
-                array('label' => 'Educational consultants and referrers', 'slug' => 'referrers-educational-consultants', 'note' => 'Who sends young people to programs'),
-                array('label' => 'Youth transport companies', 'slug' => 'youth-transport-companies', 'note' => 'The companies hired to take young people to programs'),
-            )),
-            array('title' => 'Records of harm', 'links' => array(
-                array('label' => 'Inspection reports', 'slug' => 'inspection-reports', 'note' => 'What state inspectors found, state by state'),
-                array('label' => 'Serious findings', 'slug' => 'severe-reports', 'note' => 'Deaths, assaults and other serious findings from inspections'),
-                array('label' => 'In Loving Memory', 'slug' => 'in-loving-memory', 'note' => "Young people who died in the industry's care"),
-                array('label' => 'Lawsuits', 'slug' => 'lawsuits', 'note' => 'Court cases against programs and their staff'),
-                array('label' => 'News feed', 'slug' => 'tti-news-feed', 'note' => 'News coverage of programs, newest first'),
-                array('label' => 'Document archive', 'slug' => 'document-archive', 'note' => 'Records, reports and court filings on file'),
-            )),
-            array('title' => 'Get help or take action', 'links' => array(
-                array('label' => 'Report abuse', 'slug' => 'report-abuse', 'note' => 'Where to report a program or a therapist, state by state'),
-                array('label' => 'Resources', 'slug' => 'resources', 'note' => 'Support groups and help for survivors and families'),
-                array('label' => 'Add or correct a program', 'slug' => 'tti-data-submission', 'note' => 'Tell us what you know about a program'),
-                array('label' => 'Send documents anonymously', 'slug' => 'anon-submit', 'note' => 'An encrypted upload that does not record who sent it'),
-                array('label' => 'Volunteer', 'slug' => 'volunteer', 'note' => 'Research, data entry, writing and outreach'),
-                array('label' => 'Donate', 'slug' => 'donate', 'note' => 'Support the work'),
-            )),
-            array('title' => 'Understand the industry', 'links' => array(
-                array('label' => 'History', 'slug' => 'history', 'note' => 'How the troubled teen industry came to be'),
-                array('label' => 'Law & Policy', 'slug' => 'law-policy', 'note' => 'Lawsuits and bills, and what they mean'),
-                array('label' => 'Legislation tracker', 'slug' => 'legislative-efforts', 'note' => 'Bills to regulate programs, as they move'),
-                array('label' => 'Research & Reports', 'slug' => 'researchreports', 'note' => 'Studies and government reports, summarized'),
-                array('label' => 'How the industry manages its reputation', 'slug' => 'reputation-management', 'note' => 'Marketing, review sites and new names for old programs'),
-                array('label' => 'Glossary', 'slug' => 'glossary', 'note' => "The industry's words, explained"),
-                array('label' => 'Frequently asked questions', 'slug' => 'faq', 'note' => ''),
-            )),
-            array('title' => 'Written for you', 'links' => array(
-                array('label' => 'Survivors', 'slug' => 'survivors', 'note' => 'If you went through a program'),
-                array('label' => 'Family and friends', 'slug' => 'families', 'note' => 'If someone you love is in a program, or was'),
-                array('label' => 'Advocates', 'slug' => 'advocates', 'note' => 'Organizing against the industry'),
-                array('label' => 'Journalists', 'slug' => 'journalists', 'note' => 'Records and sources for reporting'),
-                array('label' => 'Where are the kids?', 'slug' => 'where-are-the-kids', 'note' => 'Young people sent to programs, state by state'),
-            )),
-        ));
-    }
-}
-
-if (!function_exists('kop_site_map_build_featured')) {
-    /** The featured groups with each link resolved; a link whose page is not published is dropped. */
-    function kop_site_map_build_featured(array $pages) {
-        $out = array();
-        foreach (kop_site_map_featured_specs() as $group) {
-            $items = array();
-            foreach ((array) ($group['links'] ?? array()) as $spec) {
-                $url = '';
-                if (!empty($spec['slug'])) {
-                    $url = isset($pages[$spec['slug']]) ? $pages[$spec['slug']]['url'] : '';
-                } elseif (!empty($spec['path'])) {
-                    $url = home_url($spec['path']);
-                }
-                if ($url === '') continue;
-                if (!empty($spec['query'])) $url = add_query_arg($spec['query'], $url);
-                $items[] = kop_site_map_item($spec['label'], $url, (string) ($spec['note'] ?? ''));
-            }
-            if ($items) $out[] = array('title' => (string) $group['title'], 'items' => $items);
-        }
-        return $out;
     }
 }
 

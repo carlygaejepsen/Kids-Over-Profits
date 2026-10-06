@@ -1,7 +1,6 @@
 /**
  * Site map (/site-map/, templates/site-map.php): the "Find a page" filter and
- * the A to Z jumps. The full index is collapsed groups (<details>), opened by a
- * match, a jump or a #address.
+ * the A to Z jumps.
  *
  * Every link's words are in its <li data-sm> (folded by kop_site_map_fold() in
  * inc/site-map.php: lower case, no accents; fold() here must match). Typing
@@ -134,10 +133,7 @@
     function openTarget(hash) {
         if (!hash || hash.length < 2) return;
         var target = document.getElementById(decodeURIComponent(hash.slice(1)));
-        // The group itself and every collapsed group around it.
-        for (var el = target; el && el !== document.body; el = el.parentElement) {
-            if (el.tagName === 'DETAILS') el.open = true;
-        }
+        if (target && target.tagName === 'DETAILS') target.open = true;
     }
     root.addEventListener('click', function (e) {
         var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;

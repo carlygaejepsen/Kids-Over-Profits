@@ -30,7 +30,7 @@ get_header();
 
         <header class="entry-header kop-sm-header">
             <h1 class="entry-title">Site map</h1>
-            <p class="kop-sm-standfirst">The main parts of the site first, then every public page. Type in the box to find a page by name, or search inside every record, report and document instead.</p>
+            <p class="kop-sm-standfirst">Every public page of the site in one place. Type in the box to narrow the list, or search inside every record, report and document instead.</p>
         </header>
 
         <form class="kop-sm-filter" role="search" action="<?php echo esc_url($kop_sm_search); ?>" method="get" data-kop-sm-filter>
@@ -43,70 +43,60 @@ get_header();
             <p id="kop-sm-filter-status" class="kop-sm-filter__status" aria-live="polite"></p>
         </form>
 
-        <?php if (!empty($kop_sm['featured'])) : ?>
-            <section class="kop-sm-section kop-sm-section--featured" aria-labelledby="kop-sm-featured-title" data-kop-sm-section>
-                <h2 id="kop-sm-featured-title">Start here</h2>
-                <div class="kop-sm-featured">
-                    <?php foreach ($kop_sm['featured'] as $group) : ?>
-                        <div class="kop-sm-featured__group">
-                            <h3><?php echo esc_html($group['title']); ?></h3>
-                            <?php kop_site_map_render_items($group['items'], 'kop-sm-list kop-sm-list--featured'); ?>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
+        <?php if (!empty($kop_sm['quick'])) : ?>
+            <section class="kop-sm-section kop-sm-section--quick" aria-labelledby="kop-sm-quick-title" data-kop-sm-section>
+                <h2 id="kop-sm-quick-title">Most used</h2>
+                <?php kop_site_map_render_quick_links($kop_sm['quick']); ?>
             </section>
         <?php endif; ?>
 
         <?php if ($kop_sm_sections) : ?>
-            <section class="kop-sm-section kop-sm-section--index" aria-labelledby="kop-sm-index-title">
-                <h2 id="kop-sm-index-title">Full index</h2>
-                <p class="kop-sm-intro">Every public page, in groups. Open a group to see its pages, or type in the box above to search them all.</p>
-
-                <?php foreach ($kop_sm_sections as $key => $section) :
-                    $count = 0;
-                    if ($section['letters']) {
-                        foreach ($section['letters'] as $items) $count += count($items);
-                    } else {
-                        array_walk_recursive($section['items'], static function ($v, $k) use (&$count) { if ($k === 'url') $count++; });
-                    }
-                    ?>
-                    <details class="kop-sm-index kop-sm-section--<?php echo esc_attr($key); ?>" id="kop-sm-<?php echo esc_attr($key); ?>" data-kop-sm-group data-kop-sm-section>
-                        <summary>
-                            <h3 class="kop-sm-index__title"><?php echo esc_html($section['title']); ?></h3>
-                            <span class="kop-sm-count"><?php echo esc_html(number_format_i18n($count)); ?></span>
-                        </summary>
-                        <div class="kop-sm-index__body">
-                            <?php if ($section['intro'] !== '') : ?>
-                                <p class="kop-sm-intro"><?php echo esc_html($section['intro']); ?></p>
-                            <?php endif; ?>
-
-                            <?php if ($section['letters']) : ?>
-                                <nav class="kop-sm-letters" aria-label="<?php echo esc_attr($section['title'] . ': jump to a letter'); ?>">
-                                    <?php foreach (array_keys($section['letters']) as $letter) : ?>
-                                        <a href="#<?php echo esc_attr(kop_site_map_letter_id($key, (string) $letter)); ?>"><?php echo esc_html((string) $letter); ?></a>
-                                    <?php endforeach; ?>
-                                </nav>
-                                <?php foreach ($section['letters'] as $letter => $items) : ?>
-                                    <details class="kop-sm-letter" id="<?php echo esc_attr(kop_site_map_letter_id($key, (string) $letter)); ?>" data-kop-sm-group>
-                                        <summary><span class="kop-sm-letter__name"><?php echo esc_html((string) $letter); ?></span> <span class="kop-sm-count"><?php echo esc_html(number_format_i18n(count($items))); ?></span></summary>
-                                        <?php kop_site_map_render_items($items, 'kop-sm-list kop-sm-list--columns'); ?>
-                                    </details>
-                                <?php endforeach; ?>
-                            <?php elseif ($key === 'posts') : ?>
-                                <?php foreach ($section['items'] as $cat) : ?>
-                                    <details class="kop-sm-letter" data-kop-sm-group data-sm="<?php echo esc_attr(kop_site_map_fold($cat['title'])); ?>">
-                                        <summary><a href="<?php echo esc_url($cat['url']); ?>"><?php echo esc_html($cat['title']); ?></a> <span class="kop-sm-count"><?php echo esc_html($cat['note']); ?></span></summary>
-                                        <?php kop_site_map_render_items($cat['children']); ?>
-                                    </details>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <?php kop_site_map_render_items($section['items'], $key === 'hubs' ? 'kop-sm-list kop-sm-list--hubs' : 'kop-sm-list kop-sm-list--columns'); ?>
-                            <?php endif; ?>
-                        </div>
-                    </details>
-                <?php endforeach; ?>
-            </section>
+            <nav class="kop-sm-contents" aria-label="On this page">
+                <p class="kop-sm-contents__title">On this page</p>
+                <ul>
+                    <?php foreach ($kop_sm_sections as $key => $section) : ?>
+                        <li><a href="#kop-sm-<?php echo esc_attr($key); ?>"><?php echo esc_html($section['title']); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
         <?php endif; ?>
+
+        <?php foreach ($kop_sm_sections as $key => $section) :
+            $count = 0;
+            if ($section['letters']) {
+                foreach ($section['letters'] as $items) $count += count($items);
+            }
+            ?>
+            <section class="kop-sm-section kop-sm-section--<?php echo esc_attr($key); ?>" id="kop-sm-<?php echo esc_attr($key); ?>" data-kop-sm-section>
+                <h2><?php echo esc_html($section['title']); ?><?php if ($count) : ?> <span class="kop-sm-count">(<?php echo esc_html(number_format_i18n($count)); ?>)</span><?php endif; ?></h2>
+                <?php if ($section['intro'] !== '') : ?>
+                    <p class="kop-sm-intro"><?php echo esc_html($section['intro']); ?></p>
+                <?php endif; ?>
+
+                <?php if ($section['letters']) : ?>
+                    <nav class="kop-sm-letters" aria-label="<?php echo esc_attr($section['title'] . ': jump to a letter'); ?>">
+                        <?php foreach (array_keys($section['letters']) as $letter) : ?>
+                            <a href="#<?php echo esc_attr(kop_site_map_letter_id($key, (string) $letter)); ?>"><?php echo esc_html((string) $letter); ?></a>
+                        <?php endforeach; ?>
+                    </nav>
+                    <?php foreach ($section['letters'] as $letter => $items) : ?>
+                        <details class="kop-sm-letter" id="<?php echo esc_attr(kop_site_map_letter_id($key, (string) $letter)); ?>" data-kop-sm-group>
+                            <summary><span class="kop-sm-letter__name"><?php echo esc_html((string) $letter); ?></span> <span class="kop-sm-count"><?php echo esc_html(number_format_i18n(count($items))); ?></span></summary>
+                            <?php kop_site_map_render_items($items, 'kop-sm-list kop-sm-list--columns'); ?>
+                        </details>
+                    <?php endforeach; ?>
+                <?php elseif ($key === 'posts') : ?>
+                    <?php foreach ($section['items'] as $cat) : ?>
+                        <details class="kop-sm-letter" data-kop-sm-group data-sm="<?php echo esc_attr(kop_site_map_fold($cat['title'])); ?>">
+                            <summary><a href="<?php echo esc_url($cat['url']); ?>"><?php echo esc_html($cat['title']); ?></a> <span class="kop-sm-count"><?php echo esc_html($cat['note']); ?></span></summary>
+                            <?php kop_site_map_render_items($cat['children']); ?>
+                        </details>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <?php kop_site_map_render_items($section['items'], $key === 'hubs' ? 'kop-sm-list kop-sm-list--hubs' : 'kop-sm-list kop-sm-list--columns'); ?>
+                <?php endif; ?>
+            </section>
+        <?php endforeach; ?>
 
         <p class="kop-sm-empty" hidden data-kop-sm-empty>No page title matches. Use <strong>Search everything</strong> to look inside every record, report and document.</p>
 
