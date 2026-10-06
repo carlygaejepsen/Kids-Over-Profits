@@ -20,7 +20,19 @@
     "url": "https://law.justia.com/cases/federal/district-courts/utah/utdce/2:2014cv00866/94858/37/",
     "title": "Wilderness Training & Consulting v. Aspen Education Group, D. Utah",
     "date": "2015",
-    "quote": "On or about March 7, 2014, Plaintiffs and Sellers entered into an Asset Purchase Agreement pertaining to the purchase of several residential treatment programs ... located in the State of Utah. (search summary; page returned 403)"
+    "quote": "On or about March 7, 2014, Plaintiffs and Sellers entered into an Asset Purchase Agreement pertaining to the purchase of several residential treatment programs ... located in the State of Utah. The plaintiffs (buyers): Wilderness Training & Consulting, LLC; Lake Montezuma RTC, LLC; Escalante RTC, LLC; Syracuse RTC, LLC; and Syracuse Institute, LLC. (search summary; page returned 403)"
+   },
+   {
+    "url": "https://www.linkedin.com/in/john-m-webster-2659ab19/",
+    "title": "John M. Webster, LinkedIn",
+    "date": "n.d.",
+    "quote": "In 2014, John had the opportunity to purchase Turn-About with Myron Carter and Matthew Bartlett. (search summary)"
+   },
+   {
+    "url": "https://www.yelp.com/biz/turn-about-ranch-escalante",
+    "title": "Turn-About Ranch, Yelp (updated September 2026)",
+    "date": "2026-09",
+    "quote": "Turn-About Ranch, 280 N 300 E, Escalante, Utah: listing updated September 2026; the program's own site (turnaboutranch.com) is live."
    },
    {
     "url": "https://openminds.com/market-intelligence/news/030600aspen/",
@@ -35,7 +47,7 @@
     "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
    }
   ],
-  "notes": "The employee takeover rests on Breaking Code Silence (a lead); the court page naming the March 2014 sale was blocked, so the buyer's name is unconfirmed. Confidence lowered from the researcher's high for that reason.",
+  "notes": "Buyer: Escalante RTC, LLC (Escalante is Turn-About Ranch's town), one of five LLCs in the March 7, 2014 purchase from Aspen, read from search summaries of the federal case (the court page returned 403). Its co-owners, John Webster, Myron Carter and Matthew Bartlett, are named on the r/troubledteens wiki and Webster's LinkedIn. The same purchase took Island View (Syracuse RTC, now Elevations RTC), the Aspen Institute for Behavioral Assessment (Syracuse Institute, now Viewpoint Center) and Copper Canyon Academy (Lake Montezuma RTC, now Sedona Sky Academy), all programs that became Family Help & Wellness partners in 2014, so Turn-About Ranch may have been one too; no source names it, so the record does not say so. Still operating in 2026 (Yelp, its own site).",
   "ops": [
    {
     "type": "operator_link",
@@ -75,8 +87,18 @@
     "text": "Aspen Education Group stopped owning Turn-About Ranch in 2014, when the program was taken over by its employees."
    },
    {
-    "type": "manual",
-    "text": "Current operator on record 10344 still reads \"Acadia HealthCare\", which never owned Turn-About Ranch: confirm the 2014 employee buyer (reported as Escalante RTC, LLC) and whether the ranch still runs, then set the current operator and status Open (or Closed with its end year)."
+    "type": "field",
+    "facility_id": 10344,
+    "path": "identification.currentOperator",
+    "from": "Acadia HealthCare",
+    "to": "Escalante RTC, LLC (owned by its managers since 2014)"
+   },
+   {
+    "type": "field",
+    "facility_id": 10344,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
    }
   ]
  },
@@ -4438,7 +4460,7 @@
   "facility_id": null,
   "verdict": "partly_wrong",
   "confidence": "high",
-  "finding": "Clark Harman, 12, died Feb. 3, 2024 at Trails Carolina, less than a day after arriving, while sleeping in a one-person bivy bag. The NC Chief Medical Examiner listed asphyxia due to smothering and ruled the death a homicide; the DA declined charges.",
+  "finding": "Clark Harman, 12, died Feb. 3, 2024 at Trails Carolina, less than a day after arriving, zipped into a one-person bivy bag overnight: the program's restraint. The NC Chief Medical Examiner listed asphyxia due to smothering and ruled the death a homicide; the DA declined charges.",
   "kop_now": "KOP gives Feb. 1, 2024 and 'Restraint'.",
   "sources": [
    {
@@ -4454,7 +4476,7 @@
     "quote": "died at Trails Carolina on Feb. 3 while sleeping in a one-person nylon tent called a bivy"
    }
   ],
-  "notes": "One search summary said found Feb. 2; the autopsy-based reporting gives Feb. 3. Category 'other' because no restraint was found.",
+  "notes": "One search summary said found Feb. 2; the autopsy-based reporting gives Feb. 3. Category stays restraint.",
   "ops": [
    {
     "type": "memorial",
@@ -4468,14 +4490,7 @@
     "memorial_id": 11,
     "column": "cause_of_death",
     "from": "Restraint",
-    "to": "Asphyxia due to smothering in a sleeping bag; ruled a homicide"
-   },
-   {
-    "type": "memorial",
-    "memorial_id": 11,
-    "column": "cause_category",
-    "from": "restraint",
-    "to": "other"
+    "to": "Asphyxia while zipped into a bivy sleeping bag used as a restraint; ruled a homicide"
    }
   ]
  },
