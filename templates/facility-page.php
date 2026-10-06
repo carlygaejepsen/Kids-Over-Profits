@@ -52,8 +52,10 @@ $kop_fp_sources = static function ($sources, $tag = 'dd') {
     foreach (array_values($sources) as $n => $src) {
         $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
         $preview = $src['cite'] !== '' ? $src['cite'] : $src['source'];
-        $links[] = $src['url'] !== ''
-            ? kop_citation_link($src['url'], $label, $preview, true, '', true)
+        // A wiki citation with no address links the page it names.
+        $url = $src['url'] !== '' ? $src['url'] : kop_facility_pages_wiki_url($src['cite']);
+        $links[] = $url !== ''
+            ? kop_citation_link($url, $label, $preview, true, '', true)
             : '<span title="' . esc_attr($preview) . '">' . esc_html($label) . '</span>';
     }
     echo '<' . $tag . ' class="kop-fp-src">' . implode(', ', $links) . '</' . $tag . '>';

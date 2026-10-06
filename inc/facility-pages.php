@@ -1276,6 +1276,27 @@ if (!function_exists('kop_facility_pages_incidents')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_wiki_url')) {
+    /**
+     * The address of the r/troubledteens wiki page a citation names
+     * ('r/troubledteens wiki, page "<title>" (as of <date>)'), from
+     * js/data/reddit-wiki/page-urls.json (scripts/build-wiki-page-urls.py):
+     * the page of that title and date, else the only page of that title.
+     * '' when the citation names none or the title is not known.
+     */
+    function kop_facility_pages_wiki_url($cite) {
+        static $map = null;
+        if (!preg_match('/r\/troubledteens wiki, page "([^"]+)"(?: \(as of (\d{4}-\d{2}-\d{2})\))?/', (string) $cite, $m)) return '';
+        if ($map === null) {
+            $file = dirname(__DIR__) . '/js/data/reddit-wiki/page-urls.json';
+            $map = is_readable($file) ? (array) json_decode((string) file_get_contents($file), true) : array();
+        }
+        $title = trim($m[1]);
+        if (!empty($m[2]) && isset($map['dated'][$title . '|' . $m[2]])) return (string) $map['dated'][$title . '|' . $m[2]];
+        return (string) ($map['titles'][$title] ?? '');
+    }
+}
+
 if (!function_exists('kop_facility_pages_cited_html')) {
     /**
      * A note's text as HTML with each web address shown as a "source" link

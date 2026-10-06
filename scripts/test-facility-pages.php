@@ -507,6 +507,11 @@ $check('wiki dates read and sort; one event written twice shows once, both sourc
     array_column($inc, 'when') === array('August 18, 1997', 'February 6, 2000', '2006', 'April 9, 2006', 'Reported December 2025')
     && count($inc[1]['also'] ?? array()) === 1 && strpos($inc[1]['text'], 'one month into his stay') !== false,
     wp_json_encode(array_column($inc, 'when')));
+$check('a wiki citation with no address finds its page, by date when two pages share a title',
+    kop_facility_pages_wiki_url('r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18)') === 'https://www.reddit.com/r/troubledteens/wiki/index/laurelridge'
+    && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2026-01-08)') === 'https://www.reddit.com/r/troubledteens/wiki/index/BSlaurelridge'
+    && kop_facility_pages_wiki_url('r/troubledteens wiki, page "Brown Schools Inc." (as of 2026-01-07)') !== ''
+    && kop_facility_pages_wiki_url('Woodbury Reports, May 2007') === '');
 $cited = kop_facility_pages_cited_html('Ownership: sold in April 2003 (Form 10-K for 2003, filed March 2004: https://www.sec.gov/x/g87995e10vk.htm; FTC notice: https://www.ftc.gov/node/10021)');
 $check('a note\'s web addresses read as "source" links, never the address',
     substr_count($cited, '>source</a>') === 2 && strpos($cited, 'filed March 2004, <a') !== false && !preg_match('#>https?://#', $cited)
