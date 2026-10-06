@@ -1124,6 +1124,12 @@
     margin-bottom: 0.75rem;
 }
 
+/* Celebrity and viral stories: set apart from the program's own news */
+.kop-fp-news-aside > summary {
+    border-color: var(--kop-text-muted, #4A5568);
+    color: var(--kop-text-muted, #4A5568);
+}
+
 /* Serious violations */
 .kop-fp-vcards {
     display: grid;

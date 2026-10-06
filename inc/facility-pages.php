@@ -3061,13 +3061,14 @@ if (!function_exists('kop_facility_pages_news')) {
         global $wpdb;
         if (!kop_facility_pages_table_exists('news_facility_links') || !kop_facility_pages_table_exists('news_submissions')) return array();
         $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT n.id, n.article_title, n.alternate_title, n.publication_name, n.publication_date, n.article_url, n.article_type, n.summary, l.link_type
+            "SELECT n.id, n.article_title, n.alternate_title, n.publication_name, n.publication_date, n.article_url, n.article_type, n.summary, n.tags, l.link_type
                FROM news_facility_links l
                JOIN news_submissions n ON n.id = l.news_id
               WHERE l.facility_id = %d AND n.status IN ('approved','published')
               ORDER BY n.publication_date DESC, n.id DESC",
             (int) $facility_id
         ), ARRAY_A);
+        require_once get_stylesheet_directory() . '/api/news-tags.php';
         $out = array();
         foreach ((array) $rows as $r) {
             $out[] = array(
@@ -3080,6 +3081,8 @@ if (!function_exists('kop_facility_pages_news')) {
                 'type'      => trim((string) $r['article_type']),
                 'summary'   => trim((string) $r['summary']),
                 'link_type' => (string) $r['link_type'],
+                // Celebrity or Viral tag: listed apart, collapsed (kop_news_is_aside()).
+                'aside'     => kop_news_is_aside((string) $r['tags']),
                 'image'     => function_exists('kop_news_image') ? kop_news_image((int) $r['id'], (string) $r['article_url']) : null,
             );
         }
@@ -3412,6 +3415,8 @@ if (!function_exists('kop_facility_pages_violations')) {
         $wpdb->suppress_errors($suppress);
         $categories = kop_ih_categories();
         $severe = kop_ih_severe_score();
+        // Plain-language summaries a reviewer approved for the hard-to-read ones (inc/highlight-summaries.php).
+        $plain = function_exists('kop_hs_public_summaries') ? kop_hs_public_summaries((array) $rows) : array();
         $out = array();
         foreach ((array) $rows as $r) {
             $hash = (string) $r['text_hash'];
@@ -3434,6 +3439,7 @@ if (!function_exists('kop_facility_pages_violations')) {
                 'date'       => $date,
                 'date_label' => $date !== '' ? kop_facility_pages_date_label($date) : trim((string) $r['report_date']),
                 'excerpt'    => $excerpt,
+                'plain'      => (string) ($plain[(int) $r['id']] ?? ''),
                 'short'      => kop_ih_card_excerpt($excerpt, 360),
                 'state_label' => trim((string) $r['state_label']),
                 'source_url' => kop_ih_source_url($r),

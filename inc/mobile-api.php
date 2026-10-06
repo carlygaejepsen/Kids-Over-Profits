@@ -257,12 +257,13 @@ if (!function_exists('kop_mobile_news_card')) {
     /**
      * One article as the app draws it, from a kop_facility_pages_news() /
      * operator news item: {id, title, outlet, date, date_label, url, type,
-     * summary, image}. Named keys only.
+     * summary, image; aside = a celebrity or viral story the page collapses}.
+     * Named keys only.
      */
     function kop_mobile_news_card($item) {
         if (!is_array($item)) return null;
         $card = array();
-        foreach (array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'type', 'summary', 'image', 'link_type', 'about') as $k) {
+        foreach (array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'type', 'summary', 'image', 'link_type', 'about', 'aside') as $k) {
             if (array_key_exists($k, $item)) $card[$k] = $item[$k];
         }
         return $card;

@@ -711,9 +711,10 @@ if (!function_exists('kop_operator_page_data')) {
                 }
             }
             if ($news_ids) {
+                require_once get_stylesheet_directory() . '/api/news-tags.php';
                 $nin = implode(',', array_map('intval', array_keys($news_ids)));
                 $nrows = $wpdb->get_results(
-                    "SELECT id, article_title, alternate_title, publication_name, publication_date, article_url, article_type, summary
+                    "SELECT id, article_title, alternate_title, publication_name, publication_date, article_url, article_type, summary, tags
                        FROM news_submissions WHERE id IN ({$nin}) AND status IN ('approved','published')
                       ORDER BY publication_date DESC, id DESC",
                     ARRAY_A
@@ -731,6 +732,7 @@ if (!function_exists('kop_operator_page_data')) {
                         'type'       => trim((string) $r['article_type']),
                         'summary'    => trim((string) $r['summary']),
                         'about'      => $news_ids[(int) $r['id']],
+                        'aside'      => kop_news_is_aside((string) $r['tags']),
                         // The same card the facility pages and the mobile app draw (inc/mobile-api.php).
                         'image'      => function_exists('kop_news_image') ? kop_news_image((int) $r['id'], (string) $r['article_url']) : null,
                     );

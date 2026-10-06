@@ -214,3 +214,6 @@ require_once get_stylesheet_directory() . '/inc/page-images.php';
 
 // Program wiki entries: contact is the r/troubledteens modmail (saved entries rewritten once)
 require_once get_stylesheet_directory() . '/inc/wiki-contact.php';
+
+// Celebrity and viral articles already on file get their tag once (collapsed on facility and company pages)
+require_once get_stylesheet_directory() . '/inc/news-aside-tags.php';

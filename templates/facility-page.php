@@ -76,6 +76,7 @@ $kop_fp_violation_card = static function (array $v) {
             <span class="kop-fp-vtag"><?php echo esc_html($v['label']); ?></span>
             <?php if ($v['date_label'] !== '') : ?><span class="kop-fp-vdate">Inspected <?php echo esc_html($v['date_label']); ?></span><?php endif; ?>
         </p>
+        <?php if (!empty($v['plain']) && function_exists('kop_hs_plain_html')) echo kop_hs_plain_html($v['plain'], 'kop-plain-summary kop-fp-vplain'); // escaped in the helper ?>
         <blockquote class="kop-fp-vquote"><?php echo function_exists('kop_ih_excerpt_html') ? kop_ih_excerpt_html($v['short']) : '<p>' . esc_html($v['short']) . '</p>'; ?></blockquote>
         <?php if ($long) : ?>
             <details class="kop-fp-vfull">
@@ -208,18 +209,32 @@ $kop_fp_incident_list = static function (array $items) use ($kop_fp_sources) {
     </ol>
     <?php
 };
+// Articles tagged Celebrity or Viral (kop_news_is_aside()) only pass through
+// the program: they follow the rest, collapsed in a list of their own.
 $kop_fp_news_list = static function (array $items) use ($kop_fp_news_card) {
+    $kop_fp_n_aside = array_values(array_filter($items, static function ($n) { return !empty($n['aside']); }));
+    $items = array_values(array_filter($items, static function ($n) { return empty($n['aside']); }));
     $kop_fp_n_first = array_slice($items, 0, 6);
     $kop_fp_n_rest = array_slice($items, 6);
     ?>
+    <?php if ($kop_fp_n_first) : ?>
     <ul class="kop-fp-news">
         <?php foreach ($kop_fp_n_first as $n) $kop_fp_news_card($n); ?>
     </ul>
+    <?php endif; ?>
     <?php if ($kop_fp_n_rest) : ?>
         <details class="kop-fp-more">
             <summary><?php echo count($kop_fp_n_rest); ?> more <?php echo count($kop_fp_n_rest) === 1 ? 'article' : 'articles'; ?></summary>
             <ul class="kop-fp-news">
                 <?php foreach ($kop_fp_n_rest as $n) $kop_fp_news_card($n); ?>
+            </ul>
+        </details>
+    <?php endif; ?>
+    <?php if ($kop_fp_n_aside) : ?>
+        <details class="kop-fp-more kop-fp-news-aside">
+            <summary><?php echo count($kop_fp_n_aside); ?> <?php echo count($kop_fp_n_aside) === 1 ? 'article' : 'articles'; ?> about celebrities and viral stories</summary>
+            <ul class="kop-fp-news">
+                <?php foreach ($kop_fp_n_aside as $n) $kop_fp_news_card($n); ?>
             </ul>
         </details>
     <?php endif; ?>

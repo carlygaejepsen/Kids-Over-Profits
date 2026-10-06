@@ -73,6 +73,9 @@ if (!function_exists('kop_news_tag_synonyms')) {
             'LGBTQ+ Rights' => ['lgbtq rights', 'lgbt rights', 'lgbtq', 'lgbtq+', 'lgbtq youth'],
             'Survivor Stories' => ['survivor story', 'survivor testimony', 'memoir'],
             'Documentary' => ['documentaries', 'netflix'],
+            // Set aside on facility and company pages (kop_news_is_aside()).
+            'Celebrity' => ['celebrities', 'celebrity news', 'celebrity story', 'public figure', 'hollywood', 'pop culture'],
+            'Viral' => ['viral video', 'viral post', 'viral story', 'tiktok', 'youtuber', 'influencer'],
             'Private Schools' => ['private school'],
             'Staff Misconduct' => ['therapist misconduct', 'employee misconduct'],
             'Safety Violations' => ['safety concerns', 'safety violation'],
@@ -311,5 +314,29 @@ if (!function_exists('kop_news_tag_prompt_vocabulary')) {
             'Documentary', 'Adoption', 'Immigration', 'Disability Rights', 'LGBTQ+ Rights',
             'Private Schools', 'Private Prisons', 'Medicaid',
         ];
+    }
+}
+
+if (!function_exists('kop_news_aside_tags')) {
+    /**
+     * Tags that put an article in the collapsed "Celebrities and viral
+     * stories" list on facility and company pages: coverage about a famous
+     * person or a viral post that only passes through the program. Hard news
+     * that mentions one (a closure, a bill, testimony) carries neither tag.
+     */
+    function kop_news_aside_tags(): array {
+        return ['celebrity', 'viral'];
+    }
+}
+
+if (!function_exists('kop_news_is_aside')) {
+    /** True when an article's stored tags (JSON or a list) include an aside tag. */
+    function kop_news_is_aside($tags): bool {
+        foreach (kop_news_tags_normalize($tags) as $tag) {
+            if (in_array(strtolower($tag), kop_news_aside_tags(), true)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -303,25 +303,41 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
             </section>
             <?php endif; ?>
 
-            <?php if ($page['news']) : ?>
+            <?php if ($page['news']) :
+                // Celebrity or Viral tag (kop_news_is_aside()): collapsed, after the rest.
+                $kop_op_news_row = static function (array $n) {
+                    $bits = array_filter(array($n['outlet'], $n['date_label'], $n['type']), 'strlen');
+                    ?>
+                    <li>
+                        <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
+                            <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
+                        <?php else : ?>
+                            <span><?php echo esc_html($n['title']); ?></span>
+                        <?php endif; ?>
+                        <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
+                        <?php if ($n['about'] === 'facility') : ?><span class="meta">About one of its programs</span><?php endif; ?>
+                        <?php if ($n['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($n['summary']); ?></p><?php endif; ?>
+                    </li>
+                    <?php
+                };
+                $kop_op_news_main = array_values(array_filter($page['news'], static function ($n) { return empty($n['aside']); }));
+                $kop_op_news_aside = array_values(array_filter($page['news'], static function ($n) { return !empty($n['aside']); }));
+                ?>
             <section class="kop-fp-section" id="news">
                 <h2>News coverage</h2>
+                <?php if ($kop_op_news_main) : ?>
                 <ul class="kop-fp-records">
-                    <?php foreach ($page['news'] as $n) :
-                        $bits = array_filter(array($n['outlet'], $n['date_label'], $n['type']), 'strlen');
-                        ?>
-                        <li>
-                            <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
-                                <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
-                            <?php else : ?>
-                                <span><?php echo esc_html($n['title']); ?></span>
-                            <?php endif; ?>
-                            <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' | ', $bits)); ?></span><?php endif; ?>
-                            <?php if ($n['about'] === 'facility') : ?><span class="meta">About one of its programs</span><?php endif; ?>
-                            <?php if ($n['summary'] !== '') : ?><p class="kop-fp-record-summary"><?php echo esc_html($n['summary']); ?></p><?php endif; ?>
-                        </li>
-                    <?php endforeach; ?>
+                    <?php foreach ($kop_op_news_main as $n) $kop_op_news_row($n); ?>
                 </ul>
+                <?php endif; ?>
+                <?php if ($kop_op_news_aside) : ?>
+                <details class="kop-fp-more kop-fp-news-aside">
+                    <summary><?php echo count($kop_op_news_aside); ?> <?php echo count($kop_op_news_aside) === 1 ? 'article' : 'articles'; ?> about celebrities and viral stories</summary>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($kop_op_news_aside as $n) $kop_op_news_row($n); ?>
+                    </ul>
+                </details>
+                <?php endif; ?>
             </section>
             <?php endif; ?>
 

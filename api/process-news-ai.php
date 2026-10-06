@@ -673,7 +673,7 @@ function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt .= "  \"publicationDate\": \"YYYY-MM-DD format\",\n";
     $prompt .= "  \"publicationName\": \"publication name\",\n";
     $prompt .= "  \"location\": \"City, State (or Country) where the main events took place\",\n";
-    $prompt .= "  \"tags\": [\"3-5 themes. Use these exact labels where one fits: " . implode(', ', kop_news_tag_prompt_vocabulary()) . ". Add a new label only for a theme none of these covers. Do not use generic tags like Abuse, Lawsuit, Youth, or Residential Treatment\"],\n";
+    $prompt .= "  \"tags\": [\"3-5 themes. Use these exact labels where one fits: " . implode(', ', kop_news_tag_prompt_vocabulary()) . ". Add a new label only for a theme none of these covers. Add Celebrity when the article is mainly about a celebrity or public figure (their memories, interviews, memoir, show or own legal trouble) rather than what a program did or what regulators, courts or lawmakers did about it; add Viral when it is mainly about a social media post, influencer or YouTuber video, or a TV show. Do not use generic tags like Abuse, Lawsuit, Youth, or Residential Treatment\"],\n";
     $prompt .= "  \"facilities\": [\"list of facilities/companies mentioned\"],\n";
     $prompt .= "  \"staff\": [\"list of staff/owners mentioned\"],\n";
     $prompt .= "  \"survivors\": [\"list of survivors and victims mentioned (use initials or pseudonyms if provided)\"],\n";
