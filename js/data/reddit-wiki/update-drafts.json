@@ -822,6 +822,58 @@
    ],
    "tense": [],
    "conflicts": []
+  },
+  "768": {
+   "program": "Laurel Ridge Treatment Center",
+   "place": "San Antonio, TX",
+   "years": "1987-present",
+   "column": "original_markdown",
+   "base_sha1": "5c6bca9cb81f459f58a893e436f5bb08208ecbda",
+   "record": {
+    "id": 10815,
+    "name": "Laurel Ridge Treatment Center RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "In April 2026, KSAT reported that Laurel Ridge faced termination of its Medicare and Medicaid agreements after federal and state investigations into repeated safety violations, including staffing shortages that left patients waiting up to six hours to be checked in, and unsecured items that could be used for self-injury. Medicare and Medicaid payment for newly admitted patients was set to end on April 30, 2026 ([KSAT](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/)). Later that month, KSAT reported that the facility would lay off nearly 650 employees, effective June 26, after being cut off from Medicaid and Medicare payments ([KSAT](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Kept the two closure-news sentences, wording checked against the KSAT article (waits of up to six hours to be checked in; unsecured items usable for self-injury; payment for new admissions ends April 30). Moved the Jacob Cuellar sentence (g8) to Founders and Notable Staff as p1."
+    },
+    {
+     "id": "p1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "** Jacob Cuellar** is a former CEO of Laurel Ridge Treatment Center. In June 2025, KSAT reported that he had been arrested in North Carolina on six child sexual abuse charges involving offenses alleged to have occurred between 2001 and 2008, and that he also faced a pending charge in Bexar County, Texas, of continuous sexual abuse of a child ([KSAT 12 News](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Moved here from s1: the section was empty and the article is about a former CEO. Charges confirmed in the KSAT article (six Durham County counts, two minors, 2001 to 2008; Bexar County continuous sexual abuse of a child under 14, awaiting trial). Written as charges, not findings."
+    },
+    {
+     "id": "p2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Deaths, and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated March 18, 2021, Texas inspectors found that staff were aware of allegations made by a child in care of inappropriate touching by a staff member (Texas licensing inspection report, March 18, 2021).\n\nIn a report dated October 28, 2024, Texas inspectors found that allegations of inappropriate sexual comments made by a staff member were not reported to Licensing in a timely manner (Texas licensing inspection report, October 28, 2024).\n\nIn a report dated November 27, 2024, Texas inspectors found that a child in care was injured during an unnecessary restraint in which excessive physical force was used (Texas licensing inspection report, November 27, 2024).\n\nIn a report dated December 26, 2025, Texas inspectors found that a child in care had used a ribbon to attempt to hang themselves (Texas licensing inspection report, December 26, 2025).\n\nIn a report dated December 27, 2025, Texas inspectors found that requests and consults submitted by nursing staff were declined, and the child had to be sent to the emergency room (Texas licensing inspection report, December 27, 2025).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "One line per finding, oldest first, each a close paraphrase of the report excerpt in gaps.json, cited by the gap's cite_text."
+    },
+    {
+     "id": "h1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Ex-Laurel Ridge Treatment Center CEO faces 6 child sex charges in North Carolina, records indicate](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/) (KSAT 12 News, 6/10/2025)\n\n[Laurel Ridge Treatment Center faces Medicare, Medicaid termination over safety violations](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/) (KSAT, 4/17/2026)\n\n[Nearly 650 Laurel Ridge Treatment Center employees to be laid off](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/) (KSAT, 4/27/2026)",
+     "by": "haiku",
+     "verdict": "fixed",
+     "note": "Put in date order like the existing list (oldest first) and dropped the leading blank line; format matches the entry's '[Title](url) (Outlet, m/d/yyyy)' lines."
+    }
+   ],
+   "tense": [],
+   "conflicts": []
   }
  }
 }
