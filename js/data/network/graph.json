@@ -5504,7 +5504,9 @@
   {
    "id": "kris-archer",
    "name": "Kris Archer",
-   "aliases": [],
+   "aliases": [
+    "Kristen Archer"
+   ],
    "kind": "person",
    "status": "",
    "chain": "",
