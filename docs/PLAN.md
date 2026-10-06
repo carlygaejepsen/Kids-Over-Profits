@@ -1244,3 +1244,100 @@ end). Owner, once I: has room:
    if the backup has to wait for storage.
 
 ---
+
+### 3.12 Wiki entries brought up to date from KOP (2026-10-05)
+
+The 425 r/troubledteens program entries in `wiki_submissions` were bulk
+imported from the Reddit wiki in Dec 2025 - Jan 2026 and have not been
+updated since. In that time KOP has gained confirmed closures, rename
+years, operator changes, news, lawsuits, deaths and approved serious
+findings for many of the same programs. Nothing compares an entry with its
+facility record: `scripts/reddit-wiki-live.py` compares KOP's copy only
+with Reddit's. Owner decision (2026-10-05): existing entries first; stub
+and missing pages (827 stubs, 724 index slugs with no page) come later, in
+the same pipeline in "new entry" mode.
+
+Facts that shape the work:
+
+- The text of most entries is only in `original_markdown`; `json_data`
+  holds the lists (staff, media, lawsuits) but almost none of the prose. An
+  update edits the markdown in place. Regenerating it from the form
+  (`generateWikiMarkdown`) would lose text.
+- Only 46 entries are tied to a `facilities_v2` record
+  (`facility_unique_name`, 58 filled, 12 of them operators); 246 match a
+  record by exact name, 10 of those ambiguously.
+- `kop_facility_page_data()` (`inc/facility-pages.php`) already gathers
+  everything public about a record and runs offline against
+  `tmp/prod.sqlite` (`scripts/test-facility-pages.php`).
+- Publishing stays a manual paste: Reddit refuses scripts.
+
+Model delegation. Every step that can be a script is a script; models only
+write and check prose. Claude subagents do the one-off batch, run from a
+workflow; anything that runs on the server later goes through
+`kop_ai_generate_alternating()` (Groq/Gemini), never a fixed provider.
+
+| Step | Who | Why |
+|---|---|---|
+| 0 Linking, 1 Gaps | Scripts, no model | Deterministic matching; free and repeatable |
+| 0 Ambiguous links | Owner, in the review inbox | A wrong link puts another program's facts in an entry |
+| 2a Mechanical edits | Haiku 4.5 | Adding links to In the Media / Related Media, header years and status, past tense for a closed program: fixed formats |
+| 2b New prose | Sonnet 5.5 | Closure and rebrand paragraphs, lawsuit and finding summaries in the entry's own voice |
+| 2c Check | Opus 5.5 | Every added claim against its source; anything about a death, an abuse allegation or a named person is written or rewritten here, not by 2b |
+| 3 Screen, 5 Upkeep code | Sonnet 5.5, reviewed by `/code-review medium` | Ordinary inbox source and cron, existing patterns |
+| 5 Daily check | Script; any prose on the server via Groq/Gemini | Project rule for on-site AI |
+
+1. **Link every entry to its record** (script). Match by the Reddit page
+   the entry came from (`sourceSlug` or the bulk note's file name, the
+   pairing `reddit-wiki-live.py` uses), then name, past and other names
+   (`kop_v2_alias_index()`) within the state from `city_state`. A single
+   match is saved as `suggested`; ambiguous and unmatched ones become a
+   review inbox source with candidates (one click, or
+   `kop_facility_finder_field()`), saving through
+   `api/link-wiki-facility.php`. Operator entries link to `kop_operators`.
+2. **Gaps per entry** (script, `scripts/wiki-gaps.php`, offline against
+   `tmp/prod.sqlite`). For each linked entry, `kop_facility_page_data()`
+   against the entry's markdown, into `tmp/wiki-updates/gaps/<id>.json`:
+   status and end year (confirmed closures only) against the header;
+   rename years, past names and operator changes the text lacks; news,
+   lawsuits and documents whose URL is not in the entry; memorial names
+   not in it; approved serious findings at or above `kop_ih_min_score`.
+   Public, approved data only: no pending Woodbury, Fornits or inspection
+   items, no unpublished testimony, never `journalists`. A gap that
+   contradicts the entry (open vs closed, different years) is marked
+   `conflict`, never written over. `tmp/wiki-updates/report.md` counts
+   gaps by kind and lists the entries with the most.
+3. **Drafts** (subagents, per the table). Haiku makes the mechanical
+   edits, Sonnet writes the new paragraphs, Opus checks the whole new
+   entry against the gap file and the sources and returns a verdict per
+   added line. Rules for every drafter: change nothing outside the added
+   lines (the script diffs and refuses a draft that deletes or rewrites
+   existing text); every added sentence cites its link (the KOP facility
+   page, the article, the court record; KOP's own reporting is a primary
+   source); plain stated facts, no framing the reader is told to conclude
+  ; no emojis; the modmail contact line
+   unchanged; a person is named only as the source names them, never from
+   a pending item. Output: `tmp/wiki-updates/drafts/<id>.md` + `<id>.json`
+   (each added line, its source, Opus's verdict).
+4. **Pilot of 10**, picked for the most gaps across kinds (closure,
+   rename, lawsuit, death, finding). Owner reads them on the screen in
+   step 5; prompts are adjusted; then the rest (about 290 once linked) in
+   batches of 25 from a background workflow, resumable by entry id.
+5. **Review screen**: review inbox source `wiki-updates`. Before/after per
+   entry with the added lines marked and their sources, each line editable
+   or droppable, conflicts shown apart for a decision. Approve writes the
+   new markdown to `wiki_submissions` (`original_markdown` for imported
+   rows) and logs the old text for an exact Undo. Approved entries go to a
+   **Ready for Reddit** list: Copy button and a link to the page's Reddit
+   edit screen. After pasting, `reddit-wiki-live.py fetch --slugs ...` and
+   `compare` turn the badge back to "same".
+6. **Keep them current**. A daily cron reruns step 2's gap check for
+   linked entries; an entry whose record gained a confirmed closure,
+   approved news, a lawsuit, a death or a finding since its last update
+   gets a "KOP has new information" badge in the wiki editor and a new
+   inbox item.
+
+Tests: `scripts/test-wiki-gaps.php` (linking on the real rows, gap kinds,
+the no-deletion diff, approve and exact Undo on an in-memory copy) and the
+existing `scripts/test-wiki-contact.php`.
+
+---
