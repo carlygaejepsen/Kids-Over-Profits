@@ -237,6 +237,7 @@ function kop_rinbox_fornits_item(array $r) {
                 }
                 $moves[] = $m;
             }
+            if (function_exists('kop_rdest_sort_moves') && preg_match('#^https?://#i', (string) ($v['url'] ?? ''))) $moves = array_merge($moves, kop_rdest_sort_moves());
         } elseif ($kind === 'testimony') {
             $label = 'Add to the record (unpublished)';
         }
@@ -356,6 +357,14 @@ function kop_rinbox_fornits_act($key, $action, array $params) {
         case 'move':
             if ($r['status'] !== 'pending') throw new RuntimeException('This item was already handled (' . $r['status'] . ').');
             $v = json_decode((string) $r['value'], true) ?: array();
+            if ($action === 'move' && in_array((string) ($params['to'] ?? ''), array('indigenous', 'young_adult'), true)) {
+                if ($r['kind'] !== 'lead' || !preg_match('#^https?://#i', (string) ($v['url'] ?? ''))) throw new RuntimeException('Only a lead with a web address can go there.');
+                return array('message' => kop_rdest_send_row(kop_fornits_items_table(), $r['pkey'], (string) $params['to'], array(
+                    'url' => (string) $v['url'], 'title' => (string) ($v['title'] ?? $r['label'] ?? ''), 'site_name' => (string) (parse_url($v['url'], PHP_URL_HOST) ?: ''),
+                    'school_id' => (int) ($params['school_id'] ?? 0), 'ya_id' => (int) ($params['ya_id'] ?? 0), 'ya_name' => (string) ($params['ya_name'] ?? ''),
+                    'note' => 'Sent from Fornits by ' . $user . '.', 'via' => 'Fornits',
+                ), $user));
+            }
             $target = '';
             if ($r['kind'] === 'lead') {
                 $valid = kop_fornits_lead_targets();
@@ -400,6 +409,7 @@ function kop_rinbox_fornits_act($key, $action, array $params) {
             return array('message' => 'Skipped. Nothing was added; "Back to review" on the Skipped tab brings it back.');
         case 'undo':
             $was = $r['status'];
+            kop_rdest_undo_row($r);
             $res = kop_fornits_undo(array($r), $user)[$r['pkey']] ?? array('ok' => false, 'error' => 'Nothing to undo.');
             if (empty($res['ok'])) throw new RuntimeException($res['error']);
             return array('message' => $was === 'applied' ? 'Undone: it came off the record (or out of its queue). It is waiting for review again.' : 'Waiting for review again.');

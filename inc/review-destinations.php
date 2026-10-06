@@ -292,3 +292,27 @@ function kop_rdest_take_back(array $done) {
     if (!$st->rowCount()) throw new RuntimeException(ucfirst($to) . ' #' . $id . ' has been reviewed already, so it stays there.');
     if ($table === 'lawsuits') $pdo->prepare('DELETE FROM lawsuit_facility_links WHERE lawsuit_id = ?')->execute(array($id));
 }
+
+/** "Move to" entries for the two sorting destinations every link queue offers (Indian boarding schools, young adult programs). */
+function kop_rdest_sort_moves() {
+    return array_values(array_filter(kop_rdest_moves(), function ($m) { return in_array($m['id'], array('indigenous', 'young_adult'), true); }));
+}
+
+/**
+ * A queue row (Drive Docs, Fornits) sent to one of those two: the link goes there, the row is filed as
+ * rejected with the move in its 'applied' JSON, and the queue's own Undo ("Back to review") takes it back
+ * through kop_rdest_undo_row(). Returns the message.
+ */
+function kop_rdest_send_row($table, $pkey, $to, array $p, $reviewer) {
+    global $wpdb;
+    $done = kop_rdest_put($to, $p, $reviewer);
+    $wpdb->update($table, array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => 'Sent to ' . kop_rdest_targets()[$to]['label'], 'rdest' => $done)),
+        'reviewed_by' => $reviewer, 'reviewed_at' => current_time('mysql', true)), array('pkey' => $pkey));
+    return $done['message'] . ' Back to review (Skipped tab) takes it back.';
+}
+
+/** Before a queue's Undo of a rejected row: take back what kop_rdest_send_row() did, if it did. */
+function kop_rdest_undo_row(array $r) {
+    $applied = json_decode((string) ($r['applied'] ?? ''), true);
+    if ($r['status'] === 'rejected' && is_array($applied) && !empty($applied['rdest'])) kop_rdest_take_back($applied['rdest']);
+}

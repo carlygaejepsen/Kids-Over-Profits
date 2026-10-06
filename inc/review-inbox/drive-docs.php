@@ -274,6 +274,7 @@ function kop_rinbox_gdl_item(array $r) {
             }
             $moves[] = $m;
         }
+        if (function_exists('kop_rdest_sort_moves') && preg_match('#^https?://#i', (string) $r['url'])) $moves = array_merge($moves, kop_rdest_sort_moves());
     } elseif ($r['status'] === 'applied') {
         $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
             'help' => 'Takes the link off where it was added and puts it back in the waiting list.');
@@ -371,6 +372,14 @@ function kop_rinbox_gdl_act($key, $action, array $params) {
     switch ($action) {
         case 'apply':
         case 'move':
+            if ($action === 'move' && in_array((string) ($params['to'] ?? ''), array('indigenous', 'young_adult'), true)) {
+                if ($r['status'] !== 'pending') throw new RuntimeException('This link was already handled (' . $r['status'] . ').');
+                return array('message' => kop_rdest_send_row(kop_gdl_table(), $r['pkey'], (string) $params['to'], array(
+                    'url' => (string) $r['url'], 'title' => (string) $r['label'], 'site_name' => (string) $r['domain'],
+                    'school_id' => (int) ($params['school_id'] ?? 0), 'ya_id' => (int) ($params['ya_id'] ?? 0), 'ya_name' => (string) ($params['ya_name'] ?? ''),
+                    'note' => 'Sent from Drive Docs by ' . $user . '.', 'via' => 'Drive Docs',
+                ), $user));
+            }
             $to = $action === 'move' ? (string) ($params['to'] ?? '') : kop_gdl_default_target($r['kind']);
             if (!isset($targets[$to])) throw new RuntimeException('Pick where the link goes.');
             if ($r['status'] !== 'pending') throw new RuntimeException('This link was already handled (' . $r['status'] . ').');
@@ -406,6 +415,7 @@ function kop_rinbox_gdl_act($key, $action, array $params) {
             return array('message' => 'Skipped. Nothing was added; "Back to review" on the Skipped tab brings it back.');
         case 'undo':
             $was = $r['status'];
+            kop_rdest_undo_row($r);
             $res = kop_gdl_undo(array($r), $user)[$r['pkey']] ?? array('ok' => false, 'error' => 'Nothing to undo.');
             if (empty($res['ok'])) throw new RuntimeException($res['error']);
             return array('message' => $was === 'applied' ? 'Undone: the link came off where it went. It is waiting for review again.' : 'Waiting for review again.');
