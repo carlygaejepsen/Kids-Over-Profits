@@ -45,15 +45,16 @@ add_action('rest_api_init', function () {
 if (!function_exists('kop_facility_suggest')) {
     /**
      * Up to $limit facility records for a phrase of 3+ characters:
-     * [{name, place, status, hint}], where hint is "Formerly X" / "Also known
-     * as X" for a past/other-name hit and '' for a current-name hit.
+     * [{id, name, place, status, hint, url}], where hint is "Formerly X" / "Also known
+     * as X" for a past/other-name hit and '' for a current-name hit, and url is
+     * the record's /facility/ page or '' (the mobile app opens it directly).
      */
     function kop_facility_suggest($phrase, $limit = 8) {
         $phrase = trim((string) preg_replace('/\s+/u', ' ', (string) $phrase));
         if (mb_strlen($phrase) < 3 || mb_strlen($phrase) > 100) return array();
         $limit = max(1, min(15, (int) $limit));
 
-        $cache_key = 'kop_fsug_' . md5(mb_strtolower($phrase) . '|' . $limit);
+        $cache_key = 'kop_fsug2_' . md5(mb_strtolower($phrase) . '|' . $limit);
         $cached = get_transient($cache_key);
         if (is_array($cached)) return $cached;
 
@@ -67,10 +68,13 @@ if (!function_exists('kop_facility_suggest')) {
                 $location = trim(substr($location, 0, -strlen($m[0])));
             }
             $out[] = array(
+                'id'     => (int) ($f['id'] ?? 0),
                 'name'   => (string) $f['display'],
                 'place'  => $location,
                 'status' => $status,
                 'hint'   => function_exists('kop_v2_search_alias_hint') ? kop_v2_search_alias_hint($f) : '',
+                // The record's own page ('' when it has none), so the mobile app opens it directly.
+                'url'    => (string) ($f['profile_url'] ?? ''),
             );
         }
         set_transient($cache_key, $out, 10 * MINUTE_IN_SECONDS);
