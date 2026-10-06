@@ -205,6 +205,12 @@ python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws
 # the admin finder, facility-search.php (Data Manager, news processor, wiki picker), the data forms' autocompletes
 # (js/autocomplete.js alternateNameDetail()), the wizard and the map search carry the kind too. A new box does the same
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
+# Reader's site map (/site-map/, a route like /operator/, inc/site-map.php + templates/site-map.php + js/site-map.js): every public
+# page by section (hubs with their articles from kop_article_parents(), placed by template in kop_site_map_template_sections(), admin
+# tools/redirected/password pages never), posts by category, every /facility/ and /operator/ page A to Z, a "Find a page" filter.
+# kop_site_map_quick_links() also fills the search popup before typing (js/global-search.js) and the 404 page (404.php: "Did you mean"
+# from the address's words). A new page template gets a section there. /sitemap/ 301s here; XML sitemaps stay Yoast's
+php scripts/test-site-map.php [--out=tmp/site-map-preview/site-map.html]   # placement, A to Z, cache, 404 helpers, PHP == JS filter folding
 # Search results link to the record's own page (/facility/, /operator/; wiki entries and inspection rows to the matching
 # facility page in the same state), falling back to the state hub or directory search: kop_search_v2_result_url() and
 # kop_search_record_page_url() in inc/ajax-search-lite.php, used by the dropdown, the search bar and search.php

@@ -1,0 +1,451 @@
+/* Site map (/site-map/, templates/site-map.php) and the quick-link tiles it
+   shares with the 404 page (404.php). A white panel: nothing sits on the
+   gradient body background. Kadence colours headings, links, buttons and
+   inputs directly, so each is set here in every state. */
+
+.kop-site-map,
+.kop-not-found {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: clamp(1rem, 3vw, 2.25rem);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(0, 4, 53, 0.08);
+}
+
+.kop-site-map h1,
+.kop-site-map h2,
+.kop-not-found h1,
+.kop-not-found h2 {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-site-map a,
+.kop-not-found a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-site-map a:hover,
+.kop-site-map a:focus,
+.kop-not-found a:hover,
+.kop-not-found a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-site-map a:focus-visible,
+.kop-not-found a:focus-visible,
+.kop-sm-letter summary:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+/* ---- Trail and header -------------------------------------------------- */
+
+.kop-sm-trail ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-sm-trail li + li::before {
+    content: "\203A";
+    margin-right: 0.5rem;
+}
+
+.kop-sm-header .entry-title,
+.kop-not-found .entry-title {
+    margin: 0;
+}
+
+.kop-sm-standfirst {
+    max-width: 65ch;
+    margin: 0.65rem 0 1.5rem;
+    color: var(--kop-text-secondary, #000080);
+    font-size: 1.08rem;
+    line-height: 1.55;
+}
+
+/* ---- Filter ------------------------------------------------------------ */
+
+.kop-sm-filter {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin: 0 0 1.5rem;
+    padding: 0.85rem 0;
+    background: var(--kop-white, #fff);
+    border-bottom: 1px solid var(--kop-border-secondary, #aee0ed);
+}
+
+.admin-bar .kop-sm-filter {
+    top: 32px;
+}
+
+@media (max-width: 782px) {
+    .admin-bar .kop-sm-filter {
+        top: 0;
+    }
+}
+
+.kop-sm-filter__label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-sm-filter__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.kop-site-map input.kop-sm-filter__input,
+.kop-not-found input.kop-sm-filter__input {
+    flex: 1 1 16rem;
+    min-width: 0;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.8rem;
+    border: 2px solid var(--kop-navy-blue, #000080);
+    border-radius: 5px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 1rem;
+}
+
+.kop-site-map input.kop-sm-filter__input::placeholder,
+.kop-not-found input.kop-sm-filter__input::placeholder {
+    color: var(--kop-text-muted, #4A5568);
+    opacity: 1;
+}
+
+.kop-site-map input.kop-sm-filter__input:focus,
+.kop-not-found input.kop-sm-filter__input:focus {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 1px;
+}
+
+button.kop-sm-filter__button {
+    min-height: 2.75rem;
+    padding: 0.55rem 1.1rem;
+    border: 2px solid var(--kop-navy-blue, #000080);
+    border-radius: 5px;
+    background: var(--kop-navy-blue, #000080);
+    color: var(--kop-white, #fff);
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button.kop-sm-filter__button:hover,
+button.kop-sm-filter__button:focus,
+button.kop-sm-filter__button:active {
+    border-color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+}
+
+button.kop-sm-filter__button:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+.kop-sm-filter__status {
+    margin: 0.4rem 0 0;
+    min-height: 1.2em;
+    font-size: 0.9rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-sm-filter__status:empty {
+    display: none;
+}
+
+/* ---- Quick links (also on the 404 page) -------------------------------- */
+
+.kop-sm-quick {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-sm-quick li {
+    margin: 0;
+}
+
+.kop-site-map a.kop-sm-quick__link,
+.kop-not-found a.kop-sm-quick__link {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: none;
+}
+
+.kop-site-map a.kop-sm-quick__link:hover,
+.kop-site-map a.kop-sm-quick__link:focus,
+.kop-site-map a.kop-sm-quick__link:active,
+.kop-not-found a.kop-sm-quick__link:hover,
+.kop-not-found a.kop-sm-quick__link:focus,
+.kop-not-found a.kop-sm-quick__link:active {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+    border-left-color: var(--kop-navy-blue, #000080);
+}
+
+.kop-sm-quick__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.kop-sm-quick__icon {
+    flex: none;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.1rem;
+    color: var(--kop-teal-ink, #24757f);
+}
+
+.kop-sm-quick__label {
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: var(--kop-teal, #33A7B5);
+    text-underline-offset: 0.18em;
+}
+
+.kop-sm-quick__note {
+    font-size: 0.88rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+/* ---- Contents ---------------------------------------------------------- */
+
+.kop-sm-contents {
+    margin: 2rem 0 0;
+    padding: 0.9rem 1rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: 6px;
+}
+
+.kop-sm-contents__title {
+    margin: 0 0 0.4rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-sm-contents ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* ---- Sections and lists ------------------------------------------------ */
+
+.kop-sm-section {
+    margin-top: 2.25rem;
+    scroll-margin-top: 7rem;
+}
+
+.kop-sm-section h2 {
+    margin: 0 0 0.35rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--kop-teal, #33A7B5);
+    font-size: 1.4rem;
+}
+
+.kop-sm-intro {
+    max-width: 70ch;
+    margin: 0.5rem 0 0.9rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-sm-count,
+.kop-sm-note {
+    font-weight: 400;
+    font-size: 0.88rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-sm-list {
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-sm-list li {
+    margin: 0 0 0.4rem;
+    line-height: 1.4;
+    break-inside: avoid;
+}
+
+.kop-sm-list--columns {
+    columns: 3 16rem;
+    column-gap: 2rem;
+}
+
+.kop-sm-list--sub {
+    margin: 0.35rem 0 0.5rem 0.4rem;
+    padding-left: 0.9rem;
+    border-left: 2px solid var(--kop-border-secondary, #aee0ed);
+    font-size: 0.95rem;
+}
+
+/* Sections: one card per hub, its articles inside. */
+.kop-sm-list--hubs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: 0.9rem 1.5rem;
+}
+
+.kop-sm-list--hubs > li {
+    margin: 0;
+}
+
+.kop-sm-list--hubs > li > a {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* ---- A to Z ------------------------------------------------------------ */
+
+.kop-sm-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin: 0.5rem 0 0.75rem;
+}
+
+.kop-site-map .kop-sm-letters a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.1rem;
+    min-height: 2.1rem;
+    padding: 0 0.35rem;
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 4px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.kop-site-map .kop-sm-letters a:hover,
+.kop-site-map .kop-sm-letters a:focus,
+.kop-site-map .kop-sm-letters a:active {
+    background: var(--kop-navy-blue, #000080);
+    border-color: var(--kop-navy-blue, #000080);
+    color: var(--kop-white, #fff);
+}
+
+.kop-sm-letter {
+    margin: 0;
+    border-top: 1px solid var(--kop-border-secondary, #aee0ed);
+    scroll-margin-top: 7rem;
+}
+
+.kop-sm-letter:last-of-type {
+    border-bottom: 1px solid var(--kop-border-secondary, #aee0ed);
+}
+
+.kop-sm-letter summary {
+    padding: 0.55rem 0.25rem;
+    cursor: pointer;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-sm-letter__name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.kop-sm-letter[open] > .kop-sm-list {
+    margin: 0.25rem 0 1rem;
+}
+
+/* ---- Footer and empty state -------------------------------------------- */
+
+.kop-sm-empty {
+    margin: 2rem 0 0;
+    padding: 1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 6px;
+}
+
+.kop-sm-footer {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--kop-border-secondary, #aee0ed);
+    font-size: 0.9rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-sm-footer p {
+    margin: 0;
+}
+
+.kop-site-map kbd {
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 3px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.85em;
+}
+
+/* The filter hides rows with the hidden attribute; list styles must not undo it. */
+.kop-site-map [hidden] {
+    display: none !important;
+}
+
+/* ---- 404 --------------------------------------------------------------- */
+
+.kop-not-found__lede {
+    max-width: 65ch;
+    margin: 0.65rem 0 1.25rem;
+    font-size: 1.08rem;
+    line-height: 1.55;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-not-found .kop-sm-filter {
+    position: static;
+    padding-top: 0;
+}
+
+.kop-not-found__suggestions {
+    margin: 0 0 2rem;
+}
+
+.kop-not-found h2 {
+    margin: 1.75rem 0 0.75rem;
+    font-size: 1.3rem;
+}
+
+@media (max-width: 600px) {
+    .kop-sm-list--columns {
+        columns: 1;
+    }
+}

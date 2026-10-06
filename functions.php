@@ -102,6 +102,9 @@ require_once get_stylesheet_directory() . '/inc/ajax-search-lite.php';
 // Global search bar REST endpoint (site-wide search widget backend)
 require_once get_stylesheet_directory() . '/inc/global-search.php';
 
+// /site-map/: every public page for readers, the quick links in the search popup, and the 404 page's suggestions.
+require_once get_stylesheet_directory() . '/inc/site-map.php';
+
 // Research & Reports card library (Academia + Government FileBird folders)
 require_once get_stylesheet_directory() . '/inc/research-library.php';
 
