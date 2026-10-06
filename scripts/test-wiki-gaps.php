@@ -107,8 +107,15 @@ $check('an entry about an earlier name gets no status and nothing dated after it
 $g = $gaps_for('Carlbrook School');
 $check('a linked entry is compared with its record (Carlbrook School)', is_array($g));
 
+$check('KOP pages that gather others\' reporting are not sources; KOP articles and its document copies are',
+    kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/facility/provo-canyon-school-ut/') && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/lawsuits/#lawsuit-17')
+    && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/network-map/#open=x') && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/ut-reports/')
+    && !kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/trails-carolina-lawsuits/') && !kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0308.pdf')
+    && !kop_wiki_upd_is_kop_page('https://www.sltrib.com/news/x'));
+
 $all = 0;
-$no_source = array();
+$bad_source = array();
+$needs = 0;
 $bad_kind = array();
 foreach ($entries as $e) {
     $fid = kop_wiki_upd_facility_id($e, $pdo);
@@ -117,12 +124,13 @@ foreach ($entries as $e) {
     if (!$page) continue;
     foreach (kop_wiki_upd_gaps($e, $page, $pdo) as $x) {
         $all++;
-        if (trim($x['source_url']) === '') $no_source[] = $e['id'] . ':' . $x['kind'];
+        if ($x['needs_source']) { $needs++; continue; }
+        if (kop_wiki_upd_is_kop_page($x['source_url']) || preg_match('#example\.test#', $x['source_url'])) $bad_source[] = $e['id'] . ':' . $x['kind'] . ' ' . $x['source_url'];
+        if (trim($x['source_url']) === '' && empty($x['detail']['cite_text'])) $bad_source[] = $e['id'] . ':' . $x['kind'] . ' (none)';
         if (!in_array($x['kind'], array('closure', 'name', 'operator', 'news', 'news_mention', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'staff_other'), true)) $bad_kind[] = $x['kind'];
-        if (preg_match('#example\.test#', $x['source_url'])) $no_source[] = $e['id'] . ':' . $x['kind'] . ' (test host)';
     }
 }
-$check('every gap of the linked entries cites a live address', !$no_source, $all . ' gaps; ' . implode(', ', array_slice($no_source, 0, 6)));
+$check('every gap cites its original source (or is marked as needing one)', !$bad_source, $all . ' gaps, ' . $needs . ' need an outside source; ' . implode(', ', array_slice($bad_source, 0, 6)));
 $check('no survivor posts or testimony among the gaps', !$bad_kind, implode(',', array_unique($bad_kind)));
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";

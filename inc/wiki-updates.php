@@ -665,10 +665,11 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $sum = (string) ($l['summary'] ?? '');
         if (preg_match('/not (a |an )?(lawsuit|case|suit)s? (about|against|involving)|banking case|foreclos|\bliens?\b|\bUCC\b|ERISA|insurer|\bdebt\b/i', $sum)) continue;
         if (!kop_wiki_upd_names_any(($l['case_name'] ?? '') . ' ' . $sum, $aliases)) continue;
-        $add('lawsuit', (string) ($l['case_name'] ?? ''), kop_wiki_upd_live_url(home_url('/lawsuits/')) . '#lawsuit-' . (int) $l['id'],
-            'KOP lawsuits', (string) ($l['year'] ?? ''),
+        $src = kop_wiki_upd_lawsuit_source((int) $l['id'], $pdo);
+        $add('lawsuit', (string) ($l['case_name'] ?? ''), $src['url'], $src['label'], (string) ($l['year'] ?? ''),
             array('summary' => (string) ($l['summary'] ?? ''), 'status' => (string) ($l['status'] ?? ''), 'outcome' => (string) ($l['outcome'] ?? ''),
-                'court' => (string) ($l['court'] ?? ''), 'case_number' => $case, 'mentions_year' => !empty($l['year']) && strpos($words, ' ' . $l['year'] . ' ') !== false));
+                'court' => (string) ($l['court'] ?? ''), 'case_number' => $case, 'mentions_year' => !empty($l['year']) && strpos($words, ' ' . $l['year'] . ' ') !== false,
+                'cite_text' => $src['url'] === '' ? kop_wiki_upd_case_cite($l) : '', 'other_sources' => $src['others']));
     }
 
     // Deaths (the memorial's published entries).
@@ -678,7 +679,7 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $dy = preg_match('/(\d{4})/', (string) ($v['date_label'] ?? ''), $m) ? (int) $m[1] : 0;
         if ($dy && ((is_int($w_start) && $dy < $w_start - 1) || (is_int($w_end) && $dy > $w_end + 1))) continue;
         $add('death', $name . ($v['date_label'] ?? '' ? ' died ' . $v['date_label'] : '') . ($v['cause'] ?? '' ? ' (' . $v['cause'] . ')' : '') . '.',
-            (string) ($v['kop_url'] ?? '') ?: (string) ($v['source_url'] ?? ''), 'KOP memorial', (string) ($v['date_label'] ?? ''),
+            (string) ($v['source_url'] ?? '') ?: (string) ($v['kop_url'] ?? ''), (string) ($v['source_name'] ?? '') ?: 'Kids Over Profits', (string) ($v['date_label'] ?? ''),
             array('source_name' => (string) ($v['source_name'] ?? ''), 'source_url' => (string) ($v['source_url'] ?? ''), 'category' => (string) ($v['category'] ?? '')));
     }
 
@@ -690,10 +691,13 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         if ((int) ($f['weight'] ?? 0) < 70 && !preg_match('/risk level: (high|medium high)/i', $risk)) continue;
         $ym = $date !== '' ? strtolower(date('F Y', strtotime($date))) : '';
         if ($ym !== '' && strpos($words, ' ' . $ym . ' ') !== false && strpos($words, ' inspect') !== false) continue;
+        $state_name = function_exists('kop_state_canonical_name') ? kop_state_canonical_name((string) ($f['state'] ?? '')) : (string) ($f['state'] ?? '');
+        $label = $state_name . ' licensing inspection report' . ($date !== '' ? ', ' . date('F j, Y', strtotime($date)) : '');
         $add('finding', (string) ($f['label'] ?? '') . ': ' . (string) ($f['short'] ?? $f['excerpt'] ?? ''),
-            kop_wiki_upd_live_url($f['full_url'] ?? ''), 'State inspection report (' . ($f['state'] ?? '') . ')', $date,
+            (string) ($f['source_url'] ?? ''), $label, $date,
             array('category' => (string) ($f['category'] ?? ''), 'state_label' => (string) ($f['state_label'] ?? ''),
-                'report_url' => (string) ($f['source_url'] ?? ''), 'weight' => (int) ($f['weight'] ?? 0)));
+                'weight' => (int) ($f['weight'] ?? 0), 'excerpt' => (string) ($f['excerpt'] ?? ''),
+                'cite_text' => trim((string) ($f['source_url'] ?? '')) === '' ? $label : ''));
     }
 
     // The record's own incidents, when they cite a source the entry lacks.
@@ -723,7 +727,80 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
                     'other_roles' => array_values(array_filter(array_map(function ($c) { return trim(($c['role'] ?? '') . ', ' . ($c['place'] ?? ''), ', '); }, (array) ($p['career'] ?? array()))))));
         }
     }
+    foreach ($gaps as &$g) {
+        if (kop_wiki_upd_is_kop_page($g['source_url'])) $g['source_url'] = '';
+        $g['needs_source'] = $g['source_url'] === '' && empty($g['detail']['cite_text']);
+    }
+    unset($g);
     return $gaps;
+}
+
+/**
+ * True for a KOP page that gathers other people's reporting (facility,
+ * company, map, lawsuit, findings, memorial and list pages): never a
+ * citation. KOP's own articles and the documents in its media library (a
+ * Woodbury issue, a court filing) are.
+ */
+function kop_wiki_upd_is_kop_page($url) {
+    $u = strtolower(trim((string) $url));
+    if (!preg_match('#^https?://(www\.)?(kidsoverprofits\.org|example\.test)(/|$)#', $u)) return false;
+    if (strpos($u, '/wp-content/uploads/') !== false) return false;
+    return (bool) preg_match('#^https?://[^/]+/(facility|operator|network-map|lawsuits|severe-reports|memorial|wiki-feed|tti-program-index|location-index|[a-z]{2}-reports|news|search|open-data|glossary)(/|\#|\?|$)#', $u)
+        || preg_match('#^https?://[^/]+/?(\?|$)#', $u)
+        || strpos($u, '/phpbb/') !== false;
+}
+
+/**
+ * A lawsuit's own source: a court filing (its documents), else an article
+ * about it (lawsuit_news_links, then its source list, court and news sites
+ * only). {url, label, others: [more urls]}.
+ */
+function kop_wiki_upd_lawsuit_source($id, PDO $pdo = null) {
+    $none = array('url' => '', 'label' => '', 'others' => array());
+    try {
+        $pdo = $pdo ?: kop_wiki_upd_pdo();
+        $st = $pdo->prepare('SELECT case_name, court, source_urls, document_urls FROM lawsuits WHERE id = ?');
+        $st->execute(array((int) $id));
+        $l = $st->fetch(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        return $none;
+    }
+    if (!$l) return $none;
+    $list = function ($v) {
+        $d = json_decode((string) $v, true);
+        if (!is_array($d)) $d = preg_split('/[\s,]+/', (string) $v);
+        $out = array();
+        foreach ($d as $x) {
+            $u = is_array($x) ? (string) ($x['url'] ?? '') : (string) $x;
+            if (preg_match('#^https?://#i', trim($u))) $out[] = trim($u);
+        }
+        return $out;
+    };
+    $court = '#(courtlistener|pacer|uscourts|justia|casetext|law\.cornell|govinfo|courts?\.|\.courts\.|judiciary|docket|leagle|casemine|findacase|trellis|unicourt)#i';
+    $docs = array_values(array_filter($list($l['document_urls']), function ($u) { return !kop_wiki_upd_is_kop_page($u); }));
+    $sources = array_values(array_filter($list($l['source_urls']), function ($u) { return !kop_wiki_upd_is_kop_page($u); }));
+    $news = array();
+    try {
+        $st = $pdo->prepare("SELECT n.article_url, n.publication_name FROM lawsuit_news_links k JOIN news_submissions n ON n.id = k.news_id
+             WHERE k.lawsuit_id = ? AND n.status IN ('approved','published') ORDER BY n.publication_date");
+        $st->execute(array((int) $id));
+        foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $n) if (trim((string) $n['article_url']) !== '') $news[$n['article_url']] = (string) $n['publication_name'];
+    } catch (Throwable $e) {
+        // No link table on this copy.
+    }
+    $court_srcs = array_values(array_filter($sources, function ($u) use ($court) { return preg_match($court, $u); }));
+    $pick = $docs[0] ?? $court_srcs[0] ?? (array_keys($news)[0] ?? '');
+    if ($pick === '') return $none;
+    $label = in_array($pick, $docs, true) || in_array($pick, $court_srcs, true) ? 'court filing' : ($news[$pick] ?: 'news report');
+    $others = array_values(array_diff(array_unique(array_merge($docs, $court_srcs, array_keys($news))), array($pick)));
+    return array('url' => $pick, 'label' => $label, 'others' => array_slice($others, 0, 5));
+}
+
+/** A case cited by its name, court and number, for a suit with no document or article to link. */
+function kop_wiki_upd_case_cite(array $l) {
+    $name = trim(preg_replace('/\s*\([^)]*\)\s*$/', '', (string) ($l['case_name'] ?? '')));
+    $bits = array_filter(array(trim((string) ($l['court'] ?? '')), trim((string) ($l['case_number'] ?? '')) !== '' ? 'No. ' . trim((string) $l['case_number']) : '', (string) ($l['year'] ?? '')));
+    return $name . ($bits ? ', ' . implode(', ', $bits) : '');
 }
 
 /**

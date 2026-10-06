@@ -24,7 +24,8 @@ def load(i):
 
 
 def trimmed(gaps):
-    keep = [g for g in gaps if g['kind'] in DRAFT_KINDS]
+    # A gap whose only source is a KOP page that gathers others' reporting is not drafted.
+    keep = [g for g in gaps if g['kind'] in DRAFT_KINDS and not g.get('needs_source')]
     news = sorted([g for g in keep if g['kind'] == 'news'], key=lambda g: g['date'], reverse=True)[:15]
     staff = [g for g in keep if g['kind'] == 'staff'][:12]
     rest = [g for g in keep if g['kind'] not in ('news', 'staff')]
