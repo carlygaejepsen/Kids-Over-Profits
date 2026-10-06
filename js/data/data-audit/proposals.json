@@ -371,7 +371,7 @@
   "facility_id": 12161,
   "verdict": "partly_wrong",
   "confidence": "low",
-  "finding": "Tammy Behrmann and Darren Prince, with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014 (Lake Montezuma RTC, LLC) on the site of Aspen's Copper Canyon Academy. KOP's current operator \"New Legal Name: Emoticare\" is a note, not an operator.",
+  "finding": "Family Help & Wellness (Tammy Behrmann, Darren Prince) ran Sedona Sky Academy from April 23, 2014, after Aspen's Copper Canyon Academy on the same site; EmotiCare took it over in 2025 (EmotiHome Rimrock). KOP's current operator \"New Legal Name: Emoticare\" is a note, not an operator name.",
   "kop_now": "Status Suspended, from 1998; current operator New Legal Name: Emoticare; past operators none; company links: Family Help & Wellness (current).",
   "sources": [
    {
@@ -381,14 +381,26 @@
     "quote": "Tammy Behrmann and Darren Prince, in association with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014, under the legal business name of Lake Montezuma RTC, LLC."
    }
   ],
-  "notes": "Wikipedia only (lead). Copper Canyon Academy has its own record (12155), so Aspen is not added here. EmotiCare bought the property after the 2025 closing (status_years-311).",
+  "notes": "Wikipedia only (lead) for the 2014 dates. Copper Canyon Academy's record (12155) is the same program; merge it in (transferred-12155).",
   "ops": [
    {
     "type": "field",
     "facility_id": 12161,
     "path": "identification.currentOperator",
     "from": "New Legal Name: Emoticare",
-    "to": "Family Help & Wellness"
+    "to": "EmotiCare"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12161,
+    "path": "identification.pastOperators",
+    "value": "Family Help & Wellness (2014-2025)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12161,
+    "path": "identification.pastOperators",
+    "value": "Aspen Education Group (until 2014)"
    }
   ]
  },
@@ -1459,48 +1471,25 @@
   "title": "Three Springs New Beginnings",
   "place": "Owens Cross Roads, AL",
   "facility_id": 9644,
-  "verdict": "partly_wrong",
-  "confidence": "medium",
-  "finding": "Sequel TSI of Owens Cross Roads (Three Springs New Beginnings, Turning Point) closed on April 30, 2022, and the company planned a different program in a new building under the Brighter Path name. The program closed; it was not handed on.",
+  "verdict": "kop_right",
+  "confidence": "high",
+  "finding": "The Owens Cross Roads program never closed: Three Springs ran it 1996-2009, Sequel TSI 2009-2022, Vivant in 2022, and Pathway of Madison County runs it now (as Brighter Path). KOP's Transferred status and current operator stand.",
   "kop_now": "Status Transferred, from 1996; current operator Pathway of Madison County; past operators none; company links: Sequel TSI (current), Three Springs Inc. (current).",
   "sources": [
    {
-    "url": "https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/",
-    "title": "Long troubled Sequel TSI youth services center to shut down and reopen",
-    "date": "2022-05-03",
-    "quote": "TSI Owens Cross Roads will be closing on 4/30/22 due to program restructuring and transitioning of service lines."
-   },
-   {
-    "url": "https://www.alreporter.com/2022/06/02/lawsuit-alleges-teen-girl-abused-in-alabama-psychiatric-residential-center/",
-    "title": "AL Reporter",
-    "date": "2022-06-02",
-    "quote": "Sequel Owens Cross Roads closed in May, and plans to rebrand and reopen as Brighter Path"
+    "url": "https://docs.google.com/spreadsheets/d/1Rl24OnG5-str4pWlhssQ-bYZ9DJyoSZFBU-VU2zHOLU/edit",
+    "title": "Sequel/TSI/YSI/Vivant (owner's research sheet)",
+    "date": "2025-10-26",
+    "quote": "Sequel TSI Owens Cross Roads/ Three Springs New Beginnings/ Three Springs Turning Point: Three Springs 1996-2009, Sequel 2009-2022, Vivant 2022; current operator Pathway of Madison County"
    }
   ],
-  "notes": "New Beginnings and Turning Point share the Owens Cross Roads campus; sources name only the campus. Map years are in rename_end_year-29.",
+  "notes": "Per the owner's Sequel/TSI/YSI/Vivant sheet. The earlier proposal (Closed 2022, 'a different program in a new building') was dropped.",
   "ops": [
    {
-    "type": "field",
+    "type": "list_add",
     "facility_id": 9644,
-    "path": "operatingPeriod.status",
-    "from": "Transferred",
-    "to": "Closed"
-   },
-   {
-    "type": "field",
-    "facility_id": 9644,
-    "path": "operatingPeriod.endYear",
-    "from": null,
-    "to": 2022
-   },
-   {
-    "type": "note",
-    "facility_id": 9644,
-    "text": "Sequel TSI of Owens Cross Roads closed on April 30, 2022; the company planned a new program under the Brighter Path name in a different building."
-   },
-   {
-    "type": "manual",
-    "text": "Current operator on record 9644 reads \"Pathway of Madison County\", the later Brighter Path program in a new building; set it to the company that ran this program when it closed in 2022 (Sequel TSI, then being sold to Vivant)."
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2009-2022)"
    }
   ]
  },
@@ -1555,51 +1544,25 @@
   "place": "Owens Cross Roads, AL",
   "facility_id": 9659,
   "verdict": "partly_wrong",
-  "confidence": "medium",
-  "finding": "The Owens Cross Roads Sequel TSI program, which included Turning Point, closed on April 30, 2022; a different Brighter Path program was planned for a new building. Three Springs ran it until Sequel bought the company in 2009.",
+  "confidence": "high",
+  "finding": "Turning Point ran on the Owens Cross Roads campus, which Three Springs ran 1996-2009, Sequel TSI 2009-2022, Vivant in 2022, and Pathway of Madison County runs now. It was handed on, not closed; the record lacks its operators.",
   "kop_now": "Status Transferred, from 1996; current operator none; past operators none; company links: Three Springs Inc. (current).",
   "sources": [
    {
-    "url": "https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/",
-    "title": "Long troubled Sequel TSI youth services center to shut down and reopen",
-    "date": "2022-05-03",
-    "quote": "TSI Owens Cross Roads will be closing on 4/30/22 due to program restructuring and transitioning of service lines."
-   },
-   {
-    "url": "https://www.alreporter.com/2022/06/02/lawsuit-alleges-teen-girl-abused-in-alabama-psychiatric-residential-center/",
-    "title": "AL Reporter",
-    "date": "2022-06-02",
-    "quote": "Sequel Owens Cross Roads closed in May, and plans to rebrand and reopen as Brighter Path"
-   },
-   {
-    "url": "https://kidsoverprofits.org/three-springs-inc/",
-    "title": "KOP Three Springs Inc.",
-    "date": "",
-    "quote": "Three Springs Inc. was acquired by Sequel Youth and Family Services on December 30, 2009; the original Three Springs program closed on May 31, 2011 after more than 26 years."
+    "url": "https://docs.google.com/spreadsheets/d/1Rl24OnG5-str4pWlhssQ-bYZ9DJyoSZFBU-VU2zHOLU/edit",
+    "title": "Sequel/TSI/YSI/Vivant (owner's research sheet)",
+    "date": "2025-10-26",
+    "quote": "Sequel TSI Owens Cross Roads/ Three Springs New Beginnings/ Three Springs Turning Point: Three Springs 1996-2009, Sequel 2009-2022, Vivant 2022; current operator Pathway of Madison County"
    }
   ],
-  "notes": "Sources name only the Owens Cross Roads campus; the girls unit may have closed earlier than 2022.",
+  "notes": "Per the owner's Sequel/TSI/YSI/Vivant sheet. The earlier proposal (Closed 2022) was dropped.",
   "ops": [
-   {
-    "type": "field",
-    "facility_id": 9659,
-    "path": "operatingPeriod.status",
-    "from": "Transferred",
-    "to": "Closed"
-   },
-   {
-    "type": "field",
-    "facility_id": 9659,
-    "path": "operatingPeriod.endYear",
-    "from": null,
-    "to": 2022
-   },
    {
     "type": "field",
     "facility_id": 9659,
     "path": "identification.currentOperator",
     "from": "",
-    "to": "Sequel TSI"
+    "to": "Pathway of Madison County"
    },
    {
     "type": "list_add",
@@ -1608,23 +1571,17 @@
     "value": "Three Springs Inc. (1996-2009)"
    },
    {
+    "type": "list_add",
+    "facility_id": 9659,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2009-2022)"
+   },
+   {
     "type": "operator_link",
     "facility_id": 9659,
     "operator_id": 24,
     "from": "current",
     "to": "past"
-   },
-   {
-    "type": "operator_link",
-    "facility_id": 9659,
-    "operator_id": 20,
-    "from": null,
-    "to": "current"
-   },
-   {
-    "type": "note",
-    "facility_id": 9659,
-    "text": "Sequel TSI of Owens Cross Roads, where the Turning Point girls program ran, closed on April 30, 2022."
    }
   ]
  },
@@ -1969,7 +1926,7 @@
   "facility_id": 12161,
   "verdict": "kop_wrong",
   "confidence": "medium",
-  "finding": "Sedona Sky Academy closed in early 2025; the Rimrock property was bought by EmotiCare and reopened as EmotiHome Rimrock, a different name. So it is Closed (2025), not Suspended.",
+  "finding": "Sedona Sky Academy was rebranded in 2025: EmotiCare took over the Rimrock program and runs it as EmotiHome Rimrock. It is the same program under a new company and name, so it is Open, not Suspended.",
   "kop_now": "Status Suspended, from 1998; current operator New Legal Name: Emoticare; past operators none; company links: Family Help & Wellness (current).",
   "sources": [
    {
@@ -1985,26 +1942,19 @@
     "quote": "Sedona Sky Academy acquired a business license on April 7, 2014 (under Lake Montezuma RTC, LLC); article has no closure text"
    }
   ],
-  "notes": "Grokipedia and search summaries only; confirm with the Arizona DHS license record. KOP's 1998 start likely covers the Copper Canyon years (not checked).",
+  "notes": "Grokipedia and search summaries only. Add EmotiHome Rimrock as the record's current name (Copper Canyon Academy and Sedona Sky Academy as past names) in the record editor.",
   "ops": [
    {
     "type": "field",
     "facility_id": 12161,
     "path": "operatingPeriod.status",
     "from": "Suspended",
-    "to": "Closed"
-   },
-   {
-    "type": "field",
-    "facility_id": 12161,
-    "path": "operatingPeriod.endYear",
-    "from": null,
-    "to": 2025
+    "to": "Open"
    },
    {
     "type": "note",
     "facility_id": 12161,
-    "text": "Sedona Sky Academy closed in early 2025; EmotiCare bought the Rimrock property and reopened it as EmotiHome Rimrock."
+    "text": "Rebranded in 2025: EmotiCare runs the Rimrock program as EmotiHome Rimrock."
    }
   ]
  },
@@ -2240,17 +2190,11 @@
   "title": "Camp E-How-Kee",
   "place": "Brooksville, FL",
   "facility_id": 100014,
-  "verdict": "partly_wrong",
+  "verdict": "kop_right",
   "confidence": "medium",
-  "finding": "Camp E-How-Kee, Eckerd's first outdoor program (opened 1968), was renamed Eckerd Academy at Brooksville in 2007 and is listed as closed in 2014. Youth Opportunity Investments runs a different program (Brooksville Youth Academy) at the same address.",
+  "finding": "Camp E-How-Kee opened in 1968 as Eckerd's first outdoor program. KOP's record (Transferred, now run by Youth Opportunity Investments as Brooksville Youth Academy) stands; the only fix is the opening year.",
   "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Eckerd Connects (current).",
   "sources": [
-   {
-    "url": "https://www.publicschoolreview.com/ewes-e-how-kee-camp-profile/34602",
-    "title": "Ewes - E-how-kee Camp (Closed 2014)",
-    "date": "2026",
-    "quote": "Closed 2014 - Brooksville, FL"
-   },
    {
     "url": "https://strugglingteens.com/archives/2005/4/e-how-kee0504np.html",
     "title": "New Perspectives 3/05 - Camp E-How-Kee",
@@ -2258,40 +2202,14 @@
     "quote": "established in 1968, E-How-Kee was the first of 18 Outdoor Therapeutic Treatment Programs"
    }
   ],
-  "notes": "Closing year from a school directory (weak). Brooksville Youth Academy is a separate program; do not merge.",
+  "notes": "The owner's research has this as one program on one site that changed hands. A school directory's \"Closed 2014\" was dropped: it is not a source against that.",
   "ops": [
-   {
-    "type": "field",
-    "facility_id": 100014,
-    "path": "operatingPeriod.status",
-    "from": "Transferred",
-    "to": "Closed"
-   },
    {
     "type": "field",
     "facility_id": 100014,
     "path": "operatingPeriod.startYear",
     "from": null,
     "to": 1968
-   },
-   {
-    "type": "field",
-    "facility_id": 100014,
-    "path": "operatingPeriod.endYear",
-    "from": null,
-    "to": 2014
-   },
-   {
-    "type": "field",
-    "facility_id": 100014,
-    "path": "identification.currentOperator",
-    "from": "Youth Opportunity Investments",
-    "to": "Eckerd Connects"
-   },
-   {
-    "type": "note",
-    "facility_id": 100014,
-    "text": "Camp E-How-Kee, Eckerd's first outdoor program (1968), was renamed Eckerd Academy at Brooksville in 2007 and is listed as closed in 2014."
    }
   ]
  },
@@ -3019,7 +2937,7 @@
     "quote": "founded in 1985 and absorbed by Sequel Youth & Family Services in 2009"
    }
   ],
-  "notes": "The 1996 opening is KOP's own year. Brighter Path is a different program in a new building (status_years-289).",
+  "notes": "The 1996 opening is KOP's own year. Brighter Path is the same program under Pathway of Madison County (owner's Sequel/TSI/YSI/Vivant sheet).",
   "ops": [
    {
     "type": "map_years",
@@ -3951,7 +3869,7 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Elevations RTC (record 10356, Family Help & Wellness) lists Island View RTC as its past name: Aspen's Island View was sold in April 2014 and renamed Elevations RTC. Merge 10348 into 10356 at KOP Tools > Merge Duplicates; if they are kept apart, set 10348 to status Open with Family Help & Wellness current and Aspen Education Group (company #7) past."
+    "text": "Island View RTC is the earlier name of Elevations RTC (record 10356, Family Help & Wellness, which lists Island View RTC as its past name): Aspen sold it in April 2014 and it was renamed. Merge 10348 into 10356 at KOP Tools > Merge Duplicates."
    }
   ]
  },
@@ -4285,7 +4203,7 @@
   "facility_id": 12155,
   "verdict": "partly_wrong",
   "confidence": "low",
-  "finding": "Aspen ran Copper Canyon Academy until April 7, 2014; Family Help & Wellness opened Sedona Sky Academy on the same site on April 23, 2014, and Sedona Sky closed in early 2025. Nobody runs the program now, so status Open does not fit.",
+  "finding": "Copper Canyon Academy, Sedona Sky Academy and EmotiHome Rimrock are one program on the Rimrock site, rebranded each time it changed hands: Aspen until April 2014, Family Help & Wellness 2014-2025, EmotiCare since 2025.",
   "kop_now": "Status Transferred, 1998-2014; current operator Aspen Education Group; past operators none; company links: Aspen Education Group (current).",
   "sources": [
    {
@@ -4299,7 +4217,7 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Copper Canyon Academy (Aspen, until April 7, 2014) is the earlier program on the Rimrock site where Family Help & Wellness opened Sedona Sky Academy on April 23, 2014; Sedona Sky's record (12161) lists Copper Canyon Academy as its past name. Merge 12155 into 12161 at KOP Tools > Merge Duplicates, or, if they stay separate programs, set 12155 to Closed (end year 2014)."
+    "text": "Copper Canyon Academy is the earlier name of Sedona Sky Academy (record 12161, which lists it as a past name). Merge 12155 into 12161 at KOP Tools > Merge Duplicates."
    }
   ]
  },
