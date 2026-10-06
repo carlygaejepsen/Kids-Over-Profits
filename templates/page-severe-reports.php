@@ -233,7 +233,7 @@ $kop_sr_icon = static function ($name) {
                 echo $kop_sr_row['standard'] ? '. Cited: ' . esc_html($kop_sr_row['standard']) : ''; ?><?php
                 echo $kop_sr_row['corrected_on_site'] ? '. The state recorded it as corrected at the inspection' : ''; ?>.<?php
                 echo strpos($kop_sr_row['excerpt'], ' [...] ') !== false ? ' "[...]" marks text left out between sentences.' : ''; ?><?php
-                echo preg_match('/\[(?:Staff|Child|Youth|Resident) \d+\]/', kop_ih_reader_labels($kop_sr_row['excerpt'])) ? ' The state numbers the people in a report instead of naming them; we show its codes (such as S1 and C1) as [Staff 1] and [Child 1].' : ''; ?></p>
+                echo kop_ih_reader_labels($kop_sr_row['excerpt']) !== (string) $kop_sr_row['excerpt'] ? ' The state numbers or abbreviates the people in a report instead of naming them; we spell its codes out in square brackets, such as [Staff 1] for S1 or [Former client 3] for FC #3.' : ''; ?></p>
             <div class="kop-flagged-links">
                 <?php if ($kop_sr_source !== '') : ?>
                     <a href="<?php echo esc_url($kop_sr_source); ?>" target="_blank" rel="noopener noreferrer">State source</a>

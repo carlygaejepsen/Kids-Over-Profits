@@ -983,6 +983,11 @@ check(kop_ih_reader_labels('E2 pushed Y3 and R1.') === '[Staff 2] pushed [Youth 
 check(kop_ih_reader_labels('while Staff 1 (S1) worked, S1 allegedly cussed at Client #2 (C2)') === 'while Staff 1 worked, [Staff 1] allegedly cussed at Client #2', 'labels: a defined label keeps its words');
 check(kop_ih_reader_labels("S1's report on C1/C2") === "[Staff 1]'s report on [Child 1]/[Child 2]", 'labels: possessive and slash');
 check(kop_ih_reader_labels('See Section C1, form S10-2, LIC 809, vitamin C1 and 2C1.') === 'See Section C1, form S10-2, LIC 809, vitamin C1 and 2C1.', 'labels: sections, forms and codes are left alone');
+check(kop_ih_reader_labels('Spoke with FC #3 again; she reported staff #1 slammed her head and FC#4 saw it, with DC #9 and QP #2.') === 'Spoke with [Former client 3] again; she reported staff #1 slammed her head and [Former client 4] saw it, with [Deceased client 9] and [Qualified professional 2].', 'labels: NC #-codes in words, "staff #1" left as is');
+check(kop_ih_reader_labels("confirm that [R1's] parents agreed, [R1] said; [FC#1] spoke") === "confirm that [Resident 1's] parents agreed, [Resident 1] said; [Former client 1] spoke", 'labels: the state\'s own brackets are kept, not doubled');
+check(kop_ih_reader_labels('(Staff #1 [S1]) assaulted resident (Child #1 [C1]).') === '(Staff #1) assaulted resident (Child #1).', 'labels: a bracketed definition keeps the words');
+check(kop_ih_reader_labels('the SP did not intervene to protect the AV; by an SP, of AVs') === '[the staff person] did not intervene to protect [the alleged victim]; by an [staff person], of [the alleged victims]', 'labels: Minnesota SP and AV');
+check(kop_ih_reader_labels('(XS) Ex-Spouse (SP) and AV') === '(XS) Ex-Spouse (SP) and AV', 'labels: SP as ex-spouse is left alone');
 check(strpos(kop_ih_excerpt_html('S1 hit C1 & ran.'), '<p>[Staff 1] hit [Child 1] &amp; ran.</p>') === 0, 'labels: excerpt html is translated and still escaped');
 
 echo "Total: $checks checks, $failures failed.\n";

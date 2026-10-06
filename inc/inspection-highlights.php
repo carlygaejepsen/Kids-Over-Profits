@@ -2608,27 +2608,53 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /**
      * The states' person labels in words a reader knows. California writes
-     * "S1" (staff) and "C1" (client), Arizona "E1" (employee), others "Y1" and
-     * "R1". Shown as an editor's insertion, "[Staff 1]", so the quote stays
-     * the state's own and the number still tells two people apart. A label the
-     * report defines ("Staff 1 (S1)") keeps just the words. Codes after a word
-     * naming a section, form or rule, and codes inside longer ones, are left alone.
+     * "S1" (staff) and "C1" (client), Arizona "E1" (employee) and "R1"
+     * (resident), others "Y1"; North Carolina "FC #3" (former client), "FS #1"
+     * (former staff), "DC #9" (deceased client), "QP #2"; Arkansas "MHT #1";
+     * Minnesota "the SP" (staff person) and "the AV" (alleged victim). Shown
+     * as an editor's insertion, "[Staff 1]", so the quote stays the state's own
+     * and the number still tells two people apart. Where the state already
+     * wrote the code in brackets ("[R1]", a name it blacked out) its brackets
+     * are kept and not doubled. A label the report defines ("Staff 1 (S1)",
+     * "Staff #1 [S1]") keeps just the words. Codes after a word naming a
+     * section, form or rule, and codes inside longer ones, are left alone.
      */
     function kop_ih_reader_labels($text) {
-        $words = array('S' => 'Staff', 'E' => 'Staff', 'C' => 'Child', 'Y' => 'Youth', 'R' => 'Resident');
-        $text = preg_replace('/\b((?:Staff|Employee|Child|Client|Youth|Resident)(?: member)? ?#?\d{1,2})\s*\([SECYR]\d{1,2}\)/u', '$1', (string) $text);
-        return preg_replace_callback(
-            '/(?<![\w#\-.])([SECYR])(\d{1,2})(?![\w\-]|\.\d)/u',
-            static function ($m) use ($words, $text) {
-                $before = substr($text, max(0, $m[0][1] - 14), min(14, $m[0][1]));
-                if (preg_match('/\b(?:section|sec|rule|form|lic|item|part|exhibit|tag|no|number|code|vitamin|type|class|grade)\.?\s*$/i', $before)) return $m[0][0];
-                return '[' . $words[$m[1][0]] . ' ' . $m[2][0] . ']';
+        $text = (string) $text;
+        $letters = array('S' => 'Staff', 'E' => 'Staff', 'C' => 'Child', 'Y' => 'Youth', 'R' => 'Resident');
+        $coded = array('FC' => 'Former client', 'FS' => 'Former staff', 'DC' => 'Deceased client', 'QP' => 'Qualified professional', 'MHT' => 'Mental health technician');
+        $text = preg_replace('/\b((?:Former )?(?:Staff|Employee|Child|Client|Youth|Resident)(?: member)? ?#?\d{1,2}(?:\'s)?)\s*[\[(](?:[SECYR]|FC|FS|DC|QP)\s?#?\d{1,2}[\])]/iu', '$1', $text);
+        $text = preg_replace_callback(
+            '/(?<![\w#\-.])(?:([SECYR])(\d{1,2})|(FC|FS|DC|QP|MHT) ?#(\d{1,2}))(?![\w\-]|\.\d)/u',
+            static function ($m) use ($letters, $coded, $text) {
+                $at = $m[0][1];
+                $single = $m[1][1] >= 0;
+                if ($single) {
+                    $before = substr($text, max(0, $at - 14), min(14, $at));
+                    if (preg_match('/\b(?:section|sec|rule|form|lic|item|part|exhibit|tag|no|number|code|vitamin|type|class|grade)\.?\s*$/i', $before)) return $m[0][0];
+                    $words = $letters[$m[1][0]] . ' ' . $m[2][0];
+                } else {
+                    $words = $coded[$m[3][0]] . ' ' . $m[4][0];
+                }
+                return ($at > 0 && $text[$at - 1] === '[') ? $words : '[' . $words . ']';
             },
             $text,
             -1,
             $count,
             PREG_OFFSET_CAPTURE
         );
+        // Minnesota's "the SP" and "the AV". Not where SP means ex-spouse (a family form's key).
+        if (strpos($text, 'Ex-Spouse') === false) {
+            $text = preg_replace_callback('/(?<![\w#\-.\/])(?:(the|an?|by|of|to) )?(SP|AV)(s?)(?![\w\-])/u', static function ($m) {
+                $word = $m[2] === 'SP' ? 'staff person' : 'alleged victim';
+                $plural = $m[3] === 's' ? 's' : '';
+                $lead = strtolower($m[1]);
+                if ($lead === 'the' || $lead === '') return '[the ' . $word . $plural . ']';
+                if ($lead === 'a' || $lead === 'an') return $m[1] . ' [' . $word . $plural . ']';
+                return $m[1] . ' [the ' . $word . $plural . ']';
+            }, $text);
+        }
+        return $text;
     }
 
     /** An excerpt as escaped HTML: one paragraph per finding merged into it. */
