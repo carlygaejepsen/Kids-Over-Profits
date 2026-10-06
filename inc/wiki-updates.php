@@ -771,8 +771,12 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
                     'other_roles' => array_values(array_filter(array_map(function ($c) { return trim(($c['role'] ?? '') . ', ' . ($c['place'] ?? ''), ', '); }, (array) ($p['career'] ?? array()))))));
         }
     }
+    // KOP is a primary source: a fact whose only source is KOP's own record (names, operators, staff the owner
+    // researched) is cited to KOP's page. Where the record holds an outside source (an article, a court record),
+    // that is the citation instead, picked above; KOP is never cited for someone else's reporting.
     foreach ($gaps as &$g) {
-        if (kop_wiki_upd_is_kop_page($g['source_url'])) $g['source_url'] = '';
+        $g['kop_source'] = kop_wiki_upd_is_kop_page($g['source_url']);
+        if ($g['kop_source'] && preg_match('/^(KOP (facility|company) page|KOP facility page|)$/', (string) $g['source_label'])) $g['source_label'] = 'Kids Over Profits';
         $g['needs_source'] = $g['source_url'] === '' && empty($g['detail']['cite_text']);
     }
     unset($g);
@@ -780,9 +784,9 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
 }
 
 /**
- * True for a KOP page that gathers other people's reporting (facility,
- * company, map, lawsuit, findings, memorial and list pages): never a
- * citation. KOP's own articles and the documents in its media library (a
+ * True for a KOP page that gathers records (facility, company, map,
+ * lawsuit, findings, memorial and list pages): cited only for what KOP's own
+ * record holds, never in place of an outside source the record names. KOP's own articles and the documents in its media library (a
  * Woodbury issue, a court filing) are.
  */
 function kop_wiki_upd_is_kop_page($url) {

@@ -1590,11 +1590,16 @@ function kop_apply_operator_record_seeds() {
                 if (!$fid || $check->fetchColumn() !== (string) ($f['unique_name'] ?? '')) {
                     continue;
                 }
+                $rel = in_array($f['relationship'] ?? '', array('current', 'past', 'other'), true) ? $f['relationship'] : 'past';
                 $has->execute(array($id, $fid));
                 if ((int) $has->fetchColumn()) {
+                    // "update": true corrects an existing link's relationship (a merge can carry one over as current).
+                    if (!empty($f['update'])) {
+                        $pdo->prepare("UPDATE `{$prefix}kop_operator_facilities` SET relationship = ?, sort_order = ? WHERE operator_id = ? AND facility_id = ? AND relationship <> ?")
+                            ->execute(array($rel, 90, $id, $fid, $rel));
+                    }
                     continue;
                 }
-                $rel = in_array($f['relationship'] ?? '', array('current', 'past', 'other'), true) ? $f['relationship'] : 'past';
                 $link->execute(array($id, $fid, $rel, 90));
             }
             $done[] = $id;
@@ -2406,7 +2411,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '106';
+    $version = '107';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

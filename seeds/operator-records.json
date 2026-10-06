@@ -330,5 +330,19 @@
         "relationship": "past"
       }
     ]
+  },
+  {
+    "name": "The Brown Schools",
+    "operator": {
+      "notes": []
+    },
+    "facilities": [
+      {
+        "id": 10815,
+        "unique_name": "Laurel Ridge Treatment Center RTC",
+        "relationship": "past",
+        "update": true
+      }
+    ]
   }
 ]

@@ -33,9 +33,10 @@ SEPARATOR = re.compile(r'^\s*(-{3,}|\*{3,}|_{3,})\s*$')
 HEADING = re.compile(r'^\s*#{1,6}\s')
 # A source with no page of its own, cited by name: an inspection report (state and date) or a case (name v. name, number).
 TEXT_CITE = re.compile(r'\([^()]*(inspection report|\sv\.\s|No\.\s?\d)[^()]*\)')
-# KOP pages that gather other people's reporting; KOP's own articles and media-library documents are fine.
-KOP_PAGE = re.compile(r'^https?://(www\.)?kidsoverprofits\.org/(facility|operator|network-map|lawsuits|severe-reports|memorial|wiki-feed|'
-                      r'tti-program-index|location-index|[a-z]{2}-reports|news|search|open-data|glossary|phpbb)(/|#|\?|$)', re.I)
+# KOP is a primary source: its facility, company, lawsuit and memorial pages are cited for what KOP's own record holds
+# (the drafters cite an outside source instead wherever the record names one). Only KOP's lists and search pages,
+# which hold no fact of their own, are refused.
+KOP_PAGE = re.compile(r'^https?://(www\.)?kidsoverprofits\.org/(wiki-feed|tti-program-index|location-index|search|open-data|phpbb)(/|#|\?|$)', re.I)
 
 
 def norm(heading):
@@ -146,7 +147,7 @@ def check(original, draft, header_changed):
             problems.append(f'added line without a source: {t[:80]!r}')
         for url in re.findall(r'\]\((https?://[^)\s]+)\)', t):
             if KOP_PAGE.match(url):
-                problems.append(f'cites a KOP page that gathers others\' reporting: {url}')
+                problems.append(f'cites a KOP list or search page, not a record: {url}')
     if re.search(r'[\U0001F300-\U0001FAFF☀-➿]', '\n'.join(added)):
         problems.append('an emoji in the added text')
     return problems, added
