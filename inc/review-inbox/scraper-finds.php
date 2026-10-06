@@ -271,6 +271,7 @@ function kop_scraper_finds_act($key, $action, array $params) {
             $done = kop_rdest_put((string) ($params['to'] ?? ''), array(
                 'url' => $url, 'title' => (string) ($e['title'] ?? ''), 'site_name' => (string) ($e['host'] ?? ''),
                 'facility_id' => (int) ($params['facility_id'] ?? 0), 'kind' => (string) ($params['kind'] ?? ''),
+                'school_id' => (int) ($params['school_id'] ?? 0),
                 'source_note' => 'Found by the news scraper', 'via' => 'Scraper finds import',
                 'note' => 'Found by the news scraper (' . ($e['origin'] ?: 'facility sweep') . '), turned away as "'
                     . kop_scraper_finds_reason_label($e['reason'] ?? '') . '", sent here by ' . $user . '.',

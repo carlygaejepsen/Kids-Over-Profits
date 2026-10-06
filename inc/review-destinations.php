@@ -29,6 +29,7 @@ function kop_rdest_targets() {
         'lawsuit'     => array('label' => 'Lawsuits', 'needs_facility' => false),
         'legislation' => array('label' => 'Legislation', 'needs_facility' => false),
         'promo'       => array('label' => 'Industry PR', 'needs_facility' => false),
+        'indigenous'  => array('label' => 'Indian boarding schools', 'needs_facility' => false),
         'website'     => array('label' => 'Facility website', 'needs_facility' => true),
         'resource'    => array('label' => 'Facility resource (Materials and links)', 'needs_facility' => true),
     );
@@ -50,9 +51,24 @@ function kop_rdest_moves(array $except = array(), $default_fid = 0) {
                 $move['params'][] = array('name' => 'kind', 'label' => 'Kind', 'type' => 'select', 'options' => $kinds, 'value' => 'reference');
             }
         }
+        if ($id === 'indigenous') {
+            $move['params'] = array(array('name' => 'school_id', 'label' => 'About', 'type' => 'select', 'options' => kop_rdest_school_options(), 'value' => '0'));
+        }
         $out[] = $move;
     }
     return $out;
+}
+
+/** Choices for "Indian boarding schools": a school on file, or the schools in general (0). */
+function kop_rdest_school_options() {
+    $options = array('0' => 'The schools in general');
+    $pdo = function_exists('kop_ischools_pdo') ? kop_ischools_pdo() : null;
+    if ($pdo) {
+        foreach (kop_ischools_all($pdo, null) as $s) {
+            $options[(string) (int) $s['id']] = (string) $s['name'];
+        }
+    }
+    return $options;
 }
 
 /** news_submissions.status gained 'promotional'; tables made before it reject the value (as kop_news_status_enum_ensure()). */
@@ -85,7 +101,7 @@ function kop_rdest_put($to, array $p, $reviewer) {
     if (!function_exists('kop_ext_insert_news')) throw new RuntimeException('The queue inserts are not loaded.');
     kop_ext_load_record_libs();
     $pdo = kop_rinbox_pdo();
-    $type = array('news' => 'article', 'promo' => 'article', 'lawsuit' => 'lawsuit', 'legislation' => 'legislation')[$to];
+    $type = array('news' => 'article', 'promo' => 'article', 'indigenous' => 'article', 'lawsuit' => 'lawsuit', 'legislation' => 'legislation')[$to];
     $q = array(
         'url' => $url, 'title' => trim((string) ($p['title'] ?? '')) ?: $url, 'type' => $type,
         'site_name' => (string) ($p['site_name'] ?? (parse_url($url, PHP_URL_HOST) ?: '')), 'facility' => (string) ($p['facility'] ?? ''),
@@ -109,6 +125,18 @@ function kop_rdest_put($to, array $p, $reviewer) {
     if ($to === 'promo') {
         kop_rdest_promo_enum_ensure($pdo);
         $pdo->prepare("UPDATE news_submissions SET status = 'promotional', reviewed_by = ? WHERE id = ?")->execute(array($reviewer, (int) $id));
+    }
+    if ($to === 'indigenous') {
+        // An article about an Indian boarding school: filed on its page, approved, off the news list.
+        $school_id = (int) ($p['school_id'] ?? 0);
+        $pdo_s = kop_ischools_pdo();
+        if (!$pdo_s) throw new RuntimeException('The Indian boarding schools records are not available.');
+        kop_ischools_install($pdo_s);
+        if ($school_id > 0 && !kop_ischools_get($pdo_s, $school_id)) throw new RuntimeException('That school is gone.');
+        kop_ischools_link_news($pdo_s, $school_id, (int) $id, $reviewer);
+        $pdo->prepare("UPDATE news_submissions SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP WHERE id = ?")->execute(array($reviewer, (int) $id));
+        return array('to' => 'indigenous', 'id' => (int) $id, 'school_id' => $school_id, 'url' => $url,
+            'message' => 'Filed on the Indian boarding schools page as article #' . (int) $id . ' (off the news list).');
     }
     $where = $to === 'promo' ? 'the Industry PR index (internal, never public)' : 'the ' . $targets[$to]['label'] . ' queue, waiting for review';
     return array('to' => $to, 'id' => (int) $id, 'url' => $url, 'message' => 'Moved to ' . $where . ' as #' . (int) $id . '.');
@@ -164,6 +192,13 @@ function kop_rdest_take_back(array $done) {
     }
     $pdo = kop_rinbox_pdo();
     $id = (int) ($done['id'] ?? 0);
+    if ($to === 'indigenous') {
+        $pdo_s = kop_ischools_pdo();
+        if ($pdo_s) kop_ischools_unlink_news($pdo_s, (int) ($done['school_id'] ?? 0), $id);
+        $st = $pdo->prepare("UPDATE news_submissions SET status = 'deleted' WHERE id = ? AND status = 'approved'");
+        $st->execute(array($id));
+        return;
+    }
     if ($to === 'news' || $to === 'promo') {
         $st = $pdo->prepare("UPDATE news_submissions SET status = 'deleted' WHERE id = ? AND status IN ('submitted', 'promotional')");
         $st->execute(array($id));

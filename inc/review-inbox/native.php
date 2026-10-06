@@ -211,15 +211,11 @@ function kop_rinbox_native_item($type, array $r) {
     if ($pending && $t['moves'] && kop_rinbox_native_url($type, $r) !== '') {
         // Every other destination: News, Lawsuits, Legislation, Industry PR, facility website or resource.
         $moves = kop_rdest_moves(array($type));
-        if ($type === 'news') {
-            $moves[] = kop_rinbox_native_school_move();
-        }
     }
     $actions = array();
     $log = kop_rinbox_native_moves()[$type . ':' . (int) $r['id']] ?? null;
     if ($log) {
         $targets = kop_rdest_targets();
-        $targets['indigenous'] = array('label' => 'Indian boarding schools');
         $actions[] = array('id' => 'unmove', 'label' => 'Undo move to ' . ($targets[$log['to']]['label'] ?? $log['to']), 'style' => 'undo');
     }
     $title = (string) ($r[$t['title']] ?? '');
@@ -305,24 +301,6 @@ function kop_rinbox_native_restore($type, $key, $status) {
     return array('message' => 'Back to ' . $status . '.');
 }
 
-/**
- * "Move to Indian boarding schools" on a news card: the article is about an
- * Indian boarding/residential school, not the troubled teen industry, so it
- * goes to /indian-boarding-schools/ (inc/indigenous-schools.php), under a
- * school or about the schools in general, and stays off the news feed.
- */
-function kop_rinbox_native_school_move() {
-    $options = array('0' => 'The schools in general');
-    $pdo = function_exists('kop_ischools_pdo') ? kop_ischools_pdo() : null;
-    if ($pdo) {
-        foreach (kop_ischools_all($pdo, null) as $s) {
-            $options[(string) (int) $s['id']] = (string) $s['name'];
-        }
-    }
-    return array('id' => 'indigenous', 'label' => 'Move to Indian boarding schools',
-        'params' => array(array('name' => 'school_id', 'label' => 'About', 'type' => 'select', 'options' => $options, 'value' => '0')));
-}
-
 function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     $types = kop_rinbox_native_types();
     $t = $types[$type];
@@ -352,6 +330,7 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
             'site_name' => (string) ($r['publication_name'] ?? (parse_url($url, PHP_URL_HOST) ?: '')),
             'published' => (string) ($r['publication_date'] ?? ''),
             'facility_id' => (int) ($params['facility_id'] ?? 0), 'kind' => (string) ($params['kind'] ?? ''),
+            'school_id' => (int) ($params['school_id'] ?? 0),
             'source_note' => 'Sent in as ' . strtolower($t['label']) . ' (#' . (int) $r['id'] . ')',
             'note' => 'Moved from the ' . $t['label'] . ' queue (#' . (int) $r['id'] . ') by ' . $reviewer . '.',
             'self' => array($type, (int) $r['id']), 'via' => 'moved',
@@ -418,7 +397,7 @@ function kop_rinbox_native_unmove($type, $key) {
     $m = $log[$k];
     $done = $m['done'] ?? array('to' => $m['to'], 'id' => (int) ($m['to_id'] ?? 0));
     if (empty($done['self'])) kop_rdest_take_back($done);
-    if (($done['to'] ?? '') === 'indigenous' && ($pdo_s = kop_ischools_pdo())) {
+    if (!empty($done['self']) && ($done['to'] ?? '') === 'indigenous' && ($pdo_s = kop_ischools_pdo())) {
         kop_ischools_unlink_news($pdo_s, (int) ($done['school_id'] ?? 0), (int) $key);
     }
     $pdo = kop_rinbox_pdo();
