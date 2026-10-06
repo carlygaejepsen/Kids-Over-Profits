@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_HOW_TO_USE_REWRITE_VERSION')) {
-    define('KOP_HOW_TO_USE_REWRITE_VERSION', '1');
+    define('KOP_HOW_TO_USE_REWRITE_VERSION', '2');
 }
 
 if (!function_exists('kop_how_to_use_base')) {
@@ -195,51 +195,52 @@ if (!function_exists('kop_how_to_use_robots')) {
 
 if (!function_exists('kop_how_to_use_groups')) {
     /**
-     * Each group: title, links. A link is a page 'slug' (dropped when that page
-     * is not published) or a route 'path', with an optional 'query'.
+     * Each group: title, intro, links. A link is a page 'slug' (dropped when that
+     * page is not published) or a route 'path', with an optional 'query'; its
+     * note says what is on that page. Counts are written "more than" so they
+     * stay true as the records grow.
      */
     function kop_how_to_use_groups() {
         return apply_filters('kop_how_to_use_groups', array(
-            array('title' => 'Look up a program', 'links' => array(
-                array('label' => 'Facility directory', 'slug' => 'tti-program-index', 'note' => 'Every program we track, grouped by the company that runs it'),
-                array('label' => 'Programs by state or country', 'slug' => 'tti-program-index', 'query' => array('view' => 'location'), 'note' => 'The same programs, by where they are'),
-                array('label' => 'Parent companies', 'path' => '/operator/', 'note' => 'The companies that own and run programs, and their histories'),
-                array('label' => 'Network map', 'slug' => 'network-map', 'note' => 'How programs, owners, staff and referrers connect'),
-                array('label' => 'Educational consultants and referrers', 'slug' => 'referrers-educational-consultants', 'note' => 'Who sends young people to programs'),
-                array('label' => 'Youth transport companies', 'slug' => 'youth-transport-companies', 'note' => 'The companies hired to take young people to programs'),
-                array('label' => 'Young adult programs', 'slug' => 'young-adult-programs', 'note' => 'Programs for people 18 and older, run by the same industry'),
+            array('title' => 'Look up a program', 'intro' => 'For when you have a name: a program, the company behind it, or the consultant who recommended it.', 'links' => array(
+                array('label' => 'Facility directory', 'slug' => 'tti-program-index', 'note' => 'Every program on record, open and closed, grouped under the company that runs or ran it. Filter by status, or sort by the number of inspection reports; each name opens the program\'s own page.'),
+                array('label' => 'Where are the kids?', 'slug' => 'where-are-the-kids', 'note' => 'A page for every state and for the countries programs operate in: the programs there, the inspection reports that state publishes, its laws and its news.'),
+                array('label' => 'Parent companies', 'path' => '/operator/', 'note' => 'The companies and religious organizations that own and run programs, such as Universal Health Services, Sequel TSI, Aspen Education Group and Teen Challenge. Each one\'s page lists what it has run and where, its history year by year, the people who ran it, and the lawsuits and deaths on record across its programs.'),
+                array('label' => 'Network map', 'slug' => 'network-map', 'note' => 'More than 1,400 programs, companies and people, and the documented connections between them: who owned what, which staff moved from one program to the next, and which programs changed names. A timeline shows the years each was operating.'),
+                array('label' => 'Educational consultants and referrers', 'slug' => 'referrers-educational-consultants', 'note' => 'The paid advisors who recommend programs to parents. Each listing gives the programs they have referred to, where they worked before, the trade groups they belong to and any legal history on record.'),
+                array('label' => 'Youth transport companies', 'slug' => 'youth-transport-companies', 'note' => 'The escort companies parents hire to take a young person from home to a program, with what is on file about each.'),
+                array('label' => 'Young adult programs', 'slug' => 'young-adult-programs', 'note' => 'Transitional living, wilderness and therapeutic programs for people 18 and older. Many are run by the same companies and staff as the teen programs, or take young people straight from them.'),
             )),
-            array('title' => 'Records of harm', 'links' => array(
-                array('label' => 'Inspection reports', 'slug' => 'inspection-reports', 'note' => 'What state inspectors found, state by state'),
-                array('label' => 'Serious findings', 'slug' => 'severe-reports', 'note' => 'Deaths, assaults and other serious findings from inspections'),
-                array('label' => 'In Loving Memory', 'slug' => 'in-loving-memory', 'note' => "Young people who died in the industry's care"),
-                array('label' => 'Lawsuits', 'slug' => 'lawsuits', 'note' => 'Court cases against programs and their staff'),
-                array('label' => 'News feed', 'slug' => 'tti-news-feed', 'note' => 'News coverage of programs, newest first'),
-                array('label' => 'Document archive', 'slug' => 'document-archive', 'note' => 'Records, reports and court filings on file'),
+            array('title' => 'Records of harm', 'intro' => 'What licensing agencies, courts, reporters and families have documented, each with its source.', 'links' => array(
+                array('label' => 'Inspection reports', 'slug' => 'inspection-reports', 'note' => 'More than 80,000 state licensing inspections from more than 25 states, gathered so they can be read without filing a records request. Each state\'s tracker lists the facilities it licenses, every visit on record and the violations inspectors wrote up.'),
+                array('label' => 'Serious findings', 'slug' => 'severe-reports', 'note' => 'The most serious of those findings: deaths, sexual and physical abuse, restraints that injured a child, suicide attempts and medical neglect. Each quote is the agency\'s own wording, checked against its report by a person before it is listed.'),
+                array('label' => 'In Loving Memory', 'slug' => 'in-loving-memory', 'note' => 'More than 200 young people who died in programs, reform homes and detention centers, with the program, the date, the cause of death and the reporting. Filter by state, decade or cause.'),
+                array('label' => 'Lawsuits', 'slug' => 'lawsuits', 'note' => 'Court cases against programs, their owners and staff: what was claimed, where it was filed and where it stands, filterable by status, court and claim.'),
+                array('label' => 'News feed', 'slug' => 'tti-news-feed', 'note' => 'Coverage of the industry as it comes out: arrests, closures, lawsuits and investigations. Long-running stories are collected article by article.'),
+                array('label' => 'Document archive', 'slug' => 'document-archive', 'note' => 'More than 4,800 documents: Senate and GAO investigations, court filings, research, and the programs\' own handbooks, brochures and newsletters, filed under the program or company they concern. Free to read and download.'),
             )),
-            array('title' => 'Get help or take action', 'links' => array(
-                array('label' => 'Report abuse', 'slug' => 'report-abuse', 'note' => 'Where to report a program or a therapist, state by state'),
-                array('label' => 'Resources', 'slug' => 'resources', 'note' => 'Support groups and help for survivors and families'),
-                array('label' => 'Add or correct a program', 'slug' => 'tti-data-submission', 'note' => 'Tell us what you know about a program'),
-                array('label' => 'Send documents anonymously', 'slug' => 'anon-submit', 'note' => 'An encrypted upload that does not record who sent it'),
-                array('label' => 'Volunteer', 'slug' => 'volunteer', 'note' => 'Research, data entry, writing and outreach'),
-                array('label' => 'Donate', 'slug' => 'donate', 'note' => 'Support the work'),
+            array('title' => 'Get help or take action', 'intro' => 'If something happened to you or someone you know, or you have something to add to the record.', 'links' => array(
+                array('label' => 'Report abuse', 'slug' => 'report-abuse', 'note' => 'Who takes a report in every state: the board that licenses a therapist, the agency that licenses the program, child protection and the police. They do not reliably share reports with each other, so the page says which to tell and what each can do.'),
+                array('label' => 'Resources', 'slug' => 'resources', 'note' => 'Crisis lines that answer around the clock, survivor support groups, advocacy organizations and further reading, grouped by what you need.'),
+                array('label' => 'Add or correct a program', 'slug' => 'tti-data-submission', 'note' => 'Send what you know about a program, company, consultant or transport company. A person reviews every submission before it is added.'),
+                array('label' => 'Send documents anonymously', 'slug' => 'anon-submit', 'note' => 'Upload records or photos without an account. Files are encrypted the moment they reach the server, and only the site owner holds the key that opens them.'),
+                array('label' => 'Volunteer', 'slug' => 'volunteer', 'note' => 'Research, data entry and news tracking, or send in the lawsuits, bills and articles we are missing.'),
+                array('label' => 'Donate', 'slug' => 'donate', 'note' => 'Kids Over Profits is a 501(c)(3) nonprofit. Donations pay for records requests, document storage and hosting.'),
             )),
-            array('title' => 'Understand the industry', 'links' => array(
-                array('label' => 'History', 'slug' => 'history', 'note' => 'How the troubled teen industry came to be'),
-                array('label' => 'Law & Policy', 'slug' => 'law-policy', 'note' => 'Lawsuits and bills, and what they mean'),
-                array('label' => 'Legislation tracker', 'slug' => 'legislative-efforts', 'note' => 'Bills to regulate programs, as they move'),
-                array('label' => 'Research & Reports', 'slug' => 'researchreports', 'note' => 'Studies and government reports, summarized'),
-                array('label' => 'How the industry manages its reputation', 'slug' => 'reputation-management', 'note' => 'Marketing, review sites and new names for old programs'),
-                array('label' => 'Glossary', 'slug' => 'glossary', 'note' => "The industry's words, explained"),
-                array('label' => 'Frequently asked questions', 'slug' => 'faq', 'note' => 'What counts as the industry, where it came from, how to help'),
+            array('title' => 'Understand the industry', 'intro' => 'Where the industry came from, how it works and the laws that govern it.', 'links' => array(
+                array('label' => 'History', 'slug' => 'history', 'note' => 'Timelines and essays tracing the industry from older institutions for controlling children, through juvenile justice reform and corporate ownership, to the survivors now organizing against it.'),
+                array('label' => 'Law & Policy', 'slug' => 'law-policy', 'note' => 'The newest lawsuits and bills side by side, with links to both trackers.'),
+                array('label' => 'Legislation tracker', 'slug' => 'legislative-efforts', 'note' => 'Bills to regulate programs in Congress and the states: each one\'s status, sponsors and last action, a plain summary, and whether Kids Over Profits supports or opposes it.'),
+                array('label' => 'Research & Reports', 'slug' => 'researchreports', 'note' => 'Government audits, academic studies and investigations of youth residential treatment, each with notes on what it found and the programs it names.'),
+                array('label' => 'How the industry manages its reputation', 'slug' => 'reputation-management', 'note' => 'How programs shape what a parent finds online: instructions written for AI chatbots, "independent" directories run by the programs\' own marketing firm, and one program\'s 2,500 near-identical pages, one for nearly every town.'),
+                array('label' => 'Glossary', 'slug' => 'glossary', 'note' => 'More than 450 words programs use for their methods, taken from handbooks, staff manuals, state records and survivor accounts, each with the programs where it was used.'),
+                array('label' => 'Frequently asked questions', 'slug' => 'faq', 'note' => 'What counts as the troubled teen industry, where it came from, what happens in programs and how to help, answered briefly with links to the records.'),
             )),
-            array('title' => 'Written for you', 'links' => array(
-                array('label' => 'Survivors', 'slug' => 'survivors', 'note' => 'If you went through a program'),
-                array('label' => 'Family and friends', 'slug' => 'families', 'note' => 'If someone you love is in a program, or was'),
-                array('label' => 'Advocates', 'slug' => 'advocates', 'note' => 'Organizing against the industry'),
-                array('label' => 'Journalists', 'slug' => 'journalists', 'note' => 'Records and sources for reporting'),
-                array('label' => 'Where are the kids?', 'slug' => 'where-are-the-kids', 'note' => 'Young people sent to programs, state by state'),
+            array('title' => 'Written for you', 'intro' => 'Pages written with one kind of reader in mind.', 'links' => array(
+                array('label' => 'Survivors', 'slug' => 'survivors', 'note' => 'Support groups, a survivor-written guide to common after-effects, legal options and places to tell your story.'),
+                array('label' => 'Family and friends', 'slug' => 'families', 'note' => 'How to support someone who survived a program: what to say, what to do and what to avoid.'),
+                array('label' => 'Advocates', 'slug' => 'advocates', 'note' => 'The research, history and program data most useful for organizing against the industry, in one place.'),
+                array('label' => 'Journalists', 'slug' => 'journalists', 'note' => 'Guidance on trauma-informed reporting and interviewing survivors, the sources we use, and how to reach us for interviews or reprints.'),
             )),
         ));
     }
@@ -262,9 +263,14 @@ if (!function_exists('kop_how_to_use_build')) {
                 if (!empty($spec['query'])) $url = add_query_arg($spec['query'], $url);
                 $items[] = kop_site_map_item($spec['label'], $url, (string) ($spec['note'] ?? ''));
             }
-            if ($items) $groups[] = array('title' => (string) $group['title'], 'items' => $items);
+            if ($items) $groups[] = array('title' => (string) $group['title'], 'intro' => (string) ($group['intro'] ?? ''), 'items' => $items);
         }
-        return array('groups' => $groups);
+        // The "in danger now" line at the top of the page.
+        $urgent = array();
+        foreach (array('report' => 'report-abuse', 'help' => 'resources') as $key => $slug) {
+            $urgent[$key] = isset($pages[$slug]) ? $pages[$slug]['url'] : '';
+        }
+        return array('groups' => $groups, 'urgent' => $urgent);
     }
 }
 

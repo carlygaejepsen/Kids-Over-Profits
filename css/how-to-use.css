@@ -75,3 +75,35 @@ button.kop-htu-search__button:focus-visible {
     outline: 3px solid var(--kop-focus-color, #33A7B5);
     outline-offset: 2px;
 }
+
+.kop-htu-lede {
+    max-width: 46rem;
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-htu-urgent {
+    margin: 1.25rem 0 0;
+    padding: 0.8rem 1rem;
+    border-left: 5px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 4px;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-htu-urgent p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.kop-htu-group__intro {
+    margin: -0.3rem 0 0.8rem;
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-htu-list .kop-sm-note {
+    line-height: 1.45;
+}

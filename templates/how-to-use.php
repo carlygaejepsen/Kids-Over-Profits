@@ -13,6 +13,8 @@ $kop_htu = isset($GLOBALS['kop_how_to_use']) && is_array($GLOBALS['kop_how_to_us
     ? $GLOBALS['kop_how_to_use']
     : array('groups' => array());
 $kop_htu_map = function_exists('kop_site_map_url') ? kop_site_map_url() : '';
+$kop_htu_report = (string) ($kop_htu['urgent']['report'] ?? '');
+$kop_htu_help = (string) ($kop_htu['urgent']['help'] ?? '');
 
 get_header();
 ?>
@@ -28,14 +30,25 @@ get_header();
 
         <header class="entry-header kop-sm-header">
             <h1 class="entry-title">How to use this site</h1>
-            <p class="kop-sm-standfirst">Kids Over Profits tracks the troubled teen industry: the programs, the companies that run them, what inspectors and courts found, and where to get help. Start with what you came to do.</p>
+            <p class="kop-sm-standfirst">Kids Over Profits documents the troubled teen industry: the wilderness programs, therapeutic boarding schools, residential treatment centers, boot camps and religious reform schools that take young people away from home, the companies that own them, and the consultants and transport companies that fill them.</p>
+            <p class="kop-htu-lede">Most of what is here comes from records: state inspection reports, court filings, government investigations, news coverage, and the programs' own brochures and handbooks. Records carry a link to their source wherever there is one. The pages below are grouped by what people usually come here to do.</p>
         </header>
+
+        <?php if ($kop_htu_report !== '' || $kop_htu_help !== '') : ?>
+            <aside class="kop-htu-urgent" aria-label="If someone is in danger now">
+                <p><strong>If a young person is in danger in a program now:</strong>
+                    <?php if ($kop_htu_report !== '') : ?><a href="<?php echo esc_url($kop_htu_report); ?>">Report abuse</a> lists who takes a report in each state<?php endif; ?><?php if ($kop_htu_report !== '' && $kop_htu_help !== '') : ?>, and <?php endif; ?><?php if ($kop_htu_help !== '') : ?><a href="<?php echo esc_url($kop_htu_help); ?>">Resources</a> lists crisis lines that answer around the clock<?php endif; ?>.</p>
+            </aside>
+        <?php endif; ?>
 
         <?php if (!empty($kop_htu['groups'])) : ?>
             <div class="kop-htu-groups">
                 <?php foreach ($kop_htu['groups'] as $group) : ?>
                     <section class="kop-htu-group">
                         <h2><?php echo esc_html($group['title']); ?></h2>
+                        <?php if (($group['intro'] ?? '') !== '') : ?>
+                            <p class="kop-htu-group__intro"><?php echo esc_html($group['intro']); ?></p>
+                        <?php endif; ?>
                         <?php kop_site_map_render_items($group['items'], 'kop-sm-list kop-htu-list'); ?>
                     </section>
                 <?php endforeach; ?>
@@ -45,12 +58,13 @@ get_header();
         <section class="kop-sm-section kop-htu-search" aria-labelledby="kop-htu-search-title">
             <h2 id="kop-htu-search-title">Finding something</h2>
             <ul class="kop-htu-tips">
-                <li><strong>Search everything.</strong> Press <kbd>/</kbd> on any page, or use the search at the top, to look through every program, company, person, report and document. Programs also turn up under their former names.
+                <li><strong>Search the whole site.</strong> Press <kbd>/</kbd> on any page, or use the search in the header. It looks through programs, companies, people, inspection reports, lawsuits, news and documents at once, and finds a program under any name it has used, so a program that has been renamed turns up under its old name too.
                     <button type="button" class="kop-htu-search__button" data-kop-open-search>Open search</button></li>
-                <li><strong>Every program has its own page.</strong> Open one from the directory or from search to see its inspections, lawsuits, news, staff and documents in one place.</li>
+                <li><strong>Every program has its own page.</strong> It gathers what is on file about that program: the names it has gone by, the company that ran it, the state's inspection findings, lawsuits, news coverage, deaths, staff and documents. A program that changed its name is shown in one section per name, each with the records from its own years.</li>
                 <?php if ($kop_htu_map !== '') : ?>
-                    <li><strong>Every page, listed.</strong> The <a href="<?php echo esc_url($kop_htu_map); ?>">site map</a> lists every page of the site, every program and every company, A to Z.</li>
+                    <li><strong>Every page, A to Z.</strong> The <a href="<?php echo esc_url($kop_htu_map); ?>">site map</a> lists every page of the site, and every program and company page from A to Z.</li>
                 <?php endif; ?>
+                <li><strong>Something wrong or missing?</strong> The flag button on each page sends an error report straight to us. To add what you know about a program, use <em>Add or correct a program</em> above.</li>
             </ul>
         </section>
     </div>
