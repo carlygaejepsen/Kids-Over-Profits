@@ -136,6 +136,9 @@ function kop_rinbox_wupd_item(array $r) {
                 $details[] = array('label' => 'Past tense', 'value' => 'Left out: the entry keeps its present tense.');
             }
         }
+        foreach ((array) ($d['fixes'] ?? array()) as $f) {
+            $details[] = array('label' => 'Corrects a line', 'value' => $f['new'] . (($f['note'] ?? '') !== '' ? ' (' . $f['note'] . ')' : ''));
+        }
         foreach ((array) ($d['conflicts'] ?? array()) as $c) {
             $details[] = array('label' => 'KOP\'s record says otherwise', 'value' => $c['text'] . ($c['source_label'] !== '' ? ' (' . $c['source_label'] . ')' : ''),
                 'url' => (string) ($c['source_url'] ?? ''));

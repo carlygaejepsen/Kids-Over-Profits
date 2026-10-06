@@ -236,7 +236,13 @@ function kop_wiki_drafts_build($id, $current_md, $edits = null) {
     $base = implode("\n", kop_wiki_drafts_lines($current_md)) . "\n";
     $stale = sha1(rtrim(str_replace("\r\n", "\n", (string) $current_md), "\n")) !== (string) ($d['base_sha1'] ?? '');
     $tense = (string) ($edits['_tense'] ?? '1') !== '1' ? array() : (array) ($d['tense'] ?? array());
-    list($tensed_md, $tense_ids, $errors) = kop_wiki_drafts_apply_tense($base, $tense);
+    // Corrections of existing lines the owner asked for (a misspelled name) go first, then the past tense.
+    $fixes = (array) ($d['fixes'] ?? array());
+    list($fixed_md, $fix_ids, $fix_errors) = kop_wiki_drafts_apply_tense($base, $fixes);
+    list($tensed_md, $tense_ids, $errors) = kop_wiki_drafts_apply_tense($fixed_md, $tense);
+    $errors = array_merge($fix_errors, $errors);
+    $tense = array_merge($fixes, $tense);
+    $tense_ids = array_merge($fix_ids, $tense_ids);
     $ops = array();
     foreach ((array) ($d['ops'] ?? array()) as $op) {
         if (isset($edits[$op['id']])) {

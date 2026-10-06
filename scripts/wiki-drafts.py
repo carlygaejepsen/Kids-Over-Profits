@@ -278,6 +278,27 @@ def apply_tense(md, ops):
     return '\n'.join(lines) + '\n', changed, errors
 
 
+def load_fixes(folder):
+    """ops-fix.json: corrections of existing lines the owner asked for (a misspelled name), each
+    {"id": "f1", "old": "<exact line>", "new": "<the line corrected>", "note": "why"}. -> the list."""
+    path = os.path.join(folder, 'ops-fix.json')
+    return json.load(open(path, encoding='utf-8')).get('fixes', []) if os.path.exists(path) else []
+
+
+def apply_fixes(md, fixes):
+    """Each fix replaces one existing line that must be there once (applied before the past tense). -> (md, count, errors)."""
+    lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
+    done, errors = 0, []
+    for f in fixes:
+        hits = [n for n, line in enumerate(lines) if line == f['old'].rstrip('\r')]
+        if len(hits) != 1:
+            errors.append(f"{f.get('id')}: line {'not found' if not hits else 'found more than once'}: {f['old'][:70]!r}")
+            continue
+        lines[hits[0]] = f['new'].rstrip('\r')
+        done += 1
+    return '\n'.join(lines) + '\n', done, errors
+
+
 def add_kop_page(folder, md, ops):
     """The record's KOP facility page as the last Related Media item (owner, 2026-10-06), unless the entry or an op links it
     already or the record has no page. The one KOP page link a draft may carry. -> True when an op was added."""
@@ -319,7 +340,9 @@ def run(ids, write):
         tense_ops = json.load(open(tense_path, encoding='utf-8')).get('ops', []) if os.path.exists(tense_path) else []
         # The tense pass rewrites lines in place; the additions then go on top, and the check
         # compares with the tensed text, so every other original line must still be there.
-        base, tensed, tense_errors = apply_tense(md, tense_ops)
+        fixed_md, fixes, fix_errors = apply_fixes(md, load_fixes(folder))
+        base, tensed, tense_errors = apply_tense(fixed_md, tense_ops)
+        tense_errors = fix_errors + tense_errors
         draft, applied, errors = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
         kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
@@ -423,6 +446,8 @@ def export(ids):
             'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
             'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in ops if op.get('verdict') != 'dropped'],
             'tense': tense,
+            'fixes': [{'id': f['id'], 'old': f['old'].rstrip('\r'), 'new': f['new'].rstrip('\r'), 'note': f.get('note', '')}
+                      for f in load_fixes(folder)],
             'conflicts': [{'text': g.get('text', ''), 'source_label': g.get('source_label', ''), 'source_url': g.get('source_url', '')}
                           for g in gaps.get('gaps', []) if g.get('conflict')],
         }
