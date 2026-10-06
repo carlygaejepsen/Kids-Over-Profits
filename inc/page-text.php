@@ -47,6 +47,12 @@ function kop_page_text_pages() {
             'prefix' => 'kop-faq',
             'css'    => 'css/faq.css',
         ),
+        'start-here' => array(
+            'title'  => 'Start Here: How to Use This Site',
+            'file'   => 'js/data/pages/start-here.json',
+            'prefix' => 'kop-start',
+            'css'    => 'css/start-here.css',
+        ),
     );
 }
 

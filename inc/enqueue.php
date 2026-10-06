@@ -2373,5 +2373,10 @@ function kop_enqueue_plugin_contrast() {
     if (file_exists($gb)) {
         wp_enqueue_script('kop-givebutter-contrast', get_stylesheet_directory_uri() . '/js/givebutter-contrast.js', array(), filemtime($gb), true);
     }
+    // Kadence's mobile menu closed when a "#" group label (Monitor, Learn More...) was tapped.
+    $menu = get_stylesheet_directory() . '/js/mobile-menu.js';
+    if (file_exists($menu)) {
+        wp_enqueue_script('kop-mobile-menu', get_stylesheet_directory_uri() . '/js/mobile-menu.js', array(), filemtime($menu), true);
+    }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_plugin_contrast', 99);

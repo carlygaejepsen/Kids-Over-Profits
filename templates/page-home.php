@@ -203,6 +203,14 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     </section>
     <?php kop_ie_html_end(); ?>
 
+    <?php
+    // Outside the editable hero above, so a saved hero edit cannot drop it.
+    $kop_start_page = get_page_by_path('start-here');
+    if ($kop_start_page && $kop_start_page->post_status === 'publish') :
+        ?>
+        <p class="kop-home-start">New here? <a href="<?php echo esc_url(get_permalink($kop_start_page->ID)); ?>">Start here: how to use this site &raquo;</a></p>
+    <?php endif; ?>
+
     <section class="kop-home-search-section">
         <form role="search" method="get" class="kop-home-search" action="<?php echo esc_url(home_url('/')); ?>">
             <label class="screen-reader-text" for="kop-home-search-input">Search the site</label>

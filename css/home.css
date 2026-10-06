@@ -87,6 +87,21 @@
     margin-bottom: 0.5rem;
 }
 
+/* "New here? Start here" under the audience buttons. */
+.kop-home .kop-home-start {
+    margin: -1.5rem 0 1.5rem;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-home .kop-home-start a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
 .kop-home-audience {
     display: flex;
     justify-content: center;

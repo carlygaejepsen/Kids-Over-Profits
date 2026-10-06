@@ -1,0 +1,75 @@
+{
+  "_about": "Text of the /start-here/ page (templates/page-start-here.php, rendered by inc/page-text.php). Edit it in wp-admin at KOP Data Tools > Page Text, or here. Every section with a heading becomes a jump link at the top of the page. In a 'cards' section, a list item that starts with [link text](/path/) and a colon becomes a card. Format: a blank line between paragraphs, '### ' for a subheading, '- ' for a list item, **bold**, *italic*, [link text](https://...) or [link text](/site-path/).",
+  "sections": [
+    {
+      "key": "intro",
+      "label": "Introduction",
+      "style": "note",
+      "heading": "",
+      "body": "Kids Over Profits keeps public records on the troubled teen industry: the programs, the companies that own them, the people who run them, and what state inspectors, courts and reporters have found. This page shows where everything is and how to read it.\n\nIf a young person is in danger in a program right now, go to [Report Abuse](/report-abuse/) for the agencies to call in your state."
+    },
+    {
+      "key": "look-up",
+      "label": "Look up a program",
+      "style": "plain",
+      "heading": "Look up a program or company",
+      "body": "The quickest way in is the search box at the top of every page. Type part of a name. Programs change their names often, so search finds old names and other names too, and each result says which one matched (\"Formerly ...\", \"Also known as ...\").\n\n- **Search** finds facilities, companies, news, lawsuits and inspection reports at once.\n- The [Facility Directory](/tti-program-index/) lists every program we have a record for, grouped by the company that runs it. Its [By location](/tti-program-index/?view=location) tab lists them by state and town.\n- [Parent companies](/operator/) lists the companies behind the programs, largest first.\n\nIf a program is not here, that does not mean it is safe. It may mean nobody has told us about it yet. You can [add it](/tti-data-submission/)."
+    },
+    {
+      "key": "facility-page",
+      "label": "What a facility page shows",
+      "style": "plain",
+      "heading": "What a facility page shows",
+      "body": "Every program has its own page. A page holds what we have found, so some are long and some are only a name and a place. You may find:\n\n- **At a glance**: where it is, what kind of program it is, the years it ran, whether it is open or closed, and who runs it.\n- **Names over time**: a program that was renamed shows each name with its years, and the record is split into one part per name.\n- **Inspection reports** from the state, and the most serious findings in them (deaths, injuries, staff assaulting children) pulled out at the top.\n- **Lawsuits**, **news coverage** and **incidents**, in date order.\n- **Staff**, with the other programs where the same people worked.\n- **Documents and links**: brochures, court papers, archived web pages and survivor archives.\n\nEvery fact carries a **source** link. Tap it to see where it came from."
+    },
+    {
+      "key": "company-page",
+      "label": "What a company page shows",
+      "style": "plain",
+      "heading": "What a company page shows",
+      "body": "A parent company's page lists the programs it runs or ran, a year-by-year timeline of openings, closings, lawsuits and deaths, the people tied to it, and the documents filed under its programs. Some companies also have a written history.\n\nCompanies often close a program and reopen it under a new name, or sell it to another company. The company pages are where that pattern is easiest to see."
+    },
+    {
+      "key": "records",
+      "label": "Records across all programs",
+      "style": "cards",
+      "heading": "Records across all programs",
+      "body": "- [Inspection Reports](/inspection-reports/): state licensing inspections, state by state, searchable by facility.\n- [Severe Reports](/severe-reports/): the most serious inspection findings we have reviewed, in one list.\n- [Lawsuits](/lawsuits/): cases filed against programs, companies and staff.\n- [Legislation](/legislation/): bills that would regulate the industry, and where they stand.\n- [News](/tti-news-feed/): reporting on the industry, newest first.\n- [In Loving Memory](/in-loving-memory/): young people who died in these programs.\n- [Educational Consultants](/referrers-educational-consultants/): the consultants who refer families to programs.\n- [Youth Transport Companies](/youth-transport-companies/): the services hired to take teens to programs.\n- [Mental Health Providers](/mental-health-providers/): hospitals, clinics and therapists outside the industry that refer to it or use its methods."
+    },
+    {
+      "key": "learn",
+      "label": "Learn about the industry",
+      "style": "cards",
+      "heading": "Learn about the industry",
+      "body": "- [History](/history/): where the industry came from and how it grew.\n- [Glossary](/glossary/): the words programs use, and what they mean in practice.\n- [Research Library](/researchreports/): studies and government reports, the most useful marked \"Start here\".\n- [Document Archive](/document-archive/): program brochures, handbooks, court records and other papers, by program.\n- [Open Data](/open-data/): download our records as CSV and JSON files for your own research."
+    },
+    {
+      "key": "who-you-are",
+      "label": "Pages for who you are",
+      "style": "cards",
+      "heading": "Pages for who you are",
+      "body": "- [Survivors](/survivors/): for people who went through a program.\n- [Friends and families](/families/): for parents and relatives of a young person in a program, or being told to send one.\n- [Concerned citizens](/advocates/): how to push for change where you live.\n- [Journalists](/journalists/): records, documents and sources for reporting on the industry."
+    },
+    {
+      "key": "help",
+      "label": "Help or tell us something",
+      "style": "cards",
+      "heading": "Help or tell us something",
+      "body": "- [Report Abuse](/report-abuse/): the agencies that take reports about a program or therapist, in every state.\n- [Add or correct a record](/tti-data-submission/): tell us about a program, a company, a staff member or a transporter. Every submission is checked before it goes up.\n- [Send documents anonymously](/anon-submit/): encrypted upload, no account needed.\n- [Volunteer](/volunteer/): ways to help with research, records and news.\n- [Contact us](/contact/): questions, corrections and tips.\n- [Donate](/donate/): Kids Over Profits is survivor-led and runs on donations."
+    },
+    {
+      "key": "reading",
+      "label": "Reading the records",
+      "style": "plain",
+      "heading": "Reading the records",
+      "body": "- **No reports is not a clean record.** Many states publish nothing, or only the last few years, and some program types are not licensed at all. A blank section often means the state keeps its records hidden.\n- **Check the dates.** A program can change owners, staff and names many times. Each fact is tied to the years it is about.\n- **Read the source.** We summarize, but the source link always leads to the state report, court filing, article or archive we read.\n- **Found a mistake?** Every record can be corrected through the [data form](/tti-data-submission/) or by [contacting us](/contact/)."
+    },
+    {
+      "key": "updated",
+      "label": "Last updated",
+      "style": "updated",
+      "heading": "",
+      "body": "Last updated October 2026."
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 <?php
 /**
  * Offline checks for the page text system (inc/page-text.php, the editor in
- * inc/page-text-editor.php) and the /indian-boarding-schools/ and /faq/ templates.
+ * inc/page-text-editor.php) and the /indian-boarding-schools/, /faq/ and /start-here/ templates.
  *
  *   php scripts/test-page-text.php
  *
@@ -185,6 +185,50 @@ $doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
 $errs = array_filter(libxml_get_errors(), function ($e) { return !preg_match('/^Tag (main|header|section|nav) invalid/', trim($e->message)); });
 check(!$errs, 'the FAQ page parses as HTML without errors');
 
+echo "Start here
+";
+update_option('kop_page_text_edits', array());
+$start = kop_page_text_defaults('start-here');
+$headed = array_values(array_filter($start, function ($s) { return $s['heading'] !== ''; }));
+check(count($start) >= 8 && $start[0]['key'] === 'intro' && end($start)['key'] === 'updated', 'intro first, last updated last');
+$html = render_page('page-start-here.php');
+if (getenv('KOP_DUMP_START')) {
+    file_put_contents(getenv('KOP_DUMP_START'), $html);
+}
+foreach ($headed as $s) {
+    check(strpos($html, 'id="kop-start-' . $s['key'] . '"') !== false && strpos($html, '<li><a href="#kop-start-' . $s['key'] . '">') !== false,
+        "section {$s['key']} is on the page and in the jump list");
+}
+check(strpos($html, 'class="kop-start-note" id="kop-start-intro"') < strpos($html, 'class="kop-start-search"')
+    && strpos($html, 'class="kop-start-search"') < strpos($html, 'class="kop-start-toc"'), 'opening note, then search, then the jump list');
+check(strpos($html, 'name="s"') !== false && strpos($html, 'action="https://kidsoverprofits.org/"') !== false, 'the search box searches the site');
+check(substr_count($html, 'class="kop-start-org"') >= 20, 'the records, learn, audience and help sections are cards (' . substr_count($html, 'class="kop-start-org"') . ')');
+check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), 'no format syntax left over');
+preg_match_all('/href="([^"]+)"/', $html, $m);
+$bad = array_filter($m[1], function ($u) { return !preg_match('#^(https://kidsoverprofits\.org/|\#kop-start-)#', $u); });
+check(!$bad, 'every link is a site page or an in-page anchor' . ($bad ? ': ' . implode(' ', $bad) : ''));
+// Every site path is a page the theme creates, assigns or redirects, or a known page.
+$known = array('/', '/tti-program-index/', '/operator/', '/lawsuits/', '/legislation/', '/tti-news-feed/', '/tti-data-submission/', '/start-here/', '/referrers-educational-consultants/');
+$code = file_get_contents(dirname(__DIR__) . '/inc/admin.php') . file_get_contents(dirname(__DIR__) . '/inc/redirects.php');
+$unknown = array();
+foreach (array_unique($m[1]) as $u) {
+    if (strpos($u, '#') === 0) {
+        continue;
+    }
+    $path = parse_url($u, PHP_URL_PATH);
+    $slug = trim($path, '/');
+    if (!in_array($path, $known, true) && strpos($code, "'" . $slug . "'") === false && !in_array($slug, array('report-abuse', 'glossary', 'open-data', 'researchreports', 'document-archive'), true)) {
+        $unknown[] = $path;
+    }
+}
+check(!$unknown, 'every site link names a page the theme knows' . ($unknown ? ': ' . implode(' ', $unknown) : ''));
+libxml_use_internal_errors(true);
+libxml_clear_errors();
+$doc = new DOMDocument();
+$doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
+$errs = array_filter(libxml_get_errors(), function ($e) { return !preg_match('/^Tag (main|header|section|nav) invalid/', trim($e->message)); });
+check(!$errs, 'the start here page parses as HTML without errors');
+
 echo "Editor screen
 ";
 $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -193,7 +237,7 @@ $_REQUEST = array();
 ob_start();
 kop_render_page_text_editor();
 $picker = ob_get_clean();
-check(strpos($picker, 'Choose a page to edit') !== false && strpos($picker, 'kop_page=faq') !== false && strpos($picker, 'kop_page=indian-boarding-schools') !== false, 'with several pages the editor asks which one');
+check(strpos($picker, 'Choose a page to edit') !== false && strpos($picker, 'kop_page=start-here') !== false && strpos($picker, 'kop_page=faq') !== false && strpos($picker, 'kop_page=indian-boarding-schools') !== false, 'with several pages the editor asks which one');
 $_REQUEST = array('kop_page' => 'indian-boarding-schools');
 update_option('kop_page_text_edits', array('indian-boarding-schools' => array('wrong' => array('heading' => 'Tell us', 'body' => 'Edited.', 'user' => 'Tester', 'time' => 1790000000))));
 ob_start();

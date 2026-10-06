@@ -480,6 +480,9 @@ function kop_tool_page_specs() {
         // Frequently asked questions; text in js/data/pages/faq.json (Page Text editor).
         // A draft so the owner reads every answer before publishing by hand.
         array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'draft'),
+        // How to use the site: where everything is and how to read a record; text in
+        // js/data/pages/start-here.json (Page Text editor). Linked from the home page and the menu.
+        array('template' => 'page-start-here.php', 'title' => 'Start Here: How to Use This Site', 'slug' => 'start-here', 'status' => 'publish'),
         // Programs for people 18 and older, kept apart from the TTI facilities
         // (inc/young-adult-programs.php). A draft so the owner reads it before publishing by hand.
         array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'draft'),
@@ -564,6 +567,11 @@ function kop_nav_item_specs() {
             'slug'   => KOP_GLOSSARY_SLUG,
             'parent' => 'Learn More',
             'title'  => 'TTI Glossary',
+        ),
+        array(
+            'slug'   => 'start-here',
+            'parent' => 'Learn More',
+            'title'  => 'Start Here',
         ),
         array(
             'slug'   => KOP_OPEN_DATA_SLUG,
@@ -707,7 +715,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '25';
+    $version = '26';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -2409,7 +2417,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '105';
+    $version = '106';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

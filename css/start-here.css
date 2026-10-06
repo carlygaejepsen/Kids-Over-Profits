@@ -1,0 +1,254 @@
+/*
+ * Start here: how to use the site (templates/page-start-here.php).
+ *
+ * One white card, one column, like the other Page Text pages. A search box
+ * and a list of the sections sit at the top; the "cards" sections (records,
+ * learn, audiences, help) are a grid of bordered links, two across on a wide
+ * screen, one on a phone.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-start-page {
+    max-width: 56rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.65;
+}
+
+/* Text never sits on the site's gradient: edge to edge on a phone. */
+@media (max-width: 600px) {
+    .kop-start-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-start-header {
+    margin-bottom: 1.5rem;
+}
+
+.kop-start-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-start-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-start-editor-content {
+    margin-bottom: 2rem;
+}
+
+.kop-start-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-start-page a:hover,
+.kop-start-page a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-start-page p,
+.kop-start-page ul {
+    margin: 0 0 1rem;
+}
+
+.kop-start-page li {
+    margin-bottom: 0.45rem;
+}
+
+/* ---- Opening note ------------------------------------------------------- */
+
+.kop-start-note {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    font-size: 1.02rem;
+}
+
+.kop-start-note p {
+    margin: 0;
+}
+
+.kop-start-note p + p {
+    margin-top: 0.5rem;
+}
+
+/* ---- Search ------------------------------------------------------------- */
+
+.kop-start-search {
+    margin: 0 0 1.5rem;
+}
+
+.kop-start-search label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-start-search-row {
+    display: flex;
+    gap: 8px;
+}
+
+.kop-start-search input[type="search"] {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 14px;
+    border: 2px solid var(--kop-navy-blue, #000080);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 1rem;
+}
+
+.kop-start-search input[type="search"]:focus {
+    outline: 2px solid var(--kop-teal, #33A7B5);
+    outline-offset: 1px;
+}
+
+button.kop-start-search-btn {
+    background: var(--kop-navy-blue, #000080);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 22px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* States Kadence would otherwise colour (button:hover/:focus beat one class). */
+button.kop-start-search-btn:hover,
+button.kop-start-search-btn:focus {
+    background: var(--kop-teal-fill, #24757F);
+    color: #fff;
+}
+
+button.kop-start-search-btn:active {
+    background: var(--kop-navy-blue, #000080);
+    color: #fff;
+}
+
+/* ---- On this page ------------------------------------------------------- */
+
+.kop-start-toc {
+    margin: 0 0 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 8px;
+}
+
+.kop-start-page h2.kop-start-toc-title {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-start-toc ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    columns: 2;
+    column-gap: 2rem;
+}
+
+.kop-start-toc li {
+    margin-bottom: 0.35rem;
+    break-inside: avoid;
+}
+
+@media (max-width: 600px) {
+    .kop-start-toc ul {
+        columns: 1;
+    }
+}
+
+/* ---- Sections ----------------------------------------------------------- */
+
+.kop-start-page section {
+    margin-top: 2.5rem;
+    padding-left: 1.1rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    scroll-margin-top: 1.5rem;
+}
+
+.kop-start-page h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-start-page h3 {
+    margin: 1.5rem 0 0.4rem;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-start-page section > :last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .kop-start-page section {
+        padding-left: 0.8rem;
+    }
+}
+
+/* ---- Link cards --------------------------------------------------------- */
+
+.kop-start-orgs {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+    .kop-start-orgs {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kop-start-page .kop-start-org {
+    margin: 0;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.kop-start-org-name {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.kop-start-org p {
+    margin: 0.25rem 0 0;
+    font-size: 0.97rem;
+}
+
+.kop-start-updated {
+    margin-top: 2.5rem;
+    font-size: 0.9rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-start-updated p {
+    margin: 0;
+}
