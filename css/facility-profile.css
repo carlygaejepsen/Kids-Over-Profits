@@ -1177,6 +1177,23 @@
     color: var(--kop-text-muted, #4A5568);
 }
 
+.kop-fp-generated-body p.kop-plain-summary {
+    margin: 0 0 0.6rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 4px;
+    font-size: 0.97rem;
+    line-height: 1.5;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-generated-body p.kop-plain-summary .kop-plain-note {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 .kop-fp-generated-body blockquote.kop-fp-vquote {
     margin: 0;
     padding: 0;

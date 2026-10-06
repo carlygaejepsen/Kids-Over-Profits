@@ -69,6 +69,7 @@ require_once get_stylesheet_directory() . '/inc/mobile-api.php';
 // Inspection highlights: the reviewed severe findings the home page and the
 // inspection reports hub show, most recent first
 require_once get_stylesheet_directory() . '/inc/inspection-highlights.php';
+require_once get_stylesheet_directory() . '/inc/highlight-summaries.php';
 
 // Bug report status emails (shared by inc/admin.php and api/save-bug-report.php)
 require_once get_stylesheet_directory() . '/inc/bug-report-notify.php';

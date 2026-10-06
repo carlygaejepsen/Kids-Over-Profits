@@ -2764,6 +2764,7 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
     /** Cards for the "demand attention" grid, in the markup the hand-featured cards use. */
     function kop_ih_render_cards(array $rows, array $tracker_slugs) {
         $categories = kop_ih_categories();
+        $plain = function_exists('kop_hs_public_summaries') ? kop_hs_public_summaries($rows) : array();
         foreach ($rows as $row) {
             $tracker = strtolower($row['state']) . '-reports';
             $date = $row['finding_date'] ? date_i18n('F j, Y', strtotime($row['finding_date'] . ' 12:00:00')) : trim((string) $row['report_date']);
@@ -2774,6 +2775,7 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
                     <h3><?php echo esc_html($row['facility_name']); ?>
                         <span class="kop-flagged-state"><?php echo esc_html($row['state']); ?></span></h3>
                     <div class="kop-flagged-date"><?php echo $date !== '' ? 'Inspected ' . esc_html($date) : ''; ?><?php echo $date !== '' && $label !== '' ? ' &middot; ' : ''; ?><?php echo esc_html($label); ?></div>
+                    <?php if (isset($plain[(int) $row['id']])) echo kop_hs_plain_html($plain[(int) $row['id']]); // escaped in the helper ?>
                     <blockquote class="kop-flagged-quote"><?php echo kop_ih_excerpt_html(kop_ih_card_excerpt($row['excerpt'])); ?></blockquote>
                     <div class="kop-flagged-source">From the state's report<?php echo $row['state_label'] ? '. ' . esc_html($row['state_label']) : ''; ?></div>
                     <div class="kop-flagged-links">

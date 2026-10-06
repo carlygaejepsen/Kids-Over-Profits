@@ -102,6 +102,14 @@ php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]  
 # counts each report once into inspection_report_counts (bump kop_irl_version() after changing a rule); records and companies
 # take inspection rows by the facility pages' name rule + Inspection Links. Pending findings are admin-only, never public
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-inspection-rollup.php [--list]   # rules, full count on an in-memory copy, page parity, the screen
+# Plain-language summaries for hard-to-read serious findings (inc/highlight-summaries.php): kop_hs_reasons() picks approved findings with
+# codes, numbered people, stitched fragments, run-on sentences or legal citations (about 10%); an hourly job asks the AI (alternating Groq/Gemini)
+# for 1-3 plain sentences from the state's text only; drafts wait at KOP Tools > Review inbox > Plain summaries (edit, approve, reject, write
+# again) and show above the state's wording on facility pages, home cards and /severe-reports/ only once approved. A summary belongs to the
+# exact excerpt it was written from (excerpt_hash): a changed excerpt hides it and a new draft is made. Table inspection_highlight_summaries
+php scripts/test-highlight-summaries.php           # which findings are picked (the owner's examples), answer checks, printing
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=highlight-summaries   # the queue with a made-up AI
+php api/scan-highlight-summaries.php [--try|apply] [--limit=10] [--ids=704]   # on the server (ea-php82): dry run lists what would get a draft
 # Duplicate facility records (KOP Tools > Merge Duplicates, inc/facility-merge.php + facility-merge-match.php): pairs found
 # automatically (same words, one word apart, spelling, company name in front, same street address; renamed programs never),
 # merged with one click: doc fields join, every table/JSON/option pointing at the dropped id moves (kop_fmerge_ref_tables(),

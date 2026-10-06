@@ -42,6 +42,7 @@ $kop_sr_rows = $kop_sr_listing && function_exists('kop_ih_site_severe')
     ? kop_ih_site_severe($kop_sr_state, $kop_sr_category, $kop_sr_per_page + 1, ($kop_sr_page - 1) * $kop_sr_per_page) : array();
 $kop_sr_has_next = count($kop_sr_rows) > $kop_sr_per_page;
 $kop_sr_rows = array_slice($kop_sr_rows, 0, $kop_sr_per_page);
+$kop_sr_plain = function_exists('kop_hs_public_summaries') ? kop_hs_public_summaries($kop_sr_rows) : array(); // approved plain-language summaries
 
 $kop_sr_tracker_slugs = function_exists('kop_state_inspection_page_map')
     ? array_values(kop_state_inspection_page_map()) : array();
@@ -228,6 +229,7 @@ $kop_sr_icon = static function ($name) {
                     <?php endif; endforeach; ?>
                 </div>
             </header>
+            <?php if (isset($kop_sr_plain[(int) $kop_sr_row['id']])) echo kop_hs_plain_html($kop_sr_plain[(int) $kop_sr_row['id']]); // escaped in the helper ?>
             <blockquote class="kop-flagged-quote"><?php echo kop_ih_excerpt_html($kop_sr_row['excerpt']); // escaped in the helper ?></blockquote>
             <p class="kop-flagged-source">From the state's report<?php echo $kop_sr_row['state_label'] ? '. ' . esc_html($kop_sr_row['state_label']) : ''; ?><?php
                 echo $kop_sr_row['standard'] ? '. Cited: ' . esc_html($kop_sr_row['standard']) : ''; ?><?php
