@@ -330,7 +330,7 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
             'site_name' => (string) ($r['publication_name'] ?? (parse_url($url, PHP_URL_HOST) ?: '')),
             'published' => (string) ($r['publication_date'] ?? ''),
             'facility_id' => (int) ($params['facility_id'] ?? 0), 'kind' => (string) ($params['kind'] ?? ''),
-            'school_id' => (int) ($params['school_id'] ?? 0),
+            'school_id' => (int) ($params['school_id'] ?? 0), 'ya_id' => (int) ($params['ya_id'] ?? 0), 'ya_name' => (string) ($params['ya_name'] ?? ''),
             'source_note' => 'Sent in as ' . strtolower($t['label']) . ' (#' . (int) $r['id'] . ')',
             'note' => 'Moved from the ' . $t['label'] . ' queue (#' . (int) $r['id'] . ') by ' . $reviewer . '.',
             'self' => array($type, (int) $r['id']), 'via' => 'moved',

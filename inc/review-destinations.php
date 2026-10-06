@@ -30,6 +30,7 @@ function kop_rdest_targets() {
         'legislation' => array('label' => 'Legislation', 'needs_facility' => false),
         'promo'       => array('label' => 'Industry PR', 'needs_facility' => false),
         'indigenous'  => array('label' => 'Indian boarding schools', 'needs_facility' => false),
+        'young_adult' => array('label' => 'Young adult programs (18+)', 'needs_facility' => false),
         'website'     => array('label' => 'Facility website', 'needs_facility' => true),
         'resource'    => array('label' => 'Facility resource (Materials and links)', 'needs_facility' => true),
     );
@@ -54,9 +55,84 @@ function kop_rdest_moves(array $except = array(), $default_fid = 0) {
         if ($id === 'indigenous') {
             $move['params'] = array(array('name' => 'school_id', 'label' => 'About', 'type' => 'select', 'options' => kop_rdest_school_options(), 'value' => '0'));
         }
+        if ($id === 'young_adult') {
+            $move['params'] = array(
+                array('name' => 'ya_id', 'label' => 'Program', 'type' => 'select', 'options' => kop_rdest_ya_options(), 'value' => '0'),
+                array('name' => 'ya_name', 'label' => 'or new program named', 'type' => 'text', 'value' => '', 'optional' => true),
+            );
+        }
         $out[] = $move;
     }
     return $out;
+}
+
+/** Choices for "Young adult programs": one on file, or a new one by name (0). */
+function kop_rdest_ya_options() {
+    $options = array('0' => 'A new program (name it below)');
+    $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+    if ($pdo) {
+        foreach (kop_ya_all($pdo, null) as $p) {
+            $options[(string) (int) $p['id']] = (string) $p['name'];
+        }
+    }
+    return $options;
+}
+
+/** Put the article's link on a young adult program's links (a new program waits for review). */
+function kop_rdest_put_young_adult(array $p, $reviewer) {
+    $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+    if (!$pdo) throw new RuntimeException('The young adult programs records are not available.');
+    kop_ya_install($pdo);
+    $url = trim((string) $p['url']);
+    $label = trim(str_replace('|', '-', (string) ($p['title'] ?? ''))) ?: $url;
+    $line = $label . ' | ' . $url;
+    $id = (int) ($p['ya_id'] ?? 0);
+    $created = false;
+    if ($id > 0) {
+        $prog = kop_ya_get($pdo, $id);
+        if (!$prog) throw new RuntimeException('That program is gone.');
+    } else {
+        $name = trim((string) ($p['ya_name'] ?? ''));
+        if ($name === '') throw new RuntimeException('Pick the program, or type a name for a new one.');
+        $prog = kop_ya_find_by_name($pdo, $name);
+        if ($prog) {
+            $id = (int) $prog['id'];
+        } else {
+            $id = kop_ya_save($pdo, array('name' => $name, 'review' => 'pending', 'links' => $line,
+                'source' => 'Sent from the review inbox: ' . $label), 0, $reviewer);
+            $created = true;
+        }
+    }
+    if (!$created) {
+        $have = kop_ya_lines($prog['links']);
+        foreach (kop_ya_parse_links($prog['links']) as $l) {
+            if ($l[1] === $url) throw new RuntimeException('That link is already on ' . $prog['name'] . '.');
+        }
+        $have[] = $line;
+        kop_ya_save($pdo, array('name' => $prog['name'], 'other_names' => $prog['other_names'], 'city' => $prog['city'], 'state' => $prog['state'],
+            'country' => $prog['country'], 'ages' => $prog['ages'], 'program_type' => $prog['program_type'], 'run_by' => $prog['run_by'],
+            'opened' => $prog['opened'], 'closed' => $prog['closed'], 'status' => $prog['status'], 'notes' => $prog['notes'],
+            'links' => implode("
+", $have)), $id, $reviewer);
+        $prog = kop_ya_get($pdo, $id);
+    }
+    return array('to' => 'young_adult', 'id' => $id, 'url' => $url, 'line' => $line, 'created' => $created,
+        'message' => ($created ? 'Made the young adult program "' . $prog['name'] . '" (waiting for review) and put the link on it.'
+            : 'Put the link on the young adult program "' . $prog['name'] . '".'));
+}
+
+/** Undo kop_rdest_put_young_adult(): take the link line off, and the program too when it made it and holds nothing else. */
+function kop_rdest_take_back_young_adult(array $done) {
+    $pdo = kop_ya_pdo();
+    $prog = $pdo ? kop_ya_get($pdo, (int) $done['id']) : null;
+    if (!$prog) return;
+    $left = array_values(array_filter(kop_ya_lines($prog['links']), function ($l) use ($done) { return $l !== $done['line']; }));
+    if (!empty($done['created']) && !$left && $prog['review'] === 'pending' && trim((string) $prog['facts']) === '[]') {
+        kop_ya_delete($pdo, (int) $prog['id']);
+        return;
+    }
+    $pdo->prepare('UPDATE young_adult_programs SET links = ?, updated_at = ? WHERE id = ?')->execute(array(implode("
+", $left), kop_ya_now(), (int) $prog['id']));
 }
 
 /** Choices for "Indian boarding schools": a school on file, or the schools in general (0). */
@@ -101,6 +177,7 @@ function kop_rdest_put($to, array $p, $reviewer) {
     if (!function_exists('kop_ext_insert_news')) throw new RuntimeException('The queue inserts are not loaded.');
     kop_ext_load_record_libs();
     $pdo = kop_rinbox_pdo();
+    if ($to === 'young_adult') return kop_rdest_put_young_adult($p, $reviewer);
     $type = array('news' => 'article', 'promo' => 'article', 'indigenous' => 'article', 'lawsuit' => 'lawsuit', 'legislation' => 'legislation')[$to];
     $q = array(
         'url' => $url, 'title' => trim((string) ($p['title'] ?? '')) ?: $url, 'type' => $type,
@@ -192,6 +269,10 @@ function kop_rdest_take_back(array $done) {
     }
     $pdo = kop_rinbox_pdo();
     $id = (int) ($done['id'] ?? 0);
+    if ($to === 'young_adult') {
+        kop_rdest_take_back_young_adult($done);
+        return;
+    }
     if ($to === 'indigenous') {
         $pdo_s = kop_ischools_pdo();
         if ($pdo_s) kop_ischools_unlink_news($pdo_s, (int) ($done['school_id'] ?? 0), $id);

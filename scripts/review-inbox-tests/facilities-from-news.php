@@ -35,11 +35,11 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     $before = $get();
     $check('facilities-from-news: waiting item is held back', in_array($before['decision'], array('possible_duplicate', 'other_era', 'needs_place'), true), $before['decision']);
     // "Same program" only when the card has a record; the other choices open their form first ('ask').
-    $choices = $item['facility'] ? array('link', 'link_other', 'create', 'dismiss') : array('link_other', 'create', 'dismiss');
-    $check('facilities-from-news: held item offers same program, another record, new program and skip', array_column($item['actions'], 'id') === $choices,
+    $choices = $item['facility'] ? array('link', 'link_other', 'create', 'create_home', 'young_adult', 'dismiss') : array('link_other', 'create', 'create_home', 'young_adult', 'dismiss');
+    $check('facilities-from-news: held item offers same program, another record, new program, new home, young adult program and skip', array_column($item['actions'], 'id') === $choices,
         json_encode(array_column($item['actions'], 'id')));
     $asks = array_column(array_filter($item['actions'], function ($a) { return !empty($a['ask']); }), 'id');
-    $check('facilities-from-news: another record and new program open a form first, the record box starts empty', $asks === array('link_other', 'create')
+    $check('facilities-from-news: another record and new program open a form first, the record box starts empty', $asks === array('link_other', 'create', 'create_home', 'young_adult')
         && (string) array_values(array_filter($item['actions'], function ($a) { return $a['id'] === 'link_other'; }))[0]['params'][0]['value'] === '');
 
     call_user_func($src['save'], $item['key'], array('officialName' => 'Renamed In Test', 'state' => 'ut', 'type' => 'Wilderness Therapy'));

@@ -60,7 +60,7 @@ function kop_rinbox_facdisc_view_decisions() {
         'held'    => array('possible_duplicate', 'other_era', 'needs_place', 'unquoted'),
         'matched' => array('matched'),
         'created' => array('created'),
-        'aside'   => array('provider', 'not_facility', 'indigenous_school'),
+        'aside'   => array('provider', 'not_facility', 'indigenous_school', 'young_adult'),
         'removed' => array('removed'),
     );
 }
@@ -241,6 +241,24 @@ function kop_rinbox_facdisc_item(array $r) {
                 array('name' => 'country', 'label' => 'Country', 'type' => 'text', 'value' => (string) ($e['country'] ?? ''), 'optional' => true),
                 array('name' => 'type', 'label' => 'Type', 'type' => 'select', 'options' => $types, 'value' => (string) ($e['type'] ?? ''), 'optional' => true),
             ));
+        $actions[] = array('id' => 'create_home', 'label' => 'New home of a program…', 'style' => 'neutral', 'ask' => true,
+            'submit' => 'Create the record as a home',
+            'help' => 'Makes a facility record for this home or cottage, lists the article there, and ties it to a program through Program Homes: pick the program\'s record, or name a new one. Undo: Remove on the Created tab.',
+            'params' => array(
+                array('name' => 'officialName', 'label' => 'Home\'s name', 'type' => 'text', 'value' => $new_name),
+                array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => (string) ($e['city'] ?? ''), 'optional' => true),
+                array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => (string) ($e['state'] ?? ''), 'optional' => true),
+                array('name' => 'home_program', 'label' => 'Program record', 'type' => 'facility', 'value' => '', 'optional' => true),
+                array('name' => 'home_program_name', 'label' => 'or new program named', 'type' => 'text', 'value' => '', 'optional' => true),
+            ));
+        $actions[] = array('id' => 'young_adult', 'label' => 'Young adult program (18+)…', 'style' => 'neutral', 'ask' => true,
+            'submit' => 'File as a young adult program',
+            'help' => 'Not a facility record: makes a young adult program (people 18 and older) waiting for review at Young Adult Programs, with this article as a link. Undo is on the "Skipped" tab.',
+            'params' => array(
+                array('name' => 'officialName', 'label' => 'Name', 'type' => 'text', 'value' => $new_name),
+                array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => (string) ($e['city'] ?? ''), 'optional' => true),
+                array('name' => 'state', 'label' => 'State', 'type' => 'text', 'value' => (string) ($e['state'] ?? ''), 'optional' => true),
+            ));
         $fields = array(
             array('name' => 'officialName', 'label' => 'Name', 'type' => 'text', 'value' => $new_name, 'title' => true),
             array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => (string) ($e['city'] ?? '')),
@@ -263,6 +281,10 @@ function kop_rinbox_facdisc_item(array $r) {
     } elseif ($r['decision'] === 'matched' && $fid > 0) {
         $actions[] = array('id' => 'unlink', 'label' => 'Undo: take it off ' . ($fac_name ?: 'that record'), 'style' => 'undo',
             'help' => 'Takes the article off that page and puts the card back in "To decide". No record is changed or deleted.');
+    } elseif ($r['decision'] === 'young_adult') {
+        $actions[] = array('id' => 'undo_young_adult', 'label' => 'Undo: back to To decide', 'style' => 'undo',
+            'help' => 'Deletes the young adult program this made while it is still waiting for review and untouched; the card goes back to "To decide".');
+        $links[] = array('label' => 'Filed at Young Adult Programs', 'url' => admin_url('admin.php?page=kop-young-adult-programs'));
     } elseif ($r['decision'] === 'indigenous_school') {
         $links[] = array('label' => 'Filed at Indigenous Schools', 'url' => admin_url('admin.php?page=kop-indigenous-schools'));
     }
@@ -320,6 +342,53 @@ function kop_rinbox_facdisc_act($key, $action, array $params) {
             return array('message' => $decision === 'created'
                 ? 'Created ' . $label . ' and linked ' . $article . ' to it. Remove (on the Created tab) takes it out again.'
                 : 'That name and place is already in the database as ' . $label . ', so ' . $article . ' is linked to it. No new record was made.');
+        case 'create_home':
+            if (!function_exists('kop_program_homes_group')) throw new RuntimeException('Program Homes is not installed here.');
+            $pid = (int) ($params['home_program'] ?? 0);
+            $pname = trim(sanitize_text_field((string) ($params['home_program_name'] ?? '')));
+            if ($pid <= 0 && $pname === '') throw new RuntimeException('Pick the program\'s record, or type a name for a new one.');
+            kop_program_homes_install();
+            $fields = array_intersect_key($params, array_flip(array('officialName', 'city', 'state')));
+            list($decision, $fid) = kop_facdisc_create_by_hand($pdo, $id, $fields, $user);
+            $home = (string) wp_strip_all_tags(kop_facility_finder_label($pdo, $fid));
+            if ($pid === $fid) throw new RuntimeException('Pick the program\'s own record, not this one.');
+            kop_program_homes_group(array($fid => $home), $pid, $pname, kop_program_homes_opts());
+            kop_rinbox_flush_counts();
+            return array('message' => 'Made ' . $home . ' and listed it as a home of ' . ($pid > 0 ? wp_strip_all_tags(kop_facility_finder_label($pdo, $pid)) : $pname) . '. Remove (on the Created tab) takes it out again.');
+        case 'young_adult':
+            if (!in_array($r['decision'], kop_rinbox_facdisc_open_decisions(), true)) throw new RuntimeException('This name is already decided.');
+            $detail = json_decode((string) $r['detail'], true) ?: array();
+            $e = (array) ($detail['entry'] ?? array());
+            $ya = kop_ya_pdo();
+            kop_ya_install($ya);
+            $name = trim((string) ($params['officialName'] ?? '')) ?: (string) $r['mention'];
+            $cite = trim(implode(', ', array_filter(array($r['publication_name'] ?? '', $r['publication_date'] ?? ''))));
+            $line = (($r['article_title'] ?? '') !== '' ? str_replace('|', '-', $r['article_title']) : 'Article') . ' | ' . $r['article_url'];
+            $existing = kop_ya_find_by_name($ya, $name);
+            $yid = $existing ? (int) $existing['id'] : kop_ya_save($ya, array(
+                'name' => $name, 'city' => (string) ($params['city'] ?? ($e['city'] ?? '')), 'state' => (string) ($params['state'] ?? ($e['state'] ?? '')),
+                'country' => (string) ($e['country'] ?? ''), 'status' => (string) ($e['status'] ?? 'Unknown'), 'run_by' => (string) ($e['operator'] ?? ''),
+                'review' => 'pending', 'links' => preg_match('#^https?://#i', (string) $r['article_url']) ? $line : '',
+                'source' => 'Found in the news: ' . $cite), 0, $user);
+            $detail['dismissed_from'] = $r['decision'];
+            $detail['ya_id'] = $yid;
+            $detail['ya_made'] = !$existing;
+            $pdo->prepare('UPDATE news_facility_candidates SET decision = ?, detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
+                ->execute(array('young_adult', wp_json_encode($detail), $user, $id));
+            kop_rinbox_flush_counts();
+            return array('message' => ($existing ? 'Filed under the young adult program ' . $existing['name'] : 'Made the young adult program ' . $name . ' (waiting for review)') . '. Undo is on the "Skipped" tab.');
+        case 'undo_young_adult':
+            $detail = json_decode((string) $r['detail'], true) ?: array();
+            if ($r['decision'] !== 'young_adult' || empty($detail['dismissed_from'])) throw new RuntimeException('There is nothing to undo.');
+            $ya = kop_ya_pdo();
+            $prog = !empty($detail['ya_made']) && $ya ? kop_ya_get($ya, (int) $detail['ya_id']) : null;
+            if ($prog && $prog['review'] === 'pending' && trim((string) $prog['facts']) === '[]') kop_ya_delete($ya, (int) $prog['id']);
+            $back = (string) $detail['dismissed_from'];
+            unset($detail['dismissed_from'], $detail['ya_id'], $detail['ya_made']);
+            $pdo->prepare('UPDATE news_facility_candidates SET decision = ?, detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
+                ->execute(array($back, wp_json_encode($detail), $user, $id));
+            kop_rinbox_flush_counts();
+            return array('message' => 'Back in "To decide".');
         case 'dismiss':
         case 'undismiss':
             $detail = json_decode((string) $r['detail'], true) ?: array();
@@ -350,6 +419,9 @@ function kop_rinbox_facdisc_act($key, $action, array $params) {
             return array('message' => 'Took ' . $article . ' off the page of ' . $was . '. The card is back in "To decide".');
         case 'remove':
             $was = $r['facility_id'] ? wp_strip_all_tags(kop_facility_finder_label($pdo, (int) $r['facility_id'])) : '"' . $r['mention'] . '"';
+            if ($r['facility_id'] && function_exists('kop_program_homes_program_of') && kop_program_homes_program_of((int) $r['facility_id'])) {
+                kop_program_homes_remove_home((int) $r['facility_id']);   // a home made here leaves its program's list first
+            }
             kop_facdisc_remove($pdo, $id, $user);
             kop_rinbox_flush_counts();
             return array('message' => 'Removed the record for ' . $was . '. The scan will not create it again; it waits on the Removed tab.');

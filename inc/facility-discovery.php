@@ -51,6 +51,7 @@ function kop_facdisc_decisions() {
         'provider'     => 'Provider, not a facility',
         'not_facility' => 'Skipped (not a facility)',
         'indigenous_school' => 'Indigenous residential school',
+        'young_adult'  => 'Young adult program (18+)',
         'removed'      => 'Removed',
     );
 }
