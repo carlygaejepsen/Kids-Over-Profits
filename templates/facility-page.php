@@ -45,9 +45,21 @@ $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
 };
 
 // "Source: r/troubledteens wiki, HEAL": where a fact came from, each name linking to the page it cites.
-$kop_fp_sources = static function ($sources, $tag = 'dd') {
+$kop_fp_sources = static function ($sources, $tag = 'dd', $short = false) {
     if (!$sources) return;
     $links = array();
+    if ($short) {
+        // At a glance: the word "source" (source 1, source 2 ...), the citation in its preview.
+        foreach (array_values($sources) as $n => $src) {
+            $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
+            $preview = trim($src['source'] . ($src['cite'] !== '' && $src['cite'] !== $src['source'] ? ' | ' . $src['cite'] : ''));
+            $links[] = $src['url'] !== ''
+                ? kop_citation_link($src['url'], $label, $preview, true, '', true)
+                : '<span title="' . esc_attr($preview) . '">' . esc_html($label) . '</span>';
+        }
+        echo '<' . $tag . ' class="kop-fp-src">' . implode(', ', $links) . '</' . $tag . '>';
+        return;
+    }
     // Two sources with the same name and date ("Woodbury Reports, May 2007" twice) are told apart by page, else by number.
     $counts = array_count_values(array_column($sources, 'source'));
     $nth = array();
@@ -204,7 +216,8 @@ $kop_fp_incident_list = static function (array $items) use ($kop_fp_sources) {
                         <?php if ($inc['kind'] !== '') : ?><span class="kop-fp-tl-kind"><?php echo esc_html($inc['kind']); ?></span><?php endif; ?>
                     </p>
                 <?php endif; ?>
-                <p class="kop-fp-tl-text"><?php echo esc_html($inc['text']); ?><?php if ($inc['source'] !== '') $kop_fp_sources(array($inc), 'span'); ?></p>
+                <?php $kop_fp_inc_src = array_values(array_filter(array_merge(array($inc), $inc['also'] ?? array()), static function ($s) { return $s['source'] !== ''; })); ?>
+                <p class="kop-fp-tl-text"><?php echo kop_facility_pages_cited_html($inc['text']); ?><?php if ($kop_fp_inc_src) $kop_fp_sources($kop_fp_inc_src, 'span'); ?></p>
             </li>
         <?php endforeach; ?>
     </ol>
@@ -501,7 +514,7 @@ get_header();
                         <?php foreach ($page['former_locations'] as $fl) : ?>
                             <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
                         <?php endforeach; ?>
-                        <?php $kop_fp_sources($page['fact_sources']['former_locations'] ?? array()); ?>
+                        <?php $kop_fp_sources($page['fact_sources']['former_locations'] ?? array(), 'dd', true); ?>
                     </div>
                 <?php endif; ?>
                 <?php foreach ($page['facts'] as $fact) : ?>
@@ -514,7 +527,7 @@ get_header();
                         <?php else : ?>
                             <dd><?php echo esc_html($fact['value']); ?></dd>
                         <?php endif; ?>
-                        <?php $kop_fp_sources($page['fact_sources'][$fact['label']] ?? array()); ?>
+                        <?php $kop_fp_sources($page['fact_sources'][$fact['label']] ?? array(), 'dd', true); ?>
                     </div>
                 <?php endforeach; ?>
                 <?php foreach ($kop_fp_parts ? $kop_fp_parts['facts'] : array() as $kop_fp_f) : ?>
@@ -996,11 +1009,17 @@ get_header();
             <?php if ($kop_fp_has_notes) : ?>
             <section class="kop-fp-section" id="<?php echo $kop_fp_id('notes'); ?>"<?php echo $kop_fp_edit('notes', 'research notes'); ?>>
                 <h2>Research notes</h2>
-                <?php $kop_fp_list($page['notes'], 'kop-fp-notes'); ?>
+                <?php if ($page['notes']) : ?>
+                    <ul class="kop-fp-notes">
+                        <?php foreach ($page['notes'] as $kop_fp_note) : ?>
+                            <li><?php echo kop_facility_pages_cited_html($kop_fp_note); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
                 <?php if ($page['field_notes']) : ?>
                     <ul class="kop-fp-notes">
                         <?php foreach ($page['field_notes'] as $fn) : ?>
-                            <li><?php if ($fn['label'] !== '') : ?><strong><?php echo esc_html($fn['label']); ?>:</strong> <?php endif; ?><?php echo esc_html($fn['text']); ?></li>
+                            <li><?php if ($fn['label'] !== '') : ?><strong><?php echo esc_html($fn['label']); ?>:</strong> <?php endif; ?><?php echo kop_facility_pages_cited_html($fn['text']); ?></li>
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>

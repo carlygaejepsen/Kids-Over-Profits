@@ -412,7 +412,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 <h2>Research notes</h2>
                 <ul class="kop-fp-notes">
                     <?php foreach ($page['notes'] as $note) : ?>
-                        <li><?php echo esc_html($note); ?></li>
+                        <li><?php echo kop_facility_pages_cited_html($note); ?></li>
                     <?php endforeach; ?>
                 </ul>
             </section>

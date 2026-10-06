@@ -455,7 +455,7 @@ if ($picks) {
     $html = ob_get_clean();
     $check('the page links a staff entry and a fact to their sources',
         preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src">Source: <a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
-        && preg_match('#<dd class="kop-fp-src">Source: <a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        && preg_match('#<dd class="kop-fp-src"><a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test">source</a>#', $html)
         && preg_match('#kop-fp-person-name">John Roe</p>\s*<p class="kop-fp-person-role">Therapist</p>#', $html)
         && strpos($html, '>r/troubledteens wiki, as of Dec 2025</a>') !== false);
     // Two citations of one issue are told apart by page; of one date with no page, by number.
@@ -472,9 +472,12 @@ if ($picks) {
     ob_start();
     include dirname(__DIR__) . '/templates/facility-page.php';
     $html = ob_get_clean();
-    $check('two sources of one name and date look different',
-        strpos($html, '>Woodbury Reports, May 2007, p. 20</a>, <a') !== false && strpos($html, '>Woodbury Reports, May 2007, p. 31</a>') !== false
-        && strpos($html, '>Fornits, Mar 2005 (1)</a>, <a') !== false && strpos($html, '>Fornits, Mar 2005 (2)</a>') !== false);
+    // At a glance links the word "source" (source 1, source 2); each citation is in its link's preview.
+    $check('two sources of one fact are two "source" links, each citation in its preview',
+        preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007 \| [^"]*p\. 20"[^>]*>source 1</a>, <a#', $html)
+        && preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007 \| [^"]*p\. 31"[^>]*>source 2</a>#', $html)
+        && preg_match('#post by a, March 2005"[^>]*>source 1</a>, <a[^>]*post by b, March 2005"[^>]*>source 2</a>#', $html)
+        && strpos($html, '<dd class="kop-fp-src">Source: ') === false);
 }
 
 // The livelier sections: incidents as a timeline, people across records, serious findings, news pictures.
@@ -490,6 +493,23 @@ $check('incidents read as a dated timeline, oldest first, citation split off',
     && strpos($inc[1]['text'], 'Former students') === 0 && $inc[1]['url'] === 'https://www.fornits.com/phpbb/index.php?topic=5238.0'
     && $inc[1]['source'] !== '' && $inc[2]['when'] === 'September 2024' && $inc[3]['when'] === '' && $inc[0]['text'] === 'Shut down over child abuse and neglect allegations',
     wp_json_encode($inc));
+// Laurel Ridge after its two records merged: wiki dates (2000-02-06), one death written twice.
+$inc = kop_facility_pages_incidents(array(
+    '2000-02-06: Death: On February 6, 2000 a 9-year-old boy, one month into his stay, died after being restrained face down; the death was attributed to a heart attack resulting from the restraint. (r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18))',
+    'Reported 2025-12: Abuse: Survivors report verbal and physical abuse at Laurel Ridge. (r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18))',
+    '2006-04-09: Death: On April 9, 2006 a 16-year-old sent from Alaska died by suicide. (r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18))',
+    '2000: Restraint: In 2000 a 9-year-old boy died of a heart attack a day after employees held him facedown at Laurel Ridge Treatment Center in San Antonio. (r/troubledteens wiki, page "Brown Schools Inc." (as of 2026-01-07))',
+    '1997-08-18: Death: On August 18, 1997 a 16-year-old girl died during a violent face-down restraint. (r/troubledteens wiki, page "Laurel Ridge Treatment Center" (as of 2025-12-18))',
+    '2006: a 16-year-old girl ran away and was found two days later',
+));
+$check('wiki dates read and sort; one event written twice shows once, both sources kept',
+    array_column($inc, 'when') === array('August 18, 1997', 'February 6, 2000', '2006', 'April 9, 2006', 'Reported December 2025')
+    && count($inc[1]['also'] ?? array()) === 1 && strpos($inc[1]['text'], 'one month into his stay') !== false,
+    wp_json_encode(array_column($inc, 'when')));
+$cited = kop_facility_pages_cited_html('Ownership: sold in April 2003 (Form 10-K for 2003, filed March 2004: https://www.sec.gov/x/g87995e10vk.htm; FTC notice: https://www.ftc.gov/node/10021)');
+$check('a note\'s web addresses read as "source" links, never the address',
+    substr_count($cited, '>source</a>') === 2 && strpos($cited, 'filed March 2004, <a') !== false && !preg_match('#>https?://#', $cited)
+    && kop_facility_pages_cited_html('No link <here>') === 'No link &lt;here&gt;', $cited);
 $check('one person, however the records spell them',
     kop_facility_pages_person_key('Dr. Robert H. Crist, MD') === 'robert crist' && kop_facility_pages_person_key('Admissions: Jane Doe') === 'jane doe'
     && kop_facility_pages_person_key('Gerald "Jerry" Rushing') === 'gerald rushing' && kop_facility_pages_person_key('Cher') === '');

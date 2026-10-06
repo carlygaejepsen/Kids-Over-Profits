@@ -1233,10 +1233,24 @@ if (!function_exists('kop_facility_pages_incidents')) {
             }
             $when = '';
             $reported = false;
+            $sort = 0;
+            $names = array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
             $months = 'Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?';
-            if (preg_match('/^(Reported\s+)?((?:(?:' . $months . ')\.?\s+(?:\d{1,2},?\s+)?)?\d{4}(?:\s*(?:-|to|\x{2013})\s*\d{2,4})?)\s*:\s*/u', $text, $m)) {
+            if (preg_match('/^(Reported\s+)?(\d{4})-(\d{2})(?:-(\d{2}))?\s*:\s*/u', $text, $m) && (int) $m[3] >= 1 && (int) $m[3] <= 12) {
+                // 2000-02-06 / 2025-12, as the wiki and Woodbury facts write them: "February 6, 2000" / "December 2025".
+                $reported = $m[1] !== '';
+                $day = isset($m[4]) && $m[4] !== '' ? (int) $m[4] : 0;
+                $when = $names[(int) $m[3] - 1] . ($day ? ' ' . $day . ',' : '') . ' ' . $m[2];
+                $sort = (int) $m[3] * 100 + $day;
+                $text = substr($text, strlen($m[0]));
+            } elseif (preg_match('/^(Reported\s+)?((?:(' . $months . ')\.?\s+(?:(\d{1,2}),?\s+)?)?\d{4}(?:\s*(?:-|to|\x{2013})\s*\d{2,4})?)\s*:\s*/u', $text, $m)) {
                 $reported = $m[1] !== '';
                 $when = trim($m[2]);
+                if (!empty($m[3])) {
+                    foreach ($names as $n => $name) {
+                        if (stripos($name, substr($m[3], 0, 3)) === 0) $sort = ($n + 1) * 100 + (int) ($m[4] ?? 0);
+                    }
+                }
                 $text = substr($text, strlen($m[0]));
             }
             $kind = '';
@@ -1254,10 +1268,76 @@ if (!function_exists('kop_facility_pages_incidents')) {
                 'cite'   => $cite,
                 'url'    => $url,
                 'i'      => $i,
+                'sort'   => $sort,
             );
         }
-        usort($out, static function ($a, $b) { return ($a['year'] <=> $b['year']) ?: ($a['i'] <=> $b['i']); });
-        return $out;
+        usort($out, static function ($a, $b) { return ($a['year'] <=> $b['year']) ?: ($a['sort'] <=> $b['sort']) ?: ($a['i'] <=> $b['i']); });
+        return kop_facility_pages_incidents_dedupe($out);
+    }
+}
+
+if (!function_exists('kop_facility_pages_cited_html')) {
+    /**
+     * A note's text as HTML with each web address shown as a "source" link
+     * (kop_citation_link(), the citation before it as the preview), never the
+     * address itself: "(Form 10-K for 2003: https://...)" reads
+     * "(Form 10-K for 2003, source)". Everything else is escaped.
+     */
+    function kop_facility_pages_cited_html($text) {
+        $text = (string) $text;
+        if (!preg_match_all('#(:\s*)?(https?://[^\s<>"]+)#', $text, $m, PREG_OFFSET_CAPTURE | PREG_SET_ORDER)) {
+            return esc_html($text);
+        }
+        $out = '';
+        $at = 0;
+        foreach ($m as $hit) {
+            $url = rtrim($hit[2][0], '.,;)');
+            $start = $hit[0][1];
+            $before = substr($text, $at, $start - $at);
+            // The citation the address belongs to: from the last "(" or ";" before it.
+            $cite = trim(preg_replace('#^.*[(;]#s', '', $before), " \t\n)");
+            $out .= esc_html($before) . ($hit[1][0] !== '' ? ', ' : '');
+            $out .= function_exists('kop_citation_link')
+                ? kop_citation_link($url, 'source', $cite, true, '', true)
+                : '<a href="' . esc_url($url) . '" target="_blank" rel="noopener nofollow">source</a>';
+            $at = $hit[2][1] + strlen($url);
+        }
+        return $out . esc_html(substr($text, $at));
+    }
+}
+
+if (!function_exists('kop_facility_pages_incidents_dedupe')) {
+    /**
+     * One event written twice (two records merged, two wiki pages): the same
+     * year, the same "N-year-old", and three more words in common. The fuller
+     * one stays (exact date first, then the longer text); the other's source
+     * is added to it. Anything less alike is kept as it is.
+     */
+    function kop_facility_pages_incidents_dedupe(array $items) {
+        $stop = array_flip(explode(' ', 'that this with from after into their were have been staff facility program center treatment about which while there where when what they them his her him she'));
+        $words = static function ($t) use ($stop) {
+            preg_match_all('/[a-z]{4,}/', strtolower((string) $t), $m);
+            return array_diff_key(array_flip($m[0]), $stop);
+        };
+        $keep = array();
+        foreach ($items as $inc) {
+            $dupe = null;
+            if ($inc['year'] !== 9999 && preg_match('/\b(\d{1,2})[- ]year[- ]old\b/i', $inc['text'], $age)) {
+                foreach ($keep as $k => $other) {
+                    if ($other['year'] !== $inc['year'] || !preg_match('/\b' . $age[1] . '[- ]year[- ]old\b/i', $other['text'])) continue;
+                    if (count(array_intersect_key($words($inc['text']), $words($other['text']))) >= 3) { $dupe = $k; break; }
+                }
+            }
+            if ($dupe === null) { $keep[] = $inc; continue; }
+            $a = $keep[$dupe];
+            $fuller = ($inc['sort'] % 100 > 0) !== ($a['sort'] % 100 > 0) ? ($inc['sort'] % 100 > 0 ? $inc : $a)
+                : (mb_strlen($inc['text']) > mb_strlen($a['text']) ? $inc : $a);
+            $other = $fuller === $inc ? $a : $inc;
+            if ($fuller['kind'] === '') $fuller['kind'] = $other['kind'];
+            $fuller['also'] = array_merge($fuller['also'] ?? array(), array($other), $other['also'] ?? array());
+            $keep[$dupe] = $fuller;
+        }
+        return $keep;
     }
 }
 
