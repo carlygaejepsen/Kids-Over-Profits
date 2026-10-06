@@ -1354,7 +1354,18 @@ workflow; anything that runs on the server later goes through
    unchanged; a person is named only as the source names them, never from
    a pending item. Output: `tmp/wiki-updates/drafts/<id>.md` + `<id>.json`
    (each added line, its source, Opus's verdict).
-4. **Pilot of 10**, picked for the most gaps across kinds (closure,
+4. **Pilot of 10** (run 2026-10-05: `scripts/wiki-pilot-prep.py` picks and
+   writes `tmp/wiki-updates/drafts/<id>/{entry.md,gaps.json}`; a workflow ran
+   Haiku, Sonnet and Opus per batch of 5 into ops-haiku.json, ops-sonnet.json
+   and ops.json (every op with a verdict); `scripts/wiki-drafts.py assemble`
+   applies only additions and refuses a draft that loses or changes a line or
+   adds an uncited one. All 10 assembled; 66 ops; Opus opened sources and
+   fixed 10 or so, dropped wrong-program items. Owner reads the pilot page;
+   record fixes it raised: Clark Harman's memorial date (Feb 1 vs Feb 3,
+   2024), Turn-About Ranch operator Acadia and status Transferred, Kelly
+   Corey / Kelly Cole and Jeff Johnson (one name, several people), a Fornits
+   link on kidsoverprofits.org, Oakley's 2007 closing year. Earlier plan
+   text:) Picked for the most gaps across kinds (closure,
    rename, lawsuit, death, finding). Owner reads them on the screen in
    step 5; prompts are adjusted; then the rest (about 290 once linked) in
    batches of 25 from a background workflow, resumable by entry id.
