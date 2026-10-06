@@ -133,9 +133,36 @@ function kop_wiki_drafts_reddit_format($md) {
         $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', $line);
         $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
         if ($n === 0) $line = preg_replace('/\*\*\(/', '** (', $line, 1);
+        $line = preg_replace_callback('#(?<![/\w])https?://(?:www\.)?heal-online\.org(?::\d+)?(?:/[^\s)\]]*)?#i', function ($m) {
+            $map = kop_wiki_drafts_heal_archive();
+            return $map[kop_wiki_drafts_heal_key($m[0])] ?? $m[0];
+        }, $line);
         $lines[$n] = $line;
     }
     return implode("\n", $lines) . "\n";
+}
+
+/**
+ * heal-online.org was parked and filled with spam after HEAL let it go: its links
+ * go to HEAL's own capture from before 2023 (js/data/reddit-wiki/heal-archive-urls.json,
+ * scripts/build-heal-archive-urls.py). Key as scripts/wiki-drafts.py heal_key().
+ */
+function kop_wiki_drafts_heal_key($url) {
+    $path = preg_replace('#^[a-z]+://(www\.)?heal-online\.org(:\d+)?#i', '', trim((string) $url));
+    $path = explode('#', explode('?', $path, 2)[0], 2)[0];
+    $parts = explode('/', trim($path, '/'));
+    $name = trim($path, '/') !== '' ? strtolower(end($parts)) : '';
+    if (in_array($name, array('index.htm', 'index.html', 'default.htm', 'default.html'), true)) $name = '';
+    return preg_replace('/\.html$/', '.htm', $name);
+}
+
+function kop_wiki_drafts_heal_archive() {
+    static $map = null;
+    if ($map === null) {
+        $file = get_stylesheet_directory() . '/js/data/reddit-wiki/heal-archive-urls.json';
+        $map = is_readable($file) ? (array) json_decode((string) file_get_contents($file), true) : array();
+    }
+    return $map;
 }
 
 /** Past-tense pairs: each old line must be there once. -> [md, changed ids, errors]. */

@@ -64,8 +64,31 @@ def reddit_format(md):
         line = re.sub(r'(^|[\s(\[])\*\* +(?=\S)', r'\1**', line)
         if n == 0:
             line = re.sub(r'\*\*\(', '** (', line, count=1)
+        line = HEAL_URL.sub(lambda m: heal_archive().get(heal_key(m.group(0)), m.group(0)), line)
         out.append(line)
     return '\n'.join(out) + '\n'
+
+
+# heal-online.org links -> HEAL's own capture from before 2023 (js/data/reddit-wiki/heal-archive-urls.json, built by
+# scripts/build-heal-archive-urls.py); the domain was later parked and filled with spam. PHP: kop_wiki_drafts_heal_key().
+HEAL_URL = re.compile(r'(?<![/\w])https?://(?:www\.)?heal-online\.org(?::\d+)?(?:/[^\s)\]]*)?', re.I)
+_HEAL = None
+
+
+def heal_key(url):
+    path = re.sub(r'^[a-z]+://(www\.)?heal-online\.org(:\d+)?', '', url.strip(), flags=re.I).split('?')[0].split('#')[0]
+    name = path.strip('/').split('/')[-1].lower() if path.strip('/') else ''
+    if name in ('index.htm', 'index.html', 'default.htm', 'default.html'):
+        name = ''
+    return re.sub(r'\.html$', '.htm', name)
+
+
+def heal_archive():
+    global _HEAL
+    if _HEAL is None:
+        path = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'heal-archive-urls.json')
+        _HEAL = json.load(open(path, encoding='utf-8')) if os.path.exists(path) else {}
+    return _HEAL
 
 
 def footer_start(lines):
