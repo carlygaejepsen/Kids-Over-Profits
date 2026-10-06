@@ -16,8 +16,8 @@
  * in wp-admin (KOP Data Tools > Page Text); this file only lays it out.
  * Every figure is from a government, a court, the TRC/NCTR, NABS or NICWA,
  * and linked where it is used. Change a figure only with its source.
- * Created as a draft (kop_tool_page_specs()) so it is read before it is
- * public. Link it from the History hub (inc/hub-shell.php) once published.
+ * Published (it started as a draft so the owner could read it first).
+ * Not yet linked from the History hub (inc/hub-shell.php).
  */
 
 if (!defined('ABSPATH')) {

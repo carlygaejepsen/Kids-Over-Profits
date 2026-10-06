@@ -10,7 +10,7 @@
  * heading is a question: the headings make the list of questions at the top
  * and the FAQPage structured data for search engines. The answers lean on
  * the site's own history pages and link to them.
- * Created as a draft (kop_tool_page_specs()) so it is read before it is public.
+ * Published (it started as a draft so the owner could read every answer first).
  */
 
 if (!defined('ABSPATH')) {

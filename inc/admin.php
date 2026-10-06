@@ -456,10 +456,8 @@ function kop_tool_page_specs() {
         array('template' => 'page-inspection-reports.php', 'title' => 'Inspection Reports',  'slug' => 'inspection-reports', 'status' => 'publish'),
         // Every severe finding an admin has approved; empty until the first approval.
         array('template' => 'page-severe-reports.php',     'title' => 'Severe Reports',      'slug' => 'severe-reports',     'status' => 'publish'),
-        // Created as a draft so it is never public by accident. To share it
-        // with beta testers: Edit page, Visibility > Password protected,
-        // Publish, and send them the link and the password.
-        array('template' => 'page-network-map.php',        'title' => 'Network Map',         'slug' => 'network-map',        'status' => 'draft'),
+        // Published (it was behind a beta password until 2026-09-21).
+        array('template' => 'page-network-map.php',        'title' => 'Network Map',         'slug' => 'network-map',        'status' => 'publish'),
         // Where to report an abusive therapist or program, state by state.
         // Published: it is a reference list of public agencies, and every
         // entry carries the source and the date it was checked.
@@ -474,15 +472,14 @@ function kop_tool_page_specs() {
         // Mental health providers outside the TTI, from providers_master.
         array('template' => 'page-provider-index.php',     'title' => 'Mental Health Providers', 'slug' => 'mental-health-providers', 'status' => 'publish'),
         // Indian boarding schools and residential schools: not our story, so it is
-        // mostly directions to Indigenous-led organizations. A draft so the owner
-        // reads it (ideally with Indigenous reviewers) before publishing by hand.
-        array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'draft'),
+        // mostly directions to Indigenous-led organizations. Published by the owner.
+        array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'publish'),
         // Frequently asked questions; text in js/data/pages/faq.json (Page Text editor).
-        // A draft so the owner reads every answer before publishing by hand.
-        array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'draft'),
+        // Published by the owner.
+        array('template' => 'page-faq.php', 'title' => 'Frequently Asked Questions', 'slug' => 'faq', 'status' => 'publish'),
         // Programs for people 18 and older, kept apart from the TTI facilities
-        // (inc/young-adult-programs.php). A draft so the owner reads it before publishing by hand.
-        array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'draft'),
+        // (inc/young-adult-programs.php). Published by the owner.
+        array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'publish'),
         // State trackers share one template, so 'shared' creates the page by slug
         // even though other pages use the template. Oklahoma (owner, 2026-09-30).
         array('template' => 'page-state-reports.php', 'title' => 'Oklahoma Inspection Reports', 'slug' => 'ok-reports', 'status' => 'publish', 'shared' => true,

@@ -9,8 +9,8 @@
  * Facts; every fact cites the Woodbury Reports page it comes from.
  *
  * Text typed into the page in the WordPress editor replaces the opening
- * paragraph below. Created as a draft (kop_tool_page_specs()) so the owner
- * reads it before publishing.
+ * paragraph below. Published (it started as a draft so the owner could read
+ * it first).
  */
 
 if (!defined('ABSPATH')) {
