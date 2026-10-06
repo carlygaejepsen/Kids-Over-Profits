@@ -1462,7 +1462,12 @@ Open:
    restraint findings). 91 entries checked out; 48 could not be settled and
    change nothing. The 31 programs with later Woodbury issues: 23 right, 4
    proposals. Queue total 193.
-3. Turn-About Ranch's current operator: confirm the 2014 employee buyer
-   (reported as Escalante RTC, LLC) before replacing "Acadia HealthCare".
+3. Turn-About Ranch's current operator (done 2026-10-06): the buyer in
+   Aspen's March 7, 2014 sale was Escalante RTC, LLC, co-owned by its
+   managers (Webster, Carter, Bartlett); still operating. Its proposal now
+   sets current operator and status Open instead of a by-hand step. The same
+   sale took Island View, the Aspen Institute for Behavioral Assessment and
+   Copper Canyon, which became Family Help & Wellness partners; no source
+   names Turn-About Ranch as one, so the record does not.
 
 ---
