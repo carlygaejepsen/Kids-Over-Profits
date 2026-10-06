@@ -56,6 +56,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "The article's own headline and the entry's date style (M/D/YYYY); section given by name."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Elevations RTC on Kids Over Profits](https://kidsoverprofits.org/facility/elevations-rtc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -164,6 +174,16 @@
      "by": "opus",
      "verdict": "ok",
      "note": "Spelled as Woodbury prints it (probably Drummond-Hay)."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Grove School on Kids Over Profits](https://kidsoverprofits.org/facility/grove-school-ct/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -216,6 +236,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "Oldest first like the rest of the list, dates as M/D/YYYY like the entry; dropped the three letters to the editor (g4, g9, g10) and the 2014 WMTW item about an outsider on the campus (g15). Three headlines checked against the articles."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Hyde School on Kids Over Profits](https://kidsoverprofits.org/facility/hyde-school-me/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -252,6 +282,16 @@
      "verdict": "ok",
      "note": "KOP gives no role at Englishton Park, so none is stated. The two Executive Director spans overlap (2015-2016). Wiki links per the template; KOP profile link removed.",
      "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Mountain Home Academy on Kids Over Profits](https://kidsoverprofits.org/facility/mountain-home-academy-id/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -330,6 +370,16 @@
      "verdict": "ok",
      "note": "Oakley role and the Island View, Aspen and Northwest Academy roles cited to KOP's record; Phoenix Outdoor, Ascent and SUWS to the Woodbury notices, each read. Wiki links per the template; KOP profile link removed.",
      "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Oakley School on Kids Over Profits](https://kidsoverprofits.org/facility/oakley-school-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [
@@ -492,6 +542,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "Dates in the list's own M/D/YYYY form, oldest first like the existing list; removed g13 (Narvin Lichfield's defamation suit over the Netflix series, not about this program)."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Provo Canyon School on Kids Over Profits](https://kidsoverprofits.org/facility/provo-canyon-school-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [
@@ -619,6 +679,16 @@
      "verdict": "ok",
      "note": "One line for the later name, nothing about Evoke Entrada today; KOP record cited. Wiki links per the template; KOP profile link removed.",
      "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Second Nature Entrada on Kids Over Profits](https://kidsoverprofits.org/facility/evoke-entrada-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [
@@ -793,6 +863,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so they go there in that form. Removed g8 and g10 (Asheville Academy's closure and a death there: a different program) and the fbclid tail."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Trails Carolina on Kids Over Profits](https://kidsoverprofits.org/facility/trails-carolina-nc/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [
@@ -952,6 +1032,16 @@
      "verdict": "ok",
      "note": "KOP's own record is the source, cited to the facility page. No years; the entry names ReNae Singletary as the current Clinical Director, so \"worked as\". Wiki links per the template; KOP profile link removed.",
      "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Turn-About Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/turn-about-ranch-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -1023,6 +1113,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles directly under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so the three links go there in that form."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Laurel Ridge Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/laurel-ridge-treatment-center-rtc-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],

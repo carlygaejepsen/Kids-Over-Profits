@@ -121,7 +121,7 @@ def apply(md, ops):
     return '\n'.join(lines) + '\n', applied, errors
 
 
-def check(original, draft, header_changed, kop_lines=frozenset()):
+def check(original, draft, header_changed, kop_lines=frozenset(), kop_page_lines=frozenset()):
     """Every original line is still there, in order (the header may only change its years); every added line cites a link."""
     o = original.replace('\r\n', '\n').rstrip('\n').split('\n')
     d = draft.rstrip('\n').split('\n')
@@ -147,7 +147,7 @@ def check(original, draft, header_changed, kop_lines=frozenset()):
         if '](' not in t and not TEXT_CITE.search(t) and t not in kop_lines:
             problems.append(f'added line without a source: {t[:80]!r}')
         for url in re.findall(r'\]\((https?://[^)\s]+)\)', t):
-            if KOP_PAGE.match(url):
+            if KOP_PAGE.match(url) and t not in kop_page_lines:
                 problems.append(f'links a KOP page, not the wiki page or the original source: {url}')
     if re.search(r'[\U0001F300-\U0001FAFF☀-➿]', '\n'.join(added)):
         problems.append('an emoji in the added text')
@@ -257,6 +257,26 @@ def apply_tense(md, ops):
     return '\n'.join(lines) + '\n', changed, errors
 
 
+def add_kop_page(folder, md, ops):
+    """The record's KOP facility page as the last Related Media item (owner, 2026-10-06), unless the entry or an op links it
+    already or the record has no page. The one KOP page link a draft may carry. -> True when an op was added."""
+    try:
+        gaps = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
+    except FileNotFoundError:
+        return False
+    rec = gaps.get('record', {})
+    url = rec.get('url') or ''
+    name = (gaps.get('entry', {}).get('program_name') or rec.get('name') or '').strip()   # the entry's own name
+    if not url or not name or url in md or any(o.get('kop_page') or url in (o.get('text') or '') for o in ops):
+        return False
+    if not find(md.replace('\r\n', '\n').split('\n'), 'Related Media'):
+        return False
+    ops.append({'id': 'k1', 'by': 'script', 'op': 'append_to_section', 'section': 'Related Media', 'kop_page': True,
+                'text': f'[{name} on Kids Over Profits]({url})', 'gids': [], 'verdict': 'ok',
+                'note': "KOP's facility page for the record, as the last Related Media item."})
+    return True
+
+
 def run(ids, write):
     ok = True
     for i in ids:
@@ -269,7 +289,11 @@ def run(ids, write):
         with open(os.path.join(folder, 'entry.md'), encoding='utf-8') as f:
             md = f.read()
         with open(path, encoding='utf-8') as f:
-            ops = json.load(f).get('ops', [])
+            ops_file = json.load(f)
+        ops = ops_file.get('ops', [])
+        if write and add_kop_page(folder, md, ops):
+            with open(path, 'w', encoding='utf-8', newline='\n') as f:
+                json.dump(ops_file, f, ensure_ascii=False, indent=1)
         tense_path = os.path.join(folder, 'ops-tense.json')
         tense_ops = json.load(open(tense_path, encoding='utf-8')).get('ops', []) if os.path.exists(tense_path) else []
         # The tense pass rewrites lines in place; the additions then go on top, and the check
@@ -279,7 +303,8 @@ def run(ids, write):
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
         kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
                               for l in (o.get('text') or '').split('\n') if l.strip())
-        problems, added = check(base, draft, header, kop_lines)
+        kop_page_lines = frozenset((o.get('text') or '').strip() for o in ops if o.get('kop_page') and o.get('verdict') != 'dropped')
+        problems, added = check(base, draft, header, kop_lines, kop_page_lines)
         problems = tense_errors + errors + problems
         status = 'OK' if not problems else 'REFUSED'
         print(f'{i}: {status}, {len(applied)} ops applied, {sum(1 for a in added if a.strip())} lines added, {tensed} put in the past tense'
@@ -331,7 +356,7 @@ def selftest():
 
 
 EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
-OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note', 'kop_record')
+OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
 
 
 def export(ids):
