@@ -1,0 +1,4356 @@
+[
+ {
+  "key": "operator_inherited-345",
+  "kind": "operator_inherited",
+  "title": "Turn-About Ranch",
+  "place": "Escalante, UT",
+  "facility_id": 10344,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Aspen Education Group bought Turn-About Ranch in March 2000 and lost it in 2014, when its employees took it over (an asset purchase agreement dated March 7, 2014), a year before Acadia bought Aspen's parent CRC in 2015. Acadia never owned it.",
+  "kop_now": "Status Transferred, from 1989; current operator Acadia HealthCare; past operators Aspen Education Group; company links: Acadia HealthCare (current), Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/turn-about-ranch/",
+    "title": "Turn-About Ranch - Breaking Code Silence (lead)",
+    "date": "n.d.",
+    "quote": "In 2014, Turn-About Ranch announced that it would no longer be owned by Aspen Education Group but would instead be taken over by employees of the program."
+   },
+   {
+    "url": "https://law.justia.com/cases/federal/district-courts/utah/utdce/2:2014cv00866/94858/37/",
+    "title": "Wilderness Training & Consulting v. Aspen Education Group, D. Utah",
+    "date": "2015",
+    "quote": "On or about March 7, 2014, Plaintiffs and Sellers entered into an Asset Purchase Agreement pertaining to the purchase of several residential treatment programs ... located in the State of Utah. (search summary; page returned 403)"
+   },
+   {
+    "url": "https://openminds.com/market-intelligence/news/030600aspen/",
+    "title": "Aspen Youth Services Acquires Turn-About Ranch",
+    "date": "2000-03",
+    "quote": "Title only; page not opened."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
+   }
+  ],
+  "notes": "The employee takeover rests on Breaking Code Silence (a lead); the court page naming the March 2014 sale was blocked, so the buyer's name is unconfirmed. Confidence lowered from the researcher's high for that reason.",
+  "ops": [
+   {
+    "type": "operator_link",
+    "facility_id": 10344,
+    "operator_id": 6,
+    "from": "current",
+    "to": "remove"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 10344,
+    "operator_id": 7,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 10344,
+    "path": "identification.pastOperators",
+    "value": "Aspen Education Group"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10344,
+    "path": "identification.pastOperators",
+    "value": "Aspen Education Group (2000-2014)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10344,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2014)"
+   },
+   {
+    "type": "note",
+    "facility_id": 10344,
+    "text": "Aspen Education Group stopped owning Turn-About Ranch in 2014, when the program was taken over by its employees."
+   },
+   {
+    "type": "manual",
+    "text": "Current operator on record 10344 still reads \"Acadia HealthCare\", which never owned Turn-About Ranch: confirm the 2014 employee buyer (reported as Escalante RTC, LLC) and whether the ranch still runs, then set the current operator and status Open (or Closed with its end year)."
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-346",
+  "kind": "operator_inherited",
+  "title": "Outback Therapeutic Expeditions",
+  "place": "Lehi, UT",
+  "facility_id": 10350,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "CRC Health Group bought Aspen Education Group in late 2006, not the reverse. Outback Therapeutic Expeditions (founded 2001 as Walkabout) was an Aspen program until it closed on June 15, 2023, so Aspen is its operator, CRC its parent from 2006 and Acadia from 2015.",
+  "kop_now": "Status Closed, 2001-2023; current operator Aspen Education Group; past operators CRC Health Group; company links: Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Elevations_RTC",
+    "title": "Elevations RTC",
+    "date": "n.d.",
+    "quote": "CRC Health Group, a company owned by Bain Capital, purchased Aspen Education for $300 million in 2006."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group",
+    "date": "n.d.",
+    "quote": "Outback announced closure by letter on May 1, 2023, with final closure on June 15, 2023."
+   },
+   {
+    "url": "https://www.prnewswire.com/news-releases/crc-health-group-to-be-acquired-by-acadia-healthcare-280852262.html",
+    "title": "CRC Health Group to be Acquired by Acadia Healthcare",
+    "date": "2014-10-29",
+    "quote": "Acadia Healthcare Company, Inc. (NASDAQ: ACHC) has agreed to acquire CRC Health Group, Inc.; closing expected in the first quarter of 2015."
+   }
+  ],
+  "notes": "Wikipedia only (lead) for the ownership chain.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 10350,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10350,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2015)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10350,
+    "path": "identification.pastOperators",
+    "value": "Acadia HealthCare (parent, 2015-2023)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-347",
+  "kind": "operator_inherited",
+  "title": "Excel Academy",
+  "place": "Conroe, TX",
+  "facility_id": 10607,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "CRC Health Group bought Aspen Education Group in late 2006, not the reverse. Excel Academy (Conroe, TX) was an Aspen program until it closed in November 2008, so Aspen is its operator and CRC its parent from 2006.",
+  "kop_now": "Status Closed, 1996-2008; current operator Aspen Education Group; past operators CRC Health Group; company links: Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Elevations_RTC",
+    "title": "Elevations RTC",
+    "date": "n.d.",
+    "quote": "CRC Health Group, a company owned by Bain Capital, purchased Aspen Education for $300 million in 2006."
+   }
+  ],
+  "notes": "Wikipedia only (lead); the year Aspen took over Excel Academy was not found.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 10607,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10607,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2008)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-348",
+  "kind": "operator_inherited",
+  "title": "Stone Mountain School",
+  "place": "Black Mountain, NC",
+  "facility_id": 11653,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "CRC Health Group bought Aspen Education Group in late 2006, not the reverse. Stone Mountain School (Black Mountain, NC) was an Aspen program until Aspen closed it in July 2013, so Aspen is its operator and CRC its parent from 2006.",
+  "kop_now": "Status Closed, 1990-2013; current operator Aspen Education Group; past operators CRC Health Group; company links: Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Elevations_RTC",
+    "title": "Elevations RTC",
+    "date": "n.d.",
+    "quote": "CRC Health Group, a company owned by Bain Capital, purchased Aspen Education for $300 million in 2006."
+   }
+  ],
+  "notes": "Wikipedia only (lead) for the CRC purchase; the 2013 closing is from a search summary.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 11653,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11653,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2013)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-329",
+  "kind": "operator_profile",
+  "title": "Aspen Education Group",
+  "place": "",
+  "facility_id": 100001,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Acadia Healthcare bought CRC Health Group, Aspen Education Group's parent since November 2006, in early 2015, so Acadia owns what was Aspen. KOP's record names no current operator and lists CRC without years.",
+  "kop_now": "Status Open, from 1997; current operator none; past operators CRC Health Group; company links: Acadia HealthCare (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Since November 2006, Aspen Education Group ... has been a division of Bain Capital's CRC Health."
+   },
+   {
+    "url": "https://www.prnewswire.com/news-releases/crc-health-group-to-be-acquired-by-acadia-healthcare-280852262.html",
+    "title": "CRC Health Group to be Acquired by Acadia Healthcare",
+    "date": "2014-10-29",
+    "quote": "Acadia Healthcare Company, Inc. (NASDAQ: ACHC) has agreed to acquire CRC Health Group, Inc.; closing expected in the first quarter of 2015."
+   }
+  ],
+  "notes": "The February 2015 completion date is from deal databases, not the SEC 8-K.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100001,
+    "path": "identification.currentOperator",
+    "from": "",
+    "to": "Acadia HealthCare"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100001,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100001,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2015)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-330",
+  "kind": "operator_profile",
+  "title": "Youth Care of Utah",
+  "place": "Draper, UT",
+  "facility_id": 10345,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Youth Care of Utah (Draper) was an Aspen Education Group program; Aspen's parent CRC (from 2006) went to Acadia in 2015, and Acadia still lists the Draper campus as Youth Care Treatment Center. Aspen belongs on the record as a past operator.",
+  "kop_now": "Status Open, from 1989; current operator Acadia HealthCare; past operators none; company links: Acadia HealthCare (current), Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (lead)",
+    "date": "n.d.",
+    "quote": "Youth Care of Utah was part of the Aspen Education Group portfolio (search-result paraphrase)."
+   },
+   {
+    "url": "https://www.acadiahealthcare.com/locations/youth-care-treatment-center/",
+    "title": "Youth Care Treatment Center - Acadia",
+    "date": "current",
+    "quote": "Just south of Salt Lake City in Draper, Youth Care Treatment Center is Utah's leading provider of life-changing residential and outpatient treatment for adolescents and teens"
+   }
+  ],
+  "notes": "The Wikipedia line is a search paraphrase and the year Aspen took it over was not found. Name clash: a Draper center merged into Island View (Syracuse) in 2011; check that this record is the Draper campus Acadia still runs.",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 10345,
+    "path": "identification.pastOperators",
+    "value": "Aspen Education Group (until 2015)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10345,
+    "path": "identification.pastOperators",
+    "value": "CRC Health Group (parent, 2006-2015)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 10345,
+    "operator_id": 7,
+    "from": "current",
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-331",
+  "kind": "operator_profile",
+  "title": "Camp E-Ma-Laku",
+  "place": "Suches, GA",
+  "facility_id": 12514,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Eckerd Youth Alternatives (now Eckerd Connects) ran the Suches, GA site from 1996; Camp E-Ma-Laku closed in 2007 and Eckerd Academy of the Blue Ridge opened there on October 8, 2007. KOP's record names no operator.",
+  "kop_now": "Status Closed, from 2007; current operator none; past operators none; company links: Eckerd Connects (current).",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/printer_EYA-PR_070927.shtml",
+    "title": "New EYA Alternative School",
+    "date": "2007-09-24",
+    "quote": "Located in 205 acres in Union County, EYA has operated a program on the site since 1996 for youths who were referred by the state. ... That program, known as E-Ma-Laku, was closed several months ago."
+   }
+  ],
+  "notes": "The map line goes to Eckerd Academy of the Blue Ridge, the later program on the same site. Its years are in rename_end_year-26.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12514,
+    "path": "identification.currentOperator",
+    "from": "",
+    "to": "Eckerd Connects"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-332",
+  "kind": "operator_profile",
+  "title": "Sedona Sky Academy",
+  "place": "Rimrock, AZ",
+  "facility_id": 12161,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Tammy Behrmann and Darren Prince, with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014 (Lake Montezuma RTC, LLC) on the site of Aspen's Copper Canyon Academy. KOP's current operator \"New Legal Name: Emoticare\" is a note, not an operator.",
+  "kop_now": "Status Suspended, from 1998; current operator New Legal Name: Emoticare; past operators none; company links: Family Help & Wellness (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sedona_Sky_Academy",
+    "title": "Sedona Sky Academy (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Tammy Behrmann and Darren Prince, in association with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014, under the legal business name of Lake Montezuma RTC, LLC."
+   }
+  ],
+  "notes": "Wikipedia only (lead). Copper Canyon Academy has its own record (12155), so Aspen is not added here. EmotiCare bought the property after the 2025 closing (status_years-311).",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12161,
+    "path": "identification.currentOperator",
+    "from": "New Legal Name: Emoticare",
+    "to": "Family Help & Wellness"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-349",
+  "kind": "operator_inherited",
+  "title": "Blackwater STOP Camp",
+  "place": "Milton, FL",
+  "facility_id": 100145,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Youth Services International was Correctional Services Corporation's juvenile subsidiary until GEO bought CSC in 2005 and YSI was sold back to its principals; YSI never bought CSC. Nothing was found on the camp itself.",
+  "kop_now": "Status Closed, from 2003; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Correctional_Services_Corporation",
+    "title": "Correctional Services Corporation",
+    "date": "n.d.",
+    "quote": "In 2005, CSC was sold to GEO Group for $62.1 million. GEO then divested the youth portion of the enterprise, Youth Services International (YSI), back to its principals."
+   }
+  ],
+  "notes": "Wikipedia only; nothing found on who ran the camp or when.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 100145,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100145,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, until 2005)"
+   },
+   {
+    "type": "manual",
+    "text": "Find a Florida DJJ contract record for Blackwater STOP Camp (Milton) to confirm YSI ran it and its years; Florida's STOP camps date from 2006, so the 2003 start year on record 100145 may belong to an earlier camp."
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-350",
+  "kind": "operator_inherited",
+  "title": "Chanute Transition Center",
+  "place": "Rantoul, IL",
+  "facility_id": 100148,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Chanute Transition Center (Rantoul, IL) was a Youth Services International project that opened in 1998. CSC bought YSI on March 31, 1999, ran its juvenile division under the YSI name, and closed Chanute in 2001.",
+  "kop_now": "Status Closed, 1998-2001; current operator Correctional Services Corporation; past operators Youth Services International.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000876726/000095013398001184/0000950133-98-001184.txt",
+    "title": "YSI 10-K FY1997",
+    "date": "1998",
+    "quote": "The Company has renovated several buildings in Rantoul, Illinois (YSI project). Cotulla/Hondo/Lockhart/Colorado County are not mentioned."
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   }
+  ],
+  "notes": "By the audit's rule the operating subsidiary (YSI) is the operator and CSC its parent.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100148,
+    "path": "identification.currentOperator",
+    "from": "Correctional Services Corporation",
+    "to": "Youth Services International"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100148,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100148,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2001)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-351",
+  "kind": "operator_inherited",
+  "title": "Colorado County Boot Camp",
+  "place": "Eagle Lake, TX",
+  "facility_id": 100149,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Colorado County Boot Camp (Eagle Lake, TX, 1998) is on CSC's own 10-K as a managed facility, and no YSI start was found; CSC part-owned it and wrote it down in late 2004. YSI as current operator is unsupported.",
+  "kop_now": "Status Closed, from 1998; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   }
+  ],
+  "notes": "Owner before 1999 not verified; after 1999 CSC's juvenile division used the YSI name, so a YSI-branded mention is possible.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100149,
+    "path": "identification.currentOperator",
+    "from": "Youth Services International",
+    "to": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100149,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-352",
+  "kind": "operator_inherited",
+  "title": "Genesis Treatment Agency",
+  "place": "Newport News, VA",
+  "facility_id": 100151,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Genesis Treatment Agency (Newport News, VA) opened in May 1997 under Youth Services International; CSC bought YSI in March 1999 and the program ended in October 2003 under CSC's YSI division.",
+  "kop_now": "Status Closed, 1997-2003; current operator Correctional Services Corporation; past operators Youth Services International.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.fundinguniverse.com/company-histories/correctional-services-corporation-history/",
+    "title": "History of CSC",
+    "date": "",
+    "quote": "In September 1998, Youth Services agreed to be acquired by Correctional Services Corp... March 30, 1999 ... YSI a wholly owned subsidiary of CSC"
+   }
+  ],
+  "notes": "By the audit's rule the operating subsidiary (YSI) is the operator and CSC its parent.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100151,
+    "path": "identification.currentOperator",
+    "from": "Correctional Services Corporation",
+    "to": "Youth Services International"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100151,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100151,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2003)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-353",
+  "kind": "operator_inherited",
+  "title": "Hemphill County Juvenile Center",
+  "place": "Canadian, TX",
+  "facility_id": 100152,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Hemphill County Juvenile Center began in 1994 under Esmor (CSC's earlier name) and CSC discontinued it in 2004, listing it in its own 10-K. YSI was a sister subsidiary from 1999, not an earlier operator.",
+  "kop_now": "Status Closed, 1994-2004; current operator Correctional Services Corporation; past operators Esmor Correctional Services; Youth Services International.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   }
+  ],
+  "notes": "Esmor being CSC's former name was not verified here; the Esmor entry is left as is.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 100152,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-355",
+  "kind": "operator_inherited",
+  "title": "Paulding Regional Youth Detention Center",
+  "place": "Dallas, GA",
+  "facility_id": 100156,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Paulding Regional Youth Detention Center (Dallas, GA) opened in 1999 under CSC's juvenile division; after the November 2005 buyback it ran as an independent Youth Services International until the contract ended on December 31, 2013. YSI never bought CSC.",
+  "kop_now": "Status Closed, until 2013; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.prisonlegalnews.org/news/2006/jan/15/geo-group-buys-out-correctional-services-corporation/",
+    "title": "GEO Group Buys Out Correctional Services Corporation",
+    "date": "2006-01-15",
+    "quote": "CSC CEO James Slattery agreed to buy back the company's juvenile services division, Youth Services International (YSI), for $3.75 million and will continue to operate YSI's 17 juvenile facilities"
+   }
+  ],
+  "notes": "The 1999 opening is from CSC's 10-K facility list; the quoted line is the 10-K's general YSI sentence.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100156,
+    "path": "operatingPeriod.startYear",
+    "from": null,
+    "to": 1999
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100156,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100156,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2005)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-356",
+  "kind": "operator_inherited",
+  "title": "Reflections Treatment Agency",
+  "place": "Knoxville, TN",
+  "facility_id": 100158,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Reflections Treatment Agency (Knoxville) opened in 1992 under Youth Services International; CSC owned YSI from March 1999 and listed the program that year. Its closing date was not found.",
+  "kop_now": "Status Closed, from 1992; current operator Correctional Services Corporation; past operators Youth Services International.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.fundinguniverse.com/company-histories/correctional-services-corporation-history/",
+    "title": "History of CSC",
+    "date": "",
+    "quote": "In September 1998, Youth Services agreed to be acquired by Correctional Services Corp... March 30, 1999 ... YSI a wholly owned subsidiary of CSC"
+   }
+  ],
+  "notes": "If it was still open at the November 2005 split it went back to an independent YSI. By the audit's rule YSI is the operator and CSC its parent.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100158,
+    "path": "identification.currentOperator",
+    "from": "Correctional Services Corporation",
+    "to": "Youth Services International"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100158,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100158,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, from 1999)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-357",
+  "kind": "operator_inherited",
+  "title": "Springfield Academy",
+  "place": "Springfield, SD",
+  "facility_id": 100159,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Youth Services International acquired Springfield Academy (SD) in November 1993; CSC owned YSI from 1999 to 2005, and the again-independent YSI closed the program in January 2011. YSI is right as operator; CSC was only its parent.",
+  "kop_now": "Status Closed, until 2011; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.prisonlegalnews.org/news/2006/jan/15/geo-group-buys-out-correctional-services-corporation/",
+    "title": "GEO Group Buys Out Correctional Services Corporation",
+    "date": "2006-01-15",
+    "quote": "CSC CEO James Slattery agreed to buy back the company's juvenile services division, Youth Services International (YSI), for $3.75 million and will continue to operate YSI's 17 juvenile facilities"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 100159,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100159,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2005)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-358",
+  "kind": "operator_inherited",
+  "title": "Tarkio Academy",
+  "place": "Tarkio, MO",
+  "facility_id": 100160,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Tarkio Academy (MO) opened in September 1994 under Youth Services International; CSC owned YSI from March 1999, and the program closed on September 19, 2004, before the 2005 split. YSI is right as operator; CSC was its parent.",
+  "kop_now": "Status Closed, 1994-2004; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.fundinguniverse.com/company-histories/correctional-services-corporation-history/",
+    "title": "History of CSC",
+    "date": "",
+    "quote": "In September 1998, Youth Services agreed to be acquired by Correctional Services Corp... March 30, 1999 ... YSI a wholly owned subsidiary of CSC"
+   }
+  ],
+  "notes": "A 2004 Missouri DSS memo names YSI.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 100160,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100160,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2004)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-360",
+  "kind": "operator_inherited",
+  "title": "Camp Washington",
+  "place": "Carrsville, VA",
+  "facility_id": 100163,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Camp Washington (Carrsville, VA) opened in January 1996 under Youth Services International; CSC owned YSI from March 1999 and ended the program in 2000.",
+  "kop_now": "Status Closed, 1996-2000; current operator Correctional Services Corporation; past operators Youth Services International.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   }
+  ],
+  "notes": "By the audit's rule the operating subsidiary (YSI) is the operator and CSC its parent.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100163,
+    "path": "identification.currentOperator",
+    "from": "Correctional Services Corporation",
+    "to": "Youth Services International"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100163,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100163,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2000)"
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-361",
+  "kind": "operator_inherited",
+  "title": "La Salle County Juvenile Justice Center",
+  "place": "Cotulla, TX",
+  "facility_id": 100176,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Cotulla Boot Camp (64 beds, 1998) is on CSC's 10-K, and KOP's archived YSI page (2000) shows it under the YSI name, CSC's juvenile division at the time; it ended in 2000. YSI never bought CSC.",
+  "kop_now": "Status Closed, 1998-2000; current operator Youth Services International; past operators Correctional Services Corporation.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000914670/000091467000000010/0000914670-00-000010.txt",
+    "title": "CSC 10-K FY1999",
+    "date": "2000",
+    "quote": "On March 31, 1999, CSC acquired Youth Services International (\"YSI\")... CSC's juvenile division operates largely under the YSI brand name"
+   },
+   {
+    "url": "https://www.fundinguniverse.com/company-histories/correctional-services-corporation-history/",
+    "title": "History of CSC",
+    "date": "",
+    "quote": "In September 1998, Youth Services agreed to be acquired by Correctional Services Corp... March 30, 1999 ... YSI a wholly owned subsidiary of CSC"
+   }
+  ],
+  "notes": "Who opened it in 1998 was not verified. The researcher would make CSC the operator; the audit's rule keeps the operating subsidiary (YSI) with CSC as parent.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 100176,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100176,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (parent, 1999-2000)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-333",
+  "kind": "operator_profile",
+  "title": "Norris Academy",
+  "place": "Andersonville, TN",
+  "facility_id": 9614,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Sequel sold most of its programs to Vivant (formed September 2021); by April 2022 former Sequel sites in Utah and Tennessee were run by Rite of Passage, and Norris Academy's site calls itself \"A Rite of Passage Program\".",
+  "kop_now": "Status Open, no years; current operator Sequel TSI; past operators none; company links: Rite of Passage, Inc. (current), Sequel TSI (current), Rite of Passage, Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Under scrutiny, company that claimed to help troubled youth closes many operations and sells others",
+    "date": "2022-04-26",
+    "quote": "Websites for three former Sequel facilities in Utah and Tennessee indicate that they are now run by Rite of Passage, a company based in Nevada."
+   }
+  ],
+  "notes": "The article does not name Norris Academy; the Rite of Passage wording is from a search summary of the school's site. Transfer date not found.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9614,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9614,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (until 2021)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9614,
+    "path": "identification.pastOperators",
+    "value": "Vivant Behavioral Health (2021-2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9614,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-334",
+  "kind": "operator_profile",
+  "title": "Palm Beach Youth Academy",
+  "place": "West Palm Beach, FL",
+  "facility_id": 9616,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Florida DJJ lists Rite of Passage, Inc. as the provider of Palm Beach Youth Academy. Youth Services International ran the Palm Beach facility from 2003 until Sequel took over on April 1, 2016.",
+  "kop_now": "Status Open, no years; current operator Sequel TSI; past operators none; company links: Rite of Passage, Inc. (current), Sequel TSI (current), Rite of Passage, Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/palm-beach-youth-academy",
+    "title": "Palm Beach Youth Academy (DJJ)",
+    "date": "current",
+    "quote": "The facility is operated by Rite of Passage, Inc., a contract provider for the Florida Department of Juvenile Justice."
+   },
+   {
+    "url": "https://openminds.com/market-intelligence/news/sequel-youth-family-services-takes-youth-services-international-contract-palm-beach-juvenile-correctional-facility/",
+    "title": "Sequel takes over YSI contract, Palm Beach",
+    "date": "2016",
+    "quote": "On April 1, 2016, Sequel Youth and Family Services (Sequel) began managing the 70-bed Palm Beach Youth Academy ... YSI, which since 2003 had operated the 118-bed Palm Beach Juvenile Correctional Facility"
+   }
+  ],
+  "notes": "YSI's 2003 contract was the 118-bed Palm Beach Juvenile Correctional Facility (the record's other map name); the year Rite of Passage took over was not found.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9616,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9616,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International (2003-2016)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9616,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (from 2016)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9616,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9616,
+    "operator_id": 30,
+    "from": null,
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-335",
+  "kind": "operator_profile",
+  "title": "Jacksonville Youth Academy",
+  "place": "Jacksonville, FL",
+  "facility_id": 11106,
+  "verdict": "kop_wrong",
+  "confidence": "low",
+  "finding": "No source ties Wayne Halfway House to Jacksonville Youth Academy (4501 Lannie Rd). G4S Youth Services ran it by 2017 and became TrueCore Behavioral Solutions; Florida DJJ now lists Rite of Passage, Inc. as its provider.",
+  "kop_now": "Status Transferred, no years; current operator TrueCore Behavioral Solutions; past operators none; company links: TrueCore Behavioral Solutions (current), Wayne Halfway House (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/jacksonville-youth-academy",
+    "title": "Jacksonville Youth Academy (DJJ)",
+    "date": "current",
+    "quote": "Rite of Passage, Inc. - listed as the facility's provider"
+   },
+   {
+    "url": "https://www.news4jax.com/news/2019/07/24/firm-running-jacksonville-juvenile-facility-has-history-of-escapes/",
+    "title": "Firm running Jacksonville juvenile facility has history of escapes",
+    "date": "2019-07-24",
+    "quote": "Search summary only: TrueCore Behavioral, formerly known as G4S Youth Services, was hired by DJJ to run 27 programs including Jacksonville Youth Academy."
+   },
+   {
+    "url": "https://www.djj.state.fl.us/research/standardized-program-evaluation-protocol-spep/residential-spep-reports-closed-programs",
+    "title": "DJJ SPEP closed programs",
+    "date": "2026",
+    "quote": "programs that were closed subsequent to the FY 2021-22 reviews or were operated by a different provider than is currently providing services"
+   }
+  ],
+  "notes": "The TrueCore line is a search summary; another summary said TrueCore still runs it, but the DJJ page is newer and TrueCore's DJJ reviews end in FY 2023-24. Also settles its Transferred status.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11106,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 11106,
+    "path": "identification.currentOperator",
+    "from": "TrueCore Behavioral Solutions",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11106,
+    "path": "identification.pastOperators",
+    "value": "TrueCore Behavioral Solutions"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11106,
+    "operator_id": 23,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11106,
+    "operator_id": 18,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 11106,
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Jacksonville Youth Academy (October 2026), after TrueCore Behavioral Solutions (formerly G4S Youth Services)."
+   },
+   {
+    "type": "manual",
+    "text": "Remove map line p0439 (Wayne Halfway House to Jacksonville Youth Academy) in network-overrides.json and unlink Wayne Halfway House (company #27) from record 11106, unless a source shows Wayne ran an earlier Jacksonville program (KOP's own Wayne history seed lists it as transferred)."
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-336",
+  "kind": "operator_profile",
+  "title": "Marion Youth Academy",
+  "place": "Ocala, FL",
+  "facility_id": 11095,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Youth Services International ran Marion Youth Academy (Ocala) for Florida DJJ until the state ended all YSI contracts in March 2016; Sequel TSI took over, and Youth Opportunity Investments runs the program now. The record leaves YSI out.",
+  "kop_now": "Status Open, from 2007; current operator Youth Opportunity Investments; past operators Sequel TSI; company links: Sequel TSI (current), Youth Services International (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/news/press-releases/2013/department-of-juvenile-justice-teams-up-with-community-partners-to-provide-vocational-education-to-troubled-youth-in-marion-county",
+    "title": "DJJ press release, Marion County",
+    "date": "2013-02-22",
+    "quote": "DJJ residential provider, Youth Services International (YSI), bought and installed the building where the class is held."
+   },
+   {
+    "url": "https://www.djj.state.fl.us/news/press-releases/2016/florida-department-of-juvenile-justice-ends-all-contracts-with-youth-services-international",
+    "title": "DJJ ends all contracts with YSI",
+    "date": "2016-03",
+    "quote": "DJJ announced it would begin immediately transitioning all contracts statewide for residential programs run by Youth Services International (search summary)."
+   }
+  ],
+  "notes": "YSI's start year at Marion not found. The record's own note says the program runs as Silver Springs Youth Academy under Youth Opportunity Investments by 2025.",
+  "ops": [
+   {
+    "type": "list_remove",
+    "facility_id": 11095,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11095,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International (until 2016)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11095,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2016-2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11095,
+    "operator_id": 30,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11095,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11095,
+    "operator_id": 28,
+    "from": null,
+    "to": "current"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-337",
+  "kind": "operator_profile",
+  "title": "Intermountain Hospital",
+  "place": "Boise, ID",
+  "facility_id": 9690,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Psychiatric Solutions, Inc. owned Intermountain Hospital (Boise) from July 2005 until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, no years; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "Intermountain Hospital | Boise, ID | 125 | Own | 7/05"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 9690,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2005-2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-338",
+  "kind": "operator_profile",
+  "title": "Copper Hills Youth Center",
+  "place": "West Jordan, UT",
+  "facility_id": 10370,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Psychiatric Solutions, Inc. owned Copper Hills Youth Center (through Kids Behavioral Health of Utah, Inc.) until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, no years; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196exv21w1.htm",
+    "title": "PSI 10-K FY2009 Exhibit 21",
+    "date": "2010",
+    "quote": "Exhibit 21 FY2009: \"Kids Behavioral Health of Utah, Inc.\" (Utah), with subsidiary \"Copper Hills Youth Center\""
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "PSI's purchase year not found (only its FY2009 subsidiary list). The map line goes to Rivendell of Utah, probably an earlier name (same street), not confirmed.",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 10370,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (until 2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-339",
+  "kind": "operator_profile",
+  "title": "San Marcos Treatment Center",
+  "place": "San Marcos, TX",
+  "facility_id": 10618,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Psychiatric Solutions, Inc. owned San Marcos Treatment Center from April 2003 until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, from 1940; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "San Marcos Treatment Center | San Marcos, TX | 265 | Own | 4/03"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196exv21w1.htm",
+    "title": "PSI 10-K FY2009 Exhibit 21",
+    "date": "2010",
+    "quote": "Texas San Marcos Treatment Center, L.P. (Texas), subsidiary San Marcos Treatment Center"
+   }
+  ],
+  "notes": "KOP's 1940 start year was not checked.",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 10618,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2003-2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-340",
+  "kind": "operator_profile",
+  "title": "Cypress Creek",
+  "place": "Houston, TX",
+  "facility_id": 10707,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Psychiatric Solutions, Inc. owned Cypress Creek Hospital (Houston) from September 2001 until UHS bought PSI on November 15, 2010, so UHS is the owner now and The Brown Schools an earlier one.",
+  "kop_now": "Status Open, no years; current operator The Brown Schools; past operators none; company links: Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "Cypress Creek Hospital | Houston, TX | 96 | Own | 9/01"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196exv21w1.htm",
+    "title": "PSI 10-K FY2009 Exhibit 21",
+    "date": "2010",
+    "quote": "Texas Cypress Creek Hospital, L.P. (Texas), subsidiary Cypress Creek Hospital"
+   }
+  ],
+  "notes": "The map node is named Cypress Creek Academy, the SEC table Cypress Creek Hospital: confirm they are one program before approving. The Brown Schools' years were not verified.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10707,
+    "path": "identification.currentOperator",
+    "from": "The Brown Schools",
+    "to": "Universal Health Services (UHS)"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10707,
+    "path": "identification.pastOperators",
+    "value": "The Brown Schools"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 10707,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2001-2010)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 10707,
+    "operator_id": 25,
+    "from": null,
+    "to": "current"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-341",
+  "kind": "operator_profile",
+  "title": "Gulf Coast Treatment Center",
+  "place": "Fort Walton Beach, FL",
+  "facility_id": 11116,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Psychiatric Solutions, Inc. owned Gulf Coast Treatment Center (Fort Walton Beach) from June 2003 until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, no years; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "Gulf Coast Treatment Center | Fort Walton Beach, FL | 168 | Own | 6/03"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 11116,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2003-2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-342",
+  "kind": "operator_profile",
+  "title": "Willow Springs Center",
+  "place": "Reno, NV",
+  "facility_id": 12419,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Psychiatric Solutions, Inc. owned Willow Springs Center (Reno) from July 2005 until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, from 1988; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "Willow Springs Center | Reno, NV | 76 | Own | 7/05"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 12419,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2005-2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-343",
+  "kind": "operator_profile",
+  "title": "Laurel Oaks Behavioral Health Center",
+  "place": "Dothan, AL",
+  "facility_id": 13670,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Psychiatric Solutions, Inc. owned Laurel Oaks Behavioral Health Center (Dothan) from June 2003 until UHS bought PSI on November 15, 2010. UHS is the owner now, not a past one.",
+  "kop_now": "Status Open, from 2004; current operator none; past operators Universal Health Services; Ramsay Youth Services; company links: Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196e10vk.htm",
+    "title": "Psychiatric Solutions 10-K FY2009, properties table",
+    "date": "2010",
+    "quote": "Laurel Oaks Behavioral Health Center | Dothan, AL | 115 | Own | 6/03"
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "Ramsay Youth Services is left as is; its years (before 2003) were inferred, not read.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13670,
+    "path": "identification.currentOperator",
+    "from": "",
+    "to": "Universal Health Services (UHS)"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 13670,
+    "path": "identification.pastOperators",
+    "value": "Universal Health Services"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13670,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (2003-2010)"
+   }
+  ]
+ },
+ {
+  "key": "operator_profile-344",
+  "kind": "operator_profile",
+  "title": "River Point Behavioral Health",
+  "place": "Jacksonville, FL",
+  "facility_id": 14164,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Psychiatric Solutions, Inc. owned River Point Behavioral Health (Jacksonville, through TBJ Behavioral Center, LLC) until UHS bought PSI on November 15, 2010. PSI is a past owner; the record names only UHS.",
+  "kop_now": "Status Open, no years; current operator Universal Health Services (UHS); past operators none; company links: Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/0000829608/000095012310016990/g22196exv21w1.htm",
+    "title": "PSI 10-K FY2009 Exhibit 21",
+    "date": "2010",
+    "quote": "Exhibit 21 FY2009: \"TBJ Behavioral Center, LLC\" (Delaware), with subsidiary \"River Point Behavioral Health\""
+   },
+   {
+    "url": "https://uhsinc.gcs-web.com/news-releases/news-release-details/universal-health-services-completes-acquisition-psychiatric",
+    "title": "UHS Completes Acquisition of Psychiatric Solutions",
+    "date": "2010-11-15",
+    "quote": "Universal Health Services completed its acquisition of Psychiatric Solutions on November 15, 2010 (summary of release)."
+   }
+  ],
+  "notes": "Only PSI's FY2009 subsidiary list; its purchase year was not found.",
+  "ops": [
+   {
+    "type": "list_add",
+    "facility_id": 14164,
+    "path": "identification.pastOperators",
+    "value": "Psychiatric Solutions, Inc. (until 2010)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 14164,
+    "operator_id": 25,
+    "from": null,
+    "to": "current"
+   }
+  ]
+ },
+ {
+  "key": "status_years-288",
+  "kind": "status_years",
+  "title": "Daytona Juvenile Residential Facility",
+  "place": "Daytona Beach, FL",
+  "facility_id": 9606,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Florida DJJ lists Daytona Juvenile Residential Facility as an active program run by Rite of Passage, Inc.",
+  "kop_now": "Status Transferred, no years; current operator Rite of Passage, Inc.; past operators none; company links: Rite of Passage, Inc. (current), Rite of Passage, Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   }
+  ],
+  "notes": "Timberline Academy (100084) looks like this site's earlier name under YSI; see status_years-319.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9606,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 9606,
+    "text": "Florida DJJ lists Daytona Juvenile Residential Facility as an active program run by Rite of Passage, Inc. (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-289",
+  "kind": "status_years",
+  "title": "Three Springs New Beginnings",
+  "place": "Owens Cross Roads, AL",
+  "facility_id": 9644,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Sequel TSI of Owens Cross Roads (Three Springs New Beginnings, Turning Point) closed on April 30, 2022, and the company planned a different program in a new building under the Brighter Path name. The program closed; it was not handed on.",
+  "kop_now": "Status Transferred, from 1996; current operator Pathway of Madison County; past operators none; company links: Sequel TSI (current), Three Springs Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/",
+    "title": "Long troubled Sequel TSI youth services center to shut down and reopen",
+    "date": "2022-05-03",
+    "quote": "TSI Owens Cross Roads will be closing on 4/30/22 due to program restructuring and transitioning of service lines."
+   },
+   {
+    "url": "https://www.alreporter.com/2022/06/02/lawsuit-alleges-teen-girl-abused-in-alabama-psychiatric-residential-center/",
+    "title": "AL Reporter",
+    "date": "2022-06-02",
+    "quote": "Sequel Owens Cross Roads closed in May, and plans to rebrand and reopen as Brighter Path"
+   }
+  ],
+  "notes": "New Beginnings and Turning Point share the Owens Cross Roads campus; sources name only the campus. Map years are in rename_end_year-29.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9644,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 9644,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2022
+   },
+   {
+    "type": "note",
+    "facility_id": 9644,
+    "text": "Sequel TSI of Owens Cross Roads closed on April 30, 2022; the company planned a new program under the Brighter Path name in a different building."
+   },
+   {
+    "type": "manual",
+    "text": "Current operator on record 9644 reads \"Pathway of Madison County\", the later Brighter Path program in a new building; set it to the company that ran this program when it closed in 2022 (Sequel TSI, then being sold to Vivant)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-290",
+  "kind": "status_years",
+  "title": "Three Springs of Courtland",
+  "place": "Courtland, AL",
+  "facility_id": 9647,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "The Courtland campus (Three Springs, then Sequel TSI of Courtland) became Brighter Path Courtland under Vivant Behavioral Healthcare in 2022. Courtland's council voted in April 2025 to revoke its business license; Brighter Path sued, and whether it closed was not found.",
+  "kop_now": "Status Transferred, from 1990; current operator none; past operators none; company links: Three Springs Inc. (current).",
+  "sources": [
+   {
+    "url": "https://whnt.com/news/northwest-alabama/courtland-town-council-votes-to-revoke-mental-health-centers-business-license/",
+    "title": "Courtland Town Council votes to revoke business license",
+    "date": "2025-04",
+    "quote": "unanimous vote ... to revoke the business license for Brighter Path Courtland"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Sequel closes many operations and sells others",
+    "date": "2022-04-26",
+    "quote": "the company has shut down close to half of its treatment centers and sold most of the rest to a new company called Vivant Behavioral Healthcare"
+   }
+  ],
+  "notes": "Status stays Transferred until someone settles whether it still runs.",
+  "ops": [
+   {
+    "type": "operator_link",
+    "facility_id": 9647,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 9647,
+    "text": "The Town of Courtland voted on April 14, 2025 to revoke the business license of Brighter Path Courtland, the former Three Springs and Sequel TSI campus, and Brighter Path sued."
+   },
+   {
+    "type": "manual",
+    "text": "Find whether Brighter Path Courtland (Vivant) still runs after the April 2025 license revocation, then set record 9647 to status Open with Vivant Behavioral Health as current operator, or Closed with its end year. Brighter Path Courtland also has its own record (13639): consider merging 9647 into it at KOP Tools > Merge Duplicates."
+   }
+  ]
+ },
+ {
+  "key": "status_years-294",
+  "kind": "status_years",
+  "title": "Turning Point - Girls",
+  "place": "Owens Cross Roads, AL",
+  "facility_id": 9659,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "The Owens Cross Roads Sequel TSI program, which included Turning Point, closed on April 30, 2022; a different Brighter Path program was planned for a new building. Three Springs ran it until Sequel bought the company in 2009.",
+  "kop_now": "Status Transferred, from 1996; current operator none; past operators none; company links: Three Springs Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/",
+    "title": "Long troubled Sequel TSI youth services center to shut down and reopen",
+    "date": "2022-05-03",
+    "quote": "TSI Owens Cross Roads will be closing on 4/30/22 due to program restructuring and transitioning of service lines."
+   },
+   {
+    "url": "https://www.alreporter.com/2022/06/02/lawsuit-alleges-teen-girl-abused-in-alabama-psychiatric-residential-center/",
+    "title": "AL Reporter",
+    "date": "2022-06-02",
+    "quote": "Sequel Owens Cross Roads closed in May, and plans to rebrand and reopen as Brighter Path"
+   },
+   {
+    "url": "https://kidsoverprofits.org/three-springs-inc/",
+    "title": "KOP Three Springs Inc.",
+    "date": "",
+    "quote": "Three Springs Inc. was acquired by Sequel Youth and Family Services on December 30, 2009; the original Three Springs program closed on May 31, 2011 after more than 26 years."
+   }
+  ],
+  "notes": "Sources name only the Owens Cross Roads campus; the girls unit may have closed earlier than 2022.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9659,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 9659,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2022
+   },
+   {
+    "type": "field",
+    "facility_id": 9659,
+    "path": "identification.currentOperator",
+    "from": "",
+    "to": "Sequel TSI"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9659,
+    "path": "identification.pastOperators",
+    "value": "Three Springs Inc. (1996-2009)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9659,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9659,
+    "operator_id": 20,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 9659,
+    "text": "Sequel TSI of Owens Cross Roads, where the Turning Point girls program ran, closed on April 30, 2022."
+   }
+  ]
+ },
+ {
+  "key": "status_years-296",
+  "kind": "status_years",
+  "title": "UHS of Provo Canyon Springville Campus",
+  "place": "Springville, UT",
+  "facility_id": 10557,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Utah revoked the Springville license on July 6, 2026 with a closing deadline of August 6, and the July 27 appeal did not change the deadline. Wikipedia says both Provo Canyon campuses closed in 2026.",
+  "kop_now": "Status Suspended, from 2005; current operator Universal Health Services (UHS); past operators none.",
+  "sources": [
+   {
+    "url": "https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/",
+    "title": "Provo Canyon School appeals",
+    "date": "2026-07-27",
+    "quote": "the appeals do not change the closure deadlines: Aug. 6 for the Springville campus and Aug. 16 for the Provo campus"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Provo_Canyon_School",
+    "title": "Provo Canyon School (lead)",
+    "date": "2026",
+    "quote": "both campuses closed in 2026 following license revocations"
+   }
+  ],
+  "notes": "Only Wikipedia (a lead) says it actually closed; the appeal outcome is unknown.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10557,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 10557,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2026
+   },
+   {
+    "type": "note",
+    "facility_id": 10557,
+    "text": "Utah revoked the Springville campus's license on July 6, 2026 and ordered it to stop all services by August 6, 2026; the appeal UHS filed on July 27 did not change that deadline."
+   }
+  ]
+ },
+ {
+  "key": "status_years-299",
+  "kind": "status_years",
+  "title": "Sequel TSI Kissimmee",
+  "place": "Kissimmee, FL",
+  "facility_id": 11097,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Sequel TSI Kissimmee ran from 2009 to 2016 and is listed as closed. A Kissimmee Youth Academy now run by Youth Opportunity Investments (its own record, 11129) is not documented as the same program.",
+  "kop_now": "Status Transferred, 2009-2016; current operator Sequel TSI; past operators none; company links: Sequel TSI (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   }
+  ],
+  "notes": "Wikipedia only (lead). Three Springs of Osceola (9653), this record's other name, is likely the same program before 2009.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11097,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Closed"
+   },
+   {
+    "type": "note",
+    "facility_id": 11097,
+    "text": "Sequel TSI of Kissimmee ran from 2009 to 2016 and is listed as closed."
+   }
+  ]
+ },
+ {
+  "key": "status_years-300",
+  "kind": "status_years",
+  "title": "St. John's Youth Academy",
+  "place": "St. Augustine, FL",
+  "facility_id": 11098,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "St. John's Youth Academy (Sequel TSI, St. Augustine) was closed by Florida DJJ in October 2022 after a riot and abuse allegations; DJJ ended the contract and removed all youth.",
+  "kop_now": "Status Transferred, no years; current operator Sequel TSI; past operators none; company links: Sequel TSI (current).",
+  "sources": [
+   {
+    "url": "https://www.news4jax.com/news/local/2022/10/26/is-st-johns-youth-academy-shut-down/",
+    "title": "Is St. Johns Youth Academy shut down?",
+    "date": "2022-10-26",
+    "quote": "DJJ removed all youth from the facility and closed the program"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Sequel closes many operations and sells others",
+    "date": "2022-04-26",
+    "quote": "the company has shut down close to half of its treatment centers and sold most of the rest to a new company called Vivant Behavioral Healthcare"
+   }
+  ],
+  "notes": "A St. Augustine Youth Academy now runs under Youth Opportunity Investments; not confirmed as the same site.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11098,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 11098,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2022
+   },
+   {
+    "type": "note",
+    "facility_id": 11098,
+    "text": "Florida DJJ ended Sequel TSI's contract and removed all youth from St. John's Youth Academy in October 2022, after a riot and abuse allegations."
+   }
+  ]
+ },
+ {
+  "key": "status_years-304",
+  "kind": "status_years",
+  "title": "Okaloosa Youth Academy",
+  "place": "Crestview, FL",
+  "facility_id": 11120,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "DJJ lists Okaloosa Youth Academy as active, run by Gulf Coast Treatment Center. I found no earlier operator, so Transferred is not backed.",
+  "kop_now": "Status Transferred, no years; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/okaloosa-youth-academy",
+    "title": "Okaloosa Youth Academy",
+    "date": "2026",
+    "quote": "Current Operator: Gulf Coast Treatment Center; Active residential commitment program, 77 males"
+   }
+  ],
+  "notes": "Gulf Coast Treatment Center is a UHS facility (record 11116), so UHS as operator stands.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11120,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 11120,
+    "text": "Florida DJJ lists Okaloosa Youth Academy as an active program run by Gulf Coast Treatment Center (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-305",
+  "kind": "status_years",
+  "title": "Broward Youth Treatment Center",
+  "place": "Pembroke Pines, FL",
+  "facility_id": 11124,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Florida DJJ lists Broward Youth Treatment Center as active, run by Youth Opportunity Investments, LLC. No earlier operator is documented.",
+  "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Youth Opportunity Investments (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/broward-youth-treatment-center",
+    "title": "Broward Youth Treatment Center",
+    "date": "2026",
+    "quote": "Operator: Youth Opportunity Investments, LLC; active"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11124,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 11124,
+    "text": "Florida DJJ lists Broward Youth Treatment Center as an active program run by Youth Opportunity Investments, LLC (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-306",
+  "kind": "status_years",
+  "title": "Center for Success and Independence – Ocala",
+  "place": "Ocala, FL",
+  "facility_id": 11125,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Florida DJJ lists Center for Success and Independence - Ocala as active, run by Youth Opportunity Investments, LLC. No earlier operator is documented.",
+  "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Youth Opportunity Investments (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/center-for-success-and-independence-ocala",
+    "title": "Center for Success and Independence - Ocala",
+    "date": "2026",
+    "quote": "Operator: Youth Opportunity Investments, LLC; active"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11125,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 11125,
+    "text": "Florida DJJ lists Center for Success and Independence - Ocala as an active program run by Youth Opportunity Investments, LLC (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-307",
+  "kind": "status_years",
+  "title": "Deep Creek Youth Academy",
+  "place": "Hastings, FL",
+  "facility_id": 11127,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Florida DJJ lists Deep Creek Youth Academy as active, run by Youth Opportunity Investments, LLC. No earlier operator is documented.",
+  "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Youth Opportunity Investments (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/deep-creek-youth-academy",
+    "title": "Deep Creek Youth Academy",
+    "date": "2026",
+    "quote": "Operator: Youth Opportunity Investments; active"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11127,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 11127,
+    "text": "Florida DJJ lists Deep Creek Youth Academy as an active program run by Youth Opportunity Investments, LLC (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-308",
+  "kind": "status_years",
+  "title": "Everglades Youth Academy",
+  "place": "Okeechobee, FL",
+  "facility_id": 11128,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Florida DJJ lists Everglades Youth Academy as active, run by Youth Opportunity Investments, LLC. No earlier operator is documented.",
+  "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Youth Opportunity Investments (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/everglades-youth-academy",
+    "title": "Everglades Youth Academy",
+    "date": "2026",
+    "quote": "Operator: Youth Opportunity Investments; active"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11128,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 11128,
+    "text": "Florida DJJ lists Everglades Youth Academy as an active program run by Youth Opportunity Investments, LLC (October 2026)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-310",
+  "kind": "status_years",
+  "title": "New Beginnings Girls Academy",
+  "place": "La Russell, MO",
+  "facility_id": 11430,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "New Beginnings Girls Academy (La Russell, MO) no longer operates; a business directory lists it as closed. No source gives its closing year, so 2015 is left as is.",
+  "kop_now": "Status Open, 2001-2015; current operator none; past operators none; company links: Roloff Homes (current).",
+  "sources": [
+   {
+    "url": "https://www.yellowpages.com/la-russell-mo/mip/new-beginnings-girls-academy-25297260",
+    "title": "New Beginnings Girls Academy - La Russell, MO",
+    "date": "2026",
+    "quote": "closed now (directory status, via search summary)"
+   },
+   {
+    "url": "https://www.motherjones.com/politics/2011/08/new-bethany-ifb-teen-homes-abuse/",
+    "title": "Horror Stories From Tough-Love Teen Homes",
+    "date": "2011",
+    "quote": "Described as operating in La Russell in 2011."
+   }
+  ],
+  "notes": "Only a business directory says it closed (search summary).",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11430,
+    "path": "operatingPeriod.status",
+    "from": "Open",
+    "to": "Closed"
+   }
+  ]
+ },
+ {
+  "key": "status_years-311",
+  "kind": "status_years",
+  "title": "Sedona Sky Academy",
+  "place": "Rimrock, AZ",
+  "facility_id": 12161,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Sedona Sky Academy closed in early 2025; the Rimrock property was bought by EmotiCare and reopened as EmotiHome Rimrock, a different name. So it is Closed (2025), not Suspended.",
+  "kop_now": "Status Suspended, from 1998; current operator New Legal Name: Emoticare; past operators none; company links: Family Help & Wellness (current).",
+  "sources": [
+   {
+    "url": "https://grokipedia.com/page/sedona_sky_academy",
+    "title": "Sedona Sky Academy (Grokipedia)",
+    "date": "2025-2026",
+    "quote": "In early 2025, Sedona Sky Academy temporarily closed its operations in Rimrock, Arizona ... property was subsequently acquired by EmotiCare"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Sedona_Sky_Academy",
+    "title": "Sedona Sky Academy",
+    "date": "2025-12-04",
+    "quote": "Sedona Sky Academy acquired a business license on April 7, 2014 (under Lake Montezuma RTC, LLC); article has no closure text"
+   }
+  ],
+  "notes": "Grokipedia and search summaries only; confirm with the Arizona DHS license record. KOP's 1998 start likely covers the Copper Canyon years (not checked).",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12161,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 12161,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2025
+   },
+   {
+    "type": "note",
+    "facility_id": 12161,
+    "text": "Sedona Sky Academy closed in early 2025; EmotiCare bought the Rimrock property and reopened it as EmotiHome Rimrock."
+   }
+  ]
+ },
+ {
+  "key": "status_years-312",
+  "kind": "status_years",
+  "title": "Casa Grande Academy",
+  "place": "Casa Grande, AZ",
+  "facility_id": 12162,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Casa Grande Academy (32 beds) is open under the same name, run by Vivant Behavioral Healthcare, which was formed in September 2021 to buy most of Sequel's programs.",
+  "kop_now": "Status Transferred, from 2020; current operator Vivant Behavioral Health; past operators none; company links: Sequel TSI (current), Vivant Behavioral Health (current).",
+  "sources": [
+   {
+    "url": "https://www.casagrandeacademy.com/",
+    "title": "Casa Grande Academy",
+    "date": "2026",
+    "quote": "32-bed behavioral health inpatient facility; contact admissions.az@vivantbh.com (search summary)"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Sequel_Youth_and_Family_Services",
+    "title": "Sequel Youth and Family Services",
+    "date": "2021",
+    "quote": "Lists Casa Grande Academy, Casa Grande, Arizona among Sequel facilities."
+   }
+  ],
+  "notes": "The Vivant link rests on its admissions email domain (search summary); the 2020 start year was not verified.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12162,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12162,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (until 2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 12162,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 12162,
+    "text": "Casa Grande Academy has been run by Vivant Behavioral Healthcare since 2021, after Sequel Youth and Family Services."
+   }
+  ]
+ },
+ {
+  "key": "status_years-313",
+  "kind": "status_years",
+  "title": "Re-Creation Retreat",
+  "place": "Fredonia, AZ",
+  "facility_id": 12273,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Arizona DHS lists the license as CLOSED-OWNER, closed December 16, 2025, after the June 2025 suspension. Re-Creation Retreat is closed.",
+  "kop_now": "Status Suspended, from 2008; current operator none; past operators none.",
+  "sources": [
+   {
+    "url": "https://hsapps.azdhs.gov/ls/sod/Facility.aspx?FacId=BH3895",
+    "title": "AZ DHS Licensing Services Facilities Report, RE-CREATION RETREAT",
+    "date": "2026",
+    "quote": "CLOSED-OWNER Closed Date: 12/16/2025; License Expires 1/31/2026"
+   },
+   {
+    "url": "https://www.sunews.net/post/fredonia-s-re-creation-retreat-has-license-suspended-during-department-of-health-services-investigat",
+    "title": "Southern Utah News",
+    "date": "2025-06-11",
+    "quote": "license suspended ... discharge of all residents by June 7, 2025"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12273,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 12273,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2025
+   },
+   {
+    "type": "note",
+    "facility_id": 12273,
+    "text": "Arizona DHS lists the Re-Creation Retreat license as closed by the owner on December 16, 2025."
+   }
+  ]
+ },
+ {
+  "key": "status_years-314",
+  "kind": "status_years",
+  "title": "Capital Academy",
+  "place": "Camden, NJ",
+  "facility_id": 12761,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Capital Academy did not close in 2021: Sequel's Capital Academy came under local company Willow Grove LLC and keeps operating under its name. The 2021 end year marks only Sequel's years.",
+  "kop_now": "Status Transferred, 2013-2021; current operator Willow Grove, LLC; past operators none; company links: Sequel TSI (current), Vivant Behavioral Health (current).",
+  "sources": [
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "APM Reports",
+    "date": "2022-04-26",
+    "quote": "Sequel's Capital Academy in New Jersey is now controlled by a local company called Willow Grove LLC."
+   }
+  ],
+  "notes": "Still open in 2026 rests on directory listings (NPI, BBB), not a 2026 news source.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12761,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 12761,
+    "path": "operatingPeriod.endYear",
+    "from": 2021,
+    "to": null
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12761,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2013-2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 12761,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 12761,
+    "text": "Since 2021 Capital Academy has been controlled by Willow Grove LLC and runs under the same name."
+   },
+   {
+    "type": "manual",
+    "text": "Vivant Behavioral Health (company #26) is linked to record 12761 as current, but sources say Willow Grove LLC took Capital Academy from Sequel; unlink Vivant if it never ran it."
+   }
+  ]
+ },
+ {
+  "key": "status_years-315",
+  "kind": "status_years",
+  "title": "Red Top Meadows",
+  "place": "Wilson, WY",
+  "facility_id": 13431,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Only the wilderness component of Red Top Meadows was paused; the residential program for boys continues, so the program is Open.",
+  "kop_now": "Status Suspended, from 1980; current operator none; past operators none.",
+  "sources": [
+   {
+    "url": "https://www.jhnewsandguide.com/news/health/red-top-meadows-pausing-wilderness-program-for-at-risk-teens/article_3831cd6f-2ec9-4d71-88ee-d4d701fb04c2.html",
+    "title": "Red Top pausing wilderness program",
+    "date": "2026-04-01",
+    "quote": "Teenage boys will still live at Red Top, where they will be led through modified outdoor activities (search summary of article)"
+   }
+  ],
+  "notes": "Quote from a search summary of the article (fetch blocked).",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13431,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 13431,
+    "text": "Red Top Meadows paused only its wilderness program from April 2026; its residential program for boys stays open."
+   }
+  ]
+ },
+ {
+  "key": "status_years-316",
+  "kind": "status_years",
+  "title": "Shadow Mountain Behavioral Health System",
+  "place": "Tulsa, OK",
+  "facility_id": 13595,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Shadow Mountain Behavioral Health System announced it would close, effective July 5, 2019, after state and federal agencies cut off funding. It is Closed (2019).",
+  "kop_now": "Status Open, 1999-2019; current operator none; past operators none; company links: The Brown Schools (current), Universal Health Services (UHS) (current), Psychiatric Solutions, Inc. (past).",
+  "sources": [
+   {
+    "url": "https://www.kjrh.com/news/local-news/shadow-mountain-behavioral-health-system-closes-in-tulsa",
+    "title": "KJRH",
+    "date": "2019",
+    "quote": "After careful consideration an analysis, we have found it no longer feasible to remain in operation. We therefore have no choice other than to close the facility."
+   }
+  ],
+  "notes": "Closing date from a search summary; the 2019 end year is already right.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13595,
+    "path": "operatingPeriod.status",
+    "from": "Open",
+    "to": "Closed"
+   },
+   {
+    "type": "note",
+    "facility_id": 13595,
+    "text": "Shadow Mountain Behavioral Health System closed effective July 5, 2019, after state and federal agencies cut off its funding."
+   }
+  ]
+ },
+ {
+  "key": "status_years-318",
+  "kind": "status_years",
+  "title": "Camp E-How-Kee",
+  "place": "Brooksville, FL",
+  "facility_id": 100014,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Camp E-How-Kee, Eckerd's first outdoor program (opened 1968), was renamed Eckerd Academy at Brooksville in 2007 and is listed as closed in 2014. Youth Opportunity Investments runs a different program (Brooksville Youth Academy) at the same address.",
+  "kop_now": "Status Transferred, no years; current operator Youth Opportunity Investments; past operators none; company links: Eckerd Connects (current).",
+  "sources": [
+   {
+    "url": "https://www.publicschoolreview.com/ewes-e-how-kee-camp-profile/34602",
+    "title": "Ewes - E-how-kee Camp (Closed 2014)",
+    "date": "2026",
+    "quote": "Closed 2014 - Brooksville, FL"
+   },
+   {
+    "url": "https://strugglingteens.com/archives/2005/4/e-how-kee0504np.html",
+    "title": "New Perspectives 3/05 - Camp E-How-Kee",
+    "date": "2005",
+    "quote": "established in 1968, E-How-Kee was the first of 18 Outdoor Therapeutic Treatment Programs"
+   }
+  ],
+  "notes": "Closing year from a school directory (weak). Brooksville Youth Academy is a separate program; do not merge.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100014,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 100014,
+    "path": "operatingPeriod.startYear",
+    "from": null,
+    "to": 1968
+   },
+   {
+    "type": "field",
+    "facility_id": 100014,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2014
+   },
+   {
+    "type": "field",
+    "facility_id": 100014,
+    "path": "identification.currentOperator",
+    "from": "Youth Opportunity Investments",
+    "to": "Eckerd Connects"
+   },
+   {
+    "type": "note",
+    "facility_id": 100014,
+    "text": "Camp E-How-Kee, Eckerd's first outdoor program (1968), was renamed Eckerd Academy at Brooksville in 2007 and is listed as closed in 2014."
+   }
+  ]
+ },
+ {
+  "key": "status_years-319",
+  "kind": "status_years",
+  "title": "Timberline Academy",
+  "place": "Daytona Beach, FL",
+  "facility_id": 100084,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Timberline Academy (Daytona Beach) was run by Youth Services International from 1997; after Florida ended its YSI contracts in 2016 the site became Daytona Juvenile Residential Facility, run by Rite of Passage.",
+  "kop_now": "Status Transferred, from 1997; current operator Rite of Passage; past operators none; company links: Youth Services International (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/daytona-juvenile-residential-facility",
+    "title": "Daytona Juvenile Residential Facility (DJJ)",
+    "date": "2026",
+    "quote": "Current provider Rite of Passage, Inc. (search summary)"
+   },
+   {
+    "url": "https://www.djj.state.fl.us/news/press-releases/2016/florida-department-of-juvenile-justice-ends-all-contracts-with-youth-services-international",
+    "title": "FL DJJ ends all contracts with YSI",
+    "date": "2016",
+    "quote": "Transition of all YSI residential contracts"
+   }
+  ],
+  "notes": "The DJJ provider line is a search summary; any operator between YSI and Rite of Passage (Three Springs) is unsourced.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100084,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 100084,
+    "path": "identification.currentOperator",
+    "from": "Rite of Passage",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100084,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International (1997-2016)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 100084,
+    "operator_id": 30,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 100084,
+    "operator_id": 18,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 100084,
+    "text": "Florida ended its Youth Services International contracts in 2016; the Daytona Beach site now runs as Daytona Juvenile Residential Facility under Rite of Passage, Inc."
+   },
+   {
+    "type": "manual",
+    "text": "Timberline Academy (100084) and Daytona Juvenile Residential Facility (9606) look like one program on one site; merge them at KOP Tools > Merge Duplicates (keep 9606, the current name)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-320",
+  "kind": "status_years",
+  "title": "Victor Cullen Academy",
+  "place": "Sabillasville, MD",
+  "facility_id": 100085,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Victor Cullen Center in Sabillasville is open and run by the Maryland Department of Juvenile Services (audited May 2025). YSI ran it from 1999 to 2002.",
+  "kop_now": "Status Transferred, from 1965; current operator Maryland Department of Juvenile Services; past operators none; company links: Youth Services International (current).",
+  "sources": [
+   {
+    "url": "https://www.prearesourcecenter.org/audit/directory/29813",
+    "title": "PREA audit directory, Victor Cullen Center",
+    "date": "2025-05",
+    "quote": "Active status, rated capacity 48 males; onsite audit May 13-14, 2025 (search summary)"
+   }
+  ],
+  "notes": "YSI's years are from KOP's own years text, not re-verified. The program is now called Victor Cullen Center; PREA quote is a search summary.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100085,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100085,
+    "path": "identification.pastOperators",
+    "value": "Youth Services International (1999-2002)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 100085,
+    "operator_id": 30,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 100085,
+    "text": "Victor Cullen Center is run by the Maryland Department of Juvenile Services (PREA audit, May 2025)."
+   }
+  ]
+ },
+ {
+  "key": "status_years-322",
+  "kind": "status_years",
+  "title": "Cascade County Regional Juvenile Detention Center",
+  "place": "Great Falls, MT",
+  "facility_id": 100223,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Cascade County juvenile detention resumed admitting youth on Aug. 26, 2026, though its license stays restricted through Oct. 4, 2026. It is Open, not suspended.",
+  "kop_now": "Status Suspended, no years; current operator none; past operators none.",
+  "sources": [
+   {
+    "url": "https://theelectricgf.com/2026/08/26/jdc-resumes-admitting-youth-budget-issues-remain/",
+    "title": "JDC resumes admitting youth",
+    "date": "2026-08-26",
+    "quote": "The Cascade County Juvenile Detention Center resumed admitting juveniles on Aug. 26."
+   },
+   {
+    "url": "https://www.krtv.com/news/cascade-county-juvenile-detention-center-barred-from-admitting-new-youth-until-september",
+    "title": "KRTV",
+    "date": "2026",
+    "quote": "restricted license ... not admitting any new youth until at least September 4"
+   }
+  ],
+  "notes": "Check the license outcome after October 4, 2026.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100223,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Open"
+   },
+   {
+    "type": "note",
+    "facility_id": 100223,
+    "text": "Cascade County Juvenile Detention Center resumed admitting youth on August 26, 2026, on a license restricted through October 4, 2026."
+   }
+  ]
+ },
+ {
+  "key": "status_years-323",
+  "kind": "status_years",
+  "title": "A&T Preschool Academy",
+  "place": "Antioch, CA",
+  "facility_id": 100281,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "A&T Preschool Academy was one of Tobinworld's Antioch campuses; California suspended Tobinworld II and III certification in Aug 2015, and the campuses then closed in 2016 as the Antioch schools shut. It is Closed (2016), not Suspended.",
+  "kop_now": "Status Suspended, no years; current operator Tobinworld; past operators none.",
+  "sources": [
+   {
+    "url": "https://edsource.org/2016/tobinworld-closing-its-antioch-school-for-special-education-students/566741",
+    "title": "Tobinworld closing its Antioch school",
+    "date": "2016",
+    "quote": "Search summary: A&T Preschool at Grant Elementary and DVT Academy closed on a Wednesday, and KT Academy on the Kimball Elementary Campus closed on Thursday."
+   },
+   {
+    "url": "https://www.sfgate.com/bayarea/article/Embattled-Antioch-special-needs-school-closes-for-8425444.php",
+    "title": "Embattled Antioch special-needs school closes for good",
+    "date": "2016",
+    "quote": "Closure of Tobinworld Antioch school"
+   }
+  ],
+  "notes": "Closing day from a search summary (EdSource blocked). These are special education schools; whether they belong in the TTI is a separate question.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100281,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 100281,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2016
+   },
+   {
+    "type": "note",
+    "facility_id": 100281,
+    "text": "A&T Preschool Academy, one of Tobinworld's Antioch campuses, closed in 2016 after California suspended Tobinworld's certification in August 2015."
+   }
+  ]
+ },
+ {
+  "key": "status_years-324",
+  "kind": "status_years",
+  "title": "KT Academy",
+  "place": "Antioch, CA",
+  "facility_id": 100282,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "KT Academy was one of Tobinworld's Antioch campuses; California suspended Tobinworld II and III certification in Aug 2015, and the campuses then closed in 2016 as the Antioch schools shut. It is Closed (2016), not Suspended.",
+  "kop_now": "Status Suspended, no years; current operator Tobinworld; past operators none.",
+  "sources": [
+   {
+    "url": "https://edsource.org/2016/tobinworld-closing-its-antioch-school-for-special-education-students/566741",
+    "title": "Tobinworld closing its Antioch school",
+    "date": "2016",
+    "quote": "Search summary: A&T Preschool at Grant Elementary and DVT Academy closed on a Wednesday, and KT Academy on the Kimball Elementary Campus closed on Thursday."
+   },
+   {
+    "url": "https://www.sfgate.com/bayarea/article/Embattled-Antioch-special-needs-school-closes-for-8425444.php",
+    "title": "Embattled Antioch special-needs school closes for good",
+    "date": "2016",
+    "quote": "Closure of Tobinworld Antioch school"
+   }
+  ],
+  "notes": "Closing day from a search summary (EdSource blocked). These are special education schools; whether they belong in the TTI is a separate question.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 100282,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 100282,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2016
+   },
+   {
+    "type": "note",
+    "facility_id": 100282,
+    "text": "KT Academy, one of Tobinworld's Antioch campuses, closed in 2016 after California suspended Tobinworld's certification in August 2015."
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-10",
+  "kind": "rename_end_year",
+  "title": "Blue Ridge Therapeutic Wilderness",
+  "place": "Clayton, GA",
+  "facility_id": 12506,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "The Clayton, GA program opened in 2002 as Second Nature Blue Ridge and began doing business as Blue Ridge Therapeutic Wilderness on July 19, 2016, when it split from Second Nature.",
+  "kop_now": "Status Open, from 2002; current operator none; past operators none; map: Blue Ridge Therapeutic Wilderness (from 2002), Second Nature Blue Ridge (from 2002).",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/BlueRidgeTherapeuticWildernessBN_160727.shtml",
+    "title": "Introducing Blue Ridge Therapeutic Wilderness",
+    "date": "2016-07-27",
+    "quote": "as of July 19th, Second Nature Blue Ridge began doing business as Blue Ridge Therapeutic Wilderness"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "second-nature-blue-ridge",
+    "from": "from 2002",
+    "to": "2002-2016"
+   },
+   {
+    "type": "map_years",
+    "node": "blue-ridge-therapeutic-wilderness",
+    "from": "from 2002",
+    "to": "from 2016"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-14",
+  "kind": "rename_end_year",
+  "title": "Stone Mountain School",
+  "place": "Black Mountain, NC",
+  "facility_id": 11653,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Stone Mountain School and Talisman School were Aspen programs that both closed in summer 2013, so 2013 is right for every name. Talisman School did not start in 1990: StrugglingTeens announced \"Talisman School To Open August In NC\" in an item filed May 17, 2010.",
+  "kop_now": "Status Closed, 1990-2013; current operator Aspen Education Group; past operators CRC Health Group; company links: Aspen Education Group (current); map: Stone Mountain School (1990-2013), Talisman School (1990-2013), Camp Elliott (1990-2013).",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/AspenEducationGroupBN_130710.shtml",
+    "title": "Aspen Education Group Closes Five Programs",
+    "date": "2013-07-10",
+    "quote": "Aspen ceased operations at ... Talisman Academy (Hendersonville, NC), and Stone Mountain School (Black Mountain, NC)"
+   },
+   {
+    "url": "https://strugglingteens.com/artman/publish/printer_TalismanSchoolBN_100517.shtml",
+    "title": "Talisman School To Open August In NC",
+    "date": "",
+    "quote": "Talisman School To Open August In NC"
+   }
+  ],
+  "notes": "The 2010 date is read from the item's address (BN_100517; the other StrugglingTeens items cited here follow the same YYMMDD pattern); the researcher guessed 2005. Camp Elliott is the campus road, not a rename.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "talisman-school",
+    "from": "1990-2013",
+    "to": "2010-2013"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-16",
+  "kind": "rename_end_year",
+  "title": "The Ridge Maine",
+  "place": "Morrill, ME",
+  "facility_id": 11009,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Ironwood Maine operated from 2006 until Altior Healthcare took it over and renamed it The Ridge RTC Maine in 2024.",
+  "kop_now": "Status Open, from 2024; current operator Altior Healthcare; past operators none; company links: Altior Healthcare (current); map: Ironwood Maine (from 2024), The Ridge Maine (from 2024).",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/the-ridge-rtc-maine/",
+    "title": "KOP The Ridge RTC Maine",
+    "date": "",
+    "quote": "Previously known as Ironwood Maine, LLC (2006-2023)"
+   }
+  ],
+  "notes": "KOP's own page is the source; Ironwood's end is 2023 or 2024 depending on the handover date. The record's 2024 start year covers only The Ridge.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "ironwood-maine",
+    "from": "from 2024",
+    "to": "2006-2024"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-17",
+  "kind": "rename_end_year",
+  "title": "Eagle Point Christian Academy",
+  "place": "Lucedale, MS",
+  "facility_id": 13927,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Bethel Baptist Children's Home was raided in 1988 and closed by a judge in January 1990; it reopened in 1994 as Bethel Boys Academy, was renamed Eagle Point Christian Academy in February 2005, and was reported as Gulf Coast Academy by 2007.",
+  "kop_now": "Status Closed, 1978-2005; current operator World Wide Association of Specialty Programs and Schools (WWASPS); past operators none; company links: World Wide Association of Specialty Programs and Schools (WWASPS) (current); map: Bethel Boys Academy (1978-2005), Gulf Coast Academy (1978-2005), Bethel Baptist Children's Home (1978-2005), Eagle Point Christian Academy (1978-2005).",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/news/bethelboysindex.html",
+    "title": "Bethel Boys Academy and Eagle Point news",
+    "date": "2005-2007",
+    "quote": "Bethel Academy name changes to Eagle Point Christian Academy (Feb 14, 2005); Teens Escape From Gulf Coast Academy: School problems continue under new name (Sept 20, 2007)"
+   },
+   {
+    "url": "https://www.wlox.com/story/1345843/attorney-general-moves-to-close-bethel-boys-academy/",
+    "title": "WLOX",
+    "date": "2003",
+    "quote": "Attorney General Moves To Close Bethel Boys Academy"
+   }
+  ],
+  "notes": "Gulf Coast Academy's end year was not found (2007 is the last date seen). The name Gulf Coast Academy is also tied to a possibly different WWASP program.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "bethel-baptist-childrens-home",
+    "from": "1978-2005",
+    "to": "1978-1990"
+   },
+   {
+    "type": "map_years",
+    "node": "bethel-boys-academy",
+    "from": "1978-2005",
+    "to": "1994-2005"
+   },
+   {
+    "type": "map_years",
+    "node": "eagle-point-christian-academy",
+    "from": "1978-2005",
+    "to": "2005-2007"
+   },
+   {
+    "type": "map_years",
+    "node": "gulf-coast-academy",
+    "from": "1978-2005",
+    "to": "from 2007"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-18",
+  "kind": "rename_end_year",
+  "title": "Red Mountain Colorado",
+  "place": "Greeley, CO",
+  "facility_id": 12622,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Kokua Recovery (opened 2018) was renamed Red Mountain Colorado, which closed about 2023.",
+  "kop_now": "Status Closed, 2018-2023; current operator Family Help & Wellness; past operators none; company links: Family Help & Wellness (current); map: Red Mountain Colorado (2018-2023), Kokua Recovery (2018-2023).",
+  "sources": [
+   {
+    "url": "https://www.unsilenced.org/program-archive/us-programs/colorado/kokua-recovery/",
+    "title": "Unsilenced Kokua Recovery",
+    "date": "",
+    "quote": "Kokua Recovery changed its name to Red Mountain Colorado (search summary)"
+   }
+  ],
+  "notes": "The 2019 rename year is a lead only (a directory's founding year for Red Mountain); the source quote is a search summary.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "kokua-recovery",
+    "from": "2018-2023",
+    "to": "2018-2019"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-19",
+  "kind": "rename_end_year",
+  "title": "Alldredge Wilderness Journey",
+  "place": "Davis, WV",
+  "facility_id": 14017,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Alldredge Academy opened in 1999, renamed itself Alldredge Wilderness Journey in 2007 when it dropped its third phase, and closed on December 31, 2008. KOP has the order of the names reversed.",
+  "kop_now": "Status Closed, 1999-2008; current operator none; past operators Solacium Holdings; map: Alldredge Wilderness Journey (1999-2008), Alldredge Academy (1999-2008).",
+  "sources": [
+   {
+    "url": "https://lathroplybrook.com/alldredge-academy/",
+    "title": "Lathrop Lybrook, Alldredge Academy",
+    "date": "",
+    "quote": "In 2007 the program dropped the third phase, and the program also decided to change their name from Alldredge Academy to Alldredge Wilderness Journey."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "alldredge-academy",
+    "from": "1999-2008",
+    "to": "1999-2007"
+   },
+   {
+    "type": "map_years",
+    "node": "alldredge-wilderness-journey",
+    "from": "1999-2008",
+    "to": "2007-2008"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-21",
+  "kind": "rename_end_year",
+  "title": "Sequel TSI Paint Rock Valley",
+  "place": "Trenton, AL",
+  "facility_id": 13690,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Three Springs Paint Rock Valley opened in 1985 as Three Springs Inc.'s first program; Sequel bought Three Springs on December 30, 2009, the program became Sequel TSI Paint Rock Valley, and it closed on May 31, 2011.",
+  "kop_now": "Status Closed, 2009-2011; current operator none; past operators none; company links: Sequel TSI (current), Three Springs Inc. (current); map: Three Springs Paint Rock Valley (2009-2011), Sequel TSI Paint Rock Valley (2009-2011).",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/three-springs-inc/",
+    "title": "KOP Three Springs Inc.",
+    "date": "",
+    "quote": "Three Springs Inc. was acquired by Sequel Youth and Family Services on December 30, 2009; the original Three Springs program closed on May 31, 2011 after more than 26 years."
+   }
+  ],
+  "notes": "Source is KOP's own company page. Whether the Sequel name began in late 2009 or 2010 is unconfirmed.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13690,
+    "path": "operatingPeriod.startYear",
+    "from": 2009,
+    "to": 1985
+   },
+   {
+    "type": "map_years",
+    "node": "three-springs-paint-rock-valley",
+    "from": "2009-2011",
+    "to": "1985-2009"
+   },
+   {
+    "type": "map_years",
+    "node": "sequel-tsi-paint-rock-valley",
+    "from": "2009-2011",
+    "to": "2010-2011"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 13690,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-23",
+  "kind": "rename_end_year",
+  "title": "KIDS of Bergen County",
+  "place": "Hackensack, NJ",
+  "facility_id": 12760,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "KIDS of Bergen County opened in Hackensack in 1984; in 1990 it moved to Secaucus as KIDS of North Jersey, which closed in 1998.",
+  "kop_now": "Status Closed, 1984-1998; current operator KIDS Centers of America; past operators none; company links: KIDS Centers of America (current); map: KIDS of North New Jersey (1984-1998), KIDS of Bergen County (1984-1998).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/kids-centers-of-america/",
+    "title": "KIDS Centers of America - Breaking Code Silence",
+    "date": "",
+    "quote": "1990 - program relocated from Hackensack to Secaucus and changed its name from KIDS of Bergen County to KIDS of North Jersey; 1998 - KIDS of North Jersey closed its doors."
+   }
+  ],
+  "notes": "Survivor-run site only; Wikipedia agrees in outline but was not opened.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "kids-of-bergen-county",
+    "from": "1984-1998",
+    "to": "1984-1990"
+   },
+   {
+    "type": "map_years",
+    "node": "kids-of-north-new-jersey",
+    "from": "1984-1998",
+    "to": "1990-1998"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-24",
+  "kind": "rename_end_year",
+  "title": "Evoke Cascades",
+  "place": "Bend, OR",
+  "facility_id": 12355,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Second Nature Cascades (Bend, OR) opened in fall 2005 and was rebranded Evoke Cascades in 2015, which closed in November 2021.",
+  "kop_now": "Status Closed, 2015-2021; current operator none; past operators none; map: Second Nature Cascades (2015-2021), Evoke Cascades (2015-2021).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/evoke-entrada/",
+    "title": "Evoke Entrada - Breaking Code Silence",
+    "date": "",
+    "quote": "Like Evoke Entrada, Evoke Cascades was formerly marketed as Second Nature Cascades until it was rebranded in 2015. Evoke Cascades closed in November 2021."
+   },
+   {
+    "url": "https://www.allkindsoftherapy.com/news/evoke-therapy-programs-welcomes-girls-back-to-its-cascades-location-in-bend-or",
+    "title": "Evoke welcomes girls back to Cascades",
+    "date": "2021-10-06",
+    "quote": "after a three-year closure [of the girls program]"
+   }
+  ],
+  "notes": "The 2005 opening is from a search summary of Cascade Business News; the record's 2015 start year covers only the Evoke name.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "second-nature-cascades",
+    "from": "2015-2021",
+    "to": "2005-2015"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-25",
+  "kind": "rename_end_year",
+  "title": "Canyon State Academy",
+  "place": "Queen Creek, AZ",
+  "facility_id": 9605,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Arizona Boys Ranch began in 1948 and was renamed Canyon State Academy in March 2000, when Rite of Passage took over; Canyon State Academy is still open.",
+  "kop_now": "Status Open, from 2000; current operator Rite of Passage, Inc.; past operators none; company links: Rite of Passage, Inc. (current), Rite of Passage, Inc. (current); map: Canyon State Academy (from 2000), Arizona Boys Ranch (from 2000).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Canyon_State_Academy",
+    "title": "Canyon State Academy",
+    "date": "",
+    "quote": "Arizona Boys Ranch (ABR) in 1948 ... In March 2000, the name of the school was changed to Canyon State Academy (CSA)."
+   }
+  ],
+  "notes": "Wikipedia only (lead).",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "arizona-boys-ranch",
+    "from": "from 2000",
+    "to": "1948-2000"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-26",
+  "kind": "rename_end_year",
+  "title": "Camp E-Ma-Laku",
+  "place": "Suches, GA",
+  "facility_id": 12514,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Camp E-Ma-Laku ran from 1996 under Eckerd Youth Alternatives and closed several months before Eckerd Academy of the Blue Ridge opened on the same site in 2007, so it is a successor program rather than a rename.",
+  "kop_now": "Status Closed, from 2007; current operator none; past operators none; company links: Eckerd Connects (current); map: Eckerd Academy of the Blue Ridge (from 2007), E-ma-laku (from 2007).",
+  "sources": [
+   {
+    "url": "https://www.strugglingteens.com/artman/publish/EYA-PR_070927.shtml",
+    "title": "New EYA Alternative School - StrugglingTeens",
+    "date": "2007-09-27",
+    "quote": "The site had been operated by Eckerd Youth Alternatives since 1996 ... E-Ma-Laku, which was closed several months before the Academy opened."
+   }
+  ],
+  "notes": "Eckerd Academy of the Blue Ridge's end year was not found (records exist to 2011). Operator fix in operator_profile-331.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "e-ma-laku",
+    "from": "from 2007",
+    "to": "1996-2007"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-27",
+  "kind": "rename_end_year",
+  "title": "Straight – Cincinnati",
+  "place": "Milford, OH",
+  "facility_id": 9626,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Straight Inc Cincinnati (Milford, OH) closed in 1987. Kids Helping Kids was a separate Straight spin-off in Hebron, KY through the 1980s that moved into the old Milford building about 1990 and ran until Pathway took it over in 2006.",
+  "kop_now": "Status Closed, 1982-1987; current operator Straight Inc.; past operators none; company links: Straight Inc. (current); map: Kids Helping Kids (1982-1987), Straight Inc Cincinnati (1982-1987).",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/kids_helping_kids_-_straight_renamed",
+    "title": "Kids Helping Kids, A Pathway Family Center",
+    "date": "",
+    "quote": "Kids Helping Kids was originally located in Hebron, KY during all of the 1980's ... moved into the old Cincinnati Straight, Inc. building which is in Milford, Ohio."
+   }
+  ],
+  "notes": "Survivor site only; KHK's founding year was not found.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "kids-helping-kids",
+    "from": "1982-1987",
+    "to": "until 2006"
+   },
+   {
+    "type": "manual",
+    "text": "Map nodes kids-helping-kids and kids-helping-kids-of-hebron-ky look like one organisation; merge them in network-overrides.json if confirmed."
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-28",
+  "kind": "rename_end_year",
+  "title": "Meridell Achievement Center",
+  "place": "Liberty Hill, TX",
+  "facility_id": 10617,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Meridell was founded in 1961; its Westwood program opened on the Liberty Hill campus in 1967 and the campuses were consolidated there in 2001. Westwood is a campus name, not a successor name.",
+  "kop_now": "Status Open, from 1961; current operator Universal Health Services (UHS); past operators none; company links: Universal Health Services (UHS) (current); map: Meridell Achievement Center (from 1961), Westwood Boys Ranch (from 1961), Westwood Program (from 1961).",
+  "sources": [
+   {
+    "url": "https://meridell.com/about-us/our-history/",
+    "title": "Meridell history",
+    "date": "",
+    "quote": "1967: Westwood program opened on a 300-acre Liberty Hill campus ... 2001: Cedar Park campus consolidated onto the Liberty Hill campus."
+   }
+  ],
+  "notes": "The 2001 end of the Westwood name is inferred from the consolidation.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "westwood-boys-ranch",
+    "from": "from 1961",
+    "to": "1967-2001"
+   },
+   {
+    "type": "map_years",
+    "node": "westwood-program",
+    "from": "from 1961",
+    "to": "1967-2001"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-29",
+  "kind": "rename_end_year",
+  "title": "Three Springs New Beginnings",
+  "place": "Owens Cross Roads, AL",
+  "facility_id": 9644,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Three Springs New Beginnings (Owens Cross Roads) opened in 1996 under Three Springs, which Sequel absorbed in 2009 (Sequel TSI). Sequel TSI of Owens Cross Roads closed on April 30, 2022 and the name moved to Brighter Path, later Pathway of Madison County.",
+  "kop_now": "Status Transferred, from 1996; current operator Pathway of Madison County; past operators none; company links: Sequel TSI (current), Three Springs Inc. (current); map: Sequel TSI Owens Cross Roads (from 1996), Brighter Path Owens Cross Roads (from 1996), Three Springs New Beginning (from 1996).",
+  "sources": [
+   {
+    "url": "https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/",
+    "title": "Sequel TSI to shut down and reopen",
+    "date": "2022-05-03",
+    "quote": "closed on April 30, 2022 ... reopened under a new name ... Brighter Path Owens Cross Roads"
+   },
+   {
+    "url": "https://kidsoverprofits.org/three-springs-inc/",
+    "title": "Three Springs, Inc.",
+    "date": "",
+    "quote": "founded in 1985 and absorbed by Sequel Youth & Family Services in 2009"
+   }
+  ],
+  "notes": "The 1996 opening is KOP's own year. Brighter Path is a different program in a new building (status_years-289).",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "three-springs-new-beginning",
+    "from": "from 1996",
+    "to": "1996-2009"
+   },
+   {
+    "type": "map_years",
+    "node": "sequel-tsi-owens-cross-roads",
+    "from": "from 1996",
+    "to": "2009-2022"
+   },
+   {
+    "type": "map_years",
+    "node": "brighter-path-owens-cross-roads",
+    "from": "from 1996",
+    "to": "from 2022"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9644,
+    "path": "identification.pastOperators",
+    "value": "Three Springs Inc. (1996-2009)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9644,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-3",
+  "kind": "rename_end_year",
+  "title": "Magnolia Mill School",
+  "place": "Weaverville, NC",
+  "facility_id": 11659,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Solstice East (Weaverville, NC) began about 2011-2012 and became Magnolia Mill School between 2022 and 2024; the site, later called Asheville Academy, closed on May 31, 2025.",
+  "kop_now": "Status Closed, 2024-2025; current operator Family Help & Wellness; past operators none; company links: Family Help & Wellness (current); map: Solstice East (2024-2025), Magnolia Mill School (2024-2025).",
+  "sources": [
+   {
+    "url": "https://avlwatchdog.org/14-year-old-dies-by-suicide-at-weaverville-mental-health-program-run-by-owner-of-shuttered-trails-carolina/",
+    "title": "Asheville Watchdog",
+    "date": "2025-05",
+    "quote": "Solstice evolved into Magnolia Mill School between 2022 and 2024"
+   },
+   {
+    "url": "https://www.northcarolinahealthnews.org/2025/06/14/asheville-academy-trails-carolina-owner-faced-financial-upheaval-before-deaths/",
+    "title": "NC Health News",
+    "date": "2025-06-14",
+    "quote": "Asheville Academy voluntarily shut down May 31 after two girls ... died by suicide in May 2025 (search summary)"
+   }
+  ],
+  "notes": "The 2024 rename year is from a search summary (state records give 2022-2024). KOP has a separate Asheville Academy page.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "solstice-east",
+    "from": "2024-2025",
+    "to": "2012-2024"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-30",
+  "kind": "rename_end_year",
+  "title": "Stillwater Academy",
+  "place": "South Jordan, UT",
+  "facility_id": 100139,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Turnabout Academy opened in 1988 and was renamed Stillwater Academy in 2001 to avoid confusion with Turn-About Ranch; Stillwater is still open.",
+  "kop_now": "Status Open, from 1988; current operator none; past operators none; map: Stillwater Academy (from 1988), Turnabout Academy (from 1988).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/turnabout-stillwater-academy/",
+    "title": "Turnabout/Stillwater Academy",
+    "date": "",
+    "quote": "originally opened under the name 'Turnabout Academy', but its name was changed to 'Stillwater Academy' in 2001"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "turnabout-academy",
+    "from": "from 1988",
+    "to": "1988-2001"
+   },
+   {
+    "type": "map_years",
+    "node": "stillwater-academy",
+    "from": "from 1988",
+    "to": "from 2001"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-31",
+  "kind": "rename_end_year",
+  "title": "Mountain Springs Preparatory Academy",
+  "place": "Cedar City, UT",
+  "facility_id": 10483,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Academy at Cedar Mountain operated from 1999 until CERTS bought it in 2004 and renamed it Mountain Springs Preparatory Academy, which is still open.",
+  "kop_now": "Status Open, from 2004; current operator none; past operators none; company links: CERTS Group (current); map: Academy at Cedar Mountain (from 2004), Mountain Springs Preparatory Academy (from 2004).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/mountain-springs-preparatory-academy/",
+    "title": "Mountain Springs Preparatory Academy",
+    "date": "",
+    "quote": "originally founded under the name the Academy at Cedar Mountain, until it was purchased by CERTS in 2004 and the name was changed"
+   }
+  ],
+  "notes": "The quote gives the 2004 purchase; the 1999 opening is the researcher's, not quoted.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "academy-at-cedar-mountain",
+    "from": "from 2004",
+    "to": "1999-2004"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-32",
+  "kind": "rename_end_year",
+  "title": "Carolina Springs Academy",
+  "place": "Donalds, SC",
+  "facility_id": 13983,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Carolina Springs Academy opened in 1998 and lost its license in September 2009; the site reopened as Seneca Ranch (still running in 2013) until Palmetto Therapeutic Boarding School opened there in January 2017.",
+  "kop_now": "Status Closed, 1998-2009; current operator World Wide Association of Specialty Programs and Schools (WWASPS); past operators none; company links: World Wide Association of Specialty Programs and Schools (WWASPS) (current); map: Carolina Springs Academy (1998-2009), Seneca Ranch (1998-2009).",
+  "sources": [
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/carolina-springs-academy-seneca-ranch/",
+    "title": "Carolina Springs Academy / Seneca Ranch",
+    "date": "",
+    "quote": "License Revoked September 2009 ... As of 2013 currently operates under the name Seneca Ranch"
+   },
+   {
+    "url": "https://wwaspsurvivors.com/palmetto-therapeutic-boarding-school-now-open-at-former-carolina-springs-seneca-ranch-property/",
+    "title": "Palmetto now open at former Carolina Springs/Seneca Ranch",
+    "date": "2017-01-13",
+    "quote": "a school calling itself 'Palmetto Therapeutic Boarding School' has recently been opened in a South Carolina property formerly occupied by ... Carolina Springs Academy"
+   }
+  ],
+  "notes": "Survivor sites only; the 2016 end is inferred from Palmetto's opening, and other interim names (Magnolia Hills, Second Chance Ranch) exist.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "seneca-ranch",
+    "from": "1998-2009",
+    "to": "2009-2016"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-33",
+  "kind": "rename_end_year",
+  "title": "Old West Academy",
+  "place": "Randolph, UT",
+  "facility_id": 10375,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Majestic Ranch Academy (founded 1986) was renamed Old West Academy in 2007, and Old West closed in 2019.",
+  "kop_now": "Status Closed, 1986-2007; current operator World Wide Association of Specialty Programs and Schools (WWASPS); past operators none; company links: World Wide Association of Specialty Programs and Schools (WWASPS) (current); map: Majestic Ranch Academy (1986-2007), Old West Academy (1986-2007).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Old_West_Academy",
+    "title": "Old West Academy",
+    "date": "",
+    "quote": "Majestic Ranch Academy changed its name to Old West Academy in 2007 ... founded in 1986 and closed in 2019."
+   }
+  ],
+  "notes": "Wikipedia only (lead). The Majestic Ranch line keeps its years when the record's end year moves to 2019.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10375,
+    "path": "operatingPeriod.endYear",
+    "from": 2007,
+    "to": 2019
+   },
+   {
+    "type": "map_years",
+    "node": "old-west-academy",
+    "from": "1986-2007",
+    "to": "2007-2019"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-35",
+  "kind": "rename_end_year",
+  "title": "Hawk’s Landing Therapeutic Home for Boys",
+  "place": "Bonners Ferry, ID",
+  "facility_id": 9707,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Hawk's Landing was founded in 2006 as Schrom Therapeutic Home for Boys and renamed in 2018 when the founder retired; it is still open.",
+  "kop_now": "Status Open, from 2006; current operator none; past operators none; map: Schrom Boy's Home @ Hawk's Landing (from 2006), Schrom Boys' Home (from 2006), Hawk's Landing Therapeutic Home for Boys (from 2006).",
+  "sources": [
+   {
+    "url": "https://www.allkindsoftherapy.com/news/hawks-landing-celebrates-15-years-of-community-integration-for-teen-boys",
+    "title": "Hawks Landing celebrates 15 years",
+    "date": "2021",
+    "quote": "Originally established in 2006 as Schrom Therapeutic Home for Boys, the program was renamed in 2018 following the founder's retirement."
+   }
+  ],
+  "notes": "The interim name's own years are not separately sourced.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "schrom-boys-home",
+    "from": "from 2006",
+    "to": "2006-2018"
+   },
+   {
+    "type": "map_years",
+    "node": "schrom-boys-home-hawks-landing",
+    "from": "from 2006",
+    "to": "2006-2018"
+   },
+   {
+    "type": "map_years",
+    "node": "hawks-landing-therapeutic-home-for-boys",
+    "from": "from 2006",
+    "to": "from 2018"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-36",
+  "kind": "rename_end_year",
+  "title": "Telos Academy",
+  "place": "Orem, UT",
+  "facility_id": 10540,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Telos RTC opened in Orem in March 2004 and is still open; Telos Academy, its school, opened on September 25, 2014 at the same address. This is a school added, not a rename.",
+  "kop_now": "Status Open, from 2004; current operator none; past operators none; map: Telos RTC (from 2004), Telos Academy (from 2004).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/telos-rtc/",
+    "title": "Telos RTC",
+    "date": "",
+    "quote": "Telos RTC formed in March 2004 ... (2004-present)"
+   }
+  ],
+  "notes": "The 2014 date is from a search summary (Private School Review/IRS).",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "telos-academy",
+    "from": "from 2004",
+    "to": "from 2014"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-37",
+  "kind": "rename_end_year",
+  "title": "The Meadows Ranch",
+  "place": "Wickenburg, AZ",
+  "facility_id": 12304,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Remuda Ranch opened in 1990, The Meadows bought it in 2012, and in March 2018 it was renamed The Meadows Ranch, which has since closed.",
+  "kop_now": "Status Closed, 1990-2024; current operator none; past operators none; map: The Meadows Ranch (1990-2024), Remuda Ranch Programs for Anorexia and Bulimia (1990-2024).",
+  "sources": [
+   {
+    "url": "https://www.prweb.com/releases/remuda_ranch_at_the_meadows_becomes_the_meadows_ranch/prweb15293270.htm",
+    "title": "Remuda Ranch at The Meadows Becomes The Meadows Ranch",
+    "date": "2018-03",
+    "quote": "In March 2018, Remuda Ranch at The Meadows was renamed The Meadows Ranch."
+   }
+  ],
+  "notes": "KOP's 2024 closing year for The Meadows Ranch was not verified.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "remuda-ranch-programs-for-anorexia-and-bulimia",
+    "from": "1990-2024",
+    "to": "1990-2018"
+   },
+   {
+    "type": "map_years",
+    "node": "the-meadows-ranch",
+    "from": "1990-2024",
+    "to": "2018-2024"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-38",
+  "kind": "rename_end_year",
+  "title": "Youth Center at Beloit",
+  "place": "Beloit, KS",
+  "facility_id": 100143,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "The school opened in 1888 as the Kansas Industrial School for Girls, was renamed Youth Center at Beloit on July 1, 1974, and closed in August 2009.",
+  "kop_now": "Status Closed, 1888-2009; current operator Kansas Juvenile Justice Authority; past operators Women's Christian Temperance Union; State of Kansas; map: Youth Center at Beloit (1888-2009), Kansas Industrial School for GIrls (1888-2009).",
+  "sources": [
+   {
+    "url": "https://legendsofkansas.com/beloit-industrial-school-for-girls/",
+    "title": "State Industrial School for Girls, Beloit",
+    "date": "",
+    "quote": "The school's name was changed to the Youth Center at Beloit on July 1, 1974 (per Kansas Historical Society record, via search summary); active February 1, 1888 to August 28, 2009."
+   }
+  ],
+  "notes": "The rename date is a search summary of a Kansas Historical Society record. Wikipedia also gives a later name, Beloit Juvenile Correctional Facility.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "kansas-industrial-school-for-girls",
+    "from": "1888-2009",
+    "to": "1888-1974"
+   },
+   {
+    "type": "map_years",
+    "node": "youth-center-at-beloit",
+    "from": "1888-2009",
+    "to": "1974-2009"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-39",
+  "kind": "rename_end_year",
+  "title": "Havenwood North",
+  "place": "Enoch, UT",
+  "facility_id": 10364,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Zion Hills Academy (Enoch, UT) was founded about 2017 and rebranded as Havenwood North in August 2021; it is still open.",
+  "kop_now": "Status Open, from 2021; current operator Hope Group; past operators none; map: Zion HIlls Academy (from 2021), Havenwood North (from 2021).",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/havenwood-academy/",
+    "title": "Havenwood Academy",
+    "date": "",
+    "quote": "Zion Hills Academy is now called 'Havenwood North (HWN)' [rebranding August 2021]"
+   }
+  ],
+  "notes": "The 2017 founding is from nonprofit listings (EIN registered 2017), not a licensing record.",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "zion-hills-academy",
+    "from": "from 2021",
+    "to": "2017-2021"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-40",
+  "kind": "rename_end_year",
+  "title": "Pathway Family Center",
+  "place": "Milford, OH",
+  "facility_id": 100123,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Kids Helping Kids of Hebron, KY existed through the 1980s (later in Milford, OH); Pathway Family Center took it over in early 2006 as \"Kids Helping Kids, A Pathway Family Center\", which shut in late 2008. The Hebron name ends in 2006.",
+  "kop_now": "Status Closed, 2006-2008; current operator Pathway Family Center; past operators none; map: Kids Helping Kids of Hebron, KY (2006-2008), KHK a Pathway Family Center (2006-2008).",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/kids_helping_kids_-_straight_renamed",
+    "title": "Kids Helping Kids, A Pathway Family Center",
+    "date": "",
+    "quote": "In early 2006 ... Pathway Family Center acquired Kids Helping Kids ... The Cincinnati location shut down in late 2008."
+   }
+  ],
+  "notes": "Survivor site only. Likely the same organisation as map node kids-helping-kids (rename_end_year-27).",
+  "ops": [
+   {
+    "type": "map_years",
+    "node": "kids-helping-kids-of-hebron-ky",
+    "from": "2006-2008",
+    "to": "until 2006"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-41",
+  "kind": "rename_end_year",
+  "title": "Cross Creek Center",
+  "place": "La Verkin, UT",
+  "facility_id": 10372,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Cross Creek Programs (La Verkin) opened in 1988 as the girls' Cross Creek Manor; the boys' Cross Creek Center was added in the late 1990s and the program closed in 2011 or 2012.",
+  "kop_now": "Status Closed, 1988-2011; current operator World Wide Association of Specialty Programs and Schools (WWASPS); past operators none; company links: World Wide Association of Specialty Programs and Schools (WWASPS) (current); map: Red Rock Academy (1988-2011), Cross Creek Center for Boys (1988-2011).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Cross_Creek_Programs",
+    "title": "Cross Creek Programs",
+    "date": "",
+    "quote": "Cross Creek Center for boys was later added in the late 1990's ... operated from 1988 to 2011 [other sources: closed 2012]."
+   }
+  ],
+  "notes": "Wikipedia and WWASP Survivors only; the years Red Rock Academy used its name were not found.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "On the map, Cross Creek Center for Boys (cross-creek-center-for-boys) should start in the late 1990s, not 1988; the exact year was not found, so set it at KOP Tools > Map Years once known."
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-5",
+  "kind": "rename_end_year",
+  "title": "Cross Creek Programs",
+  "place": "La Verkin, UT",
+  "facility_id": 10420,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Cross Creek Programs (La Verkin, WWASP) ran from 1988 to 2012, not 1987-2011. Cross Creek Academy is the academic program's name, used alongside it, so both names share the span.",
+  "kop_now": "Status Closed, 1987-2011; current operator none; past operators none; map: Cross Creek Programs (1987-2011), Cross Creek Academy (1987-2011).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Cross_Creek_Programs",
+    "title": "Wikipedia, Cross Creek Programs",
+    "date": "",
+    "quote": "Cross Creek Academy and Browning Academy have been used as names for the academic program."
+   },
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/cross-creek-manorcenter/",
+    "title": "WWASP Survivors",
+    "date": "",
+    "quote": "established in 1988 and closed in 2012 (search summary)"
+   }
+  ],
+  "notes": "Wikipedia and survivor sites only (the 1988/2012 line is a search summary); confirm against Utah licensing.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10420,
+    "path": "operatingPeriod.startYear",
+    "from": 1987,
+    "to": 1988
+   },
+   {
+    "type": "field",
+    "facility_id": 10420,
+    "path": "operatingPeriod.endYear",
+    "from": 2011,
+    "to": 2012
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-6",
+  "kind": "rename_end_year",
+  "title": "Agape Baptist Academy",
+  "place": "Stockton, MO",
+  "facility_id": 11361,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Agape (Stockton, MO) ran from 1990 until it closed in January 2023. Agape Boarding School, Agape Boys Ranch and Agape Baptist Academy are names for one school, and no source dates a rename, so all three end in 2023, not 2003.",
+  "kop_now": "Status Closed, 1990-2003; current operator none; past operators none; map: Agape Boarding School (1990-2003), Agape Boys Ranch (1990-2003), Agape Baptist Academy (1990-2003).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Agape_Baptist_Academy",
+    "title": "Wikipedia",
+    "date": "",
+    "quote": "Agape Baptist Academy ... functioned from 1990 until 2023"
+   },
+   {
+    "url": "https://www.rollingstone.com/culture/culture-features/troubled-teen-industry-abuse-agape-school-1234645835/",
+    "title": "Rolling Stone",
+    "date": "",
+    "quote": "Agape closed in January [2023]"
+   }
+  ],
+  "notes": "The two \"rebranded\" map statuses are unsupported.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11361,
+    "path": "operatingPeriod.endYear",
+    "from": 2003,
+    "to": 2023
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-7",
+  "kind": "rename_end_year",
+  "title": "Hidden Lake Academy",
+  "place": "Dahlonega, GA",
+  "facility_id": 12539,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Hidden Lake Academy ran from 1994 and was renamed Ridge Creek School after its 2009 bankruptcy hearing; Ridge Creek closed in 2011.",
+  "kop_now": "Status Closed, from 1994; current operator none; past operators none; map: Hidden Lake Academy (from 1994), Ridge Creek School (from 1994).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Hidden_Lake_Academy",
+    "title": "Wikipedia",
+    "date": "",
+    "quote": "After the bankruptcy hearing, the school was renamed 'Ridge Creek School'. ... The school closed later that year [2011]."
+   },
+   {
+    "url": "https://jilliestake.blogspot.com/2011/07/news-flash-ridge-creek-school-is.html",
+    "title": "Jillie's Take",
+    "date": "2011-07",
+    "quote": "Ridge Creek School is closing"
+   }
+  ],
+  "notes": "The 2009 rename is from Wikipedia (lead); the 2011 closing is backed by a blog post.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12539,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2011
+   },
+   {
+    "type": "map_years",
+    "node": "hidden-lake-academy",
+    "from": "from 1994",
+    "to": "1994-2009"
+   },
+   {
+    "type": "map_years",
+    "node": "ridge-creek-school",
+    "from": "from 1994",
+    "to": "2009-2011"
+   }
+  ]
+ },
+ {
+  "key": "rename_end_year-8",
+  "kind": "rename_end_year",
+  "title": "West Ridge Academy",
+  "place": "West Jordan, UT",
+  "facility_id": 10579,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Utah Boys Ranch began in 1964; in early 2005 it opened facilities for girls and renamed itself West Ridge Academy, which closed on February 21, 2025.",
+  "kop_now": "Status Open, from 2005; current operator none; past operators none; map: West Ridge Academy (from 2005), Utah Boys Ranch (from 2005).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/West_Ridge_Academy",
+    "title": "Wikipedia",
+    "date": "",
+    "quote": "began in 1964 as the Utah Boys Ranch ... In early 2005, it opened new, separate facilities for girls and changed its name to West Ridge Academy."
+   }
+  ],
+  "notes": "Wikipedia only (lead), so confidence is lowered from the researcher's high; KOP still shows West Ridge as open.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10579,
+    "path": "operatingPeriod.status",
+    "from": "Open",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 10579,
+    "path": "operatingPeriod.startYear",
+    "from": 2005,
+    "to": 1964
+   },
+   {
+    "type": "field",
+    "facility_id": 10579,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2025
+   },
+   {
+    "type": "map_years",
+    "node": "utah-boys-ranch",
+    "from": "from 2005",
+    "to": "1964-2005"
+   },
+   {
+    "type": "map_years",
+    "node": "west-ridge-academy",
+    "from": "from 2005",
+    "to": "2005-2025"
+   },
+   {
+    "type": "note",
+    "facility_id": 10579,
+    "text": "West Ridge Academy closed on February 21, 2025."
+   }
+  ]
+ },
+ {
+  "key": "person_spelling-362",
+  "kind": "person_spelling",
+  "title": "Nick Hong / Nick Hung",
+  "place": "Marion, MT",
+  "facility_id": 12713,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "One person: Dr. Nicholas (Nick) Hong, PhD, clinical co-director at Montana Academy (Marion, MT). Woodbury's May 2009 issue misspelled him \"Nick Hung\"; Woodbury's August 2012 issue and his professional listings spell it Hong.",
+  "kop_now": "Two people at Montana Academy: Nick Hong (#1496, Clinical Director, 2012) and Nick Hung (#1502, Staff, 2009).",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0509.pdf#page=18",
+    "title": "Woodbury Reports #177, May 2009, p. 18",
+    "date": "2009-04-14",
+    "quote": "the following presenters: Dr. Nick Hung, PhD, from Montana Academy"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0812.pdf#page=5",
+    "title": "Woodbury Reports, August 2012, p. 5",
+    "date": "2012-08",
+    "quote": "The clinical department is led by two clinical directors, Tim Corson, PsyD, and Nick Hong, PhD."
+   },
+   {
+    "url": "https://doctor.webmd.com/doctor/nicholas-hong-006a29c3-179c-4c9b-9fe6-f52e7d6f0c48-overview",
+    "title": "Dr. Nicholas Hong, PhD, Psychologist (WebMD)",
+    "date": "accessed 2026-10-06",
+    "quote": "Dr. Hong works in Marion, MT and 1 other location ... Montana Academy Inc, 9705 Lost Prairie Rd, Marion, MT, 59925"
+   }
+  ],
+  "notes": "The 2009 role stays as a second role of #1496 after the merge.",
+  "ops": [
+   {
+    "type": "person_merge",
+    "keep": 1496,
+    "drop": 1502
+   }
+  ]
+ },
+ {
+  "key": "person_spelling-364",
+  "kind": "person_spelling",
+  "title": "Kelly Corey / Kelly Cole",
+  "place": "",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "One person: Kelly Corey, MSW, formerly of Provo Canyon School, who joined educational consultant Paula Feldman in 2009. Woodbury printed \"Kelly Cole\" in October 2009 and published a correction in November 2009.",
+  "kop_now": "Two people: Kelly Corey (#527) and Kelly Cole (#2229, a map node from the consultant records).",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1009.pdf",
+    "title": "Woodbury Reports, October 2009",
+    "date": "2009-10",
+    "quote": "announced Kelly Cole has joined her as an educational consultant. ... Prior to joining Paula, Kelly was the California Director at Provo Canyon School."
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf",
+    "title": "Woodbury Reports, November 2009",
+    "date": "2009-10-16",
+    "quote": "CORRECTION: KELLY COREY JOINS PAULA FELDMAN (October 16, 2009) We would like to make a correction from our October issue: Paula Feldman ... announced Kelly Corey has joined her as an educational consultant."
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0106.pdf#page=31",
+    "title": "Woodbury Reports #137, January 2006, p. 31",
+    "date": "2005-12-21",
+    "quote": "Kelly Corey, M.S.W., Regional Director of Business Development, Provo Canyon School, Orem, UT"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "person_merge",
+    "keep": 527,
+    "drop": 2229
+   },
+   {
+    "type": "manual",
+    "text": "Correct the educational consultant record that names \"Kelly Cole\" (from Woodbury's uncorrected October 2009 item) to Kelly Corey."
+   }
+  ]
+ },
+ {
+  "key": "person_spelling-366",
+  "kind": "person_spelling",
+  "title": "Greg Lindsey / Greg Lindsay",
+  "place": "",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "One person: Greg Lindsey, headmaster of Hidden Lake Academy (Dahlonega, GA) around 2001. StrugglingTeens' 2001 visit report spells it Lindsey; the board's \"Greg Lindsay\" is a misspelling.",
+  "kop_now": "Two people: Greg Lindsay (#2045, from the Miro board) and Greg Lindsey (#2046, from a staff list).",
+  "sources": [
+   {
+    "url": "https://www.strugglingteens.com/archives/2001/6/visit01.html",
+    "title": "School & Program Visits, 06/2001 - Hidden Lake Academy",
+    "date": "2001-06 (visit 2001-03-25)",
+    "quote": "My visit started with a school meeting in the gymnasium conducted by Headmaster, Greg Lindsey."
+   }
+  ],
+  "notes": "His NATSAP board role was not checked against a primary source.",
+  "ops": [
+   {
+    "type": "person_merge",
+    "keep": 2046,
+    "drop": 2045
+   }
+  ]
+ },
+ {
+  "key": "person_common-372",
+  "kind": "person_common",
+  "title": "Jennifer Jones",
+  "place": "",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Two people were probably merged by name. Jennifer Jones, a Layton, UT freelance writer and former TV news producer, did public relations for Oxbow Academy (2007) and media services for Discovery Academy (2009) under one phone number; \"Jenny Jones\" on HEAL's Aspen Ranch list is residential staff who came from Aspen Achievement Academy in 2007.",
+  "kop_now": "One person, Jennifer Jones (#181), named at Aspen Achievement Academy, Aspen Ranch, Oxbow Academy and Discovery Academy.",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=30",
+    "title": "Woodbury Reports #161, January 2008, p. 30",
+    "date": "2007-12-07",
+    "quote": "Jennifer Jones, Public Relations, Oxbow Academy, Wales, UT, 801-682-2315"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1109.pdf#page=14",
+    "title": "Woodbury Reports #183, November 2009, p. 14",
+    "date": "2009-10-09",
+    "quote": "Jennifer Jones, Media Services at Discovery Academy in Provo, UT, 801-682-2315"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf",
+    "title": "Woodbury Reports #155, July 2007",
+    "date": "2007-07",
+    "quote": "Jennifer Jones is freelance writer who resides in Layton, Utah. A former television news producer ... RedCliff Ascent hired Jones to research and write this article."
+   },
+   {
+    "url": "https://web.archive.org/web/20250829065303/https://www.heal-online.org/aspenrch.html",
+    "title": "HEAL, Aspen Ranch staff list (archived)",
+    "date": "archived 2025-08-29",
+    "quote": "Jenny Jones | Residential | Formerly worked at Aspen Achievement Academy. Joined Aspen Ranch in 2007. Jones no longer appears to be with Aspen Ranch."
+   }
+  ],
+  "notes": "No source says they are the same or different; the name is common.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Split Jenny Jones off person #181 at KOP Tools > People for records 10347 (Aspen Ranch) and 10389 (Aspen Achievement Academy); #181 keeps Oxbow Academy (10336), Discovery Academy (10333) and the map node, and the alias \"Jenny Jones\" moves with the split."
+   }
+  ]
+ },
+ {
+  "key": "person_common-384",
+  "kind": "person_common",
+  "title": "Glenn F. Bender",
+  "place": "",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "One person with the wrong years: Glenn F. Bender was the admissions contact at Academy at Swift River when it opened in 1997, Director of Admissions at Alldredge Academy by 1999, then Dean of Academics at Carlbrook School until he retired in 2012. The 2022 and 2025-2026 dates are a lawsuit's and an archive's dates.",
+  "kop_now": "Glenn F. Bender (#1084) is listed as Admissions Director at Academy at Swift River (2025-2026, HEAL) and Director of Admissions and Marketing at Alldredge Wilderness Journey (2022, HEAL).",
+  "sources": [
+   {
+    "url": "https://www.strugglingteens.com/archives/1997/12/np01.html",
+    "title": "New Perspectives, 12/1997 - Academy At Swift River",
+    "date": "1997-12",
+    "quote": "ACADEMY AT SWIFT RIVER Cummington, Massachusetts Glen Bender, Admissions 800-258-1770"
+   },
+   {
+    "url": "https://strugglingteens.com/archives/1999/12/np01.html",
+    "title": "New Perspectives, 12/1999 - Alldredge Academy",
+    "date": "1999-12",
+    "quote": "Glenn F. Bender, Director of Admissions"
+   },
+   {
+    "url": "https://strugglingteens.com/artman/publish/printer_CarlbrookSchoolBN_120814.shtml",
+    "title": "Bender Retires From Carlbrook School",
+    "date": "2012-08-10",
+    "quote": "[career schools named: Rocky Mountain Academy, Cascade School, Blue Ridge School, Academy at Swift River; Dean of Academics and founding board member at Carlbrook] (paraphrased by the fetch tool)"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0912.pdf#page=10",
+    "title": "Woodbury Reports, September 2012, p. 10",
+    "date": "2012-09",
+    "quote": "announce the future retirement of Dr. Glenn Bender, our Dean of Academics and founding member of the Carlbrook School Board of Regents"
+   },
+   {
+    "url": "https://web.archive.org/web/20250712041947/https://heal-online.org/carlbrook.html",
+    "title": "HEAL, Carlbrook staff list (archived)",
+    "date": "archived 2025-07-12",
+    "quote": "Glenn F. Bender | Dean of Academics (Former) | Formerly worked at confirmedly abusive Academy at Swift River (an Aspen Education Group program) and Blue Ridge School in VA. Also formerly with The Cascade School in California and Rocky Mountain Academy."
+   }
+  ],
+  "notes": "His Academy at Ivy Ridge role comes only from the r/troubledteens wiki and is unconfirmed.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "On Academy at Swift River (record 11977), change Glenn F. Bender's staff role \"Admissions Director (2025-2026, HEAL), left\" to \"Admissions (1997, StrugglingTeens)\"."
+   },
+   {
+    "type": "manual",
+    "text": "On Alldredge Wilderness Journey (record 14017), change Glenn F. Bender's staff role \"Director of Admissions and Marketing (2022, HEAL)\" to \"Director of Admissions (1999, StrugglingTeens)\"."
+   }
+  ]
+ },
+ {
+  "key": "transferred-9650",
+  "kind": "transferred",
+  "title": "Three Springs of Marion",
+  "place": "Ocala, FL",
+  "facility_id": 9650,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "No source was found on Three Springs of Marion after 2010, so who runs it now, if anyone, is unknown.",
+  "kop_now": "Status Transferred, 2007-2010; current operator Youth Opportunity Investments; past operators none; company links: Three Springs Inc. (current).",
+  "sources": [],
+  "notes": "",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "No source was found on who runs Three Springs of Marion (Ocala, 2007-2010) now or whether it closed, and its current operator \"Youth Opportunity Investments\" is unsourced. Find what the Ocala program became (Florida DJJ records), then set record 9650 to status Open with Three Springs Inc. (company #24) as past, or Closed with end year 2010."
+   }
+  ]
+ },
+ {
+  "key": "transferred-9653",
+  "kind": "transferred",
+  "title": "Three Springs of Osceola",
+  "place": "Kissimmee, FL",
+  "facility_id": 9653,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "No source was found on Three Springs of Osceola (Kissimmee, 2002-2009). Sequel TSI of Kissimmee ran from 2009 to 2016, and KOP's record for it names Three Springs of Osceola as an other name.",
+  "kop_now": "Status Transferred, 2002-2009; current operator Youth Opportunity Investments; past operators none; company links: Three Springs Inc. (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sequel_Youth_and_Family_Services",
+    "title": "Sequel Youth and Family Services (lead)",
+    "date": "2026",
+    "quote": "Sequel TSI of Kissimmee - Closed 2009-2016"
+   }
+  ],
+  "notes": "Wikipedia only (lead).",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 at KOP Tools > Merge Duplicates, or find what became of it and set status Closed (2009) or Open."
+   }
+  ]
+ },
+ {
+  "key": "transferred-9657",
+  "kind": "transferred",
+  "title": "Three Springs School of Tuskegee",
+  "place": "Tuskegee, AL",
+  "facility_id": 9657,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Three Springs School of Tuskegee became Sequel TSI of Tuskegee after Sequel bought Three Springs in 2009, then Brighter Path Tuskegee under Vivant Behavioral Healthcare, which listings still showed as operating in 2021-22. The 2009 end year marks only the Three Springs years.",
+  "kop_now": "Status Transferred, 2001-2009; current operator Alabama Department of Human Resources; past operators none; company links: Three Springs Inc. (current).",
+  "sources": [
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Sequel closes many operations and sells others",
+    "date": "2022-04-26",
+    "quote": "the company has shut down close to half of its treatment centers and sold most of the rest to a new company called Vivant Behavioral Healthcare"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Sequel_Youth_and_Family_Services",
+    "title": "Sequel Youth and Family Services (lead)",
+    "date": "2026",
+    "quote": "Sequel TSI of Tuskegee, Tuskegee - Operating (2021)"
+   }
+  ],
+  "notes": "Wikipedia is a lead only; no 2026 source shows it running, so status is left for the merge.",
+  "ops": [
+   {
+    "type": "operator_link",
+    "facility_id": 9657,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9657,
+    "path": "identification.pastOperators",
+    "value": "Three Springs Inc. (2001-2009)"
+   },
+   {
+    "type": "note",
+    "facility_id": 9657,
+    "text": "Three Springs School of Tuskegee became Sequel TSI of Tuskegee after Sequel bought Three Springs in 2009, then Brighter Path Tuskegee under Vivant Behavioral Healthcare."
+   },
+   {
+    "type": "manual",
+    "text": "Brighter Path Tuskegee (13641) and Sequel TSI of Tuskegee (100078) are this program's later names: merge 9657 and 100078 into 13641 at KOP Tools > Merge Duplicates, and confirm it still runs (latest source 2021-22) before setting status Open; the current operator \"Alabama Department of Human Resources\" is a placing agency, not the operator."
+   }
+  ]
+ },
+ {
+  "key": "transferred-10348",
+  "kind": "transferred",
+  "title": "Island View RTC",
+  "place": "Syracuse, UT",
+  "facility_id": 10348,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Island View RTC (Syracuse, UT) was sold by Aspen in April 2014 and renamed Elevations RTC, which KOP already holds as its own record (10356) naming Island View RTC as its past name.",
+  "kop_now": "Status Transferred, 1994-2014; current operator Aspen Education Group; past operators none; company links: Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "title": "Aspen Education Group (lead)",
+    "date": "n.d.",
+    "quote": "Youth Care of Utah was part of the Aspen Education Group portfolio (search-result paraphrase)."
+   },
+   {
+    "url": "https://www.acadiahealthcare.com/locations/youth-care-treatment-center/",
+    "title": "Youth Care Treatment Center - Acadia",
+    "date": "current",
+    "quote": "Just south of Salt Lake City in Draper, Youth Care Treatment Center is Utah's leading provider of life-changing residential and outpatient treatment for adolescents and teens"
+   }
+  ],
+  "notes": "The April 2014 sale is from the research notes on Youth Care of Utah, not a quoted source; the sources listed are about Aspen and Youth Care.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Elevations RTC (record 10356, Family Help & Wellness) lists Island View RTC as its past name: Aspen's Island View was sold in April 2014 and renamed Elevations RTC. Merge 10348 into 10356 at KOP Tools > Merge Duplicates; if they are kept apart, set 10348 to status Open with Family Help & Wellness current and Aspen Education Group (company #7) past."
+   }
+  ]
+ },
+ {
+  "key": "transferred-11091",
+  "kind": "transferred",
+  "title": "Alachua Academy",
+  "place": "Gainesville, FL",
+  "facility_id": 11091,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Alachua Academy still runs in Gainesville under Rite of Passage, Inc., after Wayne Halfway House (a Sequel, then Vivant, company) ran it from 2016. The 2016-2022 years describe only the earlier operator.",
+  "kop_now": "Status Transferred, 2016-2022; current operator Wayne Halfway House; past operators none; company links: Sequel TSI (current), Vivant Behavioral Health (current), Wayne Halfway House (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   },
+   {
+    "url": "https://www.djj.state.fl.us/research/standardized-program-evaluation-protocol-spep/residential-spep-reports-closed-programs",
+    "title": "DJJ SPEP closed programs",
+    "date": "2026",
+    "quote": "programs that were closed subsequent to the FY 2021-22 reviews or were operated by a different provider than is currently providing services"
+   }
+  ],
+  "notes": "The year Rite of Passage took over (2022-2024) was not pinned; DJJ reviews list Wayne through FY 2023-24.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11091,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 11091,
+    "path": "operatingPeriod.endYear",
+    "from": 2022,
+    "to": null
+   },
+   {
+    "type": "field",
+    "facility_id": 11091,
+    "path": "identification.currentOperator",
+    "from": "Wayne Halfway House",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11091,
+    "path": "identification.pastOperators",
+    "value": "Wayne Halfway House (from 2016)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11091,
+    "operator_id": 27,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11091,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11091,
+    "operator_id": 26,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11091,
+    "operator_id": 18,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 11091,
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Alachua Academy (October 2026), after Wayne Halfway House (Sequel, then Vivant) ran it from 2016."
+   }
+  ]
+ },
+ {
+  "key": "transferred-11094",
+  "kind": "transferred",
+  "title": "Duval Academy",
+  "place": "Jacksonville, FL",
+  "facility_id": 11094,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Duval Academy still runs in Jacksonville under Rite of Passage, Inc., after Sequel's Wayne Halfway House (later Vivant) ran it from 2016. The 2016-2022 years describe only the earlier operator.",
+  "kop_now": "Status Transferred, 2016-2022; current operator Sequel TSI; past operators none; company links: Sequel TSI (current), Wayne Halfway House (current).",
+  "sources": [
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   },
+   {
+    "url": "https://www.djj.state.fl.us/research/standardized-program-evaluation-protocol-spep/residential-spep-reports-closed-programs",
+    "title": "DJJ SPEP closed programs",
+    "date": "2026",
+    "quote": "programs that were closed subsequent to the FY 2021-22 reviews or were operated by a different provider than is currently providing services"
+   }
+  ],
+  "notes": "The year Rite of Passage took over (2022-2024) was not pinned.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11094,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 11094,
+    "path": "operatingPeriod.endYear",
+    "from": 2022,
+    "to": null
+   },
+   {
+    "type": "field",
+    "facility_id": 11094,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11094,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (from 2016)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11094,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11094,
+    "operator_id": 27,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11094,
+    "operator_id": 18,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 11094,
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Duval Academy (October 2026), after Sequel's Wayne Halfway House ran it from 2016."
+   }
+  ]
+ },
+ {
+  "key": "transferred-11103",
+  "kind": "transferred",
+  "title": "Fort Myers Academy",
+  "place": "Fort Myers, FL",
+  "facility_id": 11103,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "TrueCore Behavioral Solutions ended its Fort Myers Academy contract on August 31, 2022, and Florida DJJ now lists Rite of Passage, Inc. as the provider. The program runs on under a new company.",
+  "kop_now": "Status Transferred, no years; current operator TrueCore Behavioral Solutions; past operators none; company links: TrueCore Behavioral Solutions (current).",
+  "sources": [
+   {
+    "url": "https://www.tampabay28.com/news/local-news/i-team-investigates/florida-youth-detention-contractor-will-no-longer-operate-four-youth-facilities",
+    "title": "TrueCore will no longer operate four youth facilities",
+    "date": "2022-08",
+    "quote": "Hillsborough Girls Academy, Polk Halfway House, Fort Myers Academy, Orange Youth Academy/Orlando Intensive Youth Academy; termination Aug 31; DJJ working to reassign contracts"
+   },
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11103,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 11103,
+    "path": "identification.currentOperator",
+    "from": "TrueCore Behavioral Solutions",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11103,
+    "path": "identification.pastOperators",
+    "value": "TrueCore Behavioral Solutions (until 2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11103,
+    "operator_id": 23,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11103,
+    "operator_id": 18,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "note",
+    "facility_id": 11103,
+    "text": "TrueCore Behavioral Solutions ended its Fort Myers Academy contract on August 31, 2022; Florida DJJ now lists Rite of Passage, Inc. as the provider."
+   }
+  ]
+ },
+ {
+  "key": "transferred-11110",
+  "kind": "transferred",
+  "title": "Orange Youth Academy",
+  "place": "Orlando, FL",
+  "facility_id": 11110,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Orange Youth Academy was among the TrueCore contracts ended on August 31, 2022, and Florida DJJ now lists Youth Opportunity Investments, LLC as its provider.",
+  "kop_now": "Status Transferred, no years; current operator TrueCore Behavioral Solutions; past operators none; company links: TrueCore Behavioral Solutions (current), Youth Opportunity Investments (current).",
+  "sources": [
+   {
+    "url": "https://www.tampabay28.com/news/local-news/i-team-investigates/florida-youth-detention-contractor-will-no-longer-operate-four-youth-facilities",
+    "title": "TrueCore will no longer operate four youth facilities",
+    "date": "2022-08",
+    "quote": "Hillsborough Girls Academy, Polk Halfway House, Fort Myers Academy, Orange Youth Academy/Orlando Intensive Youth Academy; termination Aug 31; DJJ working to reassign contracts"
+   },
+   {
+    "url": "https://www.djj.state.fl.us/programs-facilities/residential-facilities",
+    "title": "Florida DJJ Residential Facilities",
+    "date": "2026-10",
+    "quote": "Provider listings (Rite of Passage, Inc.; Youth Opportunity Investments, LLC) per facility"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11110,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 11110,
+    "path": "identification.currentOperator",
+    "from": "TrueCore Behavioral Solutions",
+    "to": "Youth Opportunity Investments"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 11110,
+    "path": "identification.pastOperators",
+    "value": "TrueCore Behavioral Solutions (until 2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11110,
+    "operator_id": 23,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 11110,
+    "text": "TrueCore Behavioral Solutions ended its Orange Youth Academy contract on August 31, 2022; Florida DJJ now lists Youth Opportunity Investments, LLC as the provider."
+   }
+  ]
+ },
+ {
+  "key": "transferred-11131",
+  "kind": "transferred",
+  "title": "Bartow Youth Training Center",
+  "place": "Bartow, FL",
+  "facility_id": 11131,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Bartow Youth Training Center is most likely the Polk County Youth Training Center run by Correctional Services Corporation, later part of YSI; no source says who took it over or when it closed.",
+  "kop_now": "Status Transferred, 1995-1999; current operator AMIkids; past operators none; company links: Youth Services International (current), Correctional Services Corporation (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Correctional_Services_Corporation",
+    "title": "Correctional Services Corporation",
+    "date": "2026",
+    "quote": "In August 1998 CSC announced that the American Correctional Association had accredited two large CSC facilities in Florida: the Pahokee Youth Training Center and the Polk County Youth Training Center, each with 350 secured beds. (as relayed by search summary)"
+   }
+  ],
+  "notes": "The identification with Polk County YTC is an inference.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Who took over Bartow Youth Training Center (probably the 350-bed Polk County Youth Training Center CSC ran) and when it closed was not found, and its years disagree (1995-1999 vs 1999-2004 in the years text); the current operator \"AMIkids\" is unsourced. Search Tampa Bay Times and Florida DJJ archives, then set record 11131 to status Open with the new company or Closed with its end year."
+   }
+  ]
+ },
+ {
+  "key": "transferred-12155",
+  "kind": "transferred",
+  "title": "Copper Canyon Academy",
+  "place": "Rimrock, AZ",
+  "facility_id": 12155,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Aspen ran Copper Canyon Academy until April 7, 2014; Family Help & Wellness opened Sedona Sky Academy on the same site on April 23, 2014, and Sedona Sky closed in early 2025. Nobody runs the program now, so status Open does not fit.",
+  "kop_now": "Status Transferred, 1998-2014; current operator Aspen Education Group; past operators none; company links: Aspen Education Group (current).",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sedona_Sky_Academy",
+    "title": "Sedona Sky Academy (Wikipedia, lead)",
+    "date": "n.d.",
+    "quote": "Tammy Behrmann and Darren Prince, in association with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014, under the legal business name of Lake Montezuma RTC, LLC."
+   }
+  ],
+  "notes": "Wikipedia only (lead).",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Copper Canyon Academy (Aspen, until April 7, 2014) is the earlier program on the Rimrock site where Family Help & Wellness opened Sedona Sky Academy on April 23, 2014; Sedona Sky's record (12161) lists Copper Canyon Academy as its past name. Merge 12155 into 12161 at KOP Tools > Merge Duplicates, or, if they stay separate programs, set 12155 to Closed (end year 2014)."
+   }
+  ]
+ },
+ {
+  "key": "transferred-100003",
+  "kind": "transferred",
+  "title": "Bell County Juvenile Facility/ Bell County Youth Training Center",
+  "place": "Killeen, TX",
+  "facility_id": 100003,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Bell County's juvenile facility in Killeen is county-run today, but nothing was found on the 1999 private operator or on a \"Bell County Youth Training Center\" under that name.",
+  "kop_now": "Status Transferred, from 1999; current operator Bell County Juvenile Probation Department; past operators none; company links: Youth Services International (current), Correctional Services Corporation (current).",
+  "sources": [
+   {
+    "url": "https://www.bellcountytx.com/departments/juvenile_probation/index.php",
+    "title": "Bell County Juvenile Services",
+    "date": "2026",
+    "quote": "In 1996, Bell County purchased the property at 4800 East Rancier, Killeen (search summary)"
+   }
+  ],
+  "notes": "The county quote is a search summary.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Bell County bought the Killeen site (4800 E Rancier) in 1996 and runs its Juvenile Services Center there, but no source shows the 1999 private operator or that this is the same facility; confirm, then set record 100003 to status Open with Bell County Juvenile Probation Department current and YSI/CSC (companies #30, #31) past."
+   }
+  ]
+ },
+ {
+  "key": "spot-oakley-10349",
+  "kind": "end_before_items",
+  "title": "Oakley School",
+  "place": "Oakley, UT",
+  "facility_id": 10349,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "The Oakley School announced in April 2017 that it would close; its 26 students could stay until June 30, 2017. Nothing happened in 2007: Aspen bought the school in 2004 and it was still listed in Woodbury Reports in 2013.",
+  "kop_now": "Closed in 2007 (the record's own years-of-operation field already says 1998-2017).",
+  "sources": [
+   {
+    "url": "https://www.parkrecord.com/2017/04/21/the-oakley-school-announces-closing/",
+    "title": "The Oakley School announces closing",
+    "date": "2017-04-21",
+    "quote": "students will be able to stay on campus until June 30, 2017"
+   },
+   {
+    "url": "https://www.kpcw.org/local-news/2017-04-21/oakley-school-closes-doors",
+    "title": "Oakley School Closes Doors",
+    "date": "2017-04-21",
+    "quote": ""
+   }
+  ],
+  "notes": "Quotes from search-result text; the Park Record page was not opened in full.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10349,
+    "path": "operatingPeriod.endYear",
+    "from": 2007,
+    "to": 2017
+   },
+   {
+    "type": "map_years",
+    "node": "the-oakley-school",
+    "from": "1998-2007",
+    "to": "1998-2017"
+   },
+   {
+    "type": "note",
+    "facility_id": 10349,
+    "text": "The Oakley School announced its closing in April 2017; students could stay until June 30, 2017."
+   }
+  ]
+ }
+]

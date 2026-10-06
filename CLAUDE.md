@@ -141,6 +141,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php 
 # deaths, approved findings, incidents, staff); an entry about an earlier name gets only its own years, never today's status
 php -d extension=pdo_sqlite -d extension=mbstring scripts/wiki-gaps.php [--id=471] [--list]   # -> tmp/wiki-updates/{links.json,gaps/<id>.json,report.md}
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php                 # helpers, matching, gaps on real entries
+# Data audit (docs/PLAN.md 3.13): flag data outside sources should check (renamed programs ending with their earlier name, status vs
+# years, operators after a sale, one person under two spellings, memorials) -> tmp/data-audit/; research agents per tmp/data-audit/INSTRUCTIONS.md;
+# typed proposals in js/data/data-audit/proposals.json, reviewed at Review inbox > Data audit (inc/data-audit.php: every "from" checked, exact Undo)
+python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
 # Drafts (tmp/wiki-updates/drafts/<id>/, written by a Haiku/Sonnet/Opus workflow, assembled by scripts/wiki-drafts.py) are reviewed at
 # Review inbox > Wiki updates (inc/wiki-update-drafts.php): export ships only the ops, the site applies them to the entry's text as it is
 # now; Approve writes KOP's copy (exact Undo), then Ready for Reddit has the whole text with Copy and Reddit's edit link

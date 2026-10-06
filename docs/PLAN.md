@@ -1411,3 +1411,51 @@ the no-deletion diff, approve and exact Undo on an in-memory copy) and the
 existing `scripts/test-wiki-contact.php`.
 
 ---
+
+### 3.13 Data audit against outside sources (2026-10-06)
+
+The wiki pilot (3.12) turned up wrong KOP data: Oakley School closed in
+2017, not 2007; Turn-About Ranch was never Acadia's; Clark Harman died on
+Feb 3, 2024, of asphyxia, not on Feb 1 in a restraint; Kelly Cole is Kelly
+Corey misspelled. `scripts/data-audit.py` (offline, tmp/prod.sqlite + the map)
+flags the patterns behind them: a renamed program's name ending the year its
+earlier name did, an end year with Woodbury issues naming the program later,
+status and years that disagree, closures confirmed from an order, operator
+lines the record never names, a current operator that bought a past one (the
+program may have been sold off first), two people one or two letters apart at
+one program, one person id on 5+ programs, and every memorial entry.
+`tmp/data-audit/{flags.json,report.md}`; research instructions in
+`tmp/data-audit/INSTRUCTIONS.md`, results per flag in `tmp/data-audit/results/`.
+
+Round 1 (2026-10-06): 134 flags researched (renames, status, operators,
+people): 88 KOP wrong or partly wrong, 31 right, 16 unsure. Turned into 103
+typed proposals in `js/data/data-audit/proposals.json` (field, past operator,
+note, map years, company link current/past/removed, person merge, by hand),
+each "from" checked against the mirror. Reviewed in the review inbox, queue
+**Data audit** (`inc/data-audit.php`, `inc/review-inbox/data-audit.php`):
+Approve checks every "from" first and changes nothing when the record moved
+since; Undo puts back exactly what it changed. Map years go over Map Years and
+Map Renames (option `kop_data_audit_map_years`). Test:
+`scripts/test-review-inbox.php --source=data-audit`.
+
+Owner decision 2026-10-06: a program running under a new company is **Open**
+on its record; "Transferred" shows only on the page of the company it left
+(its link in `kop_operator_facilities` is `past`; `kop_operator_program_status()`
+in `inc/operator-pages.php`). The 29 records still saying Transferred are in
+the queue as `transferred-<id>`.
+
+Open:
+1. **Owner:** work through the Data audit queue (30 high confidence, the
+   "approve every high-confidence correction" tool skips any with a by-hand
+   step). By-hand steps it lists: split Jenny Jones off person #181, two Glenn
+   Bender role dates, the Kelly Cole consultant record, map line p0439
+   (Wayne Halfway House -> Jacksonville Youth Academy) in
+   `network-overrides.json`, several record merges (Timberline into Daytona,
+   Island View into Elevations, Three Springs campuses into their successors).
+2. Round 2: the 230 memorial entries (Opus; Clark Harman's date and cause are
+   already known wrong; needs a `memorial` op type over `memorial_victims`) and
+   the 31 programs with Woodbury issues after their end year.
+3. Turn-About Ranch's current operator: confirm the 2014 employee buyer
+   (reported as Escalante RTC, LLC) before replacing "Acadia HealthCare".
+
+---

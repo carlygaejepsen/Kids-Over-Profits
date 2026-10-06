@@ -177,6 +177,8 @@ require_once get_stylesheet_directory() . '/inc/state-lists.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-mentions.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-create.php';
 require_once get_stylesheet_directory() . '/inc/woodbury-facts.php';
+// Corrections found by checking KOP's data against outside sources (scripts/data-audit.py), approved in the review inbox
+require_once get_stylesheet_directory() . '/inc/data-audit.php';
 // Move or remove a document from the page it shows on (the document tile's pencil)
 require_once get_stylesheet_directory() . '/inc/doc-placement.php';
 // Links from the owner's Google Docs and Sheets (scripts/gdocs-extract.py), reviewed at KOP Tools > Drive Docs

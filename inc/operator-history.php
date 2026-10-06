@@ -488,11 +488,14 @@ if (!function_exists('kop_operator_history_index_rows')) {
         $facilities = array();
         if (kop_facility_pages_table_exists($ofc)) {
             $rows = $wpdb->get_results(
-                "SELECT DISTINCT ofc.operator_id, f.id, f.state, f.country, f.status, f.start_year, f.end_year
+                "SELECT DISTINCT ofc.operator_id, f.id, f.state, f.country, f.status, f.start_year, f.end_year, ofc.relationship
                    FROM `{$ofc}` ofc JOIN facilities_v2 f ON f.id = ofc.facility_id",
                 ARRAY_A
             );
-            foreach ((array) $rows as $r) $facilities[(int) $r['operator_id']][(int) $r['id']] = $r;
+            foreach ((array) $rows as $r) {
+                $r['status'] = kop_operator_program_status((string) $r['status'], (string) $r['relationship']);
+                $facilities[(int) $r['operator_id']][(int) $r['id']] = $r;
+            }
         }
 
         $out = array();

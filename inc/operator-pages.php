@@ -264,6 +264,21 @@ if (!function_exists('kop_operator_pages_robots')) {
 // Index
 // ---------------------------------------------------------------------------
 
+if (!function_exists('kop_operator_program_status')) {
+    /**
+     * A program's status as one company's page shows it. A program still
+     * running under a later company is Open on its own record, and
+     * "Transferred" on the page of a company it left (its link is 'past');
+     * the owner's rule of 2026-10-06. A record still saying Transferred (from
+     * before the rule; the data audit moves them to Open) shows as it says.
+     */
+    function kop_operator_program_status($status, $relationship) {
+        $status = trim((string) $status);
+        if ($relationship === 'past' && strcasecmp($status, 'Open') === 0) return 'Transferred';
+        return $status;
+    }
+}
+
 if (!function_exists('kop_operator_pages_decode')) {
     /** The operator block of a kop_operators row's json_data, or array(). */
     function kop_operator_pages_decode($json) {
@@ -592,10 +607,10 @@ if (!function_exists('kop_operator_page_data')) {
         $open = 0;
         if (kop_facility_pages_table_exists($ofc)) {
             $frows = $wpdb->get_results(
-                "SELECT DISTINCT f.id, f.name, f.city, f.state, f.country, f.status, f.start_year, f.end_year, f.json_data
+                "SELECT DISTINCT f.id, f.name, f.city, f.state, f.country, f.status, f.start_year, f.end_year, f.json_data, ofc.relationship
                    FROM `{$ofc}` ofc JOIN facilities_v2 f ON f.id = ofc.facility_id
                   WHERE ofc.operator_id IN ({$in})
-                  ORDER BY f.name, f.id",
+                  ORDER BY f.name, f.id, CASE WHEN ofc.relationship = 'past' THEN 1 ELSE 0 END",
                 ARRAY_A
             );
             $founded_year = preg_match('/\b(1[89]\d\d|20\d\d)\b/', (string) ($op['founded'] ?? ''), $fy) ? (int) $fy[1] : 0;
@@ -619,7 +634,7 @@ if (!function_exists('kop_operator_page_data')) {
                 $place = trim(($r['city'] ? $r['city'] . ', ' : '') . ($state !== '' ? $state : ($country !== '' && $country !== 'United States' ? $country : '')), ', ');
                 if ($state !== '') $states[$state] = true;
                 elseif ($country !== '' && $country !== 'United States') $states[$country] = true;
-                $fstatus = trim((string) $r['status']);
+                $fstatus = kop_operator_program_status((string) $r['status'], (string) ($r['relationship'] ?? ''));
                 if (strcasecmp($fstatus, 'Open') === 0) $open++;
                 $years = '';
                 if ($r['start_year'] || $r['end_year']) {
