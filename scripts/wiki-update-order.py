@@ -51,7 +51,7 @@ def main():
         status = ((d.get('record') or {}).get('status') or '').lower()
         if closed:
             tier, key = 1, -int(closed[0])
-        elif status == 'open' and s > 0:
+        elif status == 'open' and 'present' in (d['entry'].get('years') or '').lower() and s > 0:
             tier, key = 2, -s
         elif s > 0:
             tier, key = 3, -s

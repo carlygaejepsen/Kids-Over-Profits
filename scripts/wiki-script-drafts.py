@@ -16,6 +16,7 @@ and "kop_record": true; one from a Woodbury issue or a court filing cites it.
 
     python scripts/wiki-script-drafts.py <ids...>
 """
+import csv
 import json
 import os
 import re
@@ -114,12 +115,48 @@ def heading_text(h):
     return re.sub(r'[#*]+', '', h).strip()
 
 
-def staff_line(g, program, closed):
+def staff_places():
+    """name (lower case) -> the programs the network map's staff list puts the person at."""
+    out = {}
+    path = os.path.join(ROOT, 'js', 'data', 'network', 'staff-list.csv')
+    if os.path.exists(path):
+        for row in csv.reader(open(path, encoding='utf-8')):
+            if len(row) > 1:
+                out.setdefault(row[0].strip().lower(), []).append(row[1].strip())
+    return out
+
+
+STAFF_PLACES = staff_places()
+
+
+def record_names(record_id):
+    """The record's past and other names (tmp/prod.sqlite), without their years."""
+    try:
+        import sqlite3
+        con = sqlite3.connect(os.path.join(ROOT, 'tmp', 'prod.sqlite'))
+        row = con.execute('SELECT json_data FROM facilities_v2 WHERE id = ?', (record_id,)).fetchone()
+        ident = json.loads(row[0]).get('identification') or {}
+    except Exception:
+        return []
+    names = (ident.get('pastNames') or []) + (ident.get('otherNames') or [])
+    return [re.sub(r'\s*\(\d{4}.*$', '', n).strip() for n in names if isinstance(n, str) and n.strip()]
+
+
+def staff_line(g, program, closed, earlier_names=()):
+    """One staff line. Always "was": KOP's lists do not say whether someone still holds the job. A record that holds an
+    earlier name keeps that name's staff too, so when the network map's staff list puts the person at one of the record's
+    earlier names and not at the entry's program (Dan Dekker at Integrity House, on the Havenwood entry), the line names
+    the earlier program."""
     d = g.get('detail') or {}
     name = re.sub(r'\s*\(.*\)$', '', g['text']).strip()
+    places = STAFF_PLACES.get(name.lower(), [])
+    if places and program.lower() not in [p.lower() for p in places]:
+        earlier = [p for p in places if p.lower() in [n.lower() for n in earlier_names]]
+        if earlier:
+            program = earlier[0]
     role = re.sub(r'\s*\((\d{4}).*$', '', (d.get('role') or '').strip()) or 'staff member'
     years = re.search(r'\((\d{4}(?:-\d{4})?)', d.get('role') or '')
-    verb = 'was' if closed or 'left' in (d.get('role') or '') or years else 'has been'
+    verb = 'was'
     art = '' if re.match(r'(?i)(the|a|an)\b', role) else ('an ' if role[:1].lower() in 'aeiou' else 'the ')
     s = f'**{name}** {verb} {art}{role} of {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
     s = s.replace(').', ').').replace(' .', '.')
@@ -143,6 +180,7 @@ def main(ids):
         gaps = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
         program = gaps['entry']['program_name'].strip()
         rec = gaps.get('record', {})
+        earlier_names = record_names(rec.get('id'))
         closed = rec.get('status') == 'Closed' or not re.search(r'present', gaps['entry'].get('years') or '', re.I) \
             or any(g['kind'] == 'closure' and not g['conflict'] for g in gaps['gaps'])
         hist = section(lines, 'History and Background Information', 'History')
@@ -191,7 +229,7 @@ def main(ids):
         # Staff.
         for g in [g for g in live if g['kind'] in ('staff', 'staff_other')][:25]:
             if staff_sec:
-                op(staff_sec, staff_line(g, program, closed), [g['gid']], kop=bool(g.get('kop_source')))
+                op(staff_sec, staff_line(g, program, closed, earlier_names), [g['gid']], kop=bool(g.get('kop_source')))
         # Findings, under one subsection.
         finds = sorted([g for g in live if g['kind'] in ('finding', 'incident')], key=lambda g: g.get('date') or '')
         if finds and abuse_sec:
