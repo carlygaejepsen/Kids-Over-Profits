@@ -211,11 +211,15 @@ function kop_rinbox_native_item($type, array $r) {
     if ($pending && $t['moves'] && kop_rinbox_native_url($type, $r) !== '') {
         // Every other destination: News, Lawsuits, Legislation, Industry PR, facility website or resource.
         $moves = kop_rdest_moves(array($type));
+        if ($type === 'news') {
+            $moves[] = kop_rinbox_native_school_move();
+        }
     }
     $actions = array();
     $log = kop_rinbox_native_moves()[$type . ':' . (int) $r['id']] ?? null;
     if ($log) {
         $targets = kop_rdest_targets();
+        $targets['indigenous'] = array('label' => 'Indian boarding schools');
         $actions[] = array('id' => 'unmove', 'label' => 'Undo move to ' . ($targets[$log['to']]['label'] ?? $log['to']), 'style' => 'undo');
     }
     $title = (string) ($r[$t['title']] ?? '');
@@ -301,10 +305,31 @@ function kop_rinbox_native_restore($type, $key, $status) {
     return array('message' => 'Back to ' . $status . '.');
 }
 
+/**
+ * "Move to Indian boarding schools" on a news card: the article is about an
+ * Indian boarding/residential school, not the troubled teen industry, so it
+ * goes to /indian-boarding-schools/ (inc/indigenous-schools.php), under a
+ * school or about the schools in general, and stays off the news feed.
+ */
+function kop_rinbox_native_school_move() {
+    $options = array('0' => 'The schools in general');
+    $pdo = function_exists('kop_ischools_pdo') ? kop_ischools_pdo() : null;
+    if ($pdo) {
+        foreach (kop_ischools_all($pdo, null) as $s) {
+            $options[(string) (int) $s['id']] = (string) $s['name'];
+        }
+    }
+    return array('id' => 'indigenous', 'label' => 'Move to Indian boarding schools',
+        'params' => array(array('name' => 'school_id', 'label' => 'About', 'type' => 'select', 'options' => $options, 'value' => '0')));
+}
+
 function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     $types = kop_rinbox_native_types();
     $t = $types[$type];
     $targets = kop_rdest_targets();
+    if ($type === 'news' && $to === 'indigenous') {
+        return kop_rinbox_native_move_to_school($key, (int) ($params['school_id'] ?? 0));
+    }
     if (!$t['moves'] || !isset($targets[$to]) || $to === $type) throw new RuntimeException('It cannot move there.');
     $r = kop_rinbox_native_row($type, $key);
     if (!$r) throw new RuntimeException('That submission is gone.');
@@ -354,6 +379,36 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     return array('message' => $message . ' Undo moves it back.');
 }
 
+function kop_rinbox_native_move_to_school($key, $school_id) {
+    $r = kop_rinbox_native_row('news', $key);
+    if (!$r) throw new RuntimeException('That submission is gone.');
+    if ((string) $r['status'] !== 'submitted') throw new RuntimeException('Only a pending item can move to another queue.');
+    $pdo = kop_ischools_pdo();
+    if (!$pdo) throw new RuntimeException('The Indian boarding schools records are not available.');
+    kop_ischools_install($pdo);
+    $name = 'the schools in general';
+    if ($school_id > 0) {
+        $school = kop_ischools_get($pdo, $school_id);
+        if (!$school) throw new RuntimeException('That school is gone.');
+        $name = (string) $school['name'];
+    }
+    $reviewer = kop_rinbox_reviewer();
+    $prev_notes = (string) ($r['reviewer_notes'] ?? '');
+    kop_ischools_link_news($pdo, $school_id, (int) $r['id'], $reviewer);
+    $message = 'Filed on the Indian boarding schools page under ' . $name . '; it stays off the news list.';
+    $pdo->prepare("UPDATE news_submissions SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, reviewer_notes = ? WHERE id = ?")
+        ->execute(array($reviewer, trim($prev_notes . "
+" . $message), (int) $r['id']));
+    if (function_exists('kop_followup_mark_moved')) {
+        kop_followup_mark_moved(kop_followup_kind_for_native('news'), (int) $r['id']);
+    }
+    $log = kop_rinbox_native_moves();
+    $log['news:' . (int) $r['id']] = array('to' => 'indigenous', 'done' => array('to' => 'indigenous', 'self' => true, 'school_id' => $school_id),
+        'prev_status' => 'submitted', 'prev_notes' => $prev_notes, 'by' => $reviewer, 'at' => time());
+    update_option('kop_review_inbox_moves', $log, false);
+    return array('message' => $message . ' Undo moves it back.');
+}
+
 function kop_rinbox_native_unmove($type, $key) {
     $types = kop_rinbox_native_types();
     $t = $types[$type];
@@ -363,6 +418,9 @@ function kop_rinbox_native_unmove($type, $key) {
     $m = $log[$k];
     $done = $m['done'] ?? array('to' => $m['to'], 'id' => (int) ($m['to_id'] ?? 0));
     if (empty($done['self'])) kop_rdest_take_back($done);
+    if (($done['to'] ?? '') === 'indigenous' && ($pdo_s = kop_ischools_pdo())) {
+        kop_ischools_unlink_news($pdo_s, (int) ($done['school_id'] ?? 0), (int) $key);
+    }
     $pdo = kop_rinbox_pdo();
     $pdo->prepare("UPDATE {$t['table']} SET {$t['status_col']} = ?, reviewer_notes = ? WHERE id = ?")
         ->execute(array($m['prev_status'], $m['prev_notes'] !== '' ? $m['prev_notes'] : null, (int) $key));

@@ -52,7 +52,7 @@ function kop_rinbox_test_news(array $src, array $item, callable $check) {
                 $new && $new['publication_status'] === 'pending' && $moved['status'] === 'rejected', $res['message'] ?? '');
             $item_now = kop_rinbox_native_item('news', $moved);
             $check('news: the moved article offers Undo', (bool) array_filter($item_now['actions'], function ($a) { return $a['id'] === 'unmove'; }));
-            $check('news: a pending article offers every other destination', count(kop_rinbox_native_item('news', $before)['moves']) === count(kop_rdest_targets()) - 1);
+            $check('news: a pending article offers every other destination plus Indian boarding schools', count(kop_rinbox_native_item('news', $before)['moves']) === count(kop_rdest_targets()));
             call_user_func($src['act'], $item['key'], 'unmove', array());
             $check('news: Undo takes the lawsuit back and the article is pending again',
                 !kop_rinbox_native_row('lawsuit', $log['done']['id']) && kop_rinbox_native_row('news', $item['key'])['status'] === 'submitted');
