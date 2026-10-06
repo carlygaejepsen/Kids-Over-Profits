@@ -364,6 +364,16 @@ check($c && $c[0]['excerpt'] === 'Staff physically assaulted client in care.', '
 check($c && strpos($c[0]['standard'], '87072(c)(1)') !== false && strpos($c[0]['standard'], '80075(b)') !== false, 'CA: sections cited are collected');
 check($c && strpos($c[0]['excerpt'], 'SUPERVISORS') === false, 'CA: form boilerplate is stripped');
 
+// The civil penalty form's name lists "Death / Serious Bodily Injury / Physical Abuse"; it is not a death.
+$ca_form = array('id' => 3, 'facility_id' => 3, 'categories_json' => json_encode(array(
+    'report_type' => 'Complaint Investigation', 'complaint_status' => 'substantiated',
+    'investigation_findings' => 'A client alleged that while at her home, S1 sexually abused him by kissing him on the lips and fondling his genitals over his clothing. The allegation is SUBSTANTIATED. '
+        . 'A copy of this report, Confidential Names form LIC811 dated 11/4/24, Appeal Rights and form LIC 421D(CRP) for a Civil Penalty Assessment - Death / Serious Bodily Injury / Physical Abuse were given to the facility representative.',
+)));
+$c = kop_ih_candidates('CA', $ca_form);
+check($c && $c[0]['category'] === 'sexual_abuse' && !in_array('death', $c[0]['categories'], true) && !in_array('physical_abuse', $c[0]['categories'], true), 'CA: the penalty form title is not a death or physical abuse');
+check($c && strpos($c[0]['excerpt'], 'Serious Bodily Injury') === false, 'CA: the penalty form title is not in the excerpt');
+
 $ca_unsub = $ca;
 $ca_unsub['categories_json'] = json_encode(array('complaint_status' => 'unsubstantiated',
     'investigation_findings' => 'The complaint alleged that staff hit a minor. There is not a preponderance of evidence. Therefore, the allegations are UNSUBSTANTIATED.'));

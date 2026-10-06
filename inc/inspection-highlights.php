@@ -66,7 +66,8 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Per-state bumps of the rules (0 to 99), for changes that touch one state only. */
     function kop_ih_state_rule_versions() {
-        return array();
+        // CA 1: the civil penalty form's title ("Death / Serious Bodily Injury / Physical Abuse") is no finding.
+        return array('CA' => 1);
     }
 
     /** SQL for the version each report's state is scanned with, as a CASE on f.state. */
@@ -1839,6 +1840,9 @@ if (!function_exists('kop_ih_scanner_version')) {
         $text = kop_ih_clean_text($text);
         $text = (string) preg_replace('/^\d{1,2}(?=\D)/u', '', $text);
         $text = (string) preg_replace('/^continuation of LIC\s*\S*\s*/iu', '', $text);
+        // The penalty form's name (LIC 421D) lists every kind of harm it can be used for; the sentence splitter
+        // breaks it at the dash, so it is cut out whole before any rule reads it.
+        $text = (string) preg_replace('/(?:Civil Penalty Assessment\s*[-\x{2013}\x{2014}:]\s*)?Death\s*\/\s*Serious Bodily Injury\s*\/\s*Physical Abuse/iu', 'the civil penalty form', $text);
         $cut = preg_split('/(?:(?:Un)?[Ss]ubstantiated\s*)?Estimated Days of Completion|SUPERVISORS NAME:|LICENSING EVALUATOR NAME:|STATE OF CALIFORNIA - HEALTH AND HUMAN SERVICES|This report must be available at/u', $text, 2);
         return trim((string) $cut[0]);
     }
@@ -2255,6 +2259,11 @@ if (!function_exists('kop_ih_scanner_version')) {
                     && ($e['category'] !== $c['category'] || $e['categories'] !== $values[1])) {
                     $pdo->prepare('UPDATE inspection_highlights SET category=?, categories=? WHERE id=?')
                         ->execute(array($c['category'], $values[1], (int) $e['id']));
+                    $counts['relabelled']++;
+                } elseif ($e['category'] === 'death' && !in_array('death', $c['categories'], true)) {
+                    // Scanner CA 1: a "death" taken from a form's title is no death. The finding keeps its status and text; its label and score follow the rules.
+                    $pdo->prepare('UPDATE inspection_highlights SET category=?, categories=?, score=? WHERE id=?')
+                        ->execute(array($c['category'], $values[1], $c['score'], (int) $e['id']));
                     $counts['relabelled']++;
                 }
                 $counts['kept']++;
