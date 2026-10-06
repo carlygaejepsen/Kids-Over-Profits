@@ -707,13 +707,17 @@ if (!function_exists('kop_operator_page_data')) {
                     if (isset($seen_news[(int) $r['id']])) continue;
                     $seen_news[(int) $r['id']] = true;
                     $news[] = array(
+                        'id'         => (int) $r['id'],
                         'title'      => trim((string) ($r['alternate_title'] ?: $r['article_title'])),
                         'outlet'     => trim((string) $r['publication_name']),
+                        'date'       => (string) $r['publication_date'],
                         'date_label' => $r['publication_date'] ? kop_facility_pages_date_label($r['publication_date']) : '',
                         'url'        => (string) $r['article_url'],
                         'type'       => trim((string) $r['article_type']),
                         'summary'    => trim((string) $r['summary']),
                         'about'      => $news_ids[(int) $r['id']],
+                        // The same card the facility pages and the mobile app draw (inc/mobile-api.php).
+                        'image'      => function_exists('kop_news_image') ? kop_news_image((int) $r['id'], (string) $r['article_url']) : null,
                     );
                 }
             }
