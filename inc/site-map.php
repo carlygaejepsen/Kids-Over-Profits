@@ -222,6 +222,7 @@ if (!function_exists('kop_site_map_section_titles')) {
             'reading'     => array('More articles', ''),
             'profiles'    => array('Written program profiles', 'Programs with a profile written by our researchers.'),
             'posts'       => array('Posts by category', ''),
+            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs, and kept apart from its records: institutional abuse of Indigenous children in government and church schools, and programs for adults 18 and older.'),
             'take-part'   => array('Take part', 'Send us what you know, volunteer or support the work.'),
             'about'       => array('About and legal', ''),
             'other'       => array('More pages', ''),
@@ -248,8 +249,9 @@ if (!function_exists('kop_site_map_template_sections')) {
             'page-referrer-index.php'          => 'records',
             'page-transporter-index.php'       => 'records',
             'page-provider-index.php'          => 'records',
-            'page-young-adult-programs.php'    => 'records',
-            'page-indian-boarding-schools.php' => 'records',
+            // Not the TTI: their own labelled section.
+            'page-young-adult-programs.php'    => 'outside',
+            'page-indian-boarding-schools.php' => 'outside',
             'page-memorial.php'                => 'records',
             'page-inspection-reports.php'      => 'inspections',
             'page-severe-reports.php'          => 'inspections',
@@ -484,7 +486,7 @@ if (!function_exists('kop_site_map_build')) {
             if ($section === 'profiles' && isset($merged[$p['id']])) continue;
             $sections[$section]['items'][] = kop_site_map_item($p['title'], $p['url']);
         }
-        foreach (array('records', 'inspections', 'places', 'sources', 'reference', 'reading', 'profiles', 'take-part', 'about', 'other') as $k) {
+        foreach (array('records', 'inspections', 'places', 'sources', 'reference', 'reading', 'profiles', 'outside', 'take-part', 'about', 'other') as $k) {
             usort($sections[$k]['items'], static function ($a, $b) {
                 return strnatcasecmp(kop_site_map_sort_name($a['title']), kop_site_map_sort_name($b['title']));
             });

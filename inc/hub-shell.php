@@ -45,6 +45,10 @@ if (!defined('ABSPATH')) {
  *   reading_notes  slug => one line for an article with no excerpt.
  *   positions      array('heading' => ..., 'links' => array of links): policy
  *                  positions published elsewhere, listed under the reading.
+ *   outside        array('heading', 'intro', 'links'): pages about institutional
+ *                  abuse OUTSIDE the troubled teen industry, in their own
+ *                  boxed section after the hub's own lists, with the heading
+ *                  and intro saying so, so a reader never takes them for TTI.
  *   contribute    array('heading' => ..., 'links' => array of links).
  *   updated        callback returning an updated_at value for this hub.
  *
@@ -100,6 +104,15 @@ function kop_hub_config($slug) {
                 array('label' => 'In loving memory', 'slug' => 'in-loving-memory'),
                 array('label' => 'The companies behind the programs', 'url' => home_url('/operator/')),
                 array('label' => 'Network map', 'slug' => 'network-map'),
+            ),
+            // Set apart and labelled: these schools are not troubled teen programs.
+            'outside' => array(
+                'heading' => 'Institutional abuse outside the troubled teen industry',
+                'intro'   => 'These are not troubled teen industry programs. They are listed here because their history is sometimes set beside the troubled teen industry\'s; each page says where the two meet and where they do not.',
+                'links'   => array(
+                    array('label' => 'Indian boarding schools and residential schools', 'slug' => 'indian-boarding-schools',
+                          'note'  => 'Government and church schools in the United States and Canada that took Indigenous children from their families. Not part of the troubled teen industry; the page is mostly directions to Indigenous-led organizations.'),
+                ),
             ),
         ),
 
@@ -388,6 +401,43 @@ function kop_hub_positions($slug) {
     <section class="kop-hub-reading kop-hub-positions" aria-labelledby="kop-hub-positions-h"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('cfg:hub:' . $slug, 'hub settings') : ''; ?>>
         <h2 class="kop-hub-h" id="kop-hub-positions-h"><?php echo esc_html($heading); ?></h2>
         <ul class="kop-hub-reading-list kop-hub-positions-list">
+            <?php foreach ($links as $link) : ?>
+                <li>
+                    <a href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>
+                    <?php if ($link['note'] !== '') : ?>
+                        <p><?php echo esc_html($link['note']); ?></p>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+    <?php
+}
+
+/**
+ * Pages about institutional abuse outside the troubled teen industry, boxed
+ * apart from the hub's own lists, the heading and intro saying they are not
+ * TTI programs.
+ */
+function kop_hub_outside($slug) {
+    $config = kop_hub_config($slug);
+    if (empty($config['outside']['links'])) {
+        return;
+    }
+    $links = kop_hub_links($config['outside']['links']);
+    if (!$links) {
+        return;
+    }
+    $heading = !empty($config['outside']['heading']) ? $config['outside']['heading'] : 'Outside the troubled teen industry';
+    $intro = isset($config['outside']['intro']) ? trim((string) $config['outside']['intro']) : '';
+    ?>
+    <section class="kop-hub-reading kop-hub-outside" aria-labelledby="kop-hub-outside-h"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('cfg:hub:' . $slug, 'hub settings') : ''; ?>>
+        <p class="kop-hub-outside-tag">Not the troubled teen industry</p>
+        <h2 class="kop-hub-h" id="kop-hub-outside-h"><?php echo esc_html($heading); ?></h2>
+        <?php if ($intro !== '') : ?>
+            <p class="kop-hub-outside-intro"><?php echo esc_html($intro); ?></p>
+        <?php endif; ?>
+        <ul class="kop-hub-reading-list kop-hub-outside-list">
             <?php foreach ($links as $link) : ?>
                 <li>
                     <a href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>

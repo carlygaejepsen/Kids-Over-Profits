@@ -84,6 +84,8 @@ $page('inspection-reports', 'Inspection Reports', 'templates/page-inspection-rep
 $page('ut-reports', 'Utah Inspection Reports', 'templates/page-state-reports.php');
 $page('wyoming', 'Wyoming', 'templates/page-state.php');
 $page('mexico', 'Mexico', 'templates/page-country.php');
+$page('indian-boarding-schools', 'Indian Boarding Schools and Residential Schools', 'templates/page-indian-boarding-schools.php');
+$page('young-adult-programs', 'Young Adult Programs', 'templates/page-young-adult-programs.php');
 $page('tti-news-feed', 'TTI News Feed', 'templates/page-news-feed.php');
 $page('lawsuits', 'Lawsuits', 'templates/page-lawsuits.php');
 $page('report-abuse', 'Report Abuse', 'templates/page-report-abuse.php');
@@ -211,6 +213,8 @@ check('inspections', $titles_in($s['inspections']['items']) === array('Inspectio
 check('places', $titles_in($s['places']['items']) === array('Mexico', 'Wyoming'));
 check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'TTI News Feed'));
 check('reference (links by slug)', $titles_in($s['reference']['items']) === array('Links', 'Report Abuse', 'TTI Glossary'));
+check('schools and 18+ programs are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools', 'Young Adult Programs')
+    && stripos($s['outside']['title'], 'outside the troubled teen industry') !== false);
 check('take part', $titles_in($s['take-part']['items']) === array('Donate'));
 check('about (contact by slug)', $titles_in($s['about']['items']) === array('Contact', 'Privacy Policy'));
 check('other pages', $titles_in($s['other']['items']) === array('Our Story'));

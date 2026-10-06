@@ -17,7 +17,9 @@
  * Every figure is from a government, a court, the TRC/NCTR, NABS or NICWA,
  * and linked where it is used. Change a figure only with its source.
  * Published (it started as a draft so the owner could read it first).
- * Not yet linked from the History hub (inc/hub-shell.php).
+ * Linked from the History hub in its own boxed section, "Institutional abuse
+ * outside the troubled teen industry" (kop_hub_config() 'outside'), never
+ * among the hub's TTI links.
  */
 
 if (!defined('ABSPATH')) {
