@@ -1452,9 +1452,16 @@ Open:
    (Wayne Halfway House -> Jacksonville Youth Academy) in
    `network-overrides.json`, several record merges (Timberline into Daytona,
    Island View into Elevations, Three Springs campuses into their successors).
-2. Round 2: the 230 memorial entries (Opus; Clark Harman's date and cause are
-   already known wrong; needs a `memorial` op type over `memorial_victims`) and
-   the 31 programs with Woodbury issues after their end year.
+2. Round 2 (done 2026-10-06): all 230 memorial entries researched (Sonnet),
+   every proposed correction re-checked against its sources by Opus, which wrote
+   the final change (op type `memorial`, one column of `memorial_victims`;
+   init-memorial-db.php seeds only an empty table, so approved fixes stay):
+   86 memorial proposals (52 high), among them Clark Harman (Feb 3, 2024,
+   smothering, homicide), Rylan Harris (drowned, not struck by a car), Alana
+   Richardson (2023, not 2020), Kenneth Barkley and Corey Foster (dates and
+   restraint findings). 91 entries checked out; 48 could not be settled and
+   change nothing. The 31 programs with later Woodbury issues: 23 right, 4
+   proposals. Queue total 193.
 3. Turn-About Ranch's current operator: confirm the 2014 employee buyer
    (reported as Escalante RTC, LLC) before replacing "Acadia HealthCare".
 

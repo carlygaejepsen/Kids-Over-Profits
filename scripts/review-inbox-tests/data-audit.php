@@ -24,7 +24,7 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
     };
 
     // Every proposal: known op types, fields it may change, values the record can hold, ids that exist.
-    $types = array('field', 'list_add', 'list_remove', 'note', 'map_years', 'operator_link', 'person_merge', 'manual');
+    $types = array('field', 'list_add', 'list_remove', 'note', 'map_years', 'operator_link', 'person_merge', 'memorial', 'manual');
     $bad = array();
     $stale = array();
     foreach ($props as $key => $p) {
@@ -33,6 +33,7 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
             if (!in_array($t, $types, true)) $bad[] = $key . ': type ' . $t;
             if ($t === 'field' && !kop_daudit_field_ok((string) $op['path'], kop_daudit_norm($op['to'] ?? null))) $bad[] = $key . ': ' . $op['path'] . ' = ' . json_encode($op['to']);
             if ($t === 'map_years' && !kop_daudit_valid_years($op['to'] ?? '')) $bad[] = $key . ': map years ' . json_encode($op['to']);
+            if ($t === 'memorial' && !kop_daudit_memorial_ok((string) $op['column'], $op['to'] ?? null)) $bad[] = $key . ': memorial ' . $op['column'] . ' = ' . json_encode($op['to']);
             if ($t === 'operator_link' && !in_array($op['to'] ?? '', array('current', 'past', 'remove'), true)) $bad[] = $key . ': link ' . json_encode($op['to']);
         }
         $by_fid = array();
@@ -112,6 +113,27 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         $over = kop_daudit_year_overrides(array('test-node-x' => '1986-2007'));
         $check('data-audit: corrected map years win over Map Years and Map Renames', ($over['test-node-x'] ?? '') === '2007-2019');
         update_option('kop_data_audit_map_years', array(), false);
+    }
+
+    // Memorial entries: the values a correction may set, and a change that goes and comes back.
+    $check('data-audit: memorial values are checked', kop_daudit_memorial_ok('date_of_death', '2024-02-03') && !kop_daudit_memorial_ok('date_of_death', '2024-02')
+        && kop_daudit_memorial_ok('date_precision', 'month') && !kop_daudit_memorial_ok('cause_category', 'asphyxia')
+        && kop_daudit_memorial_ok('age', 12) && !kop_daudit_memorial_ok('notes', 'x'));
+    kop_rinbox_test_copy_tables(array('memorial_victims'));
+    $mid = (int) $pdo->query("SELECT id FROM memorial_victims WHERE publication_status = 'published' ORDER BY id LIMIT 1")->fetchColumn();
+    if ($mid) {
+        list(, $was) = kop_daudit_memorial_value($pdo, $mid, 'date_precision');
+        kop_daudit_memorial_put($pdo, $mid, 'date_precision', 'year');
+        list(, $mid_val) = kop_daudit_memorial_value($pdo, $mid, 'date_precision');
+        kop_daudit_memorial_put($pdo, $mid, 'date_precision', $was);
+        list(, $back) = kop_daudit_memorial_value($pdo, $mid, 'date_precision');
+        $check('data-audit: a memorial correction goes and comes back', $mid_val === 'year' && $back === $was);
+        try {
+            kop_daudit_memorial_value($pdo, $mid, 'publication_status');
+            $check('data-audit: a memorial column no correction may touch is refused', false);
+        } catch (RuntimeException $e) {
+            $check('data-audit: a memorial column no correction may touch is refused', true);
+        }
     }
 
     // The card.

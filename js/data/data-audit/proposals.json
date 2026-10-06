@@ -4352,5 +4352,3533 @@
     "text": "The Oakley School announced its closing in April 2017; students could stay until June 30, 2017."
    }
   ]
+ },
+ {
+  "key": "memorial-4",
+  "kind": "memorial",
+  "title": "Owen [Redacted]",
+  "place": "Thompson's Residential Treatment Center, Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Owen, 11, collapsed and died on Nov. 27, 2024 during a movie outing from Thompson's Residential Treatment Center in Greenville, Texas. The Dallas County Medical Examiner found he died of natural causes from intestinal complications of a surgery he had as a baby; six former workers were indicted for injury to a child after video showed staff dragging him into the theater.",
+  "kop_now": "KOP gives the cause as 'Medical neglect' without the medical examiner's finding or the charges.",
+  "sources": [
+   {
+    "url": "https://www.yahoo.com/news/articles/six-face-felony-charges-2024-014700610.html",
+    "title": "Six face felony charges in 2024 death of 11-year-old under state care",
+    "date": "2025-11-02",
+    "quote": "died of natural causes related to complications with his intestines stemming from a surgery he had as an infant"
+   },
+   {
+    "url": "https://www.texastribune.org/2025/02/07/texas-foster-care-death-residential-treatment-center/",
+    "title": "Foster child death linked to state-contracted home prompts criminal investigation (Texas Tribune)",
+    "date": "2025-02-07",
+    "quote": "It is not known if the child died from an underlying illness related to stomach pain or from a wound that he had on his head"
+   }
+  ],
+  "notes": "Category medical_neglect kept: the charges concern staff ignoring his condition, and the ME cause is an untreated medical condition. The researcher's 'disputed' wording had no source and is not used. Court papers name him only as O.R.; keep the surname out.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 4,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Intestinal complications of a surgery as a baby (natural causes, per the medical examiner); six former staff charged with injury to a child"
+   }
+  ]
+ },
+ {
+  "key": "memorial-10",
+  "kind": "memorial",
+  "title": "Zy’Kiria Bell",
+  "place": "Lake Academy, Florida",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Zy'Kiria Bell, 17, died May 29, 2024 at Lake Academy in Tampa. The Hillsborough County Medical Examiner ruled her death a suicide, according to the sheriff's office; her family disputes it and the sheriff opened a criminal investigation.",
+  "kop_now": "KOP lists the cause as Unknown.",
+  "sources": [
+   {
+    "url": "https://www.yahoo.com/news/teen-death-state-care-ruled-235634579.html",
+    "title": "Teen's death in state care ruled a suicide; family still questioning how it happened (WFLA)",
+    "date": "2024",
+    "quote": "the county's Medical Examiner ruled Zy'kiria Bell's death a suicide"
+   },
+   {
+    "url": "https://www.tampabay.com/news/hillsborough/2024/06/20/lake-academy-tampa-zykiria-bell-florida-djj/",
+    "title": "After 17-year-old dies at Tampa facility, state moves kids out, terminates contract (Tampa Bay Times)",
+    "date": "2024-06-20",
+    "quote": "died by suicide in her room on May 29"
+   }
+  ],
+  "notes": "The family says agencies told them they do not believe she did this to herself; the ME ruling is the official finding, and the wording keeps the dispute.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 10,
+    "column": "cause_of_death",
+    "from": "Unknown",
+    "to": "Ruled a suicide by the medical examiner; her family disputes the ruling"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 10,
+    "column": "cause_category",
+    "from": "unknown",
+    "to": "suicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-11",
+  "kind": "memorial",
+  "title": "Clark Harman",
+  "place": "Trails Carolina, North Carolina",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Clark Harman, 12, died Feb. 3, 2024 at Trails Carolina, less than a day after arriving, while sleeping in a one-person bivy bag. The NC Chief Medical Examiner listed asphyxia due to smothering and ruled the death a homicide; the DA declined charges.",
+  "kop_now": "KOP gives Feb. 1, 2024 and 'Restraint'.",
+  "sources": [
+   {
+    "url": "https://www.nbcnews.com/news/us-news/death-12-year-old-nc-wilderness-camp-ruled-homicide-rcna158691",
+    "title": "Death of 12-year-old at NC wilderness camp ruled a homicide (NBC News)",
+    "date": "2024-06",
+    "quote": "asphyxia due to smothering ... the death is best certified as homicide"
+   },
+   {
+    "url": "https://www.transylvaniatimes.com/news/da-will-not-pursue-involuntary-manslaughter-charges-for-dead-camper/article_26812e92-9c5a-11ef-8b2b-4746a5dd6a45.html",
+    "title": "DA will not pursue involuntary manslaughter charges for dead camper (Transylvania Times)",
+    "date": "2024-11",
+    "quote": "died at Trails Carolina on Feb. 3 while sleeping in a one-person nylon tent called a bivy"
+   }
+  ],
+  "notes": "One search summary said found Feb. 2; the autopsy-based reporting gives Feb. 3. Category 'other' because no restraint was found.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 11,
+    "column": "date_of_death",
+    "from": "2024-02-01",
+    "to": "2024-02-03"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 11,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Asphyxia due to smothering in a sleeping bag; ruled a homicide"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 11,
+    "column": "cause_category",
+    "from": "restraint",
+    "to": "other"
+   }
+  ]
+ },
+ {
+  "key": "memorial-14",
+  "kind": "memorial",
+  "title": "Arianna Duenez",
+  "place": "Vive Adolescent Care, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Arianna Duenez, 16, was found dead in her bed at Vive Adolescent Care in St. George, Utah on July 2, 2023. The Utah Medical Examiner ruled cause and manner undetermined; the state found required 15-minute checks were not done and logs were falsified, fined Vive $1,000, and said the violations did not directly cause her death.",
+  "kop_now": "KOP gives the cause as 'Medical neglect'.",
+  "sources": [
+   {
+    "url": "https://www.fox13now.com/news/fox-13-investigates/girl-who-died-in-troubled-teen-facility-was-dead-for-up-to-10-hours-before-staff-realized",
+    "title": "Girl who died in Utah facility was dead for up to 10 hours before staff realized (FOX 13)",
+    "date": "2024",
+    "quote": "ruled her cause and manner of death as undetermined"
+   }
+  ],
+  "notes": "Reviewer may keep medical_neglect as KOP's view of the missed checks; the official finding is undetermined.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 14,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Undetermined (medical examiner); found dead in bed after vomiting, required checks not done"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 14,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "unknown"
+   }
+  ]
+ },
+ {
+  "key": "memorial-15",
+  "kind": "memorial",
+  "title": "Dee Rutzen",
+  "place": "Daniels Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Dee Rutzen, 16, fell from a third-floor window at Daniels Academy in Heber City, Utah on July 18, 2023 and died in hospital. Utah DHHS treated it as a suspected suicide and noted staff knew of his suicidal thoughts in the preceding weeks.",
+  "kop_now": "KOP says 'Fell from third floor, under investigation' with category accident.",
+  "sources": [
+   {
+    "url": "https://www.sltrib.com/news/2023/07/21/utah-takes-emergency-action/",
+    "title": "Utah takes emergency action against youth treatment center after boy's death (Salt Lake Tribune)",
+    "date": "2023-07-21",
+    "quote": "staff knew the boy was having suicidal thoughts"
+   },
+   {
+    "url": "https://www.abc4.com/news/wasatch-front/utah-dhhs-investigates-daniels-academy-for-suspected-suicide/",
+    "title": "Utah DHHS investigates Daniels Academy for suspected suicide (ABC4)",
+    "date": "2023-07",
+    "quote": "It is currently being treated as a suspected suicide"
+   }
+  ],
+  "notes": "No final medical examiner ruling found; wording keeps 'suspected'.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 15,
+    "column": "cause_of_death",
+    "from": "Fell from third floor, under investigation",
+    "to": "Fell from a third-floor window; the state investigated it as a suspected suicide"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 15,
+    "column": "cause_category",
+    "from": "accident",
+    "to": "suicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-17",
+  "kind": "memorial",
+  "title": "Kamryn Meyers",
+  "place": "Powerhouse Youth Facility group home, Arizona",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Kamryn Meyers, 15, left a Powerhouse Youth Facility group home in Mesa, Arizona around Jan. 7, 2023 and was found dead with a friend in a water retention basin on Jan. 21. The Maricopa County Medical Examiner ruled drowning in the setting of acute alcohol intoxication, manner accident. The exact date of death is not known; Jan. 25 is when police announced the deaths.",
+  "kop_now": "KOP gives Jan. 25, 2023 (day) and 'Accident during escape attempt'.",
+  "sources": [
+   {
+    "url": "https://www.abc15.com/news/region-southeast-valley/mesa/mesa-police-release-additional-details-about-the-deaths-of-two-teen-girls-found-in-river-basin",
+    "title": "Mesa police release additional details about the deaths of two teen girls (ABC15)",
+    "date": "2023-03",
+    "quote": "Drowning in the setting of Acute Alcohol Intoxication"
+   },
+   {
+    "url": "https://www.live5news.com/2023/03/14/2-runaway-teens-group-home-died-alcohol-poisoning-medical-examiner-says/",
+    "title": "2 runaway teens from group home died of alcohol poisoning, medical examiner says (AP)",
+    "date": "2023-03-14",
+    "quote": "drowning in the setting of acute alcohol intoxication"
+   },
+   {
+    "url": "https://www.oxygen.com/crime-news/missing-kamryn-meyers-sitlalli-avelar-found-dead-mesa",
+    "title": "Missing Kamryn Meyers, Sitlalli Avelar found dead in Mesa (Oxygen)",
+    "date": "2023-01",
+    "quote": "A man walking his dogs on Jan. 21 spotted what he thought was a mannequin"
+   }
+  ],
+  "notes": "Two people, not a duplicate. They died off site after running away; reviewer may keep escape_attempt as the category if KOP uses it for runaways.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 17,
+    "column": "date_of_death",
+    "from": "2023-01-25",
+    "to": "2023-01-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 17,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 17,
+    "column": "cause_of_death",
+    "from": "Accident during escape attempt",
+    "to": "Drowning in the setting of acute alcohol intoxication, ruled an accident; found in a water basin two weeks after leaving the group home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 17,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
+   }
+  ]
+ },
+ {
+  "key": "memorial-18",
+  "kind": "memorial",
+  "title": "Sitlalli Avelar",
+  "place": "Powerhouse Youth Facility group home, Arizona",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Sitlalli Avelar, 17, left a Powerhouse Youth Facility group home in Mesa, Arizona around Jan. 7, 2023 and was found dead with a friend in a water retention basin on Jan. 21. The Maricopa County Medical Examiner ruled drowning in the setting of acute alcohol intoxication, manner accident. The exact date of death is not known; Jan. 25 is when police announced the deaths.",
+  "kop_now": "KOP gives Jan. 25, 2023 (day) and 'Accident during escape attempt'.",
+  "sources": [
+   {
+    "url": "https://www.abc15.com/news/region-southeast-valley/mesa/mesa-police-release-additional-details-about-the-deaths-of-two-teen-girls-found-in-river-basin",
+    "title": "Mesa police release additional details about the deaths of two teen girls (ABC15)",
+    "date": "2023-03",
+    "quote": "Drowning in the setting of Acute Alcohol Intoxication"
+   },
+   {
+    "url": "https://www.live5news.com/2023/03/14/2-runaway-teens-group-home-died-alcohol-poisoning-medical-examiner-says/",
+    "title": "2 runaway teens from group home died of alcohol poisoning, medical examiner says (AP)",
+    "date": "2023-03-14",
+    "quote": "drowning in the setting of acute alcohol intoxication"
+   },
+   {
+    "url": "https://www.oxygen.com/crime-news/missing-kamryn-meyers-sitlalli-avelar-found-dead-mesa",
+    "title": "Missing Kamryn Meyers, Sitlalli Avelar found dead in Mesa (Oxygen)",
+    "date": "2023-01",
+    "quote": "A man walking his dogs on Jan. 21 spotted what he thought was a mannequin"
+   }
+  ],
+  "notes": "Two people, not a duplicate. They died off site after running away; reviewer may keep escape_attempt as the category if KOP uses it for runaways.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 18,
+    "column": "date_of_death",
+    "from": "2023-01-25",
+    "to": "2023-01-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 18,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 18,
+    "column": "cause_of_death",
+    "from": "Accident during escape attempt",
+    "to": "Drowning in the setting of acute alcohol intoxication, ruled an accident; found in a water basin two weeks after leaving the group home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 18,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
+   }
+  ]
+ },
+ {
+  "key": "memorial-19",
+  "kind": "memorial",
+  "title": "Taylor Goodridge",
+  "place": "Diamond Ranch Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Taylor Goodridge, 17, died Dec. 20, 2022 at Diamond Ranch Academy in Hurricane, Utah of peritonitis that progressed to sepsis; state investigators found the program did not seek medical care despite weeks of symptoms.",
+  "kop_now": "KOP gives Dec. 22, 2022.",
+  "sources": [
+   {
+    "url": "https://www.nbcnews.com/news/us-news/taylor-goodridge-autopsy-diamond-ranch-academy-rcna80864",
+    "title": "Taylor Goodridge autopsy (NBC News)",
+    "date": "2023",
+    "quote": "died on Dec. 20"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 19,
+    "column": "date_of_death",
+    "from": "2022-12-22",
+    "to": "2022-12-20"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 19,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Peritonitis leading to sepsis; the program did not seek medical care despite weeks of symptoms"
+   }
+  ]
+ },
+ {
+  "key": "memorial-22",
+  "kind": "memorial",
+  "title": "Unknown",
+  "place": "Canyon State Academy, Arizona",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "A 16-year-old boy died at a hospital after a suspected overdose at Canyon State Academy in Queen Creek, Arizona on Monday night, Oct. 3, 2022; two roommates were hospitalized. The school is Canyon State Academy, not Canyon River Academy.",
+  "kop_now": "KOP names the program Canyon River Academy.",
+  "sources": [
+   {
+    "url": "https://www.abc15.com/news/region-southeast-valley/queen-creek/one-dead-two-hospitalized-during-possible-overdose-at-canyon-state-academy-in-queen-creek",
+    "title": "Student dead, two hospitalized amid possible overdose at Canyon State Academy (ABC15)",
+    "date": "2022-10-04",
+    "quote": "Canyon State Academy ... 16-year-old"
+   },
+   {
+    "url": "https://www.12news.com/article/news/local/valley/queen-creek-school-possible-overdose-oct-4-2022/75-3dface49-0e8a-4242-b4d7-f155b85be11b",
+    "title": "Student dead after possible overdose at Queen Creek treatment center for boys (12News)",
+    "date": "2022-10-04",
+    "quote": "possible overdose Monday night"
+   }
+  ],
+  "notes": "Cause is a suspected overdose; no ME finding found.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 22,
+    "column": "program",
+    "from": "Canyon River Academy",
+    "to": "Canyon State Academy"
+   }
+  ]
+ },
+ {
+  "key": "memorial-23",
+  "kind": "memorial",
+  "title": "Alexis Sluder",
+  "place": "Elbert Shaw Regional Youth Detention Center, Georgia",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Alexis Sluder, 16, died early on Aug. 27, 2022, about six hours after booking at Elbert Shaw Regional Youth Detention Center in Dalton, Georgia, of methamphetamine toxicity. Five former workers, including the director, were indicted on cruelty to children charges.",
+  "kop_now": "KOP gives the cause as 'Medical Neglect'.",
+  "sources": [
+   {
+    "url": "https://newschannel9.com/news/local/they-watched-her-die-federal-lawsuit-filed-for-teen-who-died-at-dalton-detention-center-alexis-sluder-methamphetamine-death-attorneys-complaint-workers-indicted-director-fired-wrongful-death-in-custody-deadly-drug-overdose",
+    "title": "'They watched her die': federal lawsuit filed (NewsChannel 9)",
+    "date": "2024",
+    "quote": "methamphetamine toxicity"
+   }
+  ],
+  "notes": "Category medical_neglect kept given the indictments.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 23,
+    "column": "cause_of_death",
+    "from": "Medical Neglect",
+    "to": "Methamphetamine toxicity; five former staff indicted for cruelty to children for not getting her medical help"
+   }
+  ]
+ },
+ {
+  "key": "memorial-25",
+  "kind": "memorial",
+  "title": "Ja’Ceon Terry",
+  "place": "Brooklawn, Kentucky",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Ja'Ceon Terry, 7, died July 17, 2022 at Brooklawn in Louisville after being held in a restraint. The Jefferson County coroner ruled positional asphyxia a homicide; three former workers were indicted on manslaughter charges in July 2026.",
+  "kop_now": "KOP gives July 16, 2022 and 'investigation still pending'.",
+  "sources": [
+   {
+    "url": "https://www.lpm.org/investigate/2023-07-19/fatal-failures-what-happened-in-the-final-hours-of-jaceon-terrys-life",
+    "title": "Fatal failures (Louisville Public Media)",
+    "date": "2023-07-19",
+    "quote": "pronounced dead at 4:48 p.m. on July 17, 2022"
+   },
+   {
+    "url": "https://www.lpm.org/investigate/2026-07-16/four-years-later-three-indicted-for-jaceon-terrys-death-in-louisville-foster-care",
+    "title": "Four years later, three indicted for Ja'Ceon Terry's death (Louisville Public Media)",
+    "date": "2026-07-16",
+    "quote": "three indicted"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 25,
+    "column": "date_of_death",
+    "from": "2022-07-16",
+    "to": "2022-07-17"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 25,
+    "column": "cause_of_death",
+    "from": "Positional asphyxia, investigation still pending",
+    "to": "Positional asphyxia during a restraint; ruled a homicide by the coroner"
+   }
+  ]
+ },
+ {
+  "key": "memorial-28",
+  "kind": "memorial",
+  "title": "Cedric “CJ” Lofton",
+  "place": "Juvenile Intake and Assessment Center, Kansas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "CJ Lofton, 17, was restrained face down at the Juvenile Intake and Assessment Center in Wichita on Sept. 24, 2021 and died Sept. 26. The autopsy found complications of cardiopulmonary arrest after a physical struggle while restrained prone, manner homicide.",
+  "kop_now": "KOP gives Sept. 24, 2021 (the day of the restraint) and 'Restraint'.",
+  "sources": [
+   {
+    "url": "https://www.kwch.com/2021/12/28/family-cedric-lofton-asks-criminal-charges-after-autopsy-rules-teens-death-homicide/",
+    "title": "Family of Cedric Lofton asks for criminal charges after autopsy rules teen's death a homicide (KWCH)",
+    "date": "2021-12-28",
+    "quote": "complications of cardiopulmonary arrest sustained after physical struggle restrained in the prone position"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 28,
+    "column": "date_of_death",
+    "from": "2021-09-24",
+    "to": "2021-09-26"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 28,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Cardiopulmonary arrest after being restrained face down; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-30",
+  "kind": "memorial",
+  "title": "Joshua Hancey",
+  "place": "Roost Services, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Joshua Hancey was 11 when he died July 21, 2021 after a Roost Services employee left him in a hot car for nearly three hours in American Fork, Utah.",
+  "kop_now": "KOP gives his age as 9.",
+  "sources": [
+   {
+    "url": "https://www.ksl.com/article/50440985/parties-settle-lawsuit-over-death-of-11-year-old-utah-boy-left-in-hot-car",
+    "title": "Parties settle lawsuit over death of 11-year-old Utah boy left in hot car (KSL)",
+    "date": "2022-07",
+    "quote": "Joshua 'Joshee' Hancey, 11"
+   }
+  ],
+  "notes": "Roost Services was a day-treatment center for people with disabilities, not a residential program; reviewer may decide whether it fits the page.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 30,
+    "column": "age",
+    "from": 9,
+    "to": 11
+   }
+  ]
+ },
+ {
+  "key": "memorial-33",
+  "kind": "memorial",
+  "title": "Angel Lynn Rolph-Jackson",
+  "place": "Shodair Children's Hospital, Montana",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Angel Rolph-Jackson, 15, died by suicide on May 19, 2021 in Shodair Children's Hospital's residential unit in Helena, Montana; state inspectors found missed verbal and visual checks.",
+  "kop_now": "KOP gives May 1, 2021.",
+  "sources": [
+   {
+    "url": "https://helenafuneralhome.com/obituaries/angel-lynn-rolph-jackson-age-15-of-helena/",
+    "title": "Obituary (Helena Funeral Home)",
+    "date": "2021-05",
+    "quote": "May 19, 2021"
+   },
+   {
+    "url": "https://montanafreepress.org/2021/08/26/patient-death-shodair-childrens-hospital/",
+    "title": "Patient death at Shodair Children's Hospital (Montana Free Press)",
+    "date": "2021-08-26",
+    "quote": "cited human factors contributing to the patient suicide"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 33,
+    "column": "date_of_death",
+    "from": "2021-05-01",
+    "to": "2021-05-19"
+   }
+  ]
+ },
+ {
+  "key": "memorial-35",
+  "kind": "memorial",
+  "title": "Rylan Harris",
+  "place": "Tulsa Boys’ Home, Oklahoma",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Rylan Harris, 13, ran from Tulsa Boys' Home with four other boys on the night of Dec 7, 2020 and was swept away while crossing the Arkansas River; his body was recovered about five miles downstream on Dec 8. He was not struck by a vehicle.",
+  "kop_now": "KOP says he was struck by a vehicle during an escape attempt.",
+  "sources": [
+   {
+    "url": "https://ktul.com/news/local/missing-boy-12-08-2020",
+    "title": "UPDATE: Deputies find body of missing 13-year-old boy in Arkansas River (KTUL)",
+    "date": "2020-12-08",
+    "quote": "they saw him go into the water, and he appeared to be in distress, and they did not see him make it to the shore"
+   },
+   {
+    "url": "https://tulsaworld.com/news/local/update-body-of-missing-teen-from-tulsa-boys-home-found-by-authorities-in-arkansas-river/article_c3056b8e-394e-11eb-8553-1fe10a615b84.html",
+    "title": "Body of missing teen from Tulsa Boys' Home found by authorities in Arkansas River (Tulsa World)",
+    "date": "2020-12-08",
+    "quote": ""
+   }
+  ],
+  "notes": "He entered the river Dec 7 about 9:30 p.m.; body found Dec 8. KOP's Dec 8 date is kept (no death certificate date found). The struck-by-vehicle wording likely came from Cameron Dail, the other boy in the same 6 Investigates report.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 35,
+    "column": "cause_of_death",
+    "from": "Struck by vehicle during escape attempt",
+    "to": "Drowned in the Arkansas River after running away from the home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 35,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
+   }
+  ]
+ },
+ {
+  "key": "memorial-36",
+  "kind": "memorial",
+  "title": "Clay Hensley",
+  "place": "Great Circle – St. James, Missouri",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Clay Hensley, 15, ran from Great Circle in St. James, Missouri on Sept 16, 2020 with two other residents, who returned alone on Sept 17; investigators say the two took turns strangling him. One was sentenced to 30 years for first-degree murder, the other to 30 years after pleading guilty to second-degree murder.",
+  "kop_now": "KOP says he was killed by other residents during an escape attempt, categorized as escape_attempt.",
+  "sources": [
+   {
+    "url": "https://www.ky3.com/2020/09/21/2-charged-with-murder-after-escaping-a-great-circle-facility/",
+    "title": "2 charged with murder after escaping a Great Circle facility (KY3)",
+    "date": "2020-09-21",
+    "quote": "Investigators say boys later admitted to strangling the other to death."
+   },
+   {
+    "url": "https://www.kjluradio.com/newsroom/second-teen-pleads-guilty-to-murdering-15-year-old-boy-who-escaped-from-phelps-county/article_0ec7ba64-f039-11ee-a85a-7bac7fcae61c.html",
+    "title": "Second teen pleads guilty to murdering 15-year-old boy who escaped from Phelps County facility (KJLU)",
+    "date": "2024",
+    "quote": ""
+   }
+  ],
+  "notes": "Date conflict: ran away Wed Sept 16, the two returned Thu Sept 17; an obituary gives Fri Sept 18. KOP's Sept 16 is left unchanged until a court record gives the date of the killing. Sentencing details are from search coverage of KJLU/Ozarks First (pages not fetched).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 36,
+    "column": "cause_of_death",
+    "from": "Killed by other residents during escape attempt",
+    "to": "Strangled by two other residents after the three ran from the facility; both were sentenced for his murder"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 36,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "violence"
+   }
+  ]
+ },
+ {
+  "key": "memorial-38",
+  "kind": "memorial",
+  "title": "Robert Wright Jr.",
+  "place": "Circleville Juvenile Correctional Facility, Ohio",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Robert Wright Jr., 17, was found dead in his cell at Circleville Juvenile Correctional Facility on Aug 31, 2020. The autopsy found a combination of methamphetamine intoxication and congenital heart disease; a forensic pathologist called the amphetamine level very low next to overdose cases. He had told his mother he had chest pains and was waiting to see medical staff; six guards were disciplined.",
+  "kop_now": "KOP says drug overdose and medical neglect, categorized as overdose.",
+  "sources": [
+   {
+    "url": "https://www.prisonlegalnews.org/news/2022/jul/25/medical-staff-shakeup-no-charges-after-teen-dies-ohio-juvenile-facility/",
+    "title": "Medical Staff Shakeup But No Charges After Teen Dies in Ohio Juvenile Facility (Prison Legal News)",
+    "date": "2022-07-25",
+    "quote": "a combination of methamphetamine intoxication and congenital heart disease"
+   }
+  ],
+  "notes": "Category left as overdose: the autopsy names methamphetamine intoxication, though the level was low; medical_neglect has no official finding behind it. Reviewer's call.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 38,
+    "column": "cause_of_death",
+    "from": "Drug overdose and medical neglect",
+    "to": "Methamphetamine intoxication and congenital heart disease (autopsy), after he reported chest pains"
+   }
+  ]
+ },
+ {
+  "key": "memorial-39",
+  "kind": "memorial",
+  "title": "Timmy Montoya-Kloepfel",
+  "place": "Tennyson Center for Children, Colorado",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Timothy Montoya-Kloepfel, 12, ran from Tennyson Center for Children and was struck by a car on the I-70 frontage road in Wheat Ridge about 9 p.m. on June 21, 2020; he died of his injuries on June 23, 2020.",
+  "kop_now": "KOP gives June 12, 2020 as the date of death.",
+  "sources": [
+   {
+    "url": "https://kdvr.com/news/local/wheat-ridge-police-asking-for-publics-help-identifying-child-hit-by-car-on-i-70-frontage-road/",
+    "title": "Child hit by car on I-70 frontage road dies from injuries (FOX31)",
+    "date": "2020-06-23",
+    "quote": "the boy died from his injuries on Tuesday, June 23"
+   },
+   {
+    "url": "https://obits.gazette.com/us/obituaries/gazette/name/timothy-montoya-kloepfel-obituary?id=8341750",
+    "title": "Timothy Montoya-Kloepfel obituary (The Gazette)",
+    "date": "2020",
+    "quote": "went home to be with the Lord on June 23, 2020"
+   }
+  ],
+  "notes": "Both dates are from search coverage of these pages (not fetched directly); the two agree.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 39,
+    "column": "date_of_death",
+    "from": "2020-06-12",
+    "to": "2020-06-23"
+   }
+  ]
+ },
+ {
+  "key": "memorial-44",
+  "kind": "memorial",
+  "title": "Alana Richardson",
+  "place": "Central Ohio Youth Center, Ohio",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Alana Richardson, 17, died Jan 14, 2023 (not 2020) in her cell at the Central Ohio Youth Center in Marysville; guards made 26 checks before finding she had died hours earlier.",
+  "kop_now": "KOP gives Jan 14, 2020 as the date of death.",
+  "sources": [
+   {
+    "url": "https://www.yahoo.com/news/chaos-ohio-juvenile-lockups-teen-060005898.html",
+    "title": "Chaos in Ohio's Juvenile Lockups: Teen found hours after she died in her cell",
+    "date": "2023-11",
+    "quote": "Guards conducted 26 wellness checks"
+   },
+   {
+    "url": "https://www.legacy.com/us/obituaries/urbanacitizen/name/alana-richardson-obituary?id=38677692",
+    "title": "Alana Richardson obituary (Urbana Daily Citizen)",
+    "date": "2023",
+    "quote": "died on Saturday, January 14, 2023"
+   }
+  ],
+  "notes": "KOP's own source is dated Nov 2023, consistent with 2023.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 44,
+    "column": "date_of_death",
+    "from": "2020-01-14",
+    "to": "2023-01-14"
+   }
+  ]
+ },
+ {
+  "key": "memorial-45",
+  "kind": "memorial",
+  "title": "Kirsta Simons",
+  "place": "West Ridge Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Kirsta Simons, 17, attempted suicide at West Ridge Academy on Nov 14, 2019, was taken to a hospital and died the next day, Nov 15.",
+  "kop_now": "KOP gives Nov 14, 2019, the date of the attempt, as the date of death.",
+  "sources": [
+   {
+    "url": "https://www.kuer.org/health-science-environment/2021-07-20/parents-sue-a-utah-treatment-center-after-their-daughter-from-bermuda-died-by-suicide",
+    "title": "Parents sue a Utah treatment center after their daughter from Bermuda died by suicide (KUER)",
+    "date": "2021-07-20",
+    "quote": "On Nov. 14, 2019, she tried to end her life. Kirsta was rushed to a hospital and died the next day."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 45,
+    "column": "date_of_death",
+    "from": "2019-11-14",
+    "to": "2019-11-15"
+   }
+  ]
+ },
+ {
+  "key": "memorial-48",
+  "kind": "memorial",
+  "title": "Andrew Potter",
+  "place": "Devereux Cleo Wallace, Colorado",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Andrew Potter, 15, wandered off the Devereux campus in Westminster, Colorado and was hit by a drunk driver at about 11:05 p.m. on Aug 31, 2018 while crossing Wadsworth Parkway; the driver received five years in community corrections.",
+  "kop_now": "KOP says he was struck by a vehicle during an escape attempt.",
+  "sources": [
+   {
+    "url": "https://patch.com/colorado/broomfield/dui-hit-run-charges-filed-westminster-teens-death",
+    "title": "DUI, Hit-And-Run Charges Filed In Westminster Teen's Death (Patch)",
+    "date": "2018",
+    "quote": "around 11:05 p.m. on Aug. 31"
+   },
+   {
+    "url": "https://kdvr.com/news/family-sues-westminster-school-over-sons-death/",
+    "title": "Family sues Westminster school over son's death (FOX31)",
+    "date": "2019",
+    "quote": "wandered off campus and was hit by a drunk driver"
+   }
+  ],
+  "notes": "The FOX31 lawsuit page returned 403; its wording is from the search index. Category escape_attempt left for the reviewer (accident is also defensible).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 48,
+    "column": "cause_of_death",
+    "from": "Struck by vehicle during escape attempt",
+    "to": "Struck by a drunk driver after wandering off campus"
+   }
+  ]
+ },
+ {
+  "key": "memorial-51",
+  "kind": "memorial",
+  "title": "Paul Choy",
+  "place": "Rite of Passage camp, Nevada",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Paul Choy was 15 when Rite of Passage staff in Schurz, Nevada restrained him on Feb 4, 1992 until he suffocated; he remained in a coma for 25 years and died Sept 2, 2017.",
+  "kop_now": "KOP gives Feb 4, 2017, mixing the 1992 restraint date with the 2017 year of death.",
+  "sources": [
+   {
+    "url": "https://www.findagrave.com/memorial/215345775/paul-choy",
+    "title": "Paul Choy (1976-2017), Find a Grave",
+    "date": "2017",
+    "quote": "When he resisted, they restrained him until he suffocated."
+   },
+   {
+    "url": "http://today-a-child-died.blogspot.com/2012/02/paul-choy-1992.html",
+    "title": "Today a child died: Paul Choy - 1992 (2017)",
+    "date": "2017",
+    "quote": ""
+   }
+  ],
+  "notes": "Both sources rest on his family's account; no obituary or official record found. Age 15 is his age when restrained; he was about 40-41 at death (born 1976). Age left for the reviewer. KOP's AARMS source is an article on juvenile boot camp tragedies whose landing page does not name him.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 51,
+    "column": "date_of_death",
+    "from": "2017-02-04",
+    "to": "2017-09-02"
+   }
+  ]
+ },
+ {
+  "key": "memorial-54",
+  "kind": "memorial",
+  "title": "Janaia N Barnhart",
+  "place": "Advoserv (now Bellwether Behavioral Health), Maryland",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Janaia Barnhart, 15, a Maryland teen placed at an AdvoServ group home southwest of Wilmington, Delaware, was pinned down by workers and found without a pulse on Sept 12, 2016; she died Sept 14, 2016. The medical examiner had not released a cause.",
+  "kop_now": "KOP gives Sept 12, 2016, location Maryland, cause Restraint.",
+  "sources": [
+   {
+    "url": "https://www.propublica.org/article/camera-shoving-match-group-home-worker-before-teenager-heart-stopped",
+    "title": "ProPublica: shoving match with a group home worker before the teenager's heart stopped",
+    "date": "2016",
+    "quote": "Thirty-two minutes later, paramedics arrived to find Janaia on the floor, naked, with no pulse."
+   }
+  ],
+  "notes": "AdvoServ denied mechanical restraints were used; the article reports workers pinned her down. No official cause found.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 54,
+    "column": "date_of_death",
+    "from": "2016-09-12",
+    "to": "2016-09-14"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 54,
+    "column": "location",
+    "from": "Maryland",
+    "to": "Delaware"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 54,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Heart stopped after workers pinned her down; no official cause released"
+   }
+  ]
+ },
+ {
+  "key": "memorial-56",
+  "kind": "memorial",
+  "title": "Del’Quan Seagers",
+  "place": "AMIkids Sand Hills, South Carolina",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Del'Quan Seagers was 16 when he died the day before Thanksgiving (Nov 25) 2015 at the AMIkids Sand Hills wilderness camp in South Carolina. The coroner's report gives asthma; other youth said he was beaten before he collapsed, and a state audit faulted DJJ for not investigating.",
+  "kop_now": "KOP gives age 15 and cause Unknown.",
+  "sources": [
+   {
+    "url": "https://www.cbsnews.com/news/south-carolina-juvenile-justice-ami-kids-wilderness-camp-death-violence/",
+    "title": "CBS News",
+    "date": "2018",
+    "quote": "of asthma, according to a coroner's report"
+   },
+   {
+    "url": "https://www.postandcourier.com/news/into-the-wilderness-secretive-south-carolina-camps-come-under-scrutiny-following-teens-death/article_e9e8da2e-879f-11e7-bdde-4fcffb67388d.html",
+    "title": "Into the wilderness: Secretive South Carolina camps come under scrutiny following teen's death (Post and Courier)",
+    "date": "2017",
+    "quote": "An autopsy ultimately concluded Del'Quan died of asthma"
+   }
+  ],
+  "notes": "The official cause is disputed by witnesses, so cause_category stays unknown.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 56,
+    "column": "age",
+    "from": 15,
+    "to": 16
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 56,
+    "column": "cause_of_death",
+    "from": "Unknown",
+    "to": "Asthma per the coroner's report; other youth said he was beaten before he collapsed"
+   }
+  ]
+ },
+ {
+  "key": "memorial-59",
+  "kind": "memorial",
+  "title": "Alec Sanford Lansing",
+  "place": "Trails Carolina, North Carolina",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Alec Lansing, 17, walked away from a Trails Carolina group on Nov 10, 2014; his body was found in a stream on Nov 24. The autopsy gave hypothermia, with a broken hip as a significant factor. His obituary gives Nov 22; no source gives Nov 23.",
+  "kop_now": "KOP gives Nov 23, 2014 (day precision) and cause Exposure.",
+  "sources": [
+   {
+    "url": "https://www.wyff4.com/article/autopsy-missing-teen-fell-broke-hip-died-of-hypothermia/7011704",
+    "title": "Autopsy: Missing teen fell, broke hip, died of hypothermia (WYFF4)",
+    "date": "2014",
+    "quote": ""
+   },
+   {
+    "url": "https://www.findagrave.com/memorial/139397332/alec_sanford-lansing",
+    "title": "Alec Sanford Lansing (1997-2014), Find a Grave",
+    "date": "2014",
+    "quote": ""
+   }
+  ],
+  "notes": "The exact date is unknown (obituary Nov 22, body found Nov 24), so the date becomes month precision. WYFF4 could not be fetched; the autopsy wording is from search coverage of that report.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 59,
+    "column": "date_of_death",
+    "from": "2014-11-23",
+    "to": "2014-11-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 59,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 59,
+    "column": "cause_of_death",
+    "from": "Exposure",
+    "to": "Hypothermia after a fall that broke his hip (autopsy)"
+   }
+  ]
+ },
+ {
+  "key": "memorial-63",
+  "kind": "memorial",
+  "title": "Kenneth Barkley",
+  "place": "OhioGuidestone, Ohio",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Kenneth Barkley, 15, died Jan 7, 2014 after a caseworker at the OhioGuidestone group home in Berea bear-hugged him to the ground; the Cuyahoga County Medical Examiner ruled the cause traumatic asphyxia during altercation and the manner homicide.",
+  "kop_now": "KOP gives Jan 19, 2014 and cause Restraint.",
+  "sources": [
+   {
+    "url": "https://www.cleveland19.com/story/25574865/medical-examiner-rules-death-of-teen-at-group-home-a-homicide/",
+    "title": "Medical Examiner: Death of teen at Berea group home is a homicide (Cleveland 19)",
+    "date": "2014",
+    "quote": "the caseworker bear hugged Kenny to the ground and he never got up"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 63,
+    "column": "date_of_death",
+    "from": "2014-01-19",
+    "to": "2014-01-07"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 63,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Traumatic asphyxia during a staff bear-hug restraint; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-66",
+  "kind": "memorial",
+  "title": "Paige Elizabeth Lunsford",
+  "place": "Carlton Palms Educational Center, Florida",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Paige Lunsford, 14, died July 6, 2013 at Carlton Palms (AdvoServ), Florida, after a night tied in restraints while vomiting; an autopsy concluded she died of dehydration.",
+  "kop_now": "KOP gives cause Restraint.",
+  "sources": [
+   {
+    "url": "https://www.propublica.org/article/advoserv-profit-and-abuse-at-homes-for-the-profoundly-disabled",
+    "title": "Unrestrained (ProPublica)",
+    "date": "2015",
+    "quote": "An autopsy concluded she died of dehydration"
+   }
+  ],
+  "notes": "Category restraint kept; medical_neglect is also defensible.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 66,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Dehydration (autopsy) after a night held in restraints while vomiting"
+   }
+  ]
+ },
+ {
+  "key": "memorial-68",
+  "kind": "memorial",
+  "title": "Corey Foster",
+  "place": "Leake & Watts residential treatment center, New York",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Corey Foster, 16, went into cardiac arrest on April 18, 2012 while staff restrained him on a basketball court at Leake & Watts in Yonkers, NY; the Westchester County medical examiner ruled the death an accident.",
+  "kop_now": "KOP gives Jan 18, 2012 and cause Restraint.",
+  "sources": [
+   {
+    "url": "https://newyork.cbslocal.com/2012/07/11/teens-death-at-yonkers-school-ruled-an-accident/",
+    "title": "Teen's Death At Yonkers School Ruled An Accident (CBS New York)",
+    "date": "2012-07-11",
+    "quote": "cardiac arrest during an excited state while being subdued"
+   },
+   {
+    "url": "https://www.huffpost.com/2012/04/19/leake-watts-student-dies-_n_1438536.html",
+    "title": "Corey Foster, Teen At School For At-Risk Youth, Dies After Dispute At Basketball Game (HuffPost)",
+    "date": "2012-04-19",
+    "quote": ""
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 68,
+    "column": "date_of_death",
+    "from": "2012-01-18",
+    "to": "2012-04-18"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 68,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Cardiac arrest while being restrained by staff; ruled an accident by the medical examiner"
+   }
+  ]
+ },
+ {
+  "key": "memorial-69",
+  "kind": "memorial",
+  "title": "Anthony Parker",
+  "place": "One Way Farm, Ohio",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Anthony Parker, 16, was struck and slammed head-first to the floor by another resident at One Way Farm in Ohio on Dec 19, 2011 and died Dec 28 after more than a week on life support; the autopsy gave blunt force trauma to the head. The other youth was convicted of involuntary manslaughter.",
+  "kop_now": "KOP gives Dec 27, 2011, cause beating and medical neglect, category medical_neglect.",
+  "sources": [
+   {
+    "url": "https://www.fox19.com/story/18987197/trial-begins-for-lance-tiernan-accused-of-killing-anthony-parker/",
+    "title": "Video of fight that killed Butler County teen shown in court (FOX19)",
+    "date": "2012",
+    "quote": "Parker died on Dec. 28 after more than a week on life support at Children's Hospital."
+   },
+   {
+    "url": "https://www.fox19.com/story/19012613/butler-county-jury-returns-verdict-in-lance-tiernan-one-way-farm/",
+    "title": "Jury returns verdict in boys home beating death (FOX19)",
+    "date": "2012-07-12",
+    "quote": "found Lance Tiernan guilty of involuntary manslaughter"
+   }
+  ],
+  "notes": "Staff found him unresponsive at a bed check about three hours after the attack, but no finding of medical neglect was found.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 69,
+    "column": "date_of_death",
+    "from": "2011-12-27",
+    "to": "2011-12-28"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 69,
+    "column": "cause_of_death",
+    "from": "Beating and medical neglect",
+    "to": "Blunt force trauma to the head from an assault by another resident"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 69,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "violence"
+   }
+  ]
+ },
+ {
+  "key": "memorial-73",
+  "kind": "memorial",
+  "title": "Dyskeha Streeter",
+  "place": "Divine Guidance Integrative Services, North Carolina",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Dysheka Streeter, 16, died March 28, 2011 at Divine Guidance Integrated Services, a Pitt County (Greenville) group home; a state Division of Health Service Regulation report says she died of several blood clots after days of complaining of chest pain and asking to go to the hospital.",
+  "kop_now": "KOP spells her name Dyskeha, the program Divine Guidance Integrative Services, cause Medical neglect.",
+  "sources": [
+   {
+    "url": "https://wcti12.com/archive/group-home-teen-complained-of-symptoms-before-death",
+    "title": "Group home teen complained of symptoms before death (WCTI)",
+    "date": "2011-07-13",
+    "quote": "Dysheka Streeter died from several blood clots"
+   }
+  ],
+  "notes": "Cause is from the state report as WCTI quotes it; no autopsy coverage found.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 73,
+    "column": "program",
+    "from": "Divine Guidance Integrative Services",
+    "to": "Divine Guidance Integrated Services"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 73,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Several blood clots after days of complaints of chest pain went unanswered (state report)"
+   },
+   {
+    "type": "manual",
+    "text": "Name: the WCTI source spells her first name Dysheka, not Dyskeha; correct the name on memorial entry 73."
+   }
+  ]
+ },
+ {
+  "key": "memorial-74",
+  "kind": "memorial",
+  "title": "Astrid Valdivia",
+  "place": "Utah Youth Village, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Astrid Valdivia, 13, ran away on Jan 18, 2011 from the South Salt Lake foster placement where the state had put her (the Utah Youth Village group home). She was shot and killed on Jan 23, 2011 in a Wal-Mart parking lot in Port Orchard, Washington, by the 31-year-old man she had left with, during a confrontation with sheriff's deputies; he then shot himself.",
+  "kop_now": "KOP places the death in Utah and words the cause as a gunshot during an escape attempt.",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2013/2/20/20514707/family-of-13-year-old-killed-in-shootout-files-wrongful-death-lawsuit/",
+    "title": "Family of 13-year-old killed in shootout files wrongful death lawsuit",
+    "date": "2013-02-20",
+    "quote": "A third deputy struck Martinez in the leg and when Astrid ran to Martinez, he shot the girl, killing her, before turning the weapon on himself."
+   },
+   {
+    "url": "https://www.ksl.com/article/24051084/family-believes-girl-shot-in-washington-is-utah-runaway",
+    "title": "Family believes girl shot in Washington is Utah runaway",
+    "date": "2011-01",
+    "quote": "On Jan. 18, Valdivia ran away from her South Salt Lake foster care home."
+   }
+  ],
+  "notes": "She died five days after leaving the placement, out of state; the reviewer may decide whether the entry fits the page. Category changed to violence because she was shot by a man (earlier charged with kidnapping her), not hurt by the escape itself; escape_attempt is defensible if the page prefers it.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 74,
+    "column": "location",
+    "from": "Utah",
+    "to": "Washington"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 74,
+    "column": "cause_of_death",
+    "from": "Gunshot during escape attempt",
+    "to": "Shot by the adult man she had run away with, during a confrontation with sheriff's deputies"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 74,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "violence"
+   }
+  ]
+ },
+ {
+  "key": "memorial-76",
+  "kind": "memorial",
+  "title": "Michael Keith Owens",
+  "place": "Daystar Residential, Inc., Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Michael Owens, 16, died on Friday Nov 5, 2010 after a Daystar staff member restrained him in a closet. The Harris County Institute of Forensic Science ruled the death a homicide caused by complications of mechanical asphyxia.",
+  "kop_now": "KOP gives the date as Nov 10, 2010 and the cause as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.texastribune.org/2010/11/09/after-monitor-departs-a-teenager-is-killed/",
+    "title": "After monitor departs, a teenager is killed",
+    "date": "2010-11-09",
+    "quote": "Michael Keith Owens died on Friday night, November 5, 2010 ... The initial cause of death appears to be asphyxiation."
+   },
+   {
+    "url": "https://www.chron.com/news/houston-texas/article/Death-of-restrained-boy-ruled-homicide-at-Daystar-1687608.php",
+    "title": "Death of restrained boy ruled homicide at Daystar in Manvel",
+    "date": "2010",
+    "quote": "ruled a homicide caused by \"complications of mechanical asphyxia,\" according to the Harris County Institute of Forensic Science"
+   }
+  ],
+  "notes": "The Chronicle page did not load; its ruling is quoted from the search summary of that article. Some coverage gives the middle name as Kevin; the Tribune uses Keith, so the name is left alone.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 76,
+    "column": "date_of_death",
+    "from": "2010-11-10",
+    "to": "2010-11-05"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 76,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Complications of mechanical asphyxia during a staff restraint; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-78",
+  "kind": "memorial",
+  "title": "Natasha Newman",
+  "place": "Sunrise Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Natasha Newman, 17, of London, died at the scene when a Sunrise Academy vehicle rolled on I-70 in Sevier County, Utah, shortly before 9 a.m. on Sunday Oct 17, 2010.",
+  "kop_now": "KOP gives the date as Oct 20, 2010.",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2010/10/17/20147507/girl-from-troubled-youth-center-killed-in-rollover/",
+    "title": "Girl from troubled youth center killed in rollover",
+    "date": "2010-10-17",
+    "quote": "Natasha Newman, 17, of London, England, died at the scene."
+   }
+  ],
+  "notes": "Oct 20 may have been copied from another girl hurt in the same crash who died later.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 78,
+    "column": "date_of_death",
+    "from": "2010-10-20",
+    "to": "2010-10-17"
+   }
+  ]
+ },
+ {
+  "key": "memorial-83",
+  "kind": "memorial",
+  "title": "Alexis Evette Richie",
+  "place": "SSM DePaul Health Center, Missouri",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Alexis Richie, 16, died Oct 26, 2009 in the adolescent psychiatric unit of SSM DePaul Health Center after aides held her facedown in a bean bag chair and she was sedated. The medical examiner found she suffocated on the bean bag chair and ruled the death a homicide; no charges were filed.",
+  "kop_now": "KOP gives the cause as \"Restraint, medical neglect\".",
+  "sources": [
+   {
+    "url": "https://careydanis.com/blog/st_louisarea_hospital_allegedl/",
+    "title": "St. Louis-area hospital allegedly ...",
+    "date": "2010",
+    "quote": "An autopsy showed that she died from being sedated and suffocated by the beanbag chair ... ruled a homicide."
+   },
+   {
+    "url": "https://www.stltoday.com/news/local/metro/girl-16-dies-during-restraint-at-an-already-troubled-hospital/article_4a10ccdd-5d08-52bd-bfc5-c435014aa09b.html",
+    "title": "Girl, 16, dies during restraint at an already-troubled hospital",
+    "date": "2010",
+    "quote": "The medical examiner concluded that Alexis had suffocated on the bean bag chair (paywalled; from the search summary)."
+   }
+  ],
+  "notes": "Post-Dispatch pages are paywalled; the ruling is in a law firm's summary of that coverage and the search summary.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 83,
+    "column": "cause_of_death",
+    "from": "Restraint, medical neglect",
+    "to": "Suffocation while held facedown in a bean bag chair during restraint; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-84",
+  "kind": "memorial",
+  "title": "Sergey Blashchishen",
+  "place": "SageWalk, Oregon",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Sergey Blashchishen, 16, collapsed and died on Aug 28, 2009 on a hike in Lake County on his first day at SageWalk. Preliminary autopsy results found heat stroke; a sheriff's deputy wrote that he believed the death was a homicide from criminal mistreatment and reckless endangerment.",
+  "kop_now": "KOP lists the cause and category as unknown.",
+  "sources": [
+   {
+    "url": "https://bendbulletin.com/2009/11/04/school-poses-a-threat-to-children-say-investigators/",
+    "title": "School poses a threat to children, say investigators",
+    "date": "2009-11-04",
+    "quote": "Blashchishen collapsed while on a hiking trip in Lake County and then died on the scene."
+   },
+   {
+    "url": "https://www.kgw.com/article/news/local/sheriff-wilderness-camp-to-blame-in-portland-teens-death/283-90011740",
+    "title": "Sheriff: Wilderness camp to blame in Portland teen's death",
+    "date": "2009",
+    "quote": "Preliminary autopsy results concluded that Sergey had died from heatstroke (page blocked; from the search summary)."
+   }
+  ],
+  "notes": "Heat stroke is the preliminary autopsy result as reported; no final medical examiner wording found. The homicide view is a deputy's affidavit, not a ruling, so it stays out of the cause.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 84,
+    "column": "cause_of_death",
+    "from": "Unknown",
+    "to": "Heat stroke on a hike (preliminary autopsy)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 84,
+    "column": "cause_category",
+    "from": "unknown",
+    "to": "exposure"
+   }
+  ]
+ },
+ {
+  "key": "memorial-85",
+  "kind": "memorial",
+  "title": "James Richard Shirey",
+  "place": "Diamond Ranch Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "James Richard Shirey Jr. died Jan 10, 2009 after falling ill at Diamond Ranch Academy; it has since been reported that he died of complications of congenital adrenal hyperplasia. Advocacy accounts say counselors delayed medical care thinking he might be faking.",
+  "kop_now": "KOP lists the cause and category as unknown.",
+  "sources": [
+   {
+    "url": "https://jamesshireyfoundation.org/about/",
+    "title": "About - James Shirey Foundation",
+    "date": "",
+    "quote": "James Richard Shirey Jr., who tragically passed away on January 10, 2009, at the young age of 14 due to complications from Congenital Adrenal Hyperplasia (CAH)"
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/?p=9723",
+    "title": "Diamond Ranch Academy - Breaking Code Silence",
+    "date": "",
+    "quote": "they delayed seeking medical attention for him ... it has since been reported that he died as a result of a rare genetic disorder, Congenital Adrenal Hyperplasia."
+   }
+  ],
+  "notes": "Age conflicts: the family foundation says 14, Breaking Code Silence says 15; age left at 14. The delay in care comes from advocacy sources only, so the category stays unknown here; the reviewer may set medical_neglect.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 85,
+    "column": "cause_of_death",
+    "from": "Unknown",
+    "to": "Complications of congenital adrenal hyperplasia (as reported)"
+   }
+  ]
+ },
+ {
+  "key": "memorial-86",
+  "kind": "memorial",
+  "title": "Faith Finley",
+  "place": "Parmadale Family Services, Ohio",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Faith Finley, 17, died Dec 13, 2008 while restrained face down by Parmadale staff. The Cuyahoga County coroner found she suffocated while restrained and choked on inhaled vomit, and ruled the death a homicide. Three former workers were tried for involuntary manslaughter and found not guilty in 2010.",
+  "kop_now": "KOP gives the cause as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.cleveland19.com/story/9618300/coroner-teen-at-treatment-center-was-suffocated-and-choked/",
+    "title": "Coroner: Teen at Treatment Center Was Suffocated and Choked",
+    "date": "2009",
+    "quote": "the girl suffocated while restrained and choked when she inhaled her vomit."
+   }
+  ],
+  "notes": "The coroner said the homicide ruling means death at the hands of another and implies nothing sinister. The acquittal is from KOP's own source headline (Plain Dealer, not fetchable).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 86,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Suffocated while restrained and choked on inhaled vomit; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-87",
+  "kind": "memorial",
+  "title": "Katherine Rice",
+  "place": "KidsPeace, Pennsylvania",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Katherine Rice, 16, and another girl overdosed at the KidsPeace campus in Saylorsburg on Apr 17, 2008 on pills reportedly taken from a counselor; she died at Lehigh Valley Hospital on Friday May 2, 2008. The coroner's report names methadone.",
+  "kop_now": "KOP gives the cause as \"Overdose\".",
+  "sources": [
+   {
+    "url": "https://www.wfmz.com/news/coroner-teen-dies-after-methadone-overdose-at-kidspeace/article_d606fd56-5873-5501-bb60-1187c2eb7c2b.html",
+    "title": "Coroner: Teen Dies After Methadone Overdose at KidsPeace",
+    "date": "2008-05",
+    "quote": "Katherine Rice, 16, was pronounced dead at a hospital around 3:30 p.m. Friday, Lehigh Valley Coroner Scott Grim said."
+   }
+  ],
+  "notes": "WFMZ and Pocono Record pages would not load; the details are from the headline and search summaries. Date of death (May 2) is right.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 87,
+    "column": "cause_of_death",
+    "from": "Overdose",
+    "to": "Methadone overdose at the program on Apr 17, 2008; died in hospital"
+   }
+  ]
+ },
+ {
+  "key": "memorial-88",
+  "kind": "memorial",
+  "title": "Ashlie Bunch",
+  "place": "McGraw Center of the Seattle Children's Home, Washington",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Ashlie Bunch, 15, was found dead on Jan 29, 2008 at the McGraw Center after hanging herself with shoelaces a staff member had given her.",
+  "kop_now": "KOP shows only the year 2008, and the program name has a broken apostrophe.",
+  "sources": [
+   {
+    "url": "https://www.heraldnet.com/2009/05/07/sultan-man-sues-mcgraw-center-over-daughters-death/",
+    "title": "Sultan man sues McGraw Center over daughter's death",
+    "date": "2009-05-07",
+    "quote": "she was found dead on Jan. 29, 2008 after hanging herself from a cabinet with shoelaces a staff member had given her"
+   }
+  ],
+  "notes": "The shoelace detail is from the father's lawsuit as reported.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 88,
+    "column": "date_of_death",
+    "from": "2008-01-01",
+    "to": "2008-01-29"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 88,
+    "column": "date_precision",
+    "from": "year",
+    "to": "day"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 88,
+    "column": "program",
+    "from": "McGraw Center of the Seattle Children’s Home",
+    "to": "McGraw Center of the Seattle Children's Home"
+   }
+  ]
+ },
+ {
+  "key": "memorial-91",
+  "kind": "memorial",
+  "title": "Caleb Jensen",
+  "place": "Alternative Youth Adventures, Colorado",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Caleb Jensen, 15, sent by Utah juvenile justice officials, died May 2, 2007 at Alternative Youth Adventures in Montrose County, Colorado. The Mesa County coroner found natural causes; the concern, and later charges that were dropped, were over a staph infection allegedly left untreated.",
+  "kop_now": "KOP places the death in Utah and gives the cause as \"Medical neglect\".",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2007/5/12/20018293/utah-teens-back-from-wilds-after-boy-s-death/",
+    "title": "Utah teens back from wilds after boy's death",
+    "date": "2007-05-12",
+    "quote": "He died May 2 from what the Mesa County coroner has determined to be natural causes."
+   },
+   {
+    "url": "https://www.courthousenews.com/grieving-mom-sues-camp-for-sons-death/",
+    "title": "Grieving Mom Sues Camp for Son's Death",
+    "date": "2009",
+    "quote": "operated by Alternative Youth Adventures (AYA) in Montrose County, in southwestern Colorado"
+   }
+  ],
+  "notes": "Neglect is an allegation (indictments against four were dropped), so the cause names the infection and the coroner's finding; category medical_neglect left for the reviewer.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 91,
+    "column": "location",
+    "from": "Utah",
+    "to": "Colorado"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 91,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Staph infection; coroner ruled natural causes, neglect alleged"
+   }
+  ]
+ },
+ {
+  "key": "memorial-92",
+  "kind": "memorial",
+  "title": "(Unknown male)",
+  "place": "Aspen Achievement Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "A 16-year-old boy hanged himself at Aspen Achievement Academy in Loa, Utah in April 2007 and died during the helicopter flight to a hospital. No source found gives the day.",
+  "kop_now": "KOP shows the exact date Apr 1, 2007, which looks like a stand-in for the month.",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Achievement_Academy",
+    "title": "Aspen Achievement Academy",
+    "date": "",
+    "quote": "In April 2007, a 16-year-old ... died in a helicopter transport en route to the hospital (summary)."
+   }
+  ],
+  "notes": "Only Wikipedia and advocacy sources; they differ on what he used (shoelace or seatbelt webbing). Name unknown.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 92,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   }
+  ]
+ },
+ {
+  "key": "memorial-94",
+  "kind": "memorial",
+  "title": "Harry Tyrone Rutledge",
+  "place": "Azleway Boys' Ranch, Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Harry Rutledge, 15, and another boy ran away from Azleway Boys' Ranch on Saturday Sept 16, 2006 and were found dead on the Union Pacific tracks in Hawkins, Texas, on Thursday Sept 21, 2006. Police ruled it suicide; the families disputed it and a Texas Rangers, FBI and U.S. attorney review brought no charges.",
+  "kop_now": "KOP gives the date as Sept 1, 2006, and the program name has a broken apostrophe.",
+  "sources": [
+   {
+    "url": "https://www.kltv.com/story/5447313/teens-killed-by-train-identified-as-azleway-runaways/",
+    "title": "Teens Killed By Train Identified As Azleway Runaways",
+    "date": "2006-09-22",
+    "quote": "the teens had been living at Azleway for the past few weeks, but ran away last Saturday ... They were run over by a Union Pacific train."
+   },
+   {
+    "url": "https://www.chron.com/news/houston-texas/article/Police-Runaways-hit-by-train-committed-suicide-1858111.php",
+    "title": "Police: Runaways hit by train committed suicide",
+    "date": "2006",
+    "quote": "Christopher Hill, 17, and Harry \"Ishmael\" Rutledge, 15, died Sept. 21 after they apparently lay across the tracks in Hawkins (search summary)."
+   }
+  ],
+  "notes": "They died off the grounds five days after running away; the families disputed the suicide finding.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 94,
+    "column": "date_of_death",
+    "from": "2006-09-01",
+    "to": "2006-09-21"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 94,
+    "column": "program",
+    "from": "Azleway Boys’ Ranch",
+    "to": "Azleway Boys' Ranch"
+   }
+  ]
+ },
+ {
+  "key": "memorial-95",
+  "kind": "memorial",
+  "title": "Christopher Ladell Hill",
+  "place": "Azleway Boys' Ranch, Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Christopher Hill, 17, and another boy ran away from Azleway Boys' Ranch on Saturday Sept 16, 2006 and were found dead on the Union Pacific tracks in Hawkins, Texas, on Thursday Sept 21, 2006. Police ruled it suicide; the families disputed it and a Texas Rangers, FBI and U.S. attorney review brought no charges.",
+  "kop_now": "KOP gives the date as Sept 1, 2006, and the program name has a broken apostrophe.",
+  "sources": [
+   {
+    "url": "https://www.kltv.com/story/5447313/teens-killed-by-train-identified-as-azleway-runaways/",
+    "title": "Teens Killed By Train Identified As Azleway Runaways",
+    "date": "2006-09-22",
+    "quote": "the teens had been living at Azleway for the past few weeks, but ran away last Saturday ... They were run over by a Union Pacific train."
+   },
+   {
+    "url": "https://www.chron.com/news/houston-texas/article/Police-Runaways-hit-by-train-committed-suicide-1858111.php",
+    "title": "Police: Runaways hit by train committed suicide",
+    "date": "2006",
+    "quote": "Christopher Hill, 17, and Harry \"Ishmael\" Rutledge, 15, died Sept. 21 after they apparently lay across the tracks in Hawkins (search summary)."
+   }
+  ],
+  "notes": "They died off the grounds five days after running away; the families disputed the suicide finding.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 95,
+    "column": "date_of_death",
+    "from": "2006-09-01",
+    "to": "2006-09-21"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 95,
+    "column": "program",
+    "from": "Azleway Boys’ Ranch",
+    "to": "Azleway Boys' Ranch"
+   }
+  ]
+ },
+ {
+  "key": "memorial-96",
+  "kind": "memorial",
+  "title": "Alex Cullinane",
+  "place": "Back to Basics Christian Military Academy, Florida",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Alex Cullinane, 13, collapsed during a Back to Basics campout at Oleta River State Park and was pronounced dead Aug 12, 2006; cadets said he had refused food and the heat was getting to him. The autopsy found heat stroke.",
+  "kop_now": "KOP gives the cause as \"Medical neglect\".",
+  "sources": [
+   {
+    "url": "https://www.theledger.com/story/news/2006/10/15/autopsy-camper-died-of-heat-stroke/25760802007/",
+    "title": "Autopsy: Camper Died of Heat Stroke",
+    "date": "2006-10-15",
+    "quote": "Autopsy: camper died of heat stroke (headline; page not fetchable)"
+   },
+   {
+    "url": "https://www.nbcnews.com/id/wbna14325244",
+    "title": "Camper who died refused food, cadets say",
+    "date": "2006-08",
+    "quote": "The boy got out of bed in the middle of the night to tell a drill sergeant he didn't feel well and collapsed on the way to the restroom."
+   }
+  ],
+  "notes": "The autopsy result is from KOP's own source headline; a search summary says it was ruled accidental, not confirmed, so left out. Category set to exposure like the other heat deaths; the reviewer may keep medical_neglect.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 96,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Heat stroke during a campout (autopsy)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 96,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
+   }
+  ]
+ },
+ {
+  "key": "memorial-97",
+  "kind": "memorial",
+  "title": "Rocco D. Magliozzi",
+  "place": "SUWS Idaho, Idaho",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Rocco Magliozzi, 12, fell ill on a SUWS wilderness program near Gooding, Idaho and died July 28, 2006 in a Boise hospital after exposure to West Nile virus and Rocky Mountain spotted fever.",
+  "kop_now": "KOP gives the cause as \"Medical neglect\".",
+  "sources": [
+   {
+    "url": "https://www.spokesman.com/stories/2006/aug/08/idaho-death-prompts-regional-calls-for-west-nile/",
+    "title": "Idaho death prompts regional calls for West Nile caution",
+    "date": "2006-08-08",
+    "quote": "died in a Boise hospital July 28 after being exposed to West Nile virus and Rocky Mountain Spotted Fever"
+   }
+  ],
+  "notes": "Category medical_neglect left for the reviewer; advocacy accounts say the program sent him to a doctor once and back to the field before his last hospital visit.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 97,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "West Nile virus (also exposed to Rocky Mountain spotted fever), caught on the program; died in hospital"
+   }
+  ]
+ },
+ {
+  "key": "memorial-98",
+  "kind": "memorial",
+  "title": "Elisa D. Santry",
+  "place": "Outward Bound Wilderness, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Elisa Santry, 16, died July 16, 2006 on day 16 of an Outward Bound course near Canyonlands, Utah, found in a side canyon in about 110 degree heat. Her family said the medical examiner told them heat stroke was the most likely cause.",
+  "kop_now": "KOP lists the cause and category as unknown.",
+  "sources": [
+   {
+    "url": "https://www.bostonmagazine.com/uncategorized/2007/04/08/dangers-that-can-cause-or-lead-to/",
+    "title": "Dangers That Can Cause or Lead To...",
+    "date": "2007-04-08",
+    "quote": "the medical examiner told him the most likely cause of his sister's death was heat stroke"
+   },
+   {
+    "url": "https://www.nbcnews.com/id/wbna13941650",
+    "title": "2 die on wilderness hikes in Utah heat",
+    "date": "2006-07",
+    "quote": "The temperature was about 110 degrees ... There was no evidence of foul play."
+   }
+  ],
+  "notes": "No published medical examiner report found; the heat stroke finding is as relayed by her family. Outward Bound suggested another physical cause.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 98,
+    "column": "cause_of_death",
+    "from": "Unknown",
+    "to": "Probable heat stroke on a hike in about 110 F heat (medical examiner, as reported by family)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 98,
+    "column": "cause_category",
+    "from": "unknown",
+    "to": "exposure"
+   }
+  ]
+ },
+ {
+  "key": "memorial-101",
+  "kind": "memorial",
+  "title": "Lenny Ortega",
+  "place": "Star Ranch, Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Lenny Ortega, 12, placed at Star Ranch by Child Protective Services, was swept away by rain-swollen Johnson Creek on May 6, 2006 during a bike ride with a house parent, and died May 30, 2006 in a San Antonio hospital.",
+  "kop_now": "KOP lists the cause only as \"Accident\" (category accident).",
+  "sources": [
+   {
+    "url": "https://dailytimes.com/news/article_7db780eb-4500-523f-9495-f9d34050584c.html",
+    "title": "Youth swept down creek dies (Kerrville Daily Times)",
+    "date": "2006",
+    "quote": "washed away by rain-swollen waters in Johnson Creek on May 6 and died Tuesday in a San Antonio hospital"
+   },
+   {
+    "url": "https://www.findagrave.com/memorial/171251794/lenny-ortega",
+    "title": "Lenny Ortega (1993-2006), Find a Grave",
+    "date": "",
+    "quote": "died May 30, 2006"
+   }
+  ],
+  "notes": "Article text seen only through a search summary (site returned 429). No medical examiner wording found; category drowning follows the circumstances, the cause text avoids a formal ruling.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 101,
+    "column": "cause_of_death",
+    "from": "Accident",
+    "to": "Swept away by a flooded creek on a program bike ride; died later in hospital"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 101,
+    "column": "cause_category",
+    "from": "accident",
+    "to": "drowning"
+   }
+  ]
+ },
+ {
+  "key": "memorial-102",
+  "kind": "memorial",
+  "title": "Angellika Arndt",
+  "place": "Northwest Counseling & Guidance Clinic (Rice Lake Day Treatment Center), Wisconsin",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Angellika Arndt, 7, was held face down in a control hold at the Rice Lake, Wisconsin day treatment center of Northwest Counseling and Guidance Clinic on May 25, 2006 and was pronounced dead May 26, 2006 at Children's Hospital in Minneapolis. The medical examiner ruled the death a homicide from complications of chest compression asphyxia.",
+  "kop_now": "KOP gives the location as Minnesota (where the hospital was) and the cause only as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB13/2008Nov26AngellikaArndt.pdf",
+    "title": "A Tragic Result of a Failure to Act: The Death of Angellika Arndt (Disability Rights Wisconsin)",
+    "date": "2008-11-26",
+    "quote": "On May 26th, 2006, seven-year-old Angellika Arndt died at Children's Hospital in Minneapolis from complications associated with chest compression asphyxiation, never regaining consciousness from the day before ... The Medical Examiner ruled Angie's death a homicide because the restraint impaired her ability to breath."
+   }
+  ],
+  "notes": "Date May 26 is right; the restraint was May 25.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 102,
+    "column": "location",
+    "from": "Minnesota",
+    "to": "Wisconsin"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 102,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Chest compression asphyxia during a restraint; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-110",
+  "kind": "memorial",
+  "title": "Linda Harris",
+  "place": "Chad Youth Enhancement Center, Tennessee",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Linda Harris, 14, collapsed and died Sept 18, 2005 at Chad Youth Enhancement Center. Accounts conflict: the facility said she collapsed while being escorted to a time-out room; the sheriff's office was told she stopped breathing after a staff member restrained her. Medical examiner Dr. Bruce Levy ruled the death natural, from an enlarged heart (cardiac hypertrophy) and asthma, with her weight contributing.",
+  "kop_now": "KOP gives the cause as \"Restraint\" with no mention of the medical examiner's finding.",
+  "sources": [
+   {
+    "url": "https://www.nashvillescene.com/news/handle-with-care/article_a633d9cb-2340-5d9a-b7eb-d49d7995dd4a.html",
+    "title": "Handle With Care, Nashville Scene",
+    "date": "",
+    "quote": "ruled Harris' death 'natural,' determining that her death was a result of cardiac hypertrophy"
+   },
+   {
+    "url": "http://www.raggededgemagazine.com/ide/restraint_deaths/002046.html",
+    "title": "Conflicting Accounts Surround Death Of Teen At Facility (Inclusion Daily)",
+    "date": "2005",
+    "quote": "stopped breathing after being physically restrained by a male Chad staffer"
+   }
+  ],
+  "notes": "Category left as restraint because the circumstances are disputed; the reviewer may prefer other. Nashville Scene returned 429 to a direct fetch; quotes via search.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 110,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Collapsed during a reported restraint; medical examiner ruled natural causes (enlarged heart, asthma)"
+   }
+  ]
+ },
+ {
+  "key": "memorial-111",
+  "kind": "memorial",
+  "title": "Shirley Arciszewski",
+  "place": "Group home, Charlotte",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Shirley Arciszewski, 12, died in September 2004 of asphyxia after a staff member lay on her during a restraint at a Charlotte group home; memorial listings give Sept 11, 2004. Inclusion Daily reported on Jan 11, 2005 that no charges would be filed, so 2005 cannot be the year.",
+  "kop_now": "KOP gives the date as Sept 1, 2005.",
+  "sources": [
+   {
+    "url": "http://today-a-child-died.blogspot.com/2011/09/shirley-arciszewski-2004.html?m=1",
+    "title": "Today a child died: Shirley Arciszewski - 2004",
+    "date": "2011",
+    "quote": "cites \"No Charges In Girl's Restraint Death,\" Inclusion Daily Express, January 11, 2005"
+   },
+   {
+    "url": "http://www.toddlertime.com/advocacy/hospitals/restraints/restraints-051405-2.htm",
+    "title": "Charlotte Observer excerpt (May 2005)",
+    "date": "2005-05",
+    "quote": "Shirley Arciszewski, 12, died after a worker restrained her at a Charlotte group home for mentally ill children in September. An autopsy blamed asphyxia caused by an adult lying on her."
+   }
+  ],
+  "notes": "Day Sept 11 comes from memorial listings (Find a Grave summary), not seen in news. State left as is: Charlotte is in North Carolina and memorial listings say NC, but summaries of the Inclusion Daily piece say South Carolina; the reviewer may check the archived source (archive.md/1WHCa, not readable here).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 111,
+    "column": "date_of_death",
+    "from": "2005-09-01",
+    "to": "2004-09-11"
+   }
+  ]
+ },
+ {
+  "key": "memorial-112",
+  "kind": "memorial",
+  "title": "Travis Parker",
+  "place": "Appalachian Wilderness Camp, Georgia",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Travis Parker, 13, was held face down by counselors for about 90 minutes at the state-run Appalachian Wilderness Camp in Cleveland, Georgia on April 20, 2005, was denied his asthma inhaler, and died the next day, April 21. A medical examiner ruled the death a homicide; six counselors were charged (the charges were later dismissed).",
+  "kop_now": "KOP gives the location as Illinois (the Chicago Tribune ran the AP story).",
+  "sources": [
+   {
+    "url": "https://www.foxnews.com/story/camp-counselors-charged-with-murder-in-boys-death",
+    "title": "Camp Counselors Charged With Murder in Boy's Death (AP)",
+    "date": "2005-07",
+    "quote": "Travis Parker died April 21, a day after he was held face down by counselors at the Appalachian Wilderness Camp ... A medical examiner ruled the death a homicide."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 112,
+    "column": "location",
+    "from": "Illinois",
+    "to": "Georgia"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 112,
+    "column": "cause_of_death",
+    "from": "Restraint and medical neglect",
+    "to": "Held face down and denied his inhaler during a restraint; ruled a homicide"
+   }
+  ]
+ },
+ {
+  "key": "memorial-114",
+  "kind": "memorial",
+  "title": "Roberto Reyes",
+  "place": "Thayer Learning Center, Missouri",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Roberto Reyes, 15, died Nov 3, 2004 at Thayer Learning Center in Kidder, Missouri, less than two weeks after enrolling. The autopsy attributed the death to a spider bite; state and county officials concluded earlier medical treatment might have prevented it.",
+  "kop_now": "KOP gives the location as Oklahoma (The Oklahoman ran the story).",
+  "sources": [
+   {
+    "url": "https://www.tampabay.com/archive/2007/10/26/missouri-boot-camp-death-gets-fbi-scrutiny/",
+    "title": "Missouri boot camp death gets FBI scrutiny",
+    "date": "2007-10-26",
+    "quote": "Roberto Reyes, 15, died Nov. 3 ... at Thayer Learning Center Boot Camp in Kidder, Mo."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Thayer_Learning_Center",
+    "title": "Thayer Learning Center (Wikipedia)",
+    "date": "",
+    "quote": "State and county officials concluded that \"earlier medical treatment\" of Reyes may have prevented his death."
+   }
+  ],
+  "notes": "The coroner called the death an accident; category medical_neglect is kept given the officials' conclusion.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 114,
+    "column": "location",
+    "from": "Oklahoma",
+    "to": "Missouri"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 114,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Complications of a spider bite; officials found earlier medical care might have saved him"
+   }
+  ]
+ },
+ {
+  "key": "memorial-115",
+  "kind": "memorial",
+  "title": "Karlye Newman",
+  "place": "Spring Creek Lodge Academy, Montana",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Karlye Newman, 16, died by suicide (hanging) at Spring Creek Lodge Academy in Thompson Falls, Montana in October 2004. The Montana Supreme Court gives only the month; secondary summaries give Oct 4 or Oct 7.",
+  "kop_now": "KOP gives the location as Colorado and the date as Oct 8, 2004.",
+  "sources": [
+   {
+    "url": "https://caselaw.findlaw.com/court/mt-supreme-court/1630684.html",
+    "title": "Newman v. Scottsdale Insurance Co. (Mont. 2013)",
+    "date": "2013",
+    "quote": "the suicide of a 16-year-old girl, Karlye Newman, who was residing at the Spring Creek Lodge Academy in Thompson Falls, Montana, at the time of her death in October 2004"
+   }
+  ],
+  "notes": "Day conflicts across sources (Oct 4, Oct 7, KOP's Oct 8), so the date drops to month precision.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 115,
+    "column": "location",
+    "from": "Colorado",
+    "to": "Montana"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 115,
+    "column": "date_of_death",
+    "from": "2004-10-08",
+    "to": "2004-10-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 115,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   }
+  ]
+ },
+ {
+  "key": "memorial-119",
+  "kind": "memorial",
+  "title": "Omar Paisley",
+  "place": "Miami-Dade Regional Juvenile Detention Center, Florida",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Omar Paisley, 17, died June 9, 2003 of a ruptured appendix at the Miami-Dade Regional Juvenile Detention Center after three days of asking for care, per the Miami-Dade grand jury report.",
+  "kop_now": "KOP gives the date as June 2, 2003.",
+  "sources": [
+   {
+    "url": "http://miamisao.com/wp-content/uploads/2021/02/gj2003s.pdf",
+    "title": "Miami-Dade grand jury report on the death of Omar Paisley",
+    "date": "2003",
+    "quote": "Seventeen-year old Omar Paisley spent the last three days of his life, which ended June 9, 2003, in agony"
+   },
+   {
+    "url": "https://www.prisonlegalnews.org/news/2009/jan/15/nurse-pleads-guilty-in-death-of-florida-juvenile-prisoner/",
+    "title": "Nurse Pleads Guilty in Death of Florida Juvenile Prisoner",
+    "date": "2009-01-15",
+    "quote": "On June 9, 2003, Paisley died due to a ruptured appendix."
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 119,
+    "column": "date_of_death",
+    "from": "2003-06-02",
+    "to": "2003-06-09"
+   }
+  ]
+ },
+ {
+  "key": "memorial-126",
+  "kind": "memorial",
+  "title": "Kiley Michelle Jaquays",
+  "place": "Integrity House, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Kiley Jaquays, 17, died Dec 24, 2002 when she stumbled off a ledge and fell down a steep slope inside Bloomington Cave near St. George during an Integrity House (Cedar City) outing.",
+  "kop_now": "KOP gives the cause as \"Hiking accident\".",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2002/12/25/19695707/teen-girl-dies-in-fall-from-ledge/",
+    "title": "Teen girl dies in fall from ledge",
+    "date": "2002-12-25",
+    "quote": "They were a ways in the cave when she stumbled and fell off a ledge."
+   },
+   {
+    "url": "https://caves.org/wp-content/uploads/2021/10/September_05_ACA0203-1.pdf",
+    "title": "NSS News accident report",
+    "date": "2005-09",
+    "quote": "tumbling about 275 feet down a 45- to 50-degree slope"
+   }
+  ],
+  "notes": "The 2007 Deseret News list calls it a hiking fall, so the old wording is not false; this is a precision fix only.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 126,
+    "column": "cause_of_death",
+    "from": "Hiking accident",
+    "to": "Fall from a ledge inside Bloomington Cave on a program outing"
+   }
+  ]
+ },
+ {
+  "key": "memorial-130",
+  "kind": "memorial",
+  "title": "Jeremy Gaulin",
+  "place": "Summit School and Children's Residence Center, New York",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Jeremy Gaulin was pushed from a second-floor window at Summit School in Upper Nyack by another student and died Saturday, Oct 5, 2002 at Nyack Hospital, per his Journal News obituary.",
+  "kop_now": "KOP gives the date of death as Oct 3, 2002.",
+  "sources": [
+   {
+    "url": "https://www.legacy.com/us/obituaries/lohud/name/jeremy-gaulin-obituary?id=48211677",
+    "title": "Jeremy Gaulin obituary, The Journal News",
+    "date": "2002-10-08",
+    "quote": "passed away Saturday, October 5, 2002 at Nyack Hospital"
+   }
+  ],
+  "notes": "Obituary seen via search summary (legacy.com blocked a direct fetch). Oct 3 may be the day of the fall; not confirmed. The stored program name has a broken character in Children's, worth fixing by hand.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 130,
+    "column": "date_of_death",
+    "from": "2002-10-03",
+    "to": "2002-10-05"
+   }
+  ]
+ },
+ {
+  "key": "memorial-132",
+  "kind": "memorial",
+  "title": "Erica Harvey",
+  "place": "Catherine Freer Wilderness Therapy, Nevada",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Erica Harvey, 15, died May 27, 2002 on her first full day with Catherine Freer in Nevada after becoming ill on a hike; the official cause was heat stroke and dehydration. Coverage says staff took about 45 minutes to call for help.",
+  "kop_now": "KOP gives the cause as \"Medical neglect\".",
+  "sources": [
+   {
+    "url": "https://www.phoenixnewtimes.com/news/losing-erica-cynthia-clark-harvey-doesnt-want-anyone-elses-child-to-die-in-a-wilderness-therapy-program-6431310",
+    "title": "Losing Erica, Phoenix New Times",
+    "date": "",
+    "quote": "died that afternoon of heat stroke and dehydration"
+   }
+  ],
+  "notes": "Phoenix New Times blocked a direct fetch; quote via search. Category exposure follows the cause; the reviewer may keep medical_neglect given the delay in calling for help.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 132,
+    "column": "cause_of_death",
+    "from": "Medical neglect",
+    "to": "Heat stroke and dehydration on a wilderness hike"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 132,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
+   }
+  ]
+ },
+ {
+  "key": "memorial-134",
+  "kind": "memorial",
+  "title": "Victoria Petersilka",
+  "place": "Maryville Academy, Illinois",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Victoria Petersilka, 14, was found hanged from a fire sprinkler head at Maryville Academy for Girls in Des Plaines, Illinois; the death was ruled a suicide. Find a Grave gives Feb 10, 2002. KOP's source link is a 6abc page about a different death (Michael Owens at Daystar, Texas).",
+  "kop_now": "KOP gives the date as Feb 9, 2002 and links an unrelated 6abc page under the name Chicago Tribune.",
+  "sources": [
+   {
+    "url": "https://www.findagrave.com/memorial/120593060/victoria-petersilka",
+    "title": "Victoria L. \"Vickie\" Petersilka, Find a Grave",
+    "date": "",
+    "quote": "Death 10 Feb 2002 (aged 14), Des Plaines, Cook County, Illinois"
+   },
+   {
+    "url": "https://6abc.com/archive/7771690/",
+    "title": "6abc archive page KOP cites",
+    "date": "",
+    "quote": "about Michael Owens at Daystar Residential Treatment Facility, Manvel, Texas; no mention of Petersilka"
+   }
+  ],
+  "notes": "Date comes only from Find a Grave (no news source seen for either day). The better source is the Chicago Tribune, \"Vickie 'always wanted' a home\", Sept 27, 2002 (Heinzmann and Casillas); no open URL found, so Find a Grave is proposed until one is.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 134,
+    "column": "date_of_death",
+    "from": "2002-02-09",
+    "to": "2002-02-10"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 134,
+    "column": "source_url",
+    "from": "https://6abc.com/archive/7771690/",
+    "to": "https://www.findagrave.com/memorial/120593060/victoria-petersilka"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 134,
+    "column": "source_name",
+    "from": "Chicago Tribune",
+    "to": "Find a Grave"
+   }
+  ]
+ },
+ {
+  "key": "memorial-135",
+  "kind": "memorial",
+  "title": "Matthew Goodman",
+  "place": "The Lindens (Bancroft), New Jersey",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Matthew Goodman, 14, a resident of The Lindens, a Bancroft facility in Haddonfield, New Jersey, was rushed to Children's Hospital of Philadelphia on Feb 5, 2002 and died Feb 6 of pneumonia, respiratory distress and blood poisoning. Investigators found he had been over-medicated and improperly restrained; a later DYFS report said his treatment did not cause his death.",
+  "kop_now": "KOP gives the location as Montana (the Billings Gazette ran the story) and the cause only as \"Restraint\".",
+  "sources": [
+   {
+    "url": "http://www.inclusiondaily.com/news/institutions/nj/bancroft.htm",
+    "title": "Matthew's Law and Bancroft School (Inclusion Daily Express)",
+    "date": "2002-2003",
+    "quote": "On February 5, Matthew Goodman was rushed to Children's Hospital in Philadelphia from The Lindens, a Bancroft School in Haddonfield, New Jersey. The next day Matthew died of pneumonia, respiratory distress and blood poisoning."
+   }
+  ],
+  "notes": "Program The Lindens is right (a Bancroft unit). State findings conflict (DDD found abuse, DYFS found no neglect and no causal link), so the category is left as restraint for the reviewer.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 135,
+    "column": "location",
+    "from": "Montana",
+    "to": "New Jersey"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 135,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Pneumonia, respiratory distress and blood poisoning; investigators found over-medication and improper restraint"
+   }
+  ]
+ },
+ {
+  "key": "memorial-136",
+  "kind": "memorial",
+  "title": "Katherine Lank",
+  "place": "Redrock Ranch Academy, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Katie Lank, 16, of Virginia, was enrolled in Redrock Ranch Academy of St. George; on Christmas Day 2001 she fell about 70 feet into a crevasse while hiking near Gunlock Reservoir and died Jan 13, 2002 at a Las Vegas hospital. Red Rock Canyon School is a different St. George program.",
+  "kop_now": "KOP names the program as Red Rock Canyon School.",
+  "sources": [
+   {
+    "url": "https://wwaspsdeath.blogspot.com/",
+    "title": "Utah Wilderness Therapy Deaths (quoting the Salt Lake Tribune, July 13, 2003)",
+    "date": "2003-07-13",
+    "quote": "Katie Lank, 16, of Virginia, died Jan. 13, 2002. Lank was enrolled in Redrock Ranch Academy of St. George."
+   }
+  ],
+  "notes": "Program name from the Tribune text as reposted; the original Tribune article was not reached directly. Location stays Utah (the fall); she died in a Nevada hospital.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 136,
+    "column": "program",
+    "from": "Red Rock Canyon School",
+    "to": "Redrock Ranch Academy"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 136,
+    "column": "cause_of_death",
+    "from": "Hiking accident",
+    "to": "Fell about 70 feet into a crevasse on a program hike; died three weeks later"
+   }
+  ]
+ },
+ {
+  "key": "memorial-138",
+  "kind": "memorial",
+  "title": "Valerie Ann Heron",
+  "place": "Tranquility Bay, Jamaica",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Valerie Heron died Aug 10, 2001 after jumping from a balcony at Tranquility Bay in Jamaica, on her second day there.",
+  "kop_now": "KOP gives the location as Florida (the source is the Miami New Times).",
+  "sources": [
+   {
+    "url": "https://www.miaminewtimes.com/news/rough-love-6336423",
+    "title": "Rough Love, Miami New Times",
+    "date": "",
+    "quote": "jumped off a 35-foot-high balcony to her death in August 2001 at Tranquility Bay in Jamaica"
+   },
+   {
+    "url": "https://www.angelfire.com/ex/alexcross/index.html",
+    "title": "Memorial page",
+    "date": "",
+    "quote": "On August 10th 2001 Valerie Ann Heron killed herself by jumping off of a balcony"
+   }
+  ],
+  "notes": "Sources differ on age (16 vs 17), and one says the death was officially ruled an accident though a note was found; age and cause left unchanged.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 138,
+    "column": "location",
+    "from": "Florida",
+    "to": "Jamaica"
+   }
+  ]
+ },
+ {
+  "key": "memorial-139",
+  "kind": "memorial",
+  "title": "Tony Haynes",
+  "place": "America's Buffalo Soldiers boot camp, Arizona",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Tony (Anthony) Haynes, 14, died July 1, 2001 after camp staff made him stand for hours in the desert heat. The Maricopa County medical examiner ruled the death accidental, from complications of near drowning and dehydration due to heat exposure. Camp director Charles Long was convicted of reckless manslaughter.",
+  "kop_now": "KOP gives the cause as \"Heat stroke. Staff was sentenced\".",
+  "sources": [
+   {
+    "url": "https://www.nbcnews.com/news/amp/wbna6782304",
+    "title": "Boot camp director convicted in teen's death",
+    "date": "2005-01-03",
+    "quote": "found guilty of reckless manslaughter"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Charles_Long_(ABSRA)",
+    "title": "Charles Long (ABSRA)",
+    "date": "",
+    "quote": "complications of near drowning and dehydration due to heat exposure"
+   }
+  ],
+  "notes": "Some sources say July 2; KOP's July 1 matches most coverage and is kept. The medical examiner quote is from a search summary of the Wikipedia/NBC coverage.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 139,
+    "column": "cause_of_death",
+    "from": "Heat stroke. Staff was sentenced",
+    "to": "Complications of near drowning and dehydration due to heat exposure; ruled accidental. Camp director convicted of reckless manslaughter"
+   }
+  ]
+ },
+ {
+  "key": "memorial-143",
+  "kind": "memorial",
+  "title": "Tanner Wilson",
+  "place": "Gerard of Iowa, Mason City, Iowa",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Tanner Wilson, 11, died in February 2001 of cardiopulmonary arrest shortly after two Gerard staff held him face down on the floor. A Gerard employee was charged with felony child endangerment; coverage names her Lori Meacham, and no source found names a 'Lori Ann Ingham'.",
+  "kop_now": "KOP's cause names the charged staff member as \"Lori Ann Ingham\".",
+  "sources": [
+   {
+    "url": "https://www.radioiowa.com/2001/06/14/more-details-on-boys-death-in-mason-city-facility/",
+    "title": "More Details on Boy's Death in Mason City Facility",
+    "date": "2001-06-14",
+    "quote": "Two staff members held the child face-down on the floor, with one staff member using her body to form a bridge over the child's upper body"
+   },
+   {
+    "url": "https://www.findagrave.com/memorial/30953976/tanner_james-wilson",
+    "title": "Tanner James Wilson (1989-2001), Find a Grave",
+    "date": "",
+    "quote": "Death: February 2, 2001 (aged 11) in Mason City, Iowa"
+   }
+  ],
+  "notes": "Date: Find a Grave gives Feb 2 (KOP's date), Breaking Code Silence Feb 9; conflict, date kept. The outcome of the charge (the researcher said dismissed) was not confirmed, so the new wording does not state it. The Globe Gazette source is paywalled and may hold the other name.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 143,
+    "column": "cause_of_death",
+    "from": "Restraint. A staff member – Lori Ann Ingham – was charged",
+    "to": "Cardiopulmonary arrest after being held face down in a restraint. A staff member was charged with felony child endangerment"
+   }
+  ]
+ },
+ {
+  "key": "memorial-145",
+  "kind": "memorial",
+  "title": "William “Eddie” Lee",
+  "place": "Obsidian Trails Wilderness Camp, Oregon",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "William \"Eddie\" Lee, 15, died Sept 18, 2000 after counselors held him on the ground at an Obsidian Trails campsite. The autopsy found internal bleeding from a tear to his left vertebral artery and the death was declared a homicide; no criminal charges were filed.",
+  "kop_now": "KOP gives the cause only as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://bendbulletin.com/2002/01/31/obsidian-trails-settles-wrongful-death-lawsuit/",
+    "title": "Obsidian Trails settles wrongful death lawsuit",
+    "date": "2002-01-31",
+    "quote": "internal bleeding from a tear to his left vertebral artery, most likely from a hyper-rotation of the head and neck"
+   },
+   {
+    "url": "https://www.findagrave.com/memorial/249282574/william-edward-lee",
+    "title": "William Edward \"Eddie\" Lee (1985-2000), Find a Grave",
+    "date": "",
+    "quote": "William Edward \"Eddie\" Lee (1985-2000)"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 145,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Torn left vertebral artery while held down in a restraint; ruled a homicide, no charges filed"
+   }
+  ]
+ },
+ {
+  "key": "memorial-146",
+  "kind": "memorial",
+  "title": "Joseph Douglas Bolt Jr.",
+  "place": "Alpine Boys Ranch, Washington",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Joseph Bolt Jr., 17, drowned in Cub Lake after leaving an Alpine Boys Ranch camping trip in August 2000; the coroner ruled it an accident. KOP's source link is Find a Grave, but the source name says Woodbury Reports.",
+  "kop_now": "KOP names the source \"Woodbury Reports\" while linking Find a Grave.",
+  "sources": [
+   {
+    "url": "https://www.findagrave.com/memorial/121684334/joseph-douglas-bolt",
+    "title": "Joseph Douglas Bolt, Find a Grave",
+    "date": "",
+    "quote": "Death Date: August 7, 2000"
+   },
+   {
+    "url": "https://www.strugglingteens.com/archives/2001/4/news02.html",
+    "title": "Update on Alpine's Boys Ranch (Woodbury Reports, April 2001)",
+    "date": "2001-04",
+    "quote": "Joe's (Bolt) death was an accident, caused by drowning, according to the coroner's report"
+   }
+  ],
+  "notes": "Alternatively keep the Woodbury name and point source_url at the strugglingteens.com page. Aug 7 rests on Find a Grave; his body was found in September.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 146,
+    "column": "source_name",
+    "from": "Woodbury Reports",
+    "to": "Find a Grave"
+   }
+  ]
+ },
+ {
+  "key": "memorial-148",
+  "kind": "memorial",
+  "title": "Candace Newmaker",
+  "place": "Evergreen Attachment Center, Colorado",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Candace Newmaker, 10, was suffocated during a rebirthing session on April 18, 2000 and died on April 19. Therapists Connell Watkins and Julie Ponder were convicted of reckless child abuse resulting in death, not homicide, and each sentenced to 16 years.",
+  "kop_now": "KOP dates the death April 18 and says a therapist was convicted of homicide.",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Death_of_Candace_Newmaker",
+    "title": "Death of Candace Newmaker",
+    "date": "",
+    "quote": "tried and convicted of reckless child abuse resulting in death"
+   },
+   {
+    "url": "https://abcnews.com/2020/story?id=124076&page=1",
+    "title": "ABC News 20/20",
+    "date": "2001",
+    "quote": "convicted of reckless child abuse in death of a 10-year-old girl during a controversial therapy"
+   }
+  ],
+  "notes": "April 18 is the session date (ABC); she was pronounced dead the next day (Wikipedia).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 148,
+    "column": "date_of_death",
+    "from": "2000-04-18",
+    "to": "2000-04-19"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 148,
+    "column": "cause_of_death",
+    "from": "Asphyxiated during “therapy” exercise – therapist convicted of homicide",
+    "to": "Asphyxia during a rebirthing session; two therapists convicted of reckless child abuse resulting in death"
+   }
+  ]
+ },
+ {
+  "key": "memorial-151",
+  "kind": "memorial",
+  "title": "Michael Ibarra-Wiltsie",
+  "place": "Camp E-Kel-Etu (Eckerd Youth Alternatives), Florida",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Michael Ibarra-Wiltsie, 12 (65 lb), died in February 2000 after a 300-lb counselor at Eckerd's Camp E-Kel-Etu in the Ocala National Forest pinned him face down. He died of compression asphyxia; a grand jury cleared the counselor, and a state Juvenile Justice investigation later found excessive force.",
+  "kop_now": "KOP names only Eckerd Youth Alternatives and gives the cause as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.tampabay.com/archive/2001/07/10/mother-sues-after-boy-dies-at-camp/",
+    "title": "Mother sues after boy dies at camp",
+    "date": "2001-07-10",
+    "quote": "The boy died of \"compressional asphyxiation\""
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/about-us/in-memoriam/",
+    "title": "In Memoriam",
+    "date": "",
+    "quote": "Michael Ibarra-Wiltsie (12) - February 5, 2000, Camp E-Kel-Etu."
+   }
+  ],
+  "notes": "Date: Breaking Code Silence gives Feb 5 (KOP), a disability memorial Feb 4; kept. The Tampa Bay quote is from a search summary of the archived article (its body did not load).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 151,
+    "column": "program",
+    "from": "Eckerd Youth Alternatives",
+    "to": "Eckerd Youth Alternatives (Camp E-Kel-Etu)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 151,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Compression asphyxia while pinned face down by a counselor"
+   }
+  ]
+ },
+ {
+  "key": "memorial-162",
+  "kind": "memorial",
+  "title": "Tristan Sovern",
+  "place": "Charter Greensboro, North Carolina",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Tristan Sovern, 16, died March 4, 1998 of asphyxiation at Charter Greensboro, a psychiatric hospital, after staff restrained him face down with a towel over his mouth and a sheet around his head. One staff member was indicted and a jury found him not guilty.",
+  "kop_now": "KOP names the program \"Charter Behavioral Healthcare\" with cause \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant11.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "Workers restrained Sovern face down on the floor. During the struggle, staffers put a towel over the boy's mouth and held a bed sheet around his head."
+   }
+  ],
+  "notes": "Charter Greensboro belonged to the Charter Behavioral Health chain, so KOP's name is broad rather than wrong.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 162,
+    "column": "program",
+    "from": "Charter Behavioral Healthcare",
+    "to": "Charter Greensboro (Charter Behavioral Health)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 162,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Asphyxiation while restrained face down"
+   }
+  ]
+ },
+ {
+  "key": "memorial-168",
+  "kind": "memorial",
+  "title": "Chris Campbell",
+  "place": "Iowa Juvenile Home, Toledo, Iowa",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Chris Campbell, 13, died Nov 2, 1997 at the state juvenile home in Toledo, Iowa. Staff restrained him four times in his last 24 hours; he had a pacemaker, and the cause of death was ruled undetermined.",
+  "kop_now": "KOP gives the cause as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant11.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "Staffers restrained Chris four times in the last 24 hours of his life."
+   }
+  ],
+  "notes": "cause_category kept as restraint (the Courant counts it among restraint deaths); the reviewer may prefer unknown.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 168,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Undetermined; restrained four times in his last 24 hours"
+   }
+  ]
+ },
+ {
+  "key": "memorial-169",
+  "kind": "memorial",
+  "title": "Jimmy Kanda",
+  "place": "Crow's Nest Family Care Home, San Martin, California",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Jimmy Kanda was 6, not 16. He died Sept 20, 1997 of asphyxiation after being strapped to a wheelchair and left unattended at Crows Nest Family Care Home in San Martin, California; no charges were filed and the home was shut down.",
+  "kop_now": "KOP gives his age as 16 and the cause as \"Restraint\"; the source link ends with a stray ']'.",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant11.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "Jimmy was strapped to a wheelchair and left unattended."
+   }
+  ],
+  "notes": "Crow's Nest was a care home for children with disabilities; the reviewer may decide whether it fits the page.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 169,
+    "column": "age",
+    "from": 16,
+    "to": 6
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 169,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Asphyxiation while strapped to a wheelchair and left unattended"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 169,
+    "column": "source_url",
+    "from": "https://www.courant.com/1998/10/11/11-months-23-dead/]",
+    "to": "https://www.courant.com/1998/10/11/11-months-23-dead/"
+   }
+  ]
+ },
+ {
+  "key": "memorial-171",
+  "kind": "memorial",
+  "title": "Roshelle Clayborne",
+  "place": "Laurel Ridge Residential Treatment Center, San Antonio, Texas",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Roshelle Clayborne, 16, died Aug 18, 1997 at Laurel Ridge after being restrained face down, injected with Thorazine and put in seclusion. The Bexar County medical examiner ruled natural causes (cardiac arrhythmia), calling the restraint a separate clinical issue; there was no prosecution.",
+  "kop_now": "KOP gives the cause as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant11.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "Cause: cardiac arrhythmia; no criminal prosecution"
+   },
+   {
+    "url": "http://www.nospank.net/n-g20.htm",
+    "title": "Nospank news reprint",
+    "date": "",
+    "quote": "Bexar County Medical Examiner Vincent DiMaio ruled that Clayborne died of natural causes"
+   }
+  ],
+  "notes": "cause_category kept as restraint; the reviewer may prefer other.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 171,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Cardiac arrhythmia after restraint and seclusion; medical examiner ruled natural causes"
+   }
+  ]
+ },
+ {
+  "key": "memorial-173",
+  "kind": "memorial",
+  "title": "Sakena Dorsey",
+  "place": "Foundations Behavioral Health, Bucks County, Pennsylvania",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Sakena Dorsey, 18, died June 10, 1997 at Foundations Behavioral Health Center in Bucks County, Pennsylvania, after she stopped breathing while restrained face down. Cause was asphyxiation; no charges were filed.",
+  "kop_now": "KOP gives her age as 19 and the program as \"Foundation Behavioral\".",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant11.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "Dorsey stopped breathing while she was being physically restrained, face down."
+   },
+   {
+    "url": "https://pronerestraint.blogspot.com/",
+    "title": "Restraint deaths list",
+    "date": "",
+    "quote": "Sakena Dorsey was 18 years old"
+   }
+  ],
+  "notes": "KOP's CT Insider source could not be opened to see where 19 came from.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 173,
+    "column": "age",
+    "from": 19,
+    "to": 18
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 173,
+    "column": "program",
+    "from": "Foundation Behavioral",
+    "to": "Foundations Behavioral Health"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 173,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Asphyxiation while restrained face down"
+   }
+  ]
+ },
+ {
+  "key": "memorial-181",
+  "kind": "memorial",
+  "title": "Dawnne Takeuchi",
+  "place": "VisionQuest, Colorado",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Dawnne Takeuchi, 18, died June 28, 1995 near Pagosa Springs, Colorado, while in VisionQuest, after being thrown from a supply semi-truck driven by a VisionQuest counselor, who was convicted of careless driving.",
+  "kop_now": "KOP says she fell off a wagon in Utah on June 25, 1995.",
+  "sources": [
+   {
+    "url": "https://archive.sltrib.com/story.php?ref=/news/ci_7139316",
+    "title": "Salt Lake Tribune",
+    "date": "2007-10-11",
+    "quote": "Dawnne Takeuchi, 18, of California, died June 28, 1995, near Pagosa Springs, Colo., while enrolled in the Tucson, Ariz.-based VisionQuest."
+   },
+   {
+    "url": "https://www.hcn.org/issues/issue-61/tough-love-proves-too-tough/",
+    "title": "Tough love proves too tough (High Country News)",
+    "date": "1996-06-10",
+    "quote": "18-year-old Dawnne Takeuchi was thrown from a semi-truck near Pagosa Springs, Colo. Kimberly Stafford, the VisionQuest counselor driving the supply vehicle, was convicted of careless driving"
+   }
+  ],
+  "notes": "No source gives June 25. The truck may have travelled with a VisionQuest wagon train, which would explain KOP's wording.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 181,
+    "column": "date_of_death",
+    "from": "1995-06-25",
+    "to": "1995-06-28"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 181,
+    "column": "location",
+    "from": "Utah",
+    "to": "Colorado"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 181,
+    "column": "cause_of_death",
+    "from": "Fell off a wagon",
+    "to": "Thrown from a VisionQuest supply semi-truck; the counselor driving was convicted of careless driving"
+   }
+  ]
+ },
+ {
+  "key": "memorial-182",
+  "kind": "memorial",
+  "title": "Earl Smith",
+  "place": "Methodist Children's Home Society, Detroit, Michigan",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "KOP's own source (Hartford Courant series) places Earl Smith, 9, in Detroit in November 1995 at the Methodist Children's Home Society, where a caregiver sat on him and ignored his pleas for air; she pleaded guilty to a misdemeanor. No source ties him to Children's Village in New York or to Jan 11.",
+  "kop_now": "KOP shows Children's Village, New York, Jan 11, 1995.",
+  "sources": [
+   {
+    "url": "https://www.charlydmiller.com/LIB05/1998hartfordcourant14.html",
+    "title": "Deadly Restraint (Hartford Courant, 1998)",
+    "date": "1998-10",
+    "quote": "9-year-old Earl Smith in Detroit in November 1995 ... the Methodist Children's Home Society"
+   }
+  ],
+  "notes": "Exact day unknown: 1995-11-01 with month precision. A search found no death at Children's Village in 1995.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 182,
+    "column": "program",
+    "from": "Children’s Village",
+    "to": "Methodist Children's Home Society"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 182,
+    "column": "location",
+    "from": "New York",
+    "to": "Michigan"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 182,
+    "column": "date_of_death",
+    "from": "1995-01-11",
+    "to": "1995-11-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 182,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   }
+  ]
+ },
+ {
+  "key": "memorial-183",
+  "kind": "memorial",
+  "title": "Carlos Ruiz",
+  "place": "VisionQuest (Tucson, Arizona based)",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "Carlos Ruiz, 13, died Dec 16, 1994 while in the Tucson, Arizona based VisionQuest; WitnessLA says he died of injuries from an outdoor activity. No source places his death in Utah, and none says where he died.",
+  "kop_now": "KOP gives the location as Utah.",
+  "sources": [
+   {
+    "url": "https://archive.sltrib.com/story.php?ref=/news/ci_7139316",
+    "title": "Salt Lake Tribune",
+    "date": "2007-10-11",
+    "quote": "Carlos Ruiz, 13, address unknown, died Dec. 16, 1994, in Tucson, Ariz.-based VisionQuest."
+   },
+   {
+    "url": "https://witnessla.com/controversial-company-that-profited-from-the-troubled-teen-industry-now-has-millions-from-the-feds-to-open-a-lock-up-for-immigrant-kids-in-los-angeles/",
+    "title": "WitnessLA on VisionQuest",
+    "date": "",
+    "quote": "In 1994, 13-year old Carlos Ruiz died of injuries incurred in an outdoor activity."
+   }
+  ],
+  "notes": "VisionQuest ran programs in several states; Arizona is only the company's home, so no location value is proposed.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Location 'Utah' has no source: the Salt Lake Tribune lists Carlos Ruiz only as in the Tucson, Ariz.-based VisionQuest, and no source says where he died. Reviewer: set the location to Arizona or mark it unknown. The cause wording comes from WitnessLA, not the linked Tribune list; consider citing WitnessLA."
+   }
+  ]
+ },
+ {
+  "key": "memorial-188",
+  "kind": "memorial",
+  "title": "Shinaul McGraw",
+  "place": "New Directions group home, Lynnwood, Washington",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Shinaul McGraw, 12, died June 5, 1994 at the New Directions group home in Lynnwood, Washington. The Seattle Times reports he died of hyperthermia (overheating) while his arms and legs were bound in his bed with sheets and his mouth covered with gauze.",
+  "kop_now": "KOP gives the cause only as \"Restraint\".",
+  "sources": [
+   {
+    "url": "https://archive.seattletimes.com/archive/19941209/1946310/questions-surround-death-of-boy----state-probe-fails-to-uncover-details-on-what-happened",
+    "title": "Questions surround death of boy; state probe fails to uncover details on what happened (Seattle Times)",
+    "date": "1994-12-09",
+    "quote": "He died of hyperthermia, or overheating."
+   }
+  ],
+  "notes": "The article does not give the medical examiner's manner of death. Category restraint stays.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 188,
+    "column": "cause_of_death",
+    "from": "Restraint",
+    "to": "Hyperthermia (overheating) while bound in his bed with sheets, mouth covered with gauze"
+   }
+  ]
+ },
+ {
+  "key": "memorial-193",
+  "kind": "memorial",
+  "title": "Dawn Marie Birnbaum",
+  "place": "Elan School, Maine (body found in Centre County, Pennsylvania)",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Dawn Marie Birnbaum, 17, ran away from the Elan School in Poland, Maine on March 21, 1993 and was last seen March 22 at a truck stop in Bangor. Her body was found in a snowbank by an I-80 ramp near Bellefonte, Centre County, Pennsylvania; trucker James R. Cruz Jr. was convicted in 1994 of first-degree murder in her strangulation.",
+  "kop_now": "KOP shows March 23, 1993 to the day, location Maine, and \"Murdered by an unrelated party during an escape attempt from the facility\".",
+  "sources": [
+   {
+    "url": "https://digitalcommons.portlandlibrary.com/news_pph/13329/",
+    "title": "Portland Press Herald news item",
+    "date": "1994-06-15",
+    "quote": "convicted trucker James R. Cruz Jr., 36, of Waterford, Ohio, of first-degree murder in the strangulation of Dawn Marie Birnbaum, a 17-year-old girl who ran away from the Elan School in Poland on March 21, 1993. Her body was found on March 24 on a snowbank"
+   },
+   {
+    "url": "https://www.altoonamirror.com/news/local-news/2022/04/superior-court-denies-appeal-in-93-murder-case/",
+    "title": "Superior Court denies appeal in '93 murder case (Altoona Mirror)",
+    "date": "2022-04",
+    "quote": "Her body was found on March 23, 1993, in a snowbank along an I-80 ramp near Bellefonte in Centre County."
+   },
+   {
+    "url": "https://www.psucollegian.com/archives/truck-driver-cruz-arraigned-on-charges-of-killing-teen/article_edced9b7-4288-505b-85da-17b141179010.html",
+    "title": "Truck driver Cruz arraigned on charges of killing teen (Daily Collegian)",
+    "date": "1993",
+    "quote": "last seen at Dysart's on March 22"
+   }
+  ],
+  "notes": "Sources disagree on the day her body was found (March 23 vs March 24) and none gives a day of death, so the date becomes month precision. She died after running away, away from the program; category escape_attempt kept (reviewer may prefer violence, or decide whether runaway deaths belong).",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 193,
+    "column": "date_of_death",
+    "from": "1993-03-23",
+    "to": "1993-03-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 193,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 193,
+    "column": "location",
+    "from": "Maine",
+    "to": "Pennsylvania"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 193,
+    "column": "cause_of_death",
+    "from": "Murdered by an unrelated party during an escape attempt from the facility",
+    "to": "Strangled after running away from Elan; a truck driver was convicted of first-degree murder"
+   }
+  ]
+ },
+ {
+  "key": "memorial-198",
+  "kind": "memorial",
+  "title": "Brad Glickman",
+  "place": "Elan School, Maine",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Brad Glickman, 15, a runaway from the Elan School, was shot in the heart shortly after midnight on July 4, 1990 at a house in Norway, Maine, when a resident's revolver discharged as he was handing it to him. The man was convicted of manslaughter; the Maine Supreme Judicial Court vacated the conviction in 1993 on jury-selection grounds.",
+  "kop_now": "KOP says \"Shot during escape attempt\", which reads as if he was shot at the facility.",
+  "sources": [
+   {
+    "url": "https://www.sunjournal.com/2016/03/20/day-officer-smiley-helped-boy-escape-elan-school/",
+    "title": "The day 'Officer Smiley' helped a boy escape from the Elan School (Sun Journal)",
+    "date": "2016-03-20",
+    "quote": "In July 1990, runaway Brad Glickman of New York, 15, was shot in the heart in Norway by a local man."
+   },
+   {
+    "url": "https://case-law.vlex.com/vid/state-v-hara-886195697",
+    "title": "State v. O'Hara, 627 A.2d 1001 (Me. 1993)",
+    "date": "1993",
+    "quote": "shooting shortly after midnight, July 3-4, 1990; manslaughter conviction vacated"
+   }
+  ],
+  "notes": "Sun Journal says negligent homicide, the court record says manslaughter (later vacated), so the cause leaves the verdict out. Date July 4, 1990 confirmed.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 198,
+    "column": "cause_of_death",
+    "from": "Shot during escape attempt",
+    "to": "Shot in the heart by a local man in Norway, Maine, after running away from Elan"
+   }
+  ]
+ },
+ {
+  "key": "memorial-199",
+  "kind": "memorial",
+  "title": "Kristen Beth Chase",
+  "place": "Challenger Foundation, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Kristen Beth Chase, 16, died June 26, 1990 of exertional heat stroke on the Challenger Foundation wilderness program on the Kaiparowits Plateau in southern Utah.",
+  "kop_now": "KOP shows June 27, 1990 and \"Heat Stroke\".",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/1991/7/24/18932325/father-sues-challenger-over-daughter-s-death/",
+    "title": "Father sues Challenger over daughter's death (Deseret News)",
+    "date": "1991-07-24",
+    "quote": "Kristen Beth Chase, 16 ... June 26, 1990 ... She had already died of exertional heat stroke"
+   }
+  ],
+  "notes": "",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 199,
+    "column": "date_of_death",
+    "from": "1990-06-27",
+    "to": "1990-06-26"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 199,
+    "column": "cause_of_death",
+    "from": "Heat Stroke",
+    "to": "Exertional heat stroke"
+   }
+  ]
+ },
+ {
+  "key": "memorial-201",
+  "kind": "memorial",
+  "title": "Michelle Lynn Sutton",
+  "place": "Summit Quest, Arizona",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Michelle Sutton, 15, died May 9, 1990 on Mount Dellenbaugh in the Arizona desert during a Summit Quest wilderness program. A Mohave County coroner said she died of dehydration caused by exposure to the elements; her parents sued and Summit Quest settled for $345,000.",
+  "kop_now": "KOP gives the cause as \"Negligence\", category medical_neglect.",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/1990/10/30/18888578/parents-sue-wilds-program-over-daughter-s-death-br/",
+    "title": "Parents sue wilds program over daughter's death (Deseret News)",
+    "date": "1990-10-30",
+    "quote": "A Mohave County coroner said the girl died of dehydration caused by exposure to the elements."
+   },
+   {
+    "url": "https://www.deseret.com/1992/2/1/18965215/summit-quest-to-pay-family-345-000-br/",
+    "title": "Summit Quest to pay family $345,000 (Deseret News)",
+    "date": "1992-02-01",
+    "quote": "Summit Quest will pay ... $345,000"
+   }
+  ],
+  "notes": "Date (May 9) and location Arizona confirmed. Accounts that counselors told others not to share water come from secondary summaries, so they stay out of the cause.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 201,
+    "column": "cause_of_death",
+    "from": "Negligence",
+    "to": "Dehydration caused by exposure to the elements, per the Mohave County coroner"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 201,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
+   }
+  ]
+ },
+ {
+  "key": "memorial-208",
+  "kind": "memorial",
+  "title": "Danny Lewis",
+  "place": "VisionQuest outing, Red Fleet Reservoir, Utah",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Danny Lewis, 16, of San Leandro, California, drowned on a Monday at Red Fleet Reservoir north of Vernal, Utah, during a VisionQuest outing, after becoming tangled in moss. The article is dated Wednesday June 14, 1989, so the Monday was June 12, 1989.",
+  "kop_now": "KOP shows June 1, 1989 (a stand-in day) and \"Accident, downing\" (typo).",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/1989/6/14/18811284/californian-utahn-drown/",
+    "title": "Californian, Utahn drown (Deseret News)",
+    "date": "1989-06-14",
+    "quote": "Danny Lewis, 16, of San Leandro, Calif., was on an outing sponsored by VisionQuest ... He became tangled in moss, authorities said."
+   }
+  ],
+  "notes": "Day inferred from \"Monday\" in the June 14 article.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 208,
+    "column": "date_of_death",
+    "from": "1989-06-01",
+    "to": "1989-06-12"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 208,
+    "column": "cause_of_death",
+    "from": "Accident, downing",
+    "to": "Drowned in Red Fleet Reservoir after becoming tangled in moss"
+   }
+  ]
+ },
+ {
+  "key": "memorial-209",
+  "kind": "memorial",
+  "title": "Joshua Ferrarini",
+  "place": "St. Aemilian's, Milwaukee, Wisconsin",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Joshua Ferrarini, 13, died in January 1989 in Milwaukee after an untrained St. Aemilian's employee restrained him alone; the Milwaukee Journal (June 28, 1989) reported the center was cited in his death. Find a Grave gives January 15, 1989; Breaking Code Silence gives January 8.",
+  "kop_now": "KOP shows January 8, 1989 to the day.",
+  "sources": [
+   {
+    "url": "https://www.findagrave.com/memorial/61229821/joshua-m-ferrarini",
+    "title": "Joshua Martin Ferrarini (Find a Grave)",
+    "date": "",
+    "quote": "Death: 15 Jan 1989 (aged 13), Milwaukee, Milwaukee County, Wisconsin"
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/about-us/in-memoriam/",
+    "title": "In Memoriam (Breaking Code Silence)",
+    "date": "",
+    "quote": "Joshua Ferarini | 13 | Jan 8, 1989 | St. Aemelian Hospital | Died during a restraint"
+   },
+   {
+    "url": "http://today-a-child-died.blogspot.com/2013/01/joshua-ferrarini-1989.html",
+    "title": "Today a child died: Joshua Ferrarini - 1989",
+    "date": "2013-01",
+    "quote": "he was allowed to restrain Joshua Ferrarini alone and declined help from a co-worker (cites Milwaukee Journal, June 28, 1989, 'Center Cited In Death Of 13-year-old')"
+   }
+  ],
+  "notes": "The days conflict (Jan 8 may be the restraint and Jan 15 the death); the La Crosse Tribune clipping (KOP's source) could not be opened (403). Month precision until someone reads it. Sources spell the program St. Aemilian; KOP has St. Aemelian, left for the reviewer.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 209,
+    "column": "date_of_death",
+    "from": "1989-01-08",
+    "to": "1989-01-01"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 209,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   }
+  ]
+ },
+ {
+  "key": "memorial-214",
+  "kind": "memorial",
+  "title": "Gregory Owens Jones",
+  "place": "SUWS, Idaho",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "high",
+  "finding": "Gregory Owens Jones, 13, of Bellevue, Washington, died Wednesday July 3, 1985 on a SUWS wilderness trip after falling about 70 feet down a cliff above King Hill Creek, southeast of Mountain Home, Idaho. The Elmore County coroner said after an autopsy that he died of chest injuries from the fall; the group had been without water for 9 1/2 hours in heat near 100 degrees.",
+  "kop_now": "KOP gives the cause as \"Medical neglect, exposure\", category medical_neglect.",
+  "sources": [
+   {
+    "url": "https://www.fornits.com/phpbb/index.php/topic,20747.msg402836.html",
+    "title": "Death at SUWS (Fornits, reposting Spokane Chronicle and Idaho coverage)",
+    "date": "1985-07",
+    "quote": "Gregory Owens Jones, Bellevue, Wash., died from chest injuries suffered in the fall ... had been without water for 9 1/2 hours before the accident at 4:30 p.m."
+   }
+  ],
+  "notes": "Participants described heat collapse before the fall; that is testimony, not the coroner's finding, so only the reported water and heat facts appear in the cause.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 214,
+    "column": "cause_of_death",
+    "from": "Medical neglect, exposure",
+    "to": "Chest injuries from a 70-foot fall from a cliff (coroner); the group had been without water for 9 1/2 hours in 100-degree heat"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 214,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "accident"
+   }
+  ]
+ },
+ {
+  "key": "memorial-215",
+  "kind": "memorial",
+  "title": "Leon Anger",
+  "place": "VisionQuest, Pennsylvania",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Find a Grave records Leon Anger, born September 6, 1967, died September 16, 1984 at 17 in Venango County, Pennsylvania, drowned in the Allegheny River in Victory Township. Breaking Code Silence lists him as drowned while attempting to escape from VisionQuest.",
+  "kop_now": "KOP shows New Mexico and \"Unknown cause\".",
+  "sources": [
+   {
+    "url": "https://www.findagrave.com/memorial/118631521/leon-anger",
+    "title": "Leon Anger (Find a Grave)",
+    "date": "2013-10-13",
+    "quote": "Death 16 Sep 1984 (aged 17), Venango County, Pennsylvania ... Died in Victory Township in the Allegheny River."
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/about-us/in-memoriam/",
+    "title": "In Memoriam (Breaking Code Silence)",
+    "date": "",
+    "quote": "Leon Anger | 17 | Sep 16, 1984 | VisionQuest | Drowned while attempting to escape"
+   }
+  ],
+  "notes": "No news article found; the VisionQuest link rests on Breaking Code Silence's list. A newspaper source should replace Find a Grave.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 215,
+    "column": "location",
+    "from": "New Mexico",
+    "to": "Pennsylvania"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 215,
+    "column": "cause_of_death",
+    "from": "Unknown cause",
+    "to": "Drowned in the Allegheny River"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 215,
+    "column": "cause_category",
+    "from": "unknown",
+    "to": "drowning"
+   }
+  ]
+ },
+ {
+  "key": "memorial-229",
+  "kind": "memorial",
+  "title": "Joy Evans",
+  "place": "Forest Haven (D.C. institution), Laurel, Maryland",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Joy Evans, born December 23, 1958, was committed to the District's Forest Haven institution at age eight and died there on July 8, 1976; she was the lead plaintiff in the 1976 class action Evans v. Washington. The D.C. Council report says she died at 18, but its own birth date makes her 17.",
+  "kop_now": "KOP shows 1976 (year only) and cites a 2010 ruling in the lawsuit that does not describe her death.",
+  "sources": [
+   {
+    "url": "https://chairmanmendelson.com/wp-content/uploads/2019/10/B23-63-Joy-Evans-Rec-Center-PACKET.pdf",
+    "title": "Council of the District of Columbia, Committee of the Whole report on Bill 23-63 (Joy Evans Therapeutic Recreation Center)",
+    "date": "2019-09-17",
+    "quote": "Joy Evans was born on December 23, 1958 ... she died at Forest Haven at the age of 18 on July 8, 1976."
+   },
+   {
+    "url": "https://wtop.com/dc/2024/12/a-dc-therapeutic-recreation-center-honors-a-special-needs-teenager-who-died-in-dc-care-decades-ago/",
+    "title": "DC rec center honors teen with special needs who died in city's care decades ago (WTOP)",
+    "date": "2024-12",
+    "quote": "died in the care of the former Forest Haven Asylum, a D.C.-run facility for the mentally challenged in Laurel, Maryland"
+   }
+  ],
+  "notes": "She was a resident who died there, not only a case caption. Cause: only blogs and memorial lists say she choked while force-fed lying down (others say aspiration pneumonia); no official finding found, so the cause is left for the reviewer. Age left at 17 (birth date) despite the report's 18. Forest Haven was an institution for people with disabilities, not a teen program; the reviewer decides whether she belongs.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 229,
+    "column": "date_of_death",
+    "from": "1976-01-01",
+    "to": "1976-07-08"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 229,
+    "column": "date_precision",
+    "from": "year",
+    "to": "day"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 229,
+    "column": "source_name",
+    "from": "Federal Lawsuit",
+    "to": "Council of the District of Columbia, report on Bill 23-63 (2019)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 229,
+    "column": "source_url",
+    "from": "https://www.govinfo.gov/content/pkg/USCOURTS-dcd-1_76-cv-00293/pdf/USCOURTS-dcd-1_76-cv-00293-3.pdf",
+    "to": "https://chairmanmendelson.com/wp-content/uploads/2019/10/B23-63-Joy-Evans-Rec-Center-PACKET.pdf"
+   }
+  ]
+ },
+ {
+  "key": "memorial-230",
+  "kind": "memorial",
+  "title": "Lorene Larhette",
+  "place": "Northwest Outward Bound School, Oregon",
+  "facility_id": null,
+  "verdict": "partly_wrong",
+  "confidence": "medium",
+  "finding": "Lorene LaRhette, 17, of Sudbury, Massachusetts, and Joyce Howden, 21, died of hypothermia in the snow-covered Three Sisters Wilderness of central Oregon in the first week of September 1971 on a Northwest Outward Bound graduation exercise. The survivor's account puts Lorene's death on the night before Friday, Sept. 3; Find a Grave gives September 3.",
+  "kop_now": "KOP shows September 1, 1971 to the day and the cause \"Exposure\".",
+  "sources": [
+   {
+    "url": "https://traditionalmountaineering.org/News_OutwardBound-1971_HypothermiaClaimsTwo.html",
+    "title": "Outward Bound 1971 Hypothermia Claims Two (The Geneva Times, Sept. 23, 1971, transcribed)",
+    "date": "1971-09-23",
+    "quote": "Joyce Howden, 21, Fall Creek, Ore., and Lorene LaRhette, 17, of Sudbury, Mass., died of hypothermia ... in the snow-covered Three Sisters Mountains."
+   },
+   {
+    "url": "https://www.findagrave.com/memorial/142109527/lorene-larhette",
+    "title": "Lorene Swan LaRhette (Find a Grave)",
+    "date": "",
+    "quote": "Died: September 3, 1971 (age 17) in Sisters, Oregon"
+   }
+  ],
+  "notes": "Day conflicts (Sept 2 night by the survivor's timeline, Sept 3 per Find a Grave), so month precision. The newspaper spells her name LaRhette; KOP has Larhette (name is not an editable column here). KOP's source_url (.htm) redirects to the .html page and still works.",
+  "ops": [
+   {
+    "type": "memorial",
+    "memorial_id": 230,
+    "column": "date_precision",
+    "from": "day",
+    "to": "month"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 230,
+    "column": "cause_of_death",
+    "from": "Exposure",
+    "to": "Hypothermia"
+   }
+  ]
+ },
+ {
+  "key": "end_before_items-11361",
+  "kind": "end_before_items",
+  "title": "Agape Baptist Academy",
+  "place": "Stockton, MO",
+  "facility_id": 11361,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Agape Baptist Academy (Agape Boarding School) in Stockton, MO was founded in 1990 and operated until it stopped serving boys effective Jan. 20, 2023. Woodbury Reports of 2009 describe it operating, so the 2003 end year (the year a tornado hit the school) is wrong.",
+  "kop_now": "KOP shows it Closed with years 1990-2003.",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Agape_Baptist_Academy",
+    "title": "Agape Baptist Academy",
+    "date": "2023",
+    "quote": "It will stop providing service effective Jan. 20"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0709.pdf",
+    "title": "Woodbury Reports July 2009",
+    "date": "2009-07",
+    "quote": "Agape Boarding School, a ministry of Agape Baptist Church, was founded in April 1990 by James and Kathy Clemensen."
+   }
+  ],
+  "notes": "Three map nodes share facilityId 11361; Agape Boys Ranch may be a real earlier name or a duplicate, so it is left unchanged. Status stays Closed.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 11361,
+    "path": "operatingPeriod.endYear",
+    "from": 2003,
+    "to": 2023
+   },
+   {
+    "type": "note",
+    "facility_id": 11361,
+    "text": "Stopped serving boys effective Jan. 20, 2023 (Wikipedia, Agape Baptist Academy); a 2003 tornado damaged the school but it kept operating."
+   },
+   {
+    "type": "map_years",
+    "node": "agape-baptist-academy",
+    "from": "1990-2003",
+    "to": "1990-2023"
+   },
+   {
+    "type": "map_years",
+    "node": "agape-boarding-school",
+    "from": "1990-2003",
+    "to": "1990-2023"
+   }
+  ]
+ },
+ {
+  "key": "end_before_items-13927",
+  "kind": "end_before_items",
+  "title": "Eagle Point Christian Academy",
+  "place": "Lucedale, MS",
+  "facility_id": 13927,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "The Lucedale school was still operating in September 2007 under its later name Gulf Coast Academy, so an end year of 2005 is wrong. The record's own yearsOfOperation says 1978-2008, and Woodbury says the school was founded in 1988 as Bethel Children's Home, not 1978.",
+  "kop_now": "KOP shows it Closed with endYear 2005 and startYear 1978, while its yearsOfOperation text reads 1978-2008.",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1107.pdf",
+    "title": "Woodbury Reports Nov 2007",
+    "date": "2007-09-20",
+    "quote": "Gulf Coast Academy is the most recent name for the teen boarding school. The Rev. Herman Fountain originally founded the school as the Bethel Children's Home in 1988 ... Later the name was changed to Eagle Point Christian Academy."
+   }
+  ],
+  "notes": "The 2008 closing year is unverified (operating at least Sept 2007) and comes from the record's own yearsOfOperation; the 1978 start conflicts with Woodbury's 1988. Needs a state source. Name chain Bethel, Eagle Point, Gulf Coast Academy.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13927,
+    "path": "operatingPeriod.endYear",
+    "from": 2005,
+    "to": 2008
+   },
+   {
+    "type": "field",
+    "facility_id": 13927,
+    "path": "operatingPeriod.startYear",
+    "from": 1978,
+    "to": 1988
+   },
+   {
+    "type": "manual",
+    "text": "Map nodes bethel-baptist-childrens-home, eagle-point-christian-academy and gulf-coast-academy all read 1978-2005; set each name's years once the rename years are confirmed in Map Renames."
+   }
+  ]
+ },
+ {
+  "key": "end_before_items-9688",
+  "kind": "end_before_items",
+  "title": "Ascent Wilderness Program",
+  "place": "Naples, ID",
+  "facility_id": 9688,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Ascent Wilderness Program in Naples, ID was sold to Universal Health Services in 2005 after CEDU collapsed, reopened that year and kept operating until about 2010. Woodbury in January 2008 shows it running with a new interim director.",
+  "kop_now": "KOP shows it Closed with years 1994-2005.",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf",
+    "title": "Woodbury Reports Feb 2008",
+    "date": "2008-01-02",
+    "quote": "Chris Ankney was appointed Interim Executive Director of Ascent, a wilderness program in north Idaho."
+   },
+   {
+    "url": "https://www.reddit.com/r/troubledteens/wiki/index/ascentwild",
+    "title": "r/troubledteens wiki, Ascent Wilderness Program (lead)",
+    "date": "2025-12-18",
+    "quote": "Ascent reopened later that same year and continued to operate under UHS until it closed in 2010."
+   }
+  ],
+  "notes": "The 2010 close rests on the wiki only (a lead); the 2005 sale and 2008 operation are corroborated. Record 9683 looks like the same Naples program (check Merge Duplicates).",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9688,
+    "path": "operatingPeriod.endYear",
+    "from": 2005,
+    "to": 2010
+   },
+   {
+    "type": "note",
+    "facility_id": 9688,
+    "text": "Woodbury Reports (Feb. 2008) reports Chris Ankney appointed interim executive director of Ascent in January 2008, after the 2005 sale to Universal Health Services."
+   }
+  ]
+ },
+ {
+  "key": "end_before_items-9683",
+  "kind": "end_before_items",
+  "title": "Ascent Wilderness Therapy",
+  "place": "Naples, ID",
+  "facility_id": 9683,
+  "verdict": "partly_wrong",
+  "confidence": "low",
+  "finding": "This appears to be the same Naples, ID program as record 9688, which kept operating after the 2005 UHS sale until about 2010. No Woodbury issue is tied to this record directly, so the end year is carried over from 9688.",
+  "kop_now": "KOP shows it Closed with years 1992-2005.",
+  "sources": [
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf",
+    "title": "Woodbury Reports Feb 2008",
+    "date": "2008-01-02",
+    "quote": "Chris Ankney was appointed Interim Executive Director of Ascent, a wilderness program in north Idaho."
+   }
+  ],
+  "notes": "Possible duplicate of 9688 (start 1992 vs 1994); check Merge Duplicates before changing.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9683,
+    "path": "operatingPeriod.endYear",
+    "from": 2005,
+    "to": 2010
+   },
+   {
+    "type": "map_years",
+    "node": "ascent-wilderness-therapy",
+    "from": "1992-2005",
+    "to": "1992-2010"
+   }
+  ]
  }
 ]

@@ -23,6 +23,8 @@
  *                  ({prefix}kop_operator_facilities; a past link makes the
  *                  company's page show the program as Transferred)
  *   person_merge   two person ids are one person (KOP Tools > Merge People)
+ *   memorial       one column of an In Loving Memory entry (memorial_victims:
+ *                  date, precision, age, program, cause, place, source)
  *   manual         what an admin does by hand; approving marks it done
  *
  * Approve checks every 'from' first and changes nothing when one no longer
@@ -283,6 +285,48 @@ function kop_daudit_cite(array $p) {
     return '';
 }
 
+/* ---- Memorial entries -------------------------------------------------- */
+
+/** The columns of memorial_victims a proposal may correct, with their check. */
+function kop_daudit_memorial_ok($column, $to) {
+    switch ($column) {
+        case 'date_of_death':
+            return is_string($to) && preg_match('/^(19|20)\d\d-\d\d-\d\d$/', $to) && $to <= gmdate('Y-m-d');
+        case 'date_precision':
+            return in_array($to, array('day', 'month', 'year', 'unknown'), true);
+        case 'age':
+            return $to === null || (is_int($to) && $to >= 0 && $to <= 30);
+        case 'cause_category':
+            return in_array($to, array('restraint', 'suicide', 'medical_neglect', 'accident', 'drowning', 'escape_attempt',
+                'violence', 'overdose', 'exposure', 'other', 'unknown'), true);
+        case 'program':
+        case 'cause_of_death':
+        case 'location':
+        case 'source_name':
+            return is_string($to) && trim($to) !== '' && mb_strlen($to) < 255;
+        case 'source_url':
+            return is_string($to) && preg_match('#^https?://#', $to);
+    }
+    return false;
+}
+
+function kop_daudit_memorial_value(PDO $pdo, $id, $column) {
+    if (!in_array($column, array('date_of_death', 'date_precision', 'age', 'program', 'cause_of_death', 'cause_category',
+        'location', 'source_name', 'source_url'), true)) {
+        throw new RuntimeException('Not a memorial column a correction may change.');
+    }
+    $st = $pdo->prepare("SELECT `{$column}` FROM memorial_victims WHERE id = ?");
+    $st->execute(array((int) $id));
+    $v = $st->fetchColumn();
+    if ($v === false) return array(false, null);
+    return array(true, $column === 'age' && $v !== null ? (int) $v : $v);
+}
+
+function kop_daudit_memorial_put(PDO $pdo, $id, $column, $value) {
+    $pdo->prepare("UPDATE memorial_victims SET `{$column}` = ?, updated_at = ? WHERE id = ?")
+        ->execute(array($value, gmdate('Y-m-d H:i:s'), (int) $id));
+}
+
 /* ---- Words for the cards ---------------------------------------------- */
 
 function kop_daudit_field_label($path) {
@@ -321,6 +365,11 @@ function kop_daudit_op_words(array $op, array $names = array()) {
         case 'person_merge':
             return 'Merge ' . ($names['person:' . $op['drop']] ?? '#' . $op['drop']) . ' (#' . $op['drop'] . ') into '
                 . ($names['person:' . $op['keep']] ?? '#' . $op['keep']) . ' (#' . $op['keep'] . ')';
+        case 'memorial':
+            $labels = array('date_of_death' => 'Date of death', 'date_precision' => 'How exact the date is', 'age' => 'Age',
+                'program' => 'Program', 'cause_of_death' => 'Cause of death', 'cause_category' => 'Cause (category)',
+                'location' => 'Place', 'source_name' => 'Source', 'source_url' => 'Source link');
+            return 'In Loving Memory, ' . ($labels[$op['column']] ?? $op['column']) . ': ' . kop_daudit_show($op['from'] ?? null) . ' -> ' . kop_daudit_show($op['to'] ?? null);
         case 'manual':
             return 'By hand: ' . $op['text'];
     }
@@ -381,6 +430,16 @@ function kop_daudit_check(array $p, array $opts) {
             }
         } elseif ($op['type'] === 'map_years') {
             if (!kop_daudit_valid_years($op['to'] ?? '')) $why[] = 'The map years "' . ($op['to'] ?? '') . '" are not in a form the map reads.';
+        } elseif ($op['type'] === 'memorial') {
+            if (!kop_daudit_memorial_ok((string) $op['column'], $op['to'] ?? null)) {
+                $why[] = 'The new ' . $op['column'] . ' is not a value the memorial can hold.';
+                continue;
+            }
+            list($found, $now) = kop_daudit_memorial_value($opts['pdo'], $op['memorial_id'], (string) $op['column']);
+            if (!$found) $why[] = 'Memorial entry #' . (int) $op['memorial_id'] . ' is gone.';
+            elseif ((string) $now !== (string) ($op['from'] ?? '') && (string) $now !== (string) $op['to']) {
+                $why[] = 'In the memorial entry, ' . $op['column'] . ' is now "' . kop_daudit_show($now) . '", not "' . kop_daudit_show($op['from'] ?? null) . '".';
+            }
         } elseif ($op['type'] === 'person_merge') {
             $state = function_exists('kop_people_load') ? kop_people_load() : array('rows' => array());
             foreach (array('keep', 'drop') as $k) {
@@ -431,6 +490,10 @@ function kop_daudit_apply($key, $reviewer) {
         } elseif ($op['type'] === 'map_years') {
             $done[] = array('type' => 'map_years', 'node' => (string) $op['node'], 'before' => $map[$op['node']] ?? null, 'value' => (string) $op['to']);
             $map[(string) $op['node']] = (string) $op['to'];
+        } elseif ($op['type'] === 'memorial') {
+            list(, $before) = kop_daudit_memorial_value($opts['pdo'], $op['memorial_id'], (string) $op['column']);
+            kop_daudit_memorial_put($opts['pdo'], $op['memorial_id'], (string) $op['column'], $op['to']);
+            $done[] = array('type' => 'memorial', 'memorial_id' => (int) $op['memorial_id'], 'column' => (string) $op['column'], 'before' => $before, 'value' => $op['to']);
         } elseif ($op['type'] === 'person_merge') {
             kop_pmerge_do_merge((int) $op['keep'], (int) $op['drop'], $reviewer);
             $log = kop_pmerge_log();
@@ -479,6 +542,10 @@ function kop_daudit_undo($key) {
                     if ($x['before'] === null) unset($map[$x['node']]);
                     else $map[$x['node']] = $x['before'];
                 }
+            } elseif ($x['type'] === 'memorial') {
+                list(, $now) = kop_daudit_memorial_value($opts['pdo'], $x['memorial_id'], $x['column']);
+                if ((string) $now === (string) $x['value']) kop_daudit_memorial_put($opts['pdo'], $x['memorial_id'], $x['column'], $x['before']);
+                else $kept[] = 'the memorial entry (' . $x['column'] . ', edited since)';
             } elseif ($x['type'] === 'person_merge' && $x['log'] !== '') {
                 try {
                     kop_pmerge_do_undo($x['log']);
