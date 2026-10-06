@@ -1416,7 +1416,7 @@ existing `scripts/test-wiki-contact.php`.
 
 The wiki pilot (3.12) turned up wrong KOP data: Oakley School closed in
 2017, not 2007; Turn-About Ranch was never Acadia's; Clark Harman died on
-Feb 3, 2024, of asphyxia, not on Feb 1 in a restraint; Kelly Cole is Kelly
+Feb 3, 2024, not Feb 1 (zipped into a bivy sack, the restraint); Kelly Cole is Kelly
 Corey misspelled. `scripts/data-audit.py` (offline, tmp/prod.sqlite + the map)
 flags the patterns behind them: a renamed program's name ending the year its
 earlier name did, an end year with Woodbury issues naming the program later,
@@ -1456,8 +1456,8 @@ Open:
    every proposed correction re-checked against its sources by Opus, which wrote
    the final change (op type `memorial`, one column of `memorial_victims`;
    init-memorial-db.php seeds only an empty table, so approved fixes stay):
-   86 memorial proposals (52 high), among them Clark Harman (Feb 3, 2024,
-   smothering, homicide), Rylan Harris (drowned, not struck by a car), Alana
+   86 memorial proposals (52 high), among them Clark Harman (Feb 3, 2024;
+   restraint in a bivy sack, homicide), Rylan Harris (drowned, not struck by a car), Alana
    Richardson (2023, not 2020), Kenneth Barkley and Corey Foster (dates and
    restraint findings). 91 entries checked out; 48 could not be settled and
    change nothing. The 31 programs with later Woodbury issues: 23 right, 4
