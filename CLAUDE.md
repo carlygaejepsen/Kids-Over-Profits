@@ -64,7 +64,7 @@ php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / 
 # Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
 # Facility Profile posts listed in kop_facility_pages_merged_profiles() (hyde) print unchanged on their /facility/ page, the post 301s there
 php scripts/test-facility-pages.php
-# The mobile app (github.com/carlygaejepsen/kids-over-profits-app) reads kop/v1/facility/<slug>, /operator/<slug|?name=>
+# The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>
 # and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
 # A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky

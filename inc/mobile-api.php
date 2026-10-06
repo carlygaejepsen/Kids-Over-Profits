@@ -1,6 +1,6 @@
 <?php
 /**
- * Read-only JSON for the Kids Over Profits mobile app (kids-over-profits-app).
+ * Read-only JSON for the Kids Over Profits mobile app (kids-over-profits-mobile).
  *
  * Three public GET routes under kop/v1, no login, no nonce. Each one is a thin
  * layer over the data the generated pages already print, cut to what a phone
