@@ -16,8 +16,10 @@
  * in wp-admin (KOP Data Tools > Page Text); this file only lays it out.
  * Every figure is from a government, a court, the TRC/NCTR, NABS or NICWA,
  * and linked where it is used. Change a figure only with its source.
- * Created as a draft (kop_tool_page_specs()) so it is read before it is
- * public. Link it from the History hub (inc/hub-shell.php) once published.
+ * Published (it started as a draft so the owner could read it first).
+ * Linked from the History hub in its own boxed section, "Institutional abuse
+ * outside the troubled teen industry" (kop_hub_config() 'outside'), never
+ * among the hub's TTI links.
  */
 
 if (!defined('ABSPATH')) {

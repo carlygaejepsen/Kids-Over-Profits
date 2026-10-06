@@ -31,9 +31,13 @@ function kop_site_footer_enqueue() {
     }
 }
 
-/** Footer links: slug => label, shown only when the page is published. */
+/**
+ * Footer links: slug => label, shown only when the page is published, or
+ * key => array('label', 'url') for a route that is not a WordPress page.
+ */
 function kop_site_footer_links() {
-    return apply_filters('kop_site_footer_links', array(
+    $site_map = function_exists('kop_site_map_url') ? array('label' => 'Site map', 'url' => kop_site_map_url()) : null;
+    return apply_filters('kop_site_footer_links', array_filter(array(
         'report-abuse'      => 'Report abuse',
         'document-archive'  => 'Document archive',
         'glossary'          => 'Glossary',
@@ -42,7 +46,8 @@ function kop_site_footer_links() {
         'contact'           => 'Contact',
         'privacy-policy'    => 'Privacy policy',
         'terms-of-service'  => 'Terms of service',
-    ));
+        'site-map'          => $site_map,
+    )));
 }
 
 function kop_site_footer_render() {
@@ -69,11 +74,17 @@ function kop_site_footer_render() {
             <nav class="kop-site-footer__nav" aria-label="Footer">
                 <ul>
                     <?php foreach (kop_site_footer_links() as $slug => $label) :
-                        $page = get_page_by_path($slug);
-                        if (!$page || $page->post_status !== 'publish') {
+                        if (is_array($label)) {
+                            $url = (string) ($label['url'] ?? '');
+                            $label = (string) ($label['label'] ?? '');
+                        } else {
+                            $page = get_page_by_path($slug);
+                            $url = ($page && $page->post_status === 'publish') ? get_permalink($page) : '';
+                        }
+                        if ($url === '' || $label === '') {
                             continue;
                         } ?>
-                        <li<?php echo $a('link-' . $slug); ?>><a href="<?php echo esc_url(get_permalink($page)); ?>"><?php echo esc_html($t('link-' . $slug, $label)); ?></a></li>
+                        <li<?php echo $a('link-' . $slug); ?>><a href="<?php echo esc_url($url); ?>"><?php echo esc_html($t('link-' . $slug, $label)); ?></a></li>
                     <?php endforeach; ?>
                 </ul>
             </nav>

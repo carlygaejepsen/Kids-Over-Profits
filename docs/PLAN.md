@@ -949,8 +949,9 @@ In order:
 
 Owner:
 
-- **Read and publish the FAQ** (draft, 15 questions, KOP Tools > Page
-  Text; `js/data/pages/faq.json`).
+- ~~**Read and publish the FAQ**~~ Done: the FAQ is published (15 questions,
+  KOP Tools > Page Text; `js/data/pages/faq.json`), as are Young Adult
+  Programs, Indian Boarding Schools and the Network Map.
 - **Provo Canyon School profile** (draft,
   [post 10796](https://kidsoverprofits.org/wp-admin/post.php?post=10796&action=edit)):
   the text says suspended, the record (10371) says Closed. Say which,

@@ -141,9 +141,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
+# A hub links a page about institutional abuse OUTSIDE the TTI (Indian boarding schools) only in its boxed 'outside' block
+# (kop_hub_outside(), headed and tagged as not the troubled teen industry), never among its own actions or reading list
 php scripts/test-hub-pages.php
 # Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
-# (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/, a draft until published)
+# (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/ and /faq/, both published)
 php scripts/test-page-text.php
 # Utility and legal page templates: shortcode/share behavior, case metadata and image alt text
 php scripts/test-utility-pages.php
@@ -165,7 +167,8 @@ php api/scan-new-facilities.php --ids=502         # on the server: dry run; "app
 # Indigenous residential schools (inc/indigenous-schools.php): their own records, never TTI facilities; listed on
 # /indian-boarding-schools/ with their articles, managed at KOP Data Tools > Indigenous Schools (Move here, news scan names)
 php scripts/test-indigenous-schools.php          # the first move and the page, on an in-memory copy of tmp/prod.sqlite
-# Young adult programs (18+, inc/young-adult-programs.php): their own records, never TTI facilities; listed on
+# Young adult programs (18+, inc/young-adult-programs.php): part of the industry (same companies, often the next step after a teen
+# program), but kept in their own records, not facilities_v2; never grouped with the Indigenous schools as "outside the TTI"; listed on
 # /young-adult-programs/, managed at KOP Tools > Young Adult Programs, filled from Woodbury Facts' "Young adult programs (18+)" tab
 php scripts/test-young-adult-programs.php       # records, facts + exact undo, every no-record Woodbury item, the page
 php scripts/test-young-adult-move.php           # the first move of 18+ facility records, on an in-memory copy (sync the mirror first)
@@ -205,6 +208,12 @@ python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws
 # the admin finder, facility-search.php (Data Manager, news processor, wiki picker), the data forms' autocompletes
 # (js/autocomplete.js alternateNameDetail()), the wizard and the map search carry the kind too. A new box does the same
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
+# Reader's site map (/site-map/, a route like /operator/, inc/site-map.php + templates/site-map.php + js/site-map.js): every public
+# page by section (hubs with their articles from kop_article_parents(), placed by template in kop_site_map_template_sections(), admin
+# tools/redirected/password pages never), posts by category, every /facility/ and /operator/ page A to Z, a "Find a page" filter.
+# kop_site_map_quick_links() also fills the search popup before typing (js/global-search.js) and the 404 page (404.php: "Did you mean"
+# from the address's words). A new page template gets a section there. /sitemap/ 301s here; XML sitemaps stay Yoast's
+php scripts/test-site-map.php [--out=tmp/site-map-preview/site-map.html]   # placement, A to Z, cache, 404 helpers, PHP == JS filter folding
 # Search results link to the record's own page (/facility/, /operator/; wiki entries and inspection rows to the matching
 # facility page in the same state), falling back to the state hub or directory search: kop_search_v2_result_url() and
 # kop_search_record_page_url() in inc/ajax-search-lite.php, used by the dropdown, the search bar and search.php
@@ -396,7 +405,7 @@ to the program aggregate otherwise.
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
 - `news_facility_candidates` / `news_facility_scans` - Every facility name from the news with no record and what the scan decided (created, matched, possible duplicate, provider, not a facility), one row per name, and which articles it has read (`inc/facility-discovery.php`)
 - `indigenous_schools` / `indigenous_school_news` - Indian boarding, residential and mission schools, kept out of the facility tables (never on facility pages, hubs, map, search or open data), and which articles are about each (school_id 0 = the schools in general); the news scan files a school it finds as `review = 'pending'` (`inc/indigenous-schools.php`)
-- `young_adult_programs` - Programs for people 18 and older, kept out of the facility tables like the Indigenous schools; `facts` is a JSON list of Woodbury items, each citing its issue page (`inc/young-adult-programs.php`; `ya` on `{prefix}kop_woodbury_facts` marks a no-record program's items for its tab)
+- `young_adult_programs` - Programs for people 18 and older, connected to the industry but kept in their own table, out of the facility tables; `facts` is a JSON list of Woodbury items, each citing its issue page (`inc/young-adult-programs.php`; `ya` on `{prefix}kop_woodbury_facts` marks a no-record program's items for its tab)
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)

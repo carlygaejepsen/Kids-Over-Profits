@@ -17,6 +17,9 @@
     var ENDPOINT = settings.endpoint || '';
     var NONCE = settings.nonce || '';
     var MIN_CHARS = parseInt(settings.minChars, 10) || 2;
+    // Shown before anything is typed (kop_site_map_quick_links(), inc/site-map.php).
+    var QUICK_LINKS = Array.isArray(settings.quickLinks) ? settings.quickLinks : [];
+    var SITE_MAP_URL = settings.siteMapUrl || '';
     var DEBOUNCE_MS = 250;
 
     if (!ENDPOINT || !window.fetch) {
@@ -128,13 +131,18 @@
         input.addEventListener('keydown', onInputKeydown);
 
         document.body.appendChild(overlay);
+        renderIdle();
     }
 
-    function openOverlay() {
+    function openOverlay(query) {
         if (!overlay) buildOverlay();
         lastFocused = document.activeElement;
         overlay.hidden = false;
         document.body.classList.add('kop-global-search--open');
+        if (typeof query === 'string' && query.trim() !== '') {
+            input.value = query.trim();
+            onInput();
+        }
         input.focus();
         input.select();
     }
@@ -228,6 +236,15 @@
         footerLink.hidden = true;
         statusEl.textContent = 'Type at least ' + MIN_CHARS + ' characters to search everything at once.';
         statusEl.hidden = false;
+
+        // Somewhere to go before typing: the most used pages and the site map.
+        var items = QUICK_LINKS.map(function (l) {
+            return { title: l.label, url: l.url, meta: l.note || '' };
+        });
+        if (SITE_MAP_URL) {
+            items.push({ title: 'Site map', url: SITE_MAP_URL, meta: 'Every page, A to Z' });
+        }
+        if (items.length) renderGroup({ label: 'Go to', items: items });
     }
 
     function renderResults(data) {
@@ -341,7 +358,16 @@
     function init() {
         buildTrigger();
         document.addEventListener('keydown', onGlobalKeydown);
+        // Any element can open the search: <a data-kop-open-search="optional words">.
+        document.addEventListener('click', function (e) {
+            var opener = e.target && e.target.closest ? e.target.closest('[data-kop-open-search]') : null;
+            if (!opener) return;
+            e.preventDefault();
+            openOverlay(opener.getAttribute('data-kop-open-search') || '');
+        });
     }
+
+    window.KOPGlobalSearch = { open: openOverlay, close: closeOverlay };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);

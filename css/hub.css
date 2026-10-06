@@ -332,6 +332,49 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+/* Institutional abuse outside the troubled teen industry (kop_hub_outside()):
+   boxed and tagged so it never reads as part of the hub's TTI lists. */
+.kop-hub-outside {
+    padding: 1.25rem 1.25rem 0.5rem;
+    background: var(--kop-sand, #F2EEDF);
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-left: 5px solid var(--kop-navy-blue, #000080);
+    border-radius: 6px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-hub-outside .kop-hub-h {
+    margin-top: 0.25rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-hub-outside-tag {
+    display: inline-block;
+    margin: 0;
+    padding: 0.15rem 0.55rem;
+    border-radius: 3px;
+    background: var(--kop-navy-blue, #000080);
+    color: var(--kop-white, #fff);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.kop-hub-outside-intro {
+    max-width: 70ch;
+    margin: 0.35rem 0 0.5rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-hub-outside .kop-hub-reading-list p {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-hub-outside .kop-hub-reading-list li:last-child {
+    border-bottom: 0;
+}
+
 /* An article with a featured image shows it beside its link. The column is
    half the page from 760px, so the image stays small enough to leave the
    note a readable measure. */

@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 function kop_redirect_map() {
-    return array(
+    return apply_filters('kop_redirect_map', array(
         // Renamed (phase 1): the country template derives the name from the slug.
         'uk'            => '/united-kingdom/',
         // The facility data files the country under "Czech Republic", and the
@@ -57,7 +57,7 @@ function kop_redirect_map() {
         'shiver-v-southstone-motion-for-default-judgement'                               => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/SouthstoneDefaultMotion.pdf',
         'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs'      => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Survivors-Guide-to-Legal-Action-Against-Troubled-Teen-Industry-Programs.pdf',
         'overt-and-covert-conversion-therapy-practices-in-therapeutic-boarding-schools'  => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Overt-Covert-Conversion-Therapy.pdf',
-    );
+    ));
 }
 
 function kop_apply_redirect_map() {

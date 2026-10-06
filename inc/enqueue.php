@@ -2045,6 +2045,11 @@ function kop_enqueue_global_search() {
             // suggested-edits group); harmless for anonymous visitors.
             'nonce'    => wp_create_nonce('wp_rest'),
             'minChars' => 2,
+            // Shown before anything is typed (inc/site-map.php).
+            'quickLinks' => function_exists('kop_site_map_quick_links')
+                ? array_map(function ($l) { return array('label' => $l['label'], 'note' => $l['note'], 'url' => $l['url']); }, kop_site_map_quick_links())
+                : array(),
+            'siteMapUrl' => function_exists('kop_site_map_url') ? kop_site_map_url() : '',
         )
     );
 }
