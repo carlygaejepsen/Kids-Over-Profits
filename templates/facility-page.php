@@ -44,36 +44,19 @@ $kop_fp_list = static function (array $items, $class = 'kop-fp-list') {
     echo '</ul>';
 };
 
-// "Source: r/troubledteens wiki, HEAL": where a fact came from, each name linking to the page it cites.
-$kop_fp_sources = static function ($sources, $tag = 'dd', $short = false) {
+// Where a fact, staff entry or incident came from: the word "source" (source 1, source 2 ...) linking to
+// the page it cites, the full citation in the link's preview.
+$kop_fp_sources = static function ($sources, $tag = 'dd') {
     if (!$sources) return;
     $links = array();
-    if ($short) {
-        // At a glance: the word "source" (source 1, source 2 ...), the citation in its preview.
-        foreach (array_values($sources) as $n => $src) {
-            $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
-            $preview = $src['cite'] !== '' ? $src['cite'] : $src['source'];
-            $links[] = $src['url'] !== ''
-                ? kop_citation_link($src['url'], $label, $preview, true, '', true)
-                : '<span title="' . esc_attr($preview) . '">' . esc_html($label) . '</span>';
-        }
-        echo '<' . $tag . ' class="kop-fp-src">' . implode(', ', $links) . '</' . $tag . '>';
-        return;
-    }
-    // Two sources with the same name and date ("Woodbury Reports, May 2007" twice) are told apart by page, else by number.
-    $counts = array_count_values(array_column($sources, 'source'));
-    $nth = array();
-    foreach ($sources as $src) {
-        $label = $src['source'];
-        if ($counts[$label] > 1) {
-            $nth[$label] = ($nth[$label] ?? 0) + 1;
-            $label .= preg_match('/\bp\. ?(\d+)/', $src['cite'], $pm) ? ', p. ' . $pm[1] : ' (' . $nth[$label] . ')';
-        }
+    foreach (array_values($sources) as $n => $src) {
+        $label = 'source' . (count($sources) > 1 ? ' ' . ($n + 1) : '');
+        $preview = $src['cite'] !== '' ? $src['cite'] : $src['source'];
         $links[] = $src['url'] !== ''
-            ? kop_citation_link($src['url'], $label, $src['cite'], true, '', true)
-            : '<span title="' . esc_attr($src['cite']) . '">' . esc_html($label) . '</span>';
+            ? kop_citation_link($src['url'], $label, $preview, true, '', true)
+            : '<span title="' . esc_attr($preview) . '">' . esc_html($label) . '</span>';
     }
-    echo '<' . $tag . ' class="kop-fp-src">Source: ' . implode(', ', $links) . '</' . $tag . '>';
+    echo '<' . $tag . ' class="kop-fp-src">' . implode(', ', $links) . '</' . $tag . '>';
 };
 
 // A section heading's icon (inc/icons.php), drawn in the heading's colour.
@@ -514,7 +497,7 @@ get_header();
                         <?php foreach ($page['former_locations'] as $fl) : ?>
                             <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
                         <?php endforeach; ?>
-                        <?php $kop_fp_sources($page['fact_sources']['former_locations'] ?? array(), 'dd', true); ?>
+                        <?php $kop_fp_sources($page['fact_sources']['former_locations'] ?? array()); ?>
                     </div>
                 <?php endif; ?>
                 <?php foreach ($page['facts'] as $fact) : ?>
@@ -527,7 +510,7 @@ get_header();
                         <?php else : ?>
                             <dd><?php echo esc_html($fact['value']); ?></dd>
                         <?php endif; ?>
-                        <?php $kop_fp_sources($page['fact_sources'][$fact['label']] ?? array(), 'dd', true); ?>
+                        <?php $kop_fp_sources($page['fact_sources'][$fact['label']] ?? array()); ?>
                     </div>
                 <?php endforeach; ?>
                 <?php foreach ($kop_fp_parts ? $kop_fp_parts['facts'] : array() as $kop_fp_f) : ?>

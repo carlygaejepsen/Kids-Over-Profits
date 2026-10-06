@@ -298,7 +298,7 @@
     font-weight: 700;
 }
 
-/* "Source: r/troubledteens wiki": where a staff entry or fact came from. */
+/* "source": where a staff entry, fact or incident came from (a link, the citation in its preview). */
 .kop-fp-src {
     display: block;
     margin-top: 0.15rem;

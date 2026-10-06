@@ -454,10 +454,11 @@ if ($picks) {
     include dirname(__DIR__) . '/templates/facility-page.php';
     $html = ob_get_clean();
     $check('the page links a staff entry and a fact to their sources',
-        preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src">Source: <a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test"#', $html)
+        preg_match('#kop-fp-person-name">Jane Doe</p>\s*<p class="kop-fp-person-role">Clinical Director[^<]*<span class="kop-fp-src"><a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test">source</a>#', $html)
         && preg_match('#<dd class="kop-fp-src"><a class="kop-citation-link"[^>]*href="https://www\.reddit\.com/r/troubledteens/wiki/index/test">source</a>#', $html)
         && preg_match('#kop-fp-person-name">John Roe</p>\s*<p class="kop-fp-person-role">Therapist</p>#', $html)
-        && strpos($html, '>r/troubledteens wiki, as of Dec 2025</a>') !== false);
+        && strpos($html, 'data-kop-citation-preview="r/troubledteens wiki, page &quot;Test Academy&quot;') !== false
+        && strpos($html, 'class="kop-fp-src">Source: ') === false);
     // Two citations of one issue are told apart by page; of one date with no page, by number.
     $data['fact_sources']['Capacity'] = kop_facility_pages_note_sources(array(
         'Capacity: 35 (Woodbury Reports, May 2007 (#153), p. 20: https://example.org/w.pdf#page=20)',
@@ -477,7 +478,7 @@ if ($picks) {
         preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 20"[^>]*>source 1</a>, <a#', $html)
         && preg_match('#data-kop-citation-preview="Woodbury Reports, May 2007[^"]*p\. 31"[^>]*>source 2</a>#', $html)
         && preg_match('#post by a, March 2005"[^>]*>source 1</a>, <a[^>]*post by b, March 2005"[^>]*>source 2</a>#', $html)
-        && strpos($html, '<dd class="kop-fp-src">Source: ') === false);
+        && strpos($html, 'class="kop-fp-src">Source: ') === false);
 }
 
 // The livelier sections: incidents as a timeline, people across records, serious findings, news pictures.
