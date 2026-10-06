@@ -116,6 +116,28 @@ function kop_wiki_drafts_find(array $lines, $name) {
     return null;
 }
 
+/**
+ * KOP's copies came from markdown_output/, converted back from the rendered
+ * Reddit pages, not Reddit's own source: undo what the conversion broke so the
+ * text pastes onto Reddit as it rendered there. Same rules as
+ * scripts/wiki-drafts.py reddit_format(): bold opened with a space ("** Name**"),
+ * a lost bullet ("***Lower Form:**" -> "* **Lower Form:**"), the header's
+ * missing space before "(years)", and Reddit's page footer ("Last revised by",
+ * "## Page title") dropped with the separators before it.
+ */
+function kop_wiki_drafts_reddit_format($md) {
+    $lines = kop_wiki_drafts_lines($md);
+    $lines = array_slice($lines, 0, kop_wiki_drafts_footer($lines));
+    while ($lines && (trim(end($lines)) === '' || preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', end($lines)))) array_pop($lines);
+    foreach ($lines as $n => $line) {
+        $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', $line);
+        $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
+        if ($n === 0) $line = preg_replace('/\*\*\(/', '** (', $line, 1);
+        $lines[$n] = $line;
+    }
+    return implode("\n", $lines) . "\n";
+}
+
 /** Past-tense pairs: each old line must be there once. -> [md, changed ids, errors]. */
 function kop_wiki_drafts_apply_tense($md, array $pairs) {
     $lines = kop_wiki_drafts_lines($md);
@@ -239,6 +261,10 @@ function kop_wiki_drafts_build($id, $current_md, $edits = null) {
     $count = count(array_filter($added, function ($i) use ($new_lines) {
         return trim($new_lines[$i]) !== '' && !preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', $new_lines[$i]);
     }));
+    // Line numbers above stay right: the format only drops the footer at the end.
+    $md = kop_wiki_drafts_reddit_format($md);
+    $last = count(kop_wiki_drafts_lines($md)) - 1;
+    $added = array_values(array_filter($added, function ($i) use ($last) { return $i <= $last; }));
     return array(
         'md' => $md, 'base' => $base, 'added' => $added, 'count' => $count, 'tensed' => $tensed,
         'applied' => $applied, 'tense_ids' => $tense_ids, 'errors' => array_merge($errors, $problems), 'problems' => $problems, 'stale' => $stale,

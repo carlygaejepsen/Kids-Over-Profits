@@ -47,6 +47,27 @@ def norm(heading):
 FOOTER = re.compile(r'^\s*(last revised by\b|#{1,6}\s*page title\s*$)', re.I)
 
 
+def reddit_format(md):
+    """KOP's copies came from markdown_output/, converted back from the rendered Reddit pages, not Reddit's own source.
+    Undo what the conversion broke so the text pastes onto Reddit as it rendered there (PHP: kop_wiki_drafts_reddit_format(),
+    must match): bold opened with a space ("** Name**" -> "**Name**"), a lost bullet ("***Lower Form:**" -> "* **Lower Form:**"),
+    the header's missing space ("**Name**(1987-present)" -> "**Name** (1987-present)"), and Reddit's page footer copied in
+    ("Last revised by ...", "## Page title"), which is dropped with any separators before it. Runs after the no-loss check."""
+    lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
+    stop = footer_start(lines)
+    lines = lines[:stop]
+    while lines and (not lines[-1].strip() or SEPARATOR.match(lines[-1])):
+        lines.pop()
+    out = []
+    for n, line in enumerate(lines):
+        line = re.sub(r'^\*\*\*(?=\S)', '* **', line)
+        line = re.sub(r'(^|[\s(\[])\*\* +(?=\S)', r'\1**', line)
+        if n == 0:
+            line = re.sub(r'\*\*\(', '** (', line, count=1)
+        out.append(line)
+    return '\n'.join(out) + '\n'
+
+
 def footer_start(lines):
     """Reddit's own footer ("Last revised by", "## Page title"), copied in with the page: nothing goes after it."""
     for i, l in enumerate(lines):
@@ -313,7 +334,7 @@ def run(ids, write):
             ok = False
         if write:
             with open(os.path.join(folder, 'draft.md'), 'w', encoding='utf-8', newline='\n') as f:
-                f.write(draft)
+                f.write(reddit_format(draft))
             with open(os.path.join(folder, 'check.json'), 'w', encoding='utf-8', newline='\n') as f:
                 json.dump({'status': status, 'problems': problems, 'applied': applied, 'tensed': tensed}, f, indent=1)
     return ok

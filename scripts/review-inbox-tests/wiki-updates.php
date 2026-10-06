@@ -68,7 +68,7 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
         if (isset($ops[1])) $fields[$ops[1]['id']] = '';
         call_user_func($src['save'], (string) $key, $fields);
         $b = kop_wiki_drafts_build($key, $r['row']['markdown']);
-        $check('wiki-updates: an edited line goes in as edited', strpos($b['md'], $first['text'] . ' EDITED') !== false);
+        $check('wiki-updates: an edited line goes in as edited (in Reddit form)', strpos($b['md'], rtrim(kop_wiki_drafts_reddit_format($first['text'] . ' EDITED'), "\n")) !== false);
         if (isset($ops[1])) $check('wiki-updates: an emptied line is left out', strpos($b['md'], trim(explode("\n", $ops[1]['text'])[0])) === false);
         $card = kop_rinbox_get_item('wiki-updates', (string) $key);
         $check('wiki-updates: the card shows the edit', in_array($first['text'] . ' EDITED', array_column($card['details'], 'value'), true));
@@ -105,6 +105,29 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $check('wiki-updates: Set aside leaves the entry as it is', kop_rinbox_get_item('wiki-updates', (string) $key)['status'] === 'skip' && $row($key) == $before);
     call_user_func($src['act'], (string) $key, 'undo', array());
     $check('wiki-updates: and Undo brings it back', kop_rinbox_get_item('wiki-updates', (string) $key)['status'] === 'review');
+
+    // The Reddit form undoes the markdown_output conversion: bold opened with a space, a lost bullet, the header's space, the footer.
+    $fmt = kop_wiki_drafts_reddit_format("# **X**(1990-present) Town, UT
+
+## ** History**
+
+***Level One:** rules (see [** Y**](https://example.test))
+
+**Name** was there.
+
+---
+
+Last revised by [u](/user/u/)
+## Page title
+");
+    $check('wiki-updates: the text is put in Reddit form', $fmt === "# **X** (1990-present) Town, UT
+
+## **History**
+
+* **Level One:** rules (see [**Y**](https://example.test))
+
+**Name** was there.
+", json_encode($fmt));
 
     // An entry edited since drafting still takes the additions, placed by heading.
     $md = $r['row']['markdown'];
