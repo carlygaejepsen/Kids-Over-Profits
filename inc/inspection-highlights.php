@@ -2606,10 +2606,35 @@ if (!function_exists('kop_ih_scanner_version')) {
         return '';
     }
 
+    /**
+     * The states' person labels in words a reader knows. California writes
+     * "S1" (staff) and "C1" (client), Arizona "E1" (employee), others "Y1" and
+     * "R1". Shown as an editor's insertion, "[Staff 1]", so the quote stays
+     * the state's own and the number still tells two people apart. A label the
+     * report defines ("Staff 1 (S1)") keeps just the words. Codes after a word
+     * naming a section, form or rule, and codes inside longer ones, are left alone.
+     */
+    function kop_ih_reader_labels($text) {
+        $words = array('S' => 'Staff', 'E' => 'Staff', 'C' => 'Child', 'Y' => 'Youth', 'R' => 'Resident');
+        $text = preg_replace('/\b((?:Staff|Employee|Child|Client|Youth|Resident)(?: member)? ?#?\d{1,2})\s*\([SECYR]\d{1,2}\)/u', '$1', (string) $text);
+        return preg_replace_callback(
+            '/(?<![\w#\-.])([SECYR])(\d{1,2})(?![\w\-]|\.\d)/u',
+            static function ($m) use ($words, $text) {
+                $before = substr($text, max(0, $m[0][1] - 14), min(14, $m[0][1]));
+                if (preg_match('/\b(?:section|sec|rule|form|lic|item|part|exhibit|tag|no|number|code|vitamin|type|class|grade)\.?\s*$/i', $before)) return $m[0][0];
+                return '[' . $words[$m[1][0]] . ' ' . $m[2][0] . ']';
+            },
+            $text,
+            -1,
+            $count,
+            PREG_OFFSET_CAPTURE
+        );
+    }
+
     /** An excerpt as escaped HTML: one paragraph per finding merged into it. */
     function kop_ih_excerpt_html($excerpt) {
         $out = '';
-        foreach (preg_split('/\n\s*\n/u', trim((string) $excerpt)) as $part) {
+        foreach (preg_split('/\n\s*\n/u', trim(kop_ih_reader_labels($excerpt))) as $part) {
             if (trim($part) !== '') $out .= '<p>' . htmlspecialchars(trim($part), ENT_QUOTES, 'UTF-8') . '</p>';
         }
         return $out;

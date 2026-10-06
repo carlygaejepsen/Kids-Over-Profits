@@ -977,5 +977,13 @@ if ($report_path !== '') {
     echo "Wrote $report_path\n";
 }
 
+// Reader labels: the states' S1/C1 shown in words, as an editor's insertion.
+check(kop_ih_reader_labels('S1 struck C1 with a belt.') === '[Staff 1] struck [Child 1] with a belt.', 'labels: S1 and C1 become words');
+check(kop_ih_reader_labels('E2 pushed Y3 and R1.') === '[Staff 2] pushed [Youth 3] and [Resident 1].', 'labels: E, Y and R');
+check(kop_ih_reader_labels('while Staff 1 (S1) worked, S1 allegedly cussed at Client #2 (C2)') === 'while Staff 1 worked, [Staff 1] allegedly cussed at Client #2', 'labels: a defined label keeps its words');
+check(kop_ih_reader_labels("S1's report on C1/C2") === "[Staff 1]'s report on [Child 1]/[Child 2]", 'labels: possessive and slash');
+check(kop_ih_reader_labels('See Section C1, form S10-2, LIC 809, vitamin C1 and 2C1.') === 'See Section C1, form S10-2, LIC 809, vitamin C1 and 2C1.', 'labels: sections, forms and codes are left alone');
+check(strpos(kop_ih_excerpt_html('S1 hit C1 & ran.'), '<p>[Staff 1] hit [Child 1] &amp; ran.</p>') === 0, 'labels: excerpt html is translated and still escaped');
+
 echo "Total: $checks checks, $failures failed.\n";
 exit($failures ? 1 : 0);
