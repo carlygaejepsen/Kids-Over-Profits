@@ -10166,5 +10166,83 @@
         ]
       }
     }
+  },
+  {
+    "id": 10602,
+    "unique_name": "The Brown Schools at Laurel Ridge",
+    "version": 1,
+    "note": "Ownership history from SEC filings, found 2026-10-05: The Brown Schools to April 2003, Psychiatric Solutions, Inc. April 2003 to November 2010, Universal Health Services from November 2010. Sources: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm ; https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm. The year the name changed from \"The Brown Schools at Laurel Ridge\" to \"Laurel Ridge Treatment Center\" is not in either filing (the 2004 filing already uses the new name).",
+    "facility": {
+      "identification": {
+        "name": "The Brown Schools at Laurel Ridge",
+        "currentName": "Laurel Ridge Treatment Center",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "The Brown Schools",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      },
+      "pastOperators": [],
+      "notes": [
+        "Ownership: The Brown Schools, Inc. sold Laurel Ridge Treatment Center (196 licensed beds) to Psychiatric Solutions, Inc. in April 2003, one of six inpatient facilities it sold together for $63.0 million (Psychiatric Solutions, Inc., Form 10-K for 2003, filed March 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)"
+      ]
+    }
+  },
+  {
+    "id": 10815,
+    "unique_name": "Laurel Ridge Treatment Center RTC",
+    "version": 1,
+    "note": "Ownership history from SEC filings, found 2026-10-05: The Brown Schools to April 2003, Psychiatric Solutions, Inc. April 2003 to November 2010, Universal Health Services from November 2010. Sources: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm ; https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm. The year the name changed from \"The Brown Schools at Laurel Ridge\" to \"Laurel Ridge Treatment Center\" is not in either filing (the 2004 filing already uses the new name).",
+    "facility": {
+      "identification": {
+        "name": "Laurel Ridge Treatment Center RTC",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "The Brown Schools at Laurel Ridge"
+        ],
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      },
+      "pastOperators": [
+        "The Brown Schools",
+        "Psychiatric Solutions, Inc."
+      ],
+      "notes": [
+        "Ownership: The Brown Schools, Inc. sold Laurel Ridge Treatment Center (196 licensed beds) to Psychiatric Solutions, Inc. in April 2003, one of six inpatient facilities it sold together for $63.0 million (Psychiatric Solutions, Inc., Form 10-K for 2003, filed March 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
+        "Ownership: Universal Health Services completed its acquisition of Psychiatric Solutions, Inc., and with it Laurel Ridge, in November 2010 (Universal Health Services, Form 10-K for 2010, filed February 2011: https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)"
+      ]
+    }
+  },
+  {
+    "id": 10616,
+    "unique_name": "Laurel Ridge Treatment Center Child & Adolescent RTC",
+    "version": 1,
+    "note": "Ownership history from SEC filings, found 2026-10-05: The Brown Schools to April 2003, Psychiatric Solutions, Inc. April 2003 to November 2010, Universal Health Services from November 2010. Sources: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm ; https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm. The year the name changed from \"The Brown Schools at Laurel Ridge\" to \"Laurel Ridge Treatment Center\" is not in either filing (the 2004 filing already uses the new name).",
+    "facility": {
+      "identification": {
+        "name": "Laurel Ridge Treatment Center Child & Adolescent RTC",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      },
+      "pastOperators": [
+        "The Brown Schools",
+        "Psychiatric Solutions, Inc."
+      ],
+      "notes": [
+        "Address: 17720 Corporate Woods Dr, San Antonio, TX 78259 (r/troubledteens wiki, page \"Laurel Ridge Treatment Center\" (as of 2025-12-18))",
+        "Operator: Psychiatric Solutions, Inc. (r/troubledteens wiki, page \"Laurel Ridge Treatment Center\" (as of 2025-12-18))",
+        "Ownership: The Brown Schools, Inc. sold Laurel Ridge Treatment Center (196 licensed beds) to Psychiatric Solutions, Inc. in April 2003, one of six inpatient facilities it sold together for $63.0 million (Psychiatric Solutions, Inc., Form 10-K for 2003, filed March 2004: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm)",
+        "Ownership: Universal Health Services completed its acquisition of Psychiatric Solutions, Inc., and with it Laurel Ridge, in November 2010 (Universal Health Services, Form 10-K for 2010, filed February 2011: https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)"
+      ]
+    }
   }
 ]
