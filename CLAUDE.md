@@ -143,8 +143,10 @@ php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
 php scripts/test-hub-pages.php
 # Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
-# (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/, a draft until published)
+# (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/, a draft until published, /faq/, /start-here/)
 php scripts/test-page-text.php
+# Kadence's mobile menu: a "#" group label (Monitor, Learn More) opens its list instead of closing the menu (js/mobile-menu.js)
+node scripts/test-mobile-menu.js
 # Utility and legal page templates: shortcode/share behavior, case metadata and image alt text
 php scripts/test-utility-pages.php
 # Live content with local utility/legal template CSS, screenshots at 390/768/1440
