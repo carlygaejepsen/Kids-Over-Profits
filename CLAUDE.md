@@ -142,6 +142,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
 php scripts/test-hub-pages.php
+# The menu's "#" group labels (Monitor, Learn More, Get Involved) each get a hub page (inc/nav-hubs.php, on deploy and on every
+# menu save) and link to it; the hub lists what is under the label, read live from the menu, a line on each from the item's
+# Description, the page's excerpt or kop_nav_hub_notes(). Old links kept in the kop_nav_hubs option; kop_nav_hubs_undo() restores them
+php scripts/test-nav-hubs.php
 # Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
 # (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/, a draft until published, /faq/, /start-here/)
 php scripts/test-page-text.php

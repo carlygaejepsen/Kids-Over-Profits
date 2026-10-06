@@ -187,6 +187,8 @@ require_once get_stylesheet_directory() . '/inc/hub-posts.php';
 
 // The frame a hub page is assembled in, and each hub's settings
 require_once get_stylesheet_directory() . '/inc/hub-shell.php';
+// Hub pages for the menu's group labels (Monitor, Learn More, Get Involved)
+require_once get_stylesheet_directory() . '/inc/nav-hubs.php';
 
 // Utility page presentation and legal document metadata
 require_once get_stylesheet_directory() . '/inc/utility-pages.php';

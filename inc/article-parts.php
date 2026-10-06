@@ -111,6 +111,12 @@ function kop_article_hub_slugs() {
             $hubs[$slug] = true;
         }
     }
+    // The menu's group labels' hubs (inc/nav-hubs.php).
+    if (function_exists('kop_nav_hubs_state')) {
+        foreach (array_keys(kop_nav_hubs_state()) as $slug) {
+            $hubs[$slug] = true;
+        }
+    }
     return $hubs;
 }
 

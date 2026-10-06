@@ -283,6 +283,56 @@
     text-decoration: underline;
 }
 
+/* The menu's group labels (inc/nav-hubs.php): a card per menu entry */
+
+.kop-nav-hub-group {
+    margin-top: 2rem;
+}
+
+.kop-nav-hub-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0 0 1rem;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 760px) {
+    .kop-nav-hub-cards {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.kop-nav-hub-cards .kop-nav-hub-card {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+}
+
+.kop-nav-hub-card a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    font-size: 1.05rem;
+    text-decoration: none;
+}
+
+.kop-nav-hub-card a:hover,
+.kop-nav-hub-card a:focus-visible {
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: underline;
+}
+
+.kop-nav-hub-card p {
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 /* ---- Reading: the articles filed under the hub ------------------------ */
 
 .kop-hub-reading {
