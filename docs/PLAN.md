@@ -212,6 +212,36 @@ The date is when each was last confirmed open.
     and upload again: decisions are kept, and "Left the list" shows what
     dropped off.
 
+### Mobile app
+
+The app is built and its server routes are live (section 3.14). These steps
+need the owner's accounts, devices or artwork.
+
+1. **Try it on a phone** (2026-10-06, not done). Install Expo Go (the
+   current version; the app is Expo SDK 57), then in
+   `C:\Users\daniu\source\repos\kids-over-profits-mobile` run
+   `npx expo start` and scan the QR code (`--tunnel` if the phone cannot
+   reach the PC). Open a facility with incidents, staff and survivor accounts
+   and say what reads wrong: those sections were empty in every record the
+   tests used.
+2. **An Expo account** (free) for `npx eas-cli@latest login`, then
+   `eas build --profile preview --platform android` gives an APK to install
+   without a store.
+3. **Store accounts, only to publish**: Apple Developer Program (99 USD a
+   year) and Google Play Console (25 USD once).
+4. **Artwork and words**: the icon, splash and adaptive icon are still the
+   Expo defaults (`assets/images/` in the app repo); a logo is needed. The
+   store listing needs a short and a long description, screenshots, and an
+   age rating (the pages describe abuse and deaths; the app opens with a
+   notice and the Childhelp number). Privacy policy: the site's
+   `/privacy-policy/` page works if it says the app asks only for the pages a
+   reader opens.
+5. **Site links that open the app** need the Apple Team ID and the Android
+   signing SHA-256 from the first real build, then
+   `/.well-known/apple-app-site-association` and `/.well-known/assetlinks.json`
+   shipped from the theme (`.cpanel.yml` copies files, it never deletes). The
+   `kidsoverprofits://` links work without them.
+
 ### Hosting
 
 9. **Close `/staging/`.** It answers 200 and its inner pages carry no
@@ -1487,5 +1517,98 @@ Open:
    sale took Island View, the Aspen Institute for Behavioral Assessment and
    Copper Canyon, which became Family Help & Wellness partners; no source
    names Turn-About Ranch as one, so the record does not.
+
+### 3.14 Mobile app (2026-10-06)
+
+An iOS and Android app, [kids-over-profits-mobile](https://github.com/carlygaejepsen/kids-over-profits-mobile) (Expo SDK 57,
+expo-router, TypeScript; the README there has the commands). Version one is
+public and read-only: search a facility by any of its names, the news feed,
+states and countries, parent companies, and a facility page with everything
+the website page shows. No accounts, no analytics; it only asks
+kidsoverprofits.org for the pages a reader opens.
+
+**What the server gives it** (`inc/mobile-api.php`, live since
+[5b48839e](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/5b48839ea39af308e861d724f5db4b2bbc396f27)): three public
+GET routes under `kop/v1`, each a copy of named keys, never `SELECT *`, so a
+new private column cannot leak: `/facility/<slug or id>`
+([example](https://kidsoverprofits.org/wp-json/kop/v1/facility/falcon-ridge-ranch-ut)),
+`/operator/<slug or id>` and `/operator?name=UHS`
+([example](https://kidsoverprofits.org/wp-json/kop/v1/operator?name=UHS)),
+and `/news` with `page`, `per_page` (50 at most), `archive=YYYY-MM`,
+`story=<arc slug>` and `facility=<id>`
+([example](https://kidsoverprofits.org/wp-json/kop/v1/news?per_page=5)). Each
+sends an ETag and `Cache-Control: public, max-age=600`; a matching
+`If-None-Match` gets a 304. The app also reads `facility-suggest` (now with
+`id` and `url`), `global-search`, `state/<slug>`, `country/<slug>` and
+`facilities?view=index`. Survivor testimony that is not published never
+leaves the server (`kop_rest_redact_private_testimony()` still applies). A new
+section on the facility or company page goes in the keep lists of
+`kop_mobile_facility_payload()` / `kop_mobile_operator_payload()` or the app
+never sees it. Test: `scripts/test-mobile-api.php` (`--fixture` needs no
+mirror; `--dump <dir>` writes the files the app's tests read). It checks every
+payload for private keys, HTML and fixture sentinel text.
+
+**Rules in force on the website and in the app** ([68a622df](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/68a622df2bb188cca27715d4a576f8c2201997ef),
+[84f93b2b](https://github.com/carlygaejepsen/kids-over-profits-mobile/commit/84f93b2b95d67843c888eade9517d46e283b0617)): a
+citation is only a small "source" link, numbered when there are several. One
+that only points back to us (the network map, a page of this site) is not
+shown. The Woodbury Reports name, issue and page are not printed or put in a
+link's preview; the link to our copy of the issue stays. Website:
+`kop_facility_pages_is_own_source()`, `_woodbury_clean()`,
+`_tidy_citations()`, `_cited_html()`, test `scripts/test-citation-cleanup.php`.
+App: `src/lib/citations.ts`, `InlineSources` in `src/components/ui.tsx`.
+
+**Open work, in order**
+
+1. **Refresh the app's fixtures.** `__tests__/fixtures/` in the app were
+   written before the citation clean-up and still hold the old
+   "Kids Over Profits network map" sources; the tests pass because the app
+   filters them. Run `php scripts/test-mobile-api.php --db=tmp/prod.sqlite
+   --dump <dir>` (add `--id=` for the records below) and copy the files over.
+2. **Fixtures for the sections no record in them filled**: incidents, survivor
+   accounts, the Fornits block, name eras (a renamed program: Copper Canyon
+   Academy / Sedona Sky Academy), program homes and "home of" (Newport
+   Academy, California). The types for those are loose and the screens read
+   them defensively, but nobody has seen them draw real data. Add a render
+   test per section with `@testing-library/react-native` (the app has tests
+   for its helpers and for the fixtures, none for screens).
+3. **Citations on the app's alias lines.** The website shows a "source" after
+   "Formerly ..." and after former locations (`fact_sources.formerly`,
+   `fact_sources.former_locations`); the app shows the names without them.
+   The at-a-glance rows take theirs by label, so a label that differs from
+   its key (the server's `Past operators`, `Operated`) must be checked on a
+   record that has them.
+4. **A slim list of companies.** The Companies tab downloads
+   `facilities?view=index`, 2.4 MB for 51 names. Add `kop/v1/operators`
+   (name, slug, program count, status) to `inc/mobile-api.php` and read that.
+   While there, give a company with no page slug a proper route instead of
+   the `/operator/by-name?name=` stand-in the app uses now.
+5. **Test on devices** (owner step 1 above), then a pass with VoiceOver and
+   TalkBack, the largest font setting, and a tablet. Labels exist on every
+   card, chip and link; nobody has listened to them. The site's
+   `check-contrast.py` does not cover the app; the colours come from
+   `src/theme/colors.ts`, which copies `css/colors.css` (keep the two in step).
+6. **Deep links.** `npx uri-scheme open kidsoverprofits://facility/<slug>`
+   on a device; site addresses (`/facility/<slug>/`, `/operator/<slug>/`)
+   open in the app only after owner step 5.
+7. **Build and publish.** `eas init`, the preview APK, then store builds
+   (owner steps 2 to 4). `eas.json` and `app.json` are ready; bundle id
+   `org.kidsoverprofits.app`.
+8. **Code to tidy**: the facility screen is about 400 lines and wants its
+   sections split into components; the news tab keeps its story and month
+   filters in component state, so they reset when it unmounts.
+9. **Later ideas, not started**: other outlets' coverage of the same story
+   (`story_group_id` is already in each news item), paging through every
+   inspection report (the app shows the newest 20 and links the rest), a
+   "send to KOP" share target (the stray `expo-share-intent` packages that
+   were in the theme's `package.json` until 2026-10-06 point at this), an
+   offline snapshot of the index, and notifications for new articles.
+
+**Known, not the app's to fix**: `scripts/test-facility-pages.php` has 12
+failing checks on `main` (the merged Facility Profile posts: excerpt, jump
+links, written sections first, old anchors); they predate this work and are
+unchanged by it. The `notes` list in the app's payload still carries the
+Woodbury wording and raw addresses; both the website and the app clean them
+when they print.
 
 ---
