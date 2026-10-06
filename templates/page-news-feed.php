@@ -657,10 +657,12 @@ try {
                     </div>
 
                     <div class="news-card-meta">
+                        <?php if (trim((string) ($item['author'] ?? '')) !== ''): ?>
                         <span class="meta-item author">
-                            <?php echo esc_html($item['author'] ?: 'Unknown Author'); ?>
+                            <?php echo esc_html($item['author']); ?>
                         </span>
                         <span class="meta-separator">•</span>
+                        <?php endif; ?>
                         <span class="meta-item publication">
                             <?php echo esc_html($item['publication_name'] ?: 'Unknown Publication'); ?>
                         </span>

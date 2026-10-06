@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentType === 'news') {
                 const title = submission.article_title || 'Untitled Article';
                 const source = submission.publication_name || 'Unknown Source';
-                const author = submission.author || 'Unknown Author';
+                const author = String(submission.author || '').trim();
                 
                 // Check for duplicates
                 const url = submission.article_url;
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="submission-meta">
                         <span>${kopIcon('newspaper')} ${escapeHtml(source)}</span>
-                        <span>${kopIcon('pen-line')} ${escapeHtml(author)}</span>
+                        ${author ? `<span>${kopIcon('pen-line')} ${escapeHtml(author)}</span>` : ''}
                         <span>${kopIcon('tag')} ${escapeHtml(submission.article_type || 'general')}</span>
                         ${promoMeta}
                     </div>
