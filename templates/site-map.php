@@ -67,7 +67,7 @@ get_header();
                     if ($section['letters']) {
                         foreach ($section['letters'] as $items) $count += count($items);
                     } else {
-                        foreach ($section['items'] as $item) $count += 1 + count($item['children']);
+                        array_walk_recursive($section['items'], static function ($v, $k) use (&$count) { if ($k === 'url') $count++; });
                     }
                     ?>
                     <details class="kop-sm-index kop-sm-section--<?php echo esc_attr($key); ?>" id="kop-sm-<?php echo esc_attr($key); ?>" data-kop-sm-group data-kop-sm-section>
