@@ -4434,7 +4434,7 @@
     "quote": "died by suicide in her room on May 29"
    }
   ],
-  "notes": "The family says agencies told them they do not believe she did this to herself; the ME ruling is the official finding, and the wording keeps the dispute. The category is a suggestion only: KOP had it as unknown; your call.",
+  "notes": "The family says agencies told them they do not believe she did this to herself; the ME ruling is the official finding, and the wording keeps the dispute.",
   "ops": [
    {
     "type": "memorial",
@@ -4520,6 +4520,13 @@
     "column": "cause_of_death",
     "from": "Medical neglect",
     "to": "Undetermined (medical examiner); found dead in bed after vomiting, required checks not done"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 14,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "unknown"
    }
   ]
  },
@@ -4555,6 +4562,13 @@
     "column": "cause_of_death",
     "from": "Fell from third floor, under investigation",
     "to": "Fell from a third-floor window; the state investigated it as a suspected suicide"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 15,
+    "column": "cause_category",
+    "from": "accident",
+    "to": "suicide"
    }
   ]
  },
@@ -4610,6 +4624,13 @@
     "column": "cause_of_death",
     "from": "Accident during escape attempt",
     "to": "Drowning in the setting of acute alcohol intoxication, ruled an accident; found in a water basin two weeks after leaving the group home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 17,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
    }
   ]
  },
@@ -4665,6 +4686,13 @@
     "column": "cause_of_death",
     "from": "Accident during escape attempt",
     "to": "Drowning in the setting of acute alcohol intoxication, ruled an accident; found in a water basin two weeks after leaving the group home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 18,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
    }
   ]
  },
@@ -4942,6 +4970,13 @@
     "column": "cause_of_death",
     "from": "Struck by vehicle during escape attempt",
     "to": "Drowned in the Arkansas River after running away from the home"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 35,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "drowning"
    }
   ]
  },
@@ -4977,6 +5012,13 @@
     "column": "cause_of_death",
     "from": "Killed by other residents during escape attempt",
     "to": "Strangled by two other residents after the three ran from the facility; both were sentenced for his murder"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 36,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "violence"
    }
   ]
  },
@@ -5458,6 +5500,13 @@
     "column": "cause_of_death",
     "from": "Beating and medical neglect",
     "to": "Blunt force trauma to the head from an assault by another resident"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 69,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "violence"
    }
   ]
  },
@@ -5540,6 +5589,13 @@
     "column": "cause_of_death",
     "from": "Gunshot during escape attempt",
     "to": "Shot by the adult man she had run away with, during a confrontation with sheriff's deputies"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 74,
+    "column": "cause_category",
+    "from": "escape_attempt",
+    "to": "violence"
    }
   ]
  },
@@ -5673,7 +5729,7 @@
     "quote": "Preliminary autopsy results concluded that Sergey had died from heatstroke (page blocked; from the search summary)."
    }
   ],
-  "notes": "Heat stroke is the preliminary autopsy result as reported; no final medical examiner wording found. The homicide view is a deputy's affidavit, not a ruling, so it stays out of the cause. The category is a suggestion only: KOP had it as unknown; your call.",
+  "notes": "Heat stroke is the preliminary autopsy result as reported; no final medical examiner wording found. The homicide view is a deputy's affidavit, not a ruling, so it stays out of the cause.",
   "ops": [
    {
     "type": "memorial",
@@ -6014,6 +6070,13 @@
     "column": "cause_of_death",
     "from": "Medical neglect",
     "to": "Heat stroke during a campout (autopsy)"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 96,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
    }
   ]
  },
@@ -6070,7 +6133,7 @@
     "quote": "The temperature was about 110 degrees ... There was no evidence of foul play."
    }
   ],
-  "notes": "No published medical examiner report found; the heat stroke finding is as relayed by her family. Outward Bound suggested another physical cause. The category is a suggestion only: KOP had it as unknown; your call.",
+  "notes": "No published medical examiner report found; the heat stroke finding is as relayed by her family. Outward Bound suggested another physical cause.",
   "ops": [
    {
     "type": "memorial",
@@ -6120,6 +6183,13 @@
     "column": "cause_of_death",
     "from": "Accident",
     "to": "Swept away by a flooded creek on a program bike ride; died later in hospital"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 101,
+    "column": "cause_category",
+    "from": "accident",
+    "to": "drowning"
    }
   ]
  },
@@ -6475,6 +6545,13 @@
     "column": "cause_of_death",
     "from": "Medical neglect",
     "to": "Heat stroke and dehydration on a wilderness hike"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 132,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
    }
   ]
  },
@@ -7375,6 +7452,13 @@
     "column": "cause_of_death",
     "from": "Negligence",
     "to": "Dehydration caused by exposure to the elements, per the Mohave County coroner"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 201,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "exposure"
    }
   ]
  },
@@ -7488,6 +7572,13 @@
     "column": "cause_of_death",
     "from": "Medical neglect, exposure",
     "to": "Chest injuries from a 70-foot fall from a cliff (coroner); the group had been without water for 9 1/2 hours in 100-degree heat"
+   },
+   {
+    "type": "memorial",
+    "memorial_id": 214,
+    "column": "cause_category",
+    "from": "medical_neglect",
+    "to": "accident"
    }
   ]
  },
@@ -7515,7 +7606,7 @@
     "quote": "Leon Anger | 17 | Sep 16, 1984 | VisionQuest | Drowned while attempting to escape"
    }
   ],
-  "notes": "No news article found; the VisionQuest link rests on Breaking Code Silence's list. A newspaper source should replace Find a Grave. The category is a suggestion only: KOP had it as unknown; your call.",
+  "notes": "No news article found; the VisionQuest link rests on Breaking Code Silence's list. A newspaper source should replace Find a Grave.",
   "ops": [
    {
     "type": "memorial",
