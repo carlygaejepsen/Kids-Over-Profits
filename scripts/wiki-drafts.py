@@ -20,6 +20,7 @@ A line is taken only when the sole changes are verbs put in the past tense ("is"
     python scripts/wiki-drafts.py assemble [ids...]   # ops-tense.json + ops.json -> draft.md; refuses a draft that loses or changes a line
     python scripts/wiki-drafts.py check [ids...]       # the same checks, prints per entry
     python scripts/wiki-drafts.py selftest             # the tense checker on fixed cases
+    python scripts/wiki-drafts.py export [ids...]      # passing drafts' ops -> js/data/reddit-wiki/update-drafts.json (Wiki updates queue)
 """
 import json
 import os
@@ -325,9 +326,71 @@ def selftest():
     return not bad
 
 
+EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
+OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note')
+
+
+def export(ids):
+    """Every assembled draft that passed its check -> js/data/reddit-wiki/update-drafts.json, read by the Wiki updates queue
+    (inc/wiki-update-drafts.php). Only the ops travel: the site applies them to the entry's own text, so a draft whose entry
+    changed since is still reviewable (the card says so). Entries already in the file and not in ids are kept."""
+    import hashlib
+    try:
+        with open(EXPORT, encoding='utf-8') as f:
+            out = json.load(f)
+    except FileNotFoundError:
+        out = {'entries': {}}
+    done = 0
+    for i in ids:
+        folder = os.path.join(DRAFTS, str(i))
+        try:
+            check_ = json.load(open(os.path.join(folder, 'check.json'), encoding='utf-8'))
+            gaps = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
+            ops = json.load(open(os.path.join(folder, 'ops.json'), encoding='utf-8')).get('ops', [])
+        except FileNotFoundError as e:
+            print(f'{i}: skipped, {os.path.basename(e.filename)} missing (run assemble first)')
+            continue
+        if check_.get('status') != 'OK':
+            print(f'{i}: skipped, its draft was refused')
+            continue
+        tense_path = os.path.join(folder, 'ops-tense.json')
+        tense_ops = json.load(open(tense_path, encoding='utf-8')).get('ops', []) if os.path.exists(tense_path) else []
+        with open(os.path.join(folder, 'entry.md'), encoding='utf-8') as f:
+            base = f.read().replace('\r\n', '\n').rstrip('\n')
+        tense = []
+        for op in tense_ops:
+            if op.get('op') != 'past_tense' or op.get('verdict') == 'dropped':
+                continue
+            for k, pair in enumerate(op.get('lines', [])):
+                tense.append({'id': f"{op.get('id')}.{k + 1}", 'old': pair['old'].rstrip('\r'), 'new': pair['new'].rstrip('\r')})
+        entry, record = gaps.get('entry', {}), gaps.get('record', {})
+        out['entries'][str(i)] = {
+            'program': entry.get('program_name', ''),
+            'place': entry.get('place', ''),
+            'years': entry.get('years', ''),
+            'column': entry.get('markdown_field', ''),
+            'base_sha1': hashlib.sha1(base.encode('utf-8')).hexdigest(),
+            'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
+            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in ops if op.get('verdict') != 'dropped'],
+            'tense': tense,
+            'conflicts': [{'text': g.get('text', ''), 'source_label': g.get('source_label', ''), 'source_url': g.get('source_url', '')}
+                          for g in gaps.get('gaps', []) if g.get('conflict')],
+        }
+        done += 1
+    out['entries'] = dict(sorted(out['entries'].items(), key=lambda kv: int(kv[0])))
+    with open(EXPORT, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(out, f, ensure_ascii=False, indent=1)
+        f.write('\n')
+    print(f'{done} drafts exported, {len(out["entries"])} in {os.path.relpath(EXPORT, ROOT)}')
+    return True
+
+
 def main():
     if len(sys.argv) >= 2 and sys.argv[1] == 'selftest':
         sys.exit(0 if selftest() else 1)
+    if len(sys.argv) >= 2 and sys.argv[1] == 'export':
+        ids = [int(x) for x in sys.argv[2:]] or sorted(int(d) for d in os.listdir(DRAFTS) if d.isdigit())
+        sys.exit(0 if export(ids) else 1)
     if len(sys.argv) < 2 or sys.argv[1] not in ('assemble', 'check'):
         print(__doc__)
         sys.exit(2)

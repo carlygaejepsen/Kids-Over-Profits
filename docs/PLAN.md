@@ -1386,6 +1386,20 @@ workflow; anything that runs on the server later goes through
    **Ready for Reddit** list: Copy button and a link to the page's Reddit
    edit screen. After pasting, `reddit-wiki-live.py fetch --slugs ...` and
    `compare` turn the badge back to "same".
+   Built 2026-10-06: `python scripts/wiki-drafts.py export [ids]` writes the
+   passing drafts' ops (not their text) to
+   `js/data/reddit-wiki/update-drafts.json`; `inc/wiki-update-drafts.php`
+   applies them to the entry as it is now (PHP port of the script's apply,
+   same output on every pilot draft), so an entry edited since drafting is
+   still reviewable (the card says so). Source `wiki-updates`: tabs To
+   review / Ready for Reddit / On Reddit / Set aside; each added line with
+   Opus's note, the past tense side by side with a switch, conflicts;
+   "Edit details" changes or empties any line; "Show the whole entry"
+   (admin-post `kop_wiki_draft_view`) marks the changes and has Copy and
+   Reddit's edit link. Approve writes the column the entry is read from,
+   keeping the old text in option `kop_wiki_draft_old_<id>` for an exact
+   Undo (refused if the entry was edited after). Tested by
+   `scripts/test-review-inbox.php --source=wiki-updates`.
 6. **Keep them current**. A daily cron reruns step 2's gap check for
    linked entries; an entry whose record gained a confirmed closure,
    approved news, a lawsuit, a death or a finding since its last update
