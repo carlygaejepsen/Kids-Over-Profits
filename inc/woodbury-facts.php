@@ -391,6 +391,69 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
     throw new RuntimeException('Unknown change.');
 }
 
+/**
+ * What the record says that disagrees with this item ('' when nothing does):
+ * a field holding another value, another end year or "Open" for a closure,
+ * another role for the same person. Add never overwrites any of these, so the
+ * item keeps waiting with the conflict marked.
+ */
+function kop_wbf_conflict(array $doc, array $r) {
+    $value = kop_wbf_row_value($r);
+    $show = 'kop_wbf_show_value';
+    $same = function ($a, $b) use ($show) {
+        if (is_array($a) || is_array($b)) {
+            $a = (array) $a;
+            $b = (array) $b;
+            if (array_key_exists('min', $a) || array_key_exists('max', $a)) return ($a['min'] ?? null) == ($b['min'] ?? null) && ($a['max'] ?? null) == ($b['max'] ?? null);
+        }
+        return strcasecmp(trim($show($a)), trim($show($b))) === 0;
+    };
+    switch ($r['op']) {
+        case 'set_if_empty':
+            $slot = kop_wbf_get($doc, $r['path']);
+            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return '';
+            return $same($slot, $value) ? '' : 'The record has ' . $show($slot) . '; this says ' . $show($value) . '.';
+        case 'set_closed':
+            $status = (string) ($doc['operatingPeriod']['status'] ?? '');
+            $end = $doc['operatingPeriod']['endYear'] ?? null;
+            $want = is_array($value) ? ($value['endYear'] ?? null) : null;
+            if (strcasecmp($status, 'Open') === 0) return 'The record says it is open' . ($want ? '; this says it closed in ' . (int) $want : '') . '.';
+            if ($want && $end && (int) $end !== (int) $want) return 'The record says it ended in ' . (int) $end . '; this says ' . (int) $want . '.';
+            return '';
+        case 'add_staff':
+            $key = kop_wbf_person_key($value['name'] ?? '');
+            $role = trim((string) ($value['role'] ?? ''));
+            if ($key === '' || $role === '') return '';
+            // "Director (2006, Woodbury Reports)" and "director" are the same role.
+            $plain = function ($s) { return trim(preg_replace('/\s+/', ' ', preg_replace('/\([^)]*\)/', '', strtolower((string) $s)))); };
+            foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
+                foreach ((array) kop_wbf_get($doc, $path) as $s) {
+                    if (!is_array($s) || kop_wbf_person_key($s['name'] ?? '') !== $key) continue;
+                    $have = trim((string) ($s['role'] ?? ''));
+                    $a = $plain($have);
+                    $b = $plain($role);
+                    if ($a === '' || $b === '' || strpos($a, $b) !== false || strpos($b, $a) !== false) return '';
+                    return 'The record lists ' . $s['name'] . ' as ' . $have . '; this says ' . $role . '.';
+                }
+            }
+            return '';
+    }
+    return '';
+}
+
+/** A value as words: a range {min, max} as "12 to 18", a raw entry as written, a list joined. */
+function kop_wbf_show_value($v) {
+    if (!is_array($v)) return (string) $v;
+    if (isset($v['raw'])) return (string) $v['raw'];
+    if (array_key_exists('min', $v) || array_key_exists('max', $v)) {
+        $min = $v['min'] ?? null;
+        $max = $v['max'] ?? null;
+        if ($min !== null && $max !== null) return $min == $max ? (string) $min : $min . ' to ' . $max;
+        return $min !== null ? $min . ' or more' : 'up to ' . $max;
+    }
+    return implode(', ', array_map('kop_wbf_show_value', $v));
+}
+
 /** Take back what kop_wbf_doc_apply() did, leaving anything edited since. */
 function kop_wbf_doc_undo(array &$doc, array $done) {
     foreach ((array) ($done['notes'] ?? array()) as $n) {
@@ -522,7 +585,12 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
                 $applied[$r['pkey']] = $done;
                 $results[$r['pkey']] = array('ok' => true);
             } catch (RuntimeException $e) {
-                $results[$r['pkey']] = array('ok' => false, 'error' => $e->getMessage(), 'already' => true);
+                // A different value on the record is a conflict: it keeps waiting, marked. Only "the same thing
+                // is there already" files it as rejected.
+                $conflict = kop_wbf_conflict($doc, $r);
+                $results[$r['pkey']] = $conflict !== ''
+                    ? array('ok' => false, 'error' => 'Conflict: ' . $conflict, 'conflict' => $conflict)
+                    : array('ok' => false, 'error' => $e->getMessage(), 'already' => true);
             }
         }
         if ($applied) {
@@ -533,6 +601,8 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
             if (isset($applied[$r['pkey']])) {
                 $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied' => wp_json_encode($applied[$r['pkey']]),
                     'applied_fid' => $fid, 'facility_id' => $fid, 'reviewed_by' => $reviewer, 'reviewed_at' => $now), array('pkey' => $r['pkey']));
+            } elseif (!empty($results[$r['pkey']]['conflict'])) {
+                $wpdb->update(kop_wbf_table(), array('conflict' => $results[$r['pkey']]['conflict'], 'auto' => 0), array('pkey' => $r['pkey']));
             } elseif (!empty($results[$r['pkey']]['already'])) {
                 $wpdb->update(kop_wbf_table(), array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => $results[$r['pkey']]['error'])),
                     'reviewed_by' => $reviewer, 'reviewed_at' => $now), array('pkey' => $r['pkey']));

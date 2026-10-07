@@ -283,3 +283,18 @@ function kop_on_file_status_word($status) {
     $words = array('approved' => 'approved', 'published' => 'published', 'promotional' => 'Industry PR', 'draft' => 'draft');
     return $words[(string) $status] ?? (string) $status;
 }
+
+/** One facility record ['name', 'doc'] (or null), read once a request. */
+function kop_on_file_doc($fid) {
+    static $memo = array();
+    $fid = (int) $fid;
+    if ($fid <= 0) return null;
+    if (!array_key_exists($fid, $memo)) {
+        try {
+            $memo[$fid] = kop_on_file_docs(kop_rinbox_pdo(), array($fid))[$fid] ?? null;
+        } catch (Throwable $e) {
+            $memo[$fid] = null;
+        }
+    }
+    return $memo[$fid];
+}

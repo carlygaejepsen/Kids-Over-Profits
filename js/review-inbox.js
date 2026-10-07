@@ -1165,6 +1165,19 @@
         }
         var titleRow = pick || renameBtn ? el('span', { class: 'rinbox-title-row' }, [pick, title, renameBtn]) : title;
         node.appendChild(el('header', { class: 'rinbox-card-head' }, [titleRow, meta, renameForm]));
+        // A conflict with the record (or another source) is always marked, above everything else.
+        var conflictIcon = function () {
+            if (typeof window.kopIcon !== 'function') return null;
+            var span = el('span', { class: 'rinbox-conflict-icon', 'aria-hidden': 'true' });
+            span.innerHTML = window.kopIcon('alert-triangle');
+            return span;
+        };
+        node.classList.toggle('has-conflict', !!item.conflict);
+        if (item.conflict) {
+            node.appendChild(el('p', { class: 'rinbox-conflict', role: 'note' }, [
+                conflictIcon(), el('strong', { text: 'Conflict: ' }), document.createTextNode(item.conflict)
+            ]));
+        }
         if (item.hold) node.appendChild(holdNote(item, src, node));
         if (item.recs && item.recs.length) node.appendChild(recNote(item));
         if (links.childNodes.length) node.appendChild(links);

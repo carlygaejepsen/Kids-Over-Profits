@@ -997,6 +997,24 @@ function kop_fornits_doc_apply(array &$doc, array $r, $target) {
     return $wbf('add_list', 'notes', $line, 'Lead');
 }
 
+/** What the record says that disagrees with this item (kop_wbf_conflict()'s rules): a staff role, a closure. */
+function kop_fornits_conflict(array $doc, array $r, $target = '') {
+    $v = json_decode((string) $r['value'], true) ?: array();
+    if ($r['kind'] === 'staff') {
+        $role = trim(($v['role'] ?? '') . (!empty($v['years']) ? ' (' . $v['years'] . ')' : ''));
+        return kop_wbf_conflict($doc, array('op' => 'add_staff', 'path' => 'staff.notableStaff',
+            'value' => wp_json_encode(array('name' => (string) ($v['person'] ?? ''), 'role' => $role))));
+    }
+    if ($r['kind'] === 'lead') {
+        $v += array('url' => '', 'type' => '', 'year' => '');
+        if (($target !== '' ? $target : kop_fornits_lead_target($v)) === 'closed') {
+            return kop_wbf_conflict($doc, array('op' => 'set_closed', 'path' => 'operatingPeriod.status',
+                'value' => wp_json_encode(array('endYear' => $v['year'] !== '' ? (int) $v['year'] : null))));
+        }
+    }
+    return '';
+}
+
 function kop_fornits_doc_undo(array &$doc, array $done) {
     if (($done['via'] ?? '') === 'link') {
         $key = kop_gdl_url_key($done['url']);
@@ -1107,6 +1125,12 @@ function kop_fornits_apply(array $rows, array $targets, $fid, $reviewer) {
                     $applied[] = array($r, $done);
                     $results[$r['pkey']] = array('ok' => true);
                 } catch (RuntimeException $e) {
+                    // A different value on the record is a conflict: it keeps waiting, marked on its card.
+                    $conflict = kop_fornits_conflict($doc, $r, $target);
+                    if ($conflict !== '') {
+                        $results[$r['pkey']] = array('ok' => false, 'error' => 'Conflict: ' . $conflict, 'keep' => true);
+                        continue;
+                    }
                     $mark($r, 'rejected', array('reason' => $e->getMessage()), 0);
                     $results[$r['pkey']] = array('ok' => false, 'error' => $e->getMessage());
                 }

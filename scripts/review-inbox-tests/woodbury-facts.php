@@ -128,6 +128,33 @@ function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check
     $page = call_user_func($src['list'], array('view' => 'records', 'search' => '', 'offset' => 0, 'limit' => 100, 'filters' => array()));
     $check('woodbury-facts: they are out of the waiting tabs', !array_intersect(array_column($page['items'], 'key'), $keys)
         && $page['total'] === $counts['records']);
+    // Conflicts are always marked: what the record says that disagrees, never ticked, and Add keeps them waiting.
+    $doc = array('facilityDetails' => array('type' => 'Wilderness Therapy'), 'operatingPeriod' => array('status' => 'Open', 'endYear' => null),
+        'staff' => array('administrator' => array(array('name' => 'Jane Q. Roe', 'role' => 'Executive Director (2001)'))));
+    $row = function ($op, $path, $value) { return array('op' => $op, 'path' => $path, 'value' => json_encode($value)); };
+    $check('woodbury-facts: conflict rules (other value, open record, other role) and none for the same thing',
+        kop_wbf_conflict($doc, $row('set_if_empty', 'facilityDetails.type', 'Boot Camp')) === 'The record has Wilderness Therapy; this says Boot Camp.'
+        && kop_wbf_conflict($doc, $row('set_if_empty', 'facilityDetails.type', 'wilderness therapy')) === ''
+        && kop_wbf_conflict($doc, $row('set_if_empty', 'facilityDetails.capacity', 40)) === ''
+        && strpos(kop_wbf_conflict($doc, $row('set_closed', 'operatingPeriod.status', array('endYear' => 2009))), 'The record says it is open') === 0
+        && strpos(kop_wbf_conflict($doc, $row('add_staff', 'staff.notableStaff', array('name' => 'Dr. Jane Roe', 'role' => 'Admissions'))), 'The record lists Jane Q. Roe as Executive Director') === 0
+        && kop_wbf_conflict($doc, $row('add_staff', 'staff.notableStaff', array('name' => 'Jane Roe', 'role' => 'executive director'))) === '');
+    // A real waiting item whose record now holds another value.
+    $live = null;
+    foreach ($pdo->query("SELECT * FROM $t WHERE status = 'pending' AND op = 'set_if_empty' AND facility_id > 0 ORDER BY id LIMIT 4000")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+        $f = kop_on_file_doc($r['facility_id']);
+        if ($f && kop_wbf_conflict($f['doc'], $r) !== '') { $live = $r; break; }
+    }
+    if ($live) {
+        $card = kop_rinbox_get_item('woodbury-facts', $live['pkey']);
+        $check('woodbury-facts: a card whose record disagrees says Conflict and is not ticked', strpos($card['conflict'], 'The record has') !== false && $card['selected'] === false, $card['conflict']);
+        $res = kop_wbf_apply(array($live), (int) $live['facility_id'], 'tester');
+        $after = kop_wbf_rows(array($live['pkey']))[0];
+        $check('woodbury-facts: Add on a conflict keeps it waiting, the conflict stored, never filed as rejected', $after['status'] === 'pending'
+            && strpos((string) $after['conflict'], 'The record has') === 0 && strpos((string) ($res[$live['pkey']]['error'] ?? ''), 'Conflict: ') === 0, json_encode($res));
+    } else {
+        $check('woodbury-facts: a waiting item with a live conflict exists in the mirror', false);
+    }
     $first = kop_rinbox_on_file_list($src, 'woodbury-facts', array('offset' => 0, 'limit' => 5));
     $check('woodbury-facts: the Already on file view lists them, saying what the record has', $first['total'] === count($on_file) && $first['items']
         && $first['items'][0]['details'][0]['label'] === 'Already on file', json_encode($first['items'][0]['details'][0] ?? null));

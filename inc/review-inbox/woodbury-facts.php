@@ -171,8 +171,8 @@ function kop_rinbox_wbf_item(array $r) {
         if (empty($e['found'])) $line .= ' (these words were not found in the ' . (!empty($e['pub']) ? 'archived page' : 'issue text') . ': check the page before adding)';
         $lines[] = $line;
     }
-    if ((string) $r['conflict'] !== '') $lines[] = $r['conflict'];
-    if ((string) $r['current_val'] !== '') $lines[] = 'On the record now: ' . $r['current_val'];
+    // Conflicts (the build's, and the record as it is now) are the card's Conflict mark, not a line here.
+    $conflict = $pending ? kop_rinbox_wbf_conflict($r) : '';
     if (!empty($extra['career']) && count($extra['career']) > 1) {
         $lines[] = 'Where Woodbury places ' . ($extra['person'] ?? 'them') . ': ' . implode('; ', (array) $extra['career']);
     }
@@ -317,6 +317,7 @@ function kop_rinbox_wbf_item(array $r) {
         'fields'       => kop_rinbox_wbf_fields($r),
         'actions'      => $actions,
         'links'        => $links,
+        'conflict'     => $conflict,
         // As the old screen: a checked quote and a sure match start ticked (records and consultants).
         'selected'     => $pending && !empty($r['preselect']) && ((int) $r['facility_id'] > 0 || $r['grp'] === 'consultant'),
     );
@@ -536,4 +537,20 @@ function kop_wbf_on_record(array $doc, array $r) {
             return 'already marked closed' . ($end ? ', ended ' . (int) $end : '');
     }
     return '';
+}
+
+/** Every conflict for a waiting item: the build's own note and what the record says now. */
+function kop_rinbox_wbf_conflict(array $r) {
+    $out = array();
+    if ((string) $r['conflict'] !== '') {
+        // The build writes ranges as JSON ("Another issue gives {"min": 10, "max": 14}"): shown as words.
+        $out[] = rtrim(preg_replace_callback('/\{[^{}]*\}/', function ($m) {
+            $v = json_decode($m[0], true);
+            return is_array($v) ? kop_wbf_show_value($v) : $m[0];
+        }, (string) $r['conflict']), '.') . '.';
+    }
+    if ((string) $r['current_val'] !== '') $out[] = 'On the record now: ' . $r['current_val'] . '.';
+    $f = (int) $r['facility_id'] > 0 ? kop_on_file_doc($r['facility_id']) : null;
+    if ($f && ($live = kop_wbf_conflict($f['doc'], $r)) !== '' && !in_array($live, $out, true)) $out[] = $live;
+    return implode(' ', $out);
 }

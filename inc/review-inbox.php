@@ -67,6 +67,8 @@
  * options {value: label}, category}], details [{label, value}] (facts shown on
  * the card), compare {heads: [..], rows: [{label, values: [..]}]} (two records
  * side by side), preview {label, url} (a PDF or page shown in the card),
+ * conflict (what disagrees with the record or another source: shown as a
+ * "Conflict" mark on the card, which then never starts ticked),
  * actions [{id, label, style (approve, reject, neutral, undo), confirm,
  * params [field...]}], moves [{id, label}], links [{label, url}],
  * selected (true: the card's "select" box starts ticked, a sure match).
@@ -324,8 +326,11 @@ function kop_rinbox_finish_items($source, array $items) {
     foreach ($items as &$it) {
         $it += array('subtitle' => '', 'url' => '', 'text' => '', 'created' => '', 'status' => '', 'status_label' => '',
             'facility' => null, 'fields' => array(), 'actions' => array(), 'moves' => array(), 'links' => array(),
-            'details' => array(), 'compare' => null, 'preview' => null, 'selected' => false);
+            'details' => array(), 'compare' => null, 'preview' => null, 'selected' => false, 'conflict' => '');
         $it['key'] = (string) $it['key'];
+        // A conflict is always marked, and never ticked for a bulk Add.
+        $it['conflict'] = trim(implode(' ', array_filter(array_map('trim', array_map('strval', (array) $it['conflict'])), 'strlen')));
+        if ($it['conflict'] !== '') $it['selected'] = false;
         $it['tags'] = $tags[$it['key']] ?? array();
         $it['hold'] = kop_rinbox_hold_info($source, $it['key']);
         $it['recs'] = $recs[$it['key']] ?? array();

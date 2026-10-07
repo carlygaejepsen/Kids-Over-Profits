@@ -140,6 +140,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php 
 # facility or kept record), State Lists (listed name now exactly one record's in that state: own tab, Link offered first, kop_sl_on_file())
 # Woodbury Facts and Fornits: what Add would find already on the record (kop_wbf_on_record(); a different value is a conflict and waits),
 # filtered in their own SQL ('on_file_in_list'), cached by kop_on_file_cached() until the queue or any record changes
+# Conflicts are always marked: an item's 'conflict' (another value on the record, an open record for a closure, another role, a
+# data-audit 'from' that no longer holds) draws a Conflict banner and is never ticked; Add keeps a conflict waiting (kop_wbf_conflict())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-on-file.php [--list] [--db=...]
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Volunteer reviewers (inc/review-volunteers.php, /volunteer-review/, js/volunteer-review.js): KOP Tools > Volunteer Reviewers makes a

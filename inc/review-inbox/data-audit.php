@@ -179,6 +179,8 @@ function kop_rinbox_daudit_item($key, array $p) {
         'subtitle'     => implode(' · ', array_filter(array($kinds[$p['kind'] ?? ''] ?? '', (string) ($p['place'] ?? ''), 'confidence: ' . ($p['confidence'] ?? 'low')))),
         'text'         => (string) ($p['finding'] ?? ''),
         'details'      => $details,
+        // A 'from' the record no longer holds: Approve would change nothing, so the card says so up front.
+        'conflict'     => ($view === 'applied' || $view === 'rejected') ? '' : kop_rinbox_daudit_conflict($p),
         'status'       => $view,
         'status_label' => $labels[$view] ?? $view,
         'created'      => (string) ($d['at'] ?? ''),
@@ -197,4 +199,14 @@ function kop_rinbox_daudit_act($key, $action, array $params) {
             return array('message' => kop_daudit_undo($key));
     }
     throw new RuntimeException('Unknown action.');
+}
+
+/** What on the record no longer matches the proposal's 'from' (kop_daudit_check()), as one line, or ''. */
+function kop_rinbox_daudit_conflict(array $p) {
+    try {
+        $why = kop_daudit_check($p, kop_daudit_opts());
+    } catch (Throwable $e) {
+        return '';
+    }
+    return $why ? 'The record has changed since this was proposed: ' . implode(' ', $why) : '';
 }

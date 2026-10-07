@@ -1092,3 +1092,32 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-ask-form .rinbox-help {
     margin: 0 0 8px;
 }
+
+/* A conflict with the record or another source: always marked (item.conflict) */
+.rinbox-card.has-conflict {
+    border-left-color: var(--kop-coral-pink-ink, #B4232F);
+}
+.rinbox-conflict {
+    display: flex;
+    gap: 6px;
+    align-items: flex-start;
+    margin: 8px 0;
+    padding: 8px 10px;
+    border: 1px solid var(--kop-coral-pink-ink, #B4232F);
+    border-radius: 8px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 14px;
+}
+.rinbox-conflict strong {
+    color: var(--kop-coral-pink-ink, #B4232F);
+}
+.rinbox-conflict-icon {
+    flex: none;
+    color: var(--kop-coral-pink-ink, #B4232F);
+}
+.rinbox-conflict-icon svg {
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+}

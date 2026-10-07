@@ -343,6 +343,8 @@ function kop_rinbox_fornits_item(array $r) {
         'moves'        => $moves,
         'links'        => $links,
         'details'      => $details,
+        // What the record says that disagrees (a staff role, a closure): marked, never ticked.
+        'conflict'     => $pending && ($f = kop_on_file_doc($r['facility_id'])) ? kop_fornits_conflict($f['doc'], $r) : '',
         // The reading's most important items, with a quote found in the post, start ticked.
         'selected'     => $pending && (int) $r['preselect'] === 1,
     );
