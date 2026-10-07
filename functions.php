@@ -47,6 +47,9 @@ require_once get_stylesheet_directory() . '/inc/country-rest-api.php';
 // Admin Menu & Page Rendering
 require_once get_stylesheet_directory() . '/inc/admin.php';
 
+// One-time corrections to existing legislation rows (seeds/legislation-updates.json)
+require_once get_stylesheet_directory() . '/inc/legislation-updates.php';
+
 // Slug-level 301 redirects for renamed or retired pages
 require_once get_stylesheet_directory() . '/inc/redirects.php';
 

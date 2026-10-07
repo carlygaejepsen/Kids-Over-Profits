@@ -18,6 +18,8 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/scripts/discovery-rejected.json
     # The glossary moved into SQL tables (inc/glossary-store.php): the Node build and its output are gone.
     - /bin/rm -f $DEPLOYPATH/js/data/glossary/glossary.json $DEPLOYPATH/scripts/build-glossary.js $DEPLOYPATH/scripts/test-glossary-build.php
+    # Legislation corrections ship as seeds/legislation-updates.json (inc/legislation-updates.php) now.
+    - /bin/rm -f $DEPLOYPATH/scripts/update-legislation-2026-10-06.sql
     # wiki-stubs.php reads markdown_output/empty_files_updated.md server-side to
     # know which wiki pages are still stubs. Ship that one file (the full
     # markdown_output/ dir is large and not otherwise needed in the theme).

@@ -42,6 +42,27 @@
       "facilities_affected": ["Private youth transport/escort companies", "Wilderness programs", "Boot camps", "Therapeutic boarding schools", "Behavior modification programs"],
       "tags": [],
       "reviewer_notes": "[claude 2026-09-28] Sources: bill page https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/hb0497?ys=2025RS ; third reader https://mgaleg.maryland.gov/2025RS/bills/hb/hb0497T.pdf ; chapter text https://mgaleg.maryland.gov/2025RS/Chapters_noln/CH_343_hb0497t.pdf ; revised fiscal and policy note https://mgaleg.maryland.gov/2025RS/fnotes/bil_0007/hb0497.pdf ; cross-file https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/sb0400?ys=2025RS (Chapter 344)."
+    },
+    {
+      "bill_number": "HB 723",
+      "bill_title": "Child care licensing: quality of care oversight, service planning, youth bill of rights, and critical incident reporting in children's residential care facilities",
+      "jurisdiction": "Idaho",
+      "chamber": "house",
+      "session_year": "2026",
+      "bill_type": "HB",
+      "sponsors": ["House Health and Welfare Committee", "Marco Erickson (contact)"],
+      "status": "enacted",
+      "introduced_date": "2026-02-18",
+      "last_action_date": "2026-03-26",
+      "last_action_text": "Signed by Governor Little 3/26/26; Session Law Chapter 139, effective July 1, 2026. Passed House 42-25-3 (3/3/26) and Senate 32-3 (3/18/26).",
+      "subject_tags": ["youth bill of rights", "residential treatment facilities", "licensing", "inspections", "critical incident reporting", "restraint and seclusion", "child abuse hotline"],
+      "summary": "Adds four sections to Idaho's child care licensing law (Title 39, Chapter 12) for licensed children's residential care facilities.\n\nQuality of care oversight (39-1210A): the Department of Health and Welfare must make an annual unannounced inspection of every licensed residential facility, plus more after substantiated complaints, serious incidents, prior deficiencies or patterns of noncompliance, and must hold confidential in-person interviews with residents and staff chosen by the department alone (facility staff may not pick who is interviewed). Violations found are grounds for corrective plans, sanctions, or referral to the child abuse hotline or police.\n\nService planning (39-1210B): facilities must document a child's condition and diagnosis at intake, write an individualized service plan within 30 days, update it every 90 days, and write a discharge summary within 7 days of discharge.\n\nYouth bill of rights (39-1225): the department must publish rights covering safety, medical and behavioral health care, contact with family, lawyers and advocates, privacy, education and recreation, freedom from abuse, neglect and unreasonable restraint, and grievances without retaliation. Facilities must post it, give and explain it to each child and parent at admission, and let children reach the child abuse hotline privately and unmonitored. Retaliation is a licensing violation.\n\nCritical incidents (39-1226): facilities must report to the department and to the parent, guardian or placing agency by the next business day any death, suicide attempt or serious self-harm, restraint, seclusion or emergency safety intervention, denied or delayed medical care, hospital trip, abuse allegation, arrest, runaway, or similar event, and keep an incident log for inspectors. The department must review the reports and publish substantiated findings and enforcement actions.",
+      "full_text_url": "https://legislature.idaho.gov/wp-content/uploads/sessioninfo/2026/legislation/H0723.pdf",
+      "official_url": "https://legislature.idaho.gov/sessioninfo/2026/legislation/H0723/",
+      "position": "support",
+      "facilities_affected": ["Children's residential care facilities", "Residential treatment centers", "Group homes"],
+      "tags": [],
+      "reviewer_notes": "[claude 2026-10-06] Added from https://legislature.idaho.gov/sessioninfo/2026/legislation/H0723/ (bill text + statement of purpose)."
     }
   ]
 }
