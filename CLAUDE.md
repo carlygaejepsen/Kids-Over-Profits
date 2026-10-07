@@ -190,6 +190,14 @@ php scripts/test-news-post-import.php
 # /facility/ page and the network map (kop_network_map_status_overrides) follow at once
 php scripts/test-closure-reports.php              # offline, against tmp/prod.sqlite, no Groq calls
 php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dry run; "apply" stores reports
+# Bill and lawsuit statuses (inc/status-checks.php): a nightly WP-Cron run (09:00 UTC, then every 10 min until done, 30 runs max)
+# checks every published bill and lawsuit that is not finished: federal bills from govinfo BILLSTATUS (no AI), state bills from the
+# official page (California via CalMatters Digital Democracy), federal lawsuits from the CourtListener docket feed (found by docket
+# number + first party + the court's state, never guessed), read by the AI; an unchanged page is not sent to the AI again. Changes
+# wait at Review inbox > Bill and lawsuit updates (record_status_proposals; Apply, exact Undo, a dismissed change never comes back)
+# Bill corrections and new bills by hand: seeds/legislation-updates.json + seeds/legislation.json (inc/legislation-updates.php, bump 'version')
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-status-checks.php   # parsing, matching, what is a change, runs with a made-up AI
+php api/check-record-statuses.php [--kind=bill --ids=19] [apply]   # on the server (ea-php82): dry run prints what it finds
 # Facilities the news mentions that have no record (inc/facility-discovery.php): the hourly scan creates
 # them from the article, or links a known one; KOP Tools > Facilities from News to remove or create by hand
 php scripts/test-facility-discovery.php           # offline, against tmp/prod.sqlite, no Groq calls

@@ -103,6 +103,12 @@ function kop_submission_types() {
             'tab'      => 'legislation',
         ),
         // Found by the hourly news scan (inc/closure-reports.php).
+        // Bill and lawsuit status changes the nightly check found (inc/status-checks.php).
+        'status_update' => array(
+            'label'    => 'bill or lawsuit status update',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'status_checks',
+        ),
         'closure_report' => array(
             'label'    => 'facility closure report',
             'template' => 'page-admin-submissions.php',

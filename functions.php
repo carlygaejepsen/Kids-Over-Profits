@@ -50,6 +50,9 @@ require_once get_stylesheet_directory() . '/inc/admin.php';
 // One-time corrections to existing legislation rows (seeds/legislation-updates.json)
 require_once get_stylesheet_directory() . '/inc/legislation-updates.php';
 
+// Nightly status checks of bills and lawsuits; changes wait at Review inbox > Bill and lawsuit updates
+require_once get_stylesheet_directory() . '/inc/status-checks.php';
+
 // One-time corrections to existing lawsuit rows (seeds/lawsuit-updates.json)
 require_once get_stylesheet_directory() . '/inc/lawsuit-updates.php';
 
