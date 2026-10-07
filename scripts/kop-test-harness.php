@@ -130,6 +130,15 @@ function get_posts($args = array()) {
             array_merge(array($mq['key']), $values)
         ));
     }
+    // A document library's files (kop_get_attachments_in_folder_ids).
+    if (($args['post_type'] ?? '') === 'attachment' && !empty($args['post__in'])) {
+        $ids = array_map('intval', (array) $args['post__in']);
+        $in = implode(',', array_fill(0, count($ids), '%d'));
+        return $wpdb->get_results($wpdb->prepare(
+            "SELECT ID, post_title, post_name, post_mime_type FROM wpdl_posts WHERE post_type = 'attachment' AND ID IN ($in) ORDER BY post_title",
+            $ids
+        ));
+    }
     if (($args['meta_key'] ?? '') !== '_wp_page_template') return array();
     $rows = $wpdb->get_results($wpdb->prepare(
         "SELECT p.ID, p.post_name, p.post_title FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID AND m.meta_key = '_wp_page_template'

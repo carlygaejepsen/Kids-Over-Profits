@@ -10,6 +10,9 @@
  *                                       the whole /facility/ page minus the HTML-only parts
  *   GET kop/v1/operator/<slug or id>    kop_operator_page_data() (inc/operator-pages.php);
  *   GET kop/v1/operator?name=UHS        a duplicate id resolves to its canonical record
+ *   GET kop/v1/facility/<ref>/documents the page's document library as a tree (the website's
+ *   GET kop/v1/operator/<ref>/documents [filebird_folder merge="name"] block), files linked
+ *                                       directly; a company adds its programs' libraries
  *   GET kop/v1/operators                every company page, one line each (the app's Companies
  *                                       list): kop_operator_history_index_rows(), A to Z
  *   GET kop/v1/news                     the public news feed (templates/page-news-feed.php):
@@ -52,6 +55,11 @@ add_action('rest_api_init', function () {
     register_rest_route('kop/v1', '/operator/(?P<ref>[A-Za-z0-9_-]+)', array(
         'methods'             => WP_REST_Server::READABLE,
         'callback'            => 'kop_mobile_operator_rest',
+        'permission_callback' => '__return_true',
+    ));
+    register_rest_route('kop/v1', '/(?:facility|operator)/(?P<ref>[A-Za-z0-9_-]+)/documents', array(
+        'methods'             => WP_REST_Server::READABLE,
+        'callback'            => 'kop_mobile_documents_rest',
         'permission_callback' => '__return_true',
     ));
     register_rest_route('kop/v1', '/operator', array(
@@ -293,6 +301,116 @@ if (!function_exists('kop_mobile_operators_rest')) {
         $etag = kop_mobile_etag(array('operators', $index['fingerprint'] ?? '', function_exists('kop_facility_pages_index') ? (kop_facility_pages_index()['fingerprint'] ?? '') : ''));
         if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
         return kop_mobile_response(kop_mobile_operators(), $etag);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Document libraries
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_mobile_doc_file')) {
+    /**
+     * One document tile as the app draws it: {id, title, url, ext, mime, size, thumb}.
+     * The same file the website's tile links (kop_render_doc_file_li()); a record whose
+     * file is gone everywhere is left out, as the website hides it from visitors.
+     */
+    function kop_mobile_doc_file($post) {
+        if (!is_object($post) || !empty($post->kop_file_missing)) return null;
+        $source_id = !empty($post->kop_live_source_id) ? (int) $post->kop_live_source_id : (int) $post->ID;
+        $url = (string) wp_get_attachment_url($source_id);
+        if ($url === '') return null;
+        $type = wp_check_filetype($url);
+        $path = get_attached_file($source_id);
+        $thumb = function_exists('kop_get_attachment_preview_url')
+            ? kop_get_attachment_preview_url($source_id, 'medium')
+            : wp_get_attachment_image_url($source_id, 'medium');
+        return array(
+            'id'    => (int) $post->ID,
+            'title' => function_exists('kop_title_case') ? kop_title_case($post->post_title) : (string) $post->post_title,
+            'url'   => $url,
+            'ext'   => strtolower((string) ($type['ext'] ?? '')),
+            'mime'  => (string) $post->post_mime_type,
+            'size'  => ($path && file_exists($path)) ? (int) filesize($path) : 0,
+            'thumb' => (string) ($thumb ?: ''),
+        );
+    }
+}
+
+if (!function_exists('kop_mobile_doc_nodes')) {
+    /** Subfolder nodes (kop_get_facility_doc_tree()) as {name, merged_from, count, files, folders}; empty ones dropped. */
+    function kop_mobile_doc_nodes($nodes) {
+        $out = array();
+        foreach ((array) $nodes as $node) {
+            $files = array_values(array_filter(array_map('kop_mobile_doc_file', (array) ($node['attachments'] ?? array()))));
+            $folders = kop_mobile_doc_nodes($node['children'] ?? array());
+            $count = count($files);
+            foreach ($folders as $f) $count += $f['count'];
+            if ($count === 0) continue;
+            $out[] = array(
+                'name'        => (string) $node['name'],
+                'merged_from' => (string) ($node['merged_from'] ?? ''),
+                'count'       => $count,
+                'files'       => $files,
+                'folders'     => $folders,
+            );
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_mobile_doc_library')) {
+    /**
+     * A page's document library, the tree the website's "Documents on file" block prints
+     * ([filebird_folder merge="name"]): {total, files, folders}. Subfolders come first there too.
+     */
+    function kop_mobile_doc_library($folder_id) {
+        $folder_id = (int) $folder_id;
+        if ($folder_id <= 0 || !function_exists('kop_get_facility_doc_tree')) {
+            return array('total' => 0, 'files' => array(), 'folders' => array());
+        }
+        $tree = kop_get_facility_doc_tree($folder_id, true);
+        $files = array_values(array_filter(array_map('kop_mobile_doc_file', (array) $tree['files'])));
+        $folders = kop_mobile_doc_nodes($tree['subfolders']);
+        $total = count($files);
+        foreach ($folders as $f) $total += $f['count'];
+        return array('total' => $total, 'files' => $files, 'folders' => $folders);
+    }
+}
+
+if (!function_exists('kop_mobile_documents_rest')) {
+    /**
+     * GET kop/v1/facility/<ref>/documents and kop/v1/operator/<ref>/documents:
+     * {api_version, kind, name, page_url, total, files, folders, programs}. A company's
+     * programs ({name, slug, count}) are the program libraries its page links to.
+     */
+    function kop_mobile_documents_rest($request) {
+        $ref = (string) $request->get_param('ref');
+        $kind = strpos((string) $request->get_route(), '/operator/') !== false ? 'operator' : 'facility';
+        $programs = array();
+        if ($kind === 'facility') {
+            $id = kop_mobile_resolve_facility_id($ref);
+            $page = ($id > 0 && function_exists('kop_facility_page_data')) ? kop_facility_page_data($id) : null;
+            if (!is_array($page)) return kop_mobile_not_found('No facility page for "' . $ref . '".');
+        } else {
+            $id = kop_mobile_resolve_operator_id($ref);
+            $page = ($id > 0 && function_exists('kop_operator_page_data')) ? kop_operator_page_data($id) : null;
+            if (!is_array($page)) return kop_mobile_not_found('No company page for "' . $ref . '".');
+            foreach ((array) ($page['program_docs']['programs'] ?? array()) as $p) {
+                if (!preg_match('#/facility/([^/?\#]+)#', (string) ($p['url'] ?? ''), $m)) continue;
+                $programs[] = array('name' => (string) $p['name'], 'slug' => rawurldecode($m[1]), 'count' => (int) $p['count']);
+            }
+        }
+        $library = kop_mobile_doc_library((int) ($page['documents']['folder_id'] ?? 0));
+        $data = array_merge(array(
+            'api_version' => KOP_MOBILE_API_VERSION,
+            'kind'        => $kind,
+            'name'        => (string) ($page['name'] ?? ''),
+            'page_url'    => !empty($page['url']) ? $page['url'] . '#documents' : '',
+        ), $library, array('programs' => $programs));
+        // Filing a document moves no page fingerprint, so the tag is the content's own hash.
+        $etag = kop_mobile_etag(array('documents', $kind, $id, md5((string) wp_json_encode($data))));
+        if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
+        return kop_mobile_response($data, $etag, 300);
     }
 }
 

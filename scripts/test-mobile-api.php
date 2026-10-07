@@ -12,7 +12,7 @@
  *   php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--db=tmp/prod.sqlite] [--id=14182,10371] [--dump=<dir>]
  *   php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php --fixture [--dump=<dir>]
  *
- * --dump writes facility-<id>.json, operator-<id>.json and news.json, the
+ * --dump writes facility-<id>.json, documents-<id>.json, operator-<id>.json and news.json, the
  * fixtures the app's tests read. Exit code 1 on any FAIL.
  */
 
@@ -42,6 +42,10 @@ if ($fixture) {
 
 // The Indian boarding school exclusion reads through kop_seed_pdo().
 function kop_seed_pdo() { return $GLOBALS['pdo']; }
+// The document library route's file details (no files on disk here, so sizes read 0).
+if (!function_exists('wp_check_filetype')) { function wp_check_filetype($f) { $e = strtolower(pathinfo((string) parse_url((string) $f, PHP_URL_PATH), PATHINFO_EXTENSION)); return array('ext' => $e, 'type' => ''); } }
+if (!function_exists('get_attached_file')) { function get_attached_file($id) { return ''; } }
+if (!function_exists('wp_get_attachment_image_url')) { function wp_get_attachment_image_url($id, $size = '') { return ''; } }
 
 require __DIR__ . '/kop-test-harness.php';
 require_once dirname(__DIR__) . '/inc/operator-pages.php';
@@ -273,6 +277,23 @@ foreach ($sample_ids as $fid) {
     $json = json_encode($payload);
     $check("facility $fid encodes to JSON under 500 KB", $json !== false && strlen($json) < 500 * 1024, (int) (strlen((string) $json) / 1024) . ' KB');
     $check("facility $fid documents is {folder_id, url}", array_keys($payload['documents']) === array('folder_id', 'url'));
+    if ($payload['documents']['folder_id'] > 0) {
+        // kop/v1/facility/<slug>/documents: the library the app lists in place of the website's block.
+        $lib = kop_mobile_doc_library($payload['documents']['folder_id']);
+        $flat = array();
+        $walk_lib = function ($node) use (&$walk_lib, &$flat) {
+            foreach ($node['files'] as $f) $flat[] = $f;
+            foreach ($node['folders'] as $sub) $walk_lib($sub);
+        };
+        $walk_lib($lib);
+        $check("facility $fid library total counts every file", $lib['total'] === count($flat), $lib['total'] . ' vs ' . count($flat));
+        $bad_files = array_filter($flat, function ($f) {
+            return array_keys($f) !== array('id', 'title', 'url', 'ext', 'mime', 'size', 'thumb') || $f['url'] === '' || $f['title'] === '';
+        });
+        $check("facility $fid library files are {id, title, url, ext, mime, size, thumb}", !$bad_files, json_encode(array_slice(array_values($bad_files), 0, 1)));
+        if ($list) echo "    library: {$lib['total']} files, " . count($lib['folders']) . " folders\n";
+        $dump("documents-$fid.json", array_merge(array('api_version' => KOP_MOBILE_API_VERSION, 'kind' => 'facility', 'name' => $payload['name'], 'page_url' => $payload['documents']['url']), $lib, array('programs' => array())));
+    }
     // The app hangs each fact's sources on the fact with the same label; a key with no such fact is a source nobody sees.
     $labels = array_merge(array('formerly', 'former_locations'), array_column((array) $payload['facts'], 'label'));
     $orphans = array_values(array_diff(array_keys((array) $payload['fact_sources']), $labels));

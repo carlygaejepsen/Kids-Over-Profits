@@ -77,6 +77,8 @@ php scripts/test-facility-pages.php
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-citation-cleanup.php [--no-db] [--id=9607]   # functions, then real pages from tmp/prod.sqlite
 # The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>,
 # /operators (the Companies list) and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
+# The app lists document libraries itself (/facility/<slug>/documents, /operator/<slug>/documents: the folder tree with file links) and
+# opens our own PDFs (sources included, #page=N kept) in its own viewer, never the website
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
 # A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky
 # Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious
