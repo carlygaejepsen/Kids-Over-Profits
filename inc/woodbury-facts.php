@@ -398,6 +398,16 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
  * item keeps waiting with the conflict marked.
  */
 function kop_wbf_conflict(array $doc, array $r) {
+    $c = kop_wbf_conflict_parts($doc, $r);
+    return $c ? $c['text'] : '';
+}
+
+/**
+ * The conflict as its two sides, or null: ['what' (dates, size, type, staff,
+ * closure, other), 'record' (what the record says), 'item' (what this says),
+ * 'text' (one sentence), 'slot' (where "Use this value" writes)].
+ */
+function kop_wbf_conflict_parts(array $doc, array $r) {
     $value = kop_wbf_row_value($r);
     $show = 'kop_wbf_show_value';
     $same = function ($a, $b) use ($show) {
@@ -408,22 +418,31 @@ function kop_wbf_conflict(array $doc, array $r) {
         }
         return strcasecmp(trim($show($a)), trim($show($b))) === 0;
     };
+    $what = kop_wbf_conflict_what($r);
     switch ($r['op']) {
         case 'set_if_empty':
             $slot = kop_wbf_get($doc, $r['path']);
-            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return '';
-            return $same($slot, $value) ? '' : 'The record has ' . $show($slot) . '; this says ' . $show($value) . '.';
+            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return null;
+            if ($same($slot, $value)) return null;
+            return array('what' => $what, 'record' => $show($slot), 'item' => $show($value),
+                'text' => 'The record has ' . $show($slot) . '; this says ' . $show($value) . '.', 'slot' => $r['path']);
         case 'set_closed':
             $status = (string) ($doc['operatingPeriod']['status'] ?? '');
             $end = $doc['operatingPeriod']['endYear'] ?? null;
             $want = is_array($value) ? ($value['endYear'] ?? null) : null;
-            if (strcasecmp($status, 'Open') === 0) return 'The record says it is open' . ($want ? '; this says it closed in ' . (int) $want : '') . '.';
-            if ($want && $end && (int) $end !== (int) $want) return 'The record says it ended in ' . (int) $end . '; this says ' . (int) $want . '.';
-            return '';
+            if (strcasecmp($status, 'Open') === 0) {
+                return array('what' => 'closure', 'record' => 'Open' . ($end ? ', ended ' . (int) $end : ''), 'item' => 'Closed' . ($want ? ' in ' . (int) $want : ''),
+                    'text' => 'The record says it is open' . ($want ? '; this says it closed in ' . (int) $want : '') . '.', 'slot' => 'operatingPeriod.status');
+            }
+            if ($want && $end && (int) $end !== (int) $want) {
+                return array('what' => 'closure', 'record' => 'Ended ' . (int) $end, 'item' => 'Ended ' . (int) $want,
+                    'text' => 'The record says it ended in ' . (int) $end . '; this says ' . (int) $want . '.', 'slot' => 'operatingPeriod.endYear');
+            }
+            return null;
         case 'add_staff':
             $key = kop_wbf_person_key($value['name'] ?? '');
             $role = trim((string) ($value['role'] ?? ''));
-            if ($key === '' || $role === '') return '';
+            if ($key === '' || $role === '') return null;
             // "Director (2006, Woodbury Reports)" and "director" are the same role.
             $plain = function ($s) { return trim(preg_replace('/\s+/', ' ', preg_replace('/\([^)]*\)/', '', strtolower((string) $s)))); };
             foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
@@ -432,13 +451,137 @@ function kop_wbf_conflict(array $doc, array $r) {
                     $have = trim((string) ($s['role'] ?? ''));
                     $a = $plain($have);
                     $b = $plain($role);
-                    if ($a === '' || $b === '' || strpos($a, $b) !== false || strpos($b, $a) !== false) return '';
-                    return 'The record lists ' . $s['name'] . ' as ' . $have . '; this says ' . $role . '.';
+                    if ($a === '' || $b === '' || strpos($a, $b) !== false || strpos($b, $a) !== false) return null;
+                    return array('what' => 'staff', 'record' => $s['name'] . ': ' . $have, 'item' => $s['name'] . ': ' . $role,
+                        'text' => 'The record lists ' . $s['name'] . ' as ' . $have . '; this says ' . $role . '.', 'slot' => $path);
                 }
             }
-            return '';
+            return null;
     }
-    return '';
+    return null;
+}
+
+/** The kind of disagreement, for the Conflicts filter. */
+function kop_wbf_conflict_what(array $r) {
+    $path = strtolower((string) ($r['path'] ?? ''));
+    if ($r['op'] === 'add_staff' || strpos($path, 'staff') === 0) return 'staff';
+    if ($r['op'] === 'set_closed') return 'closure';
+    if (strpos($path, 'year') !== false) return 'dates';
+    if (strpos($path, 'capacity') !== false || strpos($path, 'age') !== false || strpos($path, 'size') !== false) return 'size';
+    if (strpos($path, 'type') !== false || strpos($path, 'gender') !== false) return 'type';
+    return 'other';
+}
+
+/**
+ * "Use this value" on a conflict: write the item's value (or $value, a
+ * reviewer's correction) over what the record holds, citing the item's
+ * source. Returns what was done for kop_wbf_doc_undo() (op 'overwrite': each
+ * slot puts back its old value unless someone changed it since).
+ */
+function kop_wbf_doc_overwrite(array &$doc, array $r, $value = null) {
+    $value = $value === null ? kop_wbf_row_value($r) : $value;
+    $done = array('op' => 'overwrite', 'slots' => array(), 'notes' => array());
+    $set = function ($path, $v) use (&$doc, &$done) {
+        $slot = &kop_wbf_ref($doc, $path);
+        $done['slots'][] = array('path' => $path, 'before' => $slot, 'value' => $v);
+        $slot = $v;
+        unset($slot);
+    };
+    if ($r['op'] === 'set_if_empty') {
+        $set($r['path'], $value);
+    } elseif ($r['op'] === 'set_closed') {
+        $set('operatingPeriod.status', 'Closed');
+        $end = is_array($value) ? ($value['endYear'] ?? null) : $value;
+        if ($end) $set('operatingPeriod.endYear', (int) $end);
+    } elseif ($r['op'] === 'add_staff') {
+        $role = is_array($value) ? trim((string) ($value['role'] ?? '')) : trim((string) $value);
+        $key = kop_wbf_person_key((kop_wbf_row_value($r)['name'] ?? ''));
+        foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
+            $list = &kop_wbf_ref($doc, $path);
+            foreach ((array) $list as $i => $s) {
+                if (!is_array($s) || kop_wbf_person_key($s['name'] ?? '') !== $key) continue;
+                $ref = kop_wbf_source_ref($r);
+                $done['slots'][] = array('at' => $path, 'name' => (string) $s['name'], 'value' => $role,
+                    'before' => array('role' => $s['role'] ?? null, 'source' => $s['source'] ?? null, 'sourceUrl' => $s['sourceUrl'] ?? null));
+                $list[$i] = array_merge($s, array('role' => $role), $ref);
+                unset($list);
+                break 2;
+            }
+            unset($list);
+        }
+        if (!$done['slots']) throw new RuntimeException('That person is not on the record any more.');
+    } else {
+        throw new RuntimeException('This kind of item is added, not written over a value.');
+    }
+    $line = kop_wbf_source_line($r);
+    $notes = &kop_wbf_ref($doc, 'operatingPeriod.notes');
+    $notes = is_array($notes) ? $notes : array();
+    if (!in_array($line, $notes, true)) {
+        $notes[] = $line;
+        $done['notes'][] = array('path' => 'operatingPeriod.notes', 'line' => $line);
+    }
+    unset($notes);
+    return $done;
+}
+
+/** A reviewer's typed value in the item's shape: a range from "12 to 18", a year or number, else the text. */
+function kop_wbf_parse_value(array $r, $text) {
+    $text = trim((string) $text);
+    if ($text === '') throw new RuntimeException('Type the value first.');
+    $old = kop_wbf_row_value($r);
+    if ($r['op'] === 'set_closed') {
+        if (!preg_match('/\b(1[89]\d\d|20\d\d)\b/', $text, $m)) throw new RuntimeException('Type the year it closed.');
+        return array('endYear' => (int) $m[1]);
+    }
+    if ($r['op'] === 'add_staff') return array('role' => $text);
+    if (is_array($old) && (array_key_exists('min', $old) || array_key_exists('max', $old))) {
+        if (preg_match('/^(\d+)\s*(?:-|to|–)\s*(\d+)$/u', $text, $m)) return array('min' => (int) $m[1], 'max' => (int) $m[2]);
+        if (preg_match('/^(\d+)\s*(?:\+|or more)$/', $text, $m)) return array('min' => (int) $m[1], 'max' => null);
+        if (preg_match('/^(\d+)$/', $text, $m)) return array('min' => (int) $m[1], 'max' => (int) $m[1]);
+        throw new RuntimeException('Type a range like 12 to 18.');
+    }
+    if (is_int($old) || (is_numeric($old) && !is_string($old))) {
+        if (!preg_match('/^\d+$/', $text)) throw new RuntimeException('Type a number.');
+        return (int) $text;
+    }
+    return $text;
+}
+
+/**
+ * Settle a conflict: 'keep' files the item as rejected, the record as it is;
+ * 'use' writes the item's value over the record's, 'edit' writes $typed
+ * instead. With no conflict left, 'use' is a plain Add. Undo: kop_wbf_undo().
+ */
+function kop_wbf_resolve(array $r, $how, $typed, $reviewer) {
+    global $wpdb;
+    if ($r['status'] !== 'pending') throw new RuntimeException('This item was already handled (' . $r['status'] . '). Undo it first.');
+    $fid = (int) $r['facility_id'];
+    $now = current_time('mysql', true);
+    if ($how === 'keep') {
+        $wpdb->update(kop_wbf_table(), array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => 'Conflict settled: kept the record as it is.')),
+            'reviewed_by' => $reviewer, 'reviewed_at' => $now), array('pkey' => $r['pkey']));
+        return 'Kept the record as it is; the item is under Rejected.';
+    }
+    if ($fid <= 0) throw new RuntimeException('This item has no record to write to.');
+    $opts = kop_wbf_opts();
+    $msg = '';
+    kop_v2_with_write_lock($opts['pdo'], function () use ($r, $how, $typed, $fid, $opts, $reviewer, $now, $wpdb, &$msg) {
+        $stored = kop_facility_load($fid, $opts);
+        if (!$stored) throw new RuntimeException("Facility #{$fid} does not exist.");
+        $doc = $stored['doc'];
+        $value = $how === 'edit' ? kop_wbf_parse_value($r, $typed) : null;
+        if ($how === 'use' && !kop_wbf_conflict_parts($doc, $r)) {
+            $done = kop_wbf_doc_apply($doc, $r);
+        } else {
+            $done = kop_wbf_doc_overwrite($doc, $r, $value);
+        }
+        kop_wbf_save($doc, $opts);
+        $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied' => wp_json_encode($done), 'applied_fid' => $fid, 'facility_id' => $fid,
+            'reviewed_by' => $reviewer, 'reviewed_at' => $now, 'auto' => 0), array('pkey' => $r['pkey']));
+        $msg = ($how === 'edit' ? 'Wrote your value' : 'Wrote this value') . ' over the record\'s, citing the source. Undo puts the old value back.';
+    });
+    if ($r['op'] === 'set_closed') do_action('kop_facility_status_changed', $fid);
+    return $msg;
 }
 
 /** A value as words: a range {min, max} as "12 to 18", a raw entry as written, a list joined. */
@@ -505,6 +648,27 @@ function kop_wbf_doc_undo(array &$doc, array $done) {
                 unset($parent[$leaf]);
             }
             unset($parent);
+        }
+    } elseif ($done['op'] === 'overwrite') {
+        // Each slot gets its old value back unless someone changed it since.
+        foreach (array_reverse((array) ($done['slots'] ?? array())) as $sl) {
+            if (isset($sl['at'])) {
+                $list = &kop_wbf_ref($doc, $sl['at']);
+                foreach ((array) $list as $i => $s) {
+                    if (!is_array($s) || kop_wbf_person_key($s['name'] ?? '') !== kop_wbf_person_key($sl['name'])) continue;
+                    if (($s['role'] ?? null) === $sl['value']) {
+                        foreach ((array) $sl['before'] as $k => $v) {
+                            if ($v === null) unset($list[$i][$k]); else $list[$i][$k] = $v;
+                        }
+                    }
+                    break;
+                }
+                unset($list);
+            } else {
+                $slot = &kop_wbf_ref($doc, $sl['path']);
+                if ($slot === $sl['value']) $slot = $sl['before'];
+                unset($slot);
+            }
         }
     } elseif ($done['op'] === 'set_if_empty') {
         $slot = &kop_wbf_ref($doc, $done['path']);

@@ -49,10 +49,15 @@ kop_rinbox_register('woodbury-facts', function () {
         'count'    => function () {
             global $wpdb;
             kop_wbf_ensure_table();
-            return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . " WHERE status = 'pending'");
+            // Waiting, less what is on file or in conflict (kop_rinbox_wbf_where()).
+            return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . ' WHERE ' . kop_rinbox_wbf_where('pending', array()));
         },
         'list'     => 'kop_rinbox_wbf_list',
         'on_file'  => 'kop_rinbox_wbf_on_file',
+        'conflicts' => 'kop_rinbox_wbf_conflicts',
+        'resolve'  => function ($key, $how, $typed) {
+            return kop_wbf_resolve(kop_rinbox_wbf_row($key), $how, $typed, kop_rinbox_reviewer());
+        },
         'on_file_in_list' => true,
         'get'      => function ($key) {
             $rows = kop_wbf_rows(array($key));
@@ -86,9 +91,9 @@ function kop_rinbox_wbf_where($view, array $q) {
     global $wpdb;
     $tabs = kop_wbf_tabs();
     $where = $tabs[$view]['where'] ?? "status = 'pending'";
-    // What the record holds already waits under "Already on file" (kop_rinbox_wbf_on_file()).
+    // What the record holds already waits under "Already on file" (kop_rinbox_wbf_on_file()), conflicts in the Conflicts section.
     if (strpos($where, "status = 'pending'") === 0) {
-        $where .= kop_on_file_not_in('pkey', array_keys(kop_rinbox_on_file_keys('woodbury-facts')));
+        $where .= kop_on_file_not_in('pkey', array_merge(array_keys(kop_rinbox_on_file_keys('woodbury-facts')), array_keys(kop_rinbox_conflict_keys('woodbury-facts'))));
     }
     if (!empty($q['filters']['grp'])) $where .= $wpdb->prepare(' AND grp = %s', $q['filters']['grp']);
     if (($q['search'] ?? '') !== '') {
@@ -483,7 +488,8 @@ function kop_rinbox_wbf_on_file() {
             $f = $docs[(int) $r['facility_id']] ?? null;
             if (!$f) continue;
             $why = kop_wbf_on_record($f['doc'], $r);
-            if ($why === '') continue;
+            // A different value is a conflict (the Conflicts section), never "on file".
+            if ($why === '' || kop_wbf_conflict_parts($f['doc'], $r)) continue;
             $out[(string) $r['pkey']] = array('label' => $f['name'] . ': ' . $why,
                 'url' => function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $r['facility_id']) : '');
         }
@@ -541,6 +547,12 @@ function kop_wbf_on_record(array $doc, array $r) {
 
 /** Every conflict for a waiting item: the build's own note and what the record says now. */
 function kop_rinbox_wbf_conflict(array $r) {
+    $f = (int) $r['facility_id'] > 0 ? kop_on_file_doc($r['facility_id']) : null;
+    return kop_rinbox_wbf_conflict_text($r, $f ? kop_wbf_conflict_parts($f['doc'], $r) : null);
+}
+
+/** The build's notes and the live conflict ($live: kop_wbf_conflict_parts()) as one line. */
+function kop_rinbox_wbf_conflict_text(array $r, $live) {
     $out = array();
     if ((string) $r['conflict'] !== '') {
         // The build writes ranges as JSON ("Another issue gives {"min": 10, "max": 14}"): shown as words.
@@ -550,7 +562,41 @@ function kop_rinbox_wbf_conflict(array $r) {
         }, (string) $r['conflict']), '.') . '.';
     }
     if ((string) $r['current_val'] !== '') $out[] = 'On the record now: ' . $r['current_val'] . '.';
-    $f = (int) $r['facility_id'] > 0 ? kop_on_file_doc($r['facility_id']) : null;
-    if ($f && ($live = kop_wbf_conflict($f['doc'], $r)) !== '' && !in_array($live, $out, true)) $out[] = $live;
+    if ($live && !in_array($live['text'], $out, true)) $out[] = $live['text'];
     return implode(' ', $out);
+}
+
+/**
+ * Waiting items in conflict, for the Conflicts section: the build's own notes
+ * (another issue gives another value, the record's value at build time) and
+ * the record as it is now (kop_wbf_conflict_parts()). Items the record already
+ * holds are on file, not conflicts. [pkey => {text, record, item, what, title, facility_id}]
+ */
+function kop_rinbox_wbf_conflicts() {
+    kop_wbf_ensure_table();
+    return kop_on_file_cached('wbf_conflicts', kop_wbf_table(), function (PDO $pdo) {
+        global $wpdb;
+        $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND ((conflict IS NOT NULL AND conflict <> '')
+            OR (current_val IS NOT NULL AND current_val <> '') OR (facility_id > 0 AND op IN ('set_if_empty', 'set_closed', 'add_staff')))", ARRAY_A);
+        $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));
+        $out = array();
+        foreach ($rows as $r) {
+            $doc = $docs[(int) $r['facility_id']]['doc'] ?? null;
+            $live = $doc ? kop_wbf_conflict_parts($doc, $r) : null;
+            $built = (string) $r['conflict'] !== '' || (string) $r['current_val'] !== '';
+            if (!$live && !$built) continue;
+            if (!$live && $doc && kop_wbf_on_record($doc, $r) !== '') continue;
+            $text = kop_rinbox_wbf_conflict_text($r, $live);
+            $out[(string) $r['pkey']] = array(
+                'text' => $text,
+                'record' => $live ? $live['record'] : (string) $r['current_val'],
+                'item' => $live ? $live['item'] : kop_wbf_show_value(kop_wbf_row_value($r)),
+                'what' => $live ? $live['what'] : kop_wbf_conflict_what($r),
+                'title' => (string) $r['label'],
+                'facility_id' => (int) $r['facility_id'],
+                'editable' => (int) $r['facility_id'] > 0 && in_array($r['op'], array('set_if_empty', 'set_closed', 'add_staff'), true),
+            );
+        }
+        return $out;
+    });
 }

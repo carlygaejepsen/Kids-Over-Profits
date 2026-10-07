@@ -452,14 +452,33 @@ function kop_daudit_check(array $p, array $opts) {
     return array_values(array_unique($why));
 }
 
-/** Make proposal $key's changes. Returns the message; throws when any 'from' no longer holds. */
-function kop_daudit_apply($key, $reviewer) {
+/**
+ * kop_daudit_check() split in two: ['changed' => the record moved since the
+ * research (a value is not the 'from' any more: a conflict the reviewer can
+ * settle), 'blocked' => what no choice can get past (a record gone, a value
+ * the record cannot hold)].
+ */
+function kop_daudit_check_split(array $p, array $opts) {
+    $out = array('changed' => array(), 'blocked' => array());
+    foreach (kop_daudit_check($p, $opts) as $why) {
+        $out[preg_match('/ is now "/', $why) ? 'changed' : 'blocked'][] = $why;
+    }
+    return $out;
+}
+
+/**
+ * Make proposal $key's changes. Returns the message; throws when any 'from' no
+ * longer holds, unless $over_changes (the Conflicts section's "Use this value":
+ * the record moved since the research and the reviewer chose the proposal's value).
+ */
+function kop_daudit_apply($key, $reviewer, $over_changes = false) {
     $p = kop_daudit_proposals()[$key] ?? null;
     if (!$p) throw new RuntimeException('That proposal is not in the list any more.');
     $decisions = kop_daudit_decisions();
     if (($decisions[$key]['decision'] ?? '') === 'applied') throw new RuntimeException('Already approved.');
     $opts = kop_daudit_opts();
-    $why = kop_daudit_check($p, $opts);
+    $split = kop_daudit_check_split($p, $opts);
+    $why = $over_changes ? $split['blocked'] : array_merge($split['changed'], $split['blocked']);
     if ($why) throw new RuntimeException('Nothing was changed: ' . implode(' ', $why));
     $cite = kop_daudit_cite($p);
     $done = array();

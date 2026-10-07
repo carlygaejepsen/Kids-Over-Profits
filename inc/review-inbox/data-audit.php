@@ -35,6 +35,14 @@ kop_rinbox_register('data-audit', function () {
         ),
         'tool'     => 'kop_rinbox_daudit_tool',
         'list'     => 'kop_rinbox_daudit_list',
+        // A proposal whose record moved since the research is settled in the Conflicts section.
+        'conflicts' => 'kop_rinbox_daudit_conflicts',
+        'resolve'  => function ($key, $how, $typed) {
+            if ($how === 'keep') return kop_daudit_reject((string) $key, kop_rinbox_reviewer());
+            if ($how === 'use') return kop_daudit_apply((string) $key, kop_rinbox_reviewer(), true);
+            throw new RuntimeException('A data audit proposal is approved as researched or kept as KOP has it.');
+        },
+        'on_file_in_list' => true,
         'get'      => function ($key) {
             $p = kop_daudit_proposals()[$key] ?? null;
             return $p ? kop_rinbox_daudit_item((string) $key, $p) : null;
@@ -52,8 +60,10 @@ function kop_rinbox_daudit_view($p, array $d) {
 function kop_rinbox_daudit_view_counts() {
     $decisions = kop_daudit_decisions();
     $counts = array('high' => 0, 'review' => 0, 'applied' => 0, 'rejected' => 0);
+    $conflicts = kop_rinbox_conflict_keys('data-audit');
     foreach (kop_daudit_proposals() as $key => $p) {
         $v = kop_rinbox_daudit_view($p, $decisions[$key] ?? array());
+        if (isset($conflicts[(string) $key]) && ($v === 'high' || $v === 'review')) continue;
         if (isset($counts[$v])) $counts[$v]++;
     }
     return $counts;
@@ -89,6 +99,7 @@ function kop_rinbox_daudit_list(array $q) {
     $rows = array();
     foreach (kop_daudit_proposals() as $key => $p) {
         if (kop_rinbox_daudit_view($p, $decisions[$key] ?? array()) !== $q['view']) continue;
+        if (($q['view'] === 'high' || $q['view'] === 'review') && isset(kop_rinbox_conflict_keys('data-audit')[(string) $key])) continue;
         if ($q['search'] !== '') {
             $hay = mb_strtolower(($p['title'] ?? '') . ' ' . ($p['place'] ?? '') . ' ' . ($p['finding'] ?? ''));
             if (mb_strpos($hay, mb_strtolower($q['search'])) === false) continue;
@@ -209,4 +220,29 @@ function kop_rinbox_daudit_conflict(array $p) {
         return '';
     }
     return $why ? 'The record has changed since this was proposed: ' . implode(' ', $why) : '';
+}
+
+/** Waiting proposals whose record moved since the research (and nothing else blocks them), for the Conflicts section. */
+function kop_rinbox_daudit_conflicts() {
+    try {
+        $opts = kop_daudit_opts();
+    } catch (Throwable $e) {
+        return array();
+    }
+    $decisions = kop_daudit_decisions();
+    $out = array();
+    foreach (kop_daudit_proposals() as $key => $p) {
+        $v = kop_rinbox_daudit_view($p, $decisions[$key] ?? array());
+        if ($v !== 'high' && $v !== 'review') continue;
+        try {
+            $split = kop_daudit_check_split($p, $opts);
+        } catch (Throwable $e) {
+            continue;
+        }
+        if (!$split['changed'] || $split['blocked']) continue;
+        $out[(string) $key] = array('text' => 'The record has changed since this was proposed: ' . implode(' ', $split['changed']),
+            'record' => '', 'item' => '', 'what' => 'other', 'title' => (string) ($p['title'] ?? $key),
+            'facility_id' => (int) ($p['facility_id'] ?? 0), 'editable' => false);
+    }
+    return $out;
 }

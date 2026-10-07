@@ -55,8 +55,13 @@
  *              is listed there already...). They leave the waiting view and its
  *              count and are listed under an "Already on file" view instead,
  *              each card naming the record that holds it, to reject in a batch
- *   'on_file_in_list' true when 'list' and 'view_counts' leave them out already
- *              (a big queue filtering in SQL); 'count' still counts them
+ *   'conflicts' fn(): [key => {text, record, item, what, title, facility_id}]
+ *              optional; waiting items that disagree with their record. They
+ *              leave the waiting view and its count for the Conflicts section
+ *              (inc/review-inbox/conflicts.php), which settles them through
+ *   'resolve'  fn(key, how ('keep' | 'use' | 'edit'), typed value): message
+ *   'on_file_in_list' true when 'list', 'view_counts' and 'count' leave out
+ *              on-file and conflict items themselves (a big queue filtering in SQL)
  *   'lookup'   fn(string $name, string $q): [{value, label}]  optional; a
  *              text field or param with 'lookup' => name suggests values as
  *              the reviewer types (a company "c12", a consultant...)
@@ -363,6 +368,22 @@ function kop_rinbox_on_file_keys($source) {
     return $memo[$source] = $out;
 }
 
+/** [key => {text, record, item, what, title, facility_id}]: the source's waiting items in conflict ('conflicts'), once a request. */
+function kop_rinbox_conflict_keys($source) {
+    static $memo = array();
+    if (isset($memo[$source])) return $memo[$source];
+    $src = kop_rinbox_sources()[$source] ?? array();
+    $out = array();
+    if (!empty($src['conflicts'])) {
+        try {
+            foreach ((array) call_user_func($src['conflicts']) as $key => $info) $out[(string) $key] = (array) $info;
+        } catch (Throwable $e) {
+            // Without the check they stay in the waiting view, still marked on their cards.
+        }
+    }
+    return $memo[$source] = $out;
+}
+
 /** The "Already on file" view: the items themselves, each saying which record holds it. */
 function kop_rinbox_on_file_list(array $src, $source, array $q) {
     $found = kop_rinbox_on_file_keys($source);
@@ -394,8 +415,11 @@ function kop_rinbox_counts($fresh = false) {
     foreach (kop_rinbox_sources() as $key => $src) {
         if (empty($src['count'])) continue;
         try {
-            // What is already on file waits under its own view, not here.
-            $counts[$key] = max(0, (int) call_user_func($src['count']) - count(kop_rinbox_on_file_keys($key)));
+            // What is already on file, or in conflict, waits under its own view or the Conflicts section, not here.
+            $counts[$key] = (int) call_user_func($src['count']);
+            if (empty($src['on_file_in_list'])) {
+                $counts[$key] = max(0, $counts[$key] - count(kop_rinbox_on_file_keys($key)) - count(kop_rinbox_conflict_keys($key)));
+            }
         } catch (Throwable $e) {
             $counts[$key] = null;
         }
@@ -617,7 +641,7 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
         if (!empty($src['on_file'])) {
             $n = count(kop_rinbox_on_file_keys($source));
             $out['view_counts']['on_file'] = $n;
-            if (empty($src['on_file_in_list']) && isset($out['view_counts'][$views[0]])) $out['view_counts'][$views[0]] = max(0, $out['view_counts'][$views[0]] - $n);
+            if (empty($src['on_file_in_list']) && isset($out['view_counts'][$views[0]])) $out['view_counts'][$views[0]] = max(0, $out['view_counts'][$views[0]] - $n - count(kop_rinbox_conflict_keys($source)));
         }
         return $out;
     });

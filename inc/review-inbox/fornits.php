@@ -51,10 +51,17 @@ kop_rinbox_register('fornits', function () {
         'count'    => function () {
             global $wpdb;
             kop_fornits_ensure_tables();
-            return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . " WHERE status = 'pending'");
+            // Waiting, less what is on file or in conflict (kop_rinbox_fornits_where()).
+            return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . ' i WHERE ' . kop_rinbox_fornits_where('pending', array()));
         },
         'list'     => 'kop_rinbox_fornits_list',
         'on_file'  => 'kop_rinbox_fornits_on_file',
+        'conflicts' => 'kop_rinbox_fornits_conflicts',
+        'resolve'  => function ($key, $how, $typed) {
+            $rows = kop_fornits_rows(array(preg_replace('/[^a-f0-9]/', '', (string) $key)));
+            if (!$rows) throw new RuntimeException('That item is gone.');
+            return kop_fornits_resolve($rows[0], $how, $typed, kop_rinbox_reviewer());
+        },
         'on_file_in_list' => true,
         'get'      => function ($key) {
             $rows = kop_rinbox_fornits_select('i.pkey = %s', array(preg_replace('/[^a-f0-9]/', '', (string) $key)), 'i.id', 1, 0);
@@ -114,7 +121,7 @@ function kop_rinbox_fornits_where($view, array $q) {
     }
     // What the record holds already waits under "Already on file" (kop_rinbox_fornits_on_file()).
     if (strpos($where, "i.status = 'pending'") === 0) {
-        $where .= kop_on_file_not_in('i.pkey', array_keys(kop_rinbox_on_file_keys('fornits')));
+        $where .= kop_on_file_not_in('i.pkey', array_merge(array_keys(kop_rinbox_on_file_keys('fornits')), array_keys(kop_rinbox_conflict_keys('fornits'))));
     }
     $f = (array) ($q['filters'] ?? array());
     if (!empty($f['kind'])) $where .= $wpdb->prepare(' AND i.kind = %s', $f['kind']);
@@ -553,7 +560,7 @@ function kop_rinbox_fornits_on_file() {
     kop_fornits_ensure_tables();
     return kop_on_file_cached('fornits', kop_fornits_items_table(), function (PDO $pdo) {
         global $wpdb;
-        $rows = (array) $wpdb->get_results('SELECT pkey, topic_id, post_n, kind, facility_id, value FROM ' . kop_fornits_items_table()
+        $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_fornits_items_table()
             . " WHERE status = 'pending' AND facility_id > 0", ARRAY_A);
         $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));
         $page = function ($fid) { return function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $fid) : ''; };
@@ -607,9 +614,29 @@ function kop_rinbox_fornits_on_file() {
                     foreach (kop_on_file_urls($v['url']) as $u) $leads[$u][] = (string) $r['pkey'];
                 }
             }
-            if ($why !== '') $out[(string) $r['pkey']] = array('label' => $f['name'] . ': ' . $why, 'url' => $page($r['facility_id']));
+            // A different value is a conflict (the Conflicts section), never "on file".
+            if ($why !== '' && !kop_fornits_conflict_parts($doc, $r)) $out[(string) $r['pkey']] = array('label' => $f['name'] . ': ' . $why, 'url' => $page($r['facility_id']));
         }
         foreach (kop_on_file_match_urls($pdo, $leads) as $pkey => $info) $out[(string) $pkey] = $info;
+        return $out;
+    });
+}
+
+/** Waiting staff items and closure leads that disagree with their record, for the Conflicts section. */
+function kop_rinbox_fornits_conflicts() {
+    kop_fornits_ensure_tables();
+    return kop_on_file_cached('fornits_conflicts', kop_fornits_items_table(), function (PDO $pdo) {
+        global $wpdb;
+        $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_fornits_items_table() . " WHERE status = 'pending' AND facility_id > 0 AND kind IN ('staff', 'lead')", ARRAY_A);
+        $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));
+        $out = array();
+        foreach ($rows as $r) {
+            $doc = $docs[(int) $r['facility_id']]['doc'] ?? null;
+            $c = $doc ? kop_fornits_conflict_parts($doc, $r) : null;
+            if (!$c) continue;
+            $out[(string) $r['pkey']] = array('text' => $c['text'], 'record' => $c['record'], 'item' => $c['item'], 'what' => $c['what'],
+                'title' => (string) $r['label'], 'facility_id' => (int) $r['facility_id'], 'editable' => true);
+        }
         return $out;
     });
 }

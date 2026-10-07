@@ -144,6 +144,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php 
 # filtered in their own SQL ('on_file_in_list'), cached by kop_on_file_cached() until the queue or any record changes
 # Conflicts are always marked: an item's 'conflict' (another value on the record, an open record for a closure, another role, a
 # data-audit 'from' that no longer holds) draws a Conflict banner and is never ticked; Add keeps a conflict waiting (kop_wbf_conflict())
+# Review inbox > Conflicts (inc/review-inbox/conflicts.php) settles them in one place: a queue names its conflicts ('conflicts', which leave its
+# waiting list) and settles them ('resolve': keep the record / use this value / edit; kop_wbf_doc_overwrite() writes over a value, exact Undo);
+# Woodbury Facts, Fornits and Data audit (approved over a changed 'from') take part. A new queue with conflicts adds both keys
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-on-file.php [--list] [--db=...]
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Volunteer reviewers (inc/review-volunteers.php, /volunteer-review/, js/volunteer-review.js): KOP Tools > Volunteer Reviewers makes a

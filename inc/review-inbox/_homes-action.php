@@ -23,7 +23,8 @@ const KOP_RINBOX_HOMES_ACTIONS = array('home_of_program', 'not_home_of_program',
 
 /** Queues that already group homes their own way. */
 function kop_rinbox_homes_skip_sources() {
-    return array('program-homes', 'facility-merge');
+    // Conflicts: its cards settle one value; the queue the item came from offers the rest.
+    return array('program-homes', 'facility-merge', 'conflicts');
 }
 
 /** The action for an item's facility, or null (no facility, a program record itself, Program Homes not here). */

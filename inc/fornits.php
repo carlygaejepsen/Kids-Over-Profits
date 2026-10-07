@@ -997,22 +997,71 @@ function kop_fornits_doc_apply(array &$doc, array $r, $target) {
     return $wbf('add_list', 'notes', $line, 'Lead');
 }
 
-/** What the record says that disagrees with this item (kop_wbf_conflict()'s rules): a staff role, a closure. */
-function kop_fornits_conflict(array $doc, array $r, $target = '') {
+/** A staff item or a closure lead as the Woodbury change it makes (kop_wbf_doc_apply()), citing the post; null for other kinds. */
+function kop_fornits_as_wbf(array $r, $target = '') {
     $v = json_decode((string) $r['value'], true) ?: array();
+    $evidence = wp_json_encode(array(array('cite' => 'Fornits forum, post by ' . ($r['author'] !== '' ? $r['author'] : 'a member')
+        . (kop_fornits_month($r['post_date']) ? ', ' . kop_fornits_month($r['post_date']) : ''),
+        'url' => kop_fornits_post_url($r['topic_id'], $r['post_n']))));
     if ($r['kind'] === 'staff') {
         $role = trim(($v['role'] ?? '') . (!empty($v['years']) ? ' (' . $v['years'] . ')' : ''));
-        return kop_wbf_conflict($doc, array('op' => 'add_staff', 'path' => 'staff.notableStaff',
-            'value' => wp_json_encode(array('name' => (string) ($v['person'] ?? ''), 'role' => $role))));
+        return array('op' => 'add_staff', 'path' => 'staff.notableStaff', 'label' => 'Staff: ' . ($v['person'] ?? ''), 'extra' => '',
+            'evidence' => $evidence, 'value' => wp_json_encode(array('name' => (string) ($v['person'] ?? ''), 'role' => $role, 'pastJobs' => '')));
     }
     if ($r['kind'] === 'lead') {
         $v += array('url' => '', 'type' => '', 'year' => '');
         if (($target !== '' ? $target : kop_fornits_lead_target($v)) === 'closed') {
-            return kop_wbf_conflict($doc, array('op' => 'set_closed', 'path' => 'operatingPeriod.status',
-                'value' => wp_json_encode(array('endYear' => $v['year'] !== '' ? (int) $v['year'] : null))));
+            return array('op' => 'set_closed', 'path' => 'operatingPeriod.status', 'label' => 'Closed', 'extra' => '', 'evidence' => $evidence,
+                'value' => wp_json_encode(array('endYear' => $v['year'] !== '' ? (int) $v['year'] : null)));
         }
     }
-    return '';
+    return null;
+}
+
+/** What the record says that disagrees with this item (kop_wbf_conflict()'s rules): a staff role, a closure. */
+function kop_fornits_conflict(array $doc, array $r, $target = '') {
+    $c = kop_fornits_conflict_parts($doc, $r, $target);
+    return $c ? $c['text'] : '';
+}
+
+function kop_fornits_conflict_parts(array $doc, array $r, $target = '') {
+    $w = kop_fornits_as_wbf($r, $target);
+    return $w ? kop_wbf_conflict_parts($doc, $w) : null;
+}
+
+/**
+ * Settle a conflict (kop_wbf_resolve()'s choices): 'keep' files the item as
+ * rejected; 'use' writes its value over the record's, 'edit' writes $typed.
+ * Undo is kop_fornits_undo(), as for an Add.
+ */
+function kop_fornits_resolve(array $r, $how, $typed, $reviewer) {
+    global $wpdb;
+    if ($r['status'] !== 'pending') throw new RuntimeException('This item was already handled (' . $r['status'] . '). Undo it first.');
+    $now = current_time('mysql', true);
+    if ($how === 'keep') {
+        $wpdb->update(kop_fornits_items_table(), array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => 'Conflict settled: kept the record as it is.')),
+            'reviewed_by' => $reviewer, 'reviewed_at' => $now), array('pkey' => $r['pkey']));
+        return 'Kept the record as it is; the item is under Skipped or already there.';
+    }
+    $fid = (int) $r['facility_id'];
+    $w = kop_fornits_as_wbf($r);
+    if ($fid <= 0 || !$w) throw new RuntimeException('This item has no value to write to a record.');
+    $opts = kop_wbf_opts();
+    kop_v2_with_write_lock($opts['pdo'], function () use ($r, $w, $how, $typed, $fid, $opts, $reviewer, $now, $wpdb) {
+        $stored = kop_facility_load($fid, $opts);
+        if (!$stored) throw new RuntimeException("Facility #{$fid} does not exist.");
+        $doc = $stored['doc'];
+        if ($how === 'use' && !kop_wbf_conflict_parts($doc, $w)) {
+            $done = kop_fornits_doc_apply($doc, $r, '');
+        } else {
+            $done = array('via' => 'wbf') + kop_wbf_doc_overwrite($doc, $w, $how === 'edit' ? kop_wbf_parse_value($w, $typed) : null);
+        }
+        kop_wbf_save($doc, $opts);
+        $wpdb->update(kop_fornits_items_table(), array('status' => 'applied', 'applied' => wp_json_encode($done), 'applied_fid' => $fid,
+            'reviewed_by' => $reviewer, 'reviewed_at' => $now), array('pkey' => $r['pkey']));
+    });
+    if ($w['op'] === 'set_closed') do_action('kop_facility_status_changed', $fid);
+    return ($how === 'edit' ? 'Wrote your value' : 'Wrote this value') . ' over the record\'s, citing the post. Undo puts the old value back.';
 }
 
 function kop_fornits_doc_undo(array &$doc, array $done) {
