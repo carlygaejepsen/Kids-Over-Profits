@@ -66,6 +66,21 @@ if (!$apply && !$ids) {
 
 $res = kop_sc_run($pdo, (int) $opts['limit'], $opts['minutes'] * 60, $apply, $kinds, $ids, 'kop_sc_cli_log');
 kop_sc_cli_counts(implode('+', $kinds), $res);
+if ($apply && !$ids) {
+    // The "Last run" line on Review inbox > Bill and lawsuit updates, as the WP-Cron run keeps it.
+    $last = get_option('kop_status_checks_last_run');
+    $night = gmdate('Y-m-d');
+    if (!is_array($last) || ($last['night'] ?? '') !== $night) {
+        $last = array('night' => $night, 'checked' => 0, 'same' => 0, 'changed' => 0, 'no_source' => 0, 'error' => 0, 'runs' => 0);
+    }
+    foreach ($res['counts'] as $k => $v) {
+        $last[$k] = ($last[$k] ?? 0) + $v;
+    }
+    $last['runs'] = ($last['runs'] ?? 0) + 1;
+    $last['remaining'] = $res['remaining'];
+    $last['finished'] = $res['remaining'] === 0 ? kop_sc_now() : '';
+    update_option('kop_status_checks_last_run', $last, false);
+}
 if ($apply && $res['new'] && function_exists('kop_notify_admins')) {
     $c = count($res['new']);
     kop_notify_admins('status_update', $c . ' bill / lawsuit ' . ($c === 1 ? 'update' : 'updates') . ' to review', '', array());
