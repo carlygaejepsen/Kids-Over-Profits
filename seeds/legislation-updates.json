@@ -1,38 +1,5 @@
 {
-  "_about": "One-time corrections to existing legislation rows, applied by inc/legislation-updates.php when 'version' changes. Each row matches id AND its current bill_number; only the listed fields change, and the note is appended to reviewer_notes. Earlier batches are in git history (2026-10-06: statuses of 10 bills).",
-  "version": "2026-10-06b",
-  "updates": [
-    {
-      "id": 6,
-      "bill_number": "SB 852",
-      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
-      "set": {
-        "publication_status": "draft"
-      }
-    },
-    {
-      "id": 16,
-      "bill_number": "Hb896",
-      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
-      "set": {
-        "publication_status": "draft"
-      }
-    },
-    {
-      "id": 17,
-      "bill_number": "SB789",
-      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
-      "set": {
-        "publication_status": "draft"
-      }
-    },
-    {
-      "id": 24,
-      "bill_number": "SB 13",
-      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
-      "set": {
-        "publication_status": "draft"
-      }
-    }
-  ]
+  "_about": "One-time corrections to existing legislation rows, applied by inc/legislation-updates.php when 'version' changes (new bills in seeds/legislation.json are inserted in the same pass). Each row matches id AND its current bill_number; only the listed fields change, and the note is appended to reviewer_notes. Earlier batches are in git history.",
+  "version": "2026-10-06c",
+  "updates": []
 }

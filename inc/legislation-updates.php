@@ -17,7 +17,7 @@ function kop_apply_legislation_updates() {
     $done = array('updated' => array(), 'skipped' => array(), 'inserted' => array());
     $path = trailingslashit(get_stylesheet_directory()) . 'seeds/legislation-updates.json';
     $spec = file_exists($path) ? json_decode((string) file_get_contents($path), true) : null;
-    if (!is_array($spec) || empty($spec['updates']) || !is_array($spec['updates'])) {
+    if (!is_array($spec)) {
         return $done;
     }
     $pdo = kop_seed_pdo();
@@ -38,7 +38,7 @@ function kop_apply_legislation_updates() {
     );
     $lists = array('sponsors', 'subject_tags', 'facilities_affected', 'tags');
     try {
-        foreach ($spec['updates'] as $u) {
+        foreach ((array) ($spec['updates'] ?? array()) as $u) {
             $id = (int) ($u['id'] ?? 0);
             if ($id <= 0 || empty($u['set']) || !is_array($u['set'])) {
                 continue;
