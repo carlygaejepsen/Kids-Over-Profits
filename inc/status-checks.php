@@ -101,26 +101,71 @@ function kop_sc_ensure_tables(PDO $pdo) {
 
 /* ---- Fetching ------------------------------------------------------- */
 
-/** Raw body of a URL (GET), or '' on failure. Tests set $GLOBALS['kop_sc_fetch_stub']. */
-function kop_sc_fetch($url, $timeout = 30) {
+/**
+ * Raw body of a URL (GET), or '' on failure; the HTTP code and a failed body are left in
+ * $GLOBALS['kop_sc_last_code'] / ['kop_sc_last_body']. Tests set $GLOBALS['kop_sc_fetch_stub']
+ * (a body, or [code, body]).
+ */
+function kop_sc_fetch($url, $timeout = 30, array $headers = array()) {
+    $GLOBALS['kop_sc_last_code'] = 0;
+    $GLOBALS['kop_sc_last_body'] = '';
     if (!empty($GLOBALS['kop_sc_fetch_stub']) && is_callable($GLOBALS['kop_sc_fetch_stub'])) {
-        return (string) call_user_func($GLOBALS['kop_sc_fetch_stub'], $url);
+        $r = call_user_func($GLOBALS['kop_sc_fetch_stub'], $url);
+        list($code, $body) = is_array($r) ? $r : array(200, (string) $r);
+    } else {
+        if (!function_exists('curl_init')) {
+            return '';
+        }
+        $ch = curl_init($url);
+        curl_setopt_array($ch, array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => $timeout,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            CURLOPT_HTTPHEADER => array_merge(array('Accept-Language: en-US,en;q=0.9'), $headers),
+        ));
+        $body = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
     }
-    if (!function_exists('curl_init')) {
-        return '';
+    $GLOBALS['kop_sc_last_code'] = (int) $code;
+    if ($body !== false && $code >= 200 && $code < 300) {
+        return (string) $body;
     }
-    $ch = curl_init($url);
-    curl_setopt_array($ch, array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_TIMEOUT => $timeout,
-        CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        CURLOPT_HTTPHEADER => array('Accept-Language: en-US,en;q=0.9'),
-    ));
-    $body = curl_exec($ch);
-    $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return ($body !== false && $code >= 200 && $code < 300) ? (string) $body : '';
+    $GLOBALS['kop_sc_last_body'] = (string) $body;
+    return '';
+}
+
+/**
+ * A CourtListener request. Without an API token CourtListener allows 5 requests a minute, so
+ * requests are spaced 13 seconds apart (1 second with KOP_COURTLISTENER_TOKEN, a free token from
+ * courtlistener.com: 5,000 an hour). A "throttled" answer is waited out once; a second one throws
+ * "rate limit", which leaves the record due for the next run. '' when CourtListener has no answer.
+ */
+function kop_sc_cl_fetch($url) {
+    static $last = 0.0;
+    $token = defined('KOP_COURTLISTENER_TOKEN') ? (string) KOP_COURTLISTENER_TOKEN : (string) getenv('KOP_COURTLISTENER_TOKEN');
+    $stub = !empty($GLOBALS['kop_sc_fetch_stub']);
+    $gap = $token !== '' ? 1.0 : 13.0;
+    for ($try = 0; $try < 2; $try++) {
+        $wait = $last + $gap - microtime(true);
+        if ($wait > 0 && !$stub) {
+            usleep((int) ($wait * 1e6));
+        }
+        $last = microtime(true);
+        $body = kop_sc_fetch($url, 30, $token !== '' && strpos($url, '/api/') !== false ? array('Authorization: Token ' . $token) : array());
+        if ((int) $GLOBALS['kop_sc_last_code'] !== 429) {
+            return $body;
+        }
+        $secs = preg_match('/available in (\d+) second/i', (string) $GLOBALS['kop_sc_last_body'], $m) ? (int) $m[1] : 60;
+        if ($secs > 75) {
+            break;
+        }
+        if (!$stub) {
+            sleep($secs + 1);
+        }
+    }
+    throw new RuntimeException('CourtListener rate limit');
 }
 
 /** HTML to readable text: scripts and styles dropped, rows and blocks on their own lines. */
@@ -418,7 +463,11 @@ function kop_sc_courtlistener_docket(array $suit) {
             $q .= ' AND caseName:"' . $word . '"';
         }
     }
-    $json = json_decode(kop_sc_fetch('https://www.courtlistener.com/api/rest/v4/search/?type=r&q=' . rawurlencode($q)), true);
+    $raw = kop_sc_cl_fetch('https://www.courtlistener.com/api/rest/v4/search/?type=r&q=' . rawurlencode($q));
+    if ($raw === '') {
+        throw new RuntimeException('CourtListener did not answer the search (HTTP ' . (int) $GLOBALS['kop_sc_last_code'] . ').');
+    }
+    $json = json_decode($raw, true);
     $state = kop_sc_court_state($suit['court']);
     $best = null;
     foreach ((array) ($json['results'] ?? array()) as $r) {
@@ -542,17 +591,26 @@ function kop_sc_check_lawsuit(array $suit) {
     $ref = '';
     $text = '';
     if (kop_sc_is_federal_case($suit)) {
-        $docket = kop_sc_courtlistener_docket($suit);
-        if ($docket) {
-            $url = $docket['url'];
-            $terminated = kop_sc_clean_date($docket['terminated']);
-            $ref = 'cl:' . $docket['docket_id'];
-            // The docket's feed lists its newest entries; the page itself starts at the oldest.
-            $text = kop_sc_html_text(kop_sc_fetch('https://www.courtlistener.com/docket/' . $docket['docket_id'] . '/feed/'), 9000);
-            if (strlen($text) < 100) {
-                $text = kop_sc_html_text(kop_sc_fetch($url . (strpos($url, '?') === false ? '?' : '&') . 'order_by=desc'), 9000);
+        try {
+            // The docket found on an earlier night is read again without a new search ("cl:<id>|<terminated>").
+            if (preg_match('/^cl:(\d+)\|?(\d{4}-\d{2}-\d{2})?/', (string) ($suit['_sc_ref'] ?? ''), $m) && !empty($suit['_sc_url'])) {
+                $docket = array('docket_id' => (int) $m[1], 'url' => (string) $suit['_sc_url'], 'terminated' => $m[2] ?? '', 'case_name' => '', 'court' => '');
+            } else {
+                $docket = kop_sc_courtlistener_docket($suit);
             }
-            $text = 'Case: ' . $docket['case_name'] . ' (' . $docket['court'] . ')' . "\n" . $text;
+            if ($docket) {
+                $url = $docket['url'];
+                $terminated = kop_sc_clean_date($docket['terminated']);
+                $ref = 'cl:' . $docket['docket_id'] . '|' . $terminated;
+                // The docket's feed lists its newest entries; the page itself starts at the oldest.
+                $text = kop_sc_html_text(kop_sc_cl_fetch('https://www.courtlistener.com/docket/' . $docket['docket_id'] . '/feed/'), 9000);
+                if (strlen($text) < 100) {
+                    $text = kop_sc_html_text(kop_sc_cl_fetch($url . (strpos($url, '?') === false ? '?' : '&') . 'order_by=desc'), 9000);
+                }
+                $text = trim('Case: ' . $docket['case_name'] . ($docket['court'] !== '' ? ' (' . $docket['court'] . ')' : '')) . "\n" . $text;
+            }
+        } catch (RuntimeException $e) {
+            return array('error', null, '', '', '', $e->getMessage(), '');
         }
     }
     if ($url === '') {
@@ -681,7 +739,7 @@ function kop_sc_due(PDO $pdo, $kind, $limit, array $only_ids = array()) {
         $where .= ' AND (s.last_checked IS NULL OR s.last_checked < ?)';
         $args[] = $since;
     }
-    $st = $pdo->prepare("SELECT l.*, s.last_hash AS _sc_hash, s.last_outcome AS _sc_outcome FROM $table l LEFT JOIN record_status_sources s ON s.kind = '$kind' AND s.record_id = l.id
+    $st = $pdo->prepare("SELECT l.*, s.last_hash AS _sc_hash, s.last_outcome AS _sc_outcome, s.source_ref AS _sc_ref, s.source_url AS _sc_url FROM $table l LEFT JOIN record_status_sources s ON s.kind = '$kind' AND s.record_id = l.id
                           WHERE $where ORDER BY s.last_checked IS NOT NULL, s.last_checked, l.id LIMIT " . (int) $limit);
     $st->execute($args);
     return $st->fetchAll(PDO::FETCH_ASSOC);

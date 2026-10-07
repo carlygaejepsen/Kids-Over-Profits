@@ -245,6 +245,44 @@ if (!file_exists($mirror)) {
     $back = $pdo->query('SELECT * FROM legislation WHERE id = 9001')->fetch(PDO::FETCH_ASSOC);
     check('Undo restores the record exactly', $back === $orig);
 
+    // CourtListener: the docket found once is read again without a search; a throttled answer is
+    // waited out once, a second one leaves the case due for the next run.
+    $calls = array('search' => 0, 'feed' => 0);
+    $throttle = 0;
+    $GLOBALS['kop_sc_fetch_stub'] = function ($url) use (&$calls, &$throttle) {
+        if (strpos($url, '/api/rest/v4/search/') !== false) {
+            $calls['search']++;
+            return json_encode(array('results' => array()));
+        }
+        if (strpos($url, '/docket/77/feed/') !== false) {
+            $calls['feed']++;
+            if ($throttle > 0) {
+                $throttle--;
+                return array(429, '{"detail":"Request was throttled. Rate limit exceeded: 5/min. Expected available in 3 seconds."}');
+            }
+            return '<feed><entry><title>ORDER of dismissal with prejudice after settlement. Signed by Judge Skavdahl on 10/6/2025.</title></entry>'
+                . str_repeat('<entry><title>Docket text of an earlier entry in the case.</title></entry>', 6) . '</feed>';
+        }
+        return '';
+    };
+    $ref = $pdo->query("SELECT source_ref, source_url FROM record_status_sources WHERE kind = 'lawsuit' AND record_id = 9003")->fetch(PDO::FETCH_ASSOC);
+    check('the docket found is remembered with its closing date', $ref['source_ref'] === 'cl:77|2025-10-06' && $ref['source_url'] === 'https://www.courtlistener.com/docket/77/sherman/', json_encode($ref));
+    $GLOBALS['kop_sc_ai_stub'] = function () { return '{"same_case": true, "status": "settled", "event_date": "2025-10-06", "outcome": "The court dismissed the case with prejudice after the parties settled.", "settlement_amount": "", "quote": "ORDER of dismissal with prejudice after settlement."}'; };
+    $pdo->exec("UPDATE record_status_sources SET last_hash = NULL WHERE kind = 'lawsuit' AND record_id = 9003");
+    $throttle = 1;
+    $r = kop_sc_run($pdo, 10, 60, true, array('lawsuit'), array(9003));
+    check('a remembered docket is read without a new search, one throttle waited out', $calls['search'] === 0 && $calls['feed'] === 2 && $r['counts']['changed'] === 1, json_encode($calls) . ' ' . json_encode($r['counts']));
+    $throttle = 5;
+    $checked_at = $pdo->query("SELECT last_checked FROM record_status_sources WHERE kind = 'lawsuit' AND record_id = 9003")->fetchColumn();
+    $r = kop_sc_run($pdo, 10, 60, true, array('lawsuit'), array(9003));
+    $after_at = $pdo->query("SELECT last_checked FROM record_status_sources WHERE kind = 'lawsuit' AND record_id = 9003")->fetchColumn();
+    check('a second throttle stops the run and leaves the case due', $r['counts']['error'] === 1 && $r['stopped'] && $after_at === $checked_at, json_encode($r['counts']));
+    $GLOBALS['kop_sc_fetch_stub'] = function ($url) { return array(503, 'down'); };
+    $pdo->exec("UPDATE record_status_sources SET source_ref = '' WHERE kind = 'lawsuit' AND record_id = 9003");
+    $r = kop_sc_run($pdo, 10, 60, true, array('lawsuit'), array(9003));
+    $detail = $pdo->query("SELECT last_outcome || ': ' || last_detail FROM record_status_sources WHERE kind = 'lawsuit' AND record_id = 9003")->fetchColumn();
+    check('CourtListener down is "could not check", not "no docket"', $r['counts']['error'] === 1 && strpos($detail, 'did not answer') !== false, $detail);
+
     // Records with nothing to check say so and cost nothing.
     $GLOBALS['kop_sc_fetch_stub'] = function () { return ''; };
     $pdo->exec("INSERT INTO lawsuits (id, case_name, case_number, court, jurisdiction, status, source_urls, document_urls, publication_status)

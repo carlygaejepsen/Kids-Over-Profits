@@ -193,7 +193,8 @@ php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dr
 # Bill and lawsuit statuses (inc/status-checks.php): a nightly WP-Cron run (09:00 UTC, then every 10 min until done, 30 runs max)
 # checks every published bill and lawsuit that is not finished: federal bills from govinfo BILLSTATUS (no AI), state bills from the
 # official page (California via CalMatters Digital Democracy), federal lawsuits from the CourtListener docket feed (found by docket
-# number + first party + the court's state, never guessed), read by the AI; an unchanged page is not sent to the AI again. Changes
+# number + CourtListener court id, never guessed; remembered per case; anonymous = 5 requests/min, so spaced 13 s; a free token in
+# KOP_COURTLISTENER_TOKEN (api/config.local.php or .env) = 5,000/hour), read by the AI; an unchanged page is not sent to the AI again. Changes
 # wait at Review inbox > Bill and lawsuit updates (record_status_proposals; Apply, exact Undo, a dismissed change never comes back)
 # Bill corrections and new bills by hand: seeds/legislation-updates.json + seeds/legislation.json (inc/legislation-updates.php, bump 'version')
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-status-checks.php   # parsing, matching, what is a change, runs with a made-up AI
