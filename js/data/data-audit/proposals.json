@@ -7813,5 +7813,90 @@
     "to": "1992-2010"
    }
   ]
+ },
+ {
+  "key": "status_years-10371",
+  "kind": "status_years",
+  "title": "Provo Canyon School",
+  "place": "Provo, UT",
+  "facility_id": 10371,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Utah revoked the Provo campus license (93696) on July 17, 2026 and ordered it to stop all services by August 16, 2026. UHS appealed on July 27, but the appeal did not change the deadline, and the campus closed. The Springville campus (10557) has its own proposal.",
+  "kop_now": "Status Suspended, from 1971; current operator Universal Health Services (UHS); the note says the appeal is pending.",
+  "sources": [
+   {
+    "url": "https://utahnewsdispatch.com/2026/07/17/utah-orders-last-provo-canyon-school-teen-treatment-center-to-shut-down/",
+    "title": "Utah orders last Provo Canyon School teen treatment center to shut down",
+    "date": "2026-07-17",
+    "quote": "(search summary) The state revoked the Provo campus license and ordered it to terminate all services by August 16."
+   },
+   {
+    "url": "https://www.sltrib.com/news/2026/07/27/provo-canyon-school-appeals-utahs/",
+    "title": "Provo Canyon School appeals",
+    "date": "2026-07-27",
+    "quote": "the appeals do not change the closure deadlines: Aug. 6 for the Springville campus and Aug. 16 for the Provo campus"
+   },
+   {
+    "url": "https://www.fox13now.com/news/local-news/utah-county/families-scramble-to-find-alternatives-after-provo-canyon-school-closes",
+    "title": "Families scramble to find alternatives after Provo Canyon School closes",
+    "date": "2026",
+    "quote": "(headline)"
+   }
+  ],
+  "notes": "Researched from a cloud session whose proxy blocked the article pages, so the quotes are from search results; open one before approving. Provo Canyon Behavioral Hospital (the former Orem campus) is a separate record and is not changed.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10371,
+    "path": "operatingPeriod.status",
+    "from": "Suspended",
+    "to": "Closed"
+   },
+   {
+    "type": "field",
+    "facility_id": 10371,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2026
+   },
+   {
+    "type": "note",
+    "facility_id": 10371,
+    "text": "Utah revoked the Provo campus license (93696) on July 17, 2026 and ordered it to stop all services by August 16, 2026; the appeal UHS filed on July 27 did not change that deadline."
+   }
+  ]
+ },
+ {
+  "key": "person_common-34",
+  "kind": "person_common",
+  "title": "Jeff Johnson",
+  "place": "",
+  "facility_id": null,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Probably one person, with a career in admissions: Mount Bachelor Academy (1988-2000), Aspen Education's wilderness and outdoor division (admissions for several programs, then special projects until 2010), and Trails Carolina (2012-2013). No source found names him at Boulder Creek Academy, Allynwood Academy or Auldern Academy.",
+  "kop_now": "One person, Jeff Johnson (#34), on 15 programs: SUWS Idaho, Mount Bachelor Academy, Skyline Journey, Wilderness Quest, Ascent, Boulder Creek Academy, Adirondack Leadership Expeditions, Three Rivers Montana, Lone Star Expeditions, Auldern Academy, SunHawk Academy, SUWS of the Carolinas, Allynwood Academy, Trails Carolina and Aspen Education Group.",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/lr/Cool/",
+    "title": "StrugglingTeens resource listing",
+    "date": "",
+    "quote": "(search summary) Jeff Johnson, Director of Admissions, 12 Church St, Saranac Lake, NY (the Adirondack Leadership Expeditions address)"
+   },
+   {
+    "url": "https://www.reddit.com/r/troubledteens/wiki/index/mountbachelor",
+    "title": "r/troubledteens wiki, Mount Bachelor Academy (lead)",
+    "date": "",
+    "quote": "Mount Bachelor admissions 1988-2000, then Aspen's Wilderness/Outdoor Division, Director of Special Projects until 2010, Trails Carolina admissions 2012-2013"
+   }
+  ],
+  "notes": "Do not split him: the sources fit one career. The list of programs seems to come from a 2014 StrugglingTeens item about Squaw Valley Academy that could not be opened; read it before changing anything.",
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Find a source naming Jeff Johnson (#34) at Boulder Creek Academy, Allynwood Academy and Auldern Academy (likely the 2014 StrugglingTeens Squaw Valley Academy item); take him off any of the three it does not name, and give his remaining roles their years (Mount Bachelor 1988-2000, Trails Carolina 2012-2013)."
+   }
+  ]
  }
 ]

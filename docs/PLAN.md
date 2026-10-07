@@ -1509,7 +1509,12 @@ Open:
    Richardson (2023, not 2020), Kenneth Barkley and Corey Foster (dates and
    restraint findings). 91 entries checked out; 48 could not be settled and
    change nothing. The 31 programs with later Woodbury issues: 23 right, 4
-   proposals. Queue total 193.
+   proposals. Queue total 193; 195 after two added 2026-10-07 from a cloud
+   session's check of the wiki pilot's flags: `status_years-10371` (the
+   Provo campus closed August 16, 2026, like Springville) and
+   `person_common-34` (Jeff Johnson: one career, but no source yet for
+   Boulder Creek, Allynwood or Auldern). That session's proxy blocked the
+   article pages, so open a source before approving either.
 3. Turn-About Ranch's current operator (done 2026-10-06): the buyer in
    Aspen's March 7, 2014 sale was Escalante RTC, LLC, co-owned by its
    managers (Webster, Carter, Bartlett); still operating. Its proposal now
