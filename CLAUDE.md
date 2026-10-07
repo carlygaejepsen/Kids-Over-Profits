@@ -259,6 +259,10 @@ node scripts/test-facility-ref-split.js           # the forms split a pasted com
 # kop/v1/extension/* (inc/source-submissions.php): articles -> news_submissions, lawsuits, legislation,
 # anything else -> KOP Tools > Websites Sent In; same duplicate rules as the public forms
 php -d extension=pdo_sqlite scripts/test-source-submissions.php   # against an in-memory copy of tmp/prod.sqlite
+# The app's "Send" tab (inc/mobile-submit.php): public kop/v1/mobile/submit + /mobile/check, the extension's inserts for links,
+# suggested_edits for facility_new/facility_correction; duplicates come back as {type, status} only (never ids/titles); 12 an hour per sender.
+# Signed-in reviewers in the app use kop/v1/extension/* with an application password, like the Chrome extension
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-submit.php [--db=...]
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked

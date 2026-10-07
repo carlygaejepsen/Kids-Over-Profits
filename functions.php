@@ -93,6 +93,9 @@ require_once get_stylesheet_directory() . '/inc/newsletter-signup.php';
 // "Send to Kids Over Profits" browser extension intake (browser-extension/send-to-kop/)
 require_once get_stylesheet_directory() . '/inc/source-submissions.php';
 
+// The same intake for the mobile app, public: links and facility information to the review queues
+require_once get_stylesheet_directory() . '/inc/mobile-submit.php';
+
 // Features & Classes (Anonymous Portal, etc.)
 require_once get_stylesheet_directory() . '/inc/features.php';
 

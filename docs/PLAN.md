@@ -1604,10 +1604,23 @@ App: `src/lib/citations.ts`, `InlineSources` in `src/components/ui.tsx`.
    filters in component state, so they reset when it unmounts.
 9. **Later ideas, not started**: other outlets' coverage of the same story
    (`story_group_id` is already in each news item), paging through every
-   inspection report (the app shows the newest 20 and links the rest), a
-   "send to KOP" share target (the stray `expo-share-intent` packages that
-   were in the theme's `package.json` until 2026-10-06 point at this), an
+   inspection report (the app shows the newest 20 and links the rest), an
    offline snapshot of the index, and notifications for new articles.
+
+**Send to KOP in the app (2026-10-07).** A "Send" tab: links (article,
+lawsuit, bill, website; the extension's `classify.js` ported) and facility
+information (a missing facility, or a correction from the facility page's
+"Suggest a correction"). Public sends go to `kop/v1/mobile/submit`
+(`inc/mobile-submit.php`, test `scripts/test-mobile-submit.php`): the same
+queues and duplicate rules as the extension, facility information to
+`suggested_edits`, "email me when reviewed" and the newsletter box, a
+honeypot and 12 sends an hour per sender; a duplicate is reported only as
+"on the site" or "in review". Reviewer sign-in (About tab, application
+password in secure storage) sends links through `kop/v1/extension/*`
+exactly like the Chrome extension. Sharing a link into the app from another
+app needs a development build (not Expo Go); `kidsoverprofits://send?url=`
+and Paste link work everywhere. Owner: try each kind once on a phone and
+check it arrives at Review inbox.
 
 **Known, not the app's to fix**: `scripts/test-facility-pages.php` has 12
 failing checks on `main` (the merged Facility Profile posts: excerpt, jump
