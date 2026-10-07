@@ -403,7 +403,7 @@ function kop_rinbox_held_counts() {
 function kop_rinbox_list_unheld(array $src, $source, array $q) {
     $held = kop_rinbox_hidden_keys($source);
     // Items already on file are listed under their own view (kop_rinbox_on_file_keys()).
-    $hidden = $held + (function_exists('kop_rinbox_on_file_keys') ? array_fill_keys(array_keys(kop_rinbox_on_file_keys($source)), true) : array());
+    $hidden = $held + (function_exists('kop_rinbox_on_file_keys') && empty($src['on_file_in_list']) ? array_fill_keys(array_keys(kop_rinbox_on_file_keys($source)), true) : array());
     if (!$hidden) {
         $res = call_user_func($src['list'], $q);
         $res['next_offset'] = $q['offset'] + count((array) ($res['items'] ?? array()));

@@ -54,6 +54,8 @@ kop_rinbox_register('fornits', function () {
             return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . " WHERE status = 'pending'");
         },
         'list'     => 'kop_rinbox_fornits_list',
+        'on_file'  => 'kop_rinbox_fornits_on_file',
+        'on_file_in_list' => true,
         'get'      => function ($key) {
             $rows = kop_rinbox_fornits_select('i.pkey = %s', array(preg_replace('/[^a-f0-9]/', '', (string) $key)), 'i.id', 1, 0);
             return $rows ? kop_rinbox_fornits_item($rows[0]) : null;
@@ -109,6 +111,10 @@ function kop_rinbox_fornits_where($view, array $q) {
         $where = $wpdb->prepare('i.status = %s', $view);
     } else {
         $where = "i.status = 'pending'";
+    }
+    // What the record holds already waits under "Already on file" (kop_rinbox_fornits_on_file()).
+    if (strpos($where, "i.status = 'pending'") === 0) {
+        $where .= kop_on_file_not_in('i.pkey', array_keys(kop_rinbox_on_file_keys('fornits')));
     }
     $f = (array) ($q['filters'] ?? array());
     if (!empty($f['kind'])) $where .= $wpdb->prepare(' AND i.kind = %s', $f['kind']);
@@ -532,4 +538,76 @@ function kop_rinbox_fornits_tags_set($key, array $tags) {
         $wpdb->insert($table, array('source' => 'fornits', 'item_key' => (string) $key, 'tag' => $t,
             'created_by' => kop_rinbox_reviewer(), 'created_at' => current_time('mysql', true)));
     }
+}
+
+/**
+ * Waiting items the record holds already (added by hand or from another
+ * source since the reading), by kop_fornits_doc_apply()'s rules, read only:
+ * a link in its Materials and links, staff on its staff list with a role, an
+ * incident, note or survivor account citing the same post, a closure on a
+ * closed record, a news or lawsuit lead whose link is a kept record. [pkey => {label, url}]
+ */
+function kop_rinbox_fornits_on_file() {
+    kop_fornits_ensure_tables();
+    return kop_on_file_cached('fornits', kop_fornits_items_table(), function (PDO $pdo) {
+        global $wpdb;
+        $rows = (array) $wpdb->get_results('SELECT pkey, topic_id, post_n, kind, facility_id, value FROM ' . kop_fornits_items_table()
+            . " WHERE status = 'pending' AND facility_id > 0", ARRAY_A);
+        $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));
+        $page = function ($fid) { return function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $fid) : ''; };
+        $out = array();
+        $leads = array();
+        foreach ($rows as $r) {
+            $f = $docs[(int) $r['facility_id']] ?? null;
+            if (!$f) continue;
+            $doc = $f['doc'];
+            $v = json_decode((string) $r['value'], true) ?: array();
+            $post = kop_fornits_post_url($r['topic_id'], $r['post_n']);
+            $cites = function ($path) use ($doc, $post) {
+                foreach ((array) kop_wbf_get($doc, $path) as $line) {
+                    if (is_string($line) && strpos($line, $post) !== false) return true;
+                }
+                return false;
+            };
+            $why = '';
+            if ($r['kind'] === 'link') {
+                $key = kop_gdl_url_key((string) ($v['url'] ?? ''));
+                foreach ((array) ($doc['resourceLinks'] ?? array()) as $l) {
+                    if ($key !== '' && is_array($l) && kop_gdl_url_key($l['url'] ?? '') === $key) { $why = 'the thread is in its Materials and links'; break; }
+                }
+            } elseif ($r['kind'] === 'staff') {
+                $key = kop_wbf_person_key($v['person'] ?? '');
+                foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
+                    foreach ((array) kop_wbf_get($doc, $path) as $p) {
+                        if ($key !== '' && is_array($p) && kop_wbf_person_key($p['name'] ?? '') === $key && trim((string) ($p['role'] ?? '')) !== '') {
+                            $why = $p['name'] . ' is on its staff list (' . $p['role'] . ')';
+                            break 2;
+                        }
+                    }
+                }
+            } elseif ($r['kind'] === 'incident') {
+                if ($cites('criticalIncidents.customIncidents')) $why = 'its incidents cite this post';
+            } elseif ($r['kind'] === 'testimony') {
+                foreach ((array) ($doc['survivorTestimony'] ?? array()) as $t) {
+                    if (is_array($t) && ($t['id'] ?? '') === 'fornits-' . (int) $r['topic_id'] . '-' . (int) $r['post_n']) { $why = 'this account is on the record'; break; }
+                }
+            } elseif ($r['kind'] === 'lead') {
+                $v += array('url' => '', 'type' => '', 'year' => '');
+                $target = kop_fornits_lead_target($v);
+                if ($target === 'closed') {
+                    $end = $doc['operatingPeriod']['endYear'] ?? null;
+                    if (strcasecmp((string) ($doc['operatingPeriod']['status'] ?? ''), 'Closed') === 0 && ($v['year'] === '' || (int) $end === (int) $v['year'])) {
+                        $why = 'already marked closed' . ($end ? ', ended ' . (int) $end : '');
+                    }
+                } elseif ($target === 'note') {
+                    if ($cites('notes')) $why = 'its notes cite this post';
+                } else {
+                    foreach (kop_on_file_urls($v['url']) as $u) $leads[$u][] = (string) $r['pkey'];
+                }
+            }
+            if ($why !== '') $out[(string) $r['pkey']] = array('label' => $f['name'] . ': ' . $why, 'url' => $page($r['facility_id']));
+        }
+        foreach (kop_on_file_match_urls($pdo, $leads) as $pkey => $info) $out[(string) $pkey] = $info;
+        return $out;
+    });
 }

@@ -55,6 +55,8 @@
  *              is listed there already...). They leave the waiting view and its
  *              count and are listed under an "Already on file" view instead,
  *              each card naming the record that holds it, to reject in a batch
+ *   'on_file_in_list' true when 'list' and 'view_counts' leave them out already
+ *              (a big queue filtering in SQL); 'count' still counts them
  *   'lookup'   fn(string $name, string $q): [{value, label}]  optional; a
  *              text field or param with 'lookup' => name suggests values as
  *              the reviewer types (a company "c12", a consultant...)
@@ -610,7 +612,7 @@ function kop_rinbox_rest_items(WP_REST_Request $req) {
         if (!empty($src['on_file'])) {
             $n = count(kop_rinbox_on_file_keys($source));
             $out['view_counts']['on_file'] = $n;
-            if (isset($out['view_counts'][$views[0]])) $out['view_counts'][$views[0]] = max(0, $out['view_counts'][$views[0]] - $n);
+            if (empty($src['on_file_in_list']) && isset($out['view_counts'][$views[0]])) $out['view_counts'][$views[0]] = max(0, $out['view_counts'][$views[0]] - $n);
         }
         return $out;
     });

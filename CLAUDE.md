@@ -138,6 +138,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php 
 # Any other queue gives its source an 'on_file' => fn(): [key => {label, url}] (kop_rinbox_on_file_keys()): those leave the waiting view and
 # its count for an "Already on file" view. Facilities from News (article already listed on the record meant), Websites sent in (link on a
 # facility or kept record), State Lists (listed name now exactly one record's in that state: own tab, Link offered first, kop_sl_on_file())
+# Woodbury Facts and Fornits: what Add would find already on the record (kop_wbf_on_record(); a different value is a conflict and waits),
+# filtered in their own SQL ('on_file_in_list'), cached by kop_on_file_cached() until the queue or any record changes
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-on-file.php [--list] [--db=...]
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Volunteer reviewers (inc/review-volunteers.php, /volunteer-review/, js/volunteer-review.js): KOP Tools > Volunteer Reviewers makes a

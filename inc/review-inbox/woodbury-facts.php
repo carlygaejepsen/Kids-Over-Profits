@@ -52,6 +52,8 @@ kop_rinbox_register('woodbury-facts', function () {
             return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_wbf_table() . " WHERE status = 'pending'");
         },
         'list'     => 'kop_rinbox_wbf_list',
+        'on_file'  => 'kop_rinbox_wbf_on_file',
+        'on_file_in_list' => true,
         'get'      => function ($key) {
             $rows = kop_wbf_rows(array($key));
             return $rows ? kop_rinbox_wbf_item($rows[0]) : null;
@@ -84,6 +86,10 @@ function kop_rinbox_wbf_where($view, array $q) {
     global $wpdb;
     $tabs = kop_wbf_tabs();
     $where = $tabs[$view]['where'] ?? "status = 'pending'";
+    // What the record holds already waits under "Already on file" (kop_rinbox_wbf_on_file()).
+    if (strpos($where, "status = 'pending'") === 0) {
+        $where .= kop_on_file_not_in('pkey', array_keys(kop_rinbox_on_file_keys('woodbury-facts')));
+    }
     if (!empty($q['filters']['grp'])) $where .= $wpdb->prepare(' AND grp = %s', $q['filters']['grp']);
     if (($q['search'] ?? '') !== '') {
         $like = '%' . $wpdb->esc_like($q['search']) . '%';
@@ -456,4 +462,78 @@ function kop_rinbox_wbf_save($key, array $fields) {
     $after = kop_wbf_edit($r, $f, kop_rinbox_reviewer());
     kop_rinbox_flush_counts();
     return array('message' => 'Saved. It now reads: ' . $after['label']);
+}
+
+/**
+ * Waiting items whose record holds them already (someone added it by hand, or
+ * from another source, since the build): what Add would refuse as "already on
+ * the record", or would change nothing. A record holding a different value is
+ * a conflict, not on file: it stays waiting. [pkey => {label, url}]
+ */
+function kop_rinbox_wbf_on_file() {
+    kop_wbf_ensure_table();
+    return kop_on_file_cached('wbf', kop_wbf_table(), function (PDO $pdo) {
+        global $wpdb;
+        $rows = (array) $wpdb->get_results('SELECT pkey, facility_id, op, path, value FROM ' . kop_wbf_table()
+            . " WHERE status = 'pending' AND facility_id > 0 AND op IN ('add_staff', 'add_list', 'set_if_empty', 'set_closed')", ARRAY_A);
+        $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));
+        $out = array();
+        foreach ($rows as $r) {
+            $f = $docs[(int) $r['facility_id']] ?? null;
+            if (!$f) continue;
+            $why = kop_wbf_on_record($f['doc'], $r);
+            if ($why === '') continue;
+            $out[(string) $r['pkey']] = array('label' => $f['name'] . ': ' . $why,
+                'url' => function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $r['facility_id']) : '');
+        }
+        return $out;
+    });
+}
+
+/** Why the record already holds this item ('' when it does not), by kop_wbf_doc_apply()'s rules, read only. */
+function kop_wbf_on_record(array $doc, array $r) {
+    $value = kop_wbf_row_value($r);
+    $same = function ($a, $b) {
+        if (is_array($a) || is_array($b)) {
+            $a = (array) $a;
+            $b = (array) $b;
+            if (isset($a['raw'], $b['raw'])) return strcasecmp(trim($a['raw']), trim($b['raw'])) === 0;
+            return ($a['min'] ?? null) == ($b['min'] ?? null) && ($a['max'] ?? null) == ($b['max'] ?? null)
+                && (isset($a['min']) || isset($a['max']) || $a == $b);
+        }
+        return strcasecmp(trim((string) $a), trim((string) $b)) === 0;
+    };
+    switch ($r['op']) {
+        case 'add_staff':
+            $key = kop_wbf_person_key($value['name'] ?? '');
+            if ($key === '') return '';
+            foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
+                foreach ((array) kop_wbf_get($doc, $path) as $s) {
+                    $s = is_array($s) ? $s : array('name' => (string) $s);
+                    if (kop_wbf_person_key($s['name'] ?? '') !== $key) continue;
+                    // Add fills only empty role and past jobs: on file when it would fill nothing.
+                    foreach (array('role', 'pastJobs') as $k) {
+                        if (trim((string) ($value[$k] ?? '')) !== '' && trim((string) ($s[$k] ?? '')) === '') return '';
+                    }
+                    return ($s['name'] ?? $value['name']) . ' is on its staff list' . (!empty($s['role']) ? ' (' . $s['role'] . ')' : '');
+                }
+            }
+            return '';
+        case 'add_list':
+            $list = kop_wbf_get($doc, $r['path']);
+            return is_array($list) && kop_wbf_list_has($list, $value)
+                ? 'already listed (' . (is_array($value) ? (string) ($value['raw'] ?? wp_json_encode($value)) : mb_substr((string) $value, 0, 120)) . ')' : '';
+        case 'set_if_empty':
+            $slot = kop_wbf_get($doc, $r['path']);
+            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return '';
+            return $same($slot, $value) ? 'already says ' . (is_array($slot) ? wp_json_encode($slot) : $slot) : '';
+        case 'set_closed':
+            $status = (string) ($doc['operatingPeriod']['status'] ?? '');
+            $end = $doc['operatingPeriod']['endYear'] ?? null;
+            $want = $value['endYear'] ?? null;
+            if (strcasecmp($status, 'Closed') !== 0) return '';
+            if ($want && (int) $end !== (int) $want) return '';
+            return 'already marked closed' . ($end ? ', ended ' . (int) $end : '');
+    }
+    return '';
 }

@@ -118,7 +118,19 @@ function kop_rinbox_test_woodbury_facts(array $src, array $item, callable $check
     $grps = array_unique(array_map(function ($it) { return kop_wbf_rows(array($it['key']))[0]['grp']; }, $res['items']));
     $check('woodbury-facts: the kind filter shows only that kind', !$res['items'] || $grps === array('incident'), $res['total'] . ' incidents');
     $counts = call_user_func($src['view_counts'], array('search' => '', 'filters' => array()));
-    $check('woodbury-facts: every tab has its count', count($counts) === 8 && $counts['pending'] === (int) $pdo->query("SELECT COUNT(*) FROM $t WHERE status = 'pending'")->fetchColumn(), json_encode($counts));
+    // Items the record holds already wait under "Already on file", out of every waiting tab.
+    $on_file = kop_rinbox_on_file_keys('woodbury-facts');
+    $all_pending = (int) $pdo->query("SELECT COUNT(*) FROM $t WHERE status = 'pending'")->fetchColumn();
+    $check('woodbury-facts: every tab has its count', count($counts) === 8 && $counts['pending'] + count($on_file) === $all_pending, json_encode($counts) . ' + ' . count($on_file) . ' on file');
+    $keys = array_keys($on_file);
+    $states = $keys ? $pdo->query("SELECT DISTINCT status FROM $t WHERE pkey IN ('" . implode("','", array_slice($keys, 0, 500)) . "')")->fetchAll(PDO::FETCH_COLUMN) : array();
+    $check('woodbury-facts: items the record already holds are found, all waiting ones', $on_file && $states === array('pending'), count($on_file) . ' of ' . $all_pending . ', e.g. ' . json_encode(array_slice($on_file, 0, 3)));
+    $page = call_user_func($src['list'], array('view' => 'records', 'search' => '', 'offset' => 0, 'limit' => 100, 'filters' => array()));
+    $check('woodbury-facts: they are out of the waiting tabs', !array_intersect(array_column($page['items'], 'key'), $keys)
+        && $page['total'] === $counts['records']);
+    $first = kop_rinbox_on_file_list($src, 'woodbury-facts', array('offset' => 0, 'limit' => 5));
+    $check('woodbury-facts: the Already on file view lists them, saying what the record has', $first['total'] === count($on_file) && $first['items']
+        && $first['items'][0]['details'][0]['label'] === 'Already on file', json_encode($first['items'][0]['details'][0] ?? null));
     $pre = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND preselect = 1 AND facility_id > 0 ORDER BY id LIMIT 1");
     $notpre = $pick("SELECT pkey FROM $t WHERE status = 'pending' AND preselect = 0 AND facility_id > 0 ORDER BY id LIMIT 1");
     $check('woodbury-facts: a checked quote at a sure match starts ticked, others do not',

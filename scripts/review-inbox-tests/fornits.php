@@ -176,6 +176,22 @@ function kop_rinbox_test_fornits(array $src, array $item, callable $check) {
     $check('fornits: the kind filter on the Added tab', $n('applied', array('kind' => 'staff')) === 1 && $n('applied', array('kind' => 'lead')) === 0);
     $counts = call_user_func($src['view_counts'], $q('pending', array()));
     $check('fornits: every tab has its count', $counts['pending'] === 5 && $counts['staff'] === 1 && $counts['applied'] === 1 && $counts['rejected'] === 1, json_encode($counts));
+
+    // A thread already in a record's Materials and links is on file; the made-up ones are not.
+    $pdo = $GLOBALS['pdo'];
+    $rec = null;
+    foreach ($pdo->query("SELECT id, json_data FROM facilities_v2 WHERE json_data LIKE '%resourceLinks%' LIMIT 50")->fetchAll(PDO::FETCH_ASSOC) as $f) {
+        $l = (json_decode((string) $f['json_data'], true) ?: array())['resourceLinks'][0]['url'] ?? '';
+        if ($l !== '') { $rec = array((int) $f['id'], $l); break; }
+    }
+    $pdo->prepare("INSERT INTO wpdl_kop_fornits_items (pkey, topic_id, kind, facility_id, label, value, status, created_at) VALUES (?, 1, 'link', ?, 'On file test', ?, 'pending', ?)")
+        ->execute(array(str_repeat('ab', 16), $rec[0], json_encode(array('url' => $rec[1] . '/')), gmdate('Y-m-d H:i:s')));
+    $found = call_user_func($src['on_file']);
+    $keys = array_map('strval', array_keys($found));
+    $states = $pdo->query("SELECT DISTINCT status FROM wpdl_kop_fornits_items WHERE pkey IN ('" . implode("','", $keys) . "')")->fetchAll(PDO::FETCH_COLUMN);
+    $check('fornits: a thread the record lists already is on file, and only waiting items are', isset($found[str_repeat('ab', 16)]) && $states === array('pending'),
+        count($found) . ' on file, e.g. ' . json_encode(array_slice($found, 0, 2)));
+    $pdo->exec("DELETE FROM wpdl_kop_fornits_items WHERE pkey = '" . str_repeat('ab', 16) . "'");
     $it = kop_rinbox_get_item('fornits', $staff);
     $check('fornits: the most important items start ticked', $it['selected'] === true);
     $check('fornits: Add has an optional Record box (bulk still works)', ($it['actions'][0]['params'][0]['type'] ?? '') === 'facility' && !empty($it['actions'][0]['params'][0]['optional']));

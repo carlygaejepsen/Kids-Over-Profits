@@ -239,6 +239,46 @@ function kop_on_file_match_urls(PDO $pdo, array $want, $self_type = '', $website
     return $found;
 }
 
+/** [facility id => ['name' => ..., 'doc' => facilities_v2 document]] for the ids given that exist. */
+function kop_on_file_docs(PDO $pdo, array $ids) {
+    $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+    $out = array();
+    foreach (array_chunk($ids, 300) as $chunk) {
+        foreach ($pdo->query('SELECT id, name, json_data FROM facilities_v2 WHERE id IN (' . implode(',', $chunk) . ')')->fetchAll(PDO::FETCH_ASSOC) as $f) {
+            $doc = json_decode((string) $f['json_data'], true);
+            if (is_array($doc)) $out[(int) $f['id']] = array('name' => (string) $f['name'], 'doc' => $doc);
+        }
+    }
+    return $out;
+}
+
+/**
+ * $build() cached in a transient until the queue's table ($table, read with
+ * $wpdb) or any facility record changes: a newly added item or record is seen at once.
+ */
+function kop_on_file_cached($name, $table, callable $build) {
+    global $wpdb;
+    try {
+        $pdo = kop_rinbox_pdo();
+        $fp = md5(implode(',', (array) $wpdb->get_row("SELECT COUNT(*), MAX(id), MAX(reviewed_at), SUM(status = 'pending') FROM {$table}", ARRAY_N))
+            . '|' . implode(',', $pdo->query('SELECT COUNT(*), MAX(updated_at) FROM facilities_v2')->fetch(PDO::FETCH_NUM)));
+        $cached = get_transient('kop_on_file_' . $name);
+        if (is_array($cached) && ($cached['fp'] ?? '') === $fp) return (array) $cached['found'];
+        kop_on_file_load_libs();
+        $found = $build($pdo);
+        set_transient('kop_on_file_' . $name, array('fp' => $fp, 'found' => $found), DAY_IN_SECONDS);
+        return $found;
+    } catch (Throwable $e) {
+        return array();
+    }
+}
+
+/** " AND <col> NOT IN (...)" for keys already on file (hex keys only), or ''. */
+function kop_on_file_not_in($col, array $keys) {
+    $keys = array_values(array_filter(array_map('strval', $keys), function ($k) { return preg_match('/^[a-f0-9]{1,64}$/', $k); }));
+    return $keys ? " AND {$col} NOT IN ('" . implode("','", $keys) . "')" : '';
+}
+
 function kop_on_file_status_word($status) {
     $words = array('approved' => 'approved', 'published' => 'published', 'promotional' => 'Industry PR', 'draft' => 'draft');
     return $words[(string) $status] ?? (string) $status;
