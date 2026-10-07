@@ -512,7 +512,7 @@ if (!function_exists('kop_operator_history_index_rows')) {
             foreach ($programs as $f) {
                 if (strcasecmp(trim((string) $f['status']), 'Open') === 0) $open++;
                 $place = trim((string) ($f['state'] ?: ($f['country'] !== 'United States' ? $f['country'] : '')));
-                if ($place !== '') $places[strtoupper($place)] = true;
+                if ($place !== '') $places[strtoupper($place)] = $place;
                 if ((int) $f['start_year'] > 0 && (!$first || (int) $f['start_year'] < $first)) $first = (int) $f['start_year'];
                 foreach (array($f['start_year'], $f['end_year']) as $y) if ((int) $y > $last) $last = (int) $y;
             }
@@ -527,7 +527,7 @@ if (!function_exists('kop_operator_history_index_rows')) {
                 'programs'    => count($programs),
                 'open'        => $open,
                 'states'      => count($places),
-                'places'      => array_keys($places),   // state codes, or countries outside the US
+                'places'      => array_values($places),   // state codes, or countries outside the US
                 'years'       => $founded ? 'Founded ' . $founded : ($first ? 'Programs from ' . $first : ''),
                 'status'      => trim((string) ($op['status'] ?? '')),
                 'has_history' => $written !== null,
