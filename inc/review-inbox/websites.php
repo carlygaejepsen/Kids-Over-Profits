@@ -43,6 +43,7 @@ kop_rinbox_register('websites', function () {
             return (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = %s AND post_status = 'pending'", KOP_EXT_SOURCE_CPT));
         },
         'list'     => 'kop_rinbox_websites_list',
+        'on_file'  => 'kop_rinbox_websites_on_file',
         'get'      => function ($key) {
             $p = kop_rinbox_websites_post($key);
             return $p ? kop_rinbox_websites_item($p) : null;
@@ -264,4 +265,35 @@ function kop_rinbox_websites_tool($id, array $params) {
     if (is_wp_error($new) || !$new) throw new RuntimeException('WordPress would not add it' . (is_wp_error($new) ? ': ' . $new->get_error_message() : '.'));
     kop_rinbox_flush_counts();
     return array('message' => 'Added to the waiting list.', 'key' => (string) $new);
+}
+
+/**
+ * Waiting websites already in our records (inc/review-inbox/_on-file.php): the
+ * address on a facility (its websites or Materials and links), on a kept news
+ * article, lawsuit or bill, or kept here before.
+ */
+function kop_rinbox_websites_on_file() {
+    global $wpdb;
+    $rows = (array) $wpdb->get_results($wpdb->prepare(
+        "SELECT p.ID, p.post_status, m.meta_value AS url FROM {$wpdb->posts} p
+           JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_kop_url'
+          WHERE p.post_type = %s AND p.post_status IN ('pending', 'publish')", KOP_EXT_SOURCE_CPT));
+    kop_on_file_load_libs();
+    $want = array();
+    $kept = array();
+    foreach ($rows as $r) {
+        foreach (kop_on_file_urls($r->url, true) as $u) {
+            if ($r->post_status === 'pending') $want[$u][] = (string) $r->ID;
+            elseif (!isset($kept[$u])) $kept[$u] = (int) $r->ID;
+        }
+    }
+    if (!$want) return array();
+    $found = kop_on_file_match_urls(kop_rinbox_pdo(), $want, '', true);
+    foreach ($want as $u => $ids) {
+        if (!isset($kept[$u])) continue;
+        foreach ($ids as $id) {
+            if (!isset($found[$id])) $found[$id] = array('label' => 'Kept already in Websites sent in (#' . $kept[$u] . ')', 'url' => '');
+        }
+    }
+    return $found;
 }

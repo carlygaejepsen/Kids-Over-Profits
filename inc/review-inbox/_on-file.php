@@ -47,16 +47,17 @@ function kop_on_file_load_libs() {
 }
 
 /** Normalized addresses in a column value (one URL or a JSON list of them). */
-function kop_on_file_urls($value) {
+function kop_on_file_urls($value, $sites = false) {
     $value = trim((string) $value);
     if ($value === '') return array();
     if ($value[0] === '[') {
         $list = json_decode($value, true);
         $value = is_array($list) ? array_values(array_filter($list, 'is_string')) : array();
     }
-    return array_values(array_filter(kop_normalize_urls($value), function ($u) {
-        // A bare site ("example.com") is a program's home page, not one article or filing.
-        return strpos($u, '/') !== false;
+    return array_values(array_filter(kop_normalize_urls($value), function ($u) use ($sites) {
+        // A bare site ("example.com") is a program's home page, not one article or filing
+        // (unless websites are what is being compared).
+        return $sites || strpos($u, '/') !== false;
     }));
 }
 
@@ -125,50 +126,13 @@ function kop_on_file_find(PDO $pdo, $type) {
         }
     }
 
-    $found = array();
+    $found = kop_on_file_match_urls($pdo, $want, $type);
     $mark = function ($id, $label, $url = '') use (&$found) {
         if (!isset($found[$id])) $found[$id] = array('label' => $label, 'url' => $url);
     };
-    // The record's own tab on this page, its id in the label.
     $admin = function ($kind, $id) {
         return function_exists('kop_submission_review_url') ? kop_submission_review_url($kind) : '';
     };
-    $names = array('news' => 'News article', 'lawsuit' => 'Lawsuit', 'legislation' => 'Bill');
-
-    // Kept records of all three types, by address.
-    foreach ($types as $kind => $k) {
-        $in = implode(',', array_fill(0, count($k['kept']), '?'));
-        $cols = implode(', ', array_unique(array_merge(array('id', $k['title'], $k['status_col']), $k['urls'])));
-        $q = $pdo->prepare("SELECT $cols FROM {$k['table']} WHERE {$k['status_col']} IN ($in)");
-        $q->execute($k['kept']);
-        foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $rec) {
-            foreach ($k['urls'] as $col) {
-                foreach (kop_on_file_urls($rec[$col] ?? '') as $u) {
-                    foreach ($want[$u] ?? array() as $id) {
-                        if ($kind === $type && $id === (int) $rec['id']) continue;
-                        $title = trim((string) $rec[$k['title']]) ?: ('#' . $rec['id']);
-                        $mark($id, $names[$kind] . ' #' . $rec['id'] . ' (' . kop_on_file_status_word($rec[$k['status_col']]) . '): ' . $title, $admin($kind, $rec['id']));
-                    }
-                }
-            }
-        }
-    }
-
-    // A facility's "Materials and links".
-    if ($want) {
-        foreach ($pdo->query("SELECT id, name, json_data FROM facilities_v2 WHERE json_data LIKE '%resourceLinks%'") as $f) {
-            $doc = json_decode((string) $f['json_data'], true);
-            foreach ((array) ($doc['resourceLinks'] ?? array()) as $link) {
-                $raw = is_array($link) ? (string) ($link['url'] ?? '') : (string) $link;
-                foreach (kop_on_file_urls($raw) as $u) {
-                    foreach ($want[$u] ?? array() as $id) {
-                        $page = function_exists('kop_facility_page_url') ? kop_facility_page_url((int) $f['id']) : '';
-                        $mark($id, 'On the facility page of ' . $f['name'] . ' (Materials and links)', $page);
-                    }
-                }
-            }
-        }
-    }
 
     // The same thing under another address.
     $kept_in = implode(',', array_fill(0, count($t['kept']), '?'));
@@ -213,6 +177,65 @@ function kop_on_file_find(PDO $pdo, $type) {
     }
 
     ksort($found);
+    return $found;
+}
+
+/**
+ * Which of $want's addresses are in our records. $want: [normalized url => [key, ...]]
+ * (kop_on_file_urls() gives the normalized form). Kept news, lawsuits and bills, and
+ * facilities' resourceLinks; with $websites, also facilities' own website links
+ * (profileLinks). A row of $self_type never matches itself (same id as the key).
+ * Returns [key => {label, url}], the first place found for each key.
+ */
+function kop_on_file_match_urls(PDO $pdo, array $want, $self_type = '', $websites = false) {
+    kop_on_file_load_libs();
+    $found = array();
+    if (!$want) return $found;
+    $mark = function ($id, $label, $url = '') use (&$found) {
+        if (!isset($found[$id])) $found[$id] = array('label' => $label, 'url' => $url);
+    };
+    // The record's own tab on the Submissions Review page, its id in the label.
+    $admin = function ($kind, $id) {
+        return function_exists('kop_submission_review_url') ? kop_submission_review_url($kind) : '';
+    };
+    $names = array('news' => 'News article', 'lawsuit' => 'Lawsuit', 'legislation' => 'Bill');
+
+    foreach (kop_on_file_types() as $kind => $k) {
+        $in = implode(',', array_fill(0, count($k['kept']), '?'));
+        $cols = implode(', ', array_unique(array_merge(array('id', $k['title'], $k['status_col']), $k['urls'])));
+        $q = $pdo->prepare("SELECT $cols FROM {$k['table']} WHERE {$k['status_col']} IN ($in)");
+        $q->execute($k['kept']);
+        foreach ($q->fetchAll(PDO::FETCH_ASSOC) as $rec) {
+            foreach ($k['urls'] as $col) {
+                foreach (kop_on_file_urls($rec[$col] ?? '') as $u) {
+                    foreach ($want[$u] ?? array() as $id) {
+                        if ($kind === $self_type && (string) $id === (string) $rec['id']) continue;
+                        $title = trim((string) $rec[$k['title']]) ?: ('#' . $rec['id']);
+                        $mark($id, $names[$kind] . ' #' . $rec['id'] . ' (' . kop_on_file_status_word($rec[$k['status_col']]) . '): ' . $title, $admin($kind, $rec['id']));
+                    }
+                }
+            }
+        }
+    }
+
+    // A facility's "Materials and links" (and, for websites, its own website links).
+    $like = $websites ? "json_data LIKE '%resourceLinks%' OR json_data LIKE '%profileLinks%'" : "json_data LIKE '%resourceLinks%'";
+    foreach ($pdo->query("SELECT id, name, json_data FROM facilities_v2 WHERE $like") as $f) {
+        $doc = json_decode((string) $f['json_data'], true);
+        $lists = array('Materials and links' => (array) ($doc['resourceLinks'] ?? array()));
+        if ($websites) $lists['its websites'] = (array) ($doc['profileLinks'] ?? array());
+        foreach ($lists as $where => $links) {
+            foreach ($links as $link) {
+                $raw = is_array($link) ? (string) ($link['url'] ?? '') : (string) $link;
+                foreach (kop_on_file_urls($raw, $websites) as $u) {
+                    foreach ($want[$u] ?? array() as $id) {
+                        $page = function_exists('kop_facility_page_url') ? kop_facility_page_url((int) $f['id']) : '';
+                        $mark($id, 'On the facility page of ' . $f['name'] . ' (' . $where . ')', $page);
+                    }
+                }
+            }
+        }
+    }
     return $found;
 }
 

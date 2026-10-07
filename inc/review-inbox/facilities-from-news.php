@@ -45,6 +45,7 @@ kop_rinbox_register('facilities-from-news', function () {
             return (int) $pdo->query("SELECT COUNT(*) FROM news_facility_candidates WHERE decision IN ('possible_duplicate','other_era','needs_place','unquoted')")->fetchColumn();
         },
         'list'     => 'kop_rinbox_facdisc_list',
+        'on_file'  => 'kop_rinbox_facdisc_on_file',
         'get'      => function ($key) {
             $r = kop_rinbox_facdisc_row(kop_closure_pdo(), (int) $key);
             return $r ? kop_rinbox_facdisc_item($r) : null;
@@ -458,4 +459,55 @@ function kop_rinbox_facdisc_save($key, array $fields) {
     $pdo->prepare('UPDATE news_facility_candidates SET detail = ?, reviewed_by = ?, updated_at = UTC_TIMESTAMP() WHERE id = ?')
         ->execute(array(wp_json_encode($detail), kop_rinbox_reviewer(), (int) $key));
     return array('message' => 'Saved. Create a new record uses these details.');
+}
+
+/**
+ * Names to decide whose article is already listed on the record they mean:
+ * the record the scan suggested, or a record that has exactly this name
+ * (name, current, other or past). Nothing is left to do for those but Skip.
+ */
+function kop_rinbox_facdisc_on_file() {
+    $pdo = kop_closure_pdo();
+    kop_facdisc_ensure_tables($pdo);
+    $held = kop_rinbox_facdisc_view_decisions()['held'];
+    $rows = $pdo->query("SELECT c.id, c.news_id, c.mention, c.facility_id, l.facility_id AS linked
+                           FROM news_facility_candidates c JOIN news_facility_links l ON l.news_id = c.news_id
+                          WHERE c.decision IN ('" . implode("','", $held) . "')")->fetchAll(PDO::FETCH_ASSOC);
+    $key = function ($n) {
+        $n = trim((string) $n);
+        return function_exists('kop_facility_pages_name_key') ? kop_facility_pages_name_key($n) : strtolower($n);
+    };
+    $names = array();
+    $name_of = function ($fid) use ($pdo, &$names, $key) {
+        if (!isset($names[$fid])) {
+            $st = $pdo->prepare('SELECT name, json_data FROM facilities_v2 WHERE id = ?');
+            $st->execute(array($fid));
+            $f = $st->fetch(PDO::FETCH_ASSOC);
+            $st->closeCursor();
+            $keys = array();
+            if ($f) {
+                $ident = (array) ((json_decode((string) $f['json_data'], true) ?: array())['identification'] ?? array());
+                $all = array($f['name'], $ident['name'] ?? '', $ident['currentName'] ?? '');
+                foreach (array('otherNames', 'pastNames') as $k) {
+                    foreach ((array) ($ident[$k] ?? array()) as $n) $all[] = is_array($n) ? ($n['name'] ?? '') : $n;
+                }
+                foreach ($all as $n) if (($k = $key($n)) !== '') $keys[$k] = true;
+            }
+            $names[$fid] = array('name' => $f ? (string) $f['name'] : '', 'keys' => $keys);
+        }
+        return $names[$fid];
+    };
+    $out = array();
+    foreach ($rows as $r) {
+        $id = (string) $r['id'];
+        $fid = (int) $r['linked'];
+        if (isset($out[$id]) || $fid <= 0) continue;
+        $f = $name_of($fid);
+        if ($f['name'] === '') continue;
+        if ($fid === (int) $r['facility_id'] || isset($f['keys'][$key($r['mention'])])) {
+            $url = function_exists('kop_facility_page_url') ? (string) kop_facility_page_url($fid) : '';
+            $out[$id] = array('label' => 'The article is listed on ' . $f['name'] . ' already', 'url' => $url);
+        }
+    }
+    return $out;
 }

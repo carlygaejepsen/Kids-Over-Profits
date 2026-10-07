@@ -165,6 +165,23 @@ $msg = $act($row_by($e_name['key']), 'link', array('facility_id' => $fid2, 'add_
 $after2 = $doc_of($fid2);
 $check('with the box ticked the listed name becomes an other name', in_array($e_name['name'], (array) $after2['identification']['otherNames'], true), $msg);
 $check('kop_project_facility_name_key now reaches the record by the listed name', isset(kop_sl_doc_name_keys($after2)[kop_project_facility_name_key($e_name['name'])]));
+// Another list's row with that name in the same state is now on file: listed under "Already on file", that record first.
+$twin = $row_by($e_name['key']);
+unset($twin['id']);
+$twin['row_key'] .= '-twin';
+$twin['status'] = 'open';
+$twin['facility_id'] = null;
+$twin['undo'] = null;
+$pdo->prepare('INSERT INTO wpdl_kop_state_list_rows (' . implode(', ', array_keys($twin)) . ') VALUES (' . implode(', ', array_fill(0, count($twin), '?')) . ')')->execute(array_values($twin));
+$twin_id = (int) $pdo->lastInsertId();
+$twin_rec = $doc_of($fid2);
+$same_state = ($row_by($e_name['key'])['state'] ?? '') === (string) $pdo->query('SELECT state FROM facilities_v2 WHERE id = ' . $fid2)->fetchColumn();
+$on_file = kop_sl_on_file($pdo, $pdo->query('SELECT * FROM wpdl_kop_state_list_rows')->fetchAll(PDO::FETCH_ASSOC));
+$twin_item = array_values(array_filter(kop_sl_screen_data($pdo)['items'], function ($it) use ($twin_id) { return $it['id'] === $twin_id; }))[0] ?? null;
+$check('a row whose name is now a name of one record in the same state is on file with that record (the linked row itself is not)',
+    !$same_state || (($on_file[$twin_id] ?? 0) === $fid2 && $twin_item && $twin_item['on_file']['id'] === $fid2 && !isset($on_file[(int) $row_by($e_name['key'])['id']])),
+    json_encode(array('same_state' => $same_state, 'found' => $on_file[$twin_id] ?? null)));
+$pdo->exec('DELETE FROM wpdl_kop_state_list_rows WHERE id = ' . $twin_id);
 $act($row_by($e_name['key']), 'undo');
 $check('Undo restores the record exactly', kop_facility_same_document($before2, $doc_of($fid2)));
 // Edited after the link: Undo takes off only the added name.

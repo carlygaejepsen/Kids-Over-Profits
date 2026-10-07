@@ -93,6 +93,26 @@ function kop_rinbox_test_websites(array $src, array $item, callable $check) {
     };
     $check('websites: the waiting item is the test website', $item['title'] === 'Inbox Test Ranch alumni page' && $item['url'] === 'https://example.test/alumni'
         && strpos($item['text'], 'Staff in 2004') !== false);
+    // Already on file: a waiting link a facility already lists (its websites or Materials and links).
+    $pdo = $GLOBALS['pdo'];
+    $site = '';
+    $site_of = '';
+    foreach ($pdo->query("SELECT name, json_data FROM facilities_v2 WHERE json_data LIKE '%profileLinks%' LIMIT 200")->fetchAll(PDO::FETCH_ASSOC) as $f) {
+        $links = (array) ((json_decode((string) $f['json_data'], true) ?: array())['profileLinks'] ?? array());
+        if (!empty($links[0]) && is_string($links[0]) && preg_match('#^https?://#', $links[0])) { $site = $links[0]; $site_of = $f['name']; break; }
+    }
+    $pdo->prepare("INSERT INTO wpdl_posts (post_author, post_date, post_content, post_title, post_excerpt, post_status, post_name, post_modified, post_type)
+                   VALUES (1, ?, '', 'On file test', '', 'pending', '', ?, ?)")->execute(array(gmdate('Y-m-d H:i:s'), gmdate('Y-m-d H:i:s'), KOP_EXT_SOURCE_CPT));
+    $dup = (string) $pdo->lastInsertId();
+    // The same address written another way (www, trailing slash).
+    $pdo->prepare("INSERT INTO wpdl_postmeta (post_id, meta_key, meta_value) VALUES (?, '_kop_url', ?)")
+        ->execute(array((int) $dup, preg_replace('#^https?://(www\.)?#i', 'https://www.', rtrim($site, '/')) . '/'));
+    $found = call_user_func($src['on_file']);
+    $check('websites: a waiting link a facility already lists is on file, naming the facility; a new one is not', $site !== '' && isset($found[$dup])
+        && strpos($found[$dup]['label'], $site_of) !== false && !isset($found[(string) $id]), $site . ' ' . json_encode($found));
+    $pdo->exec('DELETE FROM wpdl_postmeta WHERE post_id = ' . (int) $dup);
+    $pdo->exec('DELETE FROM wpdl_posts WHERE ID = ' . (int) $dup);
+
     $check('websites: the tags are the entry\'s own field', strtolower((string) get_post_meta($id, '_kop_tags', true)) === 'needs source, follow up', (string) get_post_meta($id, '_kop_tags', true));
 
     call_user_func($src['save'], $item['key'], array('title' => 'Inbox Test Ranch staff list', 'facility' => 'Inbox Ranch', 'url' => 'https://example.test/alumni?x=1', 'submitted_by' => 'someone else'));
@@ -151,7 +171,7 @@ function kop_rinbox_test_websites(array $src, array $item, callable $check) {
         $check('websites: Add refuses a link that is not one', true, $e->getMessage());
     }
     $counts = call_user_func($src['view_counts'], array());
-    $check('websites: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['pending'] >= 2, json_encode($counts));
+    $check('websites: every tab has a count', array_keys($counts) === array_values(array_diff(array_keys($src['views']), array('on_file'))) && $counts['pending'] >= 2, json_encode($counts));
     call_user_func($src['act'], (string) $new, 'trash', array());
     $res = call_user_func($src['act'], (string) $new, 'delete', array());
     $check('websites: Delete permanently removes a trashed website', !get_post($new), $res['message']);

@@ -135,6 +135,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.ph
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
 # Pending items already in our records leave the waiting list: news/lawsuits/bills (inc/review-inbox/_on-file.php: same link on a kept
 # record or in a facility's resourceLinks, same headline+outlet, case number, bill) go to the Submissions Review "Already on file" tab
+# Any other queue gives its source an 'on_file' => fn(): [key => {label, url}] (kop_rinbox_on_file_keys()): those leave the waiting view and
+# its count for an "Already on file" view. Facilities from News (article already listed on the record meant), Websites sent in (link on a
+# facility or kept record), State Lists (listed name now exactly one record's in that state: own tab, Link offered first, kop_sl_on_file())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-on-file.php [--list] [--db=...]
 python scripts/test-review-inbox-ui.py           # the page in a browser against fixtures: tabs, card edits, tags, AI, actions, phone width
 # Volunteer reviewers (inc/review-volunteers.php, /volunteer-review/, js/volunteer-review.js): KOP Tools > Volunteer Reviewers makes a

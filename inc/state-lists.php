@@ -344,18 +344,57 @@ function kop_sl_screen_data(PDO $pdo) {
         $ids[] = (int) $r['facility_id'];
         $ids[] = (int) $r['left_record_id'];
     }
+    $on_file = kop_sl_on_file($pdo, $rows);
+    foreach ($on_file as $fid) $ids[] = $fid;
     $records = $ids ? kop_sl_records($pdo, $ids) : array();
     $meta = get_option('kop_state_lists_meta', array());
     $lists = is_array($meta['lists'] ?? null) ? $meta['lists'] : array();
     $path = kop_sl_import_path();
     return array(
-        'items'    => array_map(function ($r) use ($records, $lists) { return kop_sl_item($r, $records, $lists); }, $rows),
+        'items'    => array_map(function ($r) use ($records, $lists, $on_file) {
+            $it = kop_sl_item($r, $records, $lists);
+            $fid = $on_file[(int) $r['id']] ?? 0;
+            $it['on_file'] = $fid && isset($records[$fid]) ? $records[$fid] : null;
+            return $it;
+        }, $rows),
         'lists'    => $lists,
         'statuses' => kop_sl_statuses(),
         'types'    => function_exists('kop_facdisc_types') ? kop_facdisc_types() : array(),
         'file'     => array('path' => $path, 'exists' => is_readable($path), 'modified' => is_readable($path) ? gmdate('Y-m-d H:i', filemtime($path)) . ' UTC' : '',
                             'generated' => (string) ($meta['generated'] ?? ''), 'imported_at' => (string) ($meta['imported_at'] ?? '')),
     );
+}
+
+/**
+ * Rows still to decide (To review, Later) whose listed name is now exactly a
+ * name of one record in the same state: a record made or renamed since the
+ * export, or the name added when another row was linked. [row id => facility id];
+ * two or more such records stay undecided, as at export.
+ */
+function kop_sl_on_file(PDO $pdo, array $rows) {
+    $want = array();
+    foreach ($rows as $r) {
+        if (!in_array($r['status'], array('open', 'later'), true) || (int) $r['on_list'] !== 1 || !empty($r['excluded'])) continue;
+        $key = function_exists('kop_facility_pages_name_key') ? kop_facility_pages_name_key($r['name']) : (string) $r['name_key'];
+        if ($key !== '' && $r['state'] !== '') $want[$r['state']][$key][] = (int) $r['id'];
+    }
+    if (!$want) return array();
+    $states = array_keys($want);
+    $st = $pdo->prepare('SELECT id, state, json_data FROM facilities_v2 WHERE state IN (' . implode(',', array_fill(0, count($states), '?')) . ')');
+    $st->execute($states);
+    $hits = array();
+    foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $f) {
+        $doc = json_decode((string) $f['json_data'], true);
+        if (!is_array($doc)) continue;
+        foreach (array_keys(kop_sl_doc_name_keys($doc)) as $k) {
+            foreach ($want[$f['state']][$k] ?? array() as $rid) $hits[$rid][(int) $f['id']] = true;
+        }
+    }
+    $out = array();
+    foreach ($hits as $rid => $fids) {
+        if (count($fids) === 1) $out[$rid] = (int) key($fids);
+    }
+    return $out;
 }
 
 /* ---- Facility records ------------------------------------------------------ */
@@ -652,6 +691,7 @@ function kop_sl_render_page(array $data, $notice, $ajax, $nonce) {
         <div class="kop-sl__bar">
             <div class="kop-sl__tabs" role="tablist">
                 <button type="button" class="kop-sl__tab" data-tab="open" aria-selected="true">To review <span></span></button>
+                <button type="button" class="kop-sl__tab" data-tab="onfile" aria-selected="false" title="The listed name is now exactly a name of one record in the same state: link it to that record">Already on file <span></span></button>
                 <button type="button" class="kop-sl__tab" data-tab="later" aria-selected="false">Later <span></span></button>
                 <button type="button" class="kop-sl__tab" data-tab="done" aria-selected="false">Done <span></span></button>
                 <button type="button" class="kop-sl__tab" data-tab="left" aria-selected="false">Left the list <span></span></button>

@@ -401,7 +401,9 @@ function kop_rinbox_held_counts() {
  * 'next_offset' is where the next page starts in the queue's own order.
  */
 function kop_rinbox_list_unheld(array $src, $source, array $q) {
-    $hidden = kop_rinbox_hidden_keys($source);
+    $held = kop_rinbox_hidden_keys($source);
+    // Items already on file are listed under their own view (kop_rinbox_on_file_keys()).
+    $hidden = $held + (function_exists('kop_rinbox_on_file_keys') ? array_fill_keys(array_keys(kop_rinbox_on_file_keys($source)), true) : array());
     if (!$hidden) {
         $res = call_user_func($src['list'], $q);
         $res['next_offset'] = $q['offset'] + count((array) ($res['items'] ?? array()));
@@ -422,7 +424,7 @@ function kop_rinbox_list_unheld(array $src, $source, array $q) {
         }
         if (count($page) < $q['limit'] || $offset >= $total) break;
     }
-    return array('items' => $items, 'total' => max(0, $total - count($hidden)), 'next_offset' => $offset, 'held' => count($hidden));
+    return array('items' => $items, 'total' => max(0, $total - count($hidden)), 'next_offset' => $offset, 'held' => count($held));
 }
 
 /* ---- Preview -------------------------------------------------------------- */

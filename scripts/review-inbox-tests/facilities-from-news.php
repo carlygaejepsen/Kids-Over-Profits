@@ -55,7 +55,28 @@ function kop_rinbox_test_facilities_from_news(array $src, array $item, callable 
     $check('facilities-from-news: Create carries the form, prefilled', $p['officialName']['value'] === 'Renamed In Test' && $p['state']['value'] === 'UT'
         && empty($p['officialName']['optional']) && !empty($p['country']['optional']) && isset($p['type']['options']['Wilderness Therapy']));
     $counts = call_user_func($src['view_counts'], array());
-    $check('facilities-from-news: every tab has a count', array_keys($counts) === array_keys($src['views']) && $counts['all'] >= $counts['held'], json_encode($counts));
+    // "Already on file" is counted by the core (kop_rinbox_rest_items()), not the queue.
+    $check('facilities-from-news: every tab has a count', array_keys($counts) === array_values(array_diff(array_keys($src['views']), array('on_file'))) && $counts['all'] >= $counts['held'], json_encode($counts));
+
+    // Already on file: the article is listed on the record the name means; those leave "To decide".
+    $on_file = kop_rinbox_on_file_keys('facilities-from-news');
+    $held_ids = array_map('strval', $pdo->query("SELECT id FROM news_facility_candidates WHERE decision IN ('possible_duplicate','other_era','needs_place','unquoted')")->fetchAll(PDO::FETCH_COLUMN));
+    $linked = true;
+    foreach ($on_file as $k => $info) {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM news_facility_links l JOIN news_facility_candidates c ON c.news_id = l.news_id WHERE c.id = ?');
+        $st->execute(array((int) $k));
+        $n = (int) $st->fetchColumn();
+        $st->closeCursor();
+        if (!$n || strpos($info['label'], 'already') === false) $linked = false;
+    }
+    $check('facilities-from-news: names whose article is on their record already are found, each a held name with its article listed', $on_file && !array_diff(array_keys($on_file), $held_ids) && $linked,
+        count($on_file) . ' of ' . count($held_ids) . ': ' . json_encode(array_slice($on_file, 0, 2, true)));
+    $waiting = kop_rinbox_list_unheld($src, 'facilities-from-news', array('view' => 'held', 'search' => '', 'offset' => 0, 'limit' => 100, 'origin' => '', 'filters' => array()));
+    $check('facilities-from-news: they leave To decide', !array_intersect(array_column($waiting['items'], 'key'), array_keys($on_file)) && $waiting['total'] === count($held_ids) - count($on_file),
+        $waiting['total'] . ' waiting');
+    $listed = kop_rinbox_on_file_list($src, 'facilities-from-news', array('offset' => 0, 'limit' => 100));
+    $check('facilities-from-news: the Already on file view lists them, each card saying where', $listed['total'] === count($on_file)
+        && $listed['items'] && $listed['items'][0]['details'][0]['label'] === 'Already on file' && isset($src['views']['on_file']));
     $check('facilities-from-news: All recent lists every name', call_user_func($src['list'], array('view' => 'all', 'search' => '', 'offset' => 0, 'limit' => 1))['total'] === $counts['all']);
     $check('facilities-from-news: details name the article', in_array('Found in', array_column($again['details'], 'label'), true));
     $check('facilities-from-news: the scan tool is offered', ($src['tools'][0]['id'] ?? '') === 'scan' && is_callable($src['tool']));

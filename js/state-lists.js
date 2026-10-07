@@ -48,6 +48,8 @@
 
     function tabOf(it) {
         if (!it.on_list) return 'left';
+        // The name is now exactly one record's (kop_sl_on_file()): link it there.
+        if (it.on_file && (it.status === 'open' || it.status === 'later')) return 'onfile';
         if (it.status === 'open') return 'open';
         if (it.status === 'later') return 'later';
         return 'done';
@@ -108,6 +110,16 @@
         }
         var addName = el('input');
         addName.type = 'checkbox';
+        if (it.on_file) {
+            var known = el('p', 'kop-sl__note');
+            known.appendChild(document.createTextNode('Already on file: the listed name is a name of '));
+            known.appendChild(link(it.on_file.name, it.on_file.url));
+            known.appendChild(document.createTextNode(' (' + [place(it.on_file), '#' + it.on_file.id].filter(Boolean).join(' · ') + '). Link it there.'));
+            card.appendChild(known);
+            if (!it.candidates.some(function (c) { return c.id === it.on_file.id; })) {
+                it.candidates = [Object.assign({ why: 'it has this exact name in the same state' }, it.on_file)].concat(it.candidates);
+            }
+        }
         if (!it.excluded) {
             var box = el('div', 'kop-sl__box');
             box.appendChild(el('h4', 'kop-sl__h', it.candidates.length ? 'Is it one of these records?' : 'Is it a record we have under another name?'));
@@ -246,7 +258,7 @@
     }
 
     function draw() {
-        var counts = { open: 0, later: 0, done: 0, left: 0 };
+        var counts = { open: 0, onfile: 0, later: 0, done: 0, left: 0 };
         var shown = [];
         D.items.forEach(function (it) {
             if (!visible(it)) return;
@@ -270,7 +282,7 @@
         shown.forEach(function (it) {
             var card = el('article', 'kop-sl__card' + (tab === 'left' ? ' is-left' : '') + (it.left_seen ? ' is-seen' : ''));
             card.appendChild(head(it));
-            if (tab === 'open' || tab === 'later') openCard(it, card);
+            if (tab === 'open' || tab === 'onfile' || tab === 'later') openCard(it, card);
             else if (tab === 'done') doneCard(it, card);
             else leftCard(it, card);
             list.appendChild(card);
