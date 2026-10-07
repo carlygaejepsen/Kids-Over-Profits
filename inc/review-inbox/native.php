@@ -103,10 +103,11 @@ foreach (array_keys(kop_rinbox_native_types()) as $kop_rinbox_native_key) {
             'group'  => 'Submissions',
             'native' => true,
             'views'  => array('pending' => 'Pending'),
-            'count'  => function () use ($t) {
+            'count'  => function () use ($t, $type) {
                 $st = kop_rinbox_pdo()->prepare("SELECT COUNT(*) FROM {$t['table']} WHERE {$t['status_col']} = ?");
                 $st->execute(array($t['pending']));
-                return (int) $st->fetchColumn();
+                // What is already in our records waits under "Already on file" (_on-file.php), not here.
+                return max(0, (int) $st->fetchColumn() - count(kop_on_file_ids(kop_rinbox_pdo(), $type)));
             },
             'list'   => function (array $q) use ($type, $t) {
                 $pdo = kop_rinbox_pdo();

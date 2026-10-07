@@ -60,6 +60,7 @@ get_header();
             <div class="filter-controls">
                 <div class="submission-tabs status-tabs" role="tablist" aria-label="Status">
                     <button type="button" role="tab" class="submission-tab" data-status="submitted">Pending</button>
+                    <button type="button" role="tab" class="submission-tab dated-only" data-status="on_file" title="Sent in again although it is already in our records (the same link, case number or bill on a kept record, or in a facility's Materials and links). Kept out of Pending; reject them here." hidden>Already on file <span class="tab-count" id="statOnFile" hidden></span></button>
                     <button type="button" role="tab" class="submission-tab" data-status="approved">Approved</button>
                     <button type="button" role="tab" class="submission-tab" data-status="published">Published</button>
                     <button type="button" role="tab" class="submission-tab" data-status="rejected">Rejected</button>

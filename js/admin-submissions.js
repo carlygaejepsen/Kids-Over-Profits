@@ -168,6 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'data' && statusFilter.value === 'draft') {
             statusFilter.value = 'submitted';
         }
+        // "Already on file" exists for news, lawsuits and bills only.
+        if (!(isRecord || isNews) && statusFilter.value === 'on_file') {
+            statusFilter.value = 'submitted';
+        }
         if (typeof syncAddNew === 'function') syncAddNew();
     }
 
@@ -648,6 +652,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 statPublished.textContent = stats.published || 0;
                 statRejected.textContent = stats.rejected || 0;
                 if (statPromo) statPromo.textContent = stats.promotional || 0;
+                const statOnFile = document.getElementById('statOnFile');
+                if (statOnFile) {
+                    const n = Number(stats.on_file || 0);
+                    statOnFile.textContent = n > 0 ? String(n) : '';
+                    statOnFile.hidden = n === 0;
+                }
             }
         } catch (error) {
             console.error('Failed to load stats:', error);
@@ -691,7 +701,14 @@ document.addEventListener('DOMContentLoaded', () => {
             type: currentType,
             limit: String(PAGE_SIZE)
         });
-        if (status) params.set('status', status);
+        // "Already on file": pending items the server found in our records
+        // (inc/review-inbox/_on-file.php); Pending itself leaves them out.
+        if (status === 'on_file') {
+            params.set('status', 'submitted');
+            params.set('on_file', 'only');
+        } else if (status) {
+            params.set('status', status);
+        }
         if (search) params.set('search', search);
         // "Came from" (filled by js/review-inbox.js): the scraper, an import, the extension, people.
         const originFilter = document.getElementById('originFilter');
@@ -927,6 +944,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }
 
+            if (submission.on_file && submission.on_file.label) {
+                const note = document.createElement('p');
+                note.className = 'on-file-note';
+                const where = submission.on_file.url
+                    ? `<a href="${escapeHtml(submission.on_file.url)}" target="_blank" rel="noopener">${escapeHtml(submission.on_file.label)}</a>`
+                    : escapeHtml(submission.on_file.label);
+                note.innerHTML = `${kopIcon('check-circle')} Already on file: ${where}`;
+                const meta = card.querySelector('.submission-meta');
+                if (meta) meta.after(note); else card.prepend(note);
+            }
             card.querySelector('.btn-view').addEventListener('click', () => viewSubmission(submission.id));
             submissionsList.appendChild(card);
         });

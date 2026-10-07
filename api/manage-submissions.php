@@ -182,6 +182,23 @@ function kop_news_status_enum_ensure(PDO $pdo): void {
 }
 
 /** Trim/dedupe a list that may arrive as an array or newline-separated text. */
+/**
+ * Status counts with the pending items already on file moved out of the
+ * pending count into 'on_file' (inc/review-inbox/_on-file.php).
+ */
+function kop_stats_split_on_file(PDO $pdo, string $type, array $schema, array $byStatus): array {
+    if (!function_exists('kop_on_file_ids')) {
+        return $byStatus;
+    }
+    $n = count(kop_on_file_ids($pdo, $type));
+    if ($n > 0) {
+        $pending = $schema['pending'];
+        $byStatus[$pending] = max(0, (int) ($byStatus[$pending] ?? 0) - $n);
+        $byStatus['on_file'] = $n;
+    }
+    return $byStatus;
+}
+
 function kop_normalize_list($value): array {
     if (is_array($value)) {
         $items = array_map(static function ($v) { return is_string($v) ? trim($v) : $v; }, $value);
@@ -304,6 +321,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         }
     }
 
+    // Pending items already in our records (inc/review-inbox/_on-file.php) are
+    // left out of Pending and listed on their own ("Already on file", on_file=only).
+    $onFile = [];
+    $pendingView = $status !== null && $status !== '' && $status === $schema['pending'];
+    if ($pendingView && function_exists('kop_on_file_pending')) {
+        $onFile = kop_on_file_pending($pdo, $type);
+        $onFileIds = implode(',', array_map('intval', array_keys($onFile)));
+        if (($_GET['on_file'] ?? '') === 'only') {
+            $where[] = $onFileIds !== '' ? "id IN ($onFileIds)" : '0 = 1';
+        } elseif ($onFileIds !== '') {
+            $where[] = "id NOT IN ($onFileIds)";
+        }
+    }
+
     // Jurisdiction and level (lawsuits, legislation) and "sort by date", as
     // the old Lawsuit and Legislation admin pages had them.
     if (function_exists('kop_rinbox_native_list_filters')) {
@@ -365,8 +396,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     foreach ($submissions as &$row) {
         if ($schema['record']) {
             $row = kop_map_record_submission($row, $schema);
+            $row['on_file'] = $onFile[(int) $row['id']] ?? null;
             continue;
         }
+        $row['on_file'] = $onFile[(int) $row['id']] ?? null;
         $row['json_data'] = json_decode($row['json_data'] ?? '', true);
         if ($type === 'data' && empty($row['submitted_by'])) {
              $row['submitted_by'] = 'Anonymous';
@@ -879,6 +912,7 @@ try {
                     "SELECT {$schema['status_col']} AS status, COUNT(*) AS count
                      FROM {$schema['table']} GROUP BY {$schema['status_col']}"
                 )->fetchAll(PDO::FETCH_KEY_PAIR);
+                $byStatus = kop_stats_split_on_file($pdo, $type, $schema, $byStatus);
                 echo json_encode([
                     'success' => true,
                     'stats' => ['by_status' => $byStatus, 'total' => array_sum($byStatus)],
@@ -912,6 +946,8 @@ try {
                 FROM news_submissions
                 GROUP BY status
             ")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+            $newsStats = kop_stats_split_on_file($pdo, 'news', kop_submission_schema('news'), $newsStats);
 
             $newsTypeStats = $pdo->query("
                 SELECT article_type, COUNT(*) as count

@@ -1808,3 +1808,18 @@ button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:foc
 @media (max-width: 640px) {
     .add-new-fields { grid-template-columns: 1fr; }
 }
+
+/* "Already on file": the record that already holds this item */
+.submission-card .on-file-note {
+    margin: 6px 0 0;
+    padding: 6px 10px;
+    border-left: 4px solid var(--kop-teal-ink, #1D6F79);
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight, #000435);
+    font-size: 13px;
+}
+
+.submission-card .on-file-note a {
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+}
