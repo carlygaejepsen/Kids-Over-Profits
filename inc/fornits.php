@@ -1210,6 +1210,11 @@ function kop_fornits_undo(array $rows, $reviewer) {
             $results[$r['pkey']] = array('ok' => true);
         } elseif ($r['status'] !== 'applied') {
             $results[$r['pkey']] = array('ok' => false, 'error' => 'Nothing to undo.');
+        } elseif (($done['filed'] ?? '') === 'young_adult') {
+            // On a young adult program's profile (kop_fornits_ya_file()): the fact comes off again.
+            if (function_exists('kop_ya_remove_fact') && kop_ya_pdo()) kop_ya_remove_fact(kop_ya_pdo(), (array) ($done['done'] ?? array()));
+            $back($r);
+            $results[$r['pkey']] = array('ok' => true);
         } elseif (($done['via'] ?? '') === 'queue') {
             try {
                 kop_gdl_queue_remove(kop_gdl_queue_pdo(), $done);
@@ -1678,4 +1683,44 @@ function kop_fornits_render_assets() {
     })();
     </script>
     <?php
+}
+
+/**
+ * File a waiting item on young adult program $yid (its record moved there) as
+ * a fact citing the post: staff, incidents, thread links ("About the program"),
+ * leads (history; a closure also fills Closed and the year when empty). Undo:
+ * kop_fornits_undo() takes the fact off.
+ */
+function kop_fornits_ya_file(array $r, $yid, $reviewer) {
+    global $wpdb;
+    if ($r['status'] !== 'pending') throw new RuntimeException('This item was already handled (' . $r['status'] . ').');
+    $pdo = function_exists('kop_ya_pdo') ? kop_ya_pdo() : null;
+    $p = $pdo ? kop_ya_get($pdo, $yid) : null;
+    if (!$p) throw new RuntimeException('There is no young adult program ' . (int) $yid . '.');
+    $v = json_decode((string) $r['value'], true) ?: array();
+    $when = kop_fornits_month($r['post_date']);
+    $cite = array('label' => 'Fornits forum', 'number' => '', 'page' => 0,
+        'url' => $r['kind'] === 'link' ? (string) ($v['url'] ?? '') : kop_fornits_post_url($r['topic_id'], $r['post_n']),
+        'cite' => 'Fornits forum, post by ' . ($r['author'] !== '' ? $r['author'] : 'a member') . ($when ? ', ' . $when : ''));
+    $groups = array('staff' => 'staff', 'incident' => 'incident', 'lead' => 'history', 'link' => 'details');
+    $label = (string) $r['label'];
+    if ($r['kind'] === 'staff') {
+        $label = trim(($v['person'] ?? '') . ', ' . ($v['role'] ?? '') . (!empty($v['years']) ? ' (' . $v['years'] . ')' : ''), ', ');
+    } elseif ($r['kind'] === 'incident' || $r['kind'] === 'lead') {
+        $label = trim((($v['year'] ?? '') !== '' ? $v['year'] . ': ' : '') . rtrim((string) ($v['summary'] ?? $r['label']), '.')) . '.';
+    } elseif ($r['kind'] === 'link') {
+        $label = 'Survivor discussion on Fornits: ' . preg_replace('/^Fornits:\s*/', '', kop_fornits_link_label($r));
+        $cite['cite'] = 'Fornits forum';
+    }
+    $fill = array();
+    if ($r['kind'] === 'lead' && kop_fornits_lead_target($v + array('url' => '', 'type' => '')) === 'closed') {
+        $fill['status'] = 'Closed';
+        if (($v['year'] ?? '') !== '') $fill['closed'] = (int) $v['year'];
+    }
+    $now = current_time('mysql', true);
+    $fact = array('key' => 'fornits-' . $r['pkey'], 'group' => $groups[$r['kind']] ?? 'details', 'label' => $label, 'cites' => array($cite), 'by' => $reviewer, 'at' => $now);
+    $done = kop_ya_add_fact($pdo, (int) $yid, $fact, $fill);
+    $wpdb->update(kop_fornits_items_table(), array('status' => 'applied', 'applied_fid' => 0, 'reviewed_by' => $reviewer, 'reviewed_at' => $now,
+        'applied' => wp_json_encode(array('filed' => 'young_adult', 'id' => (int) $yid, 'name' => $p['name'], 'done' => $done))), array('pkey' => $r['pkey']));
+    return 'Added to the young adult program "' . $p['name'] . '", citing the post. Undo is on the Added tab.';
 }

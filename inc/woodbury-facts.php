@@ -1140,6 +1140,7 @@ add_action('init', function () {
 add_action('kop_wbf_auto_hourly', function () {
     kop_wbf_ensure_table();
     kop_wbf_sync();
+    kop_wbf_moved_to_ya();
     kop_wbf_auto_run(120);
 });
 
@@ -2418,4 +2419,26 @@ function kop_wbf_render_assets() {
     })();
     </script>
     <?php
+}
+
+/**
+ * Waiting items whose record moved to the young adult programs (the record is
+ * gone): onto the "Young adult programs (18+)" tab with that program picked,
+ * no longer "Facility #N does not exist". Run after every load of the facts
+ * file (which writes the build's record ids back) and when the queue opens.
+ * Returns how many items moved.
+ */
+function kop_wbf_moved_to_ya() {
+    global $wpdb;
+    if (!function_exists('kop_ya_moved_from_map')) return 0;
+    $map = kop_ya_moved_from_map();
+    if (!$map) return 0;
+    $n = 0;
+    foreach ($map as $fid => $p) {
+        $n += (int) $wpdb->query($wpdb->prepare('UPDATE ' . kop_wbf_table() . " SET facility_id = 0, ya = 1, ya_why = %s,
+            conflict = CASE WHEN conflict LIKE '%%does not exist%%' THEN '' ELSE conflict END
+            WHERE facility_id = %d AND status IN ('pending', 'gone')",
+            'Its record moved to the young adult programs: ' . $p['name'] . ' (young adult program #' . (int) $p['id'] . ').', (int) $fid));
+    }
+    return $n;
 }

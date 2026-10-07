@@ -259,5 +259,14 @@ if ($only === '' || $only === 'homes') {
     }
 }
 
+if ($only === '' || $only === 'ya-moved') {
+    echo "-- Items of records moved to the young adult programs --\n";
+    try {
+        kop_rinbox_test_ya_moved($check);
+    } catch (Throwable $e) {
+        $check('ya-moved: no errors', false, get_class($e) . ': ' . $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine());
+    }
+}
+
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);

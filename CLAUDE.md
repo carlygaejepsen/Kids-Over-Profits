@@ -230,6 +230,10 @@ php scripts/test-indigenous-schools.php          # the first move and the page, 
 # /young-adult-programs/, managed at KOP Tools > Young Adult Programs, filled from Woodbury Facts' "Young adult programs (18+)" tab
 php scripts/test-young-adult-programs.php       # records, facts + exact undo, every no-record Woodbury item, the page
 php scripts/test-young-adult-move.php           # the first move of 18+ facility records, on an in-memory copy (sync the mirror first)
+# Items still naming a moved record (kop_ya_moved_from_map(): source "Moved from facility record N") are filed on the program: Woodbury
+# Facts moves them to its young adult tab, program picked (kop_wbf_moved_to_ya(), after every facts load and hourly); Fornits cards offer
+# "Add to <program>" (kop_fornits_ya_file(), a fact citing the post; Undo takes it off)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=ya-moved
 # Edit in place (inc/inline-edit.php, js/inline-edit.js): admins get a pencil on every marked element
 # (kop_ie_attr('<source>:<what>')) that saves through the source's own save path; a new page or field gets a marker there
 php scripts/test-inline-edit.php                  # every facility sent back unchanged is unchanged, edits land, against tmp/prod.sqlite

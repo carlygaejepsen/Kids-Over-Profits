@@ -75,6 +75,8 @@ function kop_rinbox_wbf_list(array $q) {
         // A new facts.json is loaded when the queue is opened, as the old screen does.
         set_transient('kop_rinbox_wbf_synced', 1, MINUTE_IN_SECONDS);
         kop_wbf_sync();
+        // Items of a record moved to the young adult programs go to its young adult tab (the load writes the old ids back).
+        kop_wbf_moved_to_ya();
     }
     $where = kop_rinbox_wbf_where($q['view'], $q);
     $table = kop_wbf_table();
@@ -225,7 +227,9 @@ function kop_rinbox_wbf_item(array $r) {
             $programs[(string) $p['id']] = $p['name'] . ($p['state'] !== '' ? ' (' . $p['state'] . ')' : '');
         }
         if ($programs) {
-            $match = $pdo && function_exists('kop_ya_find_by_name') ? (kop_ya_find_by_name($pdo, $r['program']) ?: kop_ya_find_by_name($pdo, $r['program_as_written'])) : null;
+            // A moved record names its program (kop_wbf_moved_to_ya()); else the program by name.
+            $match = preg_match('/young adult program #(\d+)/', (string) ($r['ya_why'] ?? ''), $mm) && $pdo ? kop_ya_get($pdo, (int) $mm[1]) : null;
+            $match = $match ?: ($pdo && function_exists('kop_ya_find_by_name') ? (kop_ya_find_by_name($pdo, $r['program']) ?: kop_ya_find_by_name($pdo, $r['program_as_written'])) : null);
             $actions[] = array('id' => 'ya_apply', 'label' => 'Add to that young adult program', 'style' => 'approve',
                 'help' => 'Adds this item to the young adult program you pick, on the Young Adult Programs page, citing the Woodbury page.',
                 'params' => array(

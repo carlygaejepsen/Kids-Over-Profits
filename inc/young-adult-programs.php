@@ -750,3 +750,21 @@ add_action('admin_init', function () {
         }
     }
 });
+
+/**
+ * [old facilities_v2 id => ['id' => program id, 'name' => ...]] for the
+ * programs moved out of the facility records (source "Moved from facility
+ * record N", kop_ya_move_facility()). Woodbury Facts and Fornits items that
+ * still name the old record are filed on the program instead.
+ */
+function kop_ya_moved_from_map(PDO $pdo = null) {
+    static $memo = null;
+    if ($memo !== null) return $memo;
+    $memo = array();
+    $pdo = $pdo ?: kop_ya_pdo();
+    if (!$pdo || !kop_ya_ready($pdo)) return $memo;
+    foreach ($pdo->query("SELECT id, name, source FROM young_adult_programs WHERE source LIKE 'Moved from facility record %'")->fetchAll(PDO::FETCH_ASSOC) as $p) {
+        if (preg_match('/facility record (\d+)/', (string) $p['source'], $m)) $memo[(int) $m[1]] = array('id' => (int) $p['id'], 'name' => (string) $p['name']);
+    }
+    return $memo;
+}

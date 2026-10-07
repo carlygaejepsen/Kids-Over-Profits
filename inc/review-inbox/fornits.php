@@ -271,8 +271,14 @@ function kop_rinbox_fornits_item(array $r) {
                 'testimony' => 'Adds this account to the survivor testimony of ' . $fname . ', unpublished: it shows only after "OK to publish" is ticked on the record.',
             )[$kind] ?? '';
         }
+        // A record moved to the young adult programs: the item goes on that program's profile.
+        $ya = kop_fornits_ya_target($r);
+        if ($ya) {
+            $actions[] = array('id' => 'ya_file', 'label' => 'Add to ' . $ya['name'] . ' (young adult program)', 'style' => 'approve',
+                'help' => 'Its facility record moved to the young adult programs: this adds the item to ' . $ya['name'] . '\'s profile on /young-adult-programs/, citing the post. Undo takes it off.');
+        }
         // The Record box is the old screen's "Add checked to that record".
-        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => 'approve', 'help' => $help, 'params' => array(
+        $actions[] = array('id' => 'apply', 'label' => $label, 'style' => $ya ? 'neutral' : 'approve', 'help' => $help, 'params' => array(
             array('name' => 'facility', 'label' => $kind === 'lead' ? 'Record (not needed for a queue)' : 'Record', 'type' => 'facility',
                 'value' => (int) $r['facility_id'], 'optional' => true),
         ));
@@ -368,6 +374,10 @@ function kop_rinbox_fornits_act($key, $action, array $params) {
     $r = kop_rinbox_fornits_row($key);
     $user = kop_rinbox_reviewer();
     switch ($action) {
+        case 'ya_file':
+            $ya = kop_fornits_ya_target($r);
+            if (!$ya) throw new RuntimeException('This item\'s record is not a young adult program.');
+            return array('message' => kop_fornits_ya_file($r, $ya['id'], $user));
         case 'apply':
         case 'move':
             if ($r['status'] !== 'pending') throw new RuntimeException('This item was already handled (' . $r['status'] . ').');
@@ -639,4 +649,10 @@ function kop_rinbox_fornits_conflicts() {
         }
         return $out;
     });
+}
+
+/** The young adult program a waiting item's (deleted) record moved to, or null; never survivor accounts (unpublished, a record's own). */
+function kop_fornits_ya_target(array $r) {
+    if (($r['status'] ?? '') !== 'pending' || ($r['kind'] ?? '') === 'testimony' || (int) $r['facility_id'] <= 0 || !function_exists('kop_ya_moved_from_map')) return null;
+    return kop_ya_moved_from_map()[(int) $r['facility_id']] ?? null;
 }
