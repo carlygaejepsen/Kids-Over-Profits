@@ -10,6 +10,8 @@
  *                                       the whole /facility/ page minus the HTML-only parts
  *   GET kop/v1/operator/<slug or id>    kop_operator_page_data() (inc/operator-pages.php);
  *   GET kop/v1/operator?name=UHS        a duplicate id resolves to its canonical record
+ *   GET kop/v1/operators                every company page, one line each (the app's Companies
+ *                                       list): kop_operator_history_index_rows(), A to Z
  *   GET kop/v1/news                     the public news feed (templates/page-news-feed.php):
  *                                       ?page= ?per_page= (max 50) ?archive=YYYY-MM
  *                                       ?story=<arc slug> ?facility=<id>
@@ -60,6 +62,11 @@ add_action('rest_api_init', function () {
             'name' => array('required' => true, 'type' => 'string', 'sanitize_callback' => 'sanitize_text_field'),
         ),
     ));
+    register_rest_route('kop/v1', '/operators', array(
+        'methods'             => WP_REST_Server::READABLE,
+        'callback'            => 'kop_mobile_operators_rest',
+        'permission_callback' => '__return_true',
+    ));
     register_rest_route('kop/v1', '/news', array(
         'methods'             => WP_REST_Server::READABLE,
         'callback'            => 'kop_mobile_news_rest',
@@ -107,9 +114,14 @@ if (!function_exists('kop_mobile_facility_payload')) {
         foreach ($keep as $k) {
             if (array_key_exists($k, $page)) $out[$k] = $page[$k];
         }
+        // A record with a written profile post (/elan/) is that post on the website: its /facility/ page 301s there.
+        if (!empty($out['id']) && function_exists('kop_facility_page_url')) {
+            $canonical = kop_facility_page_url((int) $out['id']);
+            if ($canonical !== '') $out['url'] = $canonical;
+        }
         $out['news'] = array_map('kop_mobile_news_card', (array) ($page['news'] ?? array()));
 
-        $insp = isset($page['inspections']) && is_array($page['inspections']) ? $page['inspections'] : null;
+        $insp =isset($page['inspections']) && is_array($page['inspections']) ? $page['inspections'] : null;
         if ($insp) {
             $reports = array_values((array) ($insp['reports'] ?? array()));
             $out['inspections'] = array(
@@ -246,6 +258,41 @@ if (!function_exists('kop_mobile_operator_rest')) {
         $data = kop_mobile_operator($id);
         if ($data === null) return kop_mobile_not_found('No company page for "' . ($by_name ? $name : $ref) . '".');
         return kop_mobile_response($data, $etag);
+    }
+}
+
+if (!function_exists('kop_mobile_operators')) {
+    /**
+     * {total, items: [{id, slug, name, url, programs, open, places, years, status, major}]}, A to Z:
+     * the /operator/ index without its ledes and map numbers. Named keys only.
+     */
+    function kop_mobile_operators() {
+        $items = array();
+        foreach (function_exists('kop_operator_history_index_rows') ? kop_operator_history_index_rows() : array() as $row) {
+            $items[] = array(
+                'id'       => (int) $row['id'],
+                'slug'     => (string) $row['slug'],
+                'name'     => (string) $row['name'],
+                'url'      => (string) $row['url'],
+                'programs' => (int) $row['programs'],
+                'open'     => (int) $row['open'],
+                'places'   => array_values(array_map('strval', (array) $row['places'])),
+                'years'    => (string) $row['years'],
+                'status'   => (string) $row['status'],
+                'major'    => !empty($row['major']),
+            );
+        }
+        usort($items, static function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+        return array('api_version' => KOP_MOBILE_API_VERSION, 'total' => count($items), 'items' => $items);
+    }
+}
+
+if (!function_exists('kop_mobile_operators_rest')) {
+    function kop_mobile_operators_rest($request) {
+        $index = kop_operator_pages_index();
+        $etag = kop_mobile_etag(array('operators', $index['fingerprint'] ?? '', function_exists('kop_facility_pages_index') ? (kop_facility_pages_index()['fingerprint'] ?? '') : ''));
+        if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
+        return kop_mobile_response(kop_mobile_operators(), $etag);
     }
 }
 

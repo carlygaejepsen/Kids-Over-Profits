@@ -75,8 +75,8 @@ php scripts/test-facility-pages.php
 # this site; kop_facility_pages_is_own_source()) is not shown, and the Woodbury Reports wording ("Woodbury Reports, May 2007, p. 20") is
 # not printed or put in a preview, only the link to our copy of the issue (kop_facility_pages_woodbury_clean(), _tidy_citations(), _cited_html())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-citation-cleanup.php [--no-db] [--id=9607]   # functions, then real pages from tmp/prod.sqlite
-# The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>
-# and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
+# The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>,
+# /operators (the Companies list) and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
 # A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky
 # Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious

@@ -470,8 +470,8 @@ if (!function_exists('kop_operator_history_is_major')) {
 
 if (!function_exists('kop_operator_history_index_rows')) {
     /**
-     * Every company page: [{id, name, url, programs, open, states, years,
-     * status, has_history, map_degree, major}], majors first by size. Read
+     * Every company page: [{id, name, slug, url, programs, open, states, places,
+     * years, status, has_history, lede, map_degree, major}], majors first by size. Read
      * from the tables in two queries, so the index never builds whole pages.
      */
     function kop_operator_history_index_rows() {
@@ -522,10 +522,12 @@ if (!function_exists('kop_operator_history_index_rows')) {
             $row = array(
                 'id'          => (int) $id,
                 'name'        => $entry['display'],
+                'slug'        => $entry['slug'],
                 'url'         => kop_operator_pages_url_for_slug($entry['slug']),
                 'programs'    => count($programs),
                 'open'        => $open,
                 'states'      => count($places),
+                'places'      => array_keys($places),   // state codes, or countries outside the US
                 'years'       => $founded ? 'Founded ' . $founded : ($first ? 'Programs from ' . $first : ''),
                 'status'      => trim((string) ($op['status'] ?? '')),
                 'has_history' => $written !== null,

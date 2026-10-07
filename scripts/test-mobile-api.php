@@ -28,7 +28,9 @@ $dump_dir = isset($args['dump']) ? (string) $args['dump'] : '';
 
 if ($fixture) {
     $db_path = sys_get_temp_dir() . '/kop-mobile-api-fixture-' . getmypid() . '.sqlite';
-    register_shutdown_function(function () use ($db_path) { @unlink($db_path); });
+    register_shutdown_function(function () use ($db_path) {
+        try { @unlink($db_path); } catch (Throwable $e) {}   // Windows keeps the file locked while PDO holds it
+    });
     kop_mobile_test_build_fixture($db_path);
 } else {
     $db_path = $args['db'] ?? (dirname(__DIR__) . '/tmp/prod.sqlite');
@@ -46,6 +48,14 @@ require_once dirname(__DIR__) . '/inc/operator-pages.php';
 require_once dirname(__DIR__) . '/inc/operator-history.php';
 require_once dirname(__DIR__) . '/inc/indigenous-schools.php';
 require_once dirname(__DIR__) . '/inc/mobile-api.php';
+if (!$fixture) {
+    // On the mirror the pages are built as the live site builds them: homes under their program, renamed
+    // programs cut by the saved rename years (as scripts/test-program-homes.php and test-facility-eras.php do).
+    require_once dirname(__DIR__) . '/inc/citations.php';
+    require_once dirname(__DIR__) . '/inc/program-homes.php';
+    $kop_renames = @unserialize((string) $wpdb->get_var("SELECT option_value FROM wpdl_options WHERE option_name = 'kop_network_rename_review'"));
+    if (is_array($kop_renames)) $GLOBALS['kop_test_options']['kop_network_rename_review'] = $kop_renames;
+}
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -174,6 +184,8 @@ $walk = function ($v, $path = '') use (&$walk, $private_keys) {
             if (is_string($k) && in_array($k, $private_keys, true) && "$path.$k" !== '.inspections.summary.phone') $problems[] = "private key $path.$k";   // the page prints the licensed phone as "Phone on file"
             $problems = array_merge($problems, $walk($child, $path . '.' . $k));
         }
+        // A citation that only points back to us is never shown (kop_facility_pages_tidy_citations()), here or on the website.
+        if ((isset($v['cite']) || isset($v['source'])) && kop_facility_pages_is_own_source($v)) $problems[] = "own citation at $path: " . substr((string) ($v['cite'] ?? $v['source']), 0, 60);
     } elseif (is_string($v)) {
         if (preg_match('/<[a-z!\/][^>]*>/i', $v)) $problems[] = "HTML at $path: " . substr($v, 0, 60);
         if (strpos($v, 'PRIVATE-') !== false) $problems[] = "sentinel at $path: " . substr($v, 0, 60);
@@ -261,8 +273,12 @@ foreach ($sample_ids as $fid) {
     $json = json_encode($payload);
     $check("facility $fid encodes to JSON under 500 KB", $json !== false && strlen($json) < 500 * 1024, (int) (strlen((string) $json) / 1024) . ' KB');
     $check("facility $fid documents is {folder_id, url}", array_keys($payload['documents']) === array('folder_id', 'url'));
+    // The app hangs each fact's sources on the fact with the same label; a key with no such fact is a source nobody sees.
+    $labels = array_merge(array('formerly', 'former_locations'), array_column((array) $payload['facts'], 'label'));
+    $orphans = array_values(array_diff(array_keys((array) $payload['fact_sources']), $labels));
+    $check("facility $fid sources each name a fact", !$orphans, implode(', ', $orphans));
     $check("facility $fid id and slug match the index", $payload['id'] === $fid && $payload['slug'] === $index['ids'][$fid]['slug']);
-    $check("facility $fid url is the page url", $payload['url'] === kop_facility_page_url($fid));
+    $check("facility $fid url is the page url", $payload['url'] === kop_facility_page_url($fid), $payload['url'] . ' vs ' . kop_facility_page_url($fid));
     if ($payload['inspections'] !== null) {
         $check("facility $fid inspections cut to " . KOP_MOBILE_API_MAX_REPORTS, count($payload['inspections']['reports']) <= KOP_MOBILE_API_MAX_REPORTS && isset($payload['inspections']['more']));
         $check("facility $fid inspections keep the serious findings list", is_array($payload['inspections']['violations']));
@@ -440,6 +456,23 @@ $check('facility route answers 304 to its own ETag', $r2 instanceof WP_REST_Resp
 $check('facility route 404s an unknown slug', is_wp_error(kop_mobile_facility_rest(new KOP_Mobile_Test_Request(array(), array('ref' => 'no-such-place-xx')))));
 $r = kop_mobile_operator_rest(new KOP_Mobile_Test_Request(array(), array('ref' => '', 'name' => $fixture ? 'UHS' : $oindex['ids'][$sample_ops[0]]['display'])));
 $check('operator route by name', $r instanceof WP_REST_Response && $r->status === 200 && isset($r->data['name']), is_wp_error($r) ? $r->get_error_message() : '');
+$r = kop_mobile_operators_rest(new KOP_Mobile_Test_Request(array(), array()));
+$ol = $r instanceof WP_REST_Response ? $r->data : array();
+$check('operators route lists every company page', $r instanceof WP_REST_Response && $r->status === 200 && ($ol['total'] ?? -1) === count($oindex['ids']) && isset($r->headers['ETag']),
+    ($ol['total'] ?? '?') . ' of ' . count($oindex['ids']));
+$okeys = array('id', 'slug', 'name', 'url', 'programs', 'open', 'places', 'years', 'status', 'major');
+$check('operators items carry only the named keys', $ol && !array_filter($ol['items'], function ($i) use ($okeys) { return array_keys($i) !== $okeys; }));
+$check('operators slugs resolve to their company', $ol && !array_filter($ol['items'], function ($i) { return kop_mobile_resolve_operator_id($i['slug'], false) !== $i['id']; }));
+$names = $ol ? array_column($ol['items'], 'name') : array();
+$sorted = $names;
+usort($sorted, 'strcasecmp');
+$check('operators are A to Z', $names === $sorted);
+$problems = $walk($ol);
+$check('operators list has no private key, HTML or sentinel', !$problems, implode('; ', array_slice($problems, 0, 3)));
+$json = json_encode($ol);
+$check('operators list is small', $json !== false && strlen($json) < 300 * 1024, (int) (strlen((string) $json) / 1024) . ' KB');
+$check('operators route answers 304 to its own ETag', kop_mobile_operators_rest(new KOP_Mobile_Test_Request(array('if_none_match' => $r->headers['ETag'] ?? 'x'), array()))->status === 304);
+$dump('operators.json', $ol);
 $r = kop_mobile_news_rest(new KOP_Mobile_Test_Request(array(), array('per_page' => '3')));
 $check('news route returns 3 items with an ETag', $r instanceof WP_REST_Response && count($r->data['items']) === min(3, $feed['total']) && isset($r->headers['ETag']));
 $r2 = kop_mobile_news_rest(new KOP_Mobile_Test_Request(array('if_none_match' => $r->headers['ETag']), array('per_page' => '3')));

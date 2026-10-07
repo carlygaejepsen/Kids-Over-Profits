@@ -218,13 +218,16 @@ if (!function_exists('kop_facility_eras_record_items')) {
             // Forum reports are survivor testimony on the record's own page, not incidents.
             if (stripos((string) $inc['cite'], 'Fornits') !== 0) $incidents[] = $inc;
         }
+        // Cleaned as the record's own lists are: no citation back to us, no Woodbury wording.
+        $staff = kop_facility_pages_add_map_people(kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id), $facility_id);
+        foreach ($staff as $group => $people) $staff[$group] = kop_facility_pages_tidy_citations($people);
         return array(
             'memorials'  => kop_facility_pages_memorials($name_keys, $state_name),
             'violations' => (array) ($inspections['violations'] ?? array()),
             'lawsuits'   => kop_facility_pages_lawsuits($facility_id, $name_keys),
-            'incidents'  => $incidents,
+            'incidents'  => kop_facility_pages_tidy_citations($incidents),
             'news'       => kop_facility_pages_news($facility_id),
-            'staff'      => kop_facility_pages_add_map_people(kop_facility_pages_staff_items($doc['staff'] ?? null, $facility_id), $facility_id),
+            'staff'      => $staff,
         );
     }
 }

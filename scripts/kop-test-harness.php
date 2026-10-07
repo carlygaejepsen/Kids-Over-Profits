@@ -171,6 +171,12 @@ function get_the_modified_date($format = '', $post = null) {
 if (!function_exists('edit_post_link')) { function edit_post_link() {} }
 if (!function_exists('wp_strip_all_tags')) { function wp_strip_all_tags($s) { return trim(strip_tags((string) preg_replace('@<(script|style)[^>]*?>.*?</\\1>@si', '', (string) $s))); } }
 if (!function_exists('wp_kses_post')) { function wp_kses_post($s) { return (string) $s; } }
+if (!function_exists('wp_trim_words')) {
+    function wp_trim_words($text, $num_words = 55, $more = null) {
+        $words = preg_split('/\s+/', trim(wp_strip_all_tags($text)), -1, PREG_SPLIT_NO_EMPTY);
+        return count($words) > $num_words ? implode(' ', array_slice($words, 0, $num_words)) . ($more ?? '&hellip;') : implode(' ', $words);
+    }
+}
 function _prime_post_caches() {}
 function wp_get_attachment_url($id) {
     $file = get_post_meta($id, '_wp_attached_file', true);
