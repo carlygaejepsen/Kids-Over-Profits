@@ -50,6 +50,9 @@ require_once get_stylesheet_directory() . '/inc/admin.php';
 // One-time corrections to existing legislation rows (seeds/legislation-updates.json)
 require_once get_stylesheet_directory() . '/inc/legislation-updates.php';
 
+// One-time corrections to existing lawsuit rows (seeds/lawsuit-updates.json)
+require_once get_stylesheet_directory() . '/inc/lawsuit-updates.php';
+
 // Slug-level 301 redirects for renamed or retired pages
 require_once get_stylesheet_directory() . '/inc/redirects.php';
 

@@ -1,0 +1,204 @@
+{
+  "_about": "One-time corrections to existing lawsuit rows, applied by inc/lawsuit-updates.php when 'version' changes. Each row matches id AND its current case_name; only the listed fields change, add_source_urls is merged into source_urls, and the note is appended to reviewer_notes. New cases in seeds/lawsuits.json are inserted in the same pass.",
+  "version": "2026-10-06",
+  "updates": [
+    {
+      "id": 9,
+      "case_name": "Whitcomb and Clifford v. InnerChange Chrysalis, LLC (Embark Behavioral Health), et al.",
+      "note": "Status check 2026-10-06: dismissal order on the docket.",
+      "set": {
+        "status": "dismissed",
+        "case_number": "9:23-cv-00039-DLC",
+        "outcome": "Dismissed with prejudice on the parties' joint stipulation Dec 18, 2025; case closed."
+      },
+      "add_source_urls": [
+        "https://cases.justia.com/federal/district-courts/montana/mtdce/9:2023cv00039/73239/77/0.pdf"
+      ]
+    },
+    {
+      "id": 5,
+      "case_name": "Sweidy v. Spring Ridge Academy, et al.",
+      "note": "Status check 2026-10-06: 9th Cir. memo and SCOTUS docket.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "On August 15, 2023 the court granted summary judgment to Veronica Borges, Jean Courtney, Suzanne Courtney, Brandon Courtney, Erin Smith, Leslie Filsinger and Justin Zych, and dismissed every claim except fraud and consumer fraud against Spring Ridge Academy and Kate Deily. After a jury trial that began May 29, 2024, the jury returned a $2.5 million verdict for Kimberly Sweidy on June 14, 2024. On January 8, 2025 the court granted the defendants' motion for a new trial, finding a reasonable possibility that a juror viewed prejudicial outside information on Reddit during deliberations, and vacated the verdict; pending motions for attorney fees and costs were denied as moot. The Ninth Circuit affirmed the earlier partial judgments on January 23, 2026 (No. 24-4318), and the U.S. Supreme Court denied review on October 5, 2026 (No. 25-1402). The retrial of the fraud claims against Spring Ridge Academy and Kate Deily is still pending."
+      },
+      "add_source_urls": [
+        "https://cdn.ca9.uscourts.gov/datastore/memoranda/2026/01/23/24-4318.pdf",
+        "https://www.supremecourt.gov/search.aspx?filename=/docket/docketfiles/html/public/25-1402.html"
+      ]
+    },
+    {
+      "id": 60,
+      "case_name": "Jane Doe S.P. v. Devereux Advanced Behavioral Health, et al.",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "dismissed",
+        "outcome": "Removed from Camden County Superior Court Jan 5, 2026; plaintiff voluntarily dismissed the federal case Jan 6, 2026."
+      },
+      "add_source_urls": [
+        "https://dockets.justia.com/docket/new-jersey/njdce/1:2026cv00056/589430"
+      ]
+    },
+    {
+      "id": 2,
+      "case_name": "Fuller v. Hyde School",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "in_progress",
+        "case_number": "2:25-cv-00354-SDN",
+        "outcome": "Motion to dismiss granted in part Jul 27, 2026: forced-labor and negligence claims proceed; three former leaders dismissed."
+      },
+      "add_source_urls": [
+        "https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/",
+        "https://clearinghouse.net/case/47536/"
+      ]
+    },
+    {
+      "id": 41,
+      "case_name": "Dean Jeffries L. Goodridge, individually and as Personal Representative of the Estate of Taylor Goodridge v. Diamond Ranch Academy, Inc.",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "Some claims dismissed May 2024; Big Springs dismissed Jan 2025; discovery into defendants' finances reopened Aug 27, 2026."
+      },
+      "add_source_urls": [
+        "https://www.govinfo.gov/app/details/USCOURTS-utd-4_22-cv-00102/context",
+        "https://dockets.justia.com/docket/utah/utdce/4:2022cv00102/136738"
+      ]
+    },
+    {
+      "id": 25,
+      "case_name": "The Estate of Jason Britt and Kathleen Britt v. Agape Baptist Church, Inc. d/b/a Agape Boarding School",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "Summary judgment granted in part and denied in part Apr 30, 2026."
+      },
+      "add_source_urls": [
+        "https://www.courtlistener.com/opinion/10710041/kathleen-britt-individually-and-as-the-surviving-parent-of-jason-britt/",
+        "https://dockets.justia.com/docket/missouri/mowdce/6:2023cv03316/172388"
+      ]
+    },
+    {
+      "id": 52,
+      "case_name": "Doe, K.H. and Doe, M.H. v. Kansas City Girls Academy, et al.",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "Court allowed plaintiffs to proceed under pseudonyms Jun 3, 2026."
+      },
+      "add_source_urls": [
+        "https://www.govinfo.gov/app/details/USCOURTS-mowd-4_25-cv-00989"
+      ]
+    },
+    {
+      "id": 28,
+      "case_name": "Tenia Goshay, Personal Representative of the Estate of Cornelius Frederick v. Lakeside for Children d/b/a Lakeside Academy, et al.",
+      "note": "Status check 2026-10-06: news report, not the docket.",
+      "set": {
+        "status": "settled",
+        "outcome": "Settled Dec 2021; terms confidential."
+      },
+      "add_source_urls": [
+        "https://www.wwmt.com/news/local/family-of-cornelius-fredricks-settles-kalamazoo-county-lawsuit"
+      ]
+    },
+    {
+      "id": 51,
+      "case_name": "Siegel v. Trails Carolina, LLC, et al.",
+      "note": "Status check 2026-10-06: news report of the settlement (plaintiff not named).",
+      "set": {
+        "status": "settled",
+        "outcome": "On August 5, 2024, the court denied defendants' motions to dismiss and to strike. The case settled through mediation in September 2024; terms were not disclosed. The supplied complaint alleges that the plaintiff was sexually assaulted by another minor while at Trails Carolina and that defendants failed to protect her."
+      },
+      "add_source_urls": [
+        "https://www.yahoo.com/news/where-does-trails-carolina-stand-175840703.html"
+      ]
+    },
+    {
+      "id": 17,
+      "case_name": "Hinman v. Island View Academy et al.",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "ruling",
+        "outcome": "Summary judgment granted for both defendants May 13, 2015."
+      },
+      "add_source_urls": [
+        "https://dockets.justia.com/docket/utah/utdce/1:2014cv00015/92051"
+      ]
+    },
+    {
+      "id": 13,
+      "case_name": "Frederic Yeomans IV v. Discovery Ranch, Inc.",
+      "note": "Status check 2026-10-06: federal docket; the state filing may be separate.",
+      "set": {
+        "status": "dismissed",
+        "outcome": "Related federal case 2:17-cv-00768 (D. Utah) dismissed without prejudice Dec 14, 2017."
+      },
+      "add_source_urls": [
+        "https://dockets.justia.com/docket/utah/utdce/2:2017cv00768/106125"
+      ]
+    },
+    {
+      "id": 53,
+      "case_name": "Markel Insurance Company v. Trinity Teen Solutions, Inc., et al.",
+      "note": "Status check 2026-10-06.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "All defendants answered Oct 23, 2024; counterclaims filed."
+      },
+      "add_source_urls": [
+        "https://dockets.justia.com/docket/wyoming/wydce/1:2024cv00181/68387"
+      ]
+    },
+    {
+      "id": 72,
+      "case_name": "Doe v. Excellus Health Plan, Inc.",
+      "note": "Status check 2026-10-06: wording fix.",
+      "set": {
+        "outcome": "Apr 2023: summary judgment denied on the breach-of-contract claim; claim for interest dismissed."
+      },
+      "add_source_urls": [
+        "https://www.nycourts.gov/reporter/3dseries/2023/2023_23117.htm"
+      ]
+    },
+    {
+      "id": 64,
+      "case_name": "Mariam J. Kamara v. Devereux Foundation d/b/a Devereux Advanced Behavioral Health",
+      "note": "Hidden (draft) at the owner's request: not a youth-resident abuse case (Devereux data-breach class action).",
+      "set": {
+        "status": "closed",
+        "outcome": "Consolidated into Williams v. Devereux, 2:26-cv-05354 (data-breach class action); docket closed Sep 9, 2026.",
+        "publication_status": "draft"
+      },
+      "add_source_urls": [
+        "https://dockets.justia.com/docket/pennsylvania/paedce/2:2026cv05355/658798"
+      ]
+    },
+    {
+      "id": 57,
+      "case_name": "Whitney Hart v. The Devereux Foundation",
+      "note": "Hidden (draft) at the owner's request: not a youth-resident abuse case (employment case).",
+      "set": {
+        "publication_status": "draft"
+      }
+    },
+    {
+      "id": 90,
+      "case_name": "DURHAM v. CAPITAL ACADEMY et al 1:2018cv02045 | U.S. District Court for the District of New Jersey | Justia",
+      "note": "Hidden (draft) at the owner's request: not a youth-resident abuse case (employee whistleblower case).",
+      "set": {
+        "publication_status": "draft"
+      }
+    },
+    {
+      "id": 80,
+      "case_name": "Onofrio v. Mingus Mountain Academy et al",
+      "note": "Hidden (draft) at the owner's request: not a youth-resident abuse case (ADA employment case).",
+      "set": {
+        "publication_status": "draft"
+      }
+    }
+  ]
+}

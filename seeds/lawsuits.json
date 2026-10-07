@@ -2039,6 +2039,149 @@
           "link_type": "primary"
         }
       ]
+    },
+    {
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "The Devereux Foundation"
+      ],
+      "settlement_amount": "",
+      "document_urls": [],
+      "tags": [],
+      "facility_links": [],
+      "case_name": "Jane Doe v. The Devereux Foundation et al.",
+      "case_number": "2:26-cv-03710",
+      "court": "U.S. District Court for the District of New Jersey",
+      "jurisdiction": "Federal",
+      "filing_date": "2026-04-08",
+      "status": "settled",
+      "plaintiffs": [
+        "Jane Doe"
+      ],
+      "defendants": [
+        "The Devereux Foundation d/b/a Devereux Advanced Behavioral Health",
+        "The Helena Devereux Foundation",
+        "Devereux Properties, Inc.",
+        "Devereux Schools, Inc.",
+        "Devereux-Deerhaven School for Troubled Girls",
+        "Doe Defendants 1-3"
+      ],
+      "facilities_mentioned": [
+        "Devereux-Deerhaven"
+      ],
+      "claims": [],
+      "outcome": "Notice of settlement filed Jun 25, 2026; dismissed with prejudice Aug 25, 2026.",
+      "summary": "A former resident, filing under a pseudonym, brought a personal-injury suit against Devereux and related entities, including its Deerhaven school for girls. The case settled before the defendants answered and was dismissed with prejudice.",
+      "source_urls": [
+        "https://dockets.justia.com/docket/new-jersey/njdce/2:2026cv03710/595361"
+      ]
+    },
+    {
+      "staff_mentioned": [
+        "Alan Biggers"
+      ],
+      "organizations_mentioned": [],
+      "settlement_amount": "",
+      "document_urls": [],
+      "tags": [],
+      "facility_links": [],
+      "case_name": "Clapper v. Teen Challenge d/b/a Kansas City Girls Academy, et al.",
+      "case_number": "2616-CV23822",
+      "court": "Circuit Court of Jackson County, Missouri",
+      "jurisdiction": "Missouri",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Brooke Clapper"
+      ],
+      "defendants": [
+        "Teen Challenge d/b/a Kansas City Girls Academy",
+        "Alan Biggers"
+      ],
+      "facilities_mentioned": [
+        "Kansas City Girls Academy"
+      ],
+      "claims": [
+        "negligence",
+        "emotional_abuse",
+        "neglect"
+      ],
+      "outcome": "Filed July 2026.",
+      "summary": "A former resident who attended in 2022 alleges she was strip-searched with male staff present, monitored on camera while sleeping, and denied basic medical care, including during a serious illness. The complaint also describes isolation and shunning used as discipline.",
+      "source_urls": [
+        "https://fox4kc.com/news/education/former-students-sue-kansas-city-girls-academy-for-alleged-mistreatment/",
+        "https://hoodline.com/2026/07/strip-search-shock-claims-rock-kansas-city-girls-academy/",
+        "https://www.tonyskansascity.com/2026/07/kansas-city-faith-based-boarding-school.html"
+      ]
+    },
+    {
+      "staff_mentioned": [],
+      "organizations_mentioned": [],
+      "settlement_amount": "",
+      "document_urls": [],
+      "tags": [],
+      "facility_links": [],
+      "case_name": "Brandmeyer v. Kansas City Girls Academy, et al.",
+      "case_number": "2616-CV24404",
+      "court": "Circuit Court of Jackson County, Missouri",
+      "jurisdiction": "Missouri",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Josephine Brandmeyer"
+      ],
+      "defendants": [
+        "Kansas City Girls Academy"
+      ],
+      "facilities_mentioned": [
+        "Kansas City Girls Academy"
+      ],
+      "claims": [
+        "negligence",
+        "sexual_abuse",
+        "emotional_abuse",
+        "neglect"
+      ],
+      "outcome": "Filed July 2026.",
+      "summary": "A former resident who attended from 2019 to 2021 alleges she was sexually assaulted by another student and strip-searched by staff. She also alleges staff cut off family contact, misled parents, and kept her enrolled longer for financial reasons.",
+      "source_urls": [
+        "https://fox4kc.com/news/education/former-students-sue-kansas-city-girls-academy-for-alleged-mistreatment/",
+        "https://hoodline.com/2026/07/strip-search-shock-claims-rock-kansas-city-girls-academy/"
+      ]
+    },
+    {
+      "staff_mentioned": [],
+      "organizations_mentioned": [],
+      "settlement_amount": "",
+      "document_urls": [],
+      "tags": [],
+      "facility_links": [],
+      "case_name": "Haley v. Kansas City Girls Academy, et al.",
+      "case_number": "2616-CV24416",
+      "court": "Circuit Court of Jackson County, Missouri",
+      "jurisdiction": "Missouri",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Hana Haley"
+      ],
+      "defendants": [
+        "Kansas City Girls Academy"
+      ],
+      "facilities_mentioned": [
+        "Kansas City Girls Academy"
+      ],
+      "claims": [
+        "negligence",
+        "emotional_abuse",
+        "neglect"
+      ],
+      "outcome": "Filed July 2026.",
+      "summary": "A former resident who attended from 2019 to 2021 alleges she was strip-searched several times and denied bathroom access despite a medical need.",
+      "source_urls": [
+        "https://fox4kc.com/news/education/former-students-sue-kansas-city-girls-academy-for-alleged-mistreatment/",
+        "https://hoodline.com/2026/07/strip-search-shock-claims-rock-kansas-city-girls-academy/"
+      ]
     }
   ],
   "updates": [
