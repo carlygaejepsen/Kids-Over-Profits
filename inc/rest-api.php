@@ -3965,6 +3965,7 @@ function kop_state_collect_inspection_summaries($state_name) {
             $stats_by_facility = array();        // counts
             $inspections_by_facility = array();  // per-record details
             $inspection_by_fid_date = array();   // "$fid|$date" -> index into $inspections_by_facility[$fid] (for grouping single-finding rows)
+            $nc_pending = array();               // NC statement row id -> [fid, index], read from the text below
 
             if (is_array($report_rows)) {
                 foreach ($report_rows as $r) {
@@ -4093,6 +4094,21 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $stats_by_facility[$fid]['violations'] += $finding_count;
                     $update_latest($date_str);
 
+                    // NC's scraper keeps only the report's text. A plan of
+                    // correction is the facility's answer (its statement is a
+                    // separate report, counted there); a statement's violations
+                    // are read from its text below, as /nc-reports/ does.
+                    $finding_label = '';
+                    if ($abbrev === 'NC' && !$finding_count && count($inspections_by_facility[$fid]) < 20) {
+                        $nc_doc = (string)($categories['document_type'] ?? '');
+                        if ($nc_doc === '') $nc_doc = (string)($r['summary'] ?? '');
+                        if (preg_match('/defic|defen|statement/i', $nc_doc)) {
+                            $nc_pending[(int)$r['id']] = array($fid, count($inspections_by_facility[$fid]));
+                        } else {
+                            $finding_label = 'Plan of correction';
+                        }
+                    }
+
                     if (count($inspections_by_facility[$fid]) < 20) {
                         // Cherry-pick state-report category fields so JS can render
                         // the same accordion sections that /xx-reports/ pages do,
@@ -4152,6 +4168,39 @@ function kop_state_collect_inspection_summaries($state_name) {
                             'summary'       => $summary_out,
                             'categories'    => $picked_categories,
                         );
+                        if ($finding_label !== '') {
+                            $inspections_by_facility[$fid][count($inspections_by_facility[$fid]) - 1]['finding_label'] = $finding_label;
+                        }
+                    }
+                }
+            }
+
+            // NC statements: count "Rule is not met as evidenced by" in the
+            // text with the reader /nc-reports/ uses (kop_its_nc_statement()),
+            // a few reports at a time so the whole state's text is never held.
+            if ($nc_pending) {
+                require_once get_stylesheet_directory() . '/api/lib-inspection-text-signals.php';
+                foreach (array_chunk(array_keys($nc_pending), 100) as $chunk) {
+                    $texts = $wpdb->get_results(
+                        'SELECT id, raw_content FROM inspection_reports WHERE id IN (' . implode(',', array_map('intval', $chunk)) . ')',
+                        ARRAY_A
+                    );
+                    foreach ((array) $texts as $t) {
+                        list($fid, $idx) = $nc_pending[(int) $t['id']];
+                        if (!isset($inspections_by_facility[$fid][$idx])) continue;
+                        $read = kop_its_nc_statement((string) $t['raw_content']);
+                        $rec =& $inspections_by_facility[$fid][$idx];
+                        if ($read['citations'] > 0) {
+                            $rec['finding_count'] = $read['citations'];
+                            $stats_by_facility[$fid]['violations'] += $read['citations'];
+                        } elseif (!$read['clean']) {
+                            $rec['finding_label'] = $read['attempted'] ? 'Survey not completed' : 'See report';
+                        } elseif (!empty($read['complaint']['substantiated'])) {
+                            // "The complaint was substantiated. No deficiencies were cited."
+                            $rec['finding_label'] = 'Complaint substantiated';
+                        }
+                        if (!empty($read['complaint']['substantiated'])) $rec['complaint'] = 'substantiated';
+                        unset($rec);
                     }
                 }
             }
@@ -5816,7 +5865,7 @@ function kop_state_feed_split(array $feed) {
                     $records[$ref] = $insp;
                     $cats = isset($insp['categories']) && is_array($insp['categories']) ? $insp['categories'] : array();
                     $stub = array('ref' => $ref);
-                    foreach (array('date', 'type', 'finding_count', 'pdf_url', 'inspected_by') as $k) {
+                    foreach (array('date', 'type', 'finding_count', 'finding_label', 'pdf_url', 'inspected_by') as $k) {
                         if (isset($insp[$k]) && $insp[$k] !== '' && $insp[$k] !== null) $stub[$k] = $insp[$k];
                     }
                     if (!empty($cats['licensee'])) $stub['categories'] = array('licensee' => $cats['licensee']);

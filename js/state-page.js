@@ -673,14 +673,17 @@
             const hasCorrectiveActions = cats.corrective_actions && String(cats.corrective_actions).toLowerCase() !== 'none';
             const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0 || deficiencies.length > 0 || hasCorrectiveActions;
             const findingCount = insp.finding_count || findings.length || deficiencies.length;
-            const klass = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
+            // finding_label: the server could not count findings and says what
+            // the report is instead (NC: plan of correction, survey not completed).
+            const otherLabel = !hasFindings && insp.finding_label ? String(insp.finding_label) : '';
+            const klass = hasFindings ? 'inspection-box-violation' : (otherLabel ? 'inspection-box-neutral' : 'inspection-box-clean');
             const dateStr = formatDate(insp.date) || '—';
             const typeStr = insp.type ? escapeHtml(insp.type) : 'Inspection';
             const findingsLabel = hasFindings
                 ? (findingCount > 0
                     ? `${findingCount} finding${findingCount === 1 ? '' : 's'}`
                     : 'Has corrective actions')
-                : 'No findings';
+                : (otherLabel || 'No findings');
 
             const sourceLinks = [];
             const pdfUrls = Array.isArray(insp.pdf_urls) && insp.pdf_urls.length ? insp.pdf_urls : (insp.pdf_url ? [insp.pdf_url] : []);
@@ -701,6 +704,7 @@
                 cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
                 cats.census ? `<strong>Census:</strong> ${escapeHtml(cats.census)}` : '',
                 cats.complaint_status ? `<strong>Complaint Status:</strong> ${escapeHtml(cats.complaint_status)}` : '',
+                insp.complaint === 'substantiated' ? '<strong>Complaint:</strong> substantiated' : '',
                 cats.met_with ? `<strong>Met With:</strong> ${escapeHtml(cats.met_with)}` : '',
                 sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : '',
             ].filter(Boolean).join('<br>');

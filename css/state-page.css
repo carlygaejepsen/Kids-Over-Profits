@@ -782,6 +782,27 @@ button.facility-expand-btn:active {
     color: #065f46;
 }
 
+/* A report whose findings could not be counted (NC plan of correction, survey
+   not completed): says what it is, never "No findings". */
+.inspection-box-neutral {
+    background: #ffffff;
+}
+
+.inspection-box-neutral .inspection-header {
+    color: #1f2937;
+    border-bottom: 1px solid transparent;
+}
+
+.inspection-box-neutral[open] .inspection-header {
+    border-bottom-color: #dddddd;
+    background: #f8fafc;
+}
+
+.inspection-box-neutral .inspection-summary-findings {
+    background: #edf2f7;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 .inspection-content {
     padding: 0.85em 1em;
     background: #ffffff;
