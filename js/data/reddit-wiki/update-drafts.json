@@ -1102,6 +1102,43 @@
    "fixes": [],
    "conflicts": []
   },
+  "209": {
+   "program": "Blue Ridge Therapeutic Wilderness",
+   "place": "Clayton, GA",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "6fb321be2509a64b7f10e054d662ea80380486e7",
+   "record": {
+    "id": 12506,
+    "name": "Blue Ridge Therapeutic Wilderness",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bryan Delaney** was the Field director of Second Nature Blue Ridge. Delaney was also residential staff of Brush Ranch School, conference committee member of NATSAP, program director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) and involved with of [Outdoor Behavioral Healthcare Industry Council](https://www.reddit.com/r/troubledteens/wiki/active-programs/obhic).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Blue Ridge Therapeutic Wilderness on Kids Over Profits](https://kidsoverprofits.org/facility/blue-ridge-therapeutic-wilderness-ga/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "223": {
    "program": "San Marcos Treatment Center",
    "place": "San Marcos, TX",
@@ -1223,6 +1260,51 @@
    "fixes": [],
    "conflicts": []
   },
+  "243": {
+   "program": "Chamberlain International School",
+   "place": "Middleborough, MA",
+   "years": "1976-present",
+   "column": "original_markdown",
+   "base_sha1": "17b30c135947b0264bcfafa00e52f48ef4b1d43c",
+   "record": {
+    "id": 11982,
+    "name": "Chamberlain International School",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Sarah Norfleet** was the Director of Business Development of Chamberlain International School in 2013 ([Woodbury Reports, September 2013, p. 3](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0913.pdf#page=3)). Norfleet was also Director of Marketing and Business Development of FL Chamberlain School.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Runaways, findings of neglect and abuse cast shadow at Chamberlain school | GBH](https://www.wgbh.org/news/education-news/2016-08-16/runaways-findings-of-neglect-and-abuse-cast-shadow-at-chamberlain-school) (GBH News, 8/16/2016)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Chamberlain International School on Kids Over Profits](https://kidsoverprofits.org/facility/chamberlain-international-school-ma/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "244": {
    "program": "Cherokee Creek Boys School",
    "place": "Westminster, SC",
@@ -1286,6 +1368,60 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Cherokee Creek Boys School on Kids Over Profits](https://kidsoverprofits.org/facility/cherokee-creek-boys-school-sc/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "245": {
+   "program": "Cherry Gulch",
+   "place": "Emmett, ID",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "db92afd8798367e98940ecb927c2b2ba1e1ea6a5",
+   "record": {
+    "id": 9696,
+    "name": "Cherry Gulch",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Betty Ervin** was an Owner of Cherry Gulch in 2007 ([Woodbury Reports, April 2007 (#152), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0407.pdf#page=17)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael Ervin** was an Owner, Admissions Director of Cherry Gulch in 2007 ([Woodbury Reports, April 2007 (#152), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0407.pdf#page=17)). Ervin was also Former Executive Director (2008) of Lone Star Expeditions, Eastern Regional Director of Admissions (Outdoor Division) (2008) of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducationgroup) and admissions director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Andy Gold** was the Clinical Director of Cherry Gulch in 2008 ([Woodbury Reports, December 2008 (#172), p. 19](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=19)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Cherry Gulch on Kids Over Profits](https://kidsoverprofits.org/facility/cherry-gulch-id/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -1489,6 +1625,69 @@
      "new": "Like other behavior-modification programs, Ashcreek Ranch Academy used a level-system consisting of four levels. These levels (as of 2012) were:"
     }
    ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "502": {
+   "program": "Crossroads Academy RTC",
+   "place": "Ogden, UT",
+   "years": "2007-present",
+   "column": "original_markdown",
+   "base_sha1": "94a5baaec303b7f3bf73c2ac945efbe0cb20cbae",
+   "record": {
+    "id": 10421,
+    "name": "Crossroads Academy RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael Alger** was the Founder & Executive Director of Crossroads Academy RTC in 2006-2010 ([Woodbury Reports, October 2006 (#146), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=17)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Brian Virgin** was the Program Director of Crossroads Academy RTC in 2010 ([Woodbury Reports, October 2010, p. 4](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1010.pdf#page=4)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Matt Eschler** was the Clinical Director of Crossroads Academy RTC in 2006 ([Woodbury Reports, October 2006 (#146), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=17)). Eschler was also Parenting Workshops / Aftercare of Aspiro Group Inc..",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Norman Thibault** was the Clinical Director of Crossroads Academy RTC in 2010 ([Woodbury Reports, October 2010, p. 4](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1010.pdf#page=4)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Crossroads Academy RTC on Kids Over Profits](https://kidsoverprofits.org/facility/crossroads-academy-rtc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
    "fixes": [],
    "conflicts": []
   },
@@ -1800,6 +1999,53 @@
    "fixes": [],
    "conflicts": []
   },
+  "513": {
+   "program": "Discovery Ranch for Girls",
+   "place": "Cedar City, UT",
+   "years": "2013-present",
+   "column": "original_markdown",
+   "base_sha1": "8eb7db8e60e0ce27239c756c59e4b41b631130fe",
+   "record": {
+    "id": 10334,
+    "name": "Discovery Ranch South",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bryan Daniels** was the Clinical director of Discovery Ranch for Girls. Daniels was also clinical director of New Vision Wilderness.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Daryn Reiner** was the Director of admissions of Discovery Ranch for Girls. Reiner was also admissions director of [Deschutes Wilderness Therapy](https://www.reddit.com/r/troubledteens/wiki/index/deschuteswild) and lead field guide of [Aspiro Wilderness Adventure Therapy](https://www.reddit.com/r/troubledteens/wiki/index/aspiro).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Discovery Ranch for Girls on Kids Over Profits](https://kidsoverprofits.org/facility/discovery-ranch-south-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "515": {
    "program": "Eagle Ranch Academy",
    "place": "St. George, UT",
@@ -1826,6 +2072,42 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Eagle Ranch Academy on Kids Over Profits](https://kidsoverprofits.org/facility/eagle-ranch-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "521": {
+   "program": "Elk Mountain Academy",
+   "place": "Clark Fork, ID/Heron, MT",
+   "years": "1994-present",
+   "column": "original_markdown",
+   "base_sha1": "9b2d5f3101695d2ab4a1f97b340fc4c89b7ca52b",
+   "record": {
+    "id": 9703,
+    "name": "Elk Mountain Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Carl Olding** was the Co-Founder of Elk Mountain Academy in 1994-2008 ([Woodbury Reports, February 2008 (#162), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Elk Mountain Academy on Kids Over Profits](https://kidsoverprofits.org/facility/elk-mountain-academy-id/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -1929,6 +2211,42 @@
      "new": "** Penny Baker** was the Director of Clinical Services at Elk River. Prior to joining Elk River as a Therapist in 2014, she worked as a Special Services Coordinator at the reportedly abusive [Three Springs](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) from 1993 until 1997. She returned to Three Springs as a Group Administrator from 2001 until 2005."
     }
    ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "530": {
+   "program": "Explorations",
+   "place": "Trout Creek, MT",
+   "years": "1989-present",
+   "column": "original_markdown",
+   "base_sha1": "113099013b3c931565828ae974c19e410950a91c",
+   "record": {
+    "id": 12704,
+    "name": "Explorations Montana",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Lorne Riddell** was an Owner/Operator of Explorations in 2007 ([Woodbury Reports, November 2007 (#159), p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1107.pdf#page=10)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Explorations on Kids Over Profits](https://kidsoverprofits.org/facility/explorations-montana-mt/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
    "fixes": [],
    "conflicts": []
   },
@@ -2160,6 +2478,42 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Fulshear Treatment to Transition on Kids Over Profits](https://kidsoverprofits.org/facility/fulshear-treatment-to-transition-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "538": {
+   "program": "Gateway Academy",
+   "place": "Draper/Salt Lake City, UT",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "481701893e5900aa8f8f681a8f9a4bbf4e0aac7c",
+   "record": {
+    "id": 10376,
+    "name": "Gateway Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Carrie Shoumatoff** was an Admission Director of Gateway Academy in 2012 ([Woodbury Reports, November 2012, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1112.pdf#page=12)). Shoumatoff was also Director of Admissions, Admissions Director of [Oakley School](https://www.reddit.com/r/troubledteens/wiki/index/oakley).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Gateway Academy on Kids Over Profits](https://kidsoverprofits.org/facility/gateway-academy-ut/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -2443,6 +2797,43 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Heritage Schools Inc. on Kids Over Profits](https://kidsoverprofits.org/facility/heritage-schools-inc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "556": {
+   "program": "Embark at Hobble Creek",
+   "place": "Springville, UT",
+   "years": "2020-present",
+   "column": "original_markdown",
+   "base_sha1": "6dd89957ba378621cc943d94c00fdc9e4282bf2a",
+   "record": {
+    "id": 10354,
+    "name": "Embark at Hobble Creek",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Amir Rafiei** was an Executive director of Embark at Hobble Creek. Rafiei was also executive director of Bernalillo Academy and director of pharmacy of Acadia Healthcare.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Embark at Hobble Creek on Kids Over Profits](https://kidsoverprofits.org/facility/embark-at-hobble-creek-ut/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -2783,6 +3174,105 @@
    "fixes": [],
    "conflicts": []
   },
+  "575": {
+   "program": "Kolob Canyon RTC",
+   "place": "New Harmony, UT",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "af3510956954562740c14b572702b4527425fd36",
+   "record": {
+    "id": 10342,
+    "name": "Kolob Canyon RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jalane Christian-Stoker** was the Clinical Director of Kolob Canyon RTC ([r/troubledteens wiki, page \"Moonridge Academy\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/moonridge)). Christian-Stoker was also Clinical Director of [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tiffany Neibaur** was the Residential Director of Kolob Canyon RTC in 2005 ([r/troubledteens wiki, page \"Embark at Flathead Valley\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/flatheadvalley)). Neibaur was also Director of Professional Relations of [Embark at Flathead Valley](https://www.reddit.com/r/troubledteens/wiki/index/flatheadvalley).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Kolob Canyon RTC on Kids Over Profits](https://kidsoverprofits.org/facility/kolob-canyon-rtc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "577": {
+   "program": "La Europa Academy",
+   "place": "Murray, UT",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "78ad733cedf756d6eb6bf355b148140482d7c547",
+   "record": {
+    "id": 10341,
+    "name": "La Europa Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Courtney Merrill** was the Primary Therapist, later Clinical Director and Executive Director of La Europa Academy ([r/troubledteens wiki, page \"True North Wilderness Program\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/truenorth)). Merrill was also Co-Executive Director of True North Wilderness Programs and Primary Therapist/Shadow of Anasazi Foundation.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jordan Rigby** was the Human Resources Director of La Europa Academy in 2006 ([r/troubledteens wiki, page \"Viewpoint Center\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/viewpoint)). Rigby was also Director of Assessment of [Viewpoint Center](https://www.reddit.com/r/troubledteens/wiki/index/viewpoint) and Therapist Trainee of Gatehouse Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tawny Thomas** was the Director of Outreach of La Europa Academy ([r/troubledteens wiki, page \"Moonridge Academy\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/moonridge)). Thomas was also Chief Operating Officer, Certified Educational, Recreational of and Therapeutic Schools and Programs (CERTS), Director of Outreach and Program Development, Executive Director of [Kolob Canyon RTC](https://www.reddit.com/r/troubledteens/wiki/index/kolobcanyon), Executive Director of [Moonridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/moonridge) and Director of Outreach of Kaizen Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[La Europa Academy on Kids Over Profits](https://kidsoverprofits.org/facility/la-europa-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "578": {
    "program": "Lake House Academy",
    "place": "Flat Rock, NC",
@@ -2959,6 +3449,51 @@
    "fixes": [],
    "conflicts": []
   },
+  "580": {
+   "program": "Laurel Oaks Behavioral Health Center",
+   "place": "Dothan, AL",
+   "years": "2004-present",
+   "column": "original_markdown",
+   "base_sha1": "d01e1e8622790d9f749c38dbf9cb057bcc5b5bad",
+   "record": {
+    "id": 13670,
+    "name": "Laurel Oaks Behavioral Health Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Robert L. Turner** was the CEO of Laurel Oaks Behavioral Health Center in 2010 ([Woodbury Reports, December 2010, p. 7](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1210.pdf#page=7)). Turner was also Director of Child and Family Programs of Colorado West Regional Mental Health Center and Director of Child and Family Programs of St. Lawrence County Mental Health Clinic.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nelson M. Handel** was the Medical Director of Laurel Oaks Behavioral Health Center in 2010 ([Woodbury Reports, December 2010, p. 8](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1210.pdf#page=8)). Handel was also Founder of Dothan Behavioral Medicine.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Laurel Oaks Behavioral Health Center on Kids Over Profits](https://kidsoverprofits.org/facility/laurel-oaks-behavioral-health-center-al/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "582": {
    "program": "Lava Heights Academy",
    "place": "Toquerville, UT",
@@ -3099,6 +3634,51 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Read the PDF: the copy has no filing stamp or case number, so 'filed in' became 'for' the court; added the complaint's own statement that the cause of death was unknown (died in his sleep, para. 37) so readers do not infer an overdose; 'caused or contributed' as pleaded."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "588": {
+   "program": "Logan River Academy",
+   "place": "Logan, UT",
+   "years": "2000-present",
+   "column": "original_markdown",
+   "base_sha1": "dd9afde7db5eb8a307051a27a18c72bda42383b2",
+   "record": {
+    "id": 10471,
+    "name": "Logan River Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Heather Capson** was an Admissions Director of Logan River Academy in 2013 ([Woodbury Reports, May 2013, p. 9](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0513.pdf#page=9)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Margaret Oak** was an Admissions and Marketing Director of Logan River Academy in 2010-2012 ([Woodbury Reports, August 2010, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0810.pdf#page=15)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Logan River Academy on Kids Over Profits](https://kidsoverprofits.org/facility/logan-river-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -3433,6 +4013,42 @@
    "fixes": [],
    "conflicts": []
   },
+  "604": {
+   "program": "Moonridge Academy",
+   "place": "Cedar City, UT",
+   "years": "2003-present",
+   "column": "original_markdown",
+   "base_sha1": "38b1c69a5906c41808d864f864e6a0385dbf4f27",
+   "record": {
+    "id": 10343,
+    "name": "Moonridge Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tawny Davis** was the Director of Moonridge Academy in 2009 ([Woodbury Reports, March 2009 (#175), p. 13](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0309.pdf#page=13)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Moonridge Academy on Kids Over Profits](https://kidsoverprofits.org/facility/moonridge-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "607": {
    "program": "Mountain Home Academy",
    "place": "---",
@@ -3477,6 +4093,52 @@
     }
    ],
    "tense": [],
+   "conflicts": []
+  },
+  "612": {
+   "program": "Mountain Valley Treatment Center",
+   "place": "Plainfield/Pike, NH",
+   "years": "2011-present",
+   "column": "original_markdown",
+   "base_sha1": "8f7450a9a40aa868caebed14ca5917d765b41dfb",
+   "record": {
+    "id": 14163,
+    "name": "Mountain Valley Treatment Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Gregory Vogel** was an Executive Director of Mountain Valley Treatment Center in 2012 ([Woodbury Reports, December 2012, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1212.pdf#page=12)). Vogel was also Interim Head of School of Oliverian School and Staff of Dartmouth College.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Don Vardell** was an Executive director of Mountain Valley Treatment Center. Vardell was also Executive Director (2009) of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview), Executive Director (2007-2008) of [Excel Academy](https://www.reddit.com/r/troubledteens/wiki/index/excelacademy), Executive Director (2007), left of [Academy at Swift River](https://www.reddit.com/r/troubledteens/wiki/index/swiftriver) and Executive Director (2004) of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducationgroup).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Mountain Valley Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/mountain-valley-treatment-center-nh/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "613": {
@@ -4078,6 +4740,69 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "The obituary (403 to fetch; text confirmed through search results and its copies) gives the date, Clarksville hospital and that she was an Oak Plains patient, but no cause, so 'overdose of medication from the facility' was removed. KOP links her to the Nov 2022 Benadryl overdose; the sheriff's timeline fits (one girl died Nov 29, the other the next day), but no source checked names her."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "636": {
+   "program": "The Oliverian School",
+   "place": "Pike, NH",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "10a088aa08f6a247daddb149287871373e1da764",
+   "record": {
+    "id": 11067,
+    "name": "Oliverian School",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Randy Richardson** was the Headmaster of The Oliverian School in 2009 ([Woodbury Reports, August 2009 (#180), p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0809.pdf#page=15)). Richardson was also Headmaster of Oliverian.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Carl Lovejoy** was the Director of External Affairs of The Oliverian School in 2009 ([Woodbury Reports, October 2009 (#182), p. 14](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1009.pdf#page=14)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jamie Carver** was the Summer School Director of The Oliverian School in 2006 ([Woodbury Reports, February 2006 (#138), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0206.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mike Doherty** was an Admissions Director, Admissions Coordinator of The Oliverian School in 2007-2009 ([Woodbury Reports, January 2008 (#161), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[The Oliverian School on Kids Over Profits](https://kidsoverprofits.org/facility/oliverian-school-nh/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -4827,6 +5552,83 @@
    "fixes": [],
    "conflicts": []
   },
+  "688": {
+   "program": "Solstice RTC",
+   "place": "Layton, UT",
+   "years": "2008-present",
+   "column": "original_markdown",
+   "base_sha1": "2b3414dc4abcdf1dd08c86fac7b3142107100478",
+   "record": {
+    "id": 10359,
+    "name": "Solstice West",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Eliza Hitz** was an Equine therapy director of Solstice RTC. Hitz was also therapist of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and parent clinical director of [ROOTs Transition](https://www.reddit.com/r/troubledteens/wiki/index/rootstransition).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Erik Yost** was an Adventure therapy director of Solstice RTC. Yost was also maintenance director of [ROOTs Transition](https://www.reddit.com/r/troubledteens/wiki/index/rootstransition) and senior field instructor of [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Guy Andersen** was an Academic director of Solstice RTC. Andersen was also science teacher of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kris Archer** was the Business development director of Solstice RTC. Archer was also family teacher of [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy), family teacher of [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage), marketing director of CERTS and executive business development director of [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Rick Jackson** was the Medical director of Solstice RTC. Jackson was also medical director of [Eva Carlston Academy](https://www.reddit.com/r/troubledteens/wiki/index/evacarlston) and medical director of [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Solstice RTC on Kids Over Profits](https://kidsoverprofits.org/facility/solstice-west-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "691": {
    "program": "Spring Ridge Academy",
    "place": "Mayer, AZ",
@@ -4926,6 +5728,62 @@
    "fixes": [],
    "conflicts": []
   },
+  "696": {
+   "program": "Summit Achievement",
+   "place": "Stow, ME",
+   "years": "1996-present",
+   "column": "original_markdown",
+   "base_sha1": "b2170f7535fdd4dd25c9596d6264faa501de91c3",
+   "record": {
+    "id": 11030,
+    "name": "Summit Achievement",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bonnie Richardson** was the Director of Summit Achievement. Richardson was also academic director of [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mik Oyler** was an Executive director of Summit Achievement. Oyler was also COO of Shortridge Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jeff Hudson** was an Academic Director of Summit Achievement in 2012 ([Woodbury Reports, May 2012, p. 9](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0512.pdf#page=9)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Summit Achievement on Kids Over Profits](https://kidsoverprofits.org/facility/summit-achievement-me/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "697": {
    "program": "Summit School at Nyack",
    "place": "Nyack, NY",
@@ -4998,6 +5856,78 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Sunset Bay Academy on Kids Over Profits](https://kidsoverprofits.org/facility/sunset-bay-academy-mexico/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "716": {
+   "program": "Telos RTC",
+   "place": "Orem, UT",
+   "years": "2004-present",
+   "column": "original_markdown",
+   "base_sha1": "3037d858b24aae95e3e944a661d8bb0d5ec709df",
+   "record": {
+    "id": 10540,
+    "name": "Telos Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kevin Kuykendall** was an Academic Director of Telos RTC in 2013 ([Woodbury Reports, February 2013, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0213.pdf#page=12)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Telos RTC on Kids Over Profits](https://kidsoverprofits.org/facility/telos-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "718": {
+   "program": "Village Behavioral Health Treatment Center",
+   "place": "Louisville, TN",
+   "years": "1986-present",
+   "column": "original_markdown",
+   "base_sha1": "14fcdf144db9a8b6b1c0cf31c2b6baaf4b1edde8",
+   "record": {
+    "id": 11240,
+    "name": "Village Behavioral Health Treatment Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Marianne Oliveira** was an Administrator of Village Behavioral Health Treatment Center in 2008 ([Woodbury Reports, March 2008 (#163), p. 29](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0308.pdf#page=29)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Village Behavioral Health Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/village-behavioral-health-treatment-center-tn/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -5404,6 +6334,43 @@
    "fixes": [],
    "conflicts": []
   },
+  "726": {
+   "program": "True North Wilderness Program",
+   "place": "Waitsfield, VT",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "9463cb0ea6f25db4e84f3831685810f1a5a39b3c",
+   "record": {
+    "id": 12141,
+    "name": "True North Wilderness Programs",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mike Balotti** was the Director of Admissions of True North Wilderness Program in 2009.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[True North Wilderness Program on Kids Over Profits](https://kidsoverprofits.org/facility/true-north-wilderness-programs-vt/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "727": {
    "program": "Tulsa Boys' Home",
    "place": "Sand Springs, OK",
@@ -5513,6 +6480,125 @@
    "tense": [],
    "conflicts": []
   },
+  "729": {
+   "program": "Turnabout/Stillwater Academy",
+   "place": "South Jordan, UT",
+   "years": "1988-present",
+   "column": "original_markdown",
+   "base_sha1": "b7f43d4b93285ee54fc9b8faf95cb2b08286d742",
+   "record": {
+    "id": 100139,
+    "name": "Stillwater Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Marilyn Prettyman** was the Principal of Turnabout/Stillwater Academy in 2008 ([Woodbury Reports, June 2008 (#166), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0608.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jamie Caldwell** was an Admissions director of Turnabout/Stillwater Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Turnabout/Stillwater Academy on Kids Over Profits](https://kidsoverprofits.org/facility/stillwater-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "730": {
+   "program": "Turnbridge",
+   "place": "New Haven, CT",
+   "years": "2003-present",
+   "column": "original_markdown",
+   "base_sha1": "cddcd813f9b1d34d1db754768340f13c85e529c4",
+   "record": {
+    "id": 12682,
+    "name": "Turnbridge",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**David Freedman** was the Support staff director of Turnbridge. Freedman was also admissions director of Shortridge Academy and senior field staff of [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Turnbridge on Kids Over Profits](https://kidsoverprofits.org/facility/turnbridge-ct/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "731": {
+   "program": "Turning Winds Academic Institute",
+   "place": "Yaak, MT",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "a40639d354a540283d5f9406b469c58dd10e9bbe",
+   "record": {
+    "id": 12735,
+    "name": "Turning Winds Academic Institute",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jacob Francom** was the Program Director of Turning Winds Academic Institute in 2009 ([Woodbury Reports, June 2009 (#178), p. 13](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0609.pdf#page=13)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Turning Winds Academic Institute on Kids Over Profits](https://kidsoverprofits.org/facility/turning-winds-academic-institute-mt/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "736": {
    "program": "Utah Youth Village",
    "place": "Holladay, UT",
@@ -5549,6 +6635,43 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Utah Youth Village on Kids Over Profits](https://kidsoverprofits.org/facility/utah-youth-village-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "742": {
+   "program": "Waypoint Academy",
+   "place": "Huntsville, UT",
+   "years": "2013-present",
+   "column": "original_markdown",
+   "base_sha1": "3b51a734da045037afd76e9d3a57174d84acc352",
+   "record": {
+    "id": 10577,
+    "name": "WayPoint Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kreg Gillman** was an Executive director of Waypoint Academy. Gillman was also Clinical Director (2011-2012) of RedCliff Ascent, Former Head (2007) of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch), CEO (2003-2006) of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) and Executive Director, Founder and Director (2007-2008) of Silverado Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Waypoint Academy on Kids Over Profits](https://kidsoverprofits.org/facility/waypoint-academy-ut/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -5751,6 +6874,124 @@
    "fixes": [],
    "conflicts": []
   },
+  "748": {
+   "program": "Willow Springs Center",
+   "place": "Reno, NV",
+   "years": "1988-present",
+   "column": "original_markdown",
+   "base_sha1": "2c7390cde0f33b17035ff72120c30cc3d190513e",
+   "record": {
+    "id": 12419,
+    "name": "Willow Springs Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jim Serratt** was the Chief Executive Officer of Willow Springs Center in 2008-2012 ([Woodbury Reports, July 2008 (#167), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)). Serratt was also Western Regional Director of Referral Development of Willow Springs RTC.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Scott York** was the Chief Executive Officer of Willow Springs Center in 2008 ([Woodbury Reports, July 2008 (#167), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tricia Larmer** was an Executive Director of Business Development of Willow Springs Center in 2008 ([Woodbury Reports, July 2008 (#167), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jason Walenta** was the Medical Director of Willow Springs Center in 2007 ([Woodbury Reports, September 2007 (#157), p. 31](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=31)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Philip Malinas** was the Chief Medical Officer of Willow Springs Center in 2007 ([Woodbury Reports, September 2007 (#157), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Willow Springs Center on Kids Over Profits](https://kidsoverprofits.org/facility/willow-springs-center-nv/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "754": {
+   "program": "Woodward Academy",
+   "place": "Woodward, IA",
+   "years": "1995-present",
+   "column": "original_markdown",
+   "base_sha1": "3921e37e31f6b9517e26314a83c031074b7770b3",
+   "record": {
+    "id": 13380,
+    "name": "Woodward Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ryan Santi** was an Executive Director of Woodward Academy. Santi was also VP Ops of Vivant Behavioral Healthcare.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Clarinda Academy students restrained and injured as punishment, records show](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/12/22/clarinda-academy-iowa-students-restrained-injured-punishment-investigation-woodward-academy/2387163002/) (Des Moines Register, 12/22/2018)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Woodward Academy on Kids Over Profits](https://kidsoverprofits.org/facility/woodward-academy-ia/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "763": {
    "program": "Yellowstone Boys and Girls Ranch",
    "place": "Billings, MT",
@@ -5844,6 +7085,72 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "'Three more residents later came forward' was wrong: three girls in all (14, 15, 16), the first included. Charges stated as the article gives them."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "764": {
+   "program": "Youth Care Inc.",
+   "place": "Draper, UT",
+   "years": "1989-present",
+   "column": "original_markdown",
+   "base_sha1": "e3f675f7db1ab537c3afe30760839c57e7205117",
+   "record": {
+    "id": 10345,
+    "name": "Youth Care of Utah",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Trina Quinney-Packard** was an Executive Contact of Youth Care Inc. Quinney-Packard was also executive director of [Pine Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/pineridge) and president of NATSAP.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dayna Rust** was the Program director of Youth Care Inc. Rust was also asst clinical director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc) and clinical director of [Turn-About Ranch](https://www.reddit.com/r/troubledteens/wiki/index/turnabout).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Charles Falatea** was an Admissions Director of Youth Care Inc. in 2013 ([Woodbury Reports, January 2013, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0113.pdf#page=12)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kelly Shaheen** was the Clinical director of Youth Care Inc. Shaheen was also clinical director of [Daniels Academy](https://www.reddit.com/r/troubledteens/wiki/index/daniels).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Youth Care Inc. on Kids Over Profits](https://kidsoverprofits.org/facility/youth-care-of-utah-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],

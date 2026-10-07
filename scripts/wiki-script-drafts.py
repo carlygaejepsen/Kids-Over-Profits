@@ -143,11 +143,35 @@ def record_names(record_id):
 
 
 def clean_role(role):
-    """'Admissions Director, Admissions' -> 'Admissions Director'; a part another part already holds is dropped."""
-    parts = [p.strip() for p in role.split(',') if p.strip() and 'natsap' not in p.lower()]
+    """'Admissions Director, Admissions' -> 'Admissions Director'. A part is dropped when another part already holds its
+    words, is spelled out by it ('CEO' beside 'Chief Executive Officer') or differs from it by a letter or two ('Principle'
+    beside 'Principal'); notes in brackets, 'Former' and NATSAP board seats go."""
+    role = re.sub(r'\bPrinciple\b', 'Principal', re.sub(r'\s*\([^)]*\)', '', role))
+    parts = [re.sub(r'(?i)^former\s+', '', p.strip()) for p in role.split(',')]
+    parts = [p for p in parts if p and 'natsap' not in p.lower()]
+    words = lambda p: set(re.findall(r'[a-z]+', p.lower().replace('admission ', 'admissions '))) - {'of', 'and', 'the'}
     key = lambda p: re.sub(r'[^a-z]', '', p.lower())
-    keep = [p for i, p in enumerate(parts)
-            if not any(j != i and key(p) in key(q) and (key(p) != key(q) or j < i) for j, q in enumerate(parts))]
+    initials = lambda p: ''.join(w[0] for w in re.findall(r'[A-Za-z]+', p) if w.lower() not in ('of', 'and', 'the')).lower()
+
+    def near(a, b):
+        a, b = a.lower(), b.lower()
+        if abs(len(a) - len(b)) > 2 or min(len(a), len(b)) < 6:
+            return False
+        import difflib
+        return difflib.SequenceMatcher(None, a, b).ratio() >= 0.85
+
+    keep = []
+    for i, p in enumerate(parts):
+        drop = False
+        for j, q in enumerate(parts):
+            if i == j:
+                continue
+            same = words(p) == words(q) or near(p, q)
+            if (same and j < i) or (not same and (words(p) < words(q) or key(p) in key(q))) or (len(p) <= 5 and p.lower() == initials(q)):
+                drop = True
+                break
+        if not drop:
+            keep.append(p)
     return ', '.join(keep) or role
 
 
@@ -172,7 +196,7 @@ def staff_line(g, program, closed, earlier_names=()):
         s = f'**{name}** {role[0].lower() + role[1:]} {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
     else:
         s = f'**{name}** {verb} {art}{role} of {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
-    s = s.replace(').', ').').replace(' .', '.')
+    s = s.replace(').', ').').replace(' .', '.').replace('..', '.')
     others = []
     for r in (d.get('other_roles') or [])[:4]:
         role2, _, place = r.rpartition(', ')
