@@ -58,7 +58,71 @@ SELECT 'HB 723',
 FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM legislation WHERE jurisdiction = 'Idaho' AND bill_number = 'HB 723');
 
+-- Full-page check 2026-10-06: every other published bill. Past-session outcomes were all correct;
+-- these rows were stale, had wrong dates, or lacked the key date.
+
+-- id 42: Missouri HB 557 (2021), signed 7/14/21, emergency clause
+UPDATE legislation SET
+  status = 'enacted',
+  last_action_date = '2021-07-14',
+  last_action_text = 'Signed by Governor Parson 7/14/21 (SS HCS HBs 557 & 560); emergency clause, in effect on signing.',
+  full_text_url = 'https://documents.house.mo.gov/billtracking/bills211/sumpdf/HB0557T.pdf',
+  reviewer_notes = CONCAT(COALESCE(reviewer_notes, ''), '\n[claude 2026-10-06] Was "Delivered to Governor"; signed 7/14/21 per truly agreed summary + News Tribune 7/15/21.')
+WHERE id = 42 AND bill_number = 'HB 557';
+
+-- id 21: Ohio HB 811, still in committee; introduced date was a news story's date
+UPDATE legislation SET
+  status = 'in_committee',
+  introduced_date = '2026-04-07',
+  last_action_date = '2026-05-13',
+  last_action_text = 'Referred to House Children and Human Services Committee; no hearings held yet.',
+  full_text_url = 'https://search-prod.lis.state.oh.us/api/v2/general_assembly_136/legislation/hb811/00_IN/pdf/',
+  reviewer_notes = CONCAT(COALESCE(reviewer_notes, ''), '\n[claude 2026-10-06] Introduced 4/7/26 (not 4/22); committee referral 5/13/26.')
+WHERE id = 21 AND bill_number = 'HB 811';
+
+-- id 10: Oregon SB 136 (2025), add signing date
+UPDATE legislation SET
+  last_action_date = '2025-07-31',
+  last_action_text = 'Signed by Governor Kotek 7/31/25; Chapter 621, 2025 Oregon Laws; effective January 1, 2026.'
+WHERE id = 10 AND bill_number = 'SB 136';
+
+-- id 2: Oregon HB 4042 (2026), add sine die date
+UPDATE legislation SET last_action_date = '2026-03-06'
+WHERE id = 2 AND bill_number = 'HB 4042' AND last_action_date IS NULL;
+
+-- id 23: Utah SB 297 (2025), the stored date was the effective date
+UPDATE legislation SET
+  status = 'enacted',
+  last_action_date = '2025-03-19',
+  last_action_text = 'Signed by the Governor 3/19/25; effective July 1, 2025.'
+WHERE id = 23 AND bill_number = 'SB 297';
+
+-- id 22: Utah SB 127 (2021)
+UPDATE legislation SET
+  last_action_text = 'Signed by the Governor 3/22/21; Laws of Utah 2021, Chapter 400; effective May 5, 2021.'
+WHERE id = 22 AND bill_number = 'SB 127';
+
+-- id 28: "a 822 / Relating to physical interventions" = Oregon SB 822 (2023), the only Oregon bill with that clause
+UPDATE legislation SET
+  bill_number = 'SB 822',
+  bill_title = 'Relating to physical interventions of persons under 21 years of age; declaring an emergency.',
+  jurisdiction = 'Oregon',
+  chamber = 'senate',
+  session_year = '2023',
+  bill_type = 'SB',
+  sponsors = '["Sara Gelser Blouin (primary)"]',
+  status = 'dead',
+  introduced_date = '2023-01-31',
+  last_action_date = '2023-06-25',
+  last_action_text = 'In Senate Committee on Education upon adjournment of the 2023 session; never received a hearing.',
+  subject_tags = '["restraint and seclusion","schools","students"]',
+  summary = 'Would have banned the seclusion of students in public education programs, changed the definitions of "seclusion" and "involuntary seclusion" for certain children, and clarified the reporting and training rules for restraint and seclusion in public education programs. Referred to the Senate Education Committee, it died there without a hearing when the 2023 session ended.',
+  full_text_url = 'https://olis.oregonlegislature.gov/liz/2023R1/Downloads/MeasureDocument/SB822/Introduced',
+  official_url = 'https://olis.oregonlegislature.gov/liz/2023R1/Measures/Overview/SB822',
+  reviewer_notes = CONCAT(COALESCE(reviewer_notes, ''), '\n[claude 2026-10-06] Identified as Oregon SB 822 (2023): the only Oregon bill 2007-2025 whose relating clause has "physical interventions".')
+WHERE id = 28 AND bill_number = 'a 822';
+
 SELECT id, bill_number, jurisdiction, status, last_action_date FROM legislation
-WHERE bill_number IN ('HB 5514', 'HB 723', 'SB 1190', 'AB 1688');
+WHERE id IN (1, 2, 10, 19, 20, 21, 22, 23, 28, 42) OR (jurisdiction = 'Idaho' AND bill_number = 'HB 723');
 
 COMMIT;
