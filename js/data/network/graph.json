@@ -6,7 +6,7 @@
    "nodes": 1432,
    "edges": 2777,
    "facilityMatches": 536,
-   "withYears": 375,
+   "withYears": 376,
    "withDeaths": 27,
    "rebranded": 91,
    "profileEdges": 469,
@@ -36215,7 +36215,8 @@
    "board": {
     "x": -510.69,
     "y": -294.32
-   }
+   },
+   "years": "until 2019"
   },
   {
    "id": "desert-hills-texas",
