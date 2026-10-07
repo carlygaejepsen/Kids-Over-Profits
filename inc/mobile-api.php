@@ -18,6 +18,8 @@
  *   GET kop/v1/news                     the public news feed (templates/page-news-feed.php):
  *                                       ?page= ?per_page= (max 50) ?archive=YYYY-MM
  *                                       ?story=<arc slug> ?facility=<id>
+ *   GET kop/v1/resources                the /resources/ page's list (kop_resources_groups(),
+ *                                       inc/resources-list.php): crisis lines, reporting, support
  *
  * Privacy: every payload is built by copying NAMED keys out of the page data
  * (kop_mobile_facility_payload(), kop_mobile_operator_payload()) and the news
@@ -78,6 +80,11 @@ add_action('rest_api_init', function () {
     register_rest_route('kop/v1', '/news', array(
         'methods'             => WP_REST_Server::READABLE,
         'callback'            => 'kop_mobile_news_rest',
+        'permission_callback' => '__return_true',
+    ));
+    register_rest_route('kop/v1', '/resources', array(
+        'methods'             => WP_REST_Server::READABLE,
+        'callback'            => 'kop_mobile_resources_rest',
         'permission_callback' => '__return_true',
     ));
 });
@@ -650,6 +657,64 @@ if (!function_exists('kop_mobile_news_rest')) {
         $etag = kop_mobile_etag(array('news', $stamp, wp_json_encode($args)));
         if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
         return kop_mobile_response(kop_mobile_news_feed($args), $etag, 300);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Resources
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_mobile_resources')) {
+    /**
+     * The /resources/ page's groups as the website prints them (kop_resources_render_group()): an entry
+     * with neither an address nor a contact line is dropped, an internal page is resolved to its address
+     * and keeps its slug in 'page' (the app opens its Send tab for the data form). Named keys only.
+     */
+    function kop_mobile_resources() {
+        $groups = array();
+        foreach (function_exists('kop_resources_groups') ? kop_resources_groups() : array() as $group) {
+            $entries = array();
+            foreach ((array) ($group['entries'] ?? array()) as $entry) {
+                $url = kop_resources_entry_url($entry);
+                $contact = trim((string) ($entry['contact'] ?? ''));
+                if ($url === '' && $contact === '') continue;
+                $links = array();
+                foreach ((array) ($entry['links'] ?? array()) as $label => $href) {
+                    $links[] = array('label' => (string) $label, 'url' => (string) $href);
+                }
+                $entries[] = array(
+                    'name'     => (string) $entry['name'],
+                    'url'      => $url,
+                    'page'     => (string) ($entry['page'] ?? ''),
+                    'contact'  => $contact,
+                    'note'     => (string) ($entry['note'] ?? ''),
+                    'archived' => !empty($entry['archived']),
+                    'links'    => $links,
+                );
+            }
+            if (!$entries) continue;
+            $groups[] = array(
+                'heading' => (string) $group['heading'],
+                'intro'   => (string) ($group['intro'] ?? ''),
+                'entries' => $entries,
+            );
+        }
+        $page = function_exists('get_page_by_path') ? get_page_by_path(KOP_RESOURCES_SLUG) : null;
+        return array(
+            'api_version' => KOP_MOBILE_API_VERSION,
+            'url'         => $page ? (string) get_permalink($page) : home_url('/' . KOP_RESOURCES_SLUG . '/'),
+            'total'       => array_sum(array_map(function ($g) { return count($g['entries']); }, $groups)),
+            'groups'      => $groups,
+        );
+    }
+}
+
+if (!function_exists('kop_mobile_resources_rest')) {
+    function kop_mobile_resources_rest($request) {
+        $data = kop_mobile_resources();
+        $etag = kop_mobile_etag(array('resources', md5((string) wp_json_encode($data))));
+        if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
+        return kop_mobile_response($data, $etag, 3600);
     }
 }
 

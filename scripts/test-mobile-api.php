@@ -51,6 +51,7 @@ require __DIR__ . '/kop-test-harness.php';
 require_once dirname(__DIR__) . '/inc/operator-pages.php';
 require_once dirname(__DIR__) . '/inc/operator-history.php';
 require_once dirname(__DIR__) . '/inc/indigenous-schools.php';
+require_once dirname(__DIR__) . '/inc/resources-list.php';
 require_once dirname(__DIR__) . '/inc/mobile-api.php';
 if (!$fixture) {
     // On the mirror the pages are built as the live site builds them: homes under their program, renamed
@@ -500,6 +501,39 @@ $r2 = kop_mobile_news_rest(new KOP_Mobile_Test_Request(array('if_none_match' => 
 $check('news route answers 304 to its own ETag', $r2->status === 304);
 $r3 = kop_mobile_news_rest(new KOP_Mobile_Test_Request(array('if_none_match' => $r->headers['ETag']), array('per_page' => '4')));
 $check('news ETag differs per query', $r3->status === 200);
+
+
+// ---------------------------------------------------------------------------
+// Resources
+// ---------------------------------------------------------------------------
+
+echo "-- Resources --\n";
+$r = kop_mobile_resources_rest(new KOP_Mobile_Test_Request(array(), array()));
+$res = $r instanceof WP_REST_Response ? $r->data : array();
+$check('resources route answers with an ETag', $r instanceof WP_REST_Response && $r->status === 200 && isset($r->headers['ETag']));
+$check('resources route answers 304 to its own ETag', kop_mobile_resources_rest(new KOP_Mobile_Test_Request(array('if_none_match' => $r->headers['ETag'] ?? 'x'), array()))->status === 304);
+$src = kop_resources_groups();
+$check('resources keep every group, in the page order', array_column($res['groups'] ?? array(), 'heading') === array_column($src, 'heading'));
+// The harness has the report-abuse page and no other, as a site missing a page would: those entries drop, as on the website.
+$expect = 0;
+foreach ($src as $g) foreach ($g['entries'] as $e) if (empty($e['page']) || $e['page'] === 'report-abuse') $expect++;
+$check('resources drop only entries with no address and no contact', ($res['total'] ?? -1) === $expect, ($res['total'] ?? '?') . " of $expect");
+$ekeys = array('name', 'url', 'page', 'contact', 'note', 'archived', 'links');
+$flat = array();
+foreach ($res['groups'] ?? array() as $g) {
+    $check("resources group '{$g['heading']}' carries only the named keys", array_keys($g) === array('heading', 'intro', 'entries'));
+    foreach ($g['entries'] as $e) $flat[] = $e;
+}
+$check('resources entries carry only the named keys', $flat && !array_filter($flat, function ($e) use ($ekeys) { return array_keys($e) !== $ekeys; }));
+$by = array_column($flat, null, 'name');
+$check('988 keeps its contact line', ($by['988 Suicide and Crisis Lifeline']['contact'] ?? '') === 'Call or text 988');
+$check('the state-by-state list resolves to the site page', ($by['Where to report, state by state']['url'] ?? '') === home_url('/report-abuse/') && $by['Where to report, state by state']['page'] === 'report-abuse');
+$zoom = $by['Survivors Unrestrained']['links'] ?? array();
+$check('extra links are {label, url} in order', count($zoom) === 2 && $zoom[0]['label'] === 'Tuesday Zoom link' && strpos($zoom[0]['url'], 'https://zoom.us/') === 0, json_encode($zoom));
+$check('an archived snapshot is marked', !empty($by['SCIAD']['archived']));
+$problems = $walk($res);
+$check('resources have no private key, HTML or sentinel', !$problems, implode('; ', array_slice($problems, 0, 3)));
+$dump('resources.json', $res);
 
 echo "\n" . ($failures ? "$failures FAILED\n" : "All checks passed\n");
 exit($failures ? 1 : 0);

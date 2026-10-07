@@ -76,7 +76,7 @@ php scripts/test-facility-pages.php
 # not printed or put in a preview, only the link to our copy of the issue (kop_facility_pages_woodbury_clean(), _tidy_citations(), _cited_html())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-citation-cleanup.php [--no-db] [--id=9607]   # functions, then real pages from tmp/prod.sqlite
 # The mobile app (github.com/carlygaejepsen/kids-over-profits-mobile) reads kop/v1/facility/<slug>, /operator/<slug|?name=>,
-# /operators (the Companies list) and /news (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
+# /operators (the Companies list), /news and /resources (the /resources/ list, inc/resources-list.php) (inc/mobile-api.php): named keys copied from the page data, so a new page section goes in the keep lists there
 # The app lists document libraries itself (/facility/<slug>/documents, /operator/<slug>/documents: the folder tree with file links) and
 # opens our own PDFs (sources included, #page=N kept) in its own viewer, never the website
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
