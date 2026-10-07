@@ -34,7 +34,7 @@ function kop_apply_legislation_updates() {
     $columns = array(
         'bill_number', 'bill_title', 'jurisdiction', 'chamber', 'session_year', 'bill_type', 'sponsors',
         'status', 'introduced_date', 'last_action_date', 'last_action_text', 'subject_tags', 'summary',
-        'full_text_url', 'official_url', 'position', 'facilities_affected', 'tags',
+        'full_text_url', 'official_url', 'position', 'facilities_affected', 'tags', 'publication_status',
     );
     $lists = array('sponsors', 'subject_tags', 'facilities_affected', 'tags');
     try {
@@ -47,6 +47,9 @@ function kop_apply_legislation_updates() {
             $args = array();
             foreach ($u['set'] as $col => $val) {
                 if (!in_array($col, $columns, true)) {
+                    continue;
+                }
+                if ($col === 'publication_status' && !in_array($val, array('draft', 'pending', 'published', 'rejected'), true)) {
                     continue;
                 }
                 if ($col === 'status' && !in_array($val, kop_legislation_statuses(), true)) {

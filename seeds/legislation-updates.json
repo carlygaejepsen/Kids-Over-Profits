@@ -1,142 +1,37 @@
 {
-  "_about": "One-time corrections to existing legislation rows, applied by inc/legislation-updates.php when 'version' changes. Each row matches id AND its current bill_number; only the listed fields change, and the note is appended to reviewer_notes.",
-  "version": "2026-10-06",
+  "_about": "One-time corrections to existing legislation rows, applied by inc/legislation-updates.php when 'version' changes. Each row matches id AND its current bill_number; only the listed fields change, and the note is appended to reviewer_notes. Earlier batches are in git history (2026-10-06: statuses of 10 bills).",
+  "version": "2026-10-06b",
   "updates": [
     {
-      "id": 19,
-      "bill_number": "HB 5514",
-      "note": "Status updated to enacted (PA 111 of 2026); summary rewritten from the enrolled text.",
+      "id": 6,
+      "bill_number": "SB 852",
+      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
       "set": {
-        "bill_title": "Children: other; prohibition of use of certain restraint while transporting youths to certain youth residential treatment programs (Preventing Restraints in Youth Transport Act)",
-        "sponsors": [
-          "Cam Cavitt (primary)",
-          "Julie Brixie",
-          "Mai Xiong",
-          "Denise Mentzer",
-          "John Roth",
-          "Kathy Schmaltz"
-        ],
-        "status": "enacted",
-        "last_action_date": "2026-10-05",
-        "last_action_text": "Approved by Governor Whitmer 10/5/26 with immediate effect; Public Act 111 of 2026. Passed House 104-1 (4/28/26) and Senate 35-1 (10/1/26).",
-        "summary": "The Preventing Restraints in Youth Transport Act bars youth transportation companies (businesses that specialize in taking youth to residential programs) from using blindfolds, hoods, or other visual impairment; handcuffs, chains, irons, straitjackets, or other mechanical restraints; and holds or other physical force on a youth whose final destination is a youth residential treatment program. Physical restraint is allowed only when staff are trained in it, there is a substantial likelihood of imminent serious physical harm to the youth or others, no less restrictive alternative will work, and only for as long as that risk lasts.\n\nThe act also bars these companies from picking up a youth between 9 p.m. and 6 a.m. (transporting during those hours is still allowed).\n\n\"Youth residential treatment program\" is defined broadly: wilderness and outdoor programs, boot camps, therapeutic and education boarding schools, behavior modification programs, residential treatment centers, qualified residential treatment programs (QRTPs), psychiatric residential treatment facilities, group homes, intermediate care facilities for individuals with intellectual disabilities, and residential alternatives to incarceration, when they serve youth with emotional, behavioral, mental health, substance use, or developmental disabilities. Licensed hospitals and foster family homes are excluded.\n\nViolations carry a civil fine of up to $1,000, collected by the county prosecutor or the Attorney General; an action may be filed up to 10 years after the violation. Part of a Michigan package on abusive youth transport, publicly backed by Paris Hilton.",
-        "full_text_url": "https://legislature.mi.gov/documents/2025-2026/billenrolled/House/htm/2026-HNB-5514.htm",
-        "facilities_affected": [
-          "Private youth transport/escort companies",
-          "Wilderness programs",
-          "Therapeutic boarding schools",
-          "Residential treatment centers",
-          "Qualified residential treatment programs (QRTPs)",
-          "Psychiatric residential treatment facilities",
-          "Group homes"
-        ]
+        "publication_status": "draft"
       }
     },
     {
-      "id": 1,
-      "bill_number": "SB 1190",
-      "note": "Status updated to enacted (signed 9/30/26, Ch. 1015).",
+      "id": 16,
+      "bill_number": "Hb896",
+      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
       "set": {
-        "status": "enacted",
-        "last_action_date": "2026-09-30",
-        "last_action_text": "Approved by Governor Newsom 9/30/26; chaptered by Secretary of State, Chapter 1015, Statutes of 2026."
+        "publication_status": "draft"
       }
     },
     {
-      "id": 20,
-      "bill_number": "AB 1688",
-      "note": "Status updated to enacted (signed 9/30/26, Ch. 888); summary updated to the chaptered digest.",
+      "id": 17,
+      "bill_number": "SB789",
+      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
       "set": {
-        "status": "enacted",
-        "last_action_date": "2026-09-30",
-        "last_action_text": "Approved by Governor Newsom 9/30/26; chaptered by Secretary of State, Chapter 888, Statutes of 2026.",
-        "summary": "When a county welfare agency substantiates a report of abuse or neglect of a child in foster care, congregate care, or another out-of-home placement, or removes a child from such a placement, it must notify the attorney representing the child's parent or guardian in dependency court (within 36 hours), and the attorneys for other children in the same placement. For an Indian child, the child's tribe must also be notified. The notice leaves out the identity of the person who made the report and other confidential details. Does not apply to a parent whose parental rights have been terminated."
+        "publication_status": "draft"
       }
     },
     {
-      "id": 42,
-      "bill_number": "HB 557",
-      "note": "Was \"Delivered to Governor\"; signed 7/14/21 per truly agreed summary + News Tribune 7/15/21.",
+      "id": 24,
+      "bill_number": "SB 13",
+      "note": "Hidden (draft) at the owner's request: no state or year, could not be identified.",
       "set": {
-        "status": "enacted",
-        "last_action_date": "2021-07-14",
-        "last_action_text": "Signed by Governor Parson 7/14/21 (SS HCS HBs 557 & 560); emergency clause, in effect on signing.",
-        "full_text_url": "https://documents.house.mo.gov/billtracking/bills211/sumpdf/HB0557T.pdf"
-      }
-    },
-    {
-      "id": 21,
-      "bill_number": "HB 811",
-      "note": "Introduced 4/7/26 (not 4/22); committee referral 5/13/26.",
-      "set": {
-        "status": "in_committee",
-        "introduced_date": "2026-04-07",
-        "last_action_date": "2026-05-13",
-        "last_action_text": "Referred to House Children and Human Services Committee; no hearings held yet.",
-        "full_text_url": "https://search-prod.lis.state.oh.us/api/v2/general_assembly_136/legislation/hb811/00_IN/pdf/"
-      }
-    },
-    {
-      "id": 10,
-      "bill_number": "SB 136",
-      "note": "Added signing date.",
-      "set": {
-        "last_action_date": "2025-07-31",
-        "last_action_text": "Signed by Governor Kotek 7/31/25; Chapter 621, 2025 Oregon Laws; effective January 1, 2026."
-      }
-    },
-    {
-      "id": 2,
-      "bill_number": "HB 4042",
-      "note": "Added sine die date.",
-      "set": {
-        "last_action_date": "2026-03-06"
-      }
-    },
-    {
-      "id": 23,
-      "bill_number": "SB 297",
-      "note": "Last action date was the effective date; now the signing date.",
-      "set": {
-        "status": "enacted",
-        "last_action_date": "2025-03-19",
-        "last_action_text": "Signed by the Governor 3/19/25; effective July 1, 2025."
-      }
-    },
-    {
-      "id": 22,
-      "bill_number": "SB 127",
-      "note": "Added chapter and effective date.",
-      "set": {
-        "last_action_text": "Signed by the Governor 3/22/21; Laws of Utah 2021, Chapter 400; effective May 5, 2021."
-      }
-    },
-    {
-      "id": 28,
-      "bill_number": "a 822",
-      "note": "Identified as Oregon SB 822 (2023): the only Oregon bill 2007-2025 whose relating clause has \"physical interventions\".",
-      "set": {
-        "bill_number": "SB 822",
-        "bill_title": "Relating to physical interventions of persons under 21 years of age; declaring an emergency.",
-        "jurisdiction": "Oregon",
-        "chamber": "senate",
-        "session_year": "2023",
-        "bill_type": "SB",
-        "sponsors": [
-          "Sara Gelser Blouin (primary)"
-        ],
-        "status": "dead",
-        "introduced_date": "2023-01-31",
-        "last_action_date": "2023-06-25",
-        "last_action_text": "In Senate Committee on Education upon adjournment of the 2023 session; never received a hearing.",
-        "subject_tags": [
-          "restraint and seclusion",
-          "schools",
-          "students"
-        ],
-        "summary": "Would have banned the seclusion of students in public education programs, changed the definitions of \"seclusion\" and \"involuntary seclusion\" for certain children, and clarified the reporting and training rules for restraint and seclusion in public education programs. Referred to the Senate Education Committee, it died there without a hearing when the 2023 session ended.",
-        "full_text_url": "https://olis.oregonlegislature.gov/liz/2023R1/Downloads/MeasureDocument/SB822/Introduced",
-        "official_url": "https://olis.oregonlegislature.gov/liz/2023R1/Measures/Overview/SB822"
+        "publication_status": "draft"
       }
     }
   ]
