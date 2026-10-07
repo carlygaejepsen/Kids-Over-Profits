@@ -347,6 +347,29 @@ function kop_sc_court_state($court) {
     return '';
 }
 
+/**
+ * CourtListener's id for a federal district court named in a record ("District of Utah" -> utd,
+ * "Western District of North Carolina" -> ncwd), or '' when the name is not a district court.
+ */
+function kop_sc_court_id($court) {
+    $court = (string) $court;
+    if (stripos($court, 'District') === false || stripos($court, 'Court of Appeals') !== false || stripos($court, 'Judicial District') !== false) {
+        return '';
+    }
+    $state = kop_sc_court_state($court);
+    $codes = array_combine(kop_sc_state_names(), array('al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'dc', 'fl', 'ga', 'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky',
+        'la', 'me', 'md', 'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj', 'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc', 'sd',
+        'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy'));
+    if ($state === '' || !isset($codes[$state])) {
+        return '';
+    }
+    $part = 'd';
+    if (preg_match('/\b(Northern|Southern|Eastern|Western|Middle|Central)\s+District\b/i', $court, $m)) {
+        $part = strtolower($m[1][0]) . 'd';
+    }
+    return $codes[$state] . $part;
+}
+
 /** "2:18-cv-35-TC-DAO" -> [office "2", "18-cv-00035"]; null when it is not a federal docket number. */
 function kop_sc_docket_parts($number) {
     if (!preg_match('/(?:(\d{1,2}):)?(\d{2})[-\s]?(cv|cr|mc|md|bk|ap|mj)[-\s]?(\d{1,6})/i', (string) $number, $m)) {
@@ -383,10 +406,17 @@ function kop_sc_courtlistener_docket(array $suit) {
     if (!$parts) {
         return null;
     }
-    $q = 'docketNumber:"' . $parts[1] . '"';
-    $word = kop_sc_first_party_word($suit['case_name']);
-    if ($word !== '') {
-        $q .= ' AND caseName:"' . $word . '"';
+    // With the office ("6:23-cv-03316") the number and the court's state are enough; without it the
+    // first party narrows the search (party names like "The Estate of ..." would miss).
+    $cid = kop_sc_court_id($suit['court']);
+    if ($parts[0] !== '') {
+        $q = 'docketNumber:"' . $parts[0] . ':' . $parts[1] . '"' . ($cid !== '' ? ' AND court_id:' . $cid : '');
+    } else {
+        $q = 'docketNumber:"' . $parts[1] . '"';
+        $word = kop_sc_first_party_word($suit['case_name']);
+        if ($word !== '') {
+            $q .= ' AND caseName:"' . $word . '"';
+        }
     }
     $json = json_decode(kop_sc_fetch('https://www.courtlistener.com/api/rest/v4/search/?type=r&q=' . rawurlencode($q)), true);
     $state = kop_sc_court_state($suit['court']);

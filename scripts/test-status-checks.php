@@ -56,6 +56,9 @@ check('a state case number is not a federal docket', kop_sc_docket_parts('220900
 check('first party: Sherman, et al. v. ...', kop_sc_first_party_word('Sherman, et al. v. Trinity Teen Solutions, et al.') === 'Sherman');
 check('first party: John R. v. ... has none to search by', kop_sc_first_party_word('John R. v. United Behavioral Health') === '');
 check('court state: Western District of North Carolina', kop_sc_court_state('U.S. District Court for the Western District of North Carolina') === 'North Carolina');
+check('court id: District of Utah', kop_sc_court_id('U.S. District Court for the District of Utah, Central Division') === 'utd');
+check('court id: Western District of North Carolina', kop_sc_court_id('U.S. District Court for the Western District of North Carolina') === 'ncwd');
+check('court id: a state judicial district is not a federal court', kop_sc_court_id('Fifth Judicial District Court, Washington County, Utah') === '');
 check('court state: West Virginia is not Virginia', kop_sc_court_state('Southern District of West Virginia') === 'West Virginia');
 check('California bills are read on CalMatters', kop_sc_bill_source_url(array('official_url' => 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB1190', 'full_text_url' => ''))
     === 'https://calmatters.digitaldemocracy.org/bills/ca_202520260sb1190');
