@@ -1565,44 +1565,35 @@ App: `src/lib/citations.ts`, `InlineSources` in `src/components/ui.tsx`.
 
 **Open work, in order**
 
-1. **Refresh the app's fixtures.** `__tests__/fixtures/` in the app were
-   written before the citation clean-up and still hold the old
-   "Kids Over Profits network map" sources; the tests pass because the app
-   filters them. Run `php scripts/test-mobile-api.php --db=tmp/prod.sqlite
-   --dump <dir>` (add `--id=` for the records below) and copy the files over.
-2. **Fixtures for the sections no record in them filled**: incidents, survivor
-   accounts, the Fornits block, name eras (a renamed program: Copper Canyon
-   Academy / Sedona Sky Academy), program homes and "home of" (Newport
-   Academy, California). The types for those are loose and the screens read
-   them defensively, but nobody has seen them draw real data. Add a render
-   test per section with `@testing-library/react-native` (the app has tests
-   for its helpers and for the fixtures, none for screens).
-3. **Citations on the app's alias lines.** The website shows a "source" after
-   "Formerly ..." and after former locations (`fact_sources.formerly`,
-   `fact_sources.former_locations`); the app shows the names without them.
-   The at-a-glance rows take theirs by label, so a label that differs from
-   its key (the server's `Past operators`, `Operated`) must be checked on a
-   record that has them.
-4. **A slim list of companies.** The Companies tab downloads
-   `facilities?view=index`, 2.4 MB for 51 names. Add `kop/v1/operators`
-   (name, slug, program count, status) to `inc/mobile-api.php` and read that.
-   While there, give a company with no page slug a proper route instead of
-   the `/operator/by-name?name=` stand-in the app uses now.
-5. **Test on devices** (owner step 1 above), then a pass with VoiceOver and
+Done 2026-10-07 (theme [5d8b452b](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/5d8b452b),
+[9fc251fa](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/9fc251fa); app
+[7930afd](https://github.com/carlygaejepsen/kids-over-profits-mobile/commit/7930afd)): fixtures refreshed and
+extended to Copper Canyon / Sedona Sky, Newport Academy and its home Acre, Provo Canyon, Rebekah Home, Acadia
+Montana and Ascent (`php scripts/test-mobile-api.php --db=tmp/prod.sqlite --id=9605,9606,9607,12155,12161,100284,9758,10371,10865,12688,9688 --dump=<dir>`;
+on the mirror it now builds homes and name eras as the site does); a render test per section
+(`__tests__/facility-sections.test.tsx`); the "Formerly" line carries its sources; every `fact_sources` key is
+checked to have its fact; `kop/v1/operators` (12 KB) feeds the Companies tab, which opens companies by slug.
+Found on the way and fixed: a renamed program's page in the app showed only its own record's lists, never the
+other name's (it is now cut into "As <name>" sections like the website); the other name's staff carried the
+"network map" citation on the website too; Elan School's payload pointed at the /facility/ page that 301s to
+/elan/. Still to do by hand: Newport Academy – Alberca's address reads "1850 Calle Alberc,. Camarillo" (record
+10087). No record holds published survivor testimony yet, so that section is tested on a made-up account.
+
+1. **Test on devices** (owner step 1 above), then a pass with VoiceOver and
    TalkBack, the largest font setting, and a tablet. Labels exist on every
    card, chip and link; nobody has listened to them. The site's
    `check-contrast.py` does not cover the app; the colours come from
    `src/theme/colors.ts`, which copies `css/colors.css` (keep the two in step).
-6. **Deep links.** `npx uri-scheme open kidsoverprofits://facility/<slug>`
+2. **Deep links.** `npx uri-scheme open kidsoverprofits://facility/<slug>`
    on a device; site addresses (`/facility/<slug>/`, `/operator/<slug>/`)
    open in the app only after owner step 5.
-7. **Build and publish.** `eas init`, the preview APK, then store builds
+3. **Build and publish.** `eas init`, the preview APK, then store builds
    (owner steps 2 to 4). `eas.json` and `app.json` are ready; bundle id
    `org.kidsoverprofits.app`.
-8. **Code to tidy**: the facility screen is about 400 lines and wants its
-   sections split into components; the news tab keeps its story and month
-   filters in component state, so they reset when it unmounts.
-9. **Later ideas, not started**: other outlets' coverage of the same story
+4. **Code to tidy**: the news tab keeps its story and month filters in
+   component state, so they reset when it unmounts. (The facility screen is
+   split into section components now.)
+5. **Later ideas, not started**: other outlets' coverage of the same story
    (`story_group_id` is already in each news item), paging through every
    inspection report (the app shows the newest 20 and links the rest), an
    offline snapshot of the index, and notifications for new articles.
