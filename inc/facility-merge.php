@@ -874,8 +874,18 @@ if (!function_exists('kop_fmerge_screen_data')) {
             return $s['news'] * 3 + $s['lawsuits'] * 5 + $s['docs'] * 2 + $s['staff'] + ($s['page'] !== '' ? 3 : 0)
                 + $s['size'] / 4000 + ($s['status'] !== '' && $s['status'] !== 'Unknown' ? 1 : 0) + ($s['companies'] ? 1.5 : 0);
         };
+        // Records in one program already (two of its homes, or a home and the program): marking one pair
+        // "Homes of one program" ties them all, so the other pairs between them are not offered again.
+        $program_of = function ($id) {
+            if (!function_exists('kop_program_homes_program_of')) return 0;
+            $in = kop_program_homes_program_of($id);
+            return $in ? (int) $in[0] : (kop_program_homes_homes_of($id) ? (int) $id : 0);
+        };
+        if (function_exists('kop_program_homes_map')) kop_program_homes_map(true);
         $out = array();
         foreach (kop_fmerge_find_pairs($rows, $dismissed) as $p) {
+            $pa = $program_of((int) $p['a']);
+            if ($pa && $pa === $program_of((int) $p['b'])) continue;
             $a = $side($p['a']);
             $b = $side($p['b']);
             $sa = $score($a);

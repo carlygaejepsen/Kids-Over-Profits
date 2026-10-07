@@ -455,7 +455,10 @@ if (!function_exists('kop_program_homes_after_change')) {
         kop_program_homes_map(true);
         if (function_exists('kop_facility_pages_flush_index')) kop_facility_pages_flush_index();
         if (function_exists('kop_operator_pages_flush_index')) kop_operator_pages_flush_index();
-        if (function_exists('delete_transient')) delete_transient('kop_program_homes_suggestions');
+        if (function_exists('delete_transient')) {
+            delete_transient('kop_program_homes_suggestions');
+            delete_transient('kop_fmerge_screen'); // Merge Duplicates leaves out pairs in one program
+        }
     }
 }
 
