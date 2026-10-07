@@ -38,6 +38,9 @@ function kop_rinbox_test_highlight_summaries(array $src, array $item, callable $
     $check('highlight-summaries: a pending draft is not public', $public() === array());
     $check('highlight-summaries: the card shows why it was picked and the state\'s wording', strpos($item['subtitle'], 'Hard to read') !== false && strpos($item['text'], "state's wording") !== false, $item['subtitle']);
 
+    $t = $item['text'];
+    $check('highlight-summaries: the card text shows the draft above the state\'s wording', $row()['summary'] !== '' && strpos($t, $row()['summary']) !== false && strpos($t, $row()['summary']) < strpos($t, "state's wording"), $t);
+
     // Editing: the same checks as an AI draft.
     foreach (array('A [redacted] hit a child and ran away from the facility.', 'S1 hit C1 and ran away from the facility.', 'Too short.', 'See https://example.com for what the report says about it.') as $bad) {
         try {

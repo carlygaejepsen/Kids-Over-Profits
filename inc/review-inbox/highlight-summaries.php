@@ -104,7 +104,10 @@ function kop_rinbox_hs_item(array $r) {
     if ($r['status'] !== 'pending' && !$stale && !$none) $actions[] = array('id' => 'pending', 'label' => 'Back to pending', 'style' => 'undo',
         'help' => 'Takes the summary off the site and puts it back in the waiting list.');
 
-    $text = "The state's wording, which readers see under the summary:\n" . kop_rinbox_excerpt(kop_ih_reader_labels($r['excerpt']), 1600)
+    // The draft goes in the card's text, not only in the (closed) editor: the
+    // reviewer and volunteer copies (which carry no fields) must read it.
+    $draft = $none ? (string) $r['summary'] : "Plain-language summary" . ($r['status'] === 'approved' ? ' (on the site)' : ' (draft)') . ":\n" . (string) $r['summary'];
+    $text = ($draft !== '' ? $draft . "\n\n" : '') . "The state's wording, which readers see under the summary:\n" . kop_rinbox_excerpt(kop_ih_reader_labels($r['excerpt']), 1600)
         . ($r['status'] !== 'pending' && $r['reviewed_by'] ? "\n" . ucfirst($r['status']) . ' by ' . $r['reviewed_by'] . ', ' . $r['reviewed_at'] . ' UTC' : '');
     return array(
         'key'          => (string) $r['highlight_id'],
