@@ -245,7 +245,7 @@ check('counts', $data['counts']['facilities'] === 7 && $data['counts']['operator
 // ---- Quick links ------------------------------------------------------------
 
 $quick = array_column($data['quick'], 'label');
-check('quick links only for published pages, in order', $quick === array('Facility directory', 'Parent companies', 'Network map', 'Inspection reports', 'News', 'Lawsuits', 'Report abuse', 'Glossary'));
+check('quick links only for published pages, in order', $quick === array('Facility directory', 'Parent companies', 'Network map', 'Inspection reports', 'News', 'Lawsuits', 'Send a link', 'Report abuse', 'Glossary'));
 check('quick links are cached on their own', kop_site_map_quick_links() === $data['quick'] && isset($GLOBALS['t_transients']['kop_site_map_quick_links']));
 
 // ---- Cache ------------------------------------------------------------------

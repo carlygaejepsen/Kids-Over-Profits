@@ -83,3 +83,6 @@ node_modules
 
 # Utah checklist PDFs live in Drive (FileBird Cloud/ut_checklists), linked from the site via the index api/sync-inspection-archive.php writes
 js/data/ut_checklists/*.pdf
+
+# Send to KOP extension store zips (browser-extension/send-to-kop/package.ps1)
+browser-extension/send-to-kop/dist/

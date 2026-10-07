@@ -276,6 +276,11 @@ php -d extension=pdo_sqlite scripts/test-source-submissions.php   # against an i
 # suggested_edits for facility_new/facility_correction; duplicates come back as {type, status} only (never ids/titles); 12 an hour per sender.
 # Signed-in reviewers in the app use kop/v1/extension/* with an application password, like the Chrome extension
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-submit.php [--db=...]
+# The same route serves the browser extension without an account (via=extension; Chrome/Edge/Firefox from one folder, Safari via
+# xcrun safari-web-extension-converter; package.ps1 zips it for the stores) and the /send/ page + bookmarklet for any browser (via=web;
+# inc/send-page.php, templates/send-page.php, js/send-page.js, prefill ?url=&title=&text=)
+php scripts/test-send-page.php
+npx web-ext lint --source-dir browser-extension/send-to-kop   # 1 expected warning: Firefox ignores background.service_worker
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked

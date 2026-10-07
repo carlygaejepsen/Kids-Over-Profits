@@ -631,6 +631,7 @@ if (!function_exists('kop_site_map_quick_specs')) {
             array('label' => 'News',                'note' => 'Coverage of the industry',              'template' => 'page-news-feed.php',        'icon' => 'newspaper'),
             array('label' => 'Lawsuits',            'note' => 'Court cases against programs',          'template' => 'page-lawsuits.php',         'icon' => 'scale'),
             array('label' => 'Document archive',    'note' => 'Records, reports and filings on file',  'template' => 'page-document-archive.php', 'icon' => 'archive'),
+            array('label' => 'Send a link',         'note' => 'Add an article, lawsuit or bill',       'path' => '/send/',                      'icon' => 'send'),
             array('label' => 'Report abuse',        'note' => 'Where to report, state by state',       'template' => 'page-report-abuse.php',     'icon' => 'shield'),
             array('label' => 'Glossary',            'note' => 'The industry\'s words, explained',      'template' => 'page-glossary.php',         'icon' => 'book'),
         ));

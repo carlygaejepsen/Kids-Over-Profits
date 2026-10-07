@@ -1622,6 +1622,16 @@ app needs a development build (not Expo Go); `kidsoverprofits://send?url=`
 and Paste link work everywhere. Owner: try each kind once on a phone and
 check it arrives at Review inbox.
 
+**Send from any browser (2026-10-07).** The extension needs no account now
+(public route, `via=extension`; reviewer sign-in still optional) and loads in
+Chrome, Edge and Firefox from one folder; `/send/` takes a link from any
+browser, with a bookmarklet (`?url=&title=&text=`). Owner steps: load the
+extension unpacked and send one page; publish `dist/send-to-kop-<version>.zip`
+(`package.ps1`) to the Chrome Web Store (5 USD once) and Firefox add-ons
+(free); Safari needs a Mac with Xcode and the Apple Developer Program
+(`xcrun safari-web-extension-converter`). Then put the store links on
+`/send/` (they say "coming soon" now).
+
 **Known, not the app's to fix**: `scripts/test-facility-pages.php` has 12
 failing checks on `main` (the merged Facility Profile posts: excerpt, jump
 links, written sections first, old anchors); they predate this work and are

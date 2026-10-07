@@ -1,6 +1,7 @@
 <?php
 /**
- * "Send to KOP" in the mobile app (github.com/carlygaejepsen/kids-over-profits-mobile).
+ * "Send to KOP" in the mobile app (github.com/carlygaejepsen/kids-over-profits-mobile), the
+ * browser extension without an account, and the /send/ page (via = app | extension | web).
  *
  * The public version of the browser extension (inc/source-submissions.php):
  * anyone can send a link or facility information, and everything lands in
@@ -51,10 +52,17 @@ function kop_msub_rate_count() {
     set_transient($key, (int) get_transient($key) + 1, HOUR_IN_SECONDS);
 }
 
+/** Where a public send came from: the app, the browser extension or the site's /send/ page. */
+function kop_msub_via(array $p) {
+    $labels = array('app' => 'mobile app', 'extension' => 'browser extension', 'web' => 'Send page');
+    $via = sanitize_key((string) ($p['via'] ?? 'app'));
+    return $labels[$via] ?? $labels['app'];
+}
+
 /** Who sent it, as the records tables write it. */
 function kop_msub_submitter(array $p) {
     $name = kop_ext_text($p['submitter_name'] ?? '', 120);
-    return mb_substr(($name !== '' ? $name . ' ' : '') . '(mobile app)', 0, 255);
+    return mb_substr(($name !== '' ? $name . ' ' : '') . '(' . kop_msub_via($p) . ')', 0, 255);
 }
 
 /** Public form of the extension's duplicate list: type and whether it is live. */
@@ -132,7 +140,7 @@ function kop_msub_facility_document(array $p, $type) {
         'projectName' => $name,
         'name'        => $name,
         'facilities'  => array($facility),
-        'source'      => 'mobile app',
+        'source'      => kop_msub_via($p),
     );
     if (!empty($facility['identification']['currentOperator'])) {
         $data['operator'] = array('name' => $facility['identification']['currentOperator']);
@@ -149,7 +157,7 @@ function kop_msub_insert_facility(array $p, $type, $submitter, $note) {
         return $data;
     }
     $url = esc_url_raw(trim((string) ($p['url'] ?? '')), array('http', 'https'));
-    $reason = array($type === 'facility_new' ? 'New facility, sent from the mobile app.' : 'Correction, sent from the mobile app.');
+    $reason = array(($type === 'facility_new' ? 'New facility' : 'Correction') . ', sent from the ' . kop_msub_via($p) . '.');
     if ($note !== '') {
         $reason[] = $note;
     }

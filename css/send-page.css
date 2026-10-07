@@ -1,0 +1,200 @@
+/* /send/ (templates/send-page.php). White panels: nothing sits on the gradient body
+   background. Kadence colours headings, links, buttons and inputs directly, so each is
+   set here in every state. Works at 360px with a 16px gutter (the bookmarklet's window). */
+
+.kop-send-page {
+    max-width: 760px;
+    margin-inline: auto;
+    padding: 16px;
+    box-sizing: border-box;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 8px;
+}
+
+.kop-send-page *,
+.kop-send-page *::before,
+.kop-send-page *::after {
+    box-sizing: border-box;
+}
+
+.kop-send-page h1,
+.kop-send-page h2,
+.kop-send-page h3 {
+    color: var(--kop-midnight-blue, #000435);
+    overflow-wrap: anywhere;
+}
+
+.kop-send-page h1 { margin: 0 0 8px; font-size: 1.75rem; }
+.kop-send-page h2 { margin: 0 0 12px; font-size: 1.25rem; }
+.kop-send-page h3 { margin: 20px 0 6px; font-size: 1.05rem; }
+.kop-send-page p { color: var(--kop-midnight-blue, #000435); }
+.kop-send__lede { margin: 0 0 16px; }
+
+.kop-send__panel {
+    margin: 0 0 16px;
+    padding: 16px;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-top: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+}
+
+.kop-send-page a { color: var(--kop-navy-blue, #000080); }
+.kop-send-page a:hover,
+.kop-send-page a:focus { color: var(--kop-midnight-blue, #000435); }
+
+.kop-send__field { margin: 0 0 14px; min-width: 0; }
+
+.kop-send__field label,
+.kop-send__codelabel {
+    display: block;
+    margin: 0 0 4px;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-send-page .kop-send__field .kop-send__optional {
+    font-weight: 400;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-send-page input[type="text"],
+.kop-send-page input[type="url"],
+.kop-send-page input[type="date"],
+.kop-send-page input[type="email"],
+.kop-send-page select,
+.kop-send-page textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    padding: 9px 10px;
+    border: 1px solid var(--kop-navy-blue, #000080);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.kop-send-page input::placeholder,
+.kop-send-page textarea::placeholder {
+    color: var(--kop-text-muted, #4A5568);
+    opacity: 1;
+}
+
+.kop-send-page input:focus,
+.kop-send-page select:focus,
+.kop-send-page textarea:focus {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 1px;
+    border-color: var(--kop-navy-blue, #000080);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-send__row { display: grid; grid-template-columns: 1fr; gap: 0 12px; }
+.kop-send__row[hidden] { display: none; }
+
+@media (min-width: 560px) {
+    .kop-send__row { grid-template-columns: 1fr 1fr; }
+    .kop-send__row--three { grid-template-columns: 1.4fr 1fr 1fr; }
+}
+
+.kop-send-page .kop-send__hint {
+    margin: 4px 0 0;
+    font-size: 0.85rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+/* Honeypot: off screen, not display:none, so bots still fill it. */
+.kop-send__trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+.kop-send-page .kop-send__status {
+    margin: 6px 0 0;
+    padding: 8px 10px;
+    border-left: 4px solid var(--kop-orange-ink, #A3570D);
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.92rem;
+}
+
+.kop-send__status[hidden],
+.kop-send__result[hidden] { display: none; }
+
+.kop-send-page .kop-send__result {
+    margin: 14px 0 0;
+    padding: 12px;
+    border: 1px solid var(--kop-midnight-blue, #000435);
+    border-left-width: 6px;
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    font-weight: 600;
+}
+
+.kop-send-page .kop-send__result--ok { border-color: var(--kop-teal-ink, #24757F); }
+.kop-send-page .kop-send__result--dup { border-color: var(--kop-orange-ink, #A3570D); }
+.kop-send-page .kop-send__result--error { border-color: #B42318; }
+.kop-send__result:focus { outline: 3px solid var(--kop-focus-color, #33A7B5); outline-offset: 2px; }
+
+.kop-send__actions { margin-top: 16px; }
+
+.kop-send-page button.kop-send__submit,
+.kop-send-page button.kop-send__copy,
+.kop-send-page a.kop-send__bookmarklet {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.kop-send-page button.kop-send__submit,
+.kop-send-page button.kop-send__submit:hover,
+.kop-send-page button.kop-send__submit:focus,
+.kop-send-page button.kop-send__submit:active {
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+    border-color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-send-page button.kop-send__submit:hover,
+.kop-send-page button.kop-send__submit:active { background: var(--kop-navy-blue, #000080); }
+
+.kop-send-page button.kop-send__copy,
+.kop-send-page button.kop-send__copy:hover,
+.kop-send-page button.kop-send__copy:focus,
+.kop-send-page button.kop-send__copy:active,
+.kop-send-page a.kop-send__bookmarklet,
+.kop-send-page a.kop-send__bookmarklet:hover,
+.kop-send-page a.kop-send__bookmarklet:focus,
+.kop-send-page a.kop-send__bookmarklet:active {
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border-color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-send-page button.kop-send__copy:hover,
+.kop-send-page button.kop-send__copy:active,
+.kop-send-page a.kop-send__bookmarklet:hover,
+.kop-send-page a.kop-send__bookmarklet:active { background: var(--kop-sand, #F2EEDF); }
+
+.kop-send-page button.kop-send__submit:focus-visible,
+.kop-send-page button.kop-send__copy:focus-visible,
+.kop-send-page a.kop-send__bookmarklet:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+.kop-send-page button[disabled] { opacity: 0.7; cursor: wait; }
+.kop-send__icon { width: 1.1em; height: 1.1em; flex: none; }
+.kop-send__code { font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; word-break: break-all; }
+.kop-send__copied { font-weight: 600; color: var(--kop-midnight-blue, #000435); }

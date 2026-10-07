@@ -98,6 +98,8 @@ require_once get_stylesheet_directory() . '/inc/source-submissions.php';
 
 // The same intake for the mobile app, public: links and facility information to the review queues
 require_once get_stylesheet_directory() . '/inc/mobile-submit.php';
+// /send/: send a link to KOP from any browser (form + bookmarklet), posts to the mobile submit route.
+require_once get_stylesheet_directory() . '/inc/send-page.php';
 
 // Features & Classes (Anonymous Portal, etc.)
 require_once get_stylesheet_directory() . '/inc/features.php';

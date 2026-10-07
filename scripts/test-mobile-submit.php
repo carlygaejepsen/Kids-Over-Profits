@@ -203,6 +203,18 @@ $pid = array_key_last($GLOBALS['kop_posts']);
 check(($GLOBALS['kop_posts'][$pid]['post_status'] ?? '') === 'pending' && get_post_meta($pid, '_kop_submitted_by') === 'Lee (mobile app)', 'website lands in the Websites queue, pending, submitter "Lee (mobile app)"');
 check(count($GLOBALS['followups']) === $before && end($GLOBALS['newsletter'])['email'] === 'c@example.test', 'website has no follow-up kind; the newsletter hook gets the email');
 
+// Where it came from: via 'web' is the /send/ page, an unknown via is the app.
+$r = submit(array('type' => 'article', 'url' => 'https://example-news.test/2026/10/02/web-story', 'title' => 'Web story', 'via' => 'web', 'submitter_name' => 'Wren'));
+check(is_resp($r, 201), 'via web -> 201');
+$n = $pdo->query("SELECT * FROM news_submissions WHERE article_url = 'https://example-news.test/2026/10/02/web-story'")->fetch();
+check($n && $n['submitted_by'] === 'Wren (Send page)', 'via web: submitter "Wren (Send page)"');
+$r = submit(array('type' => 'article', 'url' => 'https://example-news.test/2026/10/02/web-story-two', 'title' => 'Web story two', 'via' => 'web'));
+$n = $pdo->query("SELECT * FROM news_submissions WHERE article_url = 'https://example-news.test/2026/10/02/web-story-two'")->fetch();
+check($n && $n['submitted_by'] === '(Send page)', 'via web, no name: submitter "(Send page)"');
+$r = submit(array('type' => 'article', 'url' => 'https://example-news.test/2026/10/02/odd-via', 'title' => 'Odd via', 'via' => 'carrier-pigeon'));
+$n = $pdo->query("SELECT * FROM news_submissions WHERE article_url = 'https://example-news.test/2026/10/02/odd-via'")->fetch();
+check($n && $n['submitted_by'] === '(mobile app)', 'unknown via falls back to "(mobile app)"');
+
 // Duplicates.
 $news = $pdo->query("SELECT article_url, status FROM news_submissions WHERE article_url LIKE 'http%' AND status IN ('approved','published') ORDER BY id DESC LIMIT 1")->fetch();
 if (!$news) {
