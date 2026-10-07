@@ -10244,5 +10244,29 @@
         "Ownership: Universal Health Services completed its acquisition of Psychiatric Solutions, Inc., and with it Laurel Ridge, in November 2010 (Universal Health Services, Form 10-K for 2010, filed February 2011: https://www.sec.gov/Archives/edgar/data/352915/000119312511050142/d10k.htm)"
       ]
     }
+  },
+  {
+    "id": 10087,
+    "unique_name": "Newport Academy – Alberca",
+    "version": 1,
+    "note": "Address typo fixed 2026-10-07: '1850 Calle Alberc,. Camarillo' left the town as '. Camarillo' on the site and in the app.",
+    "facility": {
+      "address": "1850 Calle Alberca, Camarillo, CA 93010",
+      "addressParts": {
+        "street": "1850 Calle Alberca",
+        "city": "Camarillo",
+        "state": "CA",
+        "zip": "93010"
+      },
+      "location": "Camarillo, CA",
+      "locationDetails": {
+        "city": "Camarillo",
+        "state": "CA",
+        "country": "United States",
+        "zip": "93010",
+        "additionalLocations": [],
+        "formerLocations": []
+      }
+    }
   }
 ]
