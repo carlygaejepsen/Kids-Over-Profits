@@ -59,6 +59,19 @@ check('court state: Western District of North Carolina', kop_sc_court_state('U.S
 check('court state: West Virginia is not Virginia', kop_sc_court_state('Southern District of West Virginia') === 'West Virginia');
 check('California bills are read on CalMatters', kop_sc_bill_source_url(array('official_url' => 'https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB1190', 'full_text_url' => ''))
     === 'https://calmatters.digitaldemocracy.org/bills/ca_202520260sb1190');
+check('New York Senate bills are read on the Assembly site', kop_sc_bill_source_url(array('official_url' => 'https://www.nysenate.gov/legislation/bills/2025/S937', 'full_text_url' => ''))
+    === 'https://nyassembly.gov/leg/?default_fld=&leg_video=&bn=S00937&term=2025&Summary=Y&Actions=Y');
+check('Ohio bills are read from the legislature data service', kop_sc_bill_source_url(array('official_url' => 'https://www.legislature.ohio.gov/legislation/136/hb811', 'full_text_url' => ''))
+    === 'https://search-prod.lis.state.oh.us/api/v2/general_assembly_136/legislation/hb811/actions/');
+$GLOBALS['kop_sc_fetch_stub'] = function ($url) {
+    return substr($url, -9) === '/actions/'
+        ? '[{"occurred":"2026-04-08T10:00:00-04:00","chamber":"House","action":"Introduced","description":"Introduced"},{"occurred":"2026-05-13T19:43:00-04:00","chamber":"House","action":"Refer to Committee","description":"Refer to Committee","cmte_lpid":"cmte_h_children_human_services_1"}]'
+        : '[{"name":"H. B. No. 811","short_title":"Regards residential facilities","version":"As Introduced","governor_signed_date":null,"effective_date":null}]';
+};
+$oh = kop_sc_ohio_text(kop_sc_fetch('https://search-prod.lis.state.oh.us/api/v2/general_assembly_136/legislation/hb811/actions/'), 'https://search-prod.lis.state.oh.us/api/v2/general_assembly_136/legislation/hb811/actions/');
+check('Ohio actions read newest first with the committee', strpos($oh, "Actions, newest first:
+2026-05-13 House: Refer to Committee (committee children_human_services)") !== false && strpos($oh, 'Governor signed: no') !== false);
+unset($GLOBALS['kop_sc_fetch_stub']);
 check('quote found despite curly quotes and spacing', kop_sc_quote_found("Approved by Governor  \u{2019}10/5/26\u{2019}", "x approved by governor '10/5/26' y"));
 check('a quote that is not there is not found', !kop_sc_quote_found('Vetoed by the Governor', 'Approved by the Governor'));
 check('AI JSON inside a code fence is read', kop_sc_parse_json("```json\n{\"same_bill\": true, \"status\": \"enacted\"}\n```")['status'] === 'enacted');

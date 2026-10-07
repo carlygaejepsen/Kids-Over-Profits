@@ -261,15 +261,53 @@ function kop_sc_billstatus_facts($xml, $congress) {
 
 /* ---- State bills: the official page, read by the AI ----------------- */
 
-/** The page to read for a state bill: CalMatters for California's blocked leginfo, else the official page. */
+/**
+ * The page to read for a state bill, where the official one blocks the server: California's leginfo through
+ * CalMatters, New York's Senate site (Cloudflare) through the Assembly's bill page, Ohio's site (no answer)
+ * through the legislature's own data service. Else the official page.
+ */
 function kop_sc_bill_source_url(array $bill) {
     foreach (array((string) $bill['official_url'], (string) $bill['full_text_url']) as $url) {
         if (preg_match('#leginfo\.legislature\.ca\.gov/.*bill_id=(\d{9}[A-Z]+\d+)#i', $url, $m)) {
             return 'https://calmatters.digitaldemocracy.org/bills/ca_' . strtolower($m[1]);
         }
+        if (preg_match('#nysenate\.gov/legislation/bills/(\d{4})/([A-Z])0*(\d+)#i', $url, $m)) {
+            return 'https://nyassembly.gov/leg/?default_fld=&leg_video=&bn=' . strtoupper($m[2]) . str_pad($m[3], 5, '0', STR_PAD_LEFT)
+                . '&term=' . $m[1] . '&Summary=Y&Actions=Y';
+        }
+        if (preg_match('#legislature\.ohio\.gov/legislation/(\d{3})/([a-z]+\d+)#i', $url, $m)) {
+            return 'https://search-prod.lis.state.oh.us/api/v2/general_assembly_' . $m[1] . '/legislation/' . strtolower($m[2]) . '/actions/';
+        }
     }
     $url = trim((string) $bill['official_url']);
     return preg_match('#^https?://#i', $url) ? $url : '';
+}
+
+/** Ohio's actions list (JSON) as lines the AI reads, newest first, with the signing and effective dates from the bill itself. */
+function kop_sc_ohio_text($json, $url) {
+    $actions = json_decode((string) $json, true);
+    if (!is_array($actions)) {
+        return '';
+    }
+    $lines = array();
+    foreach ($actions as $a) {
+        if (!is_array($a)) continue;
+        $lines[] = substr((string) ($a['occurred'] ?? ''), 0, 10) . ' ' . ($a['chamber'] ?? '') . ': ' . ($a['description'] ?? $a['action'] ?? '')
+            . (!empty($a['cmte_lpid']) ? ' (committee ' . preg_replace('/^cmte_[hs]_|_\d+$/', '', (string) $a['cmte_lpid']) . ')' : '');
+    }
+    rsort($lines);
+    $bill = json_decode(kop_sc_fetch(preg_replace('#actions/?$#', '', $url)), true);
+    $b = is_array($bill) && isset($bill[0]) ? $bill[0] : array();
+    $head = 'Ohio ' . ($b['name'] ?? '') . ': ' . ($b['short_title'] ?? '') . "
+Version: " . ($b['version'] ?? '')
+        . "
+Governor signed: " . ($b['governor_signed_date'] ?: 'no') . "
+Effective date: " . ($b['effective_date'] ?: 'none');
+    return $lines ? $head . "
+Actions, newest first:
+" . implode("
+", $lines) . "
+" . str_repeat(' ', 120) : '';
 }
 
 function kop_sc_bill_prompt(array $bill, $text) {
@@ -440,7 +478,8 @@ function kop_sc_check_bill(array $bill) {
     if ($url === '') {
         return array('no_source', null, '', '', '', 'The record has no official bill page link.', '');
     }
-    $text = kop_sc_html_text(kop_sc_fetch($url));
+    $raw = kop_sc_fetch($url);
+    $text = strpos($url, 'search-prod.lis.state.oh.us') !== false ? kop_sc_ohio_text($raw, $url) : kop_sc_html_text($raw);
     if (strlen($text) < 200) {
         return array('error', null, $url, '', '', 'The bill page could not be read (blocked or empty).', '');
     }
