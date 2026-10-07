@@ -40,7 +40,7 @@ if (!function_exists('kop_irl_version')) {
 
     /** Bump when kop_irl_report_counts() or kop_irl_report_year() changes: every report is counted again. */
     function kop_irl_version() {
-        return 3;
+        return 4;
     }
 
     // -----------------------------------------------------------------------
@@ -110,7 +110,8 @@ if (!function_exists('kop_irl_version')) {
                 'complaints' => 'AHCA complaint surveys',
             ),
             'NC' => array(
-                'cited'      => 'Statements of deficiency',
+                'cited'      => 'Statements of deficiency citing a rule not met',
+                'citations'  => 'Rules "not met as evidenced by" in the statement, as /nc-reports/ reads it',
                 'complaints' => 'Statements of deficiency from a complaint survey',
             ),
             'MN' => array(
@@ -169,7 +170,7 @@ if (!function_exists('kop_irl_version')) {
      * The state's own verdicts on one report: measure => count, only for the
      * measures the state publishes (kop_irl_state_measures()); zeros left out.
      * $data is the report's decoded categories_json; $raw its raw_content,
-     * read for Minnesota only.
+     * read for Minnesota and North Carolina only.
      */
     function kop_irl_report_counts($state, array $data, $raw = '') {
         $state = strtoupper((string) $state);
@@ -249,7 +250,10 @@ if (!function_exists('kop_irl_version')) {
 
             case 'NC':
                 if (preg_match('/Statement of Defi/i', (string) ($data['document_type'] ?? ''))) {
-                    $c['cited'] = 1;
+                    // "No deficiencies were cited" statements cite nothing: count the
+                    // rules not met, as /nc-reports/ does (kop_its_nc_statement()).
+                    require_once dirname(__DIR__) . '/api/lib-inspection-text-signals.php';
+                    $c['citations'] = kop_its_nc_statement((string) $raw)['citations'];
                     if (stripos((string) ($data['inspection_type'] ?? ''), 'Complaint') !== false) $c['complaints'] = 1;
                 }
                 break;
@@ -358,7 +362,7 @@ if (!function_exists('kop_irl_version')) {
         $write = $pdo->prepare('REPLACE INTO inspection_report_counts (report_id, facility_id, state, year, content_hash, counts, version) VALUES (?, ?, ?, ?, ?, ?, ?)');
         while ($done < $limit && microtime(true) - $started < $seconds) {
             $rows = $pdo->query("SELECT r.id, r.facility_id, f.state, r.report_date, r.categories_json,
-                    CASE WHEN f.state = 'MN' THEN r.raw_content ELSE NULL END AS raw
+                    CASE WHEN f.state IN ('MN', 'NC') THEN r.raw_content ELSE NULL END AS raw
                 FROM inspection_reports r
                 JOIN inspection_facilities f ON f.id = r.facility_id
                 LEFT JOIN inspection_report_counts c ON c.report_id = r.id

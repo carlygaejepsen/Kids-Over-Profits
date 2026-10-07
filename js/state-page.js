@@ -673,17 +673,28 @@
             const hasCorrectiveActions = cats.corrective_actions && String(cats.corrective_actions).toLowerCase() !== 'none';
             const hasFindings = (insp.finding_count || 0) > 0 || findings.length > 0 || deficiencies.length > 0 || hasCorrectiveActions;
             const findingCount = insp.finding_count || findings.length || deficiencies.length;
-            // finding_label: the server could not count findings and says what
-            // the report is instead (NC: plan of correction, survey not completed).
-            const otherLabel = !hasFindings && insp.finding_label ? String(insp.finding_label) : '';
-            const klass = hasFindings ? 'inspection-box-violation' : (otherLabel ? 'inspection-box-neutral' : 'inspection-box-clean');
+            // badges/tone: what the state's own report page (/xx-reports/) says
+            // about this report, worked out by the server with that page's reader
+            // (api/lib-inspection-verdicts.php). States without one keep the counts.
+            const badges = Array.isArray(insp.badges) ? insp.badges.filter(b => b && b.text) : null;
+            let klass;
+            let findingsLabel;
+            if (badges) {
+                const tone = insp.tone || 'neutral';
+                const bad = tone === 'flagged' || tone === 'repeat';
+                klass = bad ? 'inspection-box-violation' : (tone === 'clean' ? 'inspection-box-clean' : 'inspection-box-neutral');
+                const lead = badges.find(b => (bad ? (b.tone === 'flagged' || b.tone === 'repeat') : b.tone === tone)) || badges[0];
+                findingsLabel = lead ? String(lead.text) : '';
+            } else {
+                klass = hasFindings ? 'inspection-box-violation' : 'inspection-box-clean';
+                findingsLabel = hasFindings
+                    ? (findingCount > 0
+                        ? `${findingCount} finding${findingCount === 1 ? '' : 's'}`
+                        : 'Has corrective actions')
+                    : 'No findings';
+            }
             const dateStr = formatDate(insp.date) || '—';
             const typeStr = insp.type ? escapeHtml(insp.type) : 'Inspection';
-            const findingsLabel = hasFindings
-                ? (findingCount > 0
-                    ? `${findingCount} finding${findingCount === 1 ? '' : 's'}`
-                    : 'Has corrective actions')
-                : (otherLabel || 'No findings');
 
             const sourceLinks = [];
             const pdfUrls = Array.isArray(insp.pdf_urls) && insp.pdf_urls.length ? insp.pdf_urls : (insp.pdf_url ? [insp.pdf_url] : []);
@@ -704,7 +715,7 @@
                 cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
                 cats.census ? `<strong>Census:</strong> ${escapeHtml(cats.census)}` : '',
                 cats.complaint_status ? `<strong>Complaint Status:</strong> ${escapeHtml(cats.complaint_status)}` : '',
-                insp.complaint === 'substantiated' ? '<strong>Complaint:</strong> substantiated' : '',
+                badges && badges.length > 1 ? `<strong>State report page:</strong> ${badges.map(b => escapeHtml(String(b.text))).join(' &middot; ')}` : '',
                 cats.met_with ? `<strong>Met With:</strong> ${escapeHtml(cats.met_with)}` : '',
                 sourceLinks.length ? `<strong>Source:</strong> ${sourceLinks.join(' &middot; ')}` : '',
             ].filter(Boolean).join('<br>');
@@ -793,7 +804,7 @@
                     <summary class="inspection-header">
                         <span class="inspection-summary-date">${escapeHtml(dateStr)}</span>
                         <span class="inspection-summary-type">${typeStr}</span>
-                        <span class="inspection-summary-findings">${escapeHtml(findingsLabel)}</span>
+                        ${findingsLabel ? `<span class="inspection-summary-findings">${escapeHtml(findingsLabel)}</span>` : ''}
                     </summary>
                     <div class="inspection-content">
                         <div class="inspection-details-block">${detailsRows}</div>

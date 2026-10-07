@@ -61,6 +61,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-glossary-store.ph
 # After editing the FL/NC adapters' text readers or api/lib-inspection-text-signals.php (PHP must match JS exactly)
 node scripts/test-inspection-text-signals.js --php=<Local php.exe>
 php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / ?text= against tmp/prod.sqlite
+# State hub inspection cards say what the state's own /xx-reports/ page says (badges, tone, count): one PHP reader per state in
+# api/inspection-verdicts/<st>.php (api/lib-inspection-verdicts.php), used by kop_state_collect_inspection_summaries(). After
+# editing an adapter in js/inspections/states/ or a reader there, run the parity test (real adapters vs PHP on every report)
+node scripts/test-inspection-verdicts.js --php=<Local php.exe> [--states=PA,NC] [--ids=..]
 # NC rows the old nc_scraper.py matcher misfiled (adult-only, one facility under many licences): seeds/nc-inspection-cleanup.json
 php -d extension=pdo_sqlite scripts/test-nc-inspection-cleanup.php   # on an in-memory copy of tmp/prod.sqlite
 php api/clean-nc-inspections.php [apply]      # on the server (ea-php82): dry run; apply backs up to ~/kop-backups/ first

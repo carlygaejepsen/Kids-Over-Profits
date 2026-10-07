@@ -782,8 +782,8 @@ button.facility-expand-btn:active {
     color: #065f46;
 }
 
-/* A report whose findings could not be counted (NC plan of correction, survey
-   not completed): says what it is, never "No findings". */
+/* A report the state's page neither flags nor clears (plan of correction,
+   survey not completed, scan not read): says what it is, never "No findings". */
 .inspection-box-neutral {
     background: #ffffff;
 }

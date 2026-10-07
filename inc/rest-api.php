@@ -3945,7 +3945,7 @@ function kop_state_collect_inspection_summaries($state_name) {
             $placeholders = implode(',', array_fill(0, count($facility_ids), '%d'));
 
             $report_rows = $wpdb->get_results($wpdb->prepare(
-                "SELECT id, facility_id, report_date, report_url, summary, categories_json
+                "SELECT id, facility_id, report_id, report_date, report_url, summary, categories_json
                  FROM inspection_reports
                  WHERE facility_id IN ($placeholders)",
                 ...$facility_ids
@@ -3965,7 +3965,9 @@ function kop_state_collect_inspection_summaries($state_name) {
             $stats_by_facility = array();        // counts
             $inspections_by_facility = array();  // per-record details
             $inspection_by_fid_date = array();   // "$fid|$date" -> index into $inspections_by_facility[$fid] (for grouping single-finding rows)
-            $nc_pending = array();               // NC statement row id -> [fid, index], read from the text below
+            $verdict_queue = array();            // rows read by their state's report-page reader, below
+            $row_state = array();                // facility id -> the state whose scraper stored it
+            foreach ($facility_rows as $f) $row_state[(int)$f['id']] = strtoupper(trim((string)($f['state'] ?? '')));
 
             if (is_array($report_rows)) {
                 foreach ($report_rows as $r) {
@@ -4094,20 +4096,17 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $stats_by_facility[$fid]['violations'] += $finding_count;
                     $update_latest($date_str);
 
-                    // NC's scraper keeps only the report's text. A plan of
-                    // correction is the facility's answer (its statement is a
-                    // separate report, counted there); a statement's violations
-                    // are read from its text below, as /nc-reports/ does.
-                    $finding_label = '';
-                    if ($abbrev === 'NC' && !$finding_count && count($inspections_by_facility[$fid]) < 20) {
-                        $nc_doc = (string)($categories['document_type'] ?? '');
-                        if ($nc_doc === '') $nc_doc = (string)($r['summary'] ?? '');
-                        if (preg_match('/defic|defen|statement/i', $nc_doc)) {
-                            $nc_pending[(int)$r['id']] = array($fid, count($inspections_by_facility[$fid]));
-                        } else {
-                            $finding_label = 'Plan of correction';
-                        }
-                    }
+                    // Read again below by the state's report-page reader, when it has one.
+                    $verdict_queue[(int)$r['id']] = array(
+                        'fid' => $fid,
+                        'idx' => count($inspections_by_facility[$fid]) < 20 ? count($inspections_by_facility[$fid]) : null,
+                        'old' => $finding_count,
+                        'report' => array(
+                            'categories' => $categories, 'summary' => (string)($r['summary'] ?? ''),
+                            'report_date' => $date_str, 'report_url' => (string)($r['report_url'] ?? ''),
+                            'report_id' => (string)($r['report_id'] ?? ''), 'raw_content' => '',
+                        ),
+                    );
 
                     if (count($inspections_by_facility[$fid]) < 20) {
                         // Cherry-pick state-report category fields so JS can render
@@ -4168,41 +4167,59 @@ function kop_state_collect_inspection_summaries($state_name) {
                             'summary'       => $summary_out,
                             'categories'    => $picked_categories,
                         );
-                        if ($finding_label !== '') {
-                            $inspections_by_facility[$fid][count($inspections_by_facility[$fid]) - 1]['finding_label'] = $finding_label;
-                        }
                     }
                 }
             }
 
-            // NC statements: count "Rule is not met as evidenced by" in the
-            // text with the reader /nc-reports/ uses (kop_its_nc_statement()),
-            // a few reports at a time so the whole state's text is never held.
-            if ($nc_pending) {
-                require_once get_stylesheet_directory() . '/api/lib-inspection-text-signals.php';
-                foreach (array_chunk(array_keys($nc_pending), 100) as $chunk) {
+            // Each state's report page (/xx-reports/) has its own reader for what
+            // its scraper stored; the hub says what that page says: its badges,
+            // its tone, its count (api/lib-inspection-verdicts.php, parity-tested
+            // against the pages by scripts/test-inspection-verdicts.js). The text
+            // is fetched only for the rows whose reader needs it, 100 at a time.
+            if ($verdict_queue) {
+                require_once get_stylesheet_directory() . '/api/lib-inspection-verdicts.php';
+                $readers = kop_iv_states();
+                $need_text = array();
+                foreach ($verdict_queue as $rid => $q) {
+                    $st = $row_state[$q['fid']] ?? '';
+                    if (!in_array($st, $readers, true)) { unset($verdict_queue[$rid]); continue; }
+                    if (kop_inspection_verdict_needs_text($st, $q['report']['categories'])) $need_text[] = $rid;
+                }
+                foreach (array_chunk($need_text, 100) as $chunk) {
                     $texts = $wpdb->get_results(
                         'SELECT id, raw_content FROM inspection_reports WHERE id IN (' . implode(',', array_map('intval', $chunk)) . ')',
                         ARRAY_A
                     );
                     foreach ((array) $texts as $t) {
-                        list($fid, $idx) = $nc_pending[(int) $t['id']];
-                        if (!isset($inspections_by_facility[$fid][$idx])) continue;
-                        $read = kop_its_nc_statement((string) $t['raw_content']);
-                        $rec =& $inspections_by_facility[$fid][$idx];
-                        if ($read['citations'] > 0) {
-                            $rec['finding_count'] = $read['citations'];
-                            $stats_by_facility[$fid]['violations'] += $read['citations'];
-                        } elseif (!$read['clean']) {
-                            $rec['finding_label'] = $read['attempted'] ? 'Survey not completed' : 'See report';
-                        } elseif (!empty($read['complaint']['substantiated'])) {
-                            // "The complaint was substantiated. No deficiencies were cited."
-                            $rec['finding_label'] = 'Complaint substantiated';
-                        }
-                        if (!empty($read['complaint']['substantiated'])) $rec['complaint'] = 'substantiated';
-                        unset($rec);
+                        $verdict_queue[(int) $t['id']]['report']['raw_content'] = (string) $t['raw_content'];
                     }
+                    unset($texts);
                 }
+                $dropped = array();
+                foreach ($verdict_queue as $rid => $q) {
+                    $fid = $q['fid'];
+                    $verdict = kop_inspection_verdict($row_state[$fid], $q['report']);
+                    $verdict_queue[$rid]['report']['raw_content'] = '';
+                    if ($verdict === false) continue;
+                    $stats_by_facility[$fid]['violations'] += ($verdict ? $verdict['count'] : 0) - $q['old'];
+                    if ($verdict === null) {
+                        // The state's page shows no report for this row.
+                        $stats_by_facility[$fid]['count'] = max(0, $stats_by_facility[$fid]['count'] - 1);
+                        if ($q['idx'] !== null) $dropped[$fid][] = $q['idx'];
+                        continue;
+                    }
+                    if ($q['idx'] === null || !isset($inspections_by_facility[$fid][$q['idx']])) continue;
+                    $rec =& $inspections_by_facility[$fid][$q['idx']];
+                    $rec['finding_count'] = $verdict['count'];
+                    $rec['tone'] = $verdict['tone'];
+                    $rec['badges'] = $verdict['badges'];
+                    unset($rec);
+                }
+                foreach ($dropped as $fid => $idxs) {
+                    foreach ($idxs as $i) unset($inspections_by_facility[$fid][$i]);
+                    $inspections_by_facility[$fid] = array_values($inspections_by_facility[$fid]);
+                }
+                unset($verdict_queue, $need_text);
             }
 
             // Utah's scraper posts only the date, type and finding count; the
@@ -4220,6 +4237,11 @@ function kop_state_collect_inspection_summaries($state_name) {
                         if (empty($_rec['findings']) && $detail['findings']) {
                             $_rec['findings'] = array_slice($detail['findings'], 0, 12);
                             $_rec['finding_count'] = max((int)$_rec['finding_count'], count($detail['findings']));
+                            // The JSON's findings are what /ut-reports/ shows: ut.js badge "N findings".
+                            if ($_rec['finding_count'] > 0 && isset($_rec['tone']) && $_rec['tone'] === 'clean') {
+                                $_rec['tone'] = 'flagged';
+                                $_rec['badges'] = array(array('text' => $_rec['finding_count'] . ' finding' . ($_rec['finding_count'] === 1 ? '' : 's'), 'tone' => 'flagged'));
+                            }
                         }
                         if ($_rec['pdf_url'] === '' && $detail['pdf_urls']) {
                             $_rec['pdf_url'] = $detail['pdf_urls'][0];
@@ -5825,7 +5847,7 @@ function kop_state_feed_fingerprint() {
     $parts[] = 'writes:' . (function_exists('kop_v2_writes_on') && kop_v2_writes_on() ? 'v2' : 'legacy');
     $dir = get_stylesheet_directory();
     $newest = 0;
-    foreach (array('/inc/*.php', '/api/lib-*.php', '/js/data/*.json', '/js/data/*/*.json') as $pattern) {
+    foreach (array('/inc/*.php', '/api/lib-*.php', '/api/inspection-verdicts/*.php', '/js/data/*.json', '/js/data/*/*.json') as $pattern) {
         foreach ((array) glob($dir . $pattern) as $file) {
             $mtime = (int) @filemtime($file);
             if ($mtime > $newest) $newest = $mtime;
@@ -5865,7 +5887,7 @@ function kop_state_feed_split(array $feed) {
                     $records[$ref] = $insp;
                     $cats = isset($insp['categories']) && is_array($insp['categories']) ? $insp['categories'] : array();
                     $stub = array('ref' => $ref);
-                    foreach (array('date', 'type', 'finding_count', 'finding_label', 'pdf_url', 'inspected_by') as $k) {
+                    foreach (array('date', 'type', 'finding_count', 'tone', 'pdf_url', 'inspected_by') as $k) {
                         if (isset($insp[$k]) && $insp[$k] !== '' && $insp[$k] !== null) $stub[$k] = $insp[$k];
                     }
                     if (!empty($cats['licensee'])) $stub['categories'] = array('licensee' => $cats['licensee']);

@@ -82,8 +82,16 @@ $cases = array(
         array('citations' => 2, 'cited' => 1)),
     array('FL DJJ PREA is not counted', 'FL', array('source' => 'DJJ', 'report_type' => 'PREA', 'findings' => array(array('rating' => 'Failed Compliance'))), '',
         array()),
-    array('NC complaint statement of deficiency', 'NC', array('document_type' => 'Statement of Deficieny', 'inspection_type' => 'MHLCS Annual and Complaint'), '',
-        array('cited' => 1, 'complaints' => 1)),
+    array('NC complaint statement of deficiency', 'NC', array('document_type' => 'Statement of Deficieny', 'inspection_type' => 'MHLCS Annual and Complaint'),
+        "The complaint was substantiated. Deficiencies were cited.
+This Rule is not met as evidenced by:
+...
+This Rule is not met as evidenced by:
+...",
+        array('cited' => 1, 'citations' => 2, 'complaints' => 1)),
+    array('NC statement citing nothing is not a citation', 'NC', array('document_type' => 'Statement of Deficiency', 'inspection_type' => 'MHLCS Complaint and Follow-up'),
+        "The complaint was substantiated (Intake #NC00236295). No deficiencies were cited.",
+        array('complaints' => 1)),
     array('NC plan of correction is not a citation', 'NC', array('document_type' => 'Plan of Correction', 'inspection_type' => 'MHLCS Complaint'), '',
         array()),
     array('MN maltreatment determined', 'MN', array('doc_type' => 'Maltreatment Finding'), "Disposition: Maltreatment was determined.\nConclusions: ...",
