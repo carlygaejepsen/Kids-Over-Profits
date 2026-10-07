@@ -142,6 +142,15 @@ def record_names(record_id):
     return [re.sub(r'\s*\(\d{4}.*$', '', n).strip() for n in names if isinstance(n, str) and n.strip()]
 
 
+def clean_role(role):
+    """'Admissions Director, Admissions' -> 'Admissions Director'; a part another part already holds is dropped."""
+    parts = [p.strip() for p in role.split(',') if p.strip() and 'natsap' not in p.lower()]
+    key = lambda p: re.sub(r'[^a-z]', '', p.lower())
+    keep = [p for i, p in enumerate(parts)
+            if not any(j != i and key(p) in key(q) and (key(p) != key(q) or j < i) for j, q in enumerate(parts))]
+    return ', '.join(keep) or role
+
+
 def staff_line(g, program, closed, earlier_names=()):
     """One staff line. Always "was": KOP's lists do not say whether someone still holds the job. A record that holds an
     earlier name keeps that name's staff too, so when the network map's staff list puts the person at one of the record's
@@ -155,10 +164,14 @@ def staff_line(g, program, closed, earlier_names=()):
         if earlier:
             program = earlier[0]
     role = re.sub(r'\s*\((\d{4}).*$', '', (d.get('role') or '').strip()) or 'staff member'
+    role = clean_role(role)
     years = re.search(r'\((\d{4}(?:-\d{4})?)', d.get('role') or '')
     verb = 'was'
     art = '' if re.match(r'(?i)(the|a|an)\b', role) else ('an ' if role[:1].lower() in 'aeiou' else 'the ')
-    s = f'**{name}** {verb} {art}{role} of {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
+    if re.match(r'(?i)(helped found|co-?founded|founded)$', role):
+        s = f'**{name}** {role[0].lower() + role[1:]} {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
+    else:
+        s = f'**{name}** {verb} {art}{role} of {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
     s = s.replace(').', ').').replace(' .', '.')
     others = []
     for r in (d.get('other_roles') or [])[:4]:
@@ -184,8 +197,8 @@ def main(ids):
         closed = rec.get('status') == 'Closed' or not re.search(r'present', gaps['entry'].get('years') or '', re.I) \
             or any(g['kind'] == 'closure' and not g['conflict'] for g in gaps['gaps'])
         hist = section(lines, 'History and Background Information', 'History')
-        staff_sec = section(lines, 'Founders and Notable Staff', 'Notable Staff', 'Staff')
-        abuse_sec = section(lines, 'Abuse Allegations, Deaths, and Lawsuits', 'Abuse Allegations, Lawsuits, and Death',
+        staff_sec = section(lines, 'Founders and Notable Staff', 'Notable Staff', 'Notable Employees', 'Staff', 'Employees')
+        abuse_sec = section(lines, 'Abuse Allegations, Deaths, and Lawsuits', 'Abuse/Neglect Allegations and Lawsuits', 'Abuse Allegations, Lawsuits, and Death',
                             'Abuse Allegations', 'Lawsuits', 'Deaths')
         media_sec = section(lines, 'Related Media', 'In the Media')
         ops, model, n = [], [], 0
@@ -211,6 +224,8 @@ def main(ids):
                                   else f'{program} has also been known as {names}.' if d.get('how') == 'also'
                                   else f'{program} was formerly called {names}.')
             elif g['kind'] == 'operator':
+                if not re.search(r'[a-z]', d.get('operator', '')) or re.fullmatch(r'(?i)\W*(unknown|relocated|closed|n/?a|none|tbd|\?)\W*', d.get('operator', '')):
+                    continue  # a placeholder in the record ("RELOCATED", "Unknown"), not a company
                 hist_lines.append(f'{program} {"was" if closed else "is"} operated by {wiki_link(d.get("operator", ""), program)}.')
             elif g['kind'] == 'closure':
                 hist_lines.append(f'{program} closed in {d.get("end_year")}{cite(g)}.')

@@ -1,5 +1,223 @@
 {
  "entries": {
+  "64": {
+   "program": "Boys Town",
+   "place": "Boys Town, NE",
+   "years": "1921-present",
+   "column": "original_markdown",
+   "base_sha1": "af17485cb7e5721e47ebac08a10a1fca051fca72",
+   "record": {
+    "id": 13086,
+    "name": "Boys Town RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Boys Town was formerly called Father Flanagan’s Boys’ Home.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Former Boys Town teacher, wife charged with child abuse](https://www.wowt.com/2026/07/31/former-boys-town-teacher-wife-charged-with-child-abuse/) (WOWT, 7/31/2026)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Boys Town on Kids Over Profits](https://kidsoverprofits.org/facility/boys-town-rtc-ne/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "75": {
+   "program": "InnerChange",
+   "place": "Provo, UT",
+   "years": "-present",
+   "column": "original_markdown",
+   "base_sha1": "0007daa8d8dfae739de8f739b1ce6b0e61b16bf1",
+   "record": {
+    "id": 10455,
+    "name": "InnerChange",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Dustin Tibbitts** was the President of InnerChange in 2011 ([Woodbury Reports, July 2011, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0711.pdf#page=10)). Tibbitts was also Executive Director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc), Executive Director of New Haven, government relations committee co-chair of NATSAP and division president of Embark Behavioral Health.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Janet Farnsworth** was the Vice President of Business Development of InnerChange in 2014 ([Woodbury Reports, February 2014, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0214.pdf#page=10)). Farnsworth was also Director of Strategic Development of [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Tazim Salehani** was the Vice President of Marketing and Business Development of InnerChange in 2012 ([Woodbury Reports, November 2012, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1112.pdf#page=12)). Salehani was also Sales Operations Director of [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducationgroup).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Val H. Christensen** was the Chairman of the Board of InnerChange in 2008 ([Woodbury Reports, December 2008 (#172), p. 22](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=22)). Christensen was also CEO, President and Chief Executive Officer of Solacium.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Ashley Auchterlonie** was the Director of Marketing of InnerChange in 2008-2009 ([Woodbury Reports, December 2008 (#172), p. 21](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=21)). Auchterlonie was also Director of Marketing of Alldredge Wilderness Journey, Marketing Director of Solacium Group, Director of Marketing of Alldredge Academy and Greenbrier Academy and Director of Marketing of [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbrier).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Sarah Engler** was the Director of Aftercare and Transition Services of InnerChange in 2009 ([Woodbury Reports, February 2009 (#174), p. 22](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0209.pdf#page=22)). Engler was also Director of Transition Services of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Steve Walters** was the Social Media Director of InnerChange in 2011 ([Woodbury Reports, December 2011, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1211.pdf#page=11)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Jeremy Meyer** was the Director of operations of InnerChange. Meyer was also director of operations of Chrysalis Therapeutic Boarding School and field instructor of [Second Nature Uintas](https://www.reddit.com/r/troubledteens/wiki/index/snuintas).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c10",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Scott Boice** was the Director of Clinical Operations of InnerChange. Boice was also exec clinical director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc), Therapist & Parent Communicator of [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake), Senior Clinical Therapist & Treatment Team Lead of [Devereux Foundation](https://www.reddit.com/r/troubledteens/wiki/active-programs/devereuxfoundation) and Clinical Director of Three Springs Inc..",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c11",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Tracey Gerlach** was the Director Business development of InnerChange. Gerlach was also director business dev of [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc) and field instructor of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[InnerChange on Kids Over Profits](https://kidsoverprofits.org/facility/innerchange-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "92": {
+   "program": "Alabama Clinical Schools",
+   "place": "Birmingham, AL",
+   "years": "1997-present",
+   "column": "original_markdown",
+   "base_sha1": "ad69b0df49afe21679e5109c5263f3b87f2b1363",
+   "record": {
+    "id": 13624,
+    "name": "Alabama Clinical Schools",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jennifer Snyder** was the CEO of Alabama Clinical Schools in 2008 ([r/troubledteens wiki, page \"Hill Crest Behavioral Health\" (as of 2025-12-18)](https://www.reddit.com/r/troubledteens/wiki/index/hillcrestbh)). Snyder was also COO of [Turning Point Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/turningpointmi) and CEO of [Hill Crest Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/hillcrestbh).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Abused child suffered scorpion bites, broken bones at Alabama residential treatment, lawsuit claims](https://www.al.com/news/2023/01/abused-child-suffered-scorpion-bites-broken-bones-in-alabama-residential-treatment-lawsuit-claims.html) (AL.com, 1/25/2023)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Alabama Clinical Schools on Kids Over Profits](https://kidsoverprofits.org/facility/alabama-clinical-schools-al/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "No information is known about Abuse/Neglect Allegations and Lawsuits at Alabama Clinical Schools. If you attended Alabama Clinical Schools and would like to contribute information to help complete this page, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens) .",
+     "new": "In January 2023, the grandmother and legal guardian of an 11-year-old boy sued Alabama Clinical Schools, its parent company [Universal Health Services (UHS)](https://www.reddit.com/r/troubledteens/wiki/index/universalhealth), the program's Director of Residential Services and several employees in Jefferson County. The suit alleges that employees assaulted the boy on at least four occasions during the roughly six months he lived there in 2021 and 2022, breaking his collarbone; that staff threatened him and abused him verbally and mentally; and that he suffered scorpion bites in his bed. His lawyers said they would hold accountable the employees who abused him and the company that enabled the abuse ([AL.com, 1/25/2023](https://www.al.com/news/2023/01/abused-child-suffered-scorpion-bites-broken-bones-in-alabama-residential-treatment-lawsuit-claims.html); [WBRC, 1/25/2023](https://www.wbrc.com/2023/01/25/lawsuit-alleges-11-year-old-injured-abuse-birmingham-youth-residential-facility/)).",
+     "note": "The 2023 lawsuit (checked by Opus) replaces the section's 'No information is known' placeholder."
+    }
+   ],
+   "conflicts": []
+  },
   "93": {
    "program": "Ascent Wilderness Program",
    "place": "Naples, ID",
@@ -463,6 +681,97 @@
    "fixes": [],
    "conflicts": []
   },
+  "179": {
+   "program": "Alpine Academy",
+   "place": "Erda, UT",
+   "years": "2001-present",
+   "column": "original_markdown",
+   "base_sha1": "934e8db8aad1e917218ac47745ac31dd6dcc7b51",
+   "record": {
+    "id": 10382,
+    "name": "Alpine Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Corrie Norman** was the Program Director of Alpine Academy in 2011-2013 ([Woodbury Reports, October 2011, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1011.pdf#page=11)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jeff Boguslofski** was the Director of Residential Services of Alpine Academy in 2014 ([Woodbury Reports, February 2014, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0214.pdf#page=10)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Angie Alvey** was an Academic Director of Alpine Academy in 2013 ([Woodbury Reports, May 2013, p. 2](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0513.pdf#page=2)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Aarika Maisak** was the Clinical Director of Alpine Academy in 2022 ([HEAL, staff list for Alpine Academy aka Utah Youth Village](https://web.archive.org/web/20220522073316/https://www.heal-online.org/alpine.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Amy Wilson** was the Medical Director/Psychiatrist of Alpine Academy in 2022 ([HEAL, staff list for Alpine Academy aka Utah Youth Village](https://web.archive.org/web/20220522073316/https://www.heal-online.org/alpine.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dustin Dowdle** was an Assistant Clinical Director of Alpine Academy in 2022 ([HEAL, staff list for Alpine Academy aka Utah Youth Village](https://web.archive.org/web/20220522073316/https://www.heal-online.org/alpine.htm)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c7",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nikki Garza** was the Clinical Director of Alpine Academy. Garza was also CEO and Executive Director of [Fulshear Treatment to Transition](https://www.reddit.com/r/troubledteens/wiki/index/fulshear).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Alpine Academy on Kids Over Profits](https://kidsoverprofits.org/facility/alpine-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "185": {
    "program": "Arivaca Boys Ranch",
    "place": "Arivaca, AZ",
@@ -914,6 +1223,125 @@
    "fixes": [],
    "conflicts": []
   },
+  "244": {
+   "program": "Cherokee Creek Boys School",
+   "place": "Westminster, SC",
+   "years": "2003-present",
+   "column": "original_markdown",
+   "base_sha1": "b28e102b8a8ab2f43378fda9778d8f66f80fe3ed",
+   "record": {
+    "id": 13984,
+    "name": "Cherokee Creek Boys School",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kathy Whitmire** was an Executive Director of Cherokee Creek Boys School in 2007 ([Woodbury Reports, July 2007 (#155), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=30)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ron Black** was the Founder, Owner of Cherokee Creek Boys School in 2002-2012 ([Woodbury Reports, December 2007 (#160), p. 28](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1207.pdf#page=28)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Genelle Petrey Boeggeman** was an Exec director of Cherokee Creek Boys School. Boeggeman was also admissions director of [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) and admissions director of [Mount Bachelor Academy](https://www.reddit.com/r/troubledteens/wiki/index/mountbachelor).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Betsy Deane** was an Admissions Director of Cherokee Creek Boys School in 2007-2010 ([Woodbury Reports, September 2007 (#157), p. 29](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=29)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Shaler Black-Cooper** was an Admissions Director of Cherokee Creek Boys School in 2010-2012 ([Woodbury Reports, December 2010, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1210.pdf#page=11)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Cherokee Creek Boys School on Kids Over Profits](https://kidsoverprofits.org/facility/cherokee-creek-boys-school-sc/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "247": {
+   "program": "Chrysalis",
+   "place": "Eureka, MT",
+   "years": "1998-present",
+   "column": "original_markdown",
+   "base_sha1": "986b7300d5c18785537749c9c28da4cb671e22e9",
+   "record": {
+    "id": 12684,
+    "name": "Chrysalis Therapeutic Boarding School",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kendra Meiklejohn** was the Clinical director of Chrysalis. Meiklejohn was also therapist of [Alternative Youth Adventures](https://www.reddit.com/r/troubledteens/wiki/index/alternativeyouth), backcountry field guide of [Three Rivers Montana](https://www.reddit.com/r/troubledteens/wiki/index/threeriversmt) and therapist of [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "In April 2023, Oliver Whitcomb and Amy Clifford sued InnerChange Chrysalis, LLC, Solacium Holdings, LLC and others in the U.S. District Court for the District of Montana, *Whitcomb et al. v. InnerChange Chrysalis, LLC et al.* (No. 9:23-cv-00039), a personal injury case. In December 2025 the court dismissed the case with prejudice on the plaintiffs' stipulation ([PacerMonitor](https://www.pacermonitor.com/public/case/48621954/Whitcomb_et_al_v_InnerChange_Chrysalis,_LLC_et_al)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The docket shows the case terminated 12/18/2025, dismissed with prejudice on the plaintiffs' stipulation (KOP says 'In progress'). Removed 'on behalf of an anonymous survivor' (not on the docket) and 'Embark Behavioral Health' as a party (no such defendant; the defendants are InnerChange Chrysalis, Solacium Holdings, InnerChange Vive, Change Academy at Lake of the Ozarks and two individuals). Added the case number."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Chrysalis on Kids Over Profits](https://kidsoverprofits.org/facility/chrysalis-therapeutic-boarding-school-mt/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "248": {
    "program": "Cinnamon Hills Youth Crisis Center",
    "place": "St. George, UT",
@@ -1140,6 +1568,79 @@
    "fixes": [],
    "conflicts": []
   },
+  "508": {
+   "program": "The Glenholme School",
+   "place": "Washington, CT",
+   "years": "1968-present",
+   "column": "original_markdown",
+   "base_sha1": "de1a2c16899b893c3a9254988fd7d0b051da713e",
+   "record": {
+    "id": 12672,
+    "name": "The Glenholme School",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "The Glenholme School is operated by Devereux Advanced Behavioral Health.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**David J. Tuttle** was the Marketing Director, Residential Dean and Lower School Program Director of The Glenholme School in 2008 ([Woodbury Reports, August 2008 (#168), p. 30](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0808.pdf#page=30)). Tuttle was also Director of Admissions of The Kildonan School and Associate Headmaster of Linden Hill School.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kathy Fitzherbert** was the Director of Admissions of The Glenholme School in 2007 ([Woodbury Reports, February 2007 (#150), p. 16](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=16)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Patrick Qeenan** was the Clinical Director of The Glenholme School in 2007 ([Woodbury Reports, February 2007 (#150), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=17)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Sharon Murphy** was an Education Director of The Glenholme School in 2012 ([Woodbury Reports, September 2012, p. 12](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0912.pdf#page=12)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[The Glenholme School on Kids Over Profits](https://kidsoverprofits.org/facility/the-glenholme-school-ct/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "510": {
    "program": "Discovery Academy",
    "place": "Provo, UT",
@@ -1293,6 +1794,42 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Cited article (SLTrib 11/19/2024) is about the parents' notice of claim and has no lawsuit, Pilcrow, state findings or fine; recited from the SLTrib 5/17/2025 lawsuit article (Schreifels, the one KOP's record was imported from), corrected 'fined' to the $10,000+ civil penalty and 'remains licensed' to good standing as of May 2025, added the Feb 25, 2026 joint dismissal with prejudice (Daily Herald)"
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "515": {
+   "program": "Eagle Ranch Academy",
+   "place": "St. George, UT",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "7db33cfb1e4b5074d36f2ce69809a32bc7cbb4eb",
+   "record": {
+    "id": 10430,
+    "name": "Eagle Ranch Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "### **State Inspection Findings**\n\nIn a report dated November 17, 2025, Utah inspectors found: \"During the unnecessary physical restraint, a staff member pulled the client downward, causing the client’s head to strike the staff member’s knee and subsequently hit the floor; the client incurred a concussion.\" (Utah licensing inspection report, November 17, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Eagle Ranch Academy on Kids Over Profits](https://kidsoverprofits.org/facility/eagle-ranch-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -1548,6 +2085,91 @@
    "fixes": [],
    "conflicts": []
   },
+  "536": {
+   "program": "Fulshear Treatment to Transition",
+   "place": "Needville, TX",
+   "years": "2004-present",
+   "column": "original_markdown",
+   "base_sha1": "7e8aa3396d719e427df1b565dff4b9208f5b7756",
+   "record": {
+    "id": 10612,
+    "name": "Fulshear Treatment to Transition",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Nikki Preece** was an Executive Director of Fulshear Treatment to Transition in 2014 ([Woodbury Reports, February 2014, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0214.pdf#page=10)). Preece was also Staff of [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Gayle Jensen-Savoie** was an Executive Director of Fulshear Treatment to Transition in 2014 ([Woodbury Reports, February 2014, p. 11](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0214.pdf#page=11)). Jensen-Savoie was also Executive Director, Director of Fulshear Treatment to Transition – The Ranch.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Tracy Schrunk** was an Exec director of Fulshear Treatment to Transition. Schrunk was also Staff (2010) of Wingate Wilderness Therapy, executive director of Fulshear Ranch Academy, primary therapist of [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) and primary therapist of [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ashley Auchterlonie** was the Director of marketing of Fulshear Treatment to Transition. Auchterlonie was also Director of Marketing (2008-2009) of [InnerChange](https://www.reddit.com/r/troubledteens/wiki/active-programs/innerchange), Director of Marketing (2009) of New Haven, Director of Marketing (2007), left of Alldredge Wilderness Journey and Director of Marketing (2007) of [Greenbrier Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/greenbrier).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Daniel Fishburn** was the Clinical director of Fulshear Treatment to Transition. Fishburn was also CEO, Executive director of [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Scott Hess** helped found Fulshear Treatment to Transition. Hess was also administrator of Ascent Wilderness Therapy, Clinical Director (2000) of [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) and Clinical Director, Partner, Primary Therapist (2008-2013) of Wingate Wilderness Therapy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Fulshear Treatment to Transition on Kids Over Profits](https://kidsoverprofits.org/facility/fulshear-treatment-to-transition-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "545": {
    "program": "Grove School",
    "place": "Madison, CT",
@@ -1741,6 +2363,96 @@
    "fixes": [],
    "conflicts": []
   },
+  "549": {
+   "program": "Heartlight Ministries",
+   "place": "Hallsville, TX",
+   "years": "1988-present",
+   "column": "original_markdown",
+   "base_sha1": "9e08532ca28ca3c3364fef32855a328c1a00e62b",
+   "record": {
+    "id": 10772,
+    "name": "Heartlight Ministries",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated May 1, 2024, Texas inspectors found: \"This concern arose during the course of the DFPS investigation, based on a review of the evidence obtained, a staff member failed to secure a box of over-the-counter medication stored in the staff office, resulting in a resident accessing and ingesting the medication without supervision.\" (Texas licensing inspection report, May 1, 2024)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Heartlight Ministries on Kids Over Profits](https://kidsoverprofits.org/facility/heartlight-ministries-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "551": {
+   "program": "Heritage Schools Inc.",
+   "place": "Provo, UT",
+   "years": "1984-present",
+   "column": "original_markdown",
+   "base_sha1": "e9313b49a96f24f4f7efd812798d3f1f9419866f",
+   "record": {
+    "id": 10447,
+    "name": "Heritage Schools, Inc.",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Gerald Spanos** was the CEO of Heritage Schools Inc. in 2008 ([Woodbury Reports, November 2008 (#171), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=17)). Spanos was also therapist of [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Glen R. Zaugg** was the CEO of Heritage Schools Inc. in 2008 ([Woodbury Reports, November 2008 (#171), p. 17](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1108.pdf#page=17)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "### **State Inspection Findings**\n\nIn a report dated June 24, 2024, Utah inspectors found: \"At the facility, the client was out of supervision of staff and was later found unresponsive.\" (Utah licensing inspection report, June 24, 2024)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Heritage Schools Inc. on Kids Over Profits](https://kidsoverprofits.org/facility/heritage-schools-inc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "558": {
    "program": "Hyde School",
    "place": "Bath, ME",
@@ -1879,6 +2591,53 @@
    "fixes": [],
    "conflicts": []
   },
+  "564": {
+   "program": "The Ridge RTC Maine",
+   "place": "Morrill, ME",
+   "years": "2006-present",
+   "column": "original_markdown",
+   "base_sha1": "fad496288577cca1c20c0180893d54f9b86cf855",
+   "record": {
+    "id": 11009,
+    "name": "The Ridge Maine",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "The Ridge RTC Maine was formerly called Ironwood Maine (2006-2024).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Boyd Hooper** was an Executive director of Ironwood Maine. Hooper was also founder of [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc), recruiter of [Focal Point Academy](https://www.reddit.com/r/troubledteens/wiki/index/focalpoint) and admissions director of [Sundance Canyon Academy](https://www.reddit.com/r/troubledteens/wiki/index/sundancecanyon).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[The Ridge RTC Maine on Kids Over Profits](https://kidsoverprofits.org/facility/the-ridge-maine-me/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "569": {
    "program": "Judge Rotenberg Center",
    "place": "Canton, MA",
@@ -1927,6 +2686,43 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Date was wrong: the court ruled Sept. 7, 2023 (Sept. 11 is the article date). 'Last resort' was the 2018 trial finding, not a condition the court set; conditions now as the article gives them (decree wording, physician plan, probate court permission). Added the court's own limit on the ruling."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "571": {
+   "program": "Kaizen Academy/Birdseye Boys Ranch",
+   "place": "Birdseye/Fairview, UT",
+   "years": "1989-present",
+   "column": "original_markdown",
+   "base_sha1": "9648def530b503e01c4fa582b8c6627890ea464d",
+   "record": {
+    "id": 10340,
+    "name": "Kaizen Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Kaizen Academy/Birdseye Boys Ranch is operated by CERTS Group.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Kaizen Academy/Birdseye Boys Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/kaizen-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -2370,6 +3166,42 @@
    "fixes": [],
    "conflicts": []
   },
+  "591": {
+   "program": "Maple Lake Academy",
+   "place": "Spanish Fork, UT",
+   "years": "2005-present",
+   "column": "original_markdown",
+   "base_sha1": "f812f536b9f5b978676a9f474427662c978e8501",
+   "record": {
+    "id": 100362,
+    "name": "Maple Lake Academy, LLC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Deaths",
+     "text": "### **State Inspection Findings**\n\nIn a report dated May 28, 2025, Utah inspectors found: \"During the inspection, the investigator identified that a former staff member had yelled at clients and thrown a chair in the classroom with clients present.\" (Utah licensing inspection report, May 28, 2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Maple Lake Academy on Kids Over Profits](https://kidsoverprofits.org/facility/maple-lake-academy-llc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "593": {
    "program": "Maryville Academy",
    "place": "Des Plaines, IL",
@@ -2409,6 +3241,73 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Illinois Supreme Court opinion Wallace v. Smyth (No. 93144, filed Dec 19, 2002) gives the name as Waketta Roy Wallace, a boy, and states the restraint and death as the complaint's allegations; cause (positional asphyxia after a 4+ hour prone restraint) is the complaint's. KOP labels this source 'Federal Court'; it is the Illinois Supreme Court."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "594": {
+   "program": "Meadowridge Academy",
+   "place": "Swansea, MA",
+   "years": "?-present",
+   "column": "original_markdown",
+   "base_sha1": "9fe20a6f9cb8652cd15c4b5650e70e79b4379bc9",
+   "record": {
+    "id": 9676,
+    "name": "Meadowridge Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Meadowridge Academy is operated by Justice Resource Institute.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Erin Lunn** was the Program Director of Meadowridge Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Margaret Maiato** was the Director of Education Services of Meadowridge Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Eryn Maschek** was the Clinical Director of Meadowridge Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Meadowridge Academy on Kids Over Profits](https://kidsoverprofits.org/facility/meadowridge-academy-ma/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
     }
    ],
    "tense": [],
@@ -2578,6 +3477,165 @@
     }
    ],
    "tense": [],
+   "conflicts": []
+  },
+  "613": {
+   "program": "Mountain Youth Academy",
+   "place": "Mountain City, TN",
+   "years": "2002-present",
+   "column": "original_markdown",
+   "base_sha1": "ac4ab4603ee3a57fbc38274b40f2829494802333",
+   "record": {
+    "id": 11247,
+    "name": "Mountain Youth Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Mountain Youth Academy is operated by [Universal Health Services (UHS)](https://www.reddit.com/r/troubledteens/wiki/index/universalhealth).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Mountain Youth Academy on Kids Over Profits](https://kidsoverprofits.org/facility/mountain-youth-academy-tn/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "615": {
+   "program": "Natchez Trace Youth Academy",
+   "place": "Waverly, TN",
+   "years": "2000-present",
+   "column": "original_markdown",
+   "base_sha1": "560829ab6d6b1b89d0cb3bbec44476837c7474e7",
+   "record": {
+    "id": 11248,
+    "name": "Natchez Trace Youth Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Natchez Trace Youth Academy is operated by [Universal Health Services (UHS)](https://www.reddit.com/r/troubledteens/wiki/index/universalhealth).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Natchez Trace Youth Academy on Kids Over Profits](https://kidsoverprofits.org/facility/natchez-trace-youth-academy-tn/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "619": {
+   "program": "New Haven RTC",
+   "place": "Saratoga Springs/Spanish Fork, UT",
+   "years": "1995-present",
+   "column": "original_markdown",
+   "base_sha1": "13102c16e90effdfb254840cb0b16b2ec7f88976",
+   "record": {
+    "id": 10353,
+    "name": "New Haven RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kristie Jensen** was an Admissions Director of New Haven RTC in 2007-2008 ([Woodbury Reports, April 2007 (#152), p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0407.pdf#page=15)). Jensen was also Admissions/Marketing Director, Marketing Director of New Haven.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Laurie Laird** was an Education Director of New Haven RTC in 2007 ([Woodbury Reports, April 2007 (#152), p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0407.pdf#page=15)). Laird was also Education Director of New Haven.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dave Prior** was an Asst clinical director of New Haven RTC. Prior was also executive director of [Sunrise RTC](https://www.reddit.com/r/troubledteens/wiki/index/sunrisertc), therapist of [Cedar Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge) and COO of [InnerChange](https://www.reddit.com/r/troubledteens/wiki/active-programs/innerchange).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Greg Burnham** was an Assistant Clinical Director of New Haven RTC. Burnham was also Primary Wilderness Therapist (2013) of Wingate Wilderness Therapy, Assistant Clinical Director (2006) of New Haven, Clinical Director of [Outback Therapeutic Expeditions](https://www.reddit.com/r/troubledteens/wiki/index/outbackexp) and Therapist of [Cedar Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarridge).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kevin Randall** was the Clinical Director of New Haven RTC. Randall was also Former Clinical Leadership (2013) of New Haven and Executive Clinical Director of [Fulshear Treatment to Transition](https://www.reddit.com/r/troubledteens/wiki/index/fulshear).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Kris Archer** was an Outreach director of New Haven RTC. Archer was also family teacher of [Alpine Academy](https://www.reddit.com/r/troubledteens/wiki/index/alpineacademy), family teacher of [Utah Youth Village](https://www.reddit.com/r/troubledteens/wiki/index/utyouthvillage), marketing director of CERTS and business development director of [Solstice RTC](https://www.reddit.com/r/troubledteens/wiki/index/solsticewest).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[New Haven RTC on Kids Over Profits](https://kidsoverprofits.org/facility/new-haven-rtc-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "622": {
@@ -3185,6 +4243,70 @@
    "fixes": [],
    "conflicts": []
   },
+  "641": {
+   "program": "Pacific Quest",
+   "place": "Hilo/Keaau, HI",
+   "years": "2004-present",
+   "column": "original_markdown",
+   "base_sha1": "db3fca24300ea154b791551043eceff48f8bec16",
+   "record": {
+    "id": 12565,
+    "name": "Pacific Quest",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Alicia Goldman** was an Alumni and Family Services Director of Pacific Quest in 2011 ([Woodbury Reports, April 2011, p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0411.pdf#page=15)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Marney Sullivan** was an Admissions Director of Pacific Quest in 2007-2009 ([Woodbury Reports, February 2007 (#150), p. 29](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=29)). Sullivan was also Admissions Director of [Monarch School](https://www.reddit.com/r/troubledteens/wiki/index/monarch).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Travis Slagle** was the Horticultural Therapy Director of Pacific Quest in 2014 ([Woodbury Reports, February 2014, p. 10](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0214.pdf#page=10)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Scott Boice** was the Family Program Director of Pacific Quest. Boice was also exec clinical director of [New Haven RTC](https://www.reddit.com/r/troubledteens/wiki/index/newhavenrtc), Therapist & Parent Communicator of [Hidden Lake Academy](https://www.reddit.com/r/troubledteens/wiki/index/hiddenlake), Senior Clinical Therapist & Treatment Team Lead of [Devereux Foundation](https://www.reddit.com/r/troubledteens/wiki/active-programs/devereuxfoundation) and Clinical Director of Three Springs Inc..",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Pacific Quest on Kids Over Profits](https://kidsoverprofits.org/facility/pacific-quest-hi/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "657": {
    "program": "Provo Canyon School",
    "place": "Provo, UT",
@@ -3432,6 +4554,43 @@
    "fixes": [],
    "conflicts": []
   },
+  "670": {
+   "program": "ROOTs Transition",
+   "place": "Park City, UT",
+   "years": "2021-present",
+   "column": "original_markdown",
+   "base_sha1": "53c33e8f289f7cc8c995aa474e01a5c2464203b5",
+   "record": {
+    "id": 10358,
+    "name": "ROOTS Transition",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "ROOTs Transition is operated by Family Help & Wellness.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[ROOTs Transition on Kids Over Profits](https://kidsoverprofits.org/facility/roots-transition-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "680": {
    "program": "Shiloh Treatment Center",
    "place": "Manvel, TX",
@@ -3609,6 +4768,63 @@
      "new": "Second Nature was reported by many survivors to be an abusive program. Allegations of abuse and neglect which have been reported by survivors include severe medical neglect, solitary confinement, over-medication, humiliation tactics, and restriction of food. Many survivors report that they have been diagnosed with PTSD following their time at Second Nature."
     }
    ],
+   "conflicts": []
+  },
+  "686": {
+   "program": "Second Nature Uintas",
+   "place": "Duchesne, UT",
+   "years": "1998-present",
+   "column": "original_markdown",
+   "base_sha1": "709b1aee553a05632f509cc1005bc265c20b13a1",
+   "record": {
+    "id": 10377,
+    "name": "Second Nature Wilderness Program",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Andy Dunn** was the Program director of Second Nature Uintas. Dunn was also program director of [Blue Ridge Therapeutic Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/blueridge), field guide of [Summit Achievement](https://www.reddit.com/r/troubledteens/wiki/index/summitme), field director of [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge) and program director of [Equinox RTC](https://www.reddit.com/r/troubledteens/wiki/index/equinox).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Brian Rossiter** was an Exec director of Second Nature Uintas. Rossiter was also Program Director (1997) of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild), Admissions Director (2011) of SeaChange Hawaii, program director of [SageWalk Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/sagewalk) and executive director of [Second Nature Cascades](https://www.reddit.com/r/troubledteens/wiki/index/sncascades).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dan McDougal** was the Field director of Second Nature Uintas. McDougal was also Former Senior Wilderness Instructor (2025) of [Aspen Achievement Academy](https://www.reddit.com/r/troubledteens/wiki/index/aspenachievement), Executive Contact of [Blue Ridge Therapeutic Wilderness](https://www.reddit.com/r/troubledteens/wiki/index/blueridge) and administrator of [Second Nature Blue Ridge](https://www.reddit.com/r/troubledteens/wiki/index/snblueridge).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Second Nature Uintas on Kids Over Profits](https://kidsoverprofits.org/facility/second-nature-wilderness-program-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "691": {
@@ -4343,6 +5559,144 @@
    "fixes": [],
    "conflicts": []
   },
+  "743": {
+   "program": "West Ridge Academy/Utah Boys Ranch",
+   "place": "West Jordan, UT",
+   "years": "1964-present",
+   "column": "original_markdown",
+   "base_sha1": "9c9a37c6b2ced80eea657d739e0fb66503a02e9b",
+   "record": {
+    "id": 10579,
+    "name": "West Ridge Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Charlie Falatea** was the Program director of West Ridge Academy/Utah Boys Ranch. Falatea was also exec director of Solstice West, mental health associate of [Copper Hills Youth Center](https://www.reddit.com/r/troubledteens/wiki/index/copperhills) and residential staff of Youth Care of Utah.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Ken Betts** was an after care services director of West Ridge Academy/Utah Boys Ranch. Betts was also Program Director (2007) of Aspiro Group Inc., program director of [Daniels Academy](https://www.reddit.com/r/troubledteens/wiki/index/daniels), field director of [Wilderness Quest](https://www.reddit.com/r/troubledteens/wiki/index/wildernessquest) and program director of [Aspiro Wilderness Adventure Therapy](https://www.reddit.com/r/troubledteens/wiki/index/aspiro).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Amy Whittaker** was the Clinical Assistant, Boy's Clinical Director of West Ridge Academy/Utah Boys Ranch in 2006-2009 ([Woodbury Reports, October 2006 (#146), p. 16](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=16)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Dr. Ken Huey** was the Clinical Director, Director of Clinical Services of West Ridge Academy/Utah Boys Ranch in 2006 ([Woodbury Reports, October 2006 (#146), p. 15](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=15)). Huey was also Director of Clinical Services of Westridge Academy, Founder, CEO of The Change Academy at Lake of the Ozarks, CEO of Change Academy Lake of the Ozarks (CALO) and Founder of Calo.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Guy Hardcastle** was the Director of Business Development, Director of Admissions of West Ridge Academy/Utah Boys Ranch in 2009-2010 ([Woodbury Reports, May 2009 (#177), p. 18](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0509.pdf#page=18)). Hardcastle was also Director of Business Development of [Ascent Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/ascentwild), Director of Business Development of Ascent Inc. and Director of Operations of [Wilderness Quest](https://www.reddit.com/r/troubledteens/wiki/index/wildernessquest).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "c6",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Jared Hamner** was an Admissions Director, Director of Midwestern Operations of West Ridge Academy/Utah Boys Ranch in 2006-2010 ([Woodbury Reports, October 2006 (#146), p. 13](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=13)).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[West Ridge Academy/Utah Boys Ranch on Kids Over Profits](https://kidsoverprofits.org/facility/west-ridge-academy-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "744": {
+   "program": "Whetstone Academy",
+   "place": "Mountain Crest, SC",
+   "years": "2011-present",
+   "column": "original_markdown",
+   "base_sha1": "1dfab6284a0c0265f1a6de8569c9130c40997742",
+   "record": {
+    "id": 14009,
+    "name": "Whetstone Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Bryan Tomes** was the Cofounder, business director of Whetstone Academy. Tomes was also Academic Director (2010) of [Lake House Academy](https://www.reddit.com/r/troubledteens/wiki/index/lakehouse), Executive Director (2012-2013) of [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy), Academic Director, Head of School (2011) of Glen Willow Academy and academic director, operations director of [Solstice East](https://www.reddit.com/r/troubledteens/wiki/index/solsticeeast).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Lawsuit: Upstate boarding school failed to protect resident from sexual assault](https://www.foxcarolina.com/2025/05/06/lawsuit-upstate-boarding-school-failed-protect-resident-sexual-assault/) (FOX Carolina, 5/6/2025)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap."
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In January 2025, the family of a boy who attended Whetstone Academy in the fall of 2024, at 14, filed a federal lawsuit accusing the school of failing to protect him. According to the suit and his family, he was kept outside for 12 hours a day and made to use an outdoor toilet, night-shift staff were sleeping or on their phones, and on November 27 he told his mother that another child had sexually assaulted him at night. Whetstone said the South Carolina Department of Social Services found the allegations unfounded and no charges were filed; its answer to the suit says unnamed third parties are responsible ([FOX Carolina, 5/6/2025](https://www.foxcarolina.com/2025/05/06/lawsuit-upstate-boarding-school-failed-protect-resident-sexual-assault/)).",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "The suit was filed in January 2025, not May (May 6 is the article date). The article gives no date for the assault itself, only that he attended in fall 2024 and told his mother on Nov 27; 'regressive trauma symptoms' is not in the article (it reports bed-wetting). 'Denies responsibility' replaced with what Whetstone actually said (DSS found allegations unfounded, no charges; third parties responsible)."
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Whetstone Academy on Kids Over Profits](https://kidsoverprofits.org/facility/whetstone-academy-sc/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "745": {
    "program": "White River Academy",
    "place": "Delta, UT",
@@ -4649,6 +6003,43 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[San Marcos Treatment Center on Kids Over Profits](https://kidsoverprofits.org/facility/san-marcos-treatment-center-tx/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "798": {
+   "program": "Mountain Springs Preparatory Academy",
+   "place": "Cedar City, UT",
+   "years": "1999-present",
+   "column": "generated_markdown",
+   "base_sha1": "895f675cb03d34250d8b0fb922b0a105b6f53856",
+   "record": {
+    "id": 10483,
+    "name": "Mountain Springs Preparatory Academy",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Mountain Springs Preparatory Academy was formerly called Academy at Cedar Mountain (1999-2004).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Mountain Springs Preparatory Academy on Kids Over Profits](https://kidsoverprofits.org/facility/mountain-springs-preparatory-academy-ut/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
