@@ -166,16 +166,10 @@ function generateWikiMarkdown(formData) {
     };
 
     // Helper: Pad bolded staff names with a space if they run directly into text
-    const ensureBoldNameSpacing = (text) => {
-        if (!text) return text;
-        return text
-            // Collapse padding INSIDE a single bold span: "**  Name  **" -> "**Name**".
-            // The body must stay on one line ([^*\n]) so this can't latch onto a
-            // closing "**" and run through the "\n\n" separating two staff entries
-            // (which previously merged them into a run-on paragraph).
-            .replace(/\*\*[ \t]+([^*\n]+?)[ \t]*\*\*/g, '**$1**')
-            .replace(/\*\*([^*\n]+)\*\*([^\s*])/g, '**$1** $2');
-    };
+    // "**  Name  **" -> "**Name**", "**Name**was" -> "**Name** was": the same
+    // line-by-line pass as the final output (normalizeBoldSpacing), so a bio with
+    // a second bold phrase keeps both spans.
+    const ensureBoldNameSpacing = (text) => (text ? normalizeBoldSpacing(text) : text);
 
     const getFirstSentence = (text) => {
         const match = String(text || '').trim().match(/^(.+?[.!?])(?:\s|$)/);
@@ -1363,19 +1357,31 @@ function filterArticlesAlreadyInRelatedMedia(articles, formData) {
 // "at**Name**"/"**Name**text" (missing space at the span boundary). Also
 // repairs the inline-italic variant "by*many*survivors". Applied as a final
 // pass over generated output.
+//
+// The "**" markers on a line are paired in order, first with second, third with
+// fourth. Matching spans with regexes instead paired the END of one span with
+// the START of the next on a line holding two ("the **confirmedly abusive**
+// [Program]" became "**confirmedly abusive ** [Program]"), which Reddit does not
+// render as bold. A line with an odd number of markers, or an empty span, keeps
+// its bold as it is. scripts/wiki-drafts.py bold_spacing() and
+// kop_wiki_drafts_bold_spacing() (inc/wiki-update-drafts.php) do the same.
 function normalizeBoldSpacing(md) {
-    // Span content excludes "|" so adjacent bold table cells ("**A**|**B**")
-    // are never mistaken for one bold span containing a pipe.
-    return String(md || '')
-        // padding inside a bold span: "** text **" -> "**text**"
-        .replace(/\*\*[ \t]+([^*\n|]+?)[ \t]*\*\*/g, '**$1**')
-        .replace(/\*\*([^*\n|]+?)[ \t]+\*\*/g, '**$1**')
-        // missing space BEFORE a bold span: "at**Name**" -> "at **Name**"
-        .replace(/([^\s*\n|[("'])\*\*([^*\n|]+?)\*\*/g, '$1 **$2**')
-        // missing space AFTER a bold span: "**Name**text" -> "**Name** text"
-        .replace(/\*\*([^*\n|]+?)\*\*([^\s*\n|).,;:!?'"\]])/g, '**$1** $2')
+    return String(md || '').split('\n').map((line) => {
+        const parts = line.split('**');
+        if (parts.length > 1 && parts.length % 2 === 1 && parts.every((p, k) => k % 2 === 0 || p.trim())) {
+            for (let k = 1; k < parts.length; k += 2) {
+                // padding inside the span: "** text **" -> "**text**"
+                parts[k] = parts[k].replace(/^[ \t]+|[ \t]+$/g, '');
+                // missing space BEFORE it: "at**Name**" -> "at **Name**"
+                if (parts[k - 1] && !/[\s*|[("']$/.test(parts[k - 1])) parts[k - 1] += ' ';
+                // missing space AFTER it: "**Name**text" -> "**Name** text"
+                if (parts[k + 1] && !/^[\s*|).,;:!?'"\]]/.test(parts[k + 1])) parts[k + 1] = ' ' + parts[k + 1];
+            }
+            line = parts.join('**');
+        }
         // inline italic jammed between letters: "by*many*survivors"
-        .replace(/([A-Za-z])\*([A-Za-z][^*\n|]{0,60}?)\*([A-Za-z])/g, '$1 *$2* $3');
+        return line.replace(/([A-Za-z])\*([A-Za-z][^*\n|]{0,60}?)\*([A-Za-z])/g, '$1 *$2* $3');
+    }).join('\n');
 }
 
 // Final safety net: drop any duplicate paragraph block, keeping the first.

@@ -144,13 +144,11 @@ function kop_wiki_drafts_reddit_format($md) {
 
 /**
  * The wiki editor's normalizeBoldSpacing() (js/wiki-generation.js): "** text **" -> "**text**", "at**Name**" ->
- * "at **Name**", "**Name**text" -> "**Name** text", "by*many*survivors" -> "by *many* survivors"; table rows
- * left alone. The markers are paired in order (the editor's regexes pair the end of one span with the start
- * of the next on a line holding two); an odd number of markers keeps the bold as it is. Same as
- * scripts/wiki-drafts.py bold_spacing().
+ * "at **Name**", "**Name**text" -> "**Name** text", "by*many*survivors" -> "by *many* survivors". The
+ * markers are paired in order, so a line holding two spans keeps both; an odd number of markers keeps the
+ * bold as it is. Same as scripts/wiki-drafts.py bold_spacing().
  */
 function kop_wiki_drafts_bold_spacing($line) {
-    if (strpos(ltrim($line), '|') === 0) return $line;
     $parts = explode('**', $line);
     $n = count($parts);
     $ok = $n > 1 && $n % 2 === 1;

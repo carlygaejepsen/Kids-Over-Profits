@@ -76,12 +76,8 @@ def reddit_format(md):
 def bold_spacing(line):
     """The wiki editor's normalizeBoldSpacing() (js/wiki-generation.js), which every entry it writes goes through:
     "** text **" -> "**text**", "at**Name**" -> "at **Name**", "**Name**text" -> "**Name** text", "by*many*survivors" ->
-    "by *many* survivors". Table rows are left alone. The markers are paired in order, first with second, third with
-    fourth: the editor's regexes pair the end of one span with the start of the next on a line holding two ("**a** and
-    **b**" -> "**a ** and** b**"), which Reddit does not show as bold. A line with an odd number of markers keeps its bold
-    as it is. PHP: kop_wiki_drafts_bold_spacing(), must match."""
-    if line.lstrip().startswith('|'):
-        return line
+    "by *many* survivors". The markers are paired in order, first with second, third with fourth, so a line holding two
+    spans keeps both. A line with an odd number of markers keeps its bold as it is. JS and PHP must match."""
     parts = line.split('**')
     if len(parts) > 1 and len(parts) % 2 == 1 and all(parts[k].strip() for k in range(1, len(parts), 2)):
         for k in range(1, len(parts), 2):
