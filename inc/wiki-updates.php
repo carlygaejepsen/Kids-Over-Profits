@@ -830,7 +830,7 @@ function kop_wiki_upd_lawsuit_source($id, PDO $pdo = null) {
     $news = array();
     try {
         $st = $pdo->prepare("SELECT n.article_url, n.publication_name FROM lawsuit_news_links k JOIN news_submissions n ON n.id = k.news_id
-             WHERE k.lawsuit_id = ? AND n.status IN ('approved','published') ORDER BY n.publication_date");
+             WHERE k.lawsuit_id = ? AND k.link_type <> 'excluded' AND n.status IN ('approved','published') ORDER BY n.publication_date");
         $st->execute(array((int) $id));
         foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $n) if (trim((string) $n['article_url']) !== '') $news[$n['article_url']] = (string) $n['publication_name'];
     } catch (Throwable $e) {

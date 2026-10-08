@@ -29,7 +29,10 @@ get_header();
             Reclassify makes a facility a home of a program, a young adult program (18+) or an Indian boarding
             school; makes a company that is only its own homes one program; and files an article under Indian
             boarding schools or a young adult program. Merge into joins two records that are one place;
-            Facilities on a news item or lawsuit adds, moves or removes its facility links. The filters narrow
+            Facilities on a news item or lawsuit adds, moves or removes its facility links. Lawsuit news and
+            legislation news are articles; court cases and bills are the records themselves. An article's
+            Reclassify sets its kind and the case or bill it covers; a case's Coverage and documents keeps
+            its court documents apart from news, and lists the articles shown on its card. The filters narrow
             the facility records by state, status, type and years. Every change has an Undo.
         </p>
     </header>
@@ -48,8 +51,10 @@ get_header();
             <option value="providers">Mental Health Providers</option>
             <option value="locations">Locations</option>
             <option value="people">People (staff and executives)</option>
-            <option value="news">News</option>
-            <option value="lawsuits">Lawsuits</option>
+            <option value="news">News (all articles)</option>
+            <option value="lawsuit_news">Lawsuit news</option>
+            <option value="lawsuits">Court cases and documents</option>
+            <option value="legislation_news">Legislation news</option>
             <option value="bills">Bills</option>
             <option value="merged">Merged away (duplicates)</option>
             <option value="converted">Companies made one program</option>

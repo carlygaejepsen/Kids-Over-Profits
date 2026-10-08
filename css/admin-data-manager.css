@@ -134,6 +134,9 @@
 .dm-cat-news { background: var(--kop-teal-fill, #24757F); }
 .dm-cat-lawsuits { background: var(--kop-navy, #000080); }
 .dm-cat-bills { background: var(--kop-orange-fill, #A3570D); }
+.dm-cat-lawsuit_news { background: var(--kop-midnight-blue, #000435); }
+.dm-cat-legislation_news { background: var(--kop-bubblegum-pink-fill, #CC0587); }
+.dm-kind-row { justify-content: flex-start; flex-wrap: wrap; }
 .dm-cat-merged, .dm-cat-converted { background: var(--kop-text-muted, #4A5568); }
 
 /* Designation tag (home of / program / waiting for review) and page link */

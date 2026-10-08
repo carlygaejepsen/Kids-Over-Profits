@@ -411,7 +411,8 @@ if (!function_exists('kop_lawsuit_news_write_links')) {
             }
         }
 
-        $all = $pdo->prepare("SELECT `$otherCol` FROM lawsuit_news_links WHERE `$ownCol` = ?");
+        // An 'excluded' row is a match an admin took off (Data Manager): kept so the sync never re-adds it, never listed.
+        $all = $pdo->prepare("SELECT `$otherCol` FROM lawsuit_news_links WHERE `$ownCol` = ? AND link_type <> 'excluded'");
         $all->execute([$ownId]);
         return array_map('intval', $all->fetchAll(PDO::FETCH_COLUMN));
     }

@@ -843,7 +843,8 @@ try {
                 }
                 foreach (array_keys(kop_dm_record_kinds()) as $rk) {
                     if ($recordKind === $rk || ($category === '' && $q !== '')) {
-                        $items = array_merge($items, kop_dm_record_items($pdo, $rk, $q));
+                        $newsKind = $rk === 'news' && in_array($category, ['lawsuit_news', 'legislation_news'], true) ? substr($category, 0, -5) : '';
+                        $items = array_merge($items, kop_dm_record_items($pdo, $rk, $q, $newsKind));
                     }
                 }
                 if ($category === 'merged' || ($category === '' && $q !== '')) {

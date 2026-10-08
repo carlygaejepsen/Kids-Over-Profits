@@ -55,6 +55,12 @@ try {
     $jurisdictions = $statuses = $positions = [];
 }
 
+// News coverage of each bill (legislation_news_links, set in the Data Manager).
+require_once get_stylesheet_directory() . '/api/legislation-news-links.php';
+$news_links = !empty($bills) && isset($pdo) && $pdo instanceof PDO
+    ? kop_legislation_news_for_bills($pdo, array_map(static function ($b) { return (int)$b['id']; }, $bills))
+    : [];
+
 $status_labels = [
     'proposed'      => 'Proposed (draft)',
     'introduced'    => 'Introduced',
@@ -182,6 +188,7 @@ $legislation_flag_for = static function ($jurisdiction) {
             $status_label = $status_labels[$status_slug] ?? ucfirst(str_replace('_', ' ', $status_slug));
             $position     = $bill['position'] ?? 'unknown';
             $intro_date   = $bill['introduced_date']   ? date('M j, Y', strtotime($bill['introduced_date']))   : '';
+            $coverage     = $news_links[(int)$bill['id']] ?? [];
             $last_date    = $bill['last_action_date']   ? date('M j, Y', strtotime($bill['last_action_date'])) : '';
             $is_federal   = ($bill['jurisdiction'] ?? '') === 'Federal';
             $flag_image   = $legislation_flag_for($bill['jurisdiction'] ?? '');
@@ -260,6 +267,29 @@ $legislation_flag_for = static function ($jurisdiction) {
             </div>
             <?php endif; ?>
 
+            <?php if ($coverage): ?>
+            <div class="kop-card-coverage">
+                <span class="kop-party-label">News coverage:</span>
+                <ul class="kop-coverage-list">
+                    <?php foreach ($coverage as $i => $art):
+                        $art_title = $art['alternate_title'] ?: $art['article_title'];
+                        $art_meta  = array_filter([
+                            $art['publication_name'],
+                            $art['publication_date'] ? date('M j, Y', strtotime($art['publication_date'])) : '',
+                        ]);
+                    ?>
+                    <li class="kop-coverage-item"<?php echo $i >= 3 ? ' hidden data-coverage-extra' : ''; ?>>
+                        <a href="<?php echo esc_url($art['article_url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($art_title); ?></a>
+                        <?php if ($art_meta): ?><span class="kop-coverage-meta"><?php echo esc_html(implode(' - ', $art_meta)); ?></span><?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php if (count($coverage) > 3): ?>
+                    <button type="button" class="kop-coverage-more" aria-expanded="false">Show <?php echo count($coverage) - 3; ?> more article<?php echo count($coverage) - 3 === 1 ? '' : 's'; ?></button>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
             <?php if ($bill['full_text_url'] || $bill['official_url']): ?>
             <div class="kop-card-links">
                 <?php if ($bill['official_url']): ?>
@@ -281,6 +311,17 @@ $legislation_flag_for = static function ($jurisdiction) {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.kop-coverage-more').forEach(btn => {
+        const label = btn.textContent;
+        btn.addEventListener('click', function() {
+            const expand = this.getAttribute('aria-expanded') !== 'true';
+            this.closest('.kop-card-coverage').querySelectorAll('[data-coverage-extra]')
+                .forEach(li => { li.hidden = !expand; });
+            this.setAttribute('aria-expanded', expand);
+            this.textContent = expand ? 'Show fewer articles' : label;
+        });
+    });
+
     const cards   = Array.from(document.querySelectorAll('.kop-record-card'));
     const countEl = document.getElementById('filter-count');
 

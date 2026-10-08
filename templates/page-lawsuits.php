@@ -136,6 +136,7 @@ if ($lawsuit_ids) {
              FROM lawsuit_news_links ln
              JOIN news_submissions n ON n.id = ln.news_id
              WHERE ln.lawsuit_id IN ($ph)
+               AND ln.link_type <> 'excluded'
                AND n.status IN ('approved','published')
                AND n.article_url IS NOT NULL AND n.article_url <> ''
              ORDER BY n.publication_date DESC, n.id DESC"

@@ -37,8 +37,10 @@
         locations: 'Location',
         people: 'Person',
         news: 'News',
-        lawsuits: 'Lawsuit',
+        lawsuits: 'Court case',
         bills: 'Bill',
+        lawsuit_news: 'Lawsuit news',
+        legislation_news: 'Legislation news',
         merged: 'Merged away',
         converted: 'Company made a program'
     };
@@ -257,9 +259,9 @@
                 actionDefs.push(['Facilities', 'links'], ['Reclassify', 'file_news'], ['Edit', 'edit']);
                 if (it.source_url) actionDefs.push(['Read it', 'source']);
             } else if (it.kind === 'lawsuit') {
-                actionDefs.push(['Facilities', 'links'], ['Edit', 'edit']);
+                actionDefs.push(['Coverage and documents', 'coverage'], ['Facilities', 'links'], ['Edit', 'edit']);
             } else if (it.kind === 'bill') {
-                actionDefs.push(['Edit', 'edit']);
+                actionDefs.push(['Coverage and documents', 'coverage'], ['Edit', 'edit']);
             } else if (it.kind === 'merged') {
                 if (it.can_undo) actionDefs.push(['Undo merge', 'undo_merge']);
                 actionDefs.push(['Merge Duplicates', 'edit']);
@@ -591,7 +593,8 @@
         if (kind === 'person_roles' || kind === 'person_edit' || kind === 'person_merge') return openPerson(item, kind);
         if (kind === 'source') { window.open(item.source_url, '_blank', 'noopener'); return; }
         if (kind === 'links') return openRecordLinks(item);
-        if (kind === 'file_news') return openFileNews(item);
+        if (kind === 'file_news') return openNewsReclassify(item);
+        if (kind === 'coverage') return openCoverage(item);
         if (kind === 'merge') return openMerge(item);
         if (kind === 'undo_merge') return undoMergeRow(item);
         if (kind === 'convert') return openConvert(item);
@@ -942,6 +945,182 @@
                 });
             });
             body.querySelector('.dm-link-add').appendChild(buildFacilityFinder(function (f) { change({ op: 'add', to: f.id }); }));
+        }
+        refresh(null);
+    }
+
+    // ---- search news / lawsuits / bills by title (find_record). onPick(record) ----
+    function buildRecordFinder(kind, placeholder, onPick) {
+        var wrap = el('div', 'dm-progsearch');
+        var input = el('input', 'dm-progsearch-input');
+        input.type = 'search';
+        input.placeholder = placeholder;
+        var results = el('div', 'dm-progsearch-results');
+        wrap.appendChild(input);
+        wrap.appendChild(results);
+        input.addEventListener('input', debounce(function () {
+            var q = input.value.trim();
+            if (q.length < 2) { results.innerHTML = ''; return; }
+            results.innerHTML = '<div class="dm-muted">Searching…</div>';
+            getJson(API.manager + '?action=find_record&kind=' + encodeURIComponent(kind) + '&q=' + encodeURIComponent(q)).then(function (d) {
+                results.innerHTML = '';
+                if (!d || !d.success || !d.results || !d.results.length) { results.innerHTML = '<div class="dm-muted">No matches.</div>'; return; }
+                d.results.forEach(function (r) {
+                    var b = el('button', 'dm-progsearch-row', '<strong>' + esc(r.title) + '</strong> <span class="dm-muted">' + esc([r.meta, r.status].filter(Boolean).join(' · ')) + '</span> <span class="dm-id">#' + esc(r.id) + '</span>');
+                    b.type = 'button';
+                    b.addEventListener('click', function () { results.innerHTML = ''; input.value = ''; onPick(r); });
+                    results.appendChild(b);
+                });
+            }).catch(function () { results.innerHTML = '<div class="dm-error">Search failed.</div>'; });
+        }, 250));
+        return wrap;
+    }
+
+    // A change note with Undo inside a modal that stays open; refresh() after either.
+    function noteHtml(note) {
+        return note ? '<p class="dm-status-ok">' + esc(note.message) + (note.token ? ' <button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-note-undo">Undo</button>' : '') + '</p>' : '';
+    }
+    function wireNote(body, note, refresh) {
+        var undo = body.querySelector('.dm-note-undo');
+        if (undo) undo.addEventListener('click', function () {
+            setStatus('Undoing…');
+            postAction({ action: 'undo_change', token: note.token }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Undo failed.'), 'error'); return; }
+                setStatus('');
+                refresh({ message: res.data.message });
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+    // POST a change; refresh(note) with its message and Undo token.
+    function changeThen(payload, refresh) {
+        setStatus('Saving…');
+        postAction(payload).then(function (res) {
+            if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not saved.'), 'error'); return; }
+            setStatus('');
+            refresh({ message: res.data.message, token: res.data.undo_token });
+        }).catch(function () { setStatus('Network error.', 'error'); });
+    }
+
+    // ---- an article: general / lawsuit / legislation news, the case or bill it covers ----
+    function openNewsReclassify(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Reclassify article: ' + item.display_name, body);
+        function refresh(note) {
+            getJson(API.manager + '?action=record_detail&kind=news&id=' + encodeURIComponent(item.id)).then(function (d) {
+                if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this article.') + '</p>'; return; }
+                render(d.record, note);
+            }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+        }
+        function render(r, note) {
+            var kinds = [['general', 'General news'], ['lawsuit', 'Lawsuit news'], ['legislation', 'Legislation news']];
+            var now = r.news_kind || 'general';
+            item.news_kind = r.news_kind;
+            item.category = r.news_kind ? r.news_kind + '_news' : 'news';
+            if (item._catCell) item._catCell.innerHTML = badge(item.category);
+            var tie = function (list, kind) {
+                return list.length ? '<ul class="dm-link-list">' + list.map(function (t) {
+                    return '<li><span>' + esc(t.title) + ' <span class="dm-muted">#' + esc(t.id) + (t.link_type === 'auto' ? ' · matched automatically' : '') + '</span></span>' +
+                        '<span class="dm-link-acts"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-tie-off" data-kind="' + kind + '" data-id="' + esc(t.id) + '">Take off</button></span></li>';
+                }).join('') + '</ul>' : '<p class="dm-muted">None.</p>';
+            };
+            body.innerHTML = noteHtml(note) +
+                '<fieldset class="dm-desig-block"><legend>What kind of article</legend>' +
+                '<p class="dm-muted">Lawsuit news is about a court case; legislation news is about a bill or a law. Only its type and its Lawsuit / Legislation tags change.</p>' +
+                '<div class="dm-form-actions dm-kind-row">' + kinds.map(function (k) {
+                    return '<button type="button" class="kop-dm-btn' + (k[0] === now ? '' : ' kop-dm-btn-ghost') + ' dm-kind" data-kind="' + k[0] + '"' + (k[0] === now ? ' aria-pressed="true" disabled' : '') + '>' + k[1] + '</button>';
+                }).join('') + '</div></fieldset>' +
+                '<fieldset class="dm-desig-block"><legend>The case it covers</legend>' +
+                '<p class="dm-muted">It shows under "News coverage" on the case\'s card.</p>' + tie(r.cases || [], 'lawsuit') +
+                '<div class="dm-tie-case"></div></fieldset>' +
+                '<fieldset class="dm-desig-block"><legend>The bill it covers</legend>' +
+                '<p class="dm-muted">It shows under "News coverage" on the bill\'s card.</p>' + tie(r.bills || [], 'bill') +
+                '<div class="dm-tie-bill"></div></fieldset>' +
+                '<fieldset class="dm-desig-block"><legend>Outside the TTI records</legend>' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-to-places">Indian boarding school or young adult program…</button></div></fieldset>';
+            wireNote(body, note, refresh);
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-kind'), function (b) {
+                b.addEventListener('click', function () { changeThen({ action: 'news_kind', id: item.id, to: b.getAttribute('data-kind') }, refresh); });
+            });
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-tie-off'), function (b) {
+                b.addEventListener('click', function () {
+                    changeThen({ action: 'coverage_link', kind: b.getAttribute('data-kind'), id: +b.getAttribute('data-id'), news_id: item.id, op: 'remove' }, refresh);
+                });
+            });
+            body.querySelector('.dm-tie-case').appendChild(buildRecordFinder('lawsuit', 'Find the case by name or number…', function (rec) {
+                changeThen({ action: 'coverage_link', kind: 'lawsuit', id: rec.id, news_id: item.id, op: 'add' }, refresh);
+            }));
+            body.querySelector('.dm-tie-bill').appendChild(buildRecordFinder('bill', 'Find the bill by number or title…', function (rec) {
+                changeThen({ action: 'coverage_link', kind: 'bill', id: rec.id, news_id: item.id, op: 'add' }, refresh);
+            }));
+            body.querySelector('.dm-to-places').addEventListener('click', function () { openFileNews(item); });
+        }
+        refresh(null);
+    }
+
+    // ---- a case's court documents, other sources and news coverage; a bill's pages and news coverage ----
+    function openCoverage(item) {
+        var isCase = item.kind === 'lawsuit';
+        var body = el('div', 'dm-form dm-record-links');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Coverage and documents: ' + item.display_name, body);
+        function refresh(note) {
+            getJson(API.manager + '?action=record_detail&kind=' + item.kind + '&id=' + encodeURIComponent(item.id)).then(function (d) {
+                if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this record.') + '</p>'; return; }
+                render(d.record, note);
+            }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+        }
+        function linkLi(l, btn) {
+            return '<li><span><a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label || l.url) + '</a>' +
+                (l.looks === 'court' ? ' <span class="dm-designation">looks like a court document</span>' : '') + '</span>' +
+                (btn ? '<span class="dm-link-acts">' + btn + '</span>' : '') + '</li>';
+        }
+        function render(r, note) {
+            var html = noteHtml(note);
+            if (isCase) {
+                html += '<fieldset class="dm-desig-block"><legend>Court documents</legend>' +
+                    '<p class="dm-muted">Complaints, dockets, rulings, settlements. Listed on the case card as "Court doc".</p>' +
+                    (r.documents.length ? '<ul class="dm-link-list">' + r.documents.map(function (l, i) {
+                        return linkLi(l, '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-doc-move" data-list="documents" data-i="' + i + '">Not a court document</button>');
+                    }).join('') + '</ul>' : '<p class="dm-muted">None.</p>') + '</fieldset>' +
+                    '<fieldset class="dm-desig-block"><legend>Other sources</legend>' +
+                    '<p class="dm-muted">News stories and other pages the case was written from. The card shows the first two as "Source".</p>' +
+                    (r.sources.length ? '<ul class="dm-link-list">' + r.sources.map(function (l, i) {
+                        return linkLi(l, '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-doc-move" data-list="sources" data-i="' + i + '">Court document</button>');
+                    }).join('') + '</ul>' : '<p class="dm-muted">None.</p>') + '</fieldset>';
+            } else {
+                html += '<fieldset class="dm-desig-block"><legend>The bill</legend>' +
+                    (r.documents.length ? '<ul class="dm-link-list">' + r.documents.map(function (l) { return linkLi(l, ''); }).join('') + '</ul>'
+                        : '<p class="dm-muted">No official page or text on file. Add them with Edit.</p>') + '</fieldset>';
+            }
+            html += '<fieldset class="dm-desig-block"><legend>News coverage</legend>' +
+                '<p class="dm-muted">Articles from our news records, listed on the ' + (isCase ? 'case' : 'bill') + '\'s card.' +
+                (isCase ? ' Matches found automatically say so; taking one off keeps it off.' : '') + '</p>' +
+                (r.coverage.length ? '<ul class="dm-link-list">' + r.coverage.map(function (n) {
+                    return '<li><span>' + (n.url ? '<a href="' + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.title) + '</a>' : esc(n.title)) +
+                        ' <span class="dm-muted">' + esc(n.meta) + (n.link_type === 'auto' ? ' · matched automatically' : '') + (n.link_type === 'excluded' ? ' · taken off' : '') + '</span></span>' +
+                        '<span class="dm-link-acts">' + (n.link_type === 'excluded'
+                            ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cov" data-op="add" data-id="' + esc(n.news_id) + '">Put back</button>'
+                            : '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cov" data-op="remove" data-id="' + esc(n.news_id) + '">Take off</button>') + '</span></li>';
+                }).join('') + '</ul>' : '<p class="dm-muted">None.</p>') +
+                '<label>Add an article</label><div class="dm-cov-add"></div></fieldset>';
+            body.innerHTML = html;
+            wireNote(body, note, refresh);
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-doc-move'), function (b) {
+                b.addEventListener('click', function () {
+                    var list = b.getAttribute('data-list');
+                    var l = (list === 'documents' ? r.documents : r.sources)[+b.getAttribute('data-i')];
+                    changeThen({ action: 'lawsuit_doc_move', id: item.id, url: l.url, to: list === 'documents' ? 'sources' : 'documents' }, refresh);
+                });
+            });
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-cov'), function (b) {
+                b.addEventListener('click', function () {
+                    changeThen({ action: 'coverage_link', kind: item.kind, id: item.id, news_id: +b.getAttribute('data-id'), op: b.getAttribute('data-op') }, refresh);
+                });
+            });
+            body.querySelector('.dm-cov-add').appendChild(buildRecordFinder('news', 'Find the article by headline or outlet…', function (n) {
+                changeThen({ action: 'coverage_link', kind: item.kind, id: item.id, news_id: n.id, op: 'add' }, refresh);
+            }));
         }
         refresh(null);
     }
