@@ -95,11 +95,12 @@ def bold_spacing(line):
 # A section that gains a line loses its stand-in, as the editor would write it. PHP: kop_wiki_drafts_is_placeholder().
 PLACEHOLDER = re.compile(r'^(background information for |information about |detailed information about |documented information about '
                          r'|no survivor testimonies for |no related media links for |no media coverage for |additional information about '
-                         r'|programs associated with |no information is known|no information available)', re.I)
+                         r'|programs associated with |no information is (?:currently )?known|no information available)', re.I)
 
 
 def is_placeholder(line):
-    t = line.strip()
+    # The older editor set its stand-in in italics ("*No information is currently known regarding ...*").
+    t = line.strip().strip('*_').strip()
     if not t or len(t) > 350 or not PLACEHOLDER.match(t):
         return False
     low = t.lower()

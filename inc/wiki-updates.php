@@ -788,6 +788,14 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
                     'other_roles' => array_values(array_filter(array_map(function ($c) { return trim(($c['role'] ?? '') . ', ' . ($c['place'] ?? ''), ', '); }, (array) ($p['career'] ?? array()))))));
         }
     }
+    // The owner's written profile of the program (a merged Facility Profile post printed on the facility page, Hyde
+    // School): one gap per section, its text with the links it cites. KOP's own reporting, so a fact in it with no
+    // outside link is written as KOP's record (owner, 2026-10-08: the Hyde draft must draw on the KOP profile).
+    foreach (kop_wiki_upd_profile_sections((int) ($page['profile_post'] ?? 0)) as $s) {
+        $add('profile', $s['heading'], $kop_page, 'Kids Over Profits', '',
+            array('heading' => $s['heading'], 'text' => $s['text'], 'links' => $s['links']));
+    }
+
     // KOP is a primary source: a fact whose only source is KOP's own record (names, operators, staff the owner
     // researched) is cited to KOP's page. Where the record holds an outside source (an article, a court record),
     // that is the citation instead, picked above; KOP is never cited for someone else's reporting.
@@ -815,6 +823,50 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     }
     unset($g);
     return $gaps;
+}
+
+/**
+ * A merged profile post's sections as plain text for the drafters: [{heading, text, links}], split at its <h2>
+ * headings, links kept as [words](url) (site-relative ones made absolute), spoiler shortcodes opened, "Back to
+ * index" and the disclaimer dropped. Sections that only list links (survivor stories, documents, news, videos,
+ * related pages) are left out: their articles and documents reach the draft as their own gaps. The facts box
+ * (above the first heading, or under an "Index" of anchor links) is "At a glance".
+ */
+function kop_wiki_upd_profile_sections($post_id) {
+    $post = $post_id > 0 && function_exists('get_post') ? get_post($post_id) : null;
+    if (!$post || trim((string) $post->post_content) === '') return array();
+    $html = preg_replace('/<!--.*?-->/s', '', (string) $post->post_content);
+    $html = preg_replace('/\[spoiler[^\]]*\]|\[\/spoiler\]/i', '', $html);
+    $parts = preg_split('/<h2\b[^>]*>(.*?)<\/h2>/is', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
+    $out = array();
+    for ($i = 0; $i < count($parts); $i += 2) {
+        $heading = $i === 0 ? 'At a glance' : trim(html_entity_decode(wp_strip_all_tags($parts[$i - 1]), ENT_QUOTES, 'UTF-8'));
+        // The index's anchor links drop out below; what is left under it is the facts box.
+        if (preg_match('/^(index|contents)$/i', $heading)) $heading = 'At a glance';
+        if (preg_match('/^(survivor stories|document library|documents|news|video|related)\b/i', $heading)) continue;
+        $links = array();
+        $body = preg_replace_callback('/<a\b[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)<\/a>/is', function ($m) use (&$links) {
+            $words = trim(html_entity_decode(wp_strip_all_tags($m[2]), ENT_QUOTES, 'UTF-8'));
+            $url = html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+            if ($url[0] === '#' || $words === '' || preg_match('/^back to (the )?index$/i', $words)) return '';
+            if ($url[0] === '/') $url = 'https://kidsoverprofits.org' . $url;
+            $links[] = $url;
+            return '[' . $words . '](' . $url . ')';
+        }, $parts[$i]);
+        $body = preg_replace('/<li\b[^>]*>/i', "\n- ", $body);
+        $body = preg_replace('/<\/?(p|div|br|h[3-6]|ul|ol|tr|figure|blockquote)\b[^>]*>/i', "\n", $body);
+        $body = html_entity_decode(wp_strip_all_tags($body), ENT_QUOTES, 'UTF-8');
+        $lines = array();
+        foreach (preg_split('/\n/', $body) as $l) {
+            $l = trim(preg_replace('/[ \t\x{00A0}]+/u', ' ', $l));
+            if ($l === '' || $l === '-' || preg_match('/^disclaimer:/i', $l)) continue;
+            $lines[] = $l;
+        }
+        $text = implode("\n", $lines);
+        if (mb_strlen($text) < 40) continue;
+        $out[] = array('heading' => $heading, 'text' => $text, 'links' => array_values(array_unique($links)));
+    }
+    return $out;
 }
 
 /**

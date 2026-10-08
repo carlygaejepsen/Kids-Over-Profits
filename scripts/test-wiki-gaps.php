@@ -110,6 +110,17 @@ $check('an entry about an earlier name gets no status and nothing dated after it
 $g = $gaps_for('Carlbrook School');
 $check('a linked entry is compared with its record (Carlbrook School)', is_array($g));
 
+// A record with a merged profile post (Hyde School, Bath): the profile's written sections reach the drafters.
+$e = $entries[558] ?? null;
+$fid = $e ? kop_wiki_upd_facility_id($e, $pdo) : 0;
+$prof = $fid ? array_values(array_filter(kop_wiki_upd_gaps($e, kop_facility_page_data($fid), $pdo), function ($x) { return $x['kind'] === 'profile'; })) : array();
+$heads = array_column($prof, 'text');
+$check('a merged profile\'s sections become profile gaps (Hyde School)', in_array('Ownership and Leadership', $heads, true) && in_array('At a glance', $heads, true)
+    && !preg_grep('/^(News|Survivor Stories|Document Library|Video|Related)/i', $heads), json_encode($heads));
+$check('profile text is plain text with its links, no HTML, shortcodes or "Back to index"', $prof && !array_filter($prof, function ($x) {
+    return preg_match('/<[a-z\/]|\[\/?spoiler|back to index/i', $x['detail']['text']);
+}) && array_filter($prof, function ($x) { return strpos($x['detail']['text'], '](https://civilinquiry.jud.ct.gov/') !== false; }));
+
 $check('KOP\'s record pages are told apart from KOP articles and its document copies',
     kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/facility/provo-canyon-school-ut/') && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/lawsuits/#lawsuit-17')
     && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/network-map/#open=x') && kop_wiki_upd_is_kop_page('https://kidsoverprofits.org/ut-reports/')
@@ -130,7 +141,7 @@ foreach ($entries as $e) {
         if ($x['needs_source']) { $needs++; continue; }
         if ($x['kop_source'] !== (bool) kop_wiki_upd_is_kop_page($x['source_url'])) $bad_source[] = $e['id'] . ':' . $x['kind'] . ' kop_source wrong ' . $x['source_url'];
         if (trim($x['source_url']) === '' && empty($x['detail']['cite_text'])) $bad_source[] = $e['id'] . ':' . $x['kind'] . ' (none)';
-        if (!in_array($x['kind'], array('closure', 'name', 'operator', 'news', 'news_mention', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'staff_other'), true)) $bad_kind[] = $x['kind'];
+        if (!in_array($x['kind'], array('closure', 'name', 'operator', 'news', 'news_mention', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'staff_other', 'profile'), true)) $bad_kind[] = $x['kind'];
     }
 }
 $check('every gap cites a source: the outside one where the record has it, else KOP\'s own page', !$bad_source, $all . ' gaps, ' . $needs . ' with none; ' . implode(', ', array_slice($bad_source, 0, 6)));

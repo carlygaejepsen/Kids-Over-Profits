@@ -15,7 +15,7 @@ import sqlite3
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 GAPS = os.path.join(ROOT, 'tmp', 'wiki-updates', 'gaps')
 OUT = os.path.join(ROOT, 'tmp', 'wiki-updates', 'drafts')
-DRAFT_KINDS = ('closure', 'name', 'operator', 'news', 'lawsuit', 'death', 'finding', 'incident', 'staff')
+DRAFT_KINDS = ('closure', 'name', 'operator', 'news', 'lawsuit', 'death', 'finding', 'incident', 'staff', 'profile')
 
 
 def load(i):

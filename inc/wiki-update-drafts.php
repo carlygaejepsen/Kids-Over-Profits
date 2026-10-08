@@ -178,11 +178,12 @@ function kop_wiki_drafts_bold_spacing($line) {
  * attended ..."): an addition takes its place. Same as scripts/wiki-drafts.py is_placeholder().
  */
 function kop_wiki_drafts_is_placeholder($line) {
-    $t = trim((string) $line);
+    // The older editor set its stand-in in italics ("*No information is currently known regarding ...*").
+    $t = trim(trim(trim((string) $line), '*_'));
     if ($t === '' || mb_strlen($t) > 350) return false;
     if (!preg_match('/^(background information for |information about |detailed information about |documented information about '
         . '|no survivor testimonies for |no related media links for |no media coverage for |additional information about '
-        . '|programs associated with |no information is known|no information available)/i', $t)) return false;
+        . '|programs associated with |no information is (?:currently )?known|no information available)/i', $t)) return false;
     $low = strtolower($t);
     if (strpos($low, 'no information') === 0) {
         return mb_strlen($t) < 120 || strpos($low, 'would like to contribute information to help complete this page') !== false;
