@@ -192,18 +192,21 @@ def staff_line(g, program, closed, earlier_names=()):
         earlier = [p for p in places if p.lower() in [n.lower() for n in earlier_names]]
         if earlier:
             program = earlier[0]
-    role = re.sub(r'\s*\((\d{4}).*$', '', (d.get('role') or '').strip()) or 'staff member'
-    role = clean_role(role)
+    role = re.sub(r'\s*\((\d{4}).*$', '', (d.get('role') or '').strip())
+    role = clean_role(role) if role else ''
     years = re.search(r'\((\d{4}(?:-\d{4})?)', d.get('role') or '')
     verb = 'was'
     art = '' if re.match(r'(?i)(the|a|an)\b', role) else ('an ' if role[:1].lower() in 'aeiou' else 'the ')
-    if re.match(r'(?i)(helped found|co-?founded|founded)$', role):
+    if not role:
+        # Named on the record's staff list with no role: that they worked there is the fact.
+        s = f'**{name}** worked at {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
+    elif re.match(r'(?i)(helped found|co-?founded|founded)$', role):
         s = f'**{name}** {role[0].lower() + role[1:]} {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
     else:
         s = f'**{name}** {verb} {art}{role} of {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'
     s = s.replace(').', ').').replace(' .', '.').replace('..', '.')
     others = []
-    for r in (d.get('other_roles') or [])[:4]:
+    for r in d.get('other_roles') or []:
         role2, _, place = r.rpartition(', ')
         if not role2:
             continue
@@ -212,6 +215,182 @@ def staff_line(g, program, closed, earlier_names=()):
     if others:
         s += f' {name.split()[-1]} was also ' + (', '.join(others[:-1]) + ' and ' + others[-1] if len(others) > 1 else others[0]) + '.'
     return s
+
+
+def target_sections(lines):
+    """The entry's own History, Staff, Abuse and Related Media headings, recognised as the wiki editor's template
+    recognises them (wd.TEMPLATE); a section the entry lacks gets the template's name, which templated() adds before
+    any addition to it. Nothing is dropped for want of a section."""
+    secs = wd.sections(lines)
+
+    def pick(canon):
+        test = next(t for c, t, _ in wd.TEMPLATE if c == canon)
+        s = next((s for s in secs if test(s[2])), None)
+        return lines[s[0]].strip() if s else f'## **{canon}**'
+    return (pick('History and Background Information'), pick('Founders and Notable Staff'),
+            pick('Abuse/Neglect Allegations and Lawsuits'), pick('Related Media'))
+
+
+def sentence(text):
+    t = re.sub(r'\s+', ' ', text or '').strip()
+    return t if not t or re.search(r'[.!?]["”)]?$', t) else t + '.'
+
+
+def with_cite(text, g):
+    """The sentence with its citation before the final stop; a fact from KOP's own record has none."""
+    t = sentence(text)
+    c = cite(g)
+    return (t[:-1] + c + t[-1]) if c and t else t
+
+
+def incident_line(g):
+    """One of the record's incidents as its own paragraph: the record's words, dated when they are not."""
+    d = g.get('detail') or {}
+    what = (d.get('what') or g['text'].split(': ', 1)[-1]).strip()
+    when = (d.get('when') or '').strip()
+    year = re.search(r'\d{4}', when)
+    if when and not (year and year.group(0) in what) and when.lower() not in what.lower():
+        what = f'{re.sub(r"^Reported ", "Reported in ", when) if when.lower().startswith("reported") else "In " + when}, ' + what[:1].lower() + what[1:] \
+            if what[:2] != 'I ' else f'In {when}: {what}'
+    return with_cite(what, g)
+
+
+def lawsuit_line(g):
+    """A case on the record, as the wiki editor writes one with no structured parties (buildLawsuitSentence()): its
+    summary as the sentence, the case named after it."""
+    d = g.get('detail') or {}
+    case = (g.get('text') or '').strip()
+    court = (d.get('court') or '').strip()
+    num = (d.get('case_number') or '').strip()
+    named = f'*{case}*' + (f' ({", ".join(x for x in (court, ("No. " + num) if num else "") if x)})' if court or num else '')
+    summary = sentence(d.get('summary') or '')
+    year = (g.get('date') or '').strip()
+    if summary:
+        text = f'{summary} {named}.'
+    else:
+        text = f'In {year}, a lawsuit was filed: {named}.' if year else f'A lawsuit was filed: {named}.'
+    outcome = (d.get('outcome') or '').strip()
+    if outcome and outcome.lower() not in text.lower():
+        text += f' Outcome: {sentence(outcome)}'
+    return with_cite(text, g)
+
+
+def death_line(g):
+    return with_cite(g['text'], g)
+
+
+def add_new(ids):
+    """Every gap the entry's draft does not hold yet (tmp/wiki-updates/gaps/<id>.json from scripts/wiki-gaps.php,
+    through wiki-pilot-prep.trimmed()) is added to its gaps.json and written by script into ops.json as ops "n<k>",
+    after the ops already there, which are left as they are. Owner, 2026-10-08: every fact on KOP's record goes in,
+    cited or not; lawsuits, deaths and incidents are written here too, in the editor's sentence forms."""
+    import importlib.util as iu
+    spec = iu.spec_from_file_location('prep', os.path.join(ROOT, 'scripts', 'wiki-pilot-prep.py'))
+    prep = iu.module_from_spec(spec)
+    spec.loader.exec_module(prep)
+
+    def key(g):
+        k = {'staff_other': 'staff', 'news_mention': 'news'}.get(g['kind'], g['kind'])
+        return (k, g.get('source_url') if k == 'news' else re.sub(r'\W+', ' ', g['text'].lower()).strip())
+
+    for i in ids:
+        folder = os.path.join(DRAFTS, str(i))
+        gpath = os.path.join(ROOT, 'tmp', 'wiki-updates', 'gaps', f'{i}.json')
+        if not os.path.exists(gpath):
+            print(f'{i}: no gaps file')
+            continue
+        gaps_obj = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
+        ops_obj = json.load(open(os.path.join(folder, 'ops.json'), encoding='utf-8'))
+        have = {key(g) for g in gaps_obj['gaps']}
+        fresh = [g for g in prep.trimmed(json.load(open(gpath, encoding='utf-8'))['gaps']) if key(g) not in have and not g.get('conflict')]
+        # A gap already in the draft whose ops were all dropped, or that no op ever wrote, is written now too, unless it
+        # was dropped as already on the page, the same person twice, or a case/death KOP's own records place at another
+        # program; a placeholder operator ("RELOCATED") is not a company.
+        live = {x for o in ops_obj['ops'] if o.get('verdict') != 'dropped' for x in o.get('gids', [])}
+        draft_path = os.path.join(folder, 'draft.md')
+        drafted = open(draft_path, encoding='utf-8').read() if os.path.exists(draft_path) else ''
+        keep_out = re.compile(r'already (on the page|describes)|excerpt already|same person|different program|not olympus|'
+                              r'over the wwasp|this entry is the|doubtful kop data', re.I)
+        for g in gaps_obj['gaps']:
+            if g.get('conflict') or g['gid'] in live:
+                continue
+            if g['kind'] == 'news' and g.get('source_url') and g['source_url'] in drafted:
+                continue
+            if g['kind'] == 'operator' and re.fullmatch(r'(?i)\W*(unknown|relocated|closed|n/?a|none|tbd|\?)\W*', (g.get('detail') or {}).get('operator', '')):
+                continue
+            notes = ' '.join(o.get('note') or '' for o in ops_obj['ops'] if g['gid'] in o.get('gids', []))
+            if g['kind'] != 'news' and keep_out.search(notes):   # an article on the record is always listed
+                continue
+            fresh.append(dict(g, _orphan=True))
+        if not fresh:
+            print(f'{i}: nothing new')
+            continue
+        top = max([int(g['gid'][1:]) for g in gaps_obj['gaps'] if re.fullmatch(r'g\d+', g.get('gid', ''))] + [0])
+        k = 0
+        for g in fresh:
+            if not g.get('_orphan'):
+                k += 1
+                g['gid'] = f'g{top + k}'
+        lines = open(os.path.join(folder, 'entry.md'), encoding='utf-8').read().replace('\r\n', '\n').split('\n')
+        program = clean_name(gaps_obj['entry']['program_name'])
+        rec = gaps_obj.get('record', {})
+        earlier_names = record_names(rec.get('id'))
+        closed = rec.get('status') == 'Closed' or not re.search(r'present', gaps_obj['entry'].get('years') or '', re.I)
+        hist, staff_sec, abuse_sec, media_sec = target_sections(lines)
+        taken = {o['id'] for o in ops_obj['ops']}
+        n = 0
+        new_ops = []
+
+        def op(sec, text, gs, **kw):
+            nonlocal n
+            n += 1
+            while f'n{n}' in taken:
+                n += 1
+            o = {'id': f'n{n}', 'by': 'script', 'op': 'append_to_section', 'section': heading_text(sec), 'text': text,
+                 'gids': [g['gid'] for g in gs], 'verdict': 'ok',
+                 'note': "From KOP's record (added 2026-10-08: every fact on the record goes in)."}
+            # No outside source to cite (KOP's page, or nothing at all, as a memorial entry marked "Unconfirmed"): the fact
+            # stands on KOP's own record.
+            if all(g.get('kop_source') or not cite(g) for g in gs):
+                o['kop_record'] = True
+            o.update(kw)
+            new_ops.append(o)
+
+        for g in fresh:
+            d = g.get('detail') or {}
+            kind = g['kind']
+            if kind == 'staff':
+                op(staff_sec, staff_line(g, program, closed, earlier_names), [g])
+            elif kind == 'incident':
+                op(abuse_sec, incident_line(g), [g])
+            elif kind == 'lawsuit':
+                op(abuse_sec, lawsuit_line(g), [g])
+            elif kind == 'death':
+                op(abuse_sec, death_line(g), [g])
+            elif kind == 'finding':
+                st = STATES.get((re.search(r', ([A-Z]{2})\b', gaps_obj['entry'].get('place') or '') or [None, ''])[1], '')
+                ex = re.sub(r'\s+', ' ', d.get('excerpt') or g['text'].split(': ', 1)[-1]).strip().rstrip('.').replace('"', "'")
+                op(abuse_sec, f'In a report dated {long_date(g.get("date"))}, {st + " inspectors" if st else "state inspectors"} found: "{ex}."{cite(g)}', [g])
+            elif kind == 'name':
+                nm = d.get('name', '')
+                op(hist, with_cite(f'{program} later operated as {wiki_link(nm, program)}' if d.get('how') == 'later'
+                                   else f'{program} has also been known as {nm}' if d.get('how') in ('also', 'aka')
+                                   else f'{program} was formerly called {nm}', g), [g])
+            elif kind == 'operator':
+                op(hist, with_cite(f'{program} {"was" if closed else "is"} operated by {wiki_link(d.get("operator", ""), program)}', g), [g])
+            elif kind == 'closure':
+                end = str(d.get('end_year') or '')
+                op(hist, with_cite(f'{program} closed in {end}' if re.fullmatch(r'\d{4}', end) else f'{program} has closed', g), [g])
+            elif kind == 'news':
+                op(media_sec, f'[{g["text"]}]({fix_url(g["source_url"])}) ({g.get("source_label") or "news"}, {mdy(g.get("date"))})', [g])
+        gaps_obj['gaps'] += [g for g in fresh if not g.get('_orphan')]
+        ops_obj['ops'] += new_ops
+        json.dump(gaps_obj, open(os.path.join(folder, 'gaps.json'), 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, indent=1)
+        json.dump(ops_obj, open(os.path.join(folder, 'ops.json'), 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, indent=1)
+        kinds = {}
+        for g in fresh:
+            kinds[g['kind']] = kinds.get(g['kind'], 0) + 1
+        print(f'{i} {program}: {len(new_ops)} ops added {kinds}')
 
 
 def main(ids):
@@ -225,11 +404,7 @@ def main(ids):
         earlier_names = record_names(rec.get('id'))
         closed = rec.get('status') == 'Closed' or not re.search(r'present', gaps['entry'].get('years') or '', re.I) \
             or any(g['kind'] == 'closure' and not g['conflict'] for g in gaps['gaps'])
-        hist = section(lines, 'History and Background Information', 'History')
-        staff_sec = section(lines, 'Founders and Notable Staff', 'Notable Staff', 'Notable Employees', 'Staff', 'Employees')
-        abuse_sec = section(lines, 'Abuse Allegations, Deaths, and Lawsuits', 'Abuse/Neglect Allegations and Lawsuits', 'Abuse Allegations, Lawsuits, and Death',
-                            'Abuse Allegations', 'Lawsuits', 'Deaths')
-        media_sec = section(lines, 'Related Media', 'In the Media')
+        hist, staff_sec, abuse_sec, media_sec = target_sections(lines)
         ops, model, n = [], [], 0
 
         def op(sec, text, gids, kop=False, **kw):
@@ -278,12 +453,14 @@ def main(ids):
             hist_lines = [hist_lines[0]] + [re.sub('^' + re.escape(program) + r'\b', 'It', l) for l in hist_lines[1:]]
             op(hist, ' '.join(hist_lines), hist_gids, kop=hist_kop)
         # Staff.
-        for g in [g for g in live if g['kind'] in ('staff', 'staff_other')][:25]:
-            if staff_sec:
-                op(staff_sec, staff_line(g, program, closed, earlier_names), [g['gid']], kop=bool(g.get('kop_source')))
+        for g in [g for g in live if g['kind'] in ('staff', 'staff_other')]:
+            op(staff_sec, staff_line(g, program, closed, earlier_names), [g['gid']], kop=bool(g.get('kop_source')))
+        # The record's incidents, each its own paragraph.
+        for g in sorted([g for g in live if g['kind'] == 'incident'], key=lambda g: g.get('date') or ''):
+            op(abuse_sec, incident_line(g), [g['gid']], kop=bool(g.get('kop_source')))
         # Findings, under one subsection.
-        finds = sorted([g for g in live if g['kind'] in ('finding', 'incident')], key=lambda g: g.get('date') or '')
-        if finds and abuse_sec:
+        finds = sorted([g for g in live if g['kind'] == 'finding'], key=lambda g: g.get('date') or '')
+        if finds:
             st = STATES.get((re.search(r', ([A-Z]{2})\b', gaps['entry'].get('place') or '') or [None, ''])[1], '')
             body = []
             for g in finds:
@@ -294,7 +471,7 @@ def main(ids):
             op(abuse_sec, '### **State Inspection Findings**\n\n' + '\n\n'.join(body), [g['gid'] for g in finds])
         # News: every article in Related Media; event news also goes to the models.
         news = sorted([g for g in live if g['kind'] == 'news'], key=lambda g: g.get('date') or '')
-        if news and media_sec:
+        if news:
             op(media_sec, '\n\n'.join(f'[{g["text"]}]({fix_url(g["source_url"])}) ({g.get("source_label") or "news"}, {mdy(g.get("date"))})'
                                       for g in news), [g['gid'] for g in news])
         for g in live:
@@ -317,4 +494,7 @@ def main(ids):
 
 
 if __name__ == '__main__':
-    main([int(x) for x in sys.argv[1:]])
+    if sys.argv[1:2] == ['add-new']:
+        add_new([int(x) for x in sys.argv[2:]] or sorted(int(d) for d in os.listdir(DRAFTS) if d.isdigit()))
+    else:
+        main([int(x) for x in sys.argv[1:]])

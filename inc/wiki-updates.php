@@ -690,10 +690,12 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $tk = trim(kop_wiki_upd_words($n['title'] ?? ''));
         if ($tk !== '' && isset($titles[$tk])) continue;
         $titles[$tk] = true;
+        // Every article on the record goes in (owner, 2026-10-08: KOP's record is a primary source; nothing on it is left
+        // out), whether or not its title or summary names the program; 'mentions' says so.
         $about = kop_wiki_upd_names_any(($n['title'] ?? '') . ' ' . ($n['summary'] ?? ''), $aliases);
         $year = preg_match('/(\d{4})/', (string) ($n['date'] ?? ''), $m) ? (int) $m[1] : 0;
-        $add($about ? 'news' : 'news_mention', (string) $n['title'], $url, trim((string) ($n['outlet'] ?? '')), (string) ($n['date'] ?? ''),
-            array('summary' => (string) ($n['summary'] ?? ''), 'type' => (string) ($n['type'] ?? ''),
+        $add('news', (string) $n['title'], $url, trim((string) ($n['outlet'] ?? '')), (string) ($n['date'] ?? ''),
+            array('summary' => (string) ($n['summary'] ?? ''), 'type' => (string) ($n['type'] ?? ''), 'names_program' => (bool) $about,
                 'newer_than_entry' => $year && $newest && $year > $newest));
     }
 
@@ -707,8 +709,7 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $generic = preg_match('/^(a |an |the |second |first |third |two |three |several |\w+ )?(family|families|parents?|students?|former students?|plaintiffs?|survivors?|minor|doe|john doe|jane doe)\b/i', $party);
         if ($party !== '' && !$generic && mb_strlen($party) >= 6 && kop_wiki_upd_mentions($words, $party)) continue;
         $sum = (string) ($l['summary'] ?? '');
-        if (preg_match('/not (a |an )?(lawsuit|case|suit)s? (about|against|involving)|banking case|foreclos|\bliens?\b|\bUCC\b|ERISA|insurer|\bdebt\b/i', $sum)) continue;
-        if (!kop_wiki_upd_names_any(($l['case_name'] ?? '') . ' ' . $sum, $aliases)) continue;
+        // Every case on the record goes in, as the record links it (owner, 2026-10-08).
         $src = kop_wiki_upd_lawsuit_source((int) $l['id'], $pdo);
         $add('lawsuit', (string) ($l['case_name'] ?? ''), $src['url'], $src['label'], (string) ($l['year'] ?? ''),
             array('summary' => (string) ($l['summary'] ?? ''), 'status' => (string) ($l['status'] ?? ''), 'outcome' => (string) ($l['outcome'] ?? ''),
@@ -719,9 +720,8 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     // Deaths (the memorial's published entries).
     foreach ((array) ($page['memorials'] ?? array()) as $v) {
         $name = trim((string) ($v['name'] ?? ''));
+        // Every death on the record's memorial goes in, even outside the years the entry gives (owner, 2026-10-08).
         if ($name === '' || kop_wiki_upd_mentions_person($words, $name) || !$in_era($v['date_label'] ?? '')) continue;
-        $dy = preg_match('/(\d{4})/', (string) ($v['date_label'] ?? ''), $m) ? (int) $m[1] : 0;
-        if ($dy && ((is_int($w_start) && $dy < $w_start - 1) || (is_int($w_end) && $dy > $w_end + 1))) continue;
         $add('death', $name . ($v['date_label'] ?? '' ? ' died ' . $v['date_label'] : '') . ($v['cause'] ?? '' ? ' (' . $v['cause'] . ')' : '') . '.',
             (string) ($v['source_url'] ?? '') ?: (string) ($v['kop_url'] ?? ''), (string) ($v['source_name'] ?? '') ?: 'Kids Over Profits', (string) ($v['date_label'] ?? ''),
             array('source_name' => (string) ($v['source_name'] ?? ''), 'source_url' => (string) ($v['source_url'] ?? ''), 'category' => (string) ($v['category'] ?? '')));
@@ -731,9 +731,8 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     foreach ((array) ($page['inspections']['violations'] ?? array()) as $f) {
         $date = (string) ($f['date'] ?? '');
         if (!$in_era($date)) continue;
-        $risk = (string) ($f['state_label'] ?? '');
-        if ((int) ($f['weight'] ?? 0) < 70 && !preg_match('/risk level: (high|medium high)/i', $risk)) continue;
-        $ym = $date !== '' ? strtolower(date('F Y', strtotime($date))) : '';
+        // Every approved serious finding goes in, whatever its weight (owner, 2026-10-08).
+        $ym =$date !== '' ? strtolower(date('F Y', strtotime($date))) : '';
         if ($ym !== '' && strpos($words, ' ' . $ym . ' ') !== false && strpos($words, ' inspect') !== false) continue;
         $state_name = function_exists('kop_state_canonical_name') ? kop_state_canonical_name((string) ($f['state'] ?? '')) : (string) ($f['state'] ?? '');
         $label = $state_name . ' licensing inspection report' . ($date !== '' ? ', ' . date('F j, Y', strtotime($date)) : '');
@@ -744,12 +743,16 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
                 'cite_text' => trim((string) ($f['source_url'] ?? '')) === '' ? $label : ''));
     }
 
-    // The record's own incidents, when they cite a source the entry lacks.
+    // The record's own incidents, cited or not: one with no source of its own is KOP's record and cites the KOP page
+    // (owner, 2026-10-08: KOP is a primary source). One whose link or wording the entry already has is skipped.
     foreach ((array) ($page['incidents'] ?? array()) as $i) {
         $url = (string) ($i['url'] ?? '');
-        if ($url === '' || $has_url($url) || !$in_era($i['year'] ?? '')) continue;
-        $add('incident', trim((string) ($i['when'] ?? '') . ': ' . (string) ($i['text'] ?? ''), ': '), $url,
-            (string) ($i['cite'] ?? '') ?: (string) ($i['source'] ?? ''), (string) ($i['year'] ?? ''), array('kind' => (string) ($i['kind'] ?? '')));
+        $text = trim((string) ($i['text'] ?? ''));
+        if ($text === '' || ($url !== '' && $has_url($url)) || !$in_era($i['year'] ?? '')) continue;
+        if (mb_strlen($text) > 30 && kop_wiki_upd_mentions($words, $text)) continue;
+        $add('incident', trim((string) ($i['when'] ?? '') . ': ' . $text, ': '), $url !== '' ? $url : $kop_page,
+            $url !== '' ? ((string) ($i['cite'] ?? '') ?: (string) ($i['source'] ?? '')) : 'KOP facility page', (string) ($i['year'] ?? ''),
+            array('kind' => (string) ($i['kind'] ?? ''), 'when' => (string) ($i['when'] ?? ''), 'what' => $text));
     }
 
     // Staff named on the record and not in the entry.
@@ -761,13 +764,11 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
             $who = kop_wiki_upd_person_key($name);
             if (isset($seen_people[$who])) continue;
             $seen_people[$who] = true;
-            if (trim((string) ($p['role'] ?? '')) === '' && empty($p['career'])) continue;
-            // Leaders as 'staff'; others only when they worked elsewhere in the industry ('staff_other').
+            // Everyone named on the record's staff lists goes in, with or without a role (owner, 2026-10-08).
             $lead = (bool) preg_match('/found|owner|director|ceo|president|chief|principal|administrator|headmaster|executive|superintendent|chair/i', (string) ($p['role'] ?? ''));
-            if (!$lead && (empty($p['career']) || trim((string) ($p['role'] ?? '')) === '')) continue;
-            $add($lead ? 'staff' : 'staff_other', $name . (!empty($p['role']) ? ' (' . $p['role'] . ')' : ''),
+            $add('staff', $name . (!empty($p['role']) ? ' (' . $p['role'] . ')' : ''),
                 kop_wiki_upd_live_url((string) ($p['url'] ?? '')) ?: $kop_page, (string) ($p['cite'] ?? '') ?: (string) ($p['source'] ?? '') ?: 'KOP facility page', '',
-                array('group' => (string) $group, 'role' => (string) ($p['role'] ?? ''),
+                array('group' => (string) $group, 'role' => (string) ($p['role'] ?? ''), 'lead' => $lead,
                     'other_roles' => array_values(array_filter(array_map(function ($c) { return trim(($c['role'] ?? '') . ', ' . ($c['place'] ?? ''), ', '); }, (array) ($p['career'] ?? array()))))));
         }
     }

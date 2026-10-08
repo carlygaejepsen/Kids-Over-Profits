@@ -166,20 +166,28 @@ def templated(md, ops, name=''):
     if made:
         present['In the Media'] = 'In the Media'
     level_of = {c: levels.get(norm(h), '##') for c, h in present.items() if h}
+    fill = []
     for n, (canon, _, text) in enumerate(TEMPLATE):
+        if canon == 'In the Media' and made:
+            # The news section made above takes its place in the template's order, so later sections can follow it.
+            out.remove(made)
+            fill.append(made)
+            continue
         if present[canon] or not name:
             continue
         anchor = next((present[c] for c, _, _ in reversed(TEMPLATE[:n]) if present[c]), None)
         if not anchor:
             continue
         level = level_of.get(next(c for c, _, _ in reversed(TEMPLATE[:n]) if present[c]), '##')
-        out.append({'id': 'f' + str(n + 1), 'by': 'script', 'op': 'add_section', 'after_section': anchor,
+        fill.append({'id': 'f' + str(n + 1), 'by': 'script', 'op': 'add_section', 'after_section': anchor,
                     'heading': f'{level} **{canon}**', 'separator': sep, 'text': text.format(name=name, contact=CONTACT_LINK),
                     'gids': [], 'verdict': 'ok', 'filler': True,
                     'note': "The wiki editor's empty section: the page has none, so it asks readers for information."})
         present[canon] = canon
         level_of[canon] = level
-    return out
+    # The empty sections come first: an addition the record has for a section the entry lacked then lands in it,
+    # in place of its request for information.
+    return fill + out
 
 
 # The modmail link every request for information names (js/wiki-generation.js CONTACT_LINK, api/lib-wiki-contact.php).

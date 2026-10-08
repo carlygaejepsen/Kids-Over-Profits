@@ -1,8 +1,8 @@
 """Wiki update drafts, step 3 input (docs/PLAN.md 3.12): per entry, its markdown and the gaps to draft.
 
 Reads tmp/wiki-updates/gaps/<id>.json (scripts/wiki-gaps.php) and the entry's text from tmp/prod.sqlite,
-writes tmp/wiki-updates/drafts/<id>/entry.md + gaps.json (gaps numbered g1, g2, ...; news_mention and
-staff_other are left out, news newest first, at most 15 news and 12 staff). With no ids, picks a pilot:
+writes tmp/wiki-updates/drafts/<id>/entry.md + gaps.json (gaps numbered g1, g2, ...; every gap, news newest
+first, no cap per kind). With no ids, picks a pilot:
 entries covering every gap kind, most gaps first, one earlier-name entry and one conflict.
 
     python scripts/wiki-pilot-prep.py [--ids 721 657 ...] [--n 10]
@@ -24,10 +24,12 @@ def load(i):
 
 
 def trimmed(gaps):
-    # A gap whose only source is a KOP page that gathers others' reporting is not drafted.
-    keep = [g for g in gaps if g['kind'] in DRAFT_KINDS and not g.get('needs_source')]
-    news = sorted([g for g in keep if g['kind'] == 'news'], key=lambda g: g['date'], reverse=True)[:15]
-    staff = [g for g in keep if g['kind'] == 'staff'][:12]
+    # Every gap is drafted, with no cap per kind (owner, 2026-10-08: KOP's record is a primary source, nothing on it is
+    # left out). staff_other and news_mention are older names for staff and news.
+    keep = [dict(g, kind={'staff_other': 'staff', 'news_mention': 'news'}.get(g['kind'], g['kind'])) for g in gaps]
+    keep = [g for g in keep if g['kind'] in DRAFT_KINDS]
+    news = sorted([g for g in keep if g['kind'] == 'news'], key=lambda g: g['date'], reverse=True)
+    staff = [g for g in keep if g['kind'] == 'staff']
     rest = [g for g in keep if g['kind'] not in ('news', 'staff')]
     out = rest + news + staff
     for n, g in enumerate(out, 1):

@@ -31,7 +31,18 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     }
     $check('wiki-updates: the site builds exactly the script\'s draft for every local draft', $same && !$diff, count($same) . ' same; differ: ' . implode(', ', $diff));
 
+    // An entry whose text is still the one drafted from (an entry already approved and pasted holds the additions
+    // itself, so leaving a line out could not take it off): the first such card stands in for the harness's pick.
     $key = (int) $item['key'];
+    foreach (array_merge(array($key), array_keys(kop_rinbox_wupd_rows())) as $k) {
+        $rr = kop_rinbox_wupd_rows()[$k] ?? null;
+        if ($rr && $rr['view'] === 'review' && count($rr['draft']['ops'] ?? array()) > 2
+            && !kop_wiki_drafts_build((int) $k, $rr['row']['markdown'], array())['stale']) {
+            $key = (int) $k;
+            break;
+        }
+    }
+    $item = kop_rinbox_get_item('wiki-updates', (string) $key) ?: $item;
     $d = kop_wiki_drafts_all()[$key];
     $ops = array_values(array_filter($d['ops'], function ($o) { return ($o['op'] ?? '') !== 'set_header_years'; }));
     $names = array_column($item['fields'], 'name');
