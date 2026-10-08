@@ -637,7 +637,7 @@ function kop_rinbox_fornits_on_file() {
 /** Waiting staff items and closure leads that disagree with their record, for the Conflicts section. */
 function kop_rinbox_fornits_conflicts() {
     kop_fornits_ensure_tables();
-    return kop_on_file_cached('fornits_conflicts', kop_fornits_items_table(), function (PDO $pdo) {
+    return kop_on_file_cached('fornits_conflicts_v2', kop_fornits_items_table(), function (PDO $pdo) {
         global $wpdb;
         $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_fornits_items_table() . " WHERE status = 'pending' AND facility_id > 0 AND kind IN ('staff', 'lead')", ARRAY_A);
         $docs = kop_on_file_docs($pdo, array_column($rows, 'facility_id'));

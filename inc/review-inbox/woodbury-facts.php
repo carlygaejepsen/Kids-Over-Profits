@@ -531,7 +531,7 @@ function kop_wbf_on_record(array $doc, array $r) {
                 ? 'already listed (' . (is_array($value) ? (string) ($value['raw'] ?? wp_json_encode($value)) : mb_substr((string) $value, 0, 120)) . ')' : '';
         case 'set_if_empty':
             $slot = kop_wbf_get($doc, $r['path']);
-            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return '';
+            if (kop_wbf_no_info($slot)) return '';
             return $same($slot, $value) ? 'already says ' . (is_array($slot) ? wp_json_encode($slot) : $slot) : '';
         case 'set_closed':
             $status = (string) ($doc['operatingPeriod']['status'] ?? '');
@@ -547,7 +547,9 @@ function kop_wbf_on_record(array $doc, array $r) {
 /** Every conflict for a waiting item: the build's own note and what the record says now. */
 function kop_rinbox_wbf_conflict(array $r) {
     $f = (int) $r['facility_id'] > 0 ? kop_on_file_doc($r['facility_id']) : null;
-    return kop_rinbox_wbf_conflict_text($r, $f ? kop_wbf_conflict_parts($f['doc'], $r) : null);
+    $live = $f ? kop_wbf_conflict_parts($f['doc'], $r) : null;
+    if (!$live && !kop_rinbox_wbf_built_conflict($r, $f ? $f['doc'] : null)) return '';
+    return kop_rinbox_wbf_conflict_text($r, $live);
 }
 
 /** The build's notes and the live conflict ($live: kop_wbf_conflict_parts()) as one line. */
@@ -566,6 +568,32 @@ function kop_rinbox_wbf_conflict_text(array $r, $live) {
 }
 
 /**
+ * Whether the build's notes still name a disagreement. Having no information
+ * is never one: the build's "Status now: ?" (no record) or "Name: (no role)"
+ * snapshot is not, and where the record exists the live check
+ * (kop_wbf_conflict_parts()) decides for the values it reads, since the
+ * snapshot is from build time. "The record has start year X" stands only
+ * while the record still holds a start year other than the item's.
+ */
+function kop_rinbox_wbf_built_conflict(array $r, $doc) {
+    $note = trim((string) $r['conflict']);
+    if ($note !== '' && preg_match('/^The record has start year\b/i', $note)) {
+        if (!$doc) return true;
+        $have = $doc['operatingPeriod']['startYear'] ?? null;
+        if (kop_wbf_no_info($have)) return false;
+        $v = kop_wbf_row_value($r);
+        return !(preg_match('/\b(1[89]\d\d|20\d\d)\b/', is_string($v) ? $v : '', $m) && (int) $m[1] === (int) $have);
+    }
+    if ($note !== '') return true;
+    $cur = trim((string) $r['current_val']);
+    if ($cur === '') return false;
+    if ($doc && in_array($r['op'], array('set_if_empty', 'set_closed', 'add_staff'), true)) return false;
+    // "Status now: ?", "Jeff Nichols: (no role)": only the part after the last colon says anything.
+    $said = strpos($cur, ':') !== false ? substr($cur, strrpos($cur, ':') + 1) : $cur;
+    return !kop_wbf_no_info($said);
+}
+
+/**
  * Waiting items in conflict, for the Conflicts section: the build's own notes
  * (another issue gives another value, the record's value at build time) and
  * the record as it is now (kop_wbf_conflict_parts()). Items the record already
@@ -573,7 +601,7 @@ function kop_rinbox_wbf_conflict_text(array $r, $live) {
  */
 function kop_rinbox_wbf_conflicts() {
     kop_wbf_ensure_table();
-    return kop_on_file_cached('wbf_conflicts_v3', kop_wbf_table(), function (PDO $pdo) {
+    return kop_on_file_cached('wbf_conflicts_v4', kop_wbf_table(), function (PDO $pdo) {
         global $wpdb;
         $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND ((conflict IS NOT NULL AND conflict <> '')
             OR (current_val IS NOT NULL AND current_val <> '') OR (facility_id > 0 AND op IN ('set_if_empty', 'set_closed', 'add_staff')))", ARRAY_A);
@@ -582,7 +610,7 @@ function kop_rinbox_wbf_conflicts() {
         foreach ($rows as $r) {
             $doc = $docs[(int) $r['facility_id']]['doc'] ?? null;
             $live = $doc ? kop_wbf_conflict_parts($doc, $r) : null;
-            $built = (string) $r['conflict'] !== '' || (string) $r['current_val'] !== '';
+            $built = kop_rinbox_wbf_built_conflict($r, $doc);
             if (!$live && !$built) continue;
             if (!$live && $doc && kop_wbf_on_record($doc, $r) !== '') continue;
             // A closure on a record already marked closed (or with no status) is no conflict, whatever the build noted

@@ -392,10 +392,31 @@ function kop_wbf_doc_apply(array &$doc, array $r) {
 }
 
 /**
+ * True when a value says nothing: empty, "?", "Unknown", "(no role)", 0, a
+ * range with no ends. Having no information never disagrees with anything.
+ */
+function kop_wbf_no_info($v) {
+    if ($v === null || $v === false) return true;
+    if (is_array($v)) {
+        if (array_key_exists('min', $v) || array_key_exists('max', $v)) {
+            return kop_wbf_no_info($v['min'] ?? null) && kop_wbf_no_info($v['max'] ?? null);
+        }
+        foreach ($v as $x) {
+            if (!kop_wbf_no_info($x)) return false;
+        }
+        return true;
+    }
+    if (is_int($v) || is_float($v)) return $v == 0;
+    $s = strtolower(trim((string) $v, " \t\n\r\0\x0B.()"));
+    return in_array($s, array('', '?', '0', 'unknown', 'not known', 'n/a', 'na', 'none', 'no role', 'null', '-'), true);
+}
+
+/**
  * What the record says that disagrees with this item ('' when nothing does):
  * a field holding another value, another end year or "Open" for a closure,
  * another role for the same person. Add never overwrites any of these, so the
- * item keeps waiting with the conflict marked.
+ * item keeps waiting with the conflict marked. A record that says nothing
+ * (kop_wbf_no_info()) never disagrees.
  */
 function kop_wbf_conflict(array $doc, array $r) {
     $c = kop_wbf_conflict_parts($doc, $r);
@@ -422,7 +443,7 @@ function kop_wbf_conflict_parts(array $doc, array $r) {
     switch ($r['op']) {
         case 'set_if_empty':
             $slot = kop_wbf_get($doc, $r['path']);
-            if ($slot === null || $slot === '' || (is_array($slot) && ($slot['min'] ?? null) === null && ($slot['max'] ?? null) === null)) return null;
+            if (kop_wbf_no_info($slot) || kop_wbf_no_info($value)) return null;
             if ($same($slot, $value)) return null;
             return array('what' => $what, 'record' => $show($slot), 'item' => $show($value),
                 'text' => 'The record has ' . $show($slot) . '; this says ' . $show($value) . '.', 'slot' => $r['path']);
@@ -434,7 +455,7 @@ function kop_wbf_conflict_parts(array $doc, array $r) {
                 return array('what' => 'closure', 'record' => 'Open' . ($end ? ', ended ' . (int) $end : ''), 'item' => 'Closed' . ($want ? ' in ' . (int) $want : ''),
                     'text' => 'The record says it is open' . ($want ? '; this says it closed in ' . (int) $want : '') . '.', 'slot' => 'operatingPeriod.status');
             }
-            if ($want && $end && (int) $end !== (int) $want) {
+            if (!kop_wbf_no_info($want) && !kop_wbf_no_info($end) && (int) $end !== (int) $want) {
                 return array('what' => 'closure', 'record' => 'Ended ' . (int) $end, 'item' => 'Ended ' . (int) $want,
                     'text' => 'The record says it ended in ' . (int) $end . '; this says ' . (int) $want . '.', 'slot' => 'operatingPeriod.endYear');
             }
@@ -442,7 +463,7 @@ function kop_wbf_conflict_parts(array $doc, array $r) {
         case 'add_staff':
             $key = kop_wbf_person_key($value['name'] ?? '');
             $role = trim((string) ($value['role'] ?? ''));
-            if ($key === '' || $role === '') return null;
+            if ($key === '' || kop_wbf_no_info($role)) return null;
             // "Director (2006, Woodbury Reports)" and "director" are the same role.
             $plain = function ($s) { return trim(preg_replace('/\s+/', ' ', preg_replace('/\([^)]*\)/', '', strtolower((string) $s)))); };
             foreach (array('staff.administrator', 'staff.notableStaff') as $path) {
@@ -451,7 +472,7 @@ function kop_wbf_conflict_parts(array $doc, array $r) {
                     $have = trim((string) ($s['role'] ?? ''));
                     $a = $plain($have);
                     $b = $plain($role);
-                    if ($a === '' || $b === '' || strpos($a, $b) !== false || strpos($b, $a) !== false) return null;
+                    if (kop_wbf_no_info($a) || kop_wbf_no_info($b) || strpos($a, $b) !== false || strpos($b, $a) !== false) return null;
                     return array('what' => 'staff', 'record' => $s['name'] . ': ' . $have, 'item' => $s['name'] . ': ' . $role,
                         'text' => 'The record lists ' . $s['name'] . ' as ' . $have . '; this says ' . $role . '.', 'slot' => $path);
                 }
