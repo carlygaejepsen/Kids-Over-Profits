@@ -1547,3 +1547,56 @@ if (!function_exists('kop_fmerge_page')) {
         <?php
     }
 }
+
+if (!function_exists('kop_fmerge_follow_waiting')) {
+    /**
+     * Waiting import items that still name a merged-away record go to the kept
+     * one. A merge moves them at once, but a later load of an import file
+     * (Woodbury facts.json, a Fornits batch, Drive Docs links.json) writes the
+     * build's old ids back. Runs after each load and hourly; only waiting rows,
+     * never decided ones (their Undo knows where they went). A Fornits thread
+     * link gets the kept record's key; if the kept record already has that
+     * thread waiting, the old copy is filed as a duplicate. Returns rows moved.
+     */
+    function kop_fmerge_follow_waiting() {
+        global $wpdb;
+        if (!function_exists('kop_facility_merged_into') || empty($wpdb)) return 0;
+        $map = kop_facility_merged_into();
+        if (!$map['ids']) return 0;
+        $p = $wpdb->prefix;
+        $exists = function ($t) use ($wpdb) { return (bool) $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $t)); };
+        if (function_exists('kop_fmerge_is_sqlite') && isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO && kop_fmerge_is_sqlite($GLOBALS['pdo'])) {
+            $exists = function ($t) { return (bool) $GLOBALS['pdo']->query('SELECT name FROM sqlite_master WHERE type = ' . "'table'" . ' AND name = ' . $GLOBALS['pdo']->quote($t))->fetchColumn(); };
+        }
+        $n = 0;
+        foreach (array_keys($map['ids']) as $drop) {
+            $drop = (int) $drop;
+            $keep = kop_facility_merge_resolve($drop);
+            if ($keep <= 0 || $keep === $drop) continue;
+            if ($exists($p . 'kop_woodbury_facts')) {
+                $n += (int) $wpdb->query($wpdb->prepare("UPDATE {$p}kop_woodbury_facts SET facility_id = %d,
+                    conflict = CASE WHEN conflict LIKE '%%does not exist%%' THEN '' ELSE conflict END
+                    WHERE facility_id = %d AND status IN ('pending', 'gone')", $keep, $drop));
+            }
+            if ($exists($p . 'kop_gdoc_links')) {
+                $n += (int) $wpdb->query($wpdb->prepare("UPDATE {$p}kop_gdoc_links SET facility_id = %d WHERE facility_id = %d AND status = 'pending'", $keep, $drop));
+            }
+            if ($exists($p . 'kop_fornits_items')) {
+                $fi = $p . 'kop_fornits_items';
+                $n += (int) $wpdb->query($wpdb->prepare("UPDATE {$fi} SET facility_id = %d WHERE facility_id = %d AND status = 'pending' AND kind <> 'link'", $keep, $drop));
+                foreach ((array) $wpdb->get_results($wpdb->prepare("SELECT id, topic_id FROM {$fi} WHERE facility_id = %d AND status = 'pending' AND kind = 'link'", $drop), ARRAY_A) as $l) {
+                    $pkey = substr(md5('link|' . (int) $l['topic_id'] . '|' . $keep), 0, 16);
+                    if ($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$fi} WHERE pkey = %s", $pkey))) {
+                        $wpdb->update($fi, array('status' => 'rejected', 'applied' => wp_json_encode(array('reason' => 'Duplicate: record #' . $drop . ' was merged into #' . $keep . ', which has this thread already.')),
+                            'reviewed_by' => 'merge', 'reviewed_at' => current_time('mysql', true)), array('id' => (int) $l['id']));
+                    } else {
+                        $wpdb->update($fi, array('facility_id' => $keep, 'pkey' => $pkey), array('id' => (int) $l['id']));
+                    }
+                    $n++;
+                }
+            }
+        }
+        return $n;
+    }
+    add_action('kop_wbf_auto_hourly', 'kop_fmerge_follow_waiting', 20);
+}

@@ -58,3 +58,32 @@ function kop_rinbox_test_ya_moved(callable $check) {
     $status = $pdo->query('SELECT status FROM wpdl_kop_fornits_items WHERE pkey = ' . $pdo->quote($row['pkey']))->fetchColumn();
     $check('ya-moved: Undo takes the Fornits fact off and the item waits again', !$still && $status === 'pending');
 }
+
+/** Waiting items of merged-away records follow the merge (kop_fmerge_follow_waiting()), after any file load. */
+function kop_rinbox_test_merge_follow(callable $check) {
+    $pdo = $GLOBALS['pdo'];
+    // The harness's get_option() does not read the copied options table: the real merge map, from it.
+    $raw = $pdo->query("SELECT option_value FROM wpdl_options WHERE option_name = 'kop_facility_merged_into'")->fetchColumn();
+    if ($raw !== false) $GLOBALS['kop_test_options']['kop_facility_merged_into'] = unserialize($raw);
+    $map = kop_facility_merged_into();
+    $drops = array_map('intval', array_keys($map['ids']));
+    if (!$drops) { echo "  (no merges in the mirror)\n"; return; }
+    $in = implode(',', $drops);
+    $count = function ($t, $where) use ($pdo, $in) { return (int) $pdo->query("SELECT COUNT(*) FROM $t WHERE facility_id IN ($in) AND $where")->fetchColumn(); };
+    $w0 = $count('wpdl_kop_woodbury_facts', "status = 'pending'");
+    $f0 = $count('wpdl_kop_fornits_items', "status = 'pending'");
+    $sample = $pdo->query("SELECT pkey, facility_id FROM wpdl_kop_woodbury_facts WHERE facility_id IN ($in) AND status = 'pending' LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $moved = kop_fmerge_follow_waiting();
+    $w1 = $count('wpdl_kop_woodbury_facts', "status = 'pending'");
+    $f1 = $count('wpdl_kop_fornits_items', "status = 'pending'");
+    $check('merge-follow: waiting Woodbury and Fornits items of merged-away records go to the kept record', ($w0 + $f0) > 0 && $w1 === 0 && $f1 === 0 && $moved >= $w0 + $f0,
+        "Woodbury $w0 -> $w1, Fornits $f0 -> $f1, $moved rows");
+    if ($sample) {
+        $now = (int) $pdo->query('SELECT facility_id FROM wpdl_kop_woodbury_facts WHERE pkey = ' . $pdo->quote($sample['pkey']))->fetchColumn();
+        $check('merge-follow: to the record it was merged into', $now === kop_facility_merge_resolve((int) $sample['facility_id']) && $now !== (int) $sample['facility_id'], $sample['facility_id'] . ' -> ' . $now);
+    }
+    $check('merge-follow: running it again changes nothing', kop_fmerge_follow_waiting() === 0);
+    $decided = (int) $pdo->query("SELECT COUNT(*) FROM wpdl_kop_woodbury_facts WHERE facility_id IN ($in) AND status = 'applied'")->fetchColumn()
+        + (int) $pdo->query("SELECT COUNT(*) FROM wpdl_kop_woodbury_facts WHERE applied_fid IN ($in)")->fetchColumn();
+    echo "  ($decided decided items still name a merged-away id: left alone, their Undo knows where they went)\n";
+}

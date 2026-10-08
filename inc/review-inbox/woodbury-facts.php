@@ -83,6 +83,8 @@ function kop_rinbox_wbf_list(array $q) {
         kop_wbf_sync();
         // Items of a record moved to the young adult programs go to its young adult tab (the load writes the old ids back).
         kop_wbf_moved_to_ya();
+        // ...and items of a merged-away record to the record it was merged into.
+        if (function_exists('kop_fmerge_follow_waiting')) kop_fmerge_follow_waiting();
     }
     $where = kop_rinbox_wbf_where($q['view'], $q);
     $table = kop_wbf_table();

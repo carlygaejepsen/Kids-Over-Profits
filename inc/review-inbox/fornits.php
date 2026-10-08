@@ -98,6 +98,8 @@ function kop_rinbox_fornits_list(array $q) {
         // New batch files are loaded when the queue is opened, as the old screen does.
         set_transient('kop_rinbox_fornits_synced', 1, MINUTE_IN_SECONDS);
         kop_fornits_sync(15);
+        // Items of a merged-away record go to the record it was merged into (a batch carries the old id).
+        if (function_exists('kop_fmerge_follow_waiting')) kop_fmerge_follow_waiting();
     }
     $where = kop_rinbox_fornits_where($q['view'], $q);
     $total = (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . kop_fornits_items_table() . " i WHERE {$where}");

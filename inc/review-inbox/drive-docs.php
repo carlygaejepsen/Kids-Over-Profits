@@ -83,6 +83,8 @@ function kop_rinbox_gdl_list(array $q) {
         // New links files are loaded when the queue is opened, as the old screen does.
         set_transient('kop_rinbox_gdl_synced', 1, MINUTE_IN_SECONDS);
         kop_gdl_sync();
+        // Links of a merged-away record go to the record it was merged into (links.json carries the old id).
+        if (function_exists('kop_fmerge_follow_waiting')) kop_fmerge_follow_waiting();
     }
     if (kop_rinbox_gdl_grouped($q)) return kop_rinbox_gdl_group_list($q);
     $where = kop_rinbox_gdl_where($q['view'], $q);

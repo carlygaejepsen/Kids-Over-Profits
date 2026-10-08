@@ -129,6 +129,8 @@ php api/scan-highlight-summaries.php [--try|apply] [--limit=10] [--ids=704]   # 
 # merged with one click: doc fields join, every table/JSON/option pointing at the dropped id moves (kop_fmerge_ref_tables(),
 # kop_fmerge_json_tables()), its FileBird library moves into the kept folder, its page 301s; exact Undo from the Merged tab.
 # A new table holding facility ids goes in kop_fmerge_ref_tables(); files keyed by id read kop_facility_merge_expand_ids()
+# Import loads (Woodbury facts.json, Fornits batches, Drive Docs links.json) write the build's old ids back: kop_fmerge_follow_waiting()
+# re-points waiting rows of merged-away records after each load and hourly (a Fornits thread link gets the kept record's key)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.php [--list]   # real merges + undo on an in-memory copy
 # Review inbox: every approval queue on the Submissions Review page (inc/review-inbox.php, js/review-inbox.js). Each queue is
 # a source in inc/review-inbox/<name>.php, registered with kop_rinbox_register(), calling the queue's own apply/undo functions;
