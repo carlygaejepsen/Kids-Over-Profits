@@ -196,7 +196,7 @@ def staff_line(g, program, closed, earlier_names=()):
     role = clean_role(role) if role else ''
     years = re.search(r'\((\d{4}(?:-\d{4})?)', d.get('role') or '')
     verb = 'was'
-    art = '' if re.match(r'(?i)(the|a|an)\b', role) else ('an ' if role[:1].lower() in 'aeiou' else 'the ')
+    art = '' if re.match(r'(?i)(the|a|an)\b', role) else wd.role_article(role) + ' '
     if not role:
         # Named on the record's staff list with no role: that they worked there is the fact.
         s = f'**{name}** worked at {program}' + (f' in {years.group(1)}' if years else '') + cite(g) + '.'

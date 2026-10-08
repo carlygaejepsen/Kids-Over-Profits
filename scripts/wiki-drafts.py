@@ -125,6 +125,8 @@ def templated(md, ops, name=''):
     information (ops "f<n>", "filler": true). Other ops are returned unchanged."""
     lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
     secs = sections(lines)
+    ops = [dict(op, text=plain_citations(op['text'], staff=is_staff_section(op.get('section', ''))))
+           if isinstance(op.get('text'), str) else op for op in ops]
     media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
     abuse = next((s for s in secs if s[2].startswith('abuse') or 'lawsuit' in s[2] or s[2] == 'deaths'), None)
     after = abuse or next((s for name in MEDIA_AFTER for s in secs if s[2] == name), None)
@@ -188,6 +190,79 @@ def templated(md, ops, name=''):
     # The empty sections come first: an addition the record has for a section the entry lacked then lands in it,
     # in place of its request for information.
     return fill + out
+
+
+REDDIT_WIKI = re.compile(r'^https?://(www\.|old\.)?reddit\.com/r/troubledteens/wiki/', re.I)
+INLINE_CITE = re.compile(r'\(\[([^\]]+)\]\((https?://[^)\s]+)\)\)')
+LINK = re.compile(r'\[([^\]]+)\]\((https?://[^)\s]+)\)')
+# A citation in brackets: one link, or several separated by ";" or ",", and nothing else.
+CITE_GROUP = re.compile(r'\((\[[^\]]+\]\(https?://[^)\s]+\)(?:\s*[;,]\s*\[[^\]]+\]\(https?://[^)\s]+\))*)\)')
+
+
+def is_staff_section(name):
+    k = norm(name)
+    return 'staff' in k or 'founder' in k or 'employee' in k
+
+
+def plain_citations(text, staff=False):
+    """Owner, 2026-10-08: a citation is the linked word "source", never the source's name and issue
+    ("([Woodbury Reports, October 2008 (#170), p. 21](url))" -> "([source](url))"); links to wiki pages stay. On staff
+    lines a year that only dates the source goes ("was the Headmaster of X in 2008" -> "of X"); a span stays as one
+    ("in 2010-2012" -> "from 2010 to 2012", "(2010-2012)" kept), and so does the year someone founded the program."""
+    text = CITE_GROUP.sub(lambda m: '(' + LINK.sub(lambda k: k.group(0) if REDDIT_WIKI.match(k.group(2)) else f'[source]({k.group(2)})', m.group(1)) + ')', text)
+    if not staff:
+        return text
+    out = []
+    for line in text.split('\n'):
+        # Only the role sentence that opens a staff paragraph ("**Name** was the Role of Program in 2008 (...)."); the
+        # rest of a bio keeps its dates ("He was arrested in 2010").
+        m = ROLE_SENTENCE.match(line)
+        if m:
+            head, rest = m.group(1), line[m.end(1):]
+            head = re.sub(r' in (\d{4})[-–](\d{4})$', r' from \1 to \2', head)
+            head = re.sub(r' in \d{4}(?: and \d{4})?$', '', head)   # the year(s) a source was written, not a start or end
+            # "the Staff; later WWASP president of X": the later job is dropped from the role when the entry says it after.
+            semi = re.match(r'^(\*\*[^*]+\*\* (?:was|is) (?:the|a|an) )([^;]+);\s*(?:later\s+)?([^;]+?)( of .*)?$', head)
+            if semi:
+                later_words = [w for w in re.findall(r'[a-z]{4,}', semi.group(3).lower()) if w != 'later']
+                if later_words and all(w in rest.lower() for w in later_words):
+                    head = semi.group(1) + semi.group(2).strip() + (semi.group(4) or '')
+            head = re.sub(r'^(\*\*[^*]+\*\* (?:was|is) )(?:the|a|an) (.+?)( of |$)', role_phrase, head)
+            line = head + rest
+            # "was also Teacher (2008) of X": a lone year in brackets only dates the source.
+            line = re.sub(r'(was also [^.]*?)\s*\(\d{4}\)', r'\1', line)
+        out.append(line)
+    return '\n'.join(out)
+
+
+# The role sentence of a staff paragraph: "**Name** was|is|worked ..." up to its citation or full stop.
+ROLE_SENTENCE = re.compile(r'^(\*\*[^*\n]+\*\* (?:was|is|worked)\b[^.(\n]*?)(?= \(\[|\.|$)')
+# Titles one person holds at a time take "the"; everything else ("Staff", "Teacher", "Therapist") takes "a"/"an".
+ONE_HOLDER = re.compile(r'(?i)^(?!(assistant|associate|deputy|vice|co-?|former )\b)[^,]*\b(director|ceo|coo|cfo|cmo|cto|president|founder|'
+                        r'owner|headmaster|headmistress|head of|principal|superintendent|administrator|chair(man|woman|person)?|chief|dean)\b')
+
+
+def role_phrase(m):
+    """'was the Teacher of X' -> 'was a teacher at X', 'was the Staff of X' -> 'was a staff member at X';
+    'was the Headmaster of X' stays."""
+    lead, role, of = m.group(1), m.group(2), m.group(3)
+    art = role_article(role)
+    if art == 'the':
+        return f'{lead}the {role}{of}'
+    if re.fullmatch(r'(?i)staff', role.strip()):
+        role = 'staff member'
+    elif re.fullmatch(r'[A-Z][a-z]+', role.strip()):
+        role = role.lower()   # one word: "Teacher" -> "teacher"; titles ("Assistant Director") and acronyms ("RN") stay
+    art = role_article(role)
+    return f'{lead}{art} {role}{" at " if of else ""}'
+
+
+def role_article(role):
+    if ONE_HOLDER.search(role):
+        return 'the'
+    if re.match(r'[A-Z]{2}', role):   # an abbreviation is read by its letters: "an RN", "a CNA"
+        return 'an' if role[0] in 'AEFHILMNORSX' else 'a'
+    return 'an' if re.match(r'(?i)[aeiou]|hono|hour', role) and not re.match(r'(?i)(uni|use|eu|one)', role) else 'a'
 
 
 # The modmail link every request for information names (js/wiki-generation.js CONTACT_LINK, api/lib-wiki-contact.php).
