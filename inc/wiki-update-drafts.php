@@ -145,7 +145,12 @@ function kop_wiki_drafts_reddit_format($md) {
             $map = kop_wiki_drafts_heal_archive();
             return $map[kop_wiki_drafts_heal_key($m[0])] ?? $m[0];
         }, $line);
-        $lines[$n] = kop_wiki_drafts_bold_spacing($line);
+        $line = kop_wiki_drafts_bold_spacing($line);
+        // No space before . , ) ] that ends a word ("[Name](url) , which"), nor before ; : ! ? after a link, no empty
+        // date ("(FOX 13 News, )"). Same as scripts/wiki-drafts.py punct_spacing().
+        $line = preg_replace('/(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))/u', '', $line);
+        $line = preg_replace('/(?<=\)) +(?=[;:!?](?:\s|$))/u', '', $line);
+        $lines[$n] = str_replace(',)', ')', $line);
     }
     return implode("\n", $lines) . "\n";
 }

@@ -70,8 +70,17 @@ def reddit_format(md):
         if n == 0:
             line = re.sub(r'\*\*\(', '** (', line, count=1)
         line = HEAL_URL.sub(lambda m: heal_archive().get(heal_key(m.group(0)), m.group(0)), line)
-        out.append(bold_spacing(line))
+        out.append(punct_spacing(bold_spacing(line)))
     return '\n'.join(out) + '\n'
+
+
+def punct_spacing(line):
+    """The conversion left a space after every link ("[Name](url) , which", "(url) )."): no space before . , ) ] that ends a
+    word, nor before ; : ! ? after a link (a survivor's "HERE !" stays as written), and an empty date after a news outlet goes
+    ("(FOX 13 News, )" -> "(FOX 13 News)"). PHP: the same lines in kop_wiki_drafts_reddit_format()."""
+    line = re.sub(r'(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))', '', line)
+    line = re.sub(r'(?<=\)) +(?=[;:!?](?:\s|$))', '', line)
+    return re.sub(r',\)', ')', line)
 
 
 def bold_spacing(line):
@@ -656,6 +665,7 @@ def tense_pair(old, new):
 
 
 TOKEN = re.compile(r"[A-Za-z]+(?:'[A-Za-z]+)?|\s+|[^\sA-Za-z]")
+LINK_URL = re.compile(r'\]\([^)\s]*|https?://\S+')
 
 
 def tense_only(old, new):
@@ -669,6 +679,9 @@ def tense_only(old, new):
     old = re.sub(r'\b([Cc])annot\b', r'\1an not', old)
     new = re.sub(r'\b([Cc])annot\b', r'\1an not', new)
     old, new = joined(old), joined(new)
+    # A link's address is never a verb ("2003/may/25" -> "2003/could/25" broke one).
+    if LINK_URL.findall(old) != LINK_URL.findall(new):
+        return 'changes a link'
     a, b = TOKEN.findall(old), TOKEN.findall(new)
     if ''.join(a) != old or ''.join(b) != new:
         return 'could not read the line'
@@ -826,6 +839,7 @@ def selftest():
         ('The teen has to accept it and they have to stay; others had to wait.', 'The teen had to accept it and they had to stay; others had to wait.', True),
         ('The teen has to accept it.', 'The teen has to accept it.', True),
         ('Staff must restrain them.', 'Staff had to hold them.', False),
+        ('He is [quoted](https://x.org/2003/may/25/a.htm).', 'He was [quoted](https://x.org/2003/could/25/a.htm).', False),
     ]
     bad = 0
     for old, new, want in cases:
