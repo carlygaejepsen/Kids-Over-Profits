@@ -80,6 +80,16 @@ function kop_rinbox_test_wiki_links(array $src, array $item, callable $check) {
     }
     $check('wiki-links: Undo after a finder link puts back what the entry had', $row($key) == $before);
 
+    // Every editor shows the linked record's name, never the stored value (api/lib-wiki-link-label.php).
+    require_once dirname(__DIR__, 2) . '/api/lib-wiki-link-label.php';
+    $f = $pdo->query("SELECT unique_name, name FROM facilities_v2 WHERE name <> '' AND unique_name <> name ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    if ($f) $check('wiki-links: a program link shows the record\'s name', kop_wiki_link_label($pdo, $f['unique_name']) === trim($f['name']), $f['unique_name'] . ' -> ' . kop_wiki_link_label($pdo, $f['unique_name']));
+    $table = kop_wiki_upd_other_table($pdo, 'transporter');
+    $t = $table !== '' ? $pdo->query("SELECT id, unique_name FROM `{$table}` WHERE unique_name <> '' ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC) : null;
+    if ($t) $check('wiki-links: a transporter link shows its name', kop_wiki_link_label($pdo, 'transporter:' . $t['id']) === trim($t['unique_name']));
+    $check('wiki-links: a company link (its name) and an unknown value show as they are',
+        kop_wiki_link_label($pdo, 'Acadia HealthCare') === 'Acadia HealthCare' && kop_wiki_link_label($pdo, 'consultant:999999') === 'consultant:999999' && kop_wiki_link_label($pdo, '') === '');
+
     $clear = array_keys(array_filter(kop_rinbox_wlinks_rows(), function ($e) { return $e['view'] === 'clear'; }));
     $res = call_user_func($src['tool'], 'link_clear', array());
     $linked = array_filter(kop_wiki_upd_link_log(), function ($d) { return $d['decision'] === 'link'; });

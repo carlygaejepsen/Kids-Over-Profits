@@ -199,8 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentEntrySlug = '';
 
     // Program index entry this wiki entry is tied to. Required before a non-draft
-    // submission can be saved. Shape: { uniqueName, id, documentFolderId }.
+    // submission can be saved. Shape: { uniqueName, name, id, documentFolderId };
+    // uniqueName is what is stored, name is what is shown (lib-wiki-link-label.php).
     let linkedProgram = null;
+
+    function linkedProgramName() {
+        return (linkedProgram && (linkedProgram.name || linkedProgram.uniqueName)) || '';
+    }
 
     // Render the linked-program status into every display instance (the inline
     // form panel and the submit modal both use .linked-program-display).
@@ -212,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
                 display.classList.remove('linked-program-none');
                 display.classList.add('linked-program-set');
-                display.textContent = `${linkedProgram.uniqueName}${idText}`;
+                display.textContent = `${linkedProgramName()}${idText}`;
                 display.insertAdjacentHTML('afterbegin', kopIcon('check') + ' ');
 
                 // One-click jump to the program's document library in the
@@ -228,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     docsBtn.addEventListener('click', () => {
                         window.KOPDocViewer.openFolder(
                             linkedProgram.documentFolderId,
-                            `${linkedProgram.uniqueName} documents`
+                            `${linkedProgramName()} documents`
                         );
                     });
                     display.appendChild(document.createTextNode(' '));
@@ -3904,6 +3909,7 @@ Here: ${sample.ours || '(nothing)'}`;
             if (entry.facility_unique_name) {
                 linkedProgram = {
                     uniqueName: entry.facility_unique_name,
+                    name: entry.facility_link_label || '',
                     id: null,
                     documentFolderId: null
                 };
@@ -3917,6 +3923,7 @@ Here: ${sample.ours || '(nothing)'}`;
                         if (info && info.success
                             && linkedProgram && linkedProgram.uniqueName === lookupName) {
                             linkedProgram.id = info.id || linkedProgram.id;
+                            linkedProgram.name = info.name || linkedProgram.name;
                             linkedProgram.documentFolderId = info.document_folder_id || null;
                             renderLinkedProgram();
                         }

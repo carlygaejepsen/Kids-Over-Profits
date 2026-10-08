@@ -99,7 +99,7 @@
     }
 
     // ---- destination typeahead (shared by reassign + wiki repoint) ----
-    // onPick(uniqueName, id). Returns the wrapper element.
+    // onPick(uniqueName, id, button, name): uniqueName is stored, name is shown. Returns the wrapper element.
     function buildProgramSearch(onPick, placeholder) {
         var wrap = el('div', 'dm-progsearch');
         var input = el('input', 'dm-progsearch-input');
@@ -123,11 +123,11 @@
                     d.data.forEach(function (row) {
                         var meta = [aliasLabel(row), row.city, row.state, row.status].filter(Boolean).join(' · ');
                         var b = el('button', 'dm-progsearch-row',
-                            '<strong>' + esc(row.unique_name) + '</strong>' +
+                            '<strong>' + esc(row.name || row.unique_name) + '</strong>' +
                             (meta ? ' <span class="dm-muted">' + esc(meta) + '</span>' : '') +
                             ' <span class="dm-id">#' + esc(row.id) + '</span>');
                         b.type = 'button';
-                        b.addEventListener('click', function () { onPick(row.unique_name, row.id, b); });
+                        b.addEventListener('click', function () { onPick(row.unique_name, row.id, b, row.name || row.unique_name); });
                         results.appendChild(b);
                     });
                 })
@@ -353,7 +353,7 @@
                     return;
                 }
                 container.innerHTML = '';
-                var head = el('div', 'dm-fac-subhead', 'Facilities in <strong>' + esc(operator.unique_name) + '</strong>');
+                var head = el('div', 'dm-fac-subhead', 'Facilities in <strong>' + esc(operator.display_name || operator.unique_name) + '</strong>');
                 container.appendChild(head);
                 d.facilities.forEach(function (f) {
                     var row = el('div', 'dm-fac-item');
@@ -467,7 +467,7 @@
     }
 
     function facilityDelete(operator, f, container) {
-        if (confirm('Remove facility “' + f.name + '” from ' + operator.unique_name + '? This cannot be undone.')) {
+        if (confirm('Remove facility “' + f.name + '” from ' + (operator.display_name || operator.unique_name) + '? This cannot be undone.')) {
             var p = facilityRef(operator, f); p.action = 'delete_facility';
             facilityPost(p, operator, container);
         }
@@ -519,15 +519,15 @@
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm" disabled>Move facility</button></div>';
-        openModal('Move facility from: ' + operator.unique_name, body);
+        openModal('Move facility from: ' + (operator.display_name || operator.unique_name), body);
         var chosenEl = body.querySelector('.dm-dest-chosen');
         var confirmBtn = body.querySelector('.dm-confirm');
         var dest = null;
-        var search = buildProgramSearch(function (uniqueName, id) {
+        var search = buildProgramSearch(function (uniqueName, id, b, name) {
             if (uniqueName === operator.unique_name) { chosenEl.innerHTML = '<span class="dm-error">Cannot move to the same record.</span>'; return; }
             dest = uniqueName;
             chosenEl.classList.remove('dm-muted');
-            chosenEl.innerHTML = 'Destination: <strong>' + esc(uniqueName) + '</strong> #' + esc(id);
+            chosenEl.innerHTML = 'Destination: <strong>' + esc(name) + '</strong> #' + esc(id);
             confirmBtn.disabled = false;
         }, 'Search destination program…');
         body.querySelector('.dm-dest').appendChild(search);
@@ -615,8 +615,8 @@
     // existing values; wiki links are applied as 'suggested' for confirmation.
     function actionAuto(item) {
         var body = el('div', 'dm-form');
-        body.innerHTML = '<p class="dm-muted">Finding strong matches for <strong>' + esc(item.unique_name) + '</strong>…</p>';
-        openModal('Auto-link: ' + item.unique_name, body);
+        body.innerHTML = '<p class="dm-muted">Finding strong matches for <strong>' + esc(item.display_name || item.unique_name) + '</strong>…</p>';
+        openModal('Auto-link: ' + (item.display_name || item.unique_name), body);
         postJson(API.manager, { action: 'auto_apply', unique_name: item.unique_name })
             .then(function (res) {
                 if (!res.data || !res.data.success) {
@@ -653,7 +653,7 @@
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm">Rename</button></div>';
-        openModal('Rename: ' + item.unique_name, body);
+        openModal('Rename: ' + (item.display_name || item.unique_name), body);
         body.querySelector('.dm-cancel').addEventListener('click', closeModal);
         body.querySelector('.dm-confirm').addEventListener('click', function () {
             var newName = body.querySelector('.dm-rename-input').value.trim();
@@ -1466,7 +1466,7 @@
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm">Save</button></div>';
-        openModal('Document folder: ' + item.unique_name, body);
+        openModal('Document folder: ' + (item.display_name || item.unique_name), body);
         var docInput = body.querySelector('.dm-doc-input');
         var docChosen = body.querySelector('.dm-doc-chosen');
         body.querySelector('.dm-doc-browse').addEventListener('click', function () {
@@ -1520,7 +1520,7 @@
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm">Move</button></div>';
-        openModal('Move category: ' + item.unique_name, body);
+        openModal('Move category: ' + (item.display_name || item.unique_name), body);
         body.querySelector('.dm-cancel').addEventListener('click', closeModal);
         body.querySelector('.dm-confirm').addEventListener('click', function () {
             var target = body.querySelector('.dm-cat-select').value;
@@ -1551,7 +1551,7 @@
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm" disabled>Move facility</button></div>';
-        openModal('Reassign facility from: ' + item.unique_name, body);
+        openModal('Reassign facility from: ' + (item.display_name || item.unique_name), body);
 
         var chosen = { facilityIndex: null, dest: null };
         var confirmBtn = body.querySelector('.dm-confirm');
@@ -1584,11 +1584,11 @@
             });
 
         // destination search
-        var search = buildProgramSearch(function (uniqueName, id) {
+        var search = buildProgramSearch(function (uniqueName, id, b, name) {
             if (uniqueName === item.unique_name) { chosenEl.innerHTML = '<span class="dm-error">Cannot move to the same record.</span>'; return; }
             chosen.dest = uniqueName;
             chosenEl.classList.remove('dm-muted');
-            chosenEl.innerHTML = 'Destination: <strong>' + esc(uniqueName) + '</strong> #' + esc(id);
+            chosenEl.innerHTML = 'Destination: <strong>' + esc(name) + '</strong> #' + esc(id);
             refresh();
         }, 'Search destination program…');
         body.querySelector('.dm-dest').appendChild(search);
@@ -1658,7 +1658,7 @@
                 var statusHtml = here
                     ? '<span class="dm-wiki-confirmed">already linked here</span>'
                     : (linkedElsewhere
-                        ? '<span class="dm-wiki-suggested">linked to ' + esc(r.facility_unique_name) + '</span>'
+                        ? '<span class="dm-wiki-suggested">linked to ' + esc(r.facility_link_label || r.facility_unique_name) + '</span>'
                         : '<span class="dm-muted">unlinked</span>');
                 row.innerHTML =
                     '<div class="dm-wiki-meta"><strong>' + esc(r.program_name || ('#' + r.id)) + '</strong>' +
@@ -1753,10 +1753,10 @@
             var bodyNode = el('div', 'dm-form');
             bodyNode.innerHTML = '<p class="dm-muted">Repoint wiki entry “' + esc(lk.program_name || ('#' + lk.id)) +
                 '” to a different program.</p><div class="dm-dest"></div>';
-            var search = buildProgramSearch(function (uniqueName) {
+            var search = buildProgramSearch(function (uniqueName, id, b, name) {
                 setStatus('Repointing…');
                 wikiOp({ action: 'link', type: lk.type, wiki_id: parseInt(lk.id, 10), facility_unique_name: uniqueName, force: true }, function () {
-                    setStatus('Repointed to ' + esc(uniqueName) + '.', 'ok');
+                    setStatus('Repointed to ' + esc(name) + '.', 'ok');
                     setTimeout(function () { openWikiManager(targetUnique, label, onCounts); }, 700);
                 });
             }, 'Search new program…');

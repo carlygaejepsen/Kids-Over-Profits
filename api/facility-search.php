@@ -288,6 +288,14 @@ try {
         ];
     }, $rows);
 
+    // The record's name beside its unique_name ("Aspen Education Group #2" -> "Aspen Education Group"): editors show the name.
+    require_once __DIR__ . '/lib-wiki-link-label.php';
+    $names = kop_wiki_link_labels($pdo, array_column($out, 'unique_name'));
+    foreach ($out as &$o) {
+        $o['name'] = $names[$o['unique_name']] ?? $o['unique_name'];
+    }
+    unset($o);
+
     echo json_encode(['success' => true, 'data' => $out], JSON_UNESCAPED_SLASHES);
 } catch (PDOException $e) {
     error_log('facility-search error: ' . $e->getMessage());

@@ -18,7 +18,7 @@
  *       Store/replace the document library folder ID on an existing program.
  *
  *   GET  ?action=get&unique_name=...
- *       Return {unique_name, id, document_folder_id} for one program.
+ *       Return {unique_name, name, id, document_folder_id} for one program.
  */
 
 // Same-origin API: no CORS headers on purpose (used only by this site's
@@ -327,7 +327,14 @@ function kop_picker_find_duplicates(PDO $pdo, string $name): array {
     }
 
     usort($candidates, static fn($a, $b) => $b['similarity'] - $a['similarity']);
-    return ['exact' => $exact, 'candidates' => array_slice($candidates, 0, 8)];
+    $candidates = array_slice($candidates, 0, 8);
+    require_once __DIR__ . '/lib-wiki-link-label.php';
+    $names = kop_wiki_link_labels($pdo, array_column($candidates, 'unique_name'));
+    foreach ($candidates as &$c) {
+        $c['name'] = $names[$c['unique_name']] ?? $c['unique_name'];
+    }
+    unset($c);
+    return ['exact' => $exact, 'candidates' => $candidates];
 }
 
 /**
@@ -418,9 +425,11 @@ try {
                 $folderId = (int)$project['documentFolderId'];
             }
         }
+        require_once __DIR__ . '/lib-wiki-link-label.php';
         echo json_encode([
             'success'           => true,
             'unique_name'       => $uniqueName,
+            'name'              => kop_wiki_link_label($pdo, $uniqueName),
             'id'                => (int)$row['id'],
             'document_folder_id' => $folderId,
         ]);
@@ -592,6 +601,7 @@ try {
                 'success'            => true,
                 'created'            => true,
                 'unique_name'        => $uniqueName,
+                'name'               => $name,
                 'id'                 => (int)$result['operator_id'],
                 'document_folder_id' => $project['documentFolderId'] ?? null,
             ]);
@@ -608,6 +618,7 @@ try {
             'success'            => true,
             'created'            => true,
             'unique_name'        => $uniqueName,
+            'name'               => $name,
             'id'                 => (int)$pdo->lastInsertId(),
             'document_folder_id' => $project['documentFolderId'] ?? null,
         ]);

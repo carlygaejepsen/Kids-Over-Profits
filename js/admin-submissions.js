@@ -2851,7 +2851,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Render the current link state into the panel. */
     function renderLinkState(data) {
         const status = data.facility_link_status;
-        const name   = data.facility_unique_name || '';
+        const name   = data.facility_link_label || data.facility_unique_name || '';
         if (facilityLinkName) facilityLinkName.textContent = name ? `\u2192 ${name}` : '';
         if (!facilityLinkStatusBadge) return;
         if (!status) {

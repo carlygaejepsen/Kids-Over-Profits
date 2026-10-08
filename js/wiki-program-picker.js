@@ -14,10 +14,10 @@
  *       searchUrl, pickerApi,          // endpoints (fall back to theme defaults)
  *       name, organization, cityState, // prefill for search + stub creation
  *       programType, yearsActive,
- *       current: { uniqueName, id, documentFolderId } // already-linked program
+ *       current: { uniqueName, name, id, documentFolderId } // already-linked program
  *   });
  *   // result === null  → user cancelled
- *   // result === { uniqueName, id, documentFolderId }
+ *   // result === { uniqueName, name, id, documentFolderId } (name is shown, uniqueName stored)
  */
 (function () {
     'use strict';
@@ -60,6 +60,7 @@
             // ---- selection state ----
             var selected = {
                 uniqueName: current.uniqueName || null,
+                name: current.name || null,
                 id: current.id || null,
                 documentFolderId: current.documentFolderId || null
             };
@@ -178,7 +179,7 @@
                 if (!selected.uniqueName) {
                     return '<span class="kop-pp-none">No program selected</span>';
                 }
-                return 'Selected: <strong>' + escapeHtml(selected.uniqueName) + '</strong>' +
+                return 'Selected: <strong>' + escapeHtml(selected.name || selected.uniqueName) + '</strong>' +
                     (selected.id ? ' <span class="kop-pp-id">#' + escapeHtml(selected.id) + '</span>' : '');
             }
 
@@ -191,8 +192,10 @@
                 });
             }
 
-            function selectProgram(uniqueName, id) {
+            // uniqueName is what is stored, name is what is shown.
+            function selectProgram(uniqueName, id, name) {
                 selected.uniqueName = uniqueName;
+                selected.name = name || uniqueName;
                 selected.id = id != null ? id : null;
                 refreshSelectedUi();
             }
@@ -217,13 +220,13 @@
                             + escapeHtml(row.matched_name));
                     }
                     var rowEl = el('button', 'kop-pp-result',
-                        '<span class="kop-pp-result-name">' + escapeHtml(row.unique_name) + '</span>' +
+                        '<span class="kop-pp-result-name">' + escapeHtml(row.name || row.unique_name) + '</span>' +
                         (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +
                         '<span class="kop-pp-result-id">#' + escapeHtml(row.id) + '</span>');
                     rowEl.type = 'button';
                     rowEl.dataset.uniqueName = row.unique_name;
                     rowEl.addEventListener('click', function () {
-                        selectProgram(row.unique_name, row.id);
+                        selectProgram(row.unique_name, row.id, row.name);
                     });
                     results.appendChild(rowEl);
                 });
@@ -281,7 +284,7 @@
                     if (dup.location) meta.push(escapeHtml(dup.location));
                     // The match may be on a former or alternate name rather
                     // than the current index name — say so.
-                    var viaAltName = dup.matched_name && dup.matched_name !== dup.unique_name;
+                    var viaAltName = dup.matched_name && dup.matched_name !== dup.unique_name && dup.matched_name !== dup.name;
                     if (viaAltName) {
                         meta.push((dup.exact ? 'exactly matches' : 'similar to') +
                             ' its past/other name “' + escapeHtml(dup.matched_name) + '”');
@@ -291,15 +294,15 @@
                         meta.push(escapeHtml(dup.similarity) + '% similar');
                     }
                     var row = el('button', 'kop-pp-result kop-pp-dup-result',
-                        '<span class="kop-pp-result-name">' + escapeHtml(dup.unique_name) + '</span>' +
+                        '<span class="kop-pp-result-name">' + escapeHtml(dup.name || dup.unique_name) + '</span>' +
                         (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +
                         '<span class="kop-pp-result-id">#' + escapeHtml(dup.id) + '</span>');
                     row.type = 'button';
                     row.dataset.uniqueName = dup.unique_name;
                     row.addEventListener('click', function () {
-                        selectProgram(dup.unique_name, dup.id);
+                        selectProgram(dup.unique_name, dup.id, dup.name);
                         statusEl.innerHTML = '<span class="kop-pp-ok">Selected the existing entry “' +
-                            escapeHtml(dup.unique_name) + '”.</span>';
+                            escapeHtml(dup.name || dup.unique_name) + '”.</span>';
                         createPanel.style.display = 'none';
                         createToggle.classList.remove('is-open');
                     });
@@ -355,11 +358,11 @@
                         btn.disabled = false;
                         if (data && data.success) {
                             statusEl.innerHTML = '<span class="kop-pp-ok">Created “' +
-                                escapeHtml(data.unique_name) + '”.</span>';
+                                escapeHtml(data.name || data.unique_name) + '”.</span>';
                             if (data.document_folder_id) {
                                 selected.documentFolderId = data.document_folder_id;
                             }
-                            selectProgram(data.unique_name, data.id);
+                            selectProgram(data.unique_name, data.id, data.name);
                             createPanel.style.display = 'none';
                             createToggle.classList.remove('is-open');
                         } else if (data && data.code === 'possible_duplicate') {
@@ -402,6 +405,7 @@
                 selected.documentFolderId = folderVal > 0 ? folderVal : null;
                 close({
                     uniqueName: selected.uniqueName,
+                    name: selected.name || selected.uniqueName,
                     id: selected.id,
                     documentFolderId: selected.documentFolderId
                 });

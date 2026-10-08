@@ -278,6 +278,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 echo json_encode(['success' => false, 'error' => 'Wiki entry not found']);
                 exit;
             }
+            // The linked record's name, shown instead of the stored value.
+            require_once __DIR__ . '/lib-wiki-link-label.php';
+            $row['facility_link_label'] = kop_wiki_link_label($pdo, $row['facility_unique_name'] ?? '');
             echo json_encode(['success' => true, 'data' => $row]);
             exit;
         }
@@ -336,6 +339,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             );
             $stmt->execute();
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            require_once __DIR__ . '/lib-wiki-link-label.php';
+            $labels = kop_wiki_link_labels($pdo, array_column($rows, 'facility_unique_name'));
+            foreach ($rows as &$r) {
+                $r['facility_link_label'] = $labels[trim((string) $r['facility_unique_name'])] ?? '';
+            }
+            unset($r);
 
             echo json_encode([
                 'success' => true,

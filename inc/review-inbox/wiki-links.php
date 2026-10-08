@@ -146,7 +146,11 @@ function kop_rinbox_wlinks_item(array $e) {
             'value' => kop_rinbox_wlinks_label($c) . ': ' . $c['reason'] . ($c['status'] !== '' ? '; ' . $c['status'] : ''),
             'url' => kop_rinbox_wlinks_url($c));
     }
-    $linked_to = (string) ($log['label'] ?? $log['name'] ?? '');
+    $linked_to = (string) ($log['label'] ?? '');
+    if ($linked_to === '' && !empty($log['name'])) {
+        require_once get_stylesheet_directory() . '/api/lib-wiki-link-label.php';
+        $linked_to = kop_wiki_link_label(kop_wiki_upd_pdo(), $log['name']);
+    }
     if ($linked_to !== '') $details[] = array('label' => 'Linked to', 'value' => $linked_to . (!empty($log['by']) ? ' (by ' . $log['by'] . ')' : ''));
     $texts = array(
         'clear'  => 'One record matches this entry. Link it if the record is the program the entry describes.',

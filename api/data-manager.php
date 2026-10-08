@@ -1131,6 +1131,13 @@ try {
                     }
                 }
             }
+            // The linked record's name ("linked to ..."), never the stored value.
+            require_once __DIR__ . '/lib-wiki-link-label.php';
+            $labels = kop_wiki_link_labels($pdo, array_column($results, 'facility_unique_name'));
+            foreach ($results as &$r) {
+                $r['facility_link_label'] = $labels[trim((string) $r['facility_unique_name'])] ?? '';
+            }
+            unset($r);
             echo json_encode(['success' => true, 'results' => $results]);
             exit;
         }
@@ -1829,7 +1836,8 @@ try {
         } elseif ($wiki['facility_unique_name'] === $uniqueName) {
             $result['notes'][] = 'Best wiki entry is already linked here.';
         } elseif (!empty($wiki['facility_unique_name'])) {
-            $result['notes'][] = 'Best wiki entry ("' . $wiki['program_name'] . '") is already linked to ' . $wiki['facility_unique_name'] . ' — left as is.';
+            require_once __DIR__ . '/lib-wiki-link-label.php';
+            $result['notes'][] = 'Best wiki entry ("' . $wiki['program_name'] . '") is already linked to ' . kop_wiki_link_label($pdo, $wiki['facility_unique_name']) . ' — left as is.';
         } else {
             $wTable = $wiki['type'] === 'master' ? 'wiki_master' : 'wiki_submissions';
             try {

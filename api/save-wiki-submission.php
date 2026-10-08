@@ -61,6 +61,9 @@ try {
 
             if ($submission) {
                 $submission['json_data'] = json_decode($submission['json_data'], true);
+                // The linked record's name, for the editor's "Linked to" line.
+                require_once __DIR__ . '/lib-wiki-link-label.php';
+                $submission['facility_link_label'] = kop_wiki_link_label($pdo, $submission['facility_unique_name'] ?? '');
                 if (!$kop_is_admin) {
                     // Submitter contact info is for admins only.
                     unset($submission['submitted_by']);
