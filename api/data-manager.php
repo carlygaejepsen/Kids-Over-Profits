@@ -34,6 +34,10 @@
  * POST {action:"person_merge", id, into}  (into = "#id" or an exact name; Undo via person_undo_merge {log})
  * POST {action:"person_separate", id, facility_id, list, position}
  *
+ *      list also takes category=merged, converted, news, lawsuits, bills and the
+ *      facility filters state=, status=, type= ('-' = none), years=none|closed_no_end;
+ *      their actions are in api/data-manager-extra.php.
+ *
  * GET  ?action=get_designation&facility_id=   what one facility record is now
  * GET  ?action=find_facility&q=               facility records by name (admin finder)
  *
@@ -86,6 +90,8 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 // evaluates the arguments, so kop_v2_writes_active($pdo, kop_dm_v2_prefix($pdo))
 // failed with "undefined function" whenever nothing had loaded this file yet.
 require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+// Filters, merged records, converted companies, news/lawsuits/bills and their actions.
+require_once __DIR__ . '/data-manager-extra.php';
 
 // ---------------------------------------------------------------------------
 // Shared helpers
@@ -481,13 +487,16 @@ function kop_dm_facility_url(int $fid): string {
  * fields (folder, companies, designation) are filled for one page only by
  * kop_dm_enrich_facility_items().
  */
-function kop_dm_facility_items(PDO $pdo, string $q, bool $homesOnly): array {
-    $sql = 'SELECT id, unique_name, name, city, state, country, status' . ($q !== '' ? ', json_data' : '') . ' FROM facilities_v2';
+function kop_dm_facility_items(PDO $pdo, string $q, bool $homesOnly, array $filters = []): array {
+    $sql = 'SELECT id, unique_name, name, city, state, country, status, facility_type, start_year, end_year' . ($q !== '' ? ', json_data' : '') . ' FROM facilities_v2';
     $params = [];
+    $where = [];
     if ($q !== '') {
-        $sql .= ' WHERE name LIKE ? OR unique_name LIKE ? OR json_data LIKE ?';
+        $where[] = '(name LIKE ? OR unique_name LIKE ? OR json_data LIKE ?)';
         $params = ['%' . $q . '%', '%' . $q . '%', '%' . $q . '%'];
     }
+    if ($filters && ($f = kop_dm_filter_sql($filters, $params)) !== '') $where[] = $f;
+    if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
 
@@ -521,6 +530,8 @@ function kop_dm_facility_items(PDO $pdo, string $q, bool $homesOnly): array {
             'display_name'       => $name,
             'place'              => trim(implode(', ', array_filter([(string)$r['city'], (string)($r['state'] ?: $r['country'])]))),
             'status'             => (string)$r['status'],
+            'years'              => kop_dm_years($r['start_year'], $r['end_year']),
+            'facility_type'      => (string)$r['facility_type'],
             'facility_count'     => 0,
             'document_folder_id' => null,
             'is_stub'            => false,
@@ -799,7 +810,12 @@ try {
                 }
             } catch (PDOException $e) { /* table/column missing */ }
 
-            if ($category !== '' && isset($EXTRA_CATEGORIES[$category])) {
+            $filters = kop_dm_filters();
+            $filtered = kop_dm_filters_set($filters);
+            $recordKind = kop_dm_record_kind_of_category($category);
+            if ($filtered || $recordKind !== '' || in_array($category, ['people', 'merged', 'converted'], true)
+                || ($category !== '' && isset($EXTRA_CATEGORIES[$category]))) {
+                // Filters are on facility records: only they are listed.
                 $tables = [];
             } elseif ($category !== '' && isset($CATEGORY_TABLE[$category])) {
                 $tables = [$category => $CATEGORY_TABLE[$category]];
@@ -811,21 +827,34 @@ try {
             // Each facility record (or only programs and their homes), then the
             // two kinds that live outside the facility tables.
             if ($category === '' || $category === 'facilities' || $category === 'program_homes') {
-                $items = kop_dm_facility_items($pdo, $q, $category === 'program_homes');
+                $items = kop_dm_facility_items($pdo, $q, $category === 'program_homes', $filters);
             }
-            if ($category === '' || $category === 'young_adult') {
-                $items = array_merge($items, kop_dm_side_items('young_adult', $q));
-            }
-            if ($category === '' || $category === 'indigenous_schools') {
-                $items = array_merge($items, kop_dm_side_items('indigenous_school', $q));
-            }
-            // People join "All categories" only for a search: thousands of
-            // names would bury the records otherwise.
-            if ($category === 'people' || ($category === '' && $q !== '')) {
-                $items = array_merge($items, kop_dm_people_items($q));
+            if (!$filtered) {
+                if ($category === '' || $category === 'young_adult') {
+                    $items = array_merge($items, kop_dm_side_items('young_adult', $q));
+                }
+                if ($category === '' || $category === 'indigenous_schools') {
+                    $items = array_merge($items, kop_dm_side_items('indigenous_school', $q));
+                }
+                // People and news/lawsuits/bills join "All categories" only for a
+                // search: thousands of rows would bury the records otherwise.
+                if ($category === 'people' || ($category === '' && $q !== '')) {
+                    $items = array_merge($items, kop_dm_people_items($q));
+                }
+                foreach (array_keys(kop_dm_record_kinds()) as $rk) {
+                    if ($recordKind === $rk || ($category === '' && $q !== '')) {
+                        $items = array_merge($items, kop_dm_record_items($pdo, $rk, $q));
+                    }
+                }
+                if ($category === 'merged' || ($category === '' && $q !== '')) {
+                    $items = array_merge($items, kop_dm_merged_items($q));
+                }
+                if ($category === 'converted' || ($category === '' && $q !== '')) {
+                    $items = array_merge($items, kop_dm_converted_items($pdo, $q));
+                }
             }
             foreach ($items as &$it) {
-                if ($it['kind'] === 'person') {
+                if (!in_array($it['kind'], ['facility', 'young_adult', 'indigenous_school'], true)) {
                     $it['wiki_links'] = ['suggested' => 0, 'confirmed' => 0, 'total' => 0];
                     $it['name_match_unlinked'] = 0;
                     continue;
@@ -906,6 +935,19 @@ try {
                 'limit'   => $limit,
                 'offset'  => $offset,
             ]);
+            exit;
+        }
+
+        // ---- filters, record_detail, company_convert, file_options (data-manager-extra.php) ----
+        try {
+            $extra = kop_dm_extra_get($pdo, $action);
+        } catch (RuntimeException $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            exit;
+        }
+        if ($extra !== null) {
+            echo json_encode($extra);
             exit;
         }
 
@@ -1152,6 +1194,20 @@ try {
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
+        exit;
+    }
+
+    // Merges, conversions, record links, filing news (data-manager-extra.php):
+    // each through its own module, so no v2 re-derive either.
+    try {
+        $extra = kop_dm_extra_post($pdo, $action, $input);
+    } catch (RuntimeException $e) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        exit;
+    }
+    if ($extra !== null) {
+        echo json_encode($extra);
         exit;
     }
 

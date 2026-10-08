@@ -131,6 +131,10 @@
 .dm-cat-young_adult { background: var(--kop-chartreuse-ink, #5C7401); }
 .dm-cat-indigenous_schools { background: var(--kop-text-muted, #4A5568); }
 .dm-cat-people { background: var(--kop-coral-pink-fill, #B3404A); }
+.dm-cat-news { background: var(--kop-teal-fill, #24757F); }
+.dm-cat-lawsuits { background: var(--kop-navy, #000080); }
+.dm-cat-bills { background: var(--kop-orange-fill, #A3570D); }
+.dm-cat-merged, .dm-cat-converted { background: var(--kop-text-muted, #4A5568); }
 
 /* Designation tag (home of / program / waiting for review) and page link */
 .dm-designation {
@@ -416,3 +420,18 @@ a.dm-page-link:hover, a.dm-page-link:focus { color: var(--kop-midnight-blue, #00
     .kop-dm-table { font-size: 0.82rem; }
     .dm-actions { white-space: normal; }
 }
+
+/* Facility filters */
+.kop-dm-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 12px; padding: 8px 12px; background: #fff; border-radius: 8px; }
+.kop-dm-filters-label { font-weight: 600; color: var(--kop-midnight-blue, #000435); font-size: 0.88rem; }
+.kop-dm-filters select { padding: 6px 8px; border: 2px solid var(--kop-teal, #33A7B5); border-radius: 8px; background: #fff; color: var(--kop-midnight-blue, #000435); font-size: 0.88rem; max-width: 100%; }
+.kop-dm-filters select option { background: #fff; color: var(--kop-midnight-blue, #000435); }
+
+/* Record links, company conversion, warnings */
+.dm-link-list { list-style: none; margin: 8px 0; padding: 0; }
+.dm-link-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--kop-sand, #F2EEDF); }
+.dm-link-acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.dm-link-finder { flex-basis: 100%; }
+.dm-convert-homes { margin: 4px 0 8px 18px; font-size: 0.88rem; }
+.dm-warning { background: var(--kop-soft-pastel-yellow, #FFF5CB); color: var(--kop-midnight-blue, #000435); border-left: 4px solid var(--kop-orange, #EF9034); padding: 6px 10px; font-size: 0.85rem; }
+.dm-form textarea, .dm-form select { color: var(--kop-midnight-blue, #000435); }

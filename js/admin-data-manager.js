@@ -35,12 +35,17 @@
         transporters: 'Transporter',
         providers: 'Mental Health Provider',
         locations: 'Location',
-        people: 'Person'
+        people: 'Person',
+        news: 'News',
+        lawsuits: 'Lawsuit',
+        bills: 'Bill',
+        merged: 'Merged away',
+        converted: 'Company made a program'
     };
 
     function icon(name) { return (typeof kopIcon === 'function') ? kopIcon(name) : ''; }
 
-    var state = { q: '', category: '', limit: 50, offset: 0, total: 0, items: [] };
+    var state = { q: '', category: '', limit: 50, offset: 0, total: 0, items: [], filters: { state: '', status: '', type: '', years: '' } };
 
     // ---- small helpers ----
     function $(id) { return document.getElementById(id); }
@@ -141,8 +146,10 @@
     function nameCellHtml(it) {
         var sub = [];
         if (it.kind === 'facility' || it.kind === 'young_adult' || it.kind === 'indigenous_school') {
-            sub.push([it.place, it.status && it.status !== 'Unknown' ? it.status : '', '#' + it.id].filter(Boolean).join(' · '));
+            sub.push([it.place, it.status && it.status !== 'Unknown' ? it.status : '', it.years, it.facility_type, '#' + it.id].filter(Boolean).join(' · '));
             if (it.companies && it.companies.length) sub.push('Company: ' + it.companies.join(', '));
+        } else if (it.kind === 'news' || it.kind === 'lawsuit' || it.kind === 'bill' || it.kind === 'merged' || it.kind === 'converted') {
+            sub.push([it.place, '#' + it.id].filter(Boolean).join(' · '));
         } else if (it.kind === 'person') {
             sub.push('Person #' + it.id + ' · named on ' + it.record_count + ' record' + (it.record_count === 1 ? '' : 's'));
             if (it.aliases && it.aliases.length) sub.push('Also written: ' + it.aliases.join(', '));
@@ -213,7 +220,7 @@
 
         state.items.forEach(function (it) {
             var tr = el('tr');
-            var facCell = it.facility_count > 0
+            var facCell = (it.kind === 'news' || it.kind === 'lawsuit') ? String(it.linked_count || 0) : it.facility_count > 0
                 ? '<button type="button" class="dm-fac-toggle" aria-expanded="false">▶ ' + esc(it.facility_count) + '</button>'
                 : '<span class="dm-muted">' + (it.kind === 'operator' || it.kind === 'legacy' || !it.kind ? '0' : '—') + '</span>';
             tr.innerHTML =
@@ -228,6 +235,7 @@
             it._tr = tr;
             it._nameCell = tr.children[0];
             it._catCell = tr.children[1];
+            it._facCell = tr.children[3];
             it._docCell = tr.children[4];
             it._wikiCell = tr.children[5];
 
@@ -237,18 +245,32 @@
                 // One facility record: what it is (its own program, a home of a
                 // program, young adult program, Indian boarding school), plus edits.
                 actionDefs.push(
-                    ['Designation', 'designation'],
+                    ['Reclassify', 'designation'],
                     ['Rename', 'rename'],
                     ['Doc ID', 'docfolder'],
-                    ['Wiki', 'wiki']
+                    ['Wiki', 'wiki'],
+                    ['Merge into…', 'merge']
                 );
             } else if (it.kind === 'young_adult' || it.kind === 'indigenous_school') {
                 actionDefs.push(['Rename', 'rename'], ['Edit details', 'edit']);
+            } else if (it.kind === 'news') {
+                actionDefs.push(['Facilities', 'links'], ['Reclassify', 'file_news'], ['Edit', 'edit']);
+                if (it.source_url) actionDefs.push(['Read it', 'source']);
+            } else if (it.kind === 'lawsuit') {
+                actionDefs.push(['Facilities', 'links'], ['Edit', 'edit']);
+            } else if (it.kind === 'bill') {
+                actionDefs.push(['Edit', 'edit']);
+            } else if (it.kind === 'merged') {
+                if (it.can_undo) actionDefs.push(['Undo merge', 'undo_merge']);
+                actionDefs.push(['Merge Duplicates', 'edit']);
+            } else if (it.kind === 'converted') {
+                actionDefs.push(['Make it a company again', 'undo_convert'], ['Program Homes', 'edit']);
             } else if (it.kind === 'person') {
                 actionDefs.push(['Where named', 'person_roles'], ['Edit', 'person_edit'], ['Same person as', 'person_merge'], ['People screen', 'edit']);
             } else {
                 // Auto-link only makes sense for actual programs, not location aggregates.
                 if (it.category !== 'locations') actionDefs.push([icon('sparkles') + ' Auto', 'auto']);
+                if (it.kind === 'operator') actionDefs.push(['Reclassify', 'convert']);
                 actionDefs.push(
                     ['Rename', 'rename'],
                     ['Doc ID', 'docfolder'],
@@ -343,7 +365,7 @@
                         (f.page_url ? ' <a class="dm-page-link" href="' + esc(f.page_url) + '" target="_blank" rel="noopener">View page</a>' : '') +
                         '</span>';
                     var acts = el('span', 'dm-fac-item-acts');
-                    (f.facility_id ? [['designation', 'Designation', function () {
+                    (f.facility_id ? [['designation', 'Reclassify', function () {
                         openDesignation(f.facility_id, f.name, function () { loadFacilitySubrows(operator, container); });
                     }]] : []).concat([
                         ['auto', ((typeof kopIcon === 'function') ? kopIcon('sparkles') + ' ' : '') + 'Auto', function () { facilityAuto(operator, f, container); }],
@@ -539,7 +561,7 @@
         $('dmTableWrap').innerHTML = '<div class="kop-dm-loading">Loading records…</div>';
         var url = API.manager + '?action=list' +
             '&q=' + encodeURIComponent(state.q) +
-            '&category=' + encodeURIComponent(state.category) +
+            '&category=' + encodeURIComponent(state.category) + filterQuery() +
             '&limit=' + state.limit + '&offset=' + state.offset;
         getJson(url)
             .then(function (d) {
@@ -567,6 +589,13 @@
         }
         if (kind === 'edit') { window.open(item.admin_url, '_blank', 'noopener'); return; }
         if (kind === 'person_roles' || kind === 'person_edit' || kind === 'person_merge') return openPerson(item, kind);
+        if (kind === 'source') { window.open(item.source_url, '_blank', 'noopener'); return; }
+        if (kind === 'links') return openRecordLinks(item);
+        if (kind === 'file_news') return openFileNews(item);
+        if (kind === 'merge') return openMerge(item);
+        if (kind === 'undo_merge') return undoMergeRow(item);
+        if (kind === 'convert') return openConvert(item);
+        if (kind === 'undo_convert') return undoConvertRow(item);
         if (kind === 'rename' && item.kind && item.kind !== 'operator' && item.kind !== 'legacy') return actionRenameRecord(item);
         if (kind === 'docfolder' && item.kind === 'facility') return actionDocFolder(item, true);
         if (kind === 'auto') return actionAuto(item);
@@ -675,6 +704,285 @@
                 })
                 .catch(function () { setStatus('Network error.', 'error'); });
         });
+    }
+
+    // ---- shared: a result line with Undo and Done ----
+    // undoFn() returns a promise of the POST result; onChange() after either.
+    function showResult(body, message, undoFn, onChange) {
+        body.innerHTML = '<p class="dm-status-ok">' + esc(message) + '</p>' +
+            '<div class="dm-form-actions">' + (undoFn ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-undo">Undo</button>' : '') +
+            '<button type="button" class="kop-dm-btn dm-done">Done</button></div>';
+        setStatus('');
+        body.querySelector('.dm-done').addEventListener('click', closeModal);
+        var undo = body.querySelector('.dm-undo');
+        if (undo) undo.addEventListener('click', function () {
+            setStatus('Undoing…');
+            undoFn().then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Undo failed.'), 'error'); return; }
+                showResult(body, res.data.message || 'Undone.', null, onChange);
+                if (onChange) onChange();
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    function postAction(payload) { return postJson(API.manager, payload); }
+
+    // ---- facility filters (state, status, type, years) ----
+    function loadFilters() {
+        if (!$('dmFilters')) return;
+        getJson(API.manager + '?action=filters').then(function (d) {
+            if (!d || !d.success) return;
+            function fill(id, rows, extra) {
+                var sel = $(id);
+                (extra || []).concat(rows).forEach(function (r) {
+                    var o = document.createElement('option');
+                    o.value = r[0];
+                    o.textContent = r[0] === '-' ? r[1] : r[0] + (r[1] !== undefined ? ' (' + r[1] + ')' : '');
+                    sel.appendChild(o);
+                });
+            }
+            fill('dmState', d.states);
+            fill('dmStatus', d.statuses);
+            fill('dmType', d.types, [['-', 'No type given']]);
+        }).catch(function () {});
+        ['dmState', 'dmStatus', 'dmType', 'dmYears'].forEach(function (id) {
+            $(id).addEventListener('change', function () {
+                state.filters[id.replace('dm', '').toLowerCase()] = this.value;
+                // The filters narrow facility records only.
+                if (this.value && state.category !== 'facilities' && state.category !== 'program_homes') {
+                    state.category = 'facilities';
+                    $('dmCategory').value = 'facilities';
+                }
+                state.offset = 0;
+                load();
+            });
+        });
+    }
+
+    function filterQuery() {
+        var q = '';
+        Object.keys(state.filters).forEach(function (k) { if (state.filters[k]) q += '&' + k + '=' + encodeURIComponent(state.filters[k]); });
+        return q;
+    }
+
+    // ---- merge one facility record into another (inc/facility-merge.php) ----
+    function openMerge(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<p>Use this when <strong>' + esc(item.display_name) + '</strong> (#' + esc(item.id) + ') is the same place as another record. ' +
+            'Its details, staff, links, news, lawsuits and documents join the record you pick, and its page sends readers there. ' +
+            'Undo puts both back exactly. KOP Tools &gt; Merge Duplicates lists likely pairs.</p>' +
+            '<label>The record to keep</label><div class="dm-merge-finder"></div>' +
+            '<div class="dm-merge-chosen dm-muted">No record picked.</div>' +
+            '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Merge into it</button></div>';
+        openModal('Merge into another record: ' + item.display_name, body);
+        var picked = null;
+        var chosen = body.querySelector('.dm-merge-chosen');
+        body.querySelector('.dm-merge-finder').appendChild(buildFacilityFinder(function (f) {
+            if (f.id === item.id) { chosen.innerHTML = '<span class="dm-error">That is this record. Pick the other one.</span>'; picked = null; return; }
+            picked = f;
+            chosen.classList.remove('dm-muted');
+            chosen.innerHTML = 'Keep: <strong>' + esc(f.name) + '</strong> #' + esc(f.id) + ' <span class="dm-muted">' + esc([f.city, f.state].filter(Boolean).join(', ')) + '</span>';
+        }));
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        body.querySelector('.dm-confirm').addEventListener('click', function () {
+            if (!picked) { setStatus('Pick the record to keep.', 'error'); return; }
+            setStatus('Merging… (this can take a minute)');
+            postAction({ action: 'merge_facility', drop: item.id, keep: picked.id }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not merged.'), 'error'); return; }
+                removeRowDom(item);
+                showResult(body, res.data.message, res.data.undo_log ? function () {
+                    return postAction({ action: 'undo_facility_merge', log: res.data.undo_log });
+                } : null, load);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    // A merged-away record's row: Undo the merge.
+    function undoMergeRow(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p>' + esc(item.display_name) + ' was merged: ' + esc(item.designation) + '. ' +
+            'Undo makes it its own record again, with everything it had.</p>' +
+            '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Undo the merge</button></div>';
+        openModal('Undo merge: ' + item.display_name, body);
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        body.querySelector('.dm-confirm').addEventListener('click', function () {
+            setStatus('Undoing…');
+            postAction({ action: 'undo_facility_merge', log: item.log_id }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not undone.'), 'error'); return; }
+                removeRowDom(item);
+                showResult(body, res.data.message, null, null);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    // ---- a company that is one program of homes (inc/program-homes-convert.php) ----
+    function openConvert(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Reclassify company: ' + item.display_name, body);
+        getJson(API.manager + '?action=company_convert&operator_id=' + encodeURIComponent(item.id)).then(function (d) {
+            if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not check this company.') + '</p>'; return; }
+            var s = d.suggestion;
+            if (!s) {
+                body.innerHTML = '<p>' + esc(item.display_name) + ' is not a company that is one program: that needs every one of its records to carry ' +
+                    'the company\'s own name, in one state. To make one of its facilities a home of a program, open its facilities (the number in the ' +
+                    'Facilities column) and use Reclassify there.</p>' +
+                    '<div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-done">Close</button></div>';
+                body.querySelector('.dm-done').addEventListener('click', closeModal);
+                return;
+            }
+            var fixed = s.existing || s.kind === 'single';
+            body.innerHTML =
+                '<p>' + esc(s.name) + ' is one program of ' + s.homes.length + ' home' + (s.homes.length === 1 ? '' : 's') + ' in ' + esc(s.state) + ', not a company running programs. ' +
+                'Converting it lists the homes under one program record, moves the company\'s written history there' + (s.history ? ' (' + esc(s.history) + ')' : '') +
+                ', and sends its company page to the program. Undo puts the company back exactly.</p>' +
+                '<label>Program record</label>' +
+                (fixed ? '<p><strong>' + esc(s.program_name) + '</strong>' + (s.existing ? ' (record #' + esc(s.existing.id) + ', already on file)' : '') + '</p>'
+                    : '<input type="text" class="dm-convert-name" value="' + esc(s.program_name) + '">') +
+                '<label>Homes</label><ul class="dm-convert-homes">' + s.homes.map(function (h) {
+                    return '<li>' + esc(h.home_name || h.name) + (h.city ? ' <span class="dm-muted">' + esc(h.city) + '</span>' : '') + '</li>';
+                }).join('') + '</ul>' +
+                (s.warnings && s.warnings.length ? s.warnings.map(function (w) { return '<p class="dm-warning">' + esc(w) + '</p>'; }).join('') : '') +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+                '<button type="button" class="kop-dm-btn dm-confirm">Convert to one program</button></div>';
+            body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+            body.querySelector('.dm-confirm').addEventListener('click', function () {
+                var nameInput = body.querySelector('.dm-convert-name');
+                setStatus('Converting…');
+                postAction({ action: 'convert_company', operator_id: item.id, program_name: nameInput ? nameInput.value.trim() : '' }).then(function (res) {
+                    if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not converted.'), 'error'); return; }
+                    removeRowDom(item);
+                    showResult(body, res.data.message, function () { return postAction({ action: 'undo_convert', operator_id: item.id }); }, load);
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            });
+        }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+    }
+
+    function undoConvertRow(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p>' + esc(item.display_name) + ': ' + esc(item.designation) + '. Undo makes it a company again, with its records and history as before.</p>' +
+            '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Make it a company again</button></div>';
+        openModal('Undo conversion: ' + item.display_name, body);
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        body.querySelector('.dm-confirm').addEventListener('click', function () {
+            setStatus('Undoing…');
+            postAction({ action: 'undo_convert', operator_id: item.id }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not undone.'), 'error'); return; }
+                removeRowDom(item);
+                showResult(body, res.data.message, null, null);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    // ---- the facilities a news item or lawsuit is linked to ----
+    function openRecordLinks(item) {
+        var body = el('div', 'dm-form dm-record-links');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Facilities: ' + item.display_name, body);
+        function refresh(note) {
+            getJson(API.manager + '?action=record_detail&kind=' + encodeURIComponent(item.kind) + '&id=' + encodeURIComponent(item.id)).then(function (d) {
+                if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this record.') + '</p>'; return; }
+                render(d.record, note);
+            }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+        }
+        function change(payload) {
+            payload.action = 'record_links';
+            payload.kind = item.kind;
+            payload.id = item.id;
+            setStatus('Saving…');
+            postAction(payload).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not saved.'), 'error'); return; }
+                setStatus('');
+                refresh({ message: res.data.message, token: res.data.undo_token });
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        }
+        function render(r, note) {
+            item.linked_count = r.links.length;
+            if (item._facCell) item._facCell.innerHTML = String(r.links.length);
+            var html = '';
+            if (note) html += '<p class="dm-status-ok">' + esc(note.message) + (note.token ? ' <button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-link-undo">Undo</button>' : '') + '</p>';
+            html += '<p class="dm-muted">' + esc(r.place || '') + (r.source_url ? ' · <a href="' + esc(r.source_url) + '" target="_blank" rel="noopener">Read it</a>' : '') + '</p>';
+            if (!r.links.length) {
+                html += '<p>Not linked to any facility record.</p>';
+            } else {
+                html += '<ul class="dm-link-list">' + r.links.map(function (l, i) {
+                    return '<li><span>' + (l.page_url ? '<a href="' + esc(l.page_url) + '" target="_blank" rel="noopener">' + esc(l.name) + '</a>' : esc(l.name)) +
+                        ' <span class="dm-muted">#' + esc(l.id) + (l.place ? ' · ' + esc(l.place) : '') + (l.link_type !== 'mentioned' ? ' · ' + esc(l.link_type) : '') + '</span></span>' +
+                        '<span class="dm-link-acts"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-link-move" data-i="' + i + '">Move to another record</button>' +
+                        '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-link-remove" data-i="' + i + '">Remove</button></span>' +
+                        '<div class="dm-link-finder" data-i="' + i + '"></div></li>';
+                }).join('') + '</ul>';
+            }
+            html += '<label>Link another facility record</label><div class="dm-link-add"></div>';
+            if (r.filed && r.filed.length) html += '<p class="dm-muted">Also filed under: ' + esc(r.filed.join(', ')) + '</p>';
+            body.innerHTML = html;
+            var undo = body.querySelector('.dm-link-undo');
+            if (undo) undo.addEventListener('click', function () {
+                setStatus('Undoing…');
+                postAction({ action: 'undo_record_links', token: note.token }).then(function (res) {
+                    if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Undo failed.'), 'error'); return; }
+                    setStatus('');
+                    refresh({ message: res.data.message });
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            });
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-link-remove'), function (b) {
+                b.addEventListener('click', function () { change({ op: 'remove', from: r.links[+b.getAttribute('data-i')].id }); });
+            });
+            Array.prototype.forEach.call(body.querySelectorAll('.dm-link-move'), function (b) {
+                b.addEventListener('click', function () {
+                    var l = r.links[+b.getAttribute('data-i')];
+                    var host = body.querySelector('.dm-link-finder[data-i="' + b.getAttribute('data-i') + '"]');
+                    host.innerHTML = '';
+                    host.appendChild(buildFacilityFinder(function (f) { change({ op: 'move', from: l.id, to: f.id }); }));
+                    host.querySelector('input').focus();
+                });
+            });
+            body.querySelector('.dm-link-add').appendChild(buildFacilityFinder(function (f) { change({ op: 'add', to: f.id }); }));
+        }
+        refresh(null);
+    }
+
+    // ---- file a news item under Indian boarding schools or a young adult program ----
+    function openFileNews(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal('Reclassify article: ' + item.display_name, body);
+        getJson(API.manager + '?action=file_options').then(function (d) {
+            if (!d || !d.success) { body.innerHTML = '<p class="dm-error">Could not load the choices.</p>'; return; }
+            function opts(rows) { return rows.map(function (r) { return '<option value="' + esc(r[0]) + '">' + esc(r[1]) + '</option>'; }).join(''); }
+            body.innerHTML =
+                '<fieldset class="dm-desig-block"><legend>Indian boarding school</legend>' +
+                '<p class="dm-muted">The article goes on the Indian boarding schools page and leaves the news list.</p>' +
+                '<label>About</label><select class="dm-file-school">' + opts(d.schools) + '</select>' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-file-indigenous">File under Indian boarding schools</button></div></fieldset>' +
+                '<fieldset class="dm-desig-block"><legend>Young adult program (18+)</legend>' +
+                '<p class="dm-muted">The program lists the article; it stays in the news.</p>' +
+                '<label>Program</label><select class="dm-file-ya">' + opts(d.young_adult) + '</select>' +
+                '<label>or a new program named</label><input type="text" class="dm-file-yaname">' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-file-young">List on this program</button></div></fieldset>';
+            function send(payload) {
+                payload.action = 'file_news';
+                payload.id = item.id;
+                setStatus('Filing…');
+                postAction(payload).then(function (res) {
+                    if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not filed.'), 'error'); return; }
+                    showResult(body, res.data.message, function () { return postAction({ action: 'undo_file_news', id: item.id }); }, null);
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            }
+            body.querySelector('.dm-file-indigenous').addEventListener('click', function () {
+                send({ to: 'indigenous', school_id: body.querySelector('.dm-file-school').value });
+            });
+            body.querySelector('.dm-file-young').addEventListener('click', function () {
+                var ya = body.querySelector('.dm-file-ya').value;
+                var name = body.querySelector('.dm-file-yaname').value.trim();
+                if (ya === '0' && !name) { setStatus('Pick a program, or name a new one.', 'error'); return; }
+                send({ to: 'young_adult', ya_id: ya, ya_name: name });
+            });
+        }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
     }
 
     // ---- one person (inc/people.php person ids) ----
@@ -827,7 +1135,7 @@
     function openDesignation(fid, label, onDone) {
         var body = el('div', 'dm-form dm-designation-form');
         body.innerHTML = '<p class="dm-muted">Loading…</p>';
-        openModal('Designation: ' + label, body);
+        openModal('Reclassify: ' + label, body);
         getJson(API.manager + '?action=get_designation&facility_id=' + encodeURIComponent(fid))
             .then(function (d) {
                 if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this record.') + '</p>'; return; }
@@ -1544,6 +1852,7 @@
         search.addEventListener('input', onSearch);
 
         $('dmCategory').addEventListener('change', function () { state.category = this.value; state.offset = 0; load(); });
+        loadFilters();
         $('dmRefresh').addEventListener('click', load);
         if ($('dmManageFolders')) $('dmManageFolders').addEventListener('click', openFolderManager);
         if ($('dmScrape')) $('dmScrape').addEventListener('click', actionScrape);
