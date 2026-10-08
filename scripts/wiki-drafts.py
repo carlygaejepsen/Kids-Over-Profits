@@ -229,14 +229,57 @@ def plain_citations(text, staff=False):
                     head = semi.group(1) + semi.group(2).strip() + (semi.group(4) or '')
             head = re.sub(r'^(\*\*[^*]+\*\* (?:was|is) )(?:the|a|an) (.+?)( of |$)', role_phrase, head)
             line = head + rest
+        if line.lstrip().startswith('**'):
             # "was also Teacher (2008) of X": a lone year in brackets only dates the source.
             line = re.sub(r'(was also [^.]*?)\s*\(\d{4}\)', r'\1', line)
+            line = ALSO_CLAUSE.sub(lambda c: c.group(1) + also_roles(c.group(2)) + c.group(3), line)
         out.append(line)
     return '\n'.join(out)
 
 
+# "Roe was also Therapist of [Provo Canyon School](...), Executive Director of X and Teacher of Y." (staff_line's other jobs)
+ALSO_CLAUSE = re.compile(r'(\b\w+ was also )((?:[^.\[]|\[[^\]]*\]\([^)]*\))+?)(\.(?:\s|$)|$)')
+# One job: a role, "of"/"at", and a place that is a link or starts with a capital, up to ", ", " and " or the end.
+ALSO_ITEM = re.compile(r'(?:^|,\s+(?:and\s+)?|\s+and\s+)(.+?) (of|at) (\x00\d+\x00|[A-Z0-9"“][^,\x00]*?|(?:unnamed|an?|the|several|two|three)\b[^,\x00]*?)(?=,\s|\s+and\s|$)')
+OF_ROLE = re.compile(r'(?i)found|owner|trustee|board|partner|investor|shareholder')
+ALSO_MISSES = []
+
+
+def also_roles(clause):
+    """The other jobs of a staff line, each read as the role sentence is: "a therapist at [Provo Canyon School](...)",
+    "the Executive Director of X"; a role with no place joins the next ("director, owner of X" -> "the director and
+    owner of X"). Links are kept whole."""
+    links = []
+    masked = re.sub(r'\[[^\]]*\]\([^)]*\)', lambda m: links.append(m.group(0)) or f'\x00{len(links) - 1}\x00', clause)
+    groups, pos = [], 0
+    for m in ALSO_ITEM.finditer(masked):
+        if m.start() != pos:
+            ALSO_MISSES.append(clause)
+            return clause   # not the shape staff_line writes: leave it as it is
+        groups.append((re.sub(r',\s+', ' and ', m.group(1).strip()), m.group(3).strip()))
+        pos = m.end()
+    if not groups or pos != len(masked):
+        ALSO_MISSES.append(clause)
+        return clause
+    parts = []
+    for role, place in groups:
+        if re.match(r'(?i)(the|a|an)\s', role):
+            parts.append(f'{role} {"of" if role.lower().startswith("the ") else "at"} {place}')
+            continue
+        if role_article(role) == 'the':
+            parts.append(f'the {role} of {place}')
+            continue
+        r = role.lower() if re.fullmatch(r'[A-Za-z][a-z-]+(?: and [A-Za-z][a-z-]+)*', role) else role
+        if re.fullmatch(r'(?i)staff', r):
+            r = 'staff member'
+        prep = 'of' if OF_ROLE.search(r) else 'at'   # "a co-founder of", "a trustee of"; "a therapist at"
+        parts.append(f'{role_article(r)} {r} {prep} {place}')
+    text = parts[0] if len(parts) == 1 else ', '.join(parts[:-1]) + ' and ' + parts[-1]
+    return re.sub('\x00(\\d+)\x00', lambda m: links[int(m.group(1))], text)
+
+
 # The role sentence of a staff paragraph: "**Name** was|is|worked ..." up to its citation or full stop.
-ROLE_SENTENCE = re.compile(r'^(\*\*[^*\n]+\*\* (?:was|is|worked)\b[^.(\n]*?)(?= \(\[|\.|$)')
+ROLE_SENTENCE = re.compile(r'^(\*\*[^*\n]+\*\* (?:was|is|worked)\b(?:[^.(\n]|\((?!\[))*?)(?= \(\[|\.(?:\s|$)|$)')
 # Titles one person holds at a time take "the"; everything else ("Staff", "Teacher", "Therapist") takes "a"/"an".
 ONE_HOLDER = re.compile(r'(?i)^(?!(assistant|associate|deputy|vice|co-?|former )\b)[^,]*\b(director|ceo|coo|cfo|cmo|cto|president|founder|'
                         r'owner|headmaster|headmistress|head of|principal|superintendent|administrator|chair(man|woman|person)?|chief|dean)\b')
@@ -254,7 +297,7 @@ def role_phrase(m):
     elif re.fullmatch(r'[A-Z][a-z]+', role.strip()):
         role = role.lower()   # one word: "Teacher" -> "teacher"; titles ("Assistant Director") and acronyms ("RN") stay
     art = role_article(role)
-    return f'{lead}{art} {role}{" at " if of else ""}'
+    return f'{lead}{art} {role}{(" of " if OF_ROLE.search(role) else " at ") if of else ""}'
 
 
 def role_article(role):
@@ -453,6 +496,9 @@ STRONG = {
     'spread': 'spread', 'strike': 'struck', 'stick': 'stuck', 'swear': 'swore', 'tear': 'tore', 'steal': 'stole', 'bite': 'bit',
     'feed': 'fed', 'flee': 'fled', 'bleed': 'bled', 'lay': 'laid', 'forgive': 'forgave', 'withhold': 'withheld', 'undergo': 'underwent',
     'overcome': 'overcame', 'oversee': 'oversaw', 'shoot': 'shot', 'sweep': 'swept', 'weep': 'wept', 'kneel': 'knelt',
+    'lie': 'lay', 'lies': 'lay', 'bear': 'bore', 'bind': 'bound', 'dig': 'dug', 'fly': 'flew', 'freeze': 'froze', 'hang': 'hung',
+    'light': 'lit', 'ring': 'rang', 'seek': 'sought', 'shine': 'shone', 'sink': 'sank', 'slide': 'slid', 'spin': 'spun',
+    'stink': 'stank', 'swim': 'swam', 'swing': 'swung', 'wind': 'wound', 'withdraw': 'withdrew', 'mislead': 'misled',
 }
 # Words a past-tense rewrite may drop: they only say "as of now".
 DROPPABLE = {'current', 'currently', 'now', 'still', 'presently', 'today'}
@@ -475,6 +521,8 @@ def tense_pair(old, new):
     o, n = old.lower(), new.lower()
     if IRREGULAR.get(o) == n:
         return True
+    if (o, n) in (('may', 'could'), ('might', 'could')):   # "may" of permission: "Students may not speak" -> "could not"
+        return True
     for stem in _stems(o):
         if STRONG.get(stem) == n:
             return True
@@ -493,6 +541,9 @@ def tense_only(old, new):
     old, new = old.replace('\u2019', "'"), new.replace('\u2019', "'")
     # "has to"/"have to"/"had to" become one word on both sides, so "has to" -> "had to" and "must" -> "had to" both pair.
     joined = lambda t: re.sub(r'\b([Hh])(as|ave|ad) to\b', lambda m: m.group(1) + m.group(2) + 'to', t)
+    # "cannot" reads as "can not", so "cannot" -> "could not" pairs "can" with "could".
+    old = re.sub(r'\b([Cc])annot\b', r'\1an not', old)
+    new = re.sub(r'\b([Cc])annot\b', r'\1an not', new)
     old, new = joined(old), joined(new)
     a, b = TOKEN.findall(old), TOKEN.findall(new)
     if ''.join(a) != old or ''.join(b) != new:
