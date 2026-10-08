@@ -191,13 +191,13 @@ echo "Related industries
 ";
 // One template for the index and every industry page; it reads the page's own slug.
 $topics = array('foster-care', 'disability-group-homes', 'nursing-homes', 'psychiatric-hospitals');
-$topic_keys = array('note', 'outside', 'what', 'touch', 'documented', 'report', 'learn', 'wrong', 'updated');
+$topic_keys = array('note', 'outside', 'what', 'history', 'touch', 'documented', 'report', 'learn', 'wrong', 'updated');
 foreach (array_merge(array('related-industries'), $topics) as $slug) {
     $page = kop_page_text_page($slug);
     check($page && $page['prefix'] === 'kop-ri' && is_readable(dirname(__DIR__) . '/' . $page['file']), "$slug: registered, with its text file");
     $keys = array_column(kop_page_text_defaults($slug), 'key');
     if ($slug !== 'related-industries') {
-        check($keys === $topic_keys, "$slug: the nine sections in order" . ($keys === $topic_keys ? '' : ' (' . implode(', ', $keys) . ')'));
+        check($keys === $topic_keys, "$slug: the ten sections in order" . ($keys === $topic_keys ? '' : ' (' . implode(', ', $keys) . ')'));
     }
     $GLOBALS['kop_test_slug'] = $slug;
     $html = render_page('page-related-industry.php');
