@@ -6,7 +6,7 @@
    "nodes": 1432,
    "edges": 2777,
    "facilityMatches": 536,
-   "withYears": 376,
+   "withYears": 378,
    "withDeaths": 27,
    "rebranded": 91,
    "profileEdges": 469,
@@ -2006,7 +2006,7 @@
     "x": 939.93,
     "y": 172.3
    },
-   "years": "from 2020"
+   "years": "2020-2024"
   },
   {
    "id": "hidden-lake-academy",
@@ -3555,7 +3555,7 @@
     "x": 213.26,
     "y": 640.91
    },
-   "years": "from 2007"
+   "years": "2007-2023"
   },
   {
    "id": "havenwood-academy",
@@ -28401,7 +28401,8 @@
    "board": {
     "x": -450.79,
     "y": -735.55
-   }
+   },
+   "years": "until 2024"
   },
   {
    "id": "lighthouse-of-northwest-florida",
@@ -28427,7 +28428,8 @@
    "board": {
     "x": -297.26,
     "y": -759.14
-   }
+   },
+   "years": "until 2013"
   },
   {
    "id": "lila-bjorklund",
