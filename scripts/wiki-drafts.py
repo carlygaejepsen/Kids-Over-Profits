@@ -125,7 +125,9 @@ def templated(md, ops, name=''):
     information (ops "f<n>", "filler": true). Other ops are returned unchanged."""
     lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
     secs = sections(lines)
-    ops = [dict(op, text=plain_citations(op['text'], staff=is_staff_section(op.get('section', ''))))
+    # ", left" after a role ("Therapist (2017-2025), left of X") goes: a past range already says they left (owner,
+    # 2026-10-08; kop_wiki_drafts_all() in inc/wiki-update-drafts.php does the same for drafts exported before).
+    ops = [dict(op, text=plain_citations(re.sub(r'(?<=[)\w]), left(?= of )', '', op['text']), staff=is_staff_section(op.get('section', ''))))
            if isinstance(op.get('text'), str) else op for op in ops]
     media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
     abuse = next((s for s in secs if s[2].startswith('abuse') or 'lawsuit' in s[2] or s[2] == 'deaths'), None)

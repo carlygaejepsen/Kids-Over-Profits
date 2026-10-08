@@ -755,6 +755,10 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         $cite = trim((string) ($i['cite'] ?? ''));
         if ($text === '' || ($url !== '' && $has_url($url)) || !$in_era($i['year'] ?? '')) continue;
         if (mb_strlen($text) > 30 && kop_wiki_upd_mentions($words, $text)) continue;
+        // A pointer to a file ("Sexual misconduct report (document library)") or a bare label ("Deaths", "Student
+        // hospitalizations") says nothing on its own: not written into an entry (owner, 2026-10-08).
+        if (preg_match('/\(document library\)|^\W*(see )?(the )?(document library|documents?|files?)\b/i', $text)
+            || (str_word_count($text) <= 3 && !preg_match('/\d/', $text))) continue;
         $wiki = kop_wiki_upd_cited_wiki_page($cite . ' ' . (string) ($i['source'] ?? ''), $url);
         if ($wiki !== null && kop_wiki_upd_is_entry_page($entry, $wiki)) continue;
         $detail = array('kind' => (string) ($i['kind'] ?? ''), 'when' => (string) ($i['when'] ?? ''), 'what' => $text);
