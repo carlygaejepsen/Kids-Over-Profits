@@ -100,6 +100,7 @@ function kop_rdest_put_young_adult(array $p, $reviewer) {
         } else {
             $id = kop_ya_save($pdo, array('name' => $name, 'review' => 'pending', 'links' => $line,
                 'source' => 'Sent from the review inbox: ' . $label), 0, $reviewer);
+            $prog = kop_ya_get($pdo, $id);
             $created = true;
         }
     }

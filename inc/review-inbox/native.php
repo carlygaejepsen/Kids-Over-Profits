@@ -213,8 +213,12 @@ function kop_rinbox_native_item($type, array $r) {
         // Every other destination: News, Lawsuits, Legislation, Industry PR, facility website or resource.
         $moves = kop_rdest_moves(array($type));
     }
-    $actions = array();
     $log = kop_rinbox_native_moves()[$type . ':' . (int) $r['id']] ?? null;
+    if ($type === 'news' && !$pending && !$log && kop_rinbox_native_filed_ok($r)) {
+        // An article already on the site can still be filed as about an Indian boarding school or a young adult program.
+        $moves = kop_rinbox_native_filed_moves();
+    }
+    $actions = array();
     if ($log) {
         $targets = kop_rdest_targets();
         $actions[] = array('id' => 'unmove', 'label' => 'Undo move to ' . ($targets[$log['to']]['label'] ?? $log['to']), 'style' => 'undo');
@@ -234,6 +238,27 @@ function kop_rinbox_native_item($type, array $r) {
         'approve_help' => kop_rinbox_native_help($type)[0],
         'reject_help'  => kop_rinbox_native_help($type)[1],
     );
+}
+
+/** An approved or published article with a link: it can be filed under a school or a young adult program. */
+function kop_rinbox_native_filed_ok(array $r) {
+    return in_array((string) $r['status'], array('approved', 'published'), true) && kop_rinbox_native_url('news', $r) !== '';
+}
+
+/**
+ * "Move to" for an article already on the site: only the two places outside the
+ * facility records. A school takes it off the news list (it lives on the Indian
+ * boarding schools page); a young adult program gets the link and the article stays news.
+ */
+function kop_rinbox_native_filed_moves() {
+    $moves = kop_rdest_sort_moves();
+    foreach ($moves as &$m) {
+        $m['label'] = $m['id'] === 'indigenous'
+            ? 'File under Indian boarding schools (leaves the news list)'
+            : 'Also list on a young adult program (stays in the news)';
+    }
+    unset($m);
+    return $moves;
 }
 
 function kop_rinbox_native_save($type, $key, array $fields) {
@@ -309,6 +334,10 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     if ($type === 'news' && $to === 'indigenous') {
         return kop_rinbox_native_move_to_school($key, (int) ($params['school_id'] ?? 0));
     }
+    if ($type === 'news' && $to === 'young_adult') {
+        $r = kop_rinbox_native_row('news', $key);
+        if ($r && kop_rinbox_native_filed_ok($r)) return kop_rinbox_native_filed_to_ya($r, $params);
+    }
     if (!$t['moves'] || !isset($targets[$to]) || $to === $type) throw new RuntimeException('It cannot move there.');
     $r = kop_rinbox_native_row($type, $key);
     if (!$r) throw new RuntimeException('That submission is gone.');
@@ -359,10 +388,26 @@ function kop_rinbox_native_move($type, $key, $to, array $params = array()) {
     return array('message' => $message . ' Undo moves it back.');
 }
 
+/** An approved article also listed on a young adult program; the article itself stays as it is. */
+function kop_rinbox_native_filed_to_ya(array $r, array $params) {
+    $reviewer = kop_rinbox_reviewer();
+    $url = kop_rinbox_native_url('news', $r);
+    $done = kop_rdest_put_young_adult(array(
+        'url' => $url, 'title' => (string) $r['article_title'],
+        'ya_id' => (int) ($params['ya_id'] ?? 0), 'ya_name' => (string) ($params['ya_name'] ?? ''),
+    ), $reviewer);
+    $log = kop_rinbox_native_moves();
+    $log['news:' . (int) $r['id']] = array('to' => 'young_adult', 'done' => $done, 'prev_status' => (string) $r['status'],
+        'prev_notes' => (string) ($r['reviewer_notes'] ?? ''), 'by' => $reviewer, 'at' => time());
+    update_option('kop_review_inbox_moves', $log, false);
+    return array('message' => $done['message'] . ' The article stays in the news. Undo takes the link off.');
+}
+
 function kop_rinbox_native_move_to_school($key, $school_id) {
     $r = kop_rinbox_native_row('news', $key);
     if (!$r) throw new RuntimeException('That submission is gone.');
-    if ((string) $r['status'] !== 'submitted') throw new RuntimeException('Only a pending item can move to another queue.');
+    $filed = kop_rinbox_native_filed_ok($r);
+    if ((string) $r['status'] !== 'submitted' && !$filed) throw new RuntimeException('Only a pending or approved article can be filed there.');
     $pdo = kop_ischools_pdo();
     if (!$pdo) throw new RuntimeException('The Indian boarding schools records are not available.');
     kop_ischools_install($pdo);
@@ -376,17 +421,18 @@ function kop_rinbox_native_move_to_school($key, $school_id) {
     $prev_notes = (string) ($r['reviewer_notes'] ?? '');
     kop_ischools_link_news($pdo, $school_id, (int) $r['id'], $reviewer);
     $message = 'Filed on the Indian boarding schools page under ' . $name . '; it stays off the news list.';
-    $pdo->prepare("UPDATE news_submissions SET status = 'approved', reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, reviewer_notes = ? WHERE id = ?")
+    // A pending article is approved on the way (the page lists approved ones); one already on the site keeps its status.
+    $pdo->prepare("UPDATE news_submissions SET status = " . ($filed ? 'status' : "'approved'") . ", reviewed_by = ?, reviewed_at = CURRENT_TIMESTAMP, reviewer_notes = ? WHERE id = ?")
         ->execute(array($reviewer, trim($prev_notes . "
 " . $message), (int) $r['id']));
-    if (function_exists('kop_followup_mark_moved')) {
+    if (!$filed && function_exists('kop_followup_mark_moved')) {
         kop_followup_mark_moved(kop_followup_kind_for_native('news'), (int) $r['id']);
     }
     $log = kop_rinbox_native_moves();
     $log['news:' . (int) $r['id']] = array('to' => 'indigenous', 'done' => array('to' => 'indigenous', 'self' => true, 'school_id' => $school_id),
-        'prev_status' => 'submitted', 'prev_notes' => $prev_notes, 'by' => $reviewer, 'at' => time());
+        'prev_status' => (string) $r['status'], 'prev_notes' => $prev_notes, 'by' => $reviewer, 'at' => time());
     update_option('kop_review_inbox_moves', $log, false);
-    return array('message' => $message . ' Undo moves it back.');
+    return array('message' => $message . ($filed ? ' Undo puts it back on the news list.' : ' Undo moves it back.'));
 }
 
 function kop_rinbox_native_unmove($type, $key) {
@@ -414,7 +460,7 @@ function kop_rinbox_native_unmove($type, $key) {
     }
     unset($log[$k]);
     update_option('kop_review_inbox_moves', $log, false);
-    return array('message' => 'Moved back. It is pending here again.');
+    return array('message' => in_array($m['prev_status'], array('approved', 'published'), true) ? 'Taken back. The article is as it was.' : 'Moved back. It is pending here again.');
 }
 
 /** News and lawsuits: the site's own readers, which fill only empty fields. */

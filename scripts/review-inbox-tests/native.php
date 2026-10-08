@@ -66,6 +66,27 @@ function kop_rinbox_test_news(array $src, array $item, callable $check) {
     $check('news: Industry PR files the article itself as promotional', kop_rinbox_native_row('news', $item['key'])['status'] === 'promotional');
     call_user_func($src['act'], $item['key'], 'unmove', array());
     $check('news: Undo puts it back in the queue', kop_rinbox_native_row('news', $item['key'])['status'] === 'submitted');
+
+    // An article already on the site can still be filed under a school or listed on a young adult program.
+    $pdo->prepare("UPDATE news_submissions SET status = 'approved' WHERE id = ?")->execute(array((int) $item['key']));
+    $approved = kop_rinbox_native_row('news', $item['key']);
+    if (kop_rinbox_native_url('news', $approved) !== '') {
+        $ids = array_map(function ($m) { return $m['id']; }, kop_rinbox_native_item('news', $approved)['moves']);
+        $check('news: an approved article offers Indian boarding schools and young adult programs only', $ids === array('indigenous', 'young_adult'), json_encode($ids));
+        call_user_func($src['act'], $item['key'], 'move', array('to' => 'indigenous', 'school_id' => 0));
+        $linked = (int) kop_ischools_pdo()->query('SELECT COUNT(*) FROM indigenous_school_news WHERE school_id = 0 AND news_id = ' . (int) $item['key'])->fetchColumn();
+        $check('news: filing an approved article under the schools links it and keeps it approved',
+            $linked === 1 && kop_rinbox_native_row('news', $item['key'])['status'] === 'approved');
+        call_user_func($src['act'], $item['key'], 'unmove', array());
+        $linked = (int) kop_ischools_pdo()->query('SELECT COUNT(*) FROM indigenous_school_news WHERE school_id = 0 AND news_id = ' . (int) $item['key'])->fetchColumn();
+        $check('news: Undo unlinks it and it stays approved', $linked === 0 && kop_rinbox_native_row('news', $item['key'])['status'] === 'approved');
+        $res = call_user_func($src['act'], $item['key'], 'move', array('to' => 'young_adult', 'ya_id' => 0, 'ya_name' => 'Test YA Program From News'));
+        $prog = kop_ya_find_by_name(kop_ya_pdo(), 'Test YA Program From News');
+        $check('news: an approved article listed on a new young adult program puts the link there and stays approved',
+            $prog && strpos((string) $prog['links'], kop_rinbox_native_url('news', $approved)) !== false && kop_rinbox_native_row('news', $item['key'])['status'] === 'approved', $res['message'] ?? '');
+        call_user_func($src['act'], $item['key'], 'unmove', array());
+        $check('news: Undo takes the program it made back off', !kop_ya_find_by_name(kop_ya_pdo(), 'Test YA Program From News'));
+    }
     $pdo->prepare('UPDATE news_submissions SET article_title = ?, article_type = ?, tags = ?, status = ? WHERE id = ?')
         ->execute(array($before['article_title'], $before['article_type'], $before['tags'], $before['status'], (int) $item['key']));
 }
