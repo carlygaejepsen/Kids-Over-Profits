@@ -620,6 +620,11 @@
         } else if (type === 'facility') {
             input = el('input', { id: id, type: 'number', min: '1', placeholder: 'id', 'data-kop-facility-finder': '1' });
             input.value = f.value ? String(f.value) : '';
+        } else if (type === 'record') {
+            // Any record: a program id, or "company:45" etc. from the finder's any-record mode; the finder shows what is picked.
+            input = el('input', { id: id, type: 'hidden', 'data-kop-facility-finder': '1', 'data-kop-record-kinds': 'all',
+                'data-kop-picked-label': f.value_label || '' });
+            input.value = f.value ? String(f.value) : '';
         } else if (type === 'checkbox') {
             input = el('input', { id: id, type: 'checkbox' });
             input.checked = !!f.value && f.value !== '0';
@@ -695,7 +700,7 @@
         if (kind === 'checkbox') return input.checked ? '1' : '';
         if (kind === 'facilities') { try { return JSON.parse(input.dataset.ids || '[]'); } catch (e) { return []; } }
         if (kind === 'list') return input.value.split('\n').map(function (x) { return x.trim(); }).filter(Boolean);
-        if (kind === 'facility' || kind === 'number') return input.value.trim() === '' ? '' : input.value.trim();
+        if (kind === 'facility' || kind === 'number' || kind === 'record') return input.value.trim() === '' ? '' : input.value.trim();
         return input.value;
     }
 

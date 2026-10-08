@@ -983,3 +983,106 @@ function kop_wbc_render_assets() {
     </script>
     <?php
 }
+
+/* ---- Notes on an existing record ------------------------------------- */
+
+/** "company:45" -> ['company', 45]; a bare number is a facility; anything else null. */
+function kop_wbc_parse_record_token($value) {
+    $value = trim((string) $value);
+    if (preg_match('/^\d+$/', $value)) return (int) $value > 0 ? array('facility', (int) $value) : null;
+    if (preg_match('/^(company|consultant|provider|transporter):(\d+)$/', $value, $m) && (int) $m[2] > 0) return array($m[1], (int) $m[2]);
+    return null;
+}
+
+/**
+ * Where a record of $kind keeps its notes, as key paths into its stored JSON:
+ * a company's operator.notes (a list), a provider's first program's notes (a
+ * list), a consultant's notes (the person's, else the firm's) and a
+ * transporter's (text).
+ */
+function kop_wbc_note_paths($kind, array $payload) {
+    if ($kind === 'company') return array(array('operator', 'notes'));
+    $pre = isset($payload['data']) && is_array($payload['data']) ? array('data') : array();
+    $d = kop_wbc_row_data($payload);
+    if ($kind === 'provider') return array(array_merge($pre, array('facilities', 0, 'notes')));
+    if ($kind === 'transporter') return array(array_merge($pre, array('transporterCompany', 'notes')));
+    if ($kind === 'consultant') {
+        if (($d['referrerType'] ?? '') === 'individual' || (trim((string) ($d['referrerAgency']['name'] ?? '')) === '' && !empty($d['referrerConsultants'][0]))) {
+            $paths = array(array_merge($pre, array('referrerConsultants', 0, 'notes')));
+            if (isset($d['referrerIndividual'])) $paths[] = array_merge($pre, array('referrerIndividual', 'notes'));
+            return $paths;
+        }
+        return array(array_merge($pre, array('referrerAgency', 'notes')));
+    }
+    throw new RuntimeException('Unknown kind of record.');
+}
+
+/** The stored row of an existing non-facility record: [table, id, name, payload]. */
+function kop_wbc_load_record(PDO $pdo, $kind, $id) {
+    global $wpdb;
+    if ($kind === 'company') {
+        $table = $wpdb->prefix . 'kop_operators';
+        $stmt = $pdo->prepare("SELECT id, COALESCE(NULLIF(name, ''), unique_name) AS name, json_data FROM `{$table}` WHERE id = ?");
+    } else {
+        $spec = kop_wbc_record_tables()[$kind] ?? null;
+        $table = $spec ? kop_wbc_table_if_there($pdo, $spec['table']) : '';
+        if ($table === '') throw new RuntimeException('Unknown kind of record.');
+        $stmt = $pdo->prepare("SELECT id, unique_name AS name, json_data FROM `{$table}` WHERE id = ?");
+    }
+    $stmt->execute(array((int) $id));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$row) throw new RuntimeException(kop_wbc_kinds()[$kind] . ' #' . (int) $id . ' not found.');
+    $payload = json_decode((string) $row['json_data'], true);
+    return array($table, (int) $row['id'], (string) $row['name'], is_array($payload) ? $payload : array());
+}
+
+/**
+ * Add $lines to the notes of an existing company, consultant, provider or
+ * transporter (each once). Returns {kind, id, name, lines: the ones added},
+ * which kop_wbc_remove_notes() takes off again.
+ */
+function kop_wbc_add_notes($kind, $id, array $lines) {
+    return kop_wbc_change_notes($kind, $id, $lines, true);
+}
+
+function kop_wbc_remove_notes($kind, $id, array $lines) {
+    return kop_wbc_change_notes($kind, $id, $lines, false);
+}
+
+function kop_wbc_change_notes($kind, $id, array $lines, $add) {
+    $pdo = kop_wbc_pdo();
+    list($table, $id, $name, $payload) = kop_wbc_load_record($pdo, $kind, $id);
+    $lines = array_values(array_filter(array_map('trim', $lines), 'strlen'));
+    $changed = array();
+    foreach (kop_wbc_note_paths($kind, $payload) as $path) {
+        $ref = &$payload;
+        foreach ($path as $k) {
+            if (!is_array($ref)) $ref = array();
+            if (!array_key_exists($k, $ref)) $ref[$k] = null;
+            $ref = &$ref[$k];
+        }
+        $is_list = is_array($ref) || ($ref === null && in_array($kind, array('company', 'provider'), true));
+        $list = is_array($ref) ? array_values($ref) : array_values(array_filter(array_map('trim', explode("\n", (string) $ref)), 'strlen'));
+        foreach ($lines as $line) {
+            $at = array_search($line, $list, true);
+            if ($add && $at === false) {
+                $list[] = $line;
+                $changed[$line] = true;
+            } elseif (!$add && $at !== false) {
+                array_splice($list, $at, 1);
+                $changed[$line] = true;
+            }
+        }
+        $ref = $is_list ? $list : implode("\n", $list);
+        unset($ref);
+    }
+    if ($changed) {
+        $json = wp_json_encode($payload);
+        if ($kind === 'company') {
+            $pdo->prepare("UPDATE `{$table}` SET json_data = ? WHERE id = ?")->execute(array($json, $id));
+        } else {
+            $pdo->prepare("UPDATE `{$table}` SET json_data = ?, updated_at = NOW() WHERE id = ?")->execute(array($json, $id));
+        }
+    }
+    return array('kind' => $kind, 'id' => $id, 'name' => $name, 'lines' => array_keys($changed));
+}

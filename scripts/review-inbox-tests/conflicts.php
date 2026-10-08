@@ -71,6 +71,7 @@ function kop_rinbox_test_conflicts(array $src, array $item, callable $check) {
     kop_rinbox_test_conflicts_closed($check);
     kop_rinbox_test_conflicts_rollup($check);
     kop_rinbox_test_conflicts_elsewhere($check);
+    kop_rinbox_test_conflicts_other_kinds($check);
 
     // The kind filter.
     $staff = kop_rinbox_conflicts_all(array('filters' => array('what' => 'staff')));
@@ -248,4 +249,36 @@ function kop_rinbox_test_conflicts_closed(callable $check) {
         return;
     }
     echo "  (no closed record without an end year has a waiting closing year in the mirror)\n";
+}
+
+/** "Add to another record" finds companies, consultants, providers and transporters too, and files the item in its notes. */
+function kop_rinbox_test_conflicts_other_kinds(callable $check) {
+    $single = null;
+    foreach (kop_rinbox_conflicts_units(array()) as $ukey => $members) {
+        if (strpos($ukey, 'woodbury-facts|') === 0 && count($members) === 1) { $single = $ukey; break; }
+    }
+    $card = kop_rinbox_get_item('conflicts', $single);
+    $apply = array_column($card['actions'], null, 'id')['apply'] ?? array();
+    $check('conflicts: Add to another record picks any kind of record', ($apply['params'][0]['type'] ?? '') === 'record', json_encode($apply['params'][0] ?? null));
+
+    $pdo = $GLOBALS['pdo'];
+    $op = $pdo->query("SELECT id, name FROM wpdl_kop_operators WHERE name <> '' ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $found = kop_wbc_find_records(kop_wbc_pdo(), mb_substr($op['name'], 0, 12), 15, 'company');
+    $check('conflicts: the any-record search finds a company by name', in_array((int) $op['id'], array_map('intval', array_column($found, 'id')), true), $op['name']);
+    $check('conflicts: record tokens read as kind and id', kop_wbc_parse_record_token('company:' . $op['id']) === array('company', (int) $op['id'])
+        && kop_wbc_parse_record_token('123') === array('facility', 123) && kop_wbc_parse_record_token('company:x') === null);
+
+    $k = explode('|', $single, 2)[1];
+    $notes = function () use ($pdo, $op) {
+        $j = json_decode((string) $pdo->query('SELECT json_data FROM wpdl_kop_operators WHERE id = ' . (int) $op['id'])->fetchColumn(), true);
+        return (array) ($j['operator']['notes'] ?? array());
+    };
+    $before = $notes();
+    $res = kop_rinbox_conflicts_act($single, 'apply', array('facility' => 'company:' . $op['id']));
+    $row = kop_wbf_rows(array($k))[0];
+    $line = kop_wbf_source_line($row);
+    $check('conflicts: an item added to a company goes in its notes, citing its source', $row['status'] === 'applied' && in_array($line, $notes(), true)
+        && count($notes()) === count($before) + 1, $res['message']);
+    kop_rinbox_conflicts_act($single, 'undo', array());
+    $check('conflicts: ...and Undo takes exactly that note off', $notes() === $before && kop_wbf_rows(array($k))[0]['status'] === 'pending');
 }

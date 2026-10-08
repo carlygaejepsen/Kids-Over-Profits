@@ -181,9 +181,13 @@ function kop_rinbox_conflicts_elsewhere(array $it, $fid) {
         if (!in_array($id, array('create', 'apply', 'ya_create', 'ya_apply', 'ya_file'), true) && strpos($id, 'apply_to_') !== 0) continue;
         if ($id === 'apply') {
             $a['label'] = 'Add to another record';
-            $a['help'] = 'Adds this item to the record you pick instead (the one it names may be the wrong program, or merged away), citing its source.';
+            $a['help'] = 'Adds this item to the record you pick instead (the one it names may be the wrong program, or merged away), citing its source: '
+                . 'a program, or a company, consultant, provider or transporter (in its notes).';
             foreach ($a['params'] as $i => $prm) {
-                if (($prm['type'] ?? '') === 'facility') $a['params'][$i]['value'] = '';
+                if (in_array($prm['type'] ?? '', array('facility', 'record'), true)) {
+                    $a['params'][$i]['value'] = '';
+                    $a['params'][$i]['value_label'] = '';
+                }
             }
             $a['ask'] = true;
             $a['submit'] = 'Add it there';
@@ -389,14 +393,15 @@ function kop_rinbox_conflicts_group_act($queue, $gid, $action, array $params) {
         return $out;
     }
     if ($action === 'apply_ticked') {
-        $fid = (int) ($params['facility'] ?? 0);
-        if ($fid <= 0) throw new RuntimeException('Pick the record first (the Record box beside the button).');
+        $to = trim((string) ($params['facility'] ?? ''));
+        $parsed = function_exists('kop_wbc_parse_record_token') ? kop_wbc_parse_record_token($to) : (ctype_digit($to) ? array('facility', (int) $to) : null);
+        if (!$parsed) throw new RuntimeException('Pick the record first (the Record box beside the button).');
         $done = array();
         $bad = 0;
         $why = '';
         foreach ($picked as $k) {
             try {
-                call_user_func($src['act'], $k, 'apply', array('facility' => $fid));
+                call_user_func($src['act'], $k, 'apply', array('facility' => $to));
                 $done[] = $k;
             } catch (Throwable $e) {
                 $bad++;
@@ -405,7 +410,8 @@ function kop_rinbox_conflicts_group_act($queue, $gid, $action, array $params) {
         }
         $clear();
         if (!$done) throw new RuntimeException('None could be added: ' . $why);
-        return array('message' => 'Added ' . count($done) . ' item' . (count($done) === 1 ? '' : 's') . ' to ' . kop_rinbox_facility($fid)['name']
+        $where = $parsed[0] === 'facility' ? kop_rinbox_facility($parsed[1])['name'] : 'the ' . strtolower(kop_wbc_kinds()[$parsed[0]] ?? 'record') . ' you picked (in its notes)';
+        return array('message' => 'Added ' . count($done) . ' item' . (count($done) === 1 ? '' : 's') . ' to ' . $where
             . ($bad ? '; ' . $bad . ' could not be (' . $why . ')' : '') . '. Undo in Recently done takes ' . (count($done) === 1 ? 'it' : 'them all') . ' back.',
             'undo' => $undo_all($done));
     }
@@ -469,7 +475,9 @@ function kop_rinbox_conflicts_group_elsewhere(array $src, $first_key, $on) {
         if (($a['id'] ?? '') === 'apply') {
             $out[] = array('id' => 'apply_ticked', 'label' => 'Add ticked to another record', 'style' => 'neutral', 'ask' => true, 'submit' => 'Add them there',
                 'help' => 'Adds every ticked item to the record you pick instead of ' . $on . ', citing each one\'s source. Undo in Recently done takes them all back.',
-                'params' => array(array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => '')));
+                // The same picker as the queue's own Add (Woodbury Facts: any record; Fornits: programs).
+                'params' => array(array('name' => 'facility', 'label' => 'Record', 'value' => '',
+                    'type' => in_array('record', array_column((array) ($a['params'] ?? array()), 'type'), true) ? 'record' : 'facility')));
         }
     }
     return $out;

@@ -1041,6 +1041,7 @@ function kop_wbf_filed_on(array $r) {
     }
     $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider', 'young_adult' => 'young adult program',
         'company' => 'parent company', 'transporter' => 'transporter');
+    if (!empty($done['existing'])) return 'the notes of the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
     return 'the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
 }
 
@@ -1053,6 +1054,11 @@ function kop_wbf_undo(array $rows, $reviewer) {
         $wpdb->update(kop_wbf_table(), array('auto' => 0), array('pkey' => $r['pkey']));
         if ($r['status'] === 'applied' && kop_wbf_filed_on($r) !== '') {
             // Filed in a consultant or provider record's notes: back to review, the record and its notes stay.
+            // Filed on a record that was there already: the note it added comes off again.
+            $done = json_decode((string) $r['applied'], true);
+            if (!empty($done['existing']) && !empty($done['lines']) && function_exists('kop_wbc_remove_notes')) {
+                kop_wbc_remove_notes((string) $done['filed'], (int) $done['id'], (array) $done['lines']);
+            }
             // On a young adult program: the fact comes off it again, with any field it filled.
             $done = json_decode((string) $r['applied'], true);
             if (($done['filed'] ?? '') === 'young_adult' && !empty($done['done']) && function_exists('kop_ya_remove_fact') && kop_ya_pdo()) {
@@ -2449,4 +2455,26 @@ function kop_wbf_moved_to_ya() {
             'Its record moved to the young adult programs: ' . $p['name'] . ' (young adult program #' . (int) $p['id'] . ').', (int) $fid));
     }
     return $n;
+}
+
+/**
+ * File waiting items on an existing company, consultant, provider or
+ * transporter: each item's source line goes in the record's notes
+ * (kop_wbc_add_notes()); Undo takes exactly those lines off again.
+ * Returns [pkey => {ok}] like kop_wbf_apply().
+ */
+function kop_wbf_file_existing(array $rows, $kind, $id, $reviewer) {
+    global $wpdb;
+    $rows = array_values(array_filter($rows, function ($r) { return $r['status'] === 'pending'; }));
+    if (!$rows) throw new RuntimeException('Those items were already handled. Reload the list.');
+    $results = array();
+    $now = current_time('mysql', true);
+    foreach ($rows as $r) {
+        $added = kop_wbc_add_notes($kind, $id, array(kop_wbf_source_line($r)));
+        $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied_fid' => 0, 'reviewed_by' => $reviewer, 'reviewed_at' => $now,
+            'applied' => wp_json_encode(array('filed' => $kind, 'who' => 'firm', 'id' => (int) $added['id'], 'name' => $added['name'],
+                'existing' => 1, 'lines' => $added['lines']))), array('pkey' => $r['pkey']));
+        $results[$r['pkey']] = array('ok' => true, 'name' => $added['name']);
+    }
+    return $results;
 }

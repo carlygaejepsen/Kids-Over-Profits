@@ -153,11 +153,25 @@ add_action('wp_ajax_kop_facility_finder', function () {
     if (!$pdo) {
         wp_send_json_error('The records database is not reachable.', 500);
     }
-    $results = kop_facility_finder_search($pdo, wp_unslash($_GET['q'] ?? ''));
+    $q = wp_unslash($_GET['q'] ?? '');
+    $results = kop_facility_finder_search($pdo, $q);
     foreach ($results as &$r) {
         $r['url'] = function_exists('kop_facility_page_url') ? (string) kop_facility_page_url($r['id']) : '';
+        $r['kind'] = 'facility';
+        $r['token'] = (string) $r['id'];
     }
     unset($r);
+    // "Any record": companies, consultants, providers and transporters too, each as "<kind>:<id>".
+    if (($_GET['kinds'] ?? '') === 'all' && function_exists('kop_wbc_find_records')) {
+        try {
+            foreach (kop_wbc_find_records(kop_wbc_pdo(), $q, 10) as $o) {
+                $results[] = array('id' => (int) $o['id'], 'token' => $o['kind'] . ':' . (int) $o['id'], 'kind' => $o['kind'], 'name' => $o['name'],
+                    'label' => $o['label'], 'detail' => $o['detail'], 'url' => (string) ($o['url'] ?? ''));
+            }
+        } catch (Throwable $e) {
+            // Facilities alone, as before.
+        }
+    }
     wp_send_json_success($results);
 });
 
@@ -199,6 +213,7 @@ function kop_facility_finder_print_assets() {
         var nonce = <?php echo wp_json_encode(wp_create_nonce('kop_facility_finder')); ?>;
 
         function meta(f) {
+            if (f.kind && f.kind !== 'facility') return [f.label, f.detail, '#' + f.id].filter(Boolean).join(' · ');
             var place = [f.city, f.state || f.country].filter(Boolean).join(', ');
             var years = f.start_year || f.end_year ? (f.start_year || '?') + '–' + (f.end_year || '') : '';
             var bits = [place, f.status && f.status !== 'Unknown' ? f.status : '', years, '#' + f.id].filter(Boolean);
@@ -214,9 +229,10 @@ function kop_facility_finder_print_assets() {
             var q = document.createElement('input');
             q.type = 'search';
             q.className = 'kop-ff-q';
-            q.placeholder = 'Find by name…';
+            var anyKind = box.getAttribute('data-kop-record-kinds') === 'all';
+            q.placeholder = anyKind ? 'Find a program, company, consultant…' : 'Find by name…';
             q.setAttribute('autocomplete', 'off');
-            q.setAttribute('aria-label', 'Find a facility by name');
+            q.setAttribute('aria-label', anyKind ? 'Find a record by name' : 'Find a facility by name');
             var list = document.createElement('ul');
             list.className = 'kop-ff-list';
             list.hidden = true;
@@ -226,6 +242,7 @@ function kop_facility_finder_print_assets() {
             wrap.appendChild(list);
             box.insertAdjacentElement('afterend', wrap);
             wrap.insertAdjacentElement('afterend', picked);
+            if (box.getAttribute('data-kop-picked-label')) picked.textContent = 'Picked: ' + box.getAttribute('data-kop-picked-label');
 
             var results = [], active = -1, timer = null, seq = 0;
 
@@ -237,7 +254,7 @@ function kop_facility_finder_print_assets() {
                     close();
                     return;
                 }
-                box.value = f.id;
+                box.value = f.token || f.id;
                 box.dispatchEvent(new Event('input', { bubbles: true }));
                 box.dispatchEvent(new Event('change', { bubbles: true }));
                 picked.textContent = '';
@@ -260,7 +277,7 @@ function kop_facility_finder_print_assets() {
             }
             function render() {
                 list.innerHTML = '';
-                if (!results.length) { note('No facility matches. Try part of the name.'); return; }
+                if (!results.length) { note((anyKind ? 'No record' : 'No facility') + ' matches. Try part of the name.'); return; }
                 results.forEach(function (f, i) {
                     var li = document.createElement('li');
                     if (i === active) li.className = 'on';
@@ -281,7 +298,7 @@ function kop_facility_finder_print_assets() {
                 if (term.length < 2 && !/^\d+$/.test(term)) { close(); return; }
                 var mine = ++seq;
                 note('Searching…');
-                fetch(ajax + '?action=kop_facility_finder&nonce=' + encodeURIComponent(nonce) + '&q=' + encodeURIComponent(term), { credentials: 'same-origin' })
+                fetch(ajax + '?action=kop_facility_finder&nonce=' + encodeURIComponent(nonce) + '&q=' + encodeURIComponent(term) + (anyKind ? '&kinds=all' : ''), { credentials: 'same-origin' })
                     .then(function (r) { return r.json(); })
                     .then(function (json) {
                         if (mine !== seq) return;

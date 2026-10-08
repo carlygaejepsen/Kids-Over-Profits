@@ -262,7 +262,9 @@ function kop_rinbox_wbf_item(array $r) {
         $actions[] = array('id' => 'apply', 'label' => (int) $r['facility_id'] > 0 ? 'Add to the record' : 'Add to this record', 'style' => 'approve',
             'help' => 'Adds this to ' . ((int) $r['facility_id'] > 0 ? kop_rinbox_wbf_name($r['facility_id']) : 'the record you pick') . ' under ' . $goes . ', citing the Woodbury page.',
             'params' => array(
-            array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => (int) $r['facility_id']),
+            // Any record: a program, or a company, consultant, provider or transporter (filed in its notes).
+            array('name' => 'facility', 'label' => 'Record', 'type' => 'record', 'value' => (int) $r['facility_id'] ?: '',
+                'value_label' => (int) $r['facility_id'] > 0 ? kop_rinbox_wbf_name($r['facility_id']) : ''),
         ));
         // The build's other close names, one click each (the old screen's buttons under "Another record").
         foreach ($alts as $aid => $a) {
@@ -374,6 +376,11 @@ function kop_rinbox_wbf_act($key, $action, array $params) {
     switch ($action) {
         case 'apply':
             $waiting();
+            $to = function_exists('kop_wbc_parse_record_token') ? kop_wbc_parse_record_token($params['facility'] ?? '') : null;
+            if ($to && $to[0] !== 'facility') {
+                kop_wbf_file_existing(array($r), $to[0], $to[1], $user);
+                return array('message' => 'Added to ' . kop_wbf_filed_on(kop_rinbox_wbf_row($key)) . ', citing its source. Undo takes the note off again.');
+            }
             $fid = (int) ($params['facility'] ?? 0) ?: (int) $r['facility_id'];
             if ($fid > 0 && $fid !== (int) $r['facility_id']) {
                 $st = kop_rinbox_pdo()->prepare('SELECT COUNT(*) FROM facilities_v2 WHERE id = ?');
