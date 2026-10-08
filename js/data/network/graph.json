@@ -6,7 +6,7 @@
    "nodes": 1432,
    "edges": 2777,
    "facilityMatches": 536,
-   "withYears": 378,
+   "withYears": 382,
    "withDeaths": 27,
    "rebranded": 91,
    "profileEdges": 469,
@@ -12023,7 +12023,8 @@
    "board": {
     "x": -814.12,
     "y": -384.38
-   }
+   },
+   "years": "until 2001"
   },
   {
    "id": "tim-lowe",
@@ -17517,7 +17518,7 @@
     "x": -426.8,
     "y": -661.95
    },
-   "years": "from 2007"
+   "years": "2007-2020"
   },
   {
    "id": "matthew-lovell",
@@ -34243,6 +34244,7 @@
     "x": -740.58,
     "y": -571.95
    },
+   "years": "until 2025",
    "formerNames": [
     "Teen Challenge Vero Beach"
    ]
@@ -37273,7 +37275,8 @@
    "board": {
     "x": 52.16,
     "y": 475.96
-   }
+   },
+   "years": "from 1850"
   },
   {
    "id": "julie-schrom",
@@ -38944,7 +38947,8 @@
    "board": {
     "x": 245.05,
     "y": 693.35
-   }
+   },
+   "years": "until 2025"
   },
   {
    "id": "resource-realizations",
