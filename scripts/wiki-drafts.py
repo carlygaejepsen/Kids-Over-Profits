@@ -291,6 +291,10 @@ def role_phrase(m):
     """'was the Teacher of X' -> 'was a teacher at X', 'was the Staff of X' -> 'was a staff member at X';
     'was the Headmaster of X' stays."""
     lead, role, of = m.group(1), m.group(2), m.group(3)
+    if re.fullmatch(r'[A-Z][a-z]+(?: (?:[a-z][\w&/-]*|&))+', role.strip()):
+        # A role the source wrote in sentence case ("Adventure therapy coordinator", "Clinical director") reads as
+        # words mid-sentence; titles in title case ("Family Teacher", "Dean of Students") stay as written.
+        role = role[0].lower() + role[1:]
     art = role_article(role)
     if art == 'the':
         return f'{lead}the {role}{of}'

@@ -344,7 +344,11 @@ def add_new(ids):
 
     def key(g):
         k = {'staff_other': 'staff', 'news_mention': 'news'}.get(g['kind'], g['kind'])
-        return (k, g.get('source_url') if k == 'news' else re.sub(r'\W+', ' ', g['text'].lower()).strip())
+        text = g['text']
+        if k == 'staff':
+            # The person, not the role text: a role reworded on the record (", left" dropped) is the same person.
+            text = re.sub(r'\s*\(.*$', '', text)
+        return (k, g.get('source_url') if k == 'news' else re.sub(r'\W+', ' ', text.lower()).strip())
 
     for i in ids:
         folder = os.path.join(DRAFTS, str(i))
@@ -366,6 +370,8 @@ def add_new(ids):
             gs = [by_gid.get(x) for x in o.get('gids', [])]
             if o.get('by') != 'script' or o.get('verdict') == 'dropped' or not gs or not all(g and g['kind'] == 'incident' for g in gs):
                 continue
+            if o.get('rewritten') and any(key(g) in now for g in gs):
+                continue   # written by hand from the whole record (rewrite()); its gap is still on the record
             if all(key(g) not in now for g in gs):
                 o['verdict'] = 'dropped'
                 o['note'] = "Read from this entry's own wiki page: already the entry's content, not added back."
@@ -579,8 +585,52 @@ def main(ids):
         print(f'{i} {program}: {len(ops)} script ops, {len(model)} gaps for the models, closed={closed}')
 
 
+def rewrite(ids):
+    """tmp/wiki-updates/rewrites.json: script lines written again by hand from the whole record (the incident notes,
+    licensing, operatingPeriod notes, the lawsuits table, the memorial list), because the mechanical forms read as
+    fragments ("On November 28, 2024, License placed on conditional status"; owner, 2026-10-08: too vague). Keyed by
+    entry and op id; null drops a line the entry already states in more detail. An op once rewritten keeps
+    'rewritten_from' (the script's text), and add-new leaves it alone."""
+    path = os.path.join(ROOT, 'tmp', 'wiki-updates', 'rewrites.json')
+    table = json.load(open(path, encoding='utf-8'))
+    for i in ids:
+        want = table.get(str(i))
+        if not want:
+            continue
+        p = os.path.join(DRAFTS, str(i), 'ops.json')
+        ops_obj = json.load(open(p, encoding='utf-8'))
+        n = 0
+        for o in ops_obj['ops']:
+            if o['id'] not in want or o.get('by') != 'script':
+                continue
+            new = want[o['id']]
+            o.setdefault('rewritten_from', o.get('text', ''))
+            if new is None:
+                if o.get('verdict') != 'dropped':
+                    o['verdict'] = 'dropped'
+                    o['note'] = 'The entry already describes this in more detail (rewrite pass, 2026-10-08).'
+                    n += 1
+                continue
+            if o.get('text') != new:
+                o['text'] = new
+                n += 1
+            o['rewritten'] = True
+            o.pop('kop_record', None)
+            o.pop('text_cited', None)
+            if '](' not in new:
+                if re.search(r'\([^()]*\(as of \d{4}-\d\d-\d\d\)\)\.?$', new):
+                    o['text_cited'] = True
+                else:
+                    o['kop_record'] = True
+        missing = set(want) - {o['id'] for o in ops_obj['ops']}
+        json.dump(ops_obj, open(p, 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, indent=1)
+        print(f'{i}: {n} lines rewritten or dropped' + (f'; no op {sorted(missing)}' if missing else ''))
+
+
 if __name__ == '__main__':
-    if sys.argv[1:2] == ['add-new']:
+    if sys.argv[1:2] == ['rewrite']:
+        rewrite([int(x) for x in sys.argv[2:]] or sorted(int(d) for d in os.listdir(DRAFTS) if d.isdigit()))
+    elif sys.argv[1:2] == ['add-new']:
         add_new([int(x) for x in sys.argv[2:]] or sorted(int(d) for d in os.listdir(DRAFTS) if d.isdigit()))
     else:
         main([int(x) for x in sys.argv[1:]])
