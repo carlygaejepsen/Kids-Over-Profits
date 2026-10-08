@@ -763,7 +763,7 @@ def main():
             elif p['before'] and p['years'] and min(p['years']) >= p['before']:
                 when = 'before %d' % p['before']
             role = ', '.join(p['roles']) or 'Staff'
-            ev = '; '.join(e for e in p['events'] if not e.startswith('died'))
+            ev = '; '.join(e for e in p['events'] if not e.startswith(('died', 'left')))
             return '%s - %s%s%s' % (role, p['program'], ' (%s)' % when if when else '', ' [%s]' % ev if ev else '')
 
         def span(p):
@@ -789,8 +789,7 @@ def main():
                 role = 'Former ' + role + ' (before %d, %s)' % (pos['before'], pub)
             else:
                 role += ' (%s%s)' % (when + ', ' if when else '', pub)
-            if any(e.startswith(('left', 'retired')) for e in pos['events']):
-                role += ', left'
+            # No ", left": a past date range already says it (owner, 2026-10-08).
             died = [e for e in pos['events'] if e.startswith('died')]
             first = pos['items'][0]
             evs = [evidence(i) for i in pos['items']]

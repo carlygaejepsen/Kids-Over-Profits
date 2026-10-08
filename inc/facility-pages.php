@@ -1165,6 +1165,16 @@ if (!function_exists('kop_facility_pages_source_label')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_drop_left')) {
+    /**
+     * "Therapist (2007-2021, r/troubledteens wiki), left" -> without the ", left" the facts build used to add
+     * (owner, 2026-10-08: a past date range already says they left).
+     */
+    function kop_facility_pages_drop_left($text) {
+        return trim((string) preg_replace('/,\s*left\s*$/i', '', (string) $text));
+    }
+}
+
 if (!function_exists('kop_facility_pages_staff_items')) {
     /**
      * The staff lists as the page shows them: {text, source, url} per entry,
@@ -1192,7 +1202,8 @@ if (!function_exists('kop_facility_pages_staff_items')) {
                 if ($k !== 'pastTTIJobs' && is_array($item) && trim((string) ($item['name'] ?? '')) !== '') {
                     $name = trim((string) $item['name']);
                     // "Admissions: Jane Doe" from the old forms: the label is her role.
-                    $role = trim((string) ($item['role'] ?? ''));
+                    $role = kop_facility_pages_drop_left((string) ($item['role'] ?? ''));
+                    $entry['text'] = kop_facility_pages_drop_left($entry['text']);
                     if (preg_match('/^([A-Za-z][A-Za-z &\/-]{2,40}):\s*(\S.*)$/', $name, $m)) {
                         $name = $m[2];
                         if ($role === '') $role = $m[1];
@@ -1715,11 +1726,11 @@ if (!function_exists('kop_facility_pages_person_career')) {
         foreach (kop_facility_pages_people_index()[$key] ?? array() as $hit) {
             list($fid, $fname, $role) = $hit;
             if ($fid === $here) continue;
-            // "Director (2008, Woodbury Reports), left": the year stays, the citation goes.
+            // "Director (2008, Woodbury Reports), left": the year stays, the citation and the "left" go.
             $role = trim(preg_replace_callback('/\s*\(([^()]*)\)/', static function ($m) {
                 if (!preg_match('/Woodbury|HEAL|wiki|Fornits/i', $m[1])) return $m[0];
                 return preg_match('/\d{4}(?:-\d{4})?/', $m[1], $y) ? ' (' . $y[0] . ')' : '';
-            }, $role), ' ,');
+            }, kop_facility_pages_drop_left($role)), ' ,');
             $add($fname, $role, '', isset($index_ids[$fid]) ? kop_facility_page_url($fid) : '');
         }
         foreach (kop_facility_pages_map_people()[$key] ?? array() as $hit) {

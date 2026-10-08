@@ -220,6 +220,12 @@ def clean_role(role):
     return ', '.join(keep) or role
 
 
+def drop_left(role):
+    """'Therapist (2007-2021), left' -> 'Therapist (2007-2021)': a past date range already says they left (owner,
+    2026-10-08). Same rule as kop_facility_pages_drop_left()."""
+    return re.sub(r'(?i),\s*left\s*$', '', role.strip())
+
+
 def staff_line(g, program, closed, earlier_names=()):
     """One staff line. Always "was": KOP's lists do not say whether someone still holds the job. A record that holds an
     earlier name keeps that name's staff too, so when the network map's staff list puts the person at one of the record's
@@ -232,7 +238,7 @@ def staff_line(g, program, closed, earlier_names=()):
         earlier = [p for p in places if p.lower() in [n.lower() for n in earlier_names]]
         if earlier:
             program = earlier[0]
-    role = re.sub(r'\s*\((\d{4}).*$', '', (d.get('role') or '').strip())
+    role = re.sub(r'\s*\((\d{4}).*$', '', drop_left(d.get('role') or ''))
     role = clean_role(role) if role else ''
     years = re.search(r'\((\d{4}(?:-\d{4})?)', d.get('role') or '')
     verb = 'was'
@@ -248,6 +254,7 @@ def staff_line(g, program, closed, earlier_names=()):
     others = []
     for r in d.get('other_roles') or []:
         role2, _, place = r.rpartition(', ')
+        role2 = drop_left(role2)
         if not role2:
             continue
         place = re.sub(r'\s*\(\d{4}.*$', '', place).strip()
