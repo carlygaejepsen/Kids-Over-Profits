@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KOP Tools
  * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
- * Version: 2.2.0
+ * Version: 2.3.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -41,12 +41,6 @@ function kop_tools_registry() {
                 'desc'     => 'The one place to approve, reject or edit every submission: news, data (facility edit suggestions), wiki, lawsuits and legislation.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-submissions.php',
-            ),
-            array(
-                'title' => 'Publish Approved Records',
-                'desc'  => 'Move legislation and lawsuit rows still sitting in "approved" to "published". Dry run on open; the update runs only from the button on that page.',
-                'type'  => 'page',
-                'path'  => 'api/publish-approved-records.php',
             ),
             array(
                 'title'    => 'Anonymous Docs',
@@ -90,11 +84,46 @@ function kop_tools_registry() {
                 'screen'   => 'kop-woodbury-reports',
                 'requires' => 'kop_render_woodbury_page',
             ),
+            array(
+                'title'    => 'Woodbury Facts',
+                'desc'     => 'Staff, careers, incidents, openings, closings, names and owners read from every Woodbury Reports issue; adding one is live at once, with Undo.',
+                'type'     => 'screen',
+                'screen'   => 'kop-woodbury-facts',
+                'requires' => 'kop_render_woodbury_facts_page',
+            ),
+            array(
+                'title'    => 'Fornits',
+                'desc'     => 'Staff, incidents, survivor accounts and leads read from the Fornits survivor forum, with exact Undo; also checks the AI keys.',
+                'type'     => 'screen',
+                'screen'   => 'kop-fornits',
+                'requires' => 'kop_render_fornits_page',
+            ),
+            array(
+                'title'    => 'Drive Docs',
+                'desc'     => 'Links from the Google Docs export, HEAL, the wiki, SCIAD NET and the data audit: news, court records and bills to their queues, the rest onto facility records.',
+                'type'     => 'screen',
+                'screen'   => 'kop-drive-docs',
+                'requires' => 'kop_render_drive_docs_page',
+            ),
+            array(
+                'title'    => 'State Lists',
+                'desc'     => 'Facility lists states publish (MO registry, KY, AK, LA, IN, KS/MS PRTF) matched to our records: link, create, not TTI, with Undo.',
+                'type'     => 'screen',
+                'screen'   => 'kop-state-lists',
+                'requires' => 'kop_sl_page',
+            ),
+            array(
+                'title'    => 'Volunteer Reviewers',
+                'desc'     => 'Personal review links for volunteers (no account): make or turn off a link and pick the queues each one sees.',
+                'type'     => 'screen',
+                'screen'   => 'kop-volunteer-reviewers',
+                'requires' => 'kop_vol_admin_page',
+            ),
         ),
         'Records & editors' => array(
             array(
                 'title'    => 'Data Manager',
-                'desc'     => 'Cross-table listing of facilities, operators, referrers and transporters; recategorize and reassign records.',
+                'desc'     => 'Every record in one list (facilities, companies, referrers, transporters, news, lawsuits, bills) with filters; merge, reclassify and reassign, with Undo.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-data-manager.php',
             ),
@@ -147,6 +176,48 @@ function kop_tools_registry() {
                 'type'     => 'screen',
                 'screen'   => 'kop-page-text',
                 'requires' => 'kop_render_page_text_editor',
+            ),
+            array(
+                'title'    => 'Merge Duplicates',
+                'desc'     => 'Facility records stored twice, found automatically and merged with one click (documents, links and folders follow); exact Undo from the Merged tab.',
+                'type'     => 'screen',
+                'screen'   => 'kop-merge-duplicates',
+                'requires' => 'kop_fmerge_page',
+            ),
+            array(
+                'title'    => 'People',
+                'desc'     => 'One id per person named on a staff list, operator or map node; separate a name that is two people.',
+                'type'     => 'screen',
+                'screen'   => 'kop-people',
+                'requires' => 'kop_people_admin_page',
+            ),
+            array(
+                'title'    => 'Merge People',
+                'desc'     => 'One person under two spellings or names, found automatically and merged with one click; exact Undo.',
+                'type'     => 'screen',
+                'screen'   => 'kop-merge-people',
+                'requires' => 'kop_pmerge_page',
+            ),
+            array(
+                'title'    => 'Program Homes',
+                'desc'     => 'Tie the licensed homes and cottages of one program to its record, and convert parent companies that are one program; Undo.',
+                'type'     => 'screen',
+                'screen'   => 'kop-program-homes',
+                'requires' => 'kop_program_homes_page',
+            ),
+            array(
+                'title'    => 'Young Adult Programs',
+                'desc'     => 'Programs for people 18 and older, kept apart from the TTI facility records.',
+                'type'     => 'screen',
+                'screen'   => 'kop-young-adult-programs',
+                'requires' => 'kop_render_ya_admin',
+            ),
+            array(
+                'title'    => 'Indigenous Schools',
+                'desc'     => 'Indian boarding, residential and mission schools and their articles, kept out of the facility records.',
+                'type'     => 'screen',
+                'screen'   => 'kop-indigenous-schools',
+                'requires' => 'kop_render_ischools_admin',
             ),
             array(
                 'title' => 'Manage Addresses',
@@ -202,6 +273,13 @@ function kop_tools_registry() {
                 'screen'   => 'kop-network-renames',
                 'requires' => 'kop_network_renames_page',
             ),
+            array(
+                'title'    => 'Map Rebuild',
+                'desc'     => 'Status of the hourly network map rebuild (GitHub workflow), with a Rebuild now button.',
+                'type'     => 'screen',
+                'screen'   => 'kop-network-rebuild',
+                'requires' => 'kop_network_rebuild_page',
+            ),
         ),
         'Inspections' => array(
             array(
@@ -221,6 +299,20 @@ function kop_tools_registry() {
                 'desc'  => 'Scan reports not yet seen for serious findings and queue them for review. Dry run on open; ?apply=1 saves one batch.',
                 'type'  => 'page',
                 'path'  => 'api/scan-inspection-highlights.php',
+            ),
+            array(
+                'title'    => 'Inspection Links',
+                'desc'     => 'Tie facility records to state inspection rows filed under a different name.',
+                'type'     => 'screen',
+                'screen'   => 'kop-inspection-links',
+                'requires' => 'kop_render_inspection_links_page',
+            ),
+            array(
+                'title'    => 'Inspection Rankings',
+                'desc'     => 'Worst companies, facilities and states by approved serious findings and the states\' own verdicts.',
+                'type'     => 'screen',
+                'screen'   => 'kop-inspection-rankings',
+                'requires' => 'kop_render_inspection_rankings_page',
             ),
         ),
         'Media & folders' => array(
@@ -284,13 +376,6 @@ function kop_tools_registry() {
                 'query' => 'run=1',
             ),
             array(
-                'title' => 'Merge Facility Duplicates',
-                'desc'  => 'Find facilities stored twice under two spellings and merge them. Opens as a dry run.',
-                'type'  => 'page',
-                'path'  => 'api/merge-facility-duplicates.php',
-                'query' => 'run=1&dry=1',
-            ),
-            array(
                 'title' => 'Clean Up Wiki Submissions',
                 'desc'  => 'Purge rejected/deleted wiki submissions and collapse duplicates (dry-run first).',
                 'type'  => 'page',
@@ -310,7 +395,7 @@ function kop_tools_registry() {
 /**
  * Categories whose tools are also listed in the wp-admin sidebar. The rest
  * (repair and batch tools) are one hover away in the admin bar dropdown and
- * on the dashboard; listing all forty in the sidebar makes a flyout taller
+ * on the dashboard; listing all of them in the sidebar makes a flyout taller
  * than the screen. A tool elsewhere can join the sidebar on its own with
  * 'sidebar' => true.
  */
