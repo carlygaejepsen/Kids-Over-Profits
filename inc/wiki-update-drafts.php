@@ -36,7 +36,15 @@ function kop_wiki_drafts_all() {
     $data = is_readable($file) ? json_decode((string) file_get_contents($file), true) : null;
     $all = array();
     foreach ((array) ($data['entries'] ?? array()) as $id => $d) {
-        if (is_array($d)) $all[(int) $id] = $d;
+        if (!is_array($d)) continue;
+        // "Therapist (2017-2025), left of X": drafts written before the facts build stopped adding ", left"
+        // keep it; a past date range already says they left (owner, 2026-10-08). Only our added text, never the entry's.
+        foreach ((array) ($d['ops'] ?? array()) as $i => $op) {
+            if (is_array($op) && isset($op['text']) && is_string($op['text'])) {
+                $d['ops'][$i]['text'] = preg_replace('/(?<=\)|\w), left(?= of )/', '', $op['text']);
+            }
+        }
+        $all[(int) $id] = $d;
     }
     return $all;
 }
