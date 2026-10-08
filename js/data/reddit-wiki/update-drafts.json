@@ -13579,16 +13579,6 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, as in the wiki editor."
-    },
-    {
-     "id": "n60",
-     "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "**Karr Farnsworth** was a staff member at Provo Canyon School. Farnsworth was also the director and owner of [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek), the president of [WWASPS](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) and a trustee of Browning Distance Learning Academy.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     }
    ],
    "tense": [
@@ -13771,8 +13761,8 @@
     {
      "id": "f15",
      "old": "**Karr Fransworth** is reported to have worked at Provo Canyon School with Robert Lichfield. The two worked together for many years, before Lichfield decided to create his own chain of behavior-modification programs called [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He later went on to work in various roles at WWASP, even serving as the organization's President. WWASP is a notoriously abusive organization which owned*many*behavior-modification programs which were shut down due to countless instances of extreme abuse and neglect.",
-     "new": "**Karr Farnsworth** was reported to have worked at Provo Canyon School with Robert Lichfield. The two worked together for many years, before Lichfield decided to create his own chain of behavior-modification programs called [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He later went on to work in various roles at WWASP, even serving as the organization's President. WWASP was a notoriously abusive organization which owned*many*behavior-modification programs which were shut down due to countless instances of extreme abuse and neglect.",
-     "note": "past tense; typo the owner asked to fix"
+     "new": "**Karr Farnsworth** was reported to have worked at Provo Canyon School with Robert Lichfield. The two worked together for many years, before Lichfield decided to create his own chain of behavior-modification programs called [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) . He later went on to work in various roles at WWASP, even serving as the organization's President. He was also the director and owner of [Cross Creek Programs](https://www.reddit.com/r/troubledteens/wiki/index/crosscreek) and a trustee of Browning Distance Learning Academy. WWASP was a notoriously abusive organization which owned*many*behavior-modification programs which were shut down due to countless instances of extreme abuse and neglect.",
+     "note": "past tense; typo the owner asked to fix; KOP record's Farnsworth roles folded in (one paragraph per person)"
     },
     {
      "id": "f16",
