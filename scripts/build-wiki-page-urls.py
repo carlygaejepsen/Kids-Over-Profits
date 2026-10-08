@@ -19,7 +19,11 @@ import os
 import re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HEAD = re.compile(r'^WIKI (\S+) title=(.+)$')
+# A title with two pages has no plain entry; where the owner has said which page is the program's own, it gets one.
+CHOSEN = {
+    'Laurel Ridge Treatment Center': 'https://www.reddit.com/r/troubledteens/wiki/index/laurelridge',   # BSlaurelridge = The Brown Schools era
+}
+HEAD =re.compile(r'^WIKI (\S+) title=(.+)$')
 ASOF = re.compile(r'^\[Wiki page as of (\d{4}-\d{2}-\d{2})\]')
 
 
@@ -43,6 +47,7 @@ def main():
         if d:
             dated[title + '|' + d.group(1)] = url
     titles = {t: next(iter(u)) for t, u in sorted(by_title.items()) if len(u) == 1}
+    titles = dict(sorted({**titles, **CHOSEN}.items()))
     out = {'titles': titles, 'dated': dict(sorted(dated.items()))}
     path = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'page-urls.json')
     with open(path, 'w', encoding='utf-8', newline='\n') as fh:

@@ -417,9 +417,14 @@ function kop_wiki_drafts_reddit_url(array $entry) {
     return (string) ($titles[trim((string) ($entry['program_name'] ?? ''))] ?? '');
 }
 
-/** Reddit's edit screen for a page address. */
+/**
+ * Reddit's edit screen for a page address: .../r/troubledteens/wiki/index/trailscarolina/ ->
+ * https://www.reddit.com/mod/troubledteens/wiki/edit/index/trailscarolina/ (the mod tools' editor;
+ * /r/troubledteens/wiki/edit/... does not open it).
+ */
 function kop_wiki_drafts_reddit_edit_url($url) {
-    return preg_match('#^(https://www\.reddit\.com/r/troubledteens/wiki/)(.+?)/?$#', (string) $url, $m) ? $m[1] . 'edit/' . $m[2] : '';
+    return preg_match('#^https://(?:www\.|old\.)?reddit\.com/r/troubledteens/wiki/(.+?)/?$#i', (string) $url, $m)
+        ? 'https://www.reddit.com/mod/troubledteens/wiki/edit/' . $m[1] . '/' : '';
 }
 
 function kop_wiki_drafts_view_url($id) {
