@@ -219,6 +219,101 @@ def year_of(s):
     return int(m.group(1)) if m else None
 
 
+NUMBER_WORDS = {w: i for i, w in enumerate(
+    'zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen '
+    'sixteen seventeen eighteen nineteen twenty'.split())}
+NUMBER_WORDS.update({'thirty': 30, 'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90,
+                     'hundred': 100})
+ORDINAL_WORDS = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4, 'fifth': 5, 'sixth': 6, 'seventh': 7, 'eighth': 8,
+                 'ninth': 9, 'tenth': 10, 'eleventh': 11, 'twelfth': 12, 'thirteenth': 13, 'fourteenth': 14,
+                 'fifteenth': 15, 'sixteenth': 16, 'seventeenth': 17, 'eighteenth': 18, 'nineteenth': 19,
+                 'twentieth': 20, 'thirtieth': 30, 'fortieth': 40, 'fiftieth': 50, 'sixtieth': 60, 'seventieth': 70,
+                 'eightieth': 80, 'ninetieth': 90, 'hundredth': 100}
+_NUM = (r'(\d{1,3}|(?:(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)[\s-])?(?:%s)|%s)'
+        % ('|'.join(sorted(set(NUMBER_WORDS) | set(ORDINAL_WORDS), key=len, reverse=True)),
+           '|'.join(('twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'))))
+# How old the program was when the newsletter wrote: "its 40th anniversary", "celebrating 40 years",
+# "a 62-year-old school", "opened nearly five years ago", "in business for over twelve years".
+# Each with what to take off: "in its third year" opened two years before, "completed its third year" three.
+AGE_PATTERNS = [(re.compile(p % _NUM, re.I), less) for p, less in (
+    (r'\b%s(?:st|nd|rd|th)?[\s-]+(?:year[\s-]+)?(?:anniversary|birthday)', 0),
+    # "a 62-year-old school", never "ages 11-18 years old" or "17 to 24 years old".
+    (r'(?<![\d][-‐‑–—])(?<![\d] - )(?<!to )(?<!ages )(?<!age )\b%s[\s-]+years?[\s-]+old\b', 0),
+    (r'\b(?:celebrat\w*|mark(?:s|ed|ing)?|complet\w*|pass(?:es|ed)?)\s+(?:of\s+)?(?:its|their|the|our)\s+'
+     r'%s(?:st|nd|rd|th)?\s+years?\b', 0),
+    (r'\b(?:enter(?:s|ed|ing)?|begin(?:s|ning)?|began|in)\s+(?:its|their|our)\s+%s(?:st|nd|rd|th)?\s+years?\b', 1),
+    (r'\bcelebrat\w*\s+(?:over\s+|nearly\s+|more than\s+|almost\s+|about\s+)?%s\+?\s+years?\b', 0),
+    (r'\bcelebrates\s+%s\b(?!\s+(?:months?|weeks?|days?)\b)', 0),
+    (r'\b(?:inception|founding|opening|beginning)\s+(?:over\s+|nearly\s+|more than\s+|almost\s+|about\s+|some\s+)?%s\+?\s+years?\s+ago\b', 0),
+    (r'\b(?:founded|opened|established|started|began|developed|created)\s+(?:over\s+|nearly\s+|more than\s+|almost\s+|about\s+|some\s+)?%s\+?\s+years?\s+ago\b', 0),
+    (r'\b(?:has been|have been|in business|in operation|in existence|open(?:ed)?|operating|serving)\s+(?:\w+\s+){0,2}?'
+     r'(?:for\s+)?(?:over\s+|nearly\s+|more than\s+|almost\s+|about\s+|the past\s+)?%s\+?\s+years?\b', 0),
+    (r'\b(?:open|old)\s+(?:only\s+|just\s+)?%s\s+years?\b', 0),
+    (r'\b(?:its|their|our)\s+%s\s+years?\s+of\b', 0),
+)]
+SAID_FOUNDED = {0, 6, 7}  # the anniversary, "since its inception N years ago", "founded N years ago"
+FOUNDED_IN = re.compile(r'\b(?:founded|opened|established|started|began|incorporated|since|dating (?:back )?to)\b'
+                        r'[^.;]{0,40}?\b(1[89]\d\d|20[0-2]\d)\b', re.I)
+ANNIVERSARY_WORDS = re.compile(r'\banniversar|\bbirthday\b|\bcelebrat\w*\s+(?:its|their)?\s*\w+\s+years?\b', re.I)
+
+
+def number_of(word):
+    w = word.lower().replace('-', ' ').split()
+    if len(w) == 1 and w[0].isdigit():
+        return int(w[0])
+    total = 0
+    for x in w:
+        n = NUMBER_WORDS.get(x, ORDINAL_WORDS.get(x))
+        if n is None:
+            return None
+        total += n
+    return total
+
+
+def ordinal(n):
+    return '%d%s' % (n, 'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
+
+
+def founding_year(it, ref_year):
+    """The year a program opened, from an item that dates it by its age.
+
+    Woodbury dates openings by anniversary ("celebrating 40 years" in a 2009
+    issue): the reader's date, or the only year in the text, is then the year
+    of the anniversary, not the opening. Returns (year, how) when the item gives
+    the age or a stated founding year, (None, 'unknown') when it speaks of an
+    anniversary it does not number, else (None, '').
+    """
+    quote = re.sub(r'\s+', ' ', it.get('quote') or '')
+    value = re.sub(r'\s+', ' ', it.get('value') or '')
+    for text in (quote, value):
+        # A year the text states ("Founded in 2008, John has over 25 years as...") beats any count.
+        m = FOUNDED_IN.search(text)
+        if m and int(m.group(1)) <= ref_year + 1:
+            return int(m.group(1)), 'stated'
+        found = []
+        for i, (pat, less) in enumerate(AGE_PATTERNS):
+            for m in pat.finditer(text):
+                n = number_of(m.group(1))
+                if n and n <= 150 and n > less:
+                    # "established almost five years ago" beats "an outgrowth of the 40 year old X" before it.
+                    found.append((0 if i in SAID_FOUNDED else 1, m.start(), n, less))
+                    break
+        if not found:
+            continue
+        _, _, n, less = min(found)
+        # The anniversary's own year when the text gives one near the issue ("2007 will see the
+        # 50th anniversary", "on September 10, 2008"), else the year the page was written.
+        ref = ref_year
+        for y in re.findall(r'\b(20[0-2]\d|19[5-9]\d)\b', text):
+            if ref_year - 1 <= int(y) <= ref_year + 2:
+                ref = int(y)
+                break
+        return ref - n + less, 'in its %s year in %d' % (ordinal(n), ref) if less else '%d year%s before %d' % (n, '' if n == 1 else 's', ref)
+    if ANNIVERSARY_WORDS.search(quote + ' ' + value):
+        return None, 'unknown'
+    return None, ''
+
+
 def years_label(ys):
     ys = sorted(set(y for y in ys if y))
     if not ys:
@@ -867,18 +962,32 @@ def main():
         ident = doc.get('identification') or {}
         det = doc.get('facilityDetails') or {}
         y = year_of(it.get('date', '')) or year_of(value)
+        how = ''
+        if field == 'opened':
+            # "Celebrating 40 years" in a 2009 issue opened in 1969, not 2009 (owner, 2026-10-08).
+            fy, how = founding_year(it, page_year(issues[it['issue']], it['page']))
+            if fy:
+                y = fy
+            elif how == 'unknown':
+                # An anniversary with no number: any year here is the anniversary's, not the opening's.
+                stats['opened_anniversary_unnumbered'] += 1
+                note(it, field, value)
+                continue
+            if how and how != 'stated':
+                stats['opened_from_age'] += 1
 
         if field == 'opened' and y:
             have = op_.get('startYear')
+            about = ' (%s)' % how if how and how != 'stated' else ''
             if have == y:
                 stats['already'] += 1
             elif have:
                 propose([it], 'history', 'add_list', 'notes',
                         'Opened: %d per %s (the record says %s)' % (y, cite_of(it), have),
-                        'Opened in %d (the record says %s)' % (y, have), 'opened-conflict|%d' % y,
+                        'Opened in %d%s (the record says %s)' % (y, about, have), 'opened-conflict|%d' % y,
                         conflict='The record has start year %s' % have)
             else:
-                propose([it], 'history', 'set_if_empty', 'operatingPeriod.startYear', y, 'Start year: %d' % y, 'start|%d' % y)
+                propose([it], 'history', 'set_if_empty', 'operatingPeriod.startYear', y, 'Start year: %d%s' % (y, about), 'start|%d' % y)
             continue
         if field == 'closed':
             if (rec and rec['status'] == 'Closed' and (op_.get('endYear') or not y)):
