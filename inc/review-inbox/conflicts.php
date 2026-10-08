@@ -21,6 +21,12 @@
  * ticked row, and one choice settles every ticked row through the same
  * 'resolve' (Edit writes the typed value through the first and keeps the
  * record for the rest). Its Undo takes back every row it settled.
+ *
+ * An item about a program with no record (or a record merged away) can also
+ * go elsewhere: the queue's own "Create the record and add this" (a program,
+ * parent company, consultant, provider or transporter) and "Add to another
+ * record" stay on its card, and a roll-up offers both for all ticked rows
+ * (the queue's 'create_many'; Undo puts the rows back, the record stays).
  */
 
 if (!defined('ABSPATH')) {
@@ -158,9 +164,38 @@ function kop_rinbox_conflicts_item($key, $c) {
             'help' => 'When neither side is right: type the value to write to ' . $on . ' (a range as "12 to 18", a year, a role). Undo puts the old value back.',
             'params' => array(array('name' => 'value', 'label' => 'The right value', 'type' => 'text', 'value' => (string) ($c['item'] ?? ''))));
     }
-    $it['actions'] = $actions;
+    $it['actions'] = array_merge($actions, kop_rinbox_conflicts_elsewhere($it, (int) ($c['facility_id'] ?? 0)));
     $it['selected'] = false;
     return $it;
+}
+
+/**
+ * The queue's own ways to put an item somewhere else, kept on a conflict card:
+ * create a record for it, add it to another record (picked in the finder),
+ * the build's other close names, a young adult program.
+ */
+function kop_rinbox_conflicts_elsewhere(array $it, $fid) {
+    $out = array();
+    foreach ((array) ($it['actions'] ?? array()) as $a) {
+        $id = (string) ($a['id'] ?? '');
+        if (!in_array($id, array('create', 'apply', 'ya_create', 'ya_apply', 'ya_file'), true) && strpos($id, 'apply_to_') !== 0) continue;
+        if ($id === 'apply') {
+            $a['label'] = 'Add to another record';
+            $a['help'] = 'Adds this item to the record you pick instead (the one it names may be the wrong program, or merged away), citing its source.';
+            foreach ($a['params'] as $i => $prm) {
+                if (($prm['type'] ?? '') === 'facility') $a['params'][$i]['value'] = '';
+            }
+            $a['ask'] = true;
+            $a['submit'] = 'Add it there';
+        }
+        if ($id === 'create') {
+            $a['ask'] = true;
+            $a['submit'] = 'Create and add';
+        }
+        $a['style'] = 'neutral';
+        $out[] = $a;
+    }
+    return $out;
 }
 
 function kop_rinbox_conflicts_act($key, $action, array $params) {
@@ -287,6 +322,8 @@ function kop_rinbox_conflicts_group_item($key, array $members) {
             'params' => array(array('name' => 'value', 'label' => 'The right value', 'type' => 'text', 'value' => (string) ($first['item'] ?? ''))));
     }
 
+    $actions = array_merge($actions, kop_rinbox_conflicts_group_elsewhere($src, (string) array_keys($members)[0], $on));
+
     return array(
         'key'            => (string) $key,
         'title'          => ($program !== '' ? $program . ': ' : '') . $kind,
@@ -333,10 +370,6 @@ function kop_rinbox_conflicts_group_act($queue, $gid, $action, array $params) {
         if (!$ok && $bad) throw new RuntimeException('Could not undo: ' . $why);
         return array('message' => 'Undone: ' . $ok . ' item' . ($ok === 1 ? '' : 's') . ' waiting again' . ($bad ? '; ' . $bad . ' could not be taken back (' . $why . ')' : '') . '.');
     }
-    $hows = array('resolve_use' => 'use', 'resolve_keep' => 'keep', 'resolve_edit' => 'edit');
-    if (!isset($hows[$action])) throw new RuntimeException('Unknown action.');
-    if (empty($src['resolve'])) throw new RuntimeException('That queue cannot settle conflicts.');
-    $how = $hows[$action];
     $members = kop_rinbox_conflicts_group_members($queue, $gid);
     if (!$members) throw new RuntimeException('Nothing waits on this card any more. Reload the list.');
     $picked = array();
@@ -345,6 +378,42 @@ function kop_rinbox_conflicts_group_act($queue, $gid, $action, array $params) {
     }
     $picked = array_values(array_unique($picked));
     if (!$picked) throw new RuntimeException('Tick at least one item first.');
+    $undo_all = function (array $done) { return array('action' => 'undo_group', 'params' => array('keys' => array_values($done))); };
+
+    if ($action === 'create_ticked') {
+        if (empty($src['create_many'])) throw new RuntimeException('That queue cannot create records.');
+        $made = call_user_func($src['create_many'], $picked, $params);
+        $clear();
+        $out = array('message' => (string) $made['message']);
+        if (!empty($made['done'])) $out['undo'] = $undo_all($made['done']);
+        return $out;
+    }
+    if ($action === 'apply_ticked') {
+        $fid = (int) ($params['facility'] ?? 0);
+        if ($fid <= 0) throw new RuntimeException('Pick the record first (the Record box beside the button).');
+        $done = array();
+        $bad = 0;
+        $why = '';
+        foreach ($picked as $k) {
+            try {
+                call_user_func($src['act'], $k, 'apply', array('facility' => $fid));
+                $done[] = $k;
+            } catch (Throwable $e) {
+                $bad++;
+                $why = $why ?: $e->getMessage();
+            }
+        }
+        $clear();
+        if (!$done) throw new RuntimeException('None could be added: ' . $why);
+        return array('message' => 'Added ' . count($done) . ' item' . (count($done) === 1 ? '' : 's') . ' to ' . kop_rinbox_facility($fid)['name']
+            . ($bad ? '; ' . $bad . ' could not be (' . $why . ')' : '') . '. Undo in Recently done takes ' . (count($done) === 1 ? 'it' : 'them all') . ' back.',
+            'undo' => $undo_all($done));
+    }
+
+    $hows = array('resolve_use' => 'use', 'resolve_keep' => 'keep', 'resolve_edit' => 'edit');
+    if (!isset($hows[$action])) throw new RuntimeException('Unknown action.');
+    if (empty($src['resolve'])) throw new RuntimeException('That queue cannot settle conflicts.');
+    $how = $hows[$action];
 
     $what = (string) (reset($members)['what'] ?? 'other');
     if ($how === 'use' && in_array($what, kop_rinbox_conflicts_single_kinds(), true)) {
@@ -377,6 +446,31 @@ function kop_rinbox_conflicts_group_act($queue, $gid, $action, array $params) {
         'edit' => 'Wrote the typed value' . ($n > 1 ? '; the other ' . ($n - 1) . ' filed as rejected' : ''));
     return array(
         'message' => $words[$how] . ($bad ? '; ' . $bad . ' could not be (' . $why . ')' : '') . '. Undo in Recently done takes ' . ($n === 1 ? 'it' : 'them all') . ' back.',
-        'undo'    => array('action' => 'undo_group', 'params' => array('keys' => $done)),
+        'undo'    => $undo_all($done),
     );
+}
+
+/**
+ * A roll-up's "Create the record and add ticked" and "Add ticked to another
+ * record", built from the first row's own create and add actions (its name and
+ * place start the form). Only queues that can create for several items at once.
+ */
+function kop_rinbox_conflicts_group_elsewhere(array $src, $first_key, $on) {
+    $it = call_user_func($src['get'], $first_key);
+    $out = array();
+    foreach ((array) ($it['actions'] ?? array()) as $a) {
+        if (($a['id'] ?? '') === 'create' && !empty($src['create_many'])) {
+            $out[] = array('id' => 'create_ticked', 'label' => 'Create a record for ticked', 'style' => 'neutral', 'ask' => true, 'submit' => 'Create and add',
+                'confirm' => 'Create a new record with this name and add every ticked item to it?',
+                'help' => 'When ' . $on . ' is not the right record, or there is none: makes a new record (a program, parent company, consultant, provider or transporter) '
+                    . 'with the name and place below and adds every ticked item to it. Undo in Recently done puts the items back; the record stays.',
+                'params' => (array) ($a['params'] ?? array()));
+        }
+        if (($a['id'] ?? '') === 'apply') {
+            $out[] = array('id' => 'apply_ticked', 'label' => 'Add ticked to another record', 'style' => 'neutral', 'ask' => true, 'submit' => 'Add them there',
+                'help' => 'Adds every ticked item to the record you pick instead of ' . $on . ', citing each one\'s source. Undo in Recently done takes them all back.',
+                'params' => array(array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => '')));
+        }
+    }
+    return $out;
 }

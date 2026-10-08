@@ -745,6 +745,8 @@ function kop_wbf_apply(array $rows, $fid, $reviewer) {
             try {
                 $trial = $doc;
                 $done = kop_wbf_doc_apply($trial, $r);
+                // Added to another record than the one it named: Undo puts it back under that one.
+                if (is_array($done) && (int) $r['facility_id'] !== $fid) $done['from_fid'] = (int) $r['facility_id'];
                 $doc = $trial;
                 $applied[$r['pkey']] = $done;
                 $results[$r['pkey']] = array('ok' => true);
@@ -994,6 +996,8 @@ function kop_wbf_create_kinds() {
         'facility'   => 'Program (TTI facility)',
         'consultant' => 'Educational consultant: a firm',
         'person'     => 'Educational consultant: one person',
+        'company'    => 'Parent company (operator)',
+        'transporter' => 'Transporter (youth transport)',
         'provider'   => 'Mental health provider',
     );
 }
@@ -1035,7 +1039,8 @@ function kop_wbf_filed_on(array $r) {
     if (!is_array($done) || empty($done['filed'])) {
         return '';
     }
-    $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider', 'young_adult' => 'young adult program');
+    $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider', 'young_adult' => 'young adult program',
+        'company' => 'parent company', 'transporter' => 'transporter');
     return 'the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
 }
 
@@ -1081,8 +1086,11 @@ function kop_wbf_undo(array $rows, $reviewer) {
             }
             kop_wbf_save($doc, $opts);
             foreach ($list as $r) {
-                $wpdb->update(kop_wbf_table(), array('status' => 'pending', 'applied' => null, 'applied_fid' => 0,
-                    'reviewed_by' => $reviewer, 'reviewed_at' => current_time('mysql', true)), array('pkey' => $r['pkey']));
+                $done = json_decode((string) $r['applied'], true);
+                $back = array('status' => 'pending', 'applied' => null, 'applied_fid' => 0,
+                    'reviewed_by' => $reviewer, 'reviewed_at' => current_time('mysql', true));
+                if (is_array($done) && isset($done['from_fid'])) $back['facility_id'] = (int) $done['from_fid'];
+                $wpdb->update(kop_wbf_table(), $back, array('pkey' => $r['pkey']));
             }
         });
         do_action('kop_facility_status_changed', $fid);

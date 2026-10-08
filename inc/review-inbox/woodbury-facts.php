@@ -58,6 +58,12 @@ kop_rinbox_register('woodbury-facts', function () {
         'resolve'  => function ($key, $how, $typed) {
             return kop_wbf_resolve(kop_rinbox_wbf_row($key), $how, $typed, kop_rinbox_reviewer());
         },
+        // One new record for several waiting items (the Conflicts section's roll-up cards).
+        'create_many' => function (array $keys, array $params) {
+            $rows = array_values(array_filter(kop_wbf_rows($keys), function ($r) { return $r['status'] === 'pending'; }));
+            if (!$rows) throw new RuntimeException('Those items were already handled. Reload the list.');
+            return kop_rinbox_wbf_create_for($rows, $params);
+        },
         'on_file_in_list' => true,
         'get'      => function ($key) {
             $rows = kop_wbf_rows(array($key));
@@ -377,28 +383,8 @@ function kop_rinbox_wbf_act($key, $action, array $params) {
                 'Added to ' . kop_rinbox_wbf_name($fid) . ' (' . kop_wbf_where_it_goes($r) . '), citing ' . (kop_wbf_ev_label(kop_wbf_evidence($r)[0] ?? array('label' => 'Woodbury Reports', 'page' => 0))) . '. Undo is on the Added tab.');
         case 'create':
             $waiting();
-            $kind = sanitize_key((string) ($params['kind'] ?? 'facility')) ?: 'facility';
-            $kinds = kop_wbf_create_kinds();
-            if (!isset($kinds[$kind])) throw new RuntimeException('Choose what kind of record to create.');
-            $f = array('name' => $p('name'), 'city' => $p('city'), 'country' => $p('country'));
-            if ($f['name'] === '') throw new RuntimeException('A name is needed.');
-            if ($kind !== 'facility') {
-                $f['state'] = $p('state');
-                $filed = kop_wbf_file_items(array($r), $kind, $f, $user);
-                $t = $filed['target'];
-                return array('message' => 'Created the ' . strtolower($kinds[$kind]) . ' record "' . $t['name'] . '" (#' . (int) $t['id'] . ') with this item in its notes. Undo puts the item back; the record stays.');
-            }
-            if (!function_exists('kop_wbc_create_facility')) throw new RuntimeException('Record creation is not available.');
-            $raw_state = $p('state');
-            $f['state'] = $raw_state !== '' ? (string) kop_facility_state_code($raw_state) : '';
-            if ($raw_state !== '' && $f['state'] === '') {
-                throw new RuntimeException('"' . $raw_state . '" is not a US state. Leave it empty and give the country instead.');
-            }
-            $f['type'] = $p('type');
-            $f['force'] = !empty($params['force']) && $params['force'] !== '0';
-            $target = kop_wbc_create_facility(kop_wbf_create_source(kop_wbf_evidence($r)), $f, kop_closure_pdo());
-            $fid = (int) $target['id'];
-            return $result(kop_wbf_apply(array($r), $fid, $user), 'Created ' . kop_rinbox_wbf_name($fid) . ' and added this item to it. Undo is on the Added tab.');
+            $made = kop_rinbox_wbf_create_for(array($r), $params);
+            return $result($made['results'], $made['message']);
         case 'consultant':
             $waiting();
             if ($r['grp'] !== 'consultant') throw new RuntimeException('Not an educational consultant item.');
@@ -605,4 +591,50 @@ function kop_rinbox_wbf_conflicts() {
         }
         return $out;
     });
+}
+
+/**
+ * "Create the record and add this" for one or more waiting items: the record
+ * from the name and place in $params (kind facility, company, consultant firm
+ * or person, provider, transporter), then every item added to it. A program
+ * takes the items as record data (one that disagrees with another just added
+ * keeps waiting, marked); the other kinds take them as notes.
+ * Returns {message, results: [pkey => {ok, error?}], done: [pkeys added]}.
+ */
+function kop_rinbox_wbf_create_for(array $rows, array $params) {
+    $user = kop_rinbox_reviewer();
+    $p = function ($k) use ($params) { return trim(preg_replace('/\s+/u', ' ', sanitize_text_field((string) ($params[$k] ?? '')))); };
+    $kind = sanitize_key((string) ($params['kind'] ?? 'facility')) ?: 'facility';
+    $kinds = kop_wbf_create_kinds();
+    if (!isset($kinds[$kind])) throw new RuntimeException('Choose what kind of record to create.');
+    $f = array('name' => $p('name'), 'city' => $p('city'), 'country' => $p('country'));
+    if ($f['name'] === '') throw new RuntimeException('A name is needed.');
+    $n = count($rows);
+    $these = $n === 1 ? 'this item' : 'the ' . $n . ' items';
+    if ($kind !== 'facility') {
+        $f['state'] = $p('state');
+        $filed = kop_wbf_file_items($rows, $kind, $f, $user);
+        $t = $filed['target'];
+        return array('results' => $filed['results'], 'done' => array_keys($filed['results']),
+            'message' => 'Created the ' . strtolower($kinds[$kind]) . ' record "' . $t['name'] . '" (#' . (int) $t['id'] . ') with ' . $these . ' in its notes. Undo puts '
+                . ($n === 1 ? 'the item' : 'them') . ' back; the record stays.');
+    }
+    if (!function_exists('kop_wbc_create_facility')) throw new RuntimeException('Record creation is not available.');
+    $raw_state = $p('state');
+    $f['state'] = $raw_state !== '' ? (string) kop_facility_state_code($raw_state) : '';
+    if ($raw_state !== '' && $f['state'] === '') {
+        throw new RuntimeException('"' . $raw_state . '" is not a US state. Leave it empty and give the country instead.');
+    }
+    $f['type'] = $p('type');
+    $f['force'] = !empty($params['force']) && $params['force'] !== '0';
+    $target = kop_wbc_create_facility(kop_wbf_create_source(kop_wbf_evidence($rows[0])), $f, kop_closure_pdo());
+    $fid = (int) $target['id'];
+    $results = kop_wbf_apply($rows, $fid, $user);
+    $done = array_keys(array_filter($results, function ($x) { return !empty($x['ok']); }));
+    $left = array_filter($results, function ($x) { return !empty($x['conflict']); });
+    $already = array_filter($results, function ($x) { return !empty($x['already']); });
+    $msg = 'Created ' . kop_rinbox_wbf_name($fid) . ' and added ' . ($n === 1 ? 'this item' : count($done) . ' of the ' . $n . ' items') . ' to it'
+        . ($left ? '; ' . count($left) . ' disagree' . (count($left) === 1 ? 's' : '') . ' with what was just added and still wait' . (count($left) === 1 ? 's' : '') . ' under Conflicts' : '')
+        . ($already && $n > 1 ? '; ' . count($already) . ' said the same thing and went to Rejected' : '') . '. Undo is on the Added tab.';
+    return array('results' => $results, 'done' => array_map('strval', $done), 'message' => $msg);
 }

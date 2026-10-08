@@ -17,7 +17,7 @@ function kop_rinbox_test_conflicts(array $src, array $item, callable $check) {
         if (count($members) === 1) { $item = kop_rinbox_get_item('conflicts', $ukey); break; }
     }
     $check('conflicts: a card shows the conflict, both sides and the three choices, never ticked', $item['conflict'] !== '' && $item['selected'] === false
-        && array_column($item['actions'], 'id') === (empty(($all[$item['key']] ?? array())['editable']) ? array('resolve_use', 'resolve_keep') : array('resolve_use', 'resolve_keep', 'resolve_edit')),
+        && array_slice(array_column($item['actions'], 'id'), 0, empty(($all[$item['key']] ?? array())['editable']) ? 2 : 3) === (empty(($all[$item['key']] ?? array())['editable']) ? array('resolve_use', 'resolve_keep') : array('resolve_use', 'resolve_keep', 'resolve_edit')),
         json_encode(array('conflict' => $item['conflict'], 'actions' => array_column($item['actions'], 'id'), 'compare' => $item['compare'])));
 
     // They are not in Woodbury's own waiting list or count.
@@ -69,6 +69,7 @@ function kop_rinbox_test_conflicts(array $src, array $item, callable $check) {
         && kop_wbf_parse_value(array('op' => 'set_if_empty', 'value' => '40'), '45') === 45);
 
     kop_rinbox_test_conflicts_rollup($check);
+    kop_rinbox_test_conflicts_elsewhere($check);
 
     // The kind filter.
     $staff = kop_rinbox_conflicts_all(array('filters' => array('what' => 'staff')));
@@ -143,4 +144,74 @@ function kop_rinbox_test_conflicts_rollup(callable $check) {
         kop_rinbox_conflicts_act($single, $res['undo']['action'], $res['undo']['params']);
         $check('conflicts: ...and Undo puts them all back', $status($skeys) === array('pending' => count($skeys)));
     }
+}
+
+/** Create a record, or add to another one, from a conflict card and from a roll-up, with Undo. */
+function kop_rinbox_test_conflicts_elsewhere(callable $check) {
+    $units = kop_rinbox_conflicts_units(array());
+    $single = $group = null;
+    foreach ($units as $ukey => $members) {
+        if (strpos($ukey, 'woodbury-facts|') !== 0) continue;
+        if (count($members) === 1 && !$single) $single = $ukey;
+        if (count($members) > 1 && !$group && (int) reset($members)['facility_id'] > 0) $group = $ukey;
+    }
+    $ids = function ($it) { return array_column($it['actions'], 'id'); };
+    $card = kop_rinbox_get_item('conflicts', $single);
+    $check('conflicts: a card keeps the queue\'s Create the record and Add to another record', in_array('create', $ids($card), true) && in_array('apply', $ids($card), true),
+        implode(', ', $ids($card)));
+    $kinds = array_column(array_column($card['actions'], 'params', 'id')['create'] ?? array(), 'options', 'name')['kind'] ?? array();
+    $check('conflicts: Create offers a parent company and a transporter too', isset($kinds['company'], $kinds['transporter']), implode(', ', array_keys((array) $kinds)));
+    $gcard = kop_rinbox_get_item('conflicts', $group);
+    $check('conflicts: a roll-up offers Create a record for ticked and Add ticked to another record',
+        in_array('create_ticked', $ids($gcard), true) && in_array('apply_ticked', $ids($gcard), true), implode(', ', $ids($gcard)));
+
+    // Add the ticked rows to another record, then Undo.
+    $gid = explode('|', $group, 2)[1];
+    $keys = array_map('strval', array_keys(kop_rinbox_conflicts_group_members('woodbury-facts', $gid)));
+    $other = (int) $GLOBALS['pdo']->query('SELECT id FROM facilities_v2 WHERE id <> ' . (int) reset($units[$group])['facility_id'] . ' ORDER BY id LIMIT 1')->fetchColumn();
+    $status = function () use ($keys) { return array_count_values(array_column(kop_wbf_rows($keys), 'status')); };
+    $where = function () use ($keys) { return array_unique(array_map('intval', array_column(kop_wbf_rows($keys), 'facility_id'))); };
+    try {
+        $res = kop_rinbox_conflicts_act($group, 'apply_ticked', array('picked' => $keys, 'facility' => $other));
+        $moved = array_diff_key($status(), array('pending' => 1));
+        $check('conflicts: Add ticked to another record adds them there (or marks them in conflict there)', $moved || in_array($other, $where(), true), $res['message']);
+        if (!empty($res['undo'])) kop_rinbox_conflicts_act($group, $res['undo']['action'], $res['undo']['params']);
+        $check('conflicts: ...and Undo puts every row back waiting, on the record it named', $status() === array('pending' => count($keys)) && $where() === array((int) reset($units[$group])['facility_id']),
+            json_encode(array($status(), $where())));
+    } catch (Throwable $e) {
+        $check('conflicts: Add ticked to another record', false, get_class($e) . ': ' . $e->getMessage());
+    }
+
+    // Create a record for the ticked rows. Both creates write with MySQL-only SQL (ON DUPLICATE KEY, INSERT IGNORE), so
+    // only the record is made up here, as scripts/test-woodbury-facts.php does: the queue's create_many files every
+    // ticked row on it (kop_wbf_file_items with kop_wbc_create swapped for a stand-in) and Undo puts them back.
+    $made = array();
+    $builders = &$GLOBALS['kop_rinbox_builders'];
+    $real = $builders['woodbury-facts'];
+    $builders['woodbury-facts'] = function () use ($real, &$made) {
+        $src = call_user_func($real);
+        $src['create_many'] = function (array $ks, array $params) use (&$made) {
+            global $wpdb;
+            $rows = array_values(array_filter(kop_wbf_rows($ks), function ($r) { return $r['status'] === 'pending'; }));
+            $made[] = $params;
+            foreach ($rows as $r) {
+                $wpdb->update(kop_wbf_table(), array('status' => 'applied', 'applied_fid' => 0, 'reviewed_by' => 'inbox-test', 'reviewed_at' => gmdate('Y-m-d H:i:s'),
+                    'applied' => json_encode(array('filed' => 'company', 'who' => 'firm', 'id' => 990001, 'name' => $params['name']))), array('pkey' => $r['pkey']));
+            }
+            return array('message' => 'Created.', 'done' => array_column($rows, 'pkey'));
+        };
+        return $src;
+    };
+    kop_rinbox_sources(true);
+    try {
+        $res = kop_rinbox_conflicts_act($group, 'create_ticked', array('picked' => $keys, 'kind' => 'company', 'name' => 'Inbox Test Holdings', 'city' => '', 'state' => 'UT', 'country' => ''));
+        $check('conflicts: Create a record for ticked hands every ticked row and the form to the queue, once', count($made) === 1 && $made[0]['kind'] === 'company'
+            && $status() === array('applied' => count($keys)), $res['message']);
+        kop_rinbox_conflicts_act($group, $res['undo']['action'], $res['undo']['params']);
+        $check('conflicts: ...and Undo puts the rows back waiting (the record stays)', $status() === array('pending' => count($keys)), json_encode($status()));
+    } catch (Throwable $e) {
+        $check('conflicts: Create a record for ticked', false, get_class($e) . ': ' . $e->getMessage());
+    }
+    $builders['woodbury-facts'] = $real;
+    kop_rinbox_sources(true);
 }
