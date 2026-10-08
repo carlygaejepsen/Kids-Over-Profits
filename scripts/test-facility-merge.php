@@ -96,7 +96,7 @@ $find = function ($name) use ($names) { return array_keys($names, $name, true); 
 foreach (array(
     array('Rosewood Youth Academy', 'CSI – Rosewood Youth Academy', true),
     array('Highlands Youth Academy', 'Highland Youth Academy', true),
-    array('Piney Ridge Treatment Center', 'Piney Ridge Center', true),
+    array('Piney Ridge Treatment Center', 'Piney Ridge Center', false), // Fayetteville, AR and Waynesville, MO: two programs
     array('Copper Canyon Academy', 'Sedona Sky Academy', false),      // a renamed program
     array('Forward In Life', 'Forward In Life II', false),              // two homes
     array('RMBHS – Opal House', 'RMBHS – Plata House', false),          // sibling houses
