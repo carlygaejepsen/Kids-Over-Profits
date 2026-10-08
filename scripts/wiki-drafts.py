@@ -615,7 +615,8 @@ def run(ids, write):
         ops = templated(base, ops, entry_name(json.load(open(gaps_path, encoding='utf-8'))) if os.path.exists(gaps_path) else '')
         draft, applied, errors = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
-        kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
+        # Lines standing on KOP's own record, or citing a source named in words with no link, need no link.
+        kop_lines = frozenset(l.strip() for o in ops if (o.get('kop_record') or o.get('text_cited')) and o.get('verdict') != 'dropped'
                               for l in (o.get('text') or '').split('\n') if l.strip())
         kop_page_lines = frozenset((o.get('text') or '').strip() for o in ops if o.get('kop_page') and o.get('verdict') != 'dropped')
         problems, added = check(base, draft, header, kop_lines, kop_page_lines)

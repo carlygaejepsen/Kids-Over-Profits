@@ -92,7 +92,47 @@ def cite(g):
             label = re.sub(r'\s*\(archived [^)]*\)', '', label)   # the capture date it named is not the one linked now
         return f' ([{label}]({url}))'
     ct = (g.get('detail') or {}).get('cite_text')
+    link = cite_link(ct) if ct else ''
+    if link:
+        return f' ([source]({link}))'
     return f' ({ct})' if ct else ''
+
+
+MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+_LIB = None
+
+
+def cite_link(ct):
+    """The link for a citation the record holds only as words: a Woodbury Reports issue page -> our copy of the issue
+    in the media library (#page=N); a HEAL page -> HEAL's archived copy (tmp/heal/issues.json, through fix_url); an
+    r/troubledteens wiki page title -> that page. '' when none is known."""
+    global _LIB
+    if _LIB is None:
+        _LIB = {'wb': {}, 'heal': {}}
+        try:
+            import sqlite3
+            con = sqlite3.connect(os.path.join(ROOT, 'tmp', 'prod.sqlite'))
+            for (g,) in con.execute("SELECT guid FROM wpdl_posts WHERE post_type='attachment' AND guid LIKE '%woodbury-%.pdf'"):
+                _LIB['wb'][os.path.basename(g).lower()] = re.sub(r'kidsoverprofits\.org/staging/', 'kidsoverprofits.org/', g)
+        except Exception:
+            pass
+        p = os.path.join(ROOT, 'tmp', 'heal', 'issues.json')
+        if os.path.exists(p):
+            for it in json.load(open(p, encoding='utf-8')):
+                if isinstance(it, dict) and it.get('label') and it.get('url'):
+                    _LIB['heal'][it['label'].lower()] = it['url']
+    m = re.match(r'Woodbury Reports, (\w+) (\d{4})[^,]*, p\. ?(\d+)', ct)
+    if m and m.group(1).lower() in MONTHS:
+        u = _LIB['wb'].get(f'woodbury-{MONTHS.index(m.group(1).lower()) + 1:02d}{m.group(2)[2:]}.pdf')
+        return f'{u}#page={m.group(3)}' if u else ''
+    m = re.match(r'HEAL, (.+?)\s*(?:\(archived [^)]*\))?$', ct)
+    if m:
+        u = _LIB['heal'].get(m.group(1).strip().lower())
+        return fix_url(u) if u else ''
+    m = re.search(r'troubledteens wiki, page "([^"]+)"', ct)
+    if m:
+        return TITLES.get(m.group(1), '')
+    return ''
 
 
 def mdy(d):
@@ -250,8 +290,14 @@ def incident_line(g):
     when = (d.get('when') or '').strip()
     year = re.search(r'\d{4}', when)
     if when and not (year and year.group(0) in what) and when.lower() not in what.lower():
-        what = f'{re.sub(r"^Reported ", "Reported in ", when) if when.lower().startswith("reported") else "In " + when}, ' + what[:1].lower() + what[1:] \
-            if what[:2] != 'I ' else f'In {when}: {what}'
+        lead = re.sub(r'^Reported ', 'Reported in ', when) if when.lower().startswith('reported') \
+            else ('On ' if re.search(r'\b\d{1,2},? \d{4}$', when) else 'In ') + when
+        first = what.split(' ', 1)[0]
+        # Lower-case only a common opening word ("A survivor", "Staff"), never a name ("Louis", "Mother Jones").
+        if first.lower() in ('a', 'an', 'the', 'survivors', 'survivor', 'staff', 'residents', 'students', 'boys', 'girls',
+                             'parents', 'former', 'two', 'three', 'several', 'one', 'another', 'his', 'her', 'their'):
+            what = what[:1].lower() + what[1:]
+        what = f'{lead}, {what}'
     return with_cite(what, g)
 
 
@@ -302,7 +348,33 @@ def add_new(ids):
         gaps_obj = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
         ops_obj = json.load(open(os.path.join(folder, 'ops.json'), encoding='utf-8'))
         have = {key(g) for g in gaps_obj['gaps']}
-        fresh = [g for g in prep.trimmed(json.load(open(gpath, encoding='utf-8'))['gaps']) if key(g) not in have and not g.get('conflict')]
+        current = prep.trimmed(json.load(open(gpath, encoding='utf-8'))['gaps'])
+        fresh = [g for g in current if key(g) not in have and not g.get('conflict')]
+        # A script incident whose gap the record no longer gives (read from this entry's own wiki page: the entry's own
+        # content) is taken out; one whose source changed (another wiki page, now linked) is written again.
+        now = {key(g): g for g in current}
+        by_gid = {g['gid']: g for g in gaps_obj['gaps']}
+        changed = False
+        for o in ops_obj['ops']:
+            gs = [by_gid.get(x) for x in o.get('gids', [])]
+            if o.get('by') != 'script' or o.get('verdict') == 'dropped' or not gs or not all(g and g['kind'] == 'incident' for g in gs):
+                continue
+            if all(key(g) not in now for g in gs):
+                o['verdict'] = 'dropped'
+                o['note'] = "Read from this entry's own wiki page: already the entry's content, not added back."
+                changed = True
+            elif len(gs) == 1 and now[key(gs[0])].get('source_url') != gs[0].get('source_url'):
+                g = dict(gs[0], source_url=now[key(gs[0])]['source_url'], source_label=now[key(gs[0])]['source_label'],
+                         kop_source=now[key(gs[0])].get('kop_source'), detail=now[key(gs[0])].get('detail'))
+                by_gid[g['gid']].update(g)
+                o['text'] = incident_line(g)
+                o.pop('kop_record', None)
+                o.pop('text_cited', None)
+                if not cite(g):
+                    o['kop_record'] = True
+                elif not g.get('source_url'):
+                    o['text_cited'] = True   # a source named in words, no link (HEAL, Mother Jones, 2007)
+                changed = True
         # A gap already in the draft whose ops were all dropped, or that no op ever wrote, is written now too, unless it
         # was dropped as already on the page, the same person twice, or a case/death KOP's own records place at another
         # program; a placeholder operator ("RELOCATED") is not a company.
@@ -312,7 +384,7 @@ def add_new(ids):
         keep_out = re.compile(r'already (on the page|describes)|excerpt already|same person|different program|not olympus|'
                               r'over the wwasp|this entry is the|doubtful kop data', re.I)
         for g in gaps_obj['gaps']:
-            if g.get('conflict') or g['gid'] in live:
+            if g.get('conflict') or g['gid'] in live or key(g) not in now:   # only what the record still gives
                 continue
             if g['kind'] == 'news' and g.get('source_url') and g['source_url'] in drafted:
                 continue
@@ -323,7 +395,12 @@ def add_new(ids):
                 continue
             fresh.append(dict(g, _orphan=True))
         if not fresh:
-            print(f'{i}: nothing new')
+            if changed:
+                json.dump(gaps_obj, open(os.path.join(folder, 'gaps.json'), 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, indent=1)
+                json.dump(ops_obj, open(os.path.join(folder, 'ops.json'), 'w', encoding='utf-8', newline='\n'), ensure_ascii=False, indent=1)
+                print(f'{i}: incidents from its own wiki page taken out / re-cited')
+            else:
+                print(f'{i}: nothing new')
             continue
         top = max([int(g['gid'][1:]) for g in gaps_obj['gaps'] if re.fullmatch(r'g\d+', g.get('gid', ''))] + [0])
         k = 0
@@ -353,6 +430,8 @@ def add_new(ids):
             # stands on KOP's own record.
             if all(g.get('kop_source') or not cite(g) for g in gs):
                 o['kop_record'] = True
+            elif all(not g.get('source_url') for g in gs):
+                o['text_cited'] = True   # a source named in words, no link
             o.update(kw)
             new_ops.append(o)
 

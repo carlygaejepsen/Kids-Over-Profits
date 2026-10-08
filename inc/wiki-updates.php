@@ -745,14 +745,26 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
 
     // The record's own incidents, cited or not: one with no source of its own is KOP's record and cites the KOP page
     // (owner, 2026-10-08: KOP is a primary source). One whose link or wording the entry already has is skipped.
+    // An incident read from an r/troubledteens wiki page cites that page: when it is this entry's own page, the
+    // incident is the entry's own text summarised and is never added back (Ashcreek Ranch, 2026-10-08); another
+    // wiki page is linked. A written citation with no link stays as text; only an incident with no source at all
+    // stands on KOP's record.
     foreach ((array) ($page['incidents'] ?? array()) as $i) {
         $url = (string) ($i['url'] ?? '');
         $text = trim((string) ($i['text'] ?? ''));
+        $cite = trim((string) ($i['cite'] ?? ''));
         if ($text === '' || ($url !== '' && $has_url($url)) || !$in_era($i['year'] ?? '')) continue;
         if (mb_strlen($text) > 30 && kop_wiki_upd_mentions($words, $text)) continue;
-        $add('incident', trim((string) ($i['when'] ?? '') . ': ' . $text, ': '), $url !== '' ? $url : $kop_page,
-            $url !== '' ? ((string) ($i['cite'] ?? '') ?: (string) ($i['source'] ?? '')) : 'KOP facility page', (string) ($i['year'] ?? ''),
-            array('kind' => (string) ($i['kind'] ?? ''), 'when' => (string) ($i['when'] ?? ''), 'what' => $text));
+        $wiki = kop_wiki_upd_cited_wiki_page($cite . ' ' . (string) ($i['source'] ?? ''), $url);
+        if ($wiki !== null && kop_wiki_upd_is_entry_page($entry, $wiki)) continue;
+        $detail = array('kind' => (string) ($i['kind'] ?? ''), 'when' => (string) ($i['when'] ?? ''), 'what' => $text);
+        if ($url === '' && $wiki !== null && $wiki['url'] !== '') {
+            $url = $wiki['url'];
+        } elseif ($url === '' && $cite !== '') {
+            $detail['cite_text'] = $cite;
+        }
+        $add('incident', trim((string) ($i['when'] ?? '') . ': ' . $text, ': '), $url !== '' ? $url : ($cite !== '' ? '' : $kop_page),
+            $url !== '' ? ($cite ?: (string) ($i['source'] ?? '')) : ($cite !== '' ? $cite : 'KOP facility page'), (string) ($i['year'] ?? ''), $detail);
     }
 
     // Staff named on the record and not in the entry.
@@ -775,6 +787,23 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     // KOP is a primary source: a fact whose only source is KOP's own record (names, operators, staff the owner
     // researched) is cited to KOP's page. Where the record holds an outside source (an article, a court record),
     // that is the citation instead, picked above; KOP is never cited for someone else's reporting.
+    // A fact KOP read from an r/troubledteens wiki page (its citation names the page): from this entry's own page it is
+    // the entry's own content and is not added back; from another page, that page is the source, linked.
+    $kept = array();
+    foreach ($gaps as $g) {
+        $outside = $g['source_url'] !== '' && !kop_wiki_upd_is_kop_page($g['source_url']) && stripos($g['source_url'], 'reddit.com/r/troubledteens/wiki/') === false;
+        $w = $outside ? null : kop_wiki_upd_cited_wiki_page((string) $g['source_label'] . ' ' . (string) ($g['detail']['cite_text'] ?? ''), (string) $g['source_url']);
+        if ($w !== null) {
+            if (kop_wiki_upd_is_entry_page($entry, $w)) continue;
+            if ($w['url'] !== '') {
+                $g['source_url'] = $w['url'];
+                $g['source_label'] = 'r/troubledteens wiki' . ($w['title'] !== '' ? ', ' . $w['title'] : '');
+                unset($g['detail']['cite_text']);
+            }
+        }
+        $kept[] = $g;
+    }
+    $gaps = $kept;
     foreach ($gaps as &$g) {
         $g['kop_source'] = kop_wiki_upd_is_kop_page($g['source_url']);
         if ($g['kop_source'] && preg_match('/^(KOP (facility|company) page|KOP facility page|)$/', (string) $g['source_label'])) $g['source_label'] = 'Kids Over Profits';
@@ -782,6 +811,39 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
     }
     unset($g);
     return $gaps;
+}
+
+/**
+ * The r/troubledteens wiki page a citation names ('r/troubledteens wiki, page "Ashcreek Ranch Academy" (as of
+ * 2025-12-18)', or a reddit.com/r/troubledteens/wiki/ link): {title, url, path}, url from
+ * js/data/reddit-wiki/page-urls.json ('' when the title is not there); null when it names none.
+ */
+function kop_wiki_upd_cited_wiki_page($cite, $url = '') {
+    if (preg_match('~reddit\.com/r/troubledteens/wiki/([^\s?#)]+?)/?(?:[?#\s)]|$)~i', (string) $url . ' ' . (string) $cite, $m)) {
+        return array('title' => '', 'url' => 'https://www.reddit.com/r/troubledteens/wiki/' . $m[1], 'path' => strtolower($m[1]));
+    }
+    if (!preg_match('/r\/troubledteens wiki/i', (string) $cite)) return null;
+    $title = preg_match('/page\s+["\x{201C}]([^"\x{201D}]+)["\x{201D}]/u', (string) $cite, $m) ? trim($m[1]) : '';
+    static $titles = null;
+    if ($titles === null) {
+        $f = dirname(__DIR__) . '/js/data/reddit-wiki/page-urls.json';
+        $j = is_readable($f) ? json_decode((string) file_get_contents($f), true) : null;
+        $titles = (array) ($j['titles'] ?? array());
+    }
+    $u = $title !== '' ? (string) ($titles[$title] ?? '') : '';
+    $path = preg_match('#/wiki/(.+?)/?$#', $u, $m) ? strtolower($m[1]) : '';
+    return array('title' => $title, 'url' => $u, 'path' => $path);
+}
+
+/** True when a cited wiki page is the entry's own page (its address, or a title that is one of the entry's names). */
+function kop_wiki_upd_is_entry_page(array $entry, array $wiki) {
+    $own = strtolower(trim((string) ($entry['page'] ?? ''), '/'));
+    if ($own !== '' && $wiki['path'] !== '' && $own === $wiki['path']) return true;
+    if ($wiki['title'] === '') return $wiki['path'] === '' ;
+    foreach (kop_wiki_upd_entry_names($entry) as $n) {
+        if (kop_wiki_upd_key($n) === kop_wiki_upd_key($wiki['title'])) return true;
+    }
+    return false;
 }
 
 /**

@@ -477,16 +477,6 @@
      "kop_record": true
     },
     {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse and Investigations",
-     "text": "In 1996 a former resident sued Ascent Wilderness and Northwest Academy claiming abuse in 1994-1995, including taunting by untrained counsellors, withheld medication, sleeping among dead rats and being forced to sit outside in January.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n4",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -1345,56 +1335,6 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "The lawsuit alleges that on January 27, 2019 a student attacked a resident for about 15 seconds while a staff member stood in the room, causing loss of consciousness and tooth injury, and that staff refused to take her to a doctor.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "A 2020 survivor reports running away from the La Pine branch and hitchhiking 40 miles before being caught.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "A $2.3 million lawsuit filed August 2, 2021 against J Bar J Youth Services alleges a no-intervention policy left a former resident with a traumatic brain injury and damaged teeth after an attack by another student.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Reported in December 2025, survivors report psychological/emotional abuse, restricting food, medical neglect, violent physical restraints, solitary confinement tactics and forced manual labor.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n5",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Reported in December 2025, a January 2021 survivor review reports two residents took the office master key, money and a program vehicle and ran away at night.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n6",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -1597,11 +1537,10 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse Allegations and Lawsuits",
-     "text": "In May 17, 2009, a former male house-parent employee of Alpine Academy was charged with rape, accused of a sexual relationship with a 17-year-old female student; held on $100,000 bail.",
+     "text": "On May 17, 2009, a former male house-parent employee of Alpine Academy was charged with rape, accused of a sexual relationship with a 17-year-old female student; held on $100,000 bail ([source](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0609.pdf#page=19)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n2",
@@ -2366,34 +2305,13 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A commenter in 2014 says the Arizona Office of Behavioral Health Licensing cited the ranch 13 times in two years, including for staff abuse of clients in 2013, and fined it twice.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n2",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In a June 2017 update HEAL said it had received over 10 complaints about the program and that nearly all staff had been replaced since 2012.",
+     "text": "In a June 2017 update HEAL said it had received over 10 complaints about the program and that nearly all staff had been replaced since 2012 ([source](https://web.archive.org/web/20220522081127/http://www.heal-online.org/arivaca.htm)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors report verbal and physical abuse, food and sleep deprivation, unsanitary conditions and financial abuse of parents.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n4",
@@ -2729,94 +2647,31 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "In 1991 a mother accused a former therapist of abusing her 14-year-old daughter; newspapers reported the female staff member allegedly admitted to sodomizing the girl and was fired shortly after.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "On October 19, 1993 a 14-year-old boy attempted suicide by jumping off a cliff in the Henry Mountains, fell 75 feet, and survived with fractured bones and head injuries.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n3",
      "op": "append_to_section",
      "section": "Abuse and Death",
-     "text": "A survivor testimonial told HEAL that during a 2.5-month stay in winter 1994 the youth was deprived of food and made to hike long distances for the first 72 hours.",
+     "text": "A survivor testimonial told HEAL that during a 2.5-month stay in winter 1994 the youth was deprived of food and made to hike long distances for the first 72 hours ([source](https://web.archive.org/web/20041019111346/http://www.heal-online.org:80/aspenachieve.htm)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n4",
      "op": "append_to_section",
      "section": "Abuse and Death",
-     "text": "A survivor testimonial told HEAL that during drug withdrawal in 1994 the youth was denied medical care, collapsed, and was dragged by a pack strap for almost a mile.",
+     "text": "A survivor testimonial told HEAL that during drug withdrawal in 1994 the youth was denied medical care, collapsed, and was dragged by a pack strap for almost a mile ([source](https://web.archive.org/web/20041019111346/http://www.heal-online.org:80/aspenachieve.htm)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n5",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "In January 1996 six teens beat a staff member and fled; Garfield County Attorney Wallace Lee found insufficient evidence to charge them, and authorities reconsidered the program's license.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n6",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "After a January 1996 riot, authorities reconsidered the program's license over concerns about runaway youths near Capitol Reef National Park.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n7",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "In April 2007 a 16-year-old boy died by suicide after hanging himself with a shoelace from a tree; staff found and revived him but he died in helicopter transport to the hospital.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n8",
      "op": "append_to_section",
      "section": "Abuse and Death",
-     "text": "Reported in August 2025, hEAL states Aspen Achievement Academy is licensed in Utah only as Outdoor Youth Treatment and is not licensed or regulated by the Utah Department of Health.",
+     "text": "Reported in August 2025, HEAL states Aspen Achievement Academy is licensed in Utah only as Outdoor Youth Treatment and is not licensed or regulated by the Utah Department of Health ([source](https://web.archive.org/web/20220516051434/http://www.heal-online.org/aspenache.htm)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n9",
-     "op": "append_to_section",
-     "section": "Abuse and Death",
-     "text": "Reported in December 2025, news articles over the years reported many youths escaping or attempting to escape from the program.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n10",
@@ -4924,136 +4779,6 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A survivor who attended in 2015 reports staff told him his sexuality was wrong and ridiculed him for it.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A survivor reported in 2015 that the Utah licensing board was investigating the program over complaints of abuse, mistreatment, discrimination and negligence.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Survivors report that staff broke a boy's wrist during a restraint around 2015 and no staff were disciplined; another account says he was not taken to hospital for days.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A January 2020 complaint by a parent alleges a staff member punched a resident in the head and threw him to the ground.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n5",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A former staff member reports that on July 9, 2020 an administrative assistant restrained a student on the floor for nearly an hour for not complying.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n6",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports that residents who refused instructions could be physically escorted or restrained even when not a danger to anyone.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n7",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports staff restrained him with excessive force when none was necessary.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n8",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports a 21-year-old staff member made sexual remarks about a student's 15-year-old sister and sexually harassed female staff.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n9",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, boys on the punitive Caution Level are reportedly locked in a basement, sometimes for weeks.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n10",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports a boy was locked in a basement room for a week as punishment for trying to give himself a tattoo.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n11",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports a ranch staff member pushed him into a window that shattered; the staff member was suspended for two weeks and returned.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n12",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors allege physical and verbal abuse, animal abuse, forced labor, violent restraints and solitary confinement at Ashcreek Ranch Academy.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n13",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a 2017 survivor review alleges residential director Dave Saldana called gay students sexual predators.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     }
    ],
    "tense": [
@@ -5683,7 +5408,7 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In August 18, 2017, frederic Yeomans IV files suit alleging repeated sexual assault by another resident.",
+     "text": "On August 18, 2017, Frederic Yeomans IV files suit alleging repeated sexual assault by another resident.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5693,7 +5418,7 @@
      "id": "n2",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In September 2019, sexual misconduct report (document library).",
+     "text": "In September 2019, Sexual misconduct report (document library).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5703,7 +5428,7 @@
      "id": "n3",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In July 1, 2020, runaway (AWOL) report (document library).",
+     "text": "On July 1, 2020, Runaway (AWOL) report (document library).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5713,7 +5438,7 @@
      "id": "n4",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In November 5, 2024, biruk Silvers, 17, dies by suicide; four violations substantiated November 6 (supervision, protection, suicide policy, reporting).",
+     "text": "On November 5, 2024, Biruk Silvers, 17, dies by suicide; four violations substantiated November 6 (supervision, protection, suicide policy, reporting).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5723,7 +5448,7 @@
      "id": "n5",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In November 28, 2024, license placed on conditional status, admissions halted.",
+     "text": "On November 28, 2024, License placed on conditional status, admissions halted.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5733,7 +5458,7 @@
      "id": "n6",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In May 17, 2025, silvers family sues Discovery Ranch Academy, University of Utah and Pilcrow Advisors.",
+     "text": "On May 17, 2025, Silvers family sues Discovery Ranch Academy, University of Utah and Pilcrow Advisors.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5743,7 +5468,7 @@
      "id": "n7",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In May 28, 2026, liparote v. Discovery Ranch, Inc. et al. filed in federal court alleging sexual assault, forced labor and trafficking violations.",
+     "text": "On May 28, 2026, Liparote v. Discovery Ranch, Inc. et al. filed in federal court alleging sexual assault, forced labor and trafficking violations.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5909,7 +5634,7 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In December 6, 2023, a client ingested non-edible objects on six occasions requiring emergency room visits; supervision finding.",
+     "text": "On December 6, 2023, a client ingested non-edible objects on six occasions requiring emergency room visits; supervision finding.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5919,7 +5644,7 @@
      "id": "n2",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In December 31, 2024, eight violations in one complaint investigation, including 5 staff to 22 clients, a client unsupervised about three hours, meals used as punishment, and two clients self-injuring with a sharp object from the staff office.",
+     "text": "On December 31, 2024, Eight violations in one complaint investigation, including 5 staff to 22 clients, a client unsupervised about three hours, meals used as punishment, and two clients self-injuring with a sharp object from the staff office.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5929,7 +5654,7 @@
      "id": "n3",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In February 12, 2025, a client with a history of sexual misconduct able to act sexually with a peer.",
+     "text": "On February 12, 2025, a client with a history of sexual misconduct able to act sexually with a peer.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -5939,7 +5664,7 @@
      "id": "n4",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In March 20, 2025, two clients went missing and were marked present; not reported.",
+     "text": "On March 20, 2025, two clients went missing and were marked present; not reported.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -6109,11 +5834,10 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "In November 28, 2007, louis Ladenburger, a former counselor at Elk Mountain Academy and former Catholic priest, pled guilty to an amended charge of aggravated assault against a minor.",
+     "text": "On November 28, 2007, Louis Ladenburger, a former counselor at Elk Mountain Academy and former Catholic priest, pled guilty to an amended charge of aggravated assault against a minor ([source](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=29)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n2",
@@ -7892,11 +7616,10 @@
      "id": "n3",
      "op": "append_to_section",
      "section": "Abuse Allegations and Lawsuits",
-     "text": "In August 20, 2007, mother Jones reported controversy over the tax-payer-funded Judge Rotenberg Center's use of electric shock treatment on autistic, mentally retarded, and emotionally disturbed children; critics called the treatment inhumane.",
+     "text": "On August 20, 2007, Mother Jones reported controversy over the tax-payer-funded Judge Rotenberg Center's use of electric shock treatment on autistic, mentally retarded, and emotionally disturbed children; critics called the treatment inhumane ([source](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1007.pdf#page=26)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n21",
@@ -8165,36 +7888,6 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "In 2017, a survivor reports a resident with MRSA was not separated from the others, and that residents were made to bathe in bleach after an outside doctor warned staff.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors report a no-talk punishment barring residents from speaking for up to 48 hours, extended if broken, plus extreme exercise or essays for minor infractions.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors allege communication restrictions, forced manual labor, religious discrimination and medical neglect at Kolob Canyon RTC.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n4",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -8282,74 +7975,13 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "A DCFS email dated 11/28/2016 concerns alleged inappropriate touching by male staff at La Europa Academy.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor who attended in 2018-2019 alleges sexual assault was ignored and at least one staff member hired was a sexual predator.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors allege emotional abuse, solitary confinement and isolation, attack therapy and forced manual labor at La Europa Academy.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, survivors report residents are forced into attack-therapy 'Accountability Groups' in which residents and staff berate one resident.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n5",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor review alleges a child died because of La Europa Academy; no details given.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n6",
-     "op": "append_to_section",
-     "section": "Abuse Allegations",
-     "text": "Reported in December 2025, a survivor reports a resident was placed in a dangerous hold and said she could not breathe.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n7",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "Reported in June 2026, survivors allege emotional abuse, solitary confinement, attack therapy and forced labor, and that parents are told complaints are manipulation; the program is reported understaffed.",
+     "text": "Reported in June 2026, survivors allege emotional abuse, solitary confinement, attack therapy and forced labor, and that parents are told complaints are manipulation; the program is reported understaffed (r/troubledteens wiki, page \"Doug Bodin\" (as of 2026-06-08)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n8",
@@ -8502,44 +8134,13 @@
      "kop_page": true
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "In 2011 Lake House Academy sued its founder Cat Jennings alleging breach of fiduciary duty, constructive fraud and misappropriation of trade secrets after she tried to create a new program nearby; the motion was denied.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
      "id": "n2",
      "op": "append_to_section",
      "section": "Abuse Allegations and Lawsuits",
-     "text": "In 2012, a lawsuit between Lake House Academy (Plaintiff) and Catherine \"Cat\" Jennings (Defendant) was settled, with all named parties resolving their disputes.",
+     "text": "In 2012, a lawsuit between Lake House Academy (Plaintiff) and Catherine \"Cat\" Jennings (Defendant) was settled, with all named parties resolving their disputes ([source](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0412.pdf#page=15)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Reported in December 2025, survivors report emotional and physical abuse, food deprivation, medical neglect, isolation, violent restraints and communication restrictions.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Reported in December 2025, survivors report staff use restraints called Containments, sometimes kicking or hitting the teen, and safety protocols that include supervised bathroom and shower use.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n5",
@@ -8773,56 +8374,6 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Staff technician Jeffrey Scott McCarter, 37, was arrested July 29, 2008 and charged with sexually assaulting a 15-year-old resident in a linen closet.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "A jury convicted former technician Jeffrey Scott McCarter of second-degree rape on August 10, 2011; he was sentenced to 30 years in prison on September 21, 2011.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "On October 16, 2012 a former employee sued Laurel Oaks alleging a sexually hostile work environment and retaliation (Terry v. Laurel Oaks); the outcome is unknown.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "A 2021 review reports a staff member shoved a disabled resident into a door, puncturing his shoulder with the doorknob.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n5",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Lawsuits",
-     "text": "Reported in December 2025, survivors and parents report overmedication, verbal and emotional abuse, sexual abuse by staff and other residents, unsanitary conditions and violent or excessive restraints at Laurel Oaks.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     }
    ],
    "tense": [],
@@ -11586,7 +11137,7 @@
      "id": "n2",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In 1974, shut down over child abuse and neglect allegations; reopened the same year.",
+     "text": "In 1974, Shut down over child abuse and neglect allegations; reopened the same year.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11596,7 +11147,7 @@
      "id": "n3",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In 1980, federal jury sides with the school in Milonas and Rice; judge issues permanent injunction against polygraphs, mail censorship, and isolation or force except for immediate danger.",
+     "text": "In 1980, Federal jury sides with the school in Milonas and Rice; judge issues permanent injunction against polygraphs, mail censorship, and isolation or force except for immediate danger.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11606,7 +11157,7 @@
      "id": "n4",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In 2004, parent complaint alleges a 15-year-old's nose was broken before a forced Haldol injection and children were held in Observation most of the day.",
+     "text": "In 2004, Parent complaint alleges a 15-year-old's nose was broken before a forced Haldol injection and children were held in Observation most of the day.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11616,7 +11167,7 @@
      "id": "n5",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In 2012, provo campus placed on conditional status after a runaway stole a car and caused a fatal crash.",
+     "text": "In 2012, Provo campus placed on conditional status after a runaway stole a car and caused a fatal crash.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11626,7 +11177,7 @@
      "id": "n6",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In 2013, springville campus placed on conditional status after a girl was injured in a restraint.",
+     "text": "In 2013, Springville campus placed on conditional status after a girl was injured in a restraint.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11656,7 +11207,7 @@
      "id": "n9",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In December 1, 2024, staff member struck a client during a restraint (substantiated, repeat noncompliance).",
+     "text": "On December 1, 2024, staff member struck a client during a restraint (substantiated, repeat noncompliance).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11666,7 +11217,7 @@
      "id": "n10",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In April 13, 2025, staff member injured a client's face during a restraint (substantiated).",
+     "text": "On April 13, 2025, staff member injured a client's face during a restraint (substantiated).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11676,7 +11227,7 @@
      "id": "n11",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In June 2026, licensers sanction the school for delaying care to a teen with a jaw injury and brain bleed; two families sue.",
+     "text": "In June 2026, Licensers sanction the school for delaying care to a teen with a jaw injury and brain bleed; two families sue.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -11686,7 +11237,7 @@
      "id": "n12",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In July 17, 2026, provo campus license revoked; Springville license revoked; operations ordered to cease; appeal filed July 27.",
+     "text": "On July 17, 2026, Provo campus license revoked; Springville license revoked; operations ordered to cease; appeal filed July 27.",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
@@ -16045,46 +15596,6 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Deaths, and Lawsuits",
-     "text": "On August 18, 1997 a 16-year-old girl died during a violent face-down restraint and Thorazine injection with eight staff watching; staff could not find emergency ventilation equipment.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n2",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Deaths, and Lawsuits",
-     "text": "On February 6, 2000 a 9-year-old boy, one month into his stay, died after being restrained face down; the death was attributed to a heart attack resulting from the restraint.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n3",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Deaths, and Lawsuits",
-     "text": "On April 9, 2006 a 16-year-old sent from Alaska died by suicide; a Texas Department of Family and Protective Services investigation found Laurel Ridge failed to check on him every 15 minutes as its policy required.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
-    },
-    {
-     "id": "n4",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Deaths, and Lawsuits",
-     "text": "Reported in December 2025, survivors report verbal and physical abuse, excessive seclusion, violent restraints, overmedication and deceptive marketing at Laurel Ridge.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     },
     {
      "id": "n5",
