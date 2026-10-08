@@ -123,6 +123,7 @@ function kop_rinbox_ph_item(array $s) {
     $text = count($s['homes']) . ' records in ' . $state . ' named "' . $s['program_name'] . ' - ...". Group ties each one to one program record; each keeps its own record, licence and inspection reports.';
     $details = array();
     if ($s['existing']) $details[] = array('label' => 'Already on file', 'value' => 'A record named just "' . $s['existing']['name'] . '" (#' . $s['existing']['id'] . ') is in this state: it can be the program.');
+    if (function_exists('kop_program_homes_reasons') && !empty($s['reason'])) $details[] = array('label' => 'Why', 'value' => kop_program_homes_reasons()[$s['reason']] ?? $s['reason']);
     if ($s['operator'] !== '') $details[] = array('label' => 'Company', 'value' => $s['operator']);
     foreach ($s['warnings'] as $w) $details[] = array('label' => 'Check', 'value' => $w);
 

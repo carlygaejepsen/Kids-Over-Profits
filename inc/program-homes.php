@@ -168,14 +168,195 @@ if (!function_exists('kop_program_homes_key')) {
     }
 }
 
+if (!function_exists('kop_program_homes_words')) {
+    /**
+     * A name's words as kop_program_homes_key() reads them, each with where it
+     * ends in the name: [[key word, byte offset after it], ...]. "The" and
+     * "Inc"/"LLC" are not words here, as in the key.
+     */
+    function kop_program_homes_words($name) {
+        $name = html_entity_decode((string) $name, ENT_QUOTES, 'UTF-8');
+        $out = array();
+        if (!preg_match_all('/[\p{L}\p{N}]+(?:[\x{2019}\'][\p{L}\p{N}]+)*/u', $name, $m, PREG_OFFSET_CAPTURE)) return $out;
+        foreach ($m[0] as $t) {
+            $k = kop_program_homes_key($t[0]);
+            if ($k === '') continue;
+            foreach (explode(' ', $k) as $w) $out[] = array($w, $t[1] + strlen($t[0]));
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_program_homes_cut')) {
+    /** "Boys Republic Graves Cottage STRTP" cut after 2 words: ['Boys Republic', 'Graves Cottage STRTP']. */
+    function kop_program_homes_cut($name, $n) {
+        $name = html_entity_decode((string) $name, ENT_QUOTES, 'UTF-8');
+        $words = kop_program_homes_words($name);
+        if ($n < 1 || count($words) < $n) return array(trim($name), '');
+        $end = $words[$n - 1][1];
+        $base = rtrim(substr($name, 0, $end), " ,-:\u{2013}\u{2014}");
+        $rest = trim(substr($name, $end), " ,-:#'\u{2013}\u{2014}\u{2019}");
+        // "Three Springs of Marion" -> "Marion"; "Academy at Candor" -> "Candor".
+        $rest = trim(preg_replace('/^(?:(?:inc|llc|ltd|of|at|in)\.?[\s,]+)+/i', '', $rest . ' '), " ,-:#\u{2013}\u{2014}");
+        return array($base, $rest);
+    }
+}
+
+if (!function_exists('kop_program_homes_tidy_name')) {
+    /** "Three Springs of" -> "Three Springs"; "Speck Homes Inc, Program" -> "Speck Homes"; "Lydia's Home, LLC Phase" -> "Lydia's Home". */
+    function kop_program_homes_tidy_name($name) {
+        $name = trim((string) $name);
+        do {
+            $before = $name;
+            $name = trim(preg_replace('/[\s,.\-:]+(?:at|of|de|del|la|el|and|for|in|the|inc|llc|ltd|phase|level|program|no|number)\.?$/iu', '', $name), " ,-:");
+        } while ($name !== $before && $name !== '');
+        return $name !== '' ? $name : trim((string) $before);
+    }
+}
+
+if (!function_exists('kop_program_homes_prefix_groups')) {
+    /**
+     * Groups the "Program – Home" names miss, from rows not yet in one (rows as
+     * kop_program_homes_suggest() takes them). Records in one state that share
+     * the start of their name, longest start first:
+     *   numbered     "Echelon 1", "Echelon 3"; "Adelphoi Middle Creek I", "... II"
+     *   same name    the same name in several towns (the homes told apart by town)
+     *   house names  "ROP ATCS Baker House", "ROP ATCS Joann House"
+     *   shared start three or more records sharing two or more words ("Little Sand
+     *                East / Lakeside / West"): may be one company's separate programs
+     * A one-word start is never a common word, and takes three records unless the homes are numbered or same-named.
+     * Returns [key => {program_name, state, reason, homes: [{id, name, home_name, city,
+     * status, operator}], existing: {id, name} or null}].
+     */
+    function kop_program_homes_prefix_groups(array $rows) {
+        static $common = null;
+        if ($common === null) {
+            $common = array_flip(explode(' ', 'new st saint north south east west united first grace hope life youth boys girls family childrens children '
+                . 'community mountain valley river lake crossroads pathways bridges cedar oak pine sunrise victory faith heritage harbor haven '
+                . 'cornerstone lighthouse mercy spring springs canyon ranch academy center house home camp american national christian southern '
+                . 'northern sierra rocky blue green red golden silver eagle ridge meadow meadows forest island bay pacific atlantic santa san los '
+                . 'james john baptist methodist catholic county city state department juvenile adolescent residential treatment behavioral '
+                . 'alabama alaska arizona arkansas california colorado connecticut delaware florida georgia hawaii idaho illinois indiana iowa '
+                . 'kansas kentucky louisiana maine maryland massachusetts michigan minnesota mississippi missouri montana nebraska nevada '
+                . 'hampshire jersey mexico york carolina dakota ohio oklahoma oregon pennsylvania rhode tennessee texas utah vermont virginia '
+                . 'washington wisconsin wyoming'));
+        }
+        $generic = array_flip(array('childrens home', 'group home', 'youth services', 'new hope', 'boys ranch', 'girls ranch', 'youth home',
+            'youth homes', 'family services', 'childrens center', 'child and', 'home for', 'house of', 'center for', 'residential treatment',
+            'treatment center', 'youth academy', 'boys home', 'girls home', 'new life', 'new beginnings', 'second chance', 'hope house',
+            'christian academy', 'juvenile detention', 'detention center', 'juvenile justice', 'county juvenile', 'methodist childrens',
+            'baptist childrens', 'united methodist', 'department of', 'youth development', 'youth center'));
+        $numbered = '/^(?:(?:home|house|phase|no|number|unit|program)\s+)?(?:\d+|i{1,3}|iv|v|vi{1,3}|ix|x)$/';
+        $homey = '/\b(?:house|home|homes|cottage|cottages|residence|group|campus|lodge|cabin|apartments?|manor|unit|ihf|strtp)\b/';
+        // A start never ends on a joining word or a single letter ("Camp E-Kel-Etu", "Three Springs of").
+        $joining = array_flip(array('at', 'of', 'de', 'del', 'la', 'el', 'and', 'for', 'in', 'on', 'a', 'an', 'to'));
+
+        $by_state = array();
+        foreach ($rows as $r) {
+            $state = strtoupper(trim((string) ($r['state'] ?? '')));
+            if ($state === '') continue;
+            $words = array_map(static function ($w) { return $w[0]; }, kop_program_homes_words($r['name']));
+            if (!$words) continue;
+            $by_state[$state][] = array($r, $words);
+        }
+        $out = array();
+        foreach ($by_state as $state => $list) {
+            $taken = array();
+            for ($n = 6; $n >= 1; $n--) {
+                $pref = array();
+                foreach ($list as $i => $e) {
+                    if (isset($taken[$i]) || count($e[1]) < $n) continue;
+                    $pref[implode(' ', array_slice($e[1], 0, $n))][] = $i;
+                }
+                foreach ($pref as $base => $members) {
+                    if (count($members) < 2 || isset($generic[$base])) continue;
+                    $last = substr(strrchr(' ' . $base, ' '), 1);
+                    if (isset($joining[$last]) || strlen($last) < 2) continue;
+                    if ($n === 1 && (isset($common[$base]) || mb_strlen($base) < 5 || ctype_digit($base))) continue;
+                    $rests = array();
+                    $is_numbered = false;
+                    $house = 0;
+                    $empty = 0;
+                    foreach ($members as $i) {
+                        $rest = implode(' ', array_slice($list[$i][1], $n));
+                        $rests[$i] = $rest;
+                        if ($rest === '') $empty++;
+                        elseif (preg_match($numbered, $rest)) $is_numbered = true;
+                        elseif (preg_match($homey, $rest)) $house++;
+                    }
+                    if ($is_numbered) $reason = 'numbered';
+                    elseif ($empty === count($members)) $reason = 'same name';
+                    elseif ($house >= 2) $reason = 'house names';
+                    // Three that share a start, or a record named just the start and two more.
+                    elseif ($n >= 2 && (count($members) - $empty >= 3 || ($empty === 1 && count($members) >= 3))) $reason = 'shared start';
+                    else continue;
+                    // One shared word is enough for numbered or same-named homes, else it takes three records.
+                    if ($n === 1 && count($members) < 3 && $reason !== 'numbered' && $reason !== 'same name') continue;
+                    // One record named just the start is the program, unless every record is.
+                    $existing = null;
+                    $homes = array();
+                    $names = array();
+                    foreach ($members as $i) {
+                        $r = $list[$i][0];
+                        $taken[$i] = true;
+                        list($b, $home) = kop_program_homes_cut($r['name'], $n);
+                        $names[$b] = ($names[$b] ?? 0) + 1;
+                        if ($rests[$i] === '' && $reason !== 'same name' && !$existing && $empty === 1) {
+                            $existing = array('id' => (int) $r['id'], 'name' => (string) $r['name']);
+                            continue;
+                        }
+                        $city = trim((string) ($r['city'] ?? ''));
+                        if ($home === '') {
+                            list($house_name) = kop_program_homes_split_name($city);
+                            $home = $house_name !== '' ? $house_name : $city;
+                        }
+                        $homes[] = array(
+                            'id'        => (int) $r['id'],
+                            'name'      => (string) $r['name'],
+                            'home_name' => $home,
+                            'city'      => $city,
+                            'status'    => trim((string) ($r['status'] ?? '')),
+                            'operator'  => trim((string) ($r['operator'] ?? '')),
+                        );
+                    }
+                    if (count($homes) < ($existing ? 1 : 2)) continue;
+                    arsort($names);
+                    $out[$base . '|' . $state] = array(
+                        'program_name' => $existing ? $existing['name'] : kop_program_homes_tidy_name((string) array_key_first($names)),
+                        'state'        => $state,
+                        'reason'       => $reason,
+                        'homes'        => $homes,
+                        'existing'     => $existing,
+                    );
+                }
+            }
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_program_homes_reasons')) {
+    /** Why a group was suggested => how the screen names it. */
+    function kop_program_homes_reasons() {
+        return array(
+            'dash'         => "Named \"Program \u{2013} Home\"",
+            'numbered'     => 'Numbered homes',
+            'same name'    => 'Same name in several towns',
+            'house names'  => 'Program name, then a house',
+            'shared start' => 'Names start the same',
+        );
+    }
+}
+
 if (!function_exists('kop_program_homes_suggest')) {
     /**
      * Proposed groups from facility rows [{id, name, state, city, status,
-     * operator}] (operator = company name or ''): records named "Program – Home"
-     * in one state, two or more of them, none already grouped. Each:
-     * {key, program_name, state, homes: [{id, name, home_name, city, status}],
-     * existing: {id, name} or null (a record named just "Program" there),
-     * operator, warnings: [text]}. Largest first.
+     * operator}] (operator = company name or ''), none already grouped: records
+     * named "Program – Home" in one state, two or more of them, then the ones
+     * kop_program_homes_prefix_groups() finds among the rest. Each:
+     * {key, program_name, state, reason (kop_program_homes_reasons()), homes:
+     * [{id, name, home_name, city, status}], existing: {id, name} or null (a
+     * record named just "Program" there), operator, warnings: [text]}. Largest first.
      */
     function kop_program_homes_suggest(array $rows, array $grouped = array(), array $dismissed = array()) {
         $by_key = array();
@@ -204,17 +385,34 @@ if (!function_exists('kop_program_homes_suggest')) {
                 'operator'  => trim((string) ($r['operator'] ?? '')),
             );
         }
-        $out = array();
+        $cands = array();
+        $used = array();
         foreach ($by_key as $key => $g) {
-            if (count($g['homes']) < 2 || isset($dismissed[$key])) continue;
-            list($bk, $state) = explode('|', $key, 2);
+            if (count($g['homes']) < 2) continue;
+            // A dismissed group's records are not offered again under another start.
+            foreach ($g['homes'] as $h) $used[$h['id']] = true;
+            foreach ($plain[$key] ?? array() as $p) $used[(int) $p['id']] = true;
+            if (isset($dismissed[$key])) continue;
             arsort($g['base']);
-            $program_name = (string) array_key_first($g['base']);
             // A record named just "Program" in that state is the program already.
             $existing = null;
             foreach ($plain[$key] ?? array() as $p) {
                 if (!isset($grouped[(int) $p['id']])) { $existing = array('id' => (int) $p['id'], 'name' => (string) $p['name']); break; }
             }
+            $cands[$key] = array('program_name' => (string) array_key_first($g['base']), 'state' => explode('|', $key, 2)[1],
+                'reason' => 'dash', 'homes' => $g['homes'], 'existing' => $existing);
+        }
+        $rest = array();
+        foreach ($rows as $r) {
+            if (!isset($grouped[(int) $r['id']]) && !isset($used[(int) $r['id']])) $rest[] = $r;
+        }
+        foreach (kop_program_homes_prefix_groups($rest) as $key => $g) {
+            if (!isset($dismissed[$key]) && !isset($cands[$key])) $cands[$key] = $g;
+        }
+
+        $out = array();
+        foreach ($cands as $key => $g) {
+            $bk = explode('|', $key, 2)[0];
             $ops = array();
             foreach ($g['homes'] as $h) if ($h['operator'] !== '') $ops[$h['operator']] = ($ops[$h['operator']] ?? 0) + 1;
             arsort($ops);
@@ -231,14 +429,17 @@ if (!function_exists('kop_program_homes_suggest')) {
             }
             if ($company !== '') {
                 $warnings[] = 'The first part is the name of a company (' . $company . '), so these may be its separate programs rather than homes of one.';
+            } elseif ($g['reason'] === 'shared start') {
+                $warnings[] = 'These only share the start of their names: they may be one company\'s separate programs rather than homes of one program.';
             }
-            usort($g['homes'], static function ($a, $b) { return strcasecmp($a['home_name'], $b['home_name']); });
+            usort($g['homes'], static function ($a, $b) { return strnatcasecmp($a['home_name'], $b['home_name']); });
             $out[] = array(
                 'key'          => $key,
-                'program_name' => $program_name,
-                'state'        => $state,
+                'program_name' => $g['program_name'],
+                'state'        => $g['state'],
+                'reason'       => $g['reason'],
                 'homes'        => $g['homes'],
-                'existing'     => $existing,
+                'existing'     => $g['existing'],
                 'operator'     => $operator,
                 'warnings'     => $warnings,
             );
@@ -715,7 +916,7 @@ if (!function_exists('kop_program_homes_handle_post')) {
         if (!current_user_can('manage_options')) wp_die('Not allowed.');
         check_admin_referer('kop_program_homes');
         $do = sanitize_key($_POST['do'] ?? '');
-        $back = admin_url('admin.php?page=kop-program-homes' . (!empty($_POST['tab']) ? '&tab=' . sanitize_key($_POST['tab']) : '') . (!empty($_POST['q']) ? '&q=' . rawurlencode(wp_unslash($_POST['q'])) : ''));
+        $back = admin_url('admin.php?page=kop-program-homes' . (!empty($_POST['tab']) ? '&tab=' . sanitize_key($_POST['tab']) : '') . (!empty($_POST['q']) ? '&q=' . rawurlencode(wp_unslash($_POST['q'])) : '') . (!empty($_POST['why']) ? '&why=' . rawurlencode(wp_unslash($_POST['why'])) : ''));
         $msg = '';
         try {
             if ($do === 'group') {
@@ -763,6 +964,7 @@ if (!function_exists('kop_program_homes_page')) {
             echo '<input type="hidden" name="action" value="kop_program_homes">';
             wp_nonce_field('kop_program_homes');
             echo '<input type="hidden" name="tab" value="' . esc_attr($tab) . '"><input type="hidden" name="q" value="' . esc_attr($q) . '">';
+            if (!empty($_GET['why'])) echo '<input type="hidden" name="why" value="' . esc_attr(sanitize_text_field(wp_unslash($_GET['why']))) . '">';
             foreach ($extra as $k => $v) echo '<input type="hidden" name="' . esc_attr($k) . '" value="' . esc_attr($v) . '">';
         };
         $suggestions = kop_program_homes_suggestions(isset($_GET['refresh']));
@@ -822,17 +1024,33 @@ if (!function_exists('kop_program_homes_page')) {
                     foreach ($s['homes'] as $h) if (stripos($h['name'], $q) !== false || isset($aka[(int) $h['id']])) return true;
                     return false;
                 }));
+                // Why each group was suggested: one link per reason, with how many.
+                $why = sanitize_text_field(wp_unslash($_GET['why'] ?? ''));
+                $reasons = kop_program_homes_reasons();
+                $by_why = array();
+                foreach ($list as $s) $by_why[$s['reason'] ?? 'dash'] = ($by_why[$s['reason'] ?? 'dash'] ?? 0) + 1;
+                $why_url = static function ($w) use ($base, $q) {
+                    return $base . ($w !== '' ? '&why=' . rawurlencode($w) : '') . ($q !== '' ? '&q=' . rawurlencode($q) : '');
+                };
+                echo '<p class="kop-ph-why">' . ($why === '' ? '<strong>All (' . count($list) . ')</strong>' : '<a href="' . esc_url($why_url('')) . '">All (' . count($list) . ')</a>');
+                foreach ($reasons as $w => $label) {
+                    if (empty($by_why[$w])) continue;
+                    $text = esc_html($label) . ' (' . (int) $by_why[$w] . ')';
+                    echo ' &middot; ' . ($why === $w ? '<strong>' . $text . '</strong>' : '<a href="' . esc_url($why_url($w)) . '">' . $text . '</a>');
+                }
+                echo '</p>';
+                if ($why !== '') $list = array_values(array_filter($list, static function ($s) use ($why) { return ($s['reason'] ?? 'dash') === $why; }));
                 $per = 20;
                 $pages = max(1, (int) ceil(count($list) / $per));
                 $paged = min($paged, $pages);
-                echo '<p class="kop-ph-count">' . count($list) . ' suggested groups, biggest first. Untick any record that is not one of its homes; change the program name if it should read differently.</p>';
+                echo '<p class="kop-ph-count">' . count($list) . ' suggested groups, biggest first. Untick any record that is not one of its homes; change the program name if it should read differently. "Names start the same" groups are the least sure.</p>';
                 foreach (array_slice($list, ($paged - 1) * $per, $per) as $s) {
                     kop_program_homes_page_card($s, $hidden);
                 }
                 if ($pages > 1) {
                     echo '<p class="kop-ph-pages">';
                     for ($i = 1; $i <= $pages; $i++) {
-                        $u = $base . '&paged=' . $i . ($q !== '' ? '&q=' . rawurlencode($q) : '');
+                        $u = $base . '&paged=' . $i . ($q !== '' ? '&q=' . rawurlencode($q) : '') . ($why !== '' ? '&why=' . rawurlencode($why) : '');
                         echo $i === $paged ? '<strong>' . $i . '</strong> ' : '<a href="' . esc_url($u) . '">' . $i . '</a> ';
                     }
                     echo '</p>';
@@ -853,6 +1071,7 @@ if (!function_exists('kop_program_homes_page')) {
             .kop-ph-card .kop-ph-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
             .kop-ph-card .kop-ph-actions label { margin-right: 8px; }
             .kop-ph-count, .kop-ph-pages { color: #4A5568; }
+            .kop-ph-why { margin: 8px 0; }
         </style>
         <?php
     }
@@ -867,7 +1086,7 @@ if (!function_exists('kop_program_homes_page_card')) {
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
                 <?php $hidden(array('do' => 'group')); ?>
                 <h2><?php echo esc_html($s['program_name']); ?><?php echo $state_name !== '' ? ', ' . esc_html($state_name) : ''; ?> <span class="kop-ph-meta">(<?php echo count($s['homes']); ?> records)</span></h2>
-                <?php if ($s['operator'] !== '') : ?><p class="kop-ph-meta">Filed under <?php echo esc_html($s['operator']); ?></p><?php endif; ?>
+                <p class="kop-ph-meta">Why: <?php echo esc_html(kop_program_homes_reasons()[$s['reason'] ?? 'dash'] ?? ''); ?><?php if ($s['operator'] !== '') : ?>. Filed under <?php echo esc_html($s['operator']); ?><?php endif; ?></p>
                 <?php foreach ($s['warnings'] as $w) : ?><p class="kop-ph-warn"><?php echo esc_html($w); ?></p><?php endforeach; ?>
                 <table>
                     <tbody>

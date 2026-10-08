@@ -127,6 +127,38 @@ $named = kop_program_homes_suggest(array(
 ));
 $check('a group named for its company carries a warning', $named && count($named[0]['warnings']) === 1, $named ? implode(' / ', $named[0]['warnings']) : 'none');
 foreach (array_slice($sugg, 0, 8) as $s) printf("  %3d  %s, %s%s\n", count($s['homes']), $s['program_name'], $s['state'], $s['existing'] ? ' (existing record #' . $s['existing']['id'] . ')' : '');
+// Groups the dash misses (kop_program_homes_prefix_groups()).
+foreach (array(
+    array('Boys Republic Graves Cottage STRTP', 2, array('Boys Republic', 'Graves Cottage STRTP')),
+    array("Georgia Sheriffs\u{2019} Boys Ranch", 2, array("Georgia Sheriffs", 'Boys Ranch')),
+    array('Three Springs of Marion', 2, array('Three Springs', 'Marion')),
+    array('Home Court Advantage Inc IV', 3, array('Home Court Advantage', 'IV')),
+) as $c) {
+    $got = kop_program_homes_cut($c[0], $c[1]);
+    $got[0] = kop_program_homes_tidy_name($got[0]);
+    $check("cut '{$c[0]}'", $got === $c[2], implode(' | ', $got));
+}
+$more = kop_program_homes_suggest(array(
+    array('id' => 1, 'name' => 'Echelon 1', 'state' => 'NC', 'city' => 'A', 'status' => 'Open', 'operator' => ''),
+    array('id' => 2, 'name' => 'Echelon 3', 'state' => 'NC', 'city' => 'B', 'status' => 'Open', 'operator' => ''),
+    array('id' => 3, 'name' => 'ROP ATCS Baker House', 'state' => 'CA', 'city' => 'A', 'status' => 'Open', 'operator' => ''),
+    array('id' => 4, 'name' => 'ROP ATCS Joann House', 'state' => 'CA', 'city' => 'B', 'status' => 'Open', 'operator' => ''),
+    array('id' => 5, 'name' => 'Dimondale', 'state' => 'CA', 'city' => 'Carson', 'status' => 'Open', 'operator' => ''),
+    array('id' => 6, 'name' => 'Dimondale', 'state' => 'CA', 'city' => 'Gardena', 'status' => 'Open', 'operator' => ''),
+    array('id' => 7, 'name' => 'Victor Cullen Center', 'state' => 'MD', 'city' => '', 'status' => 'Open', 'operator' => ''),
+    array('id' => 8, 'name' => 'Victor Cullen Academy', 'state' => 'MD', 'city' => '', 'status' => 'Open', 'operator' => ''),
+    array('id' => 9, 'name' => 'Santa Clara Juvenile Hall', 'state' => 'CA', 'city' => '', 'status' => 'Open', 'operator' => ''),
+    array('id' => 10, 'name' => 'Santa Cruz Juvenile Hall', 'state' => 'CA', 'city' => '', 'status' => 'Open', 'operator' => ''),
+));
+$reasons = array();
+foreach ($more as $s) $reasons[$s['program_name']] = $s['reason'] . ':' . implode(',', array_column($s['homes'], 'home_name'));
+ksort($reasons);
+$check('numbered, house-named and same-named homes are suggested; two programs and two juvenile halls are not', $reasons === array(
+    'Dimondale' => 'same name:Carson,Gardena', 'Echelon' => 'numbered:1,3', 'ROP ATCS' => 'house names:Baker House,Joann House'), json_encode($reasons));
+$by_reason = array();
+foreach ($sugg as $s) $by_reason[$s['reason']] = ($by_reason[$s['reason']] ?? 0) + 1;
+printf("  by reason: %s\n", json_encode($by_reason));
+$check('every reason has a label', !array_diff(array_keys($by_reason), array_keys(kop_program_homes_reasons())));
 $check('a dismissed group is not suggested', !array_filter(kop_program_homes_suggest($rows, array(), array($newport['key'] => 1)), function ($s) use ($newport) { return $s['key'] === $newport['key']; }));
 
 // ---------------------------------------------------------------------------

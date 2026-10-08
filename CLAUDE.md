@@ -100,7 +100,8 @@ python scripts/build-operator-histories.py      # tmp/operator-histories/*.json 
 php scripts/test-operator-history-seed.php      # fill, replace untouched drafts, keep edited/published, on a temp copy
 # Homes and cottages of one program (inc/program-homes.php): each licensed home keeps its record; {prefix}kop_program_homes ties it
 # to a program record (never a field in the facility document, which the form's normalizer would drop). KOP Tools > Program Homes
-# suggests groups from "Program – Home" names in one state, an admin confirms each (new or existing program record), Undo deletes
+# suggests groups in one state from "Program – Home" names, then (kop_program_homes_prefix_groups()) numbered homes ("Echelon 1/3"), one
+# name in several towns, "Program <X> House" names and 3+ records sharing a 2-word start (each card says why, filter by it); an admin confirms each (new or existing program record), Undo deletes
 # a record it made if untouched. Program pages list homes + their news/lawsuits/serious findings; homes name their program;
 # company pages fold homes under it. Directory, map and search still list homes one by one (docs/PLAN.md)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes.php   # suggestions, group Newport Academy CA, pages, undo, on a temp copy
