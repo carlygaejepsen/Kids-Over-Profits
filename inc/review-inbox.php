@@ -370,7 +370,8 @@ function kop_rinbox_on_file_keys($source) {
 
 /** [key => {text, record, item, what, title, facility_id}]: the source's waiting items in conflict ('conflicts'), once a request. */
 function kop_rinbox_conflict_keys($source) {
-    static $memo = array();
+    // Kept for the request; a settled conflict clears it (kop_rinbox_conflicts_caches()).
+    $memo = &$GLOBALS['kop_rinbox_conflict_memo'];
     if (isset($memo[$source])) return $memo[$source];
     $src = kop_rinbox_sources()[$source] ?? array();
     $out = array();

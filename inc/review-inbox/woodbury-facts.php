@@ -578,7 +578,7 @@ function kop_rinbox_wbf_conflict_text(array $r, $live) {
  */
 function kop_rinbox_wbf_conflicts() {
     kop_wbf_ensure_table();
-    return kop_on_file_cached('wbf_conflicts', kop_wbf_table(), function (PDO $pdo) {
+    return kop_on_file_cached('wbf_conflicts_v2', kop_wbf_table(), function (PDO $pdo) {
         global $wpdb;
         $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND ((conflict IS NOT NULL AND conflict <> '')
             OR (current_val IS NOT NULL AND current_val <> '') OR (facility_id > 0 AND op IN ('set_if_empty', 'set_closed', 'add_staff')))", ARRAY_A);
@@ -598,6 +598,8 @@ function kop_rinbox_wbf_conflicts() {
                 'what' => $live ? $live['what'] : kop_wbf_conflict_what($r),
                 'title' => (string) $r['label'],
                 'facility_id' => (int) $r['facility_id'],
+                // No record yet: the program as Woodbury names it, so the Conflicts section can say which.
+                'program' => (int) $r['facility_id'] > 0 ? '' : trim((string) $r['program'] . ((string) $r['place'] !== '' ? ' (' . $r['place'] . ')' : '')),
                 'editable' => (int) $r['facility_id'] > 0 && in_array($r['op'], array('set_if_empty', 'set_closed', 'add_staff'), true),
             );
         }

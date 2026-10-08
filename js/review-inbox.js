@@ -440,7 +440,7 @@
         function update() {
             var on = 0, all = 0;
             boxes.forEach(function (b) { all += b.kopKeys.length; if (b.checked) on += b.kopKeys.length; });
-            count.textContent = on + ' of ' + all + ' links ticked';
+            count.textContent = on + ' of ' + all + ' ' + (item.checklist_noun || 'links') + ' ticked';
         }
         function setAll(v) { boxes.forEach(function (b) { b.checked = v; }); update(); }
         var head = el('div', { class: 'rinbox-check-head' }, [
