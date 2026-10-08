@@ -566,7 +566,7 @@ function kop_rinbox_wbf_conflict_text(array $r, $live) {
  */
 function kop_rinbox_wbf_conflicts() {
     kop_wbf_ensure_table();
-    return kop_on_file_cached('wbf_conflicts_v2', kop_wbf_table(), function (PDO $pdo) {
+    return kop_on_file_cached('wbf_conflicts_v3', kop_wbf_table(), function (PDO $pdo) {
         global $wpdb;
         $rows = (array) $wpdb->get_results('SELECT * FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND ((conflict IS NOT NULL AND conflict <> '')
             OR (current_val IS NOT NULL AND current_val <> '') OR (facility_id > 0 AND op IN ('set_if_empty', 'set_closed', 'add_staff')))", ARRAY_A);
@@ -578,6 +578,10 @@ function kop_rinbox_wbf_conflicts() {
             $built = (string) $r['conflict'] !== '' || (string) $r['current_val'] !== '';
             if (!$live && !$built) continue;
             if (!$live && $doc && kop_wbf_on_record($doc, $r) !== '') continue;
+            // A closure on a record already marked closed (or with no status) is no conflict, whatever the build noted
+            // ("Status now: Closed"): with a year the record lacks, Add fills it in; without one it is on file.
+            if (!$live && $doc && $r['op'] === 'set_closed'
+                && in_array(strtolower((string) ($doc['operatingPeriod']['status'] ?? '')), array('closed', 'unknown', ''), true)) continue;
             $text = kop_rinbox_wbf_conflict_text($r, $live);
             $out[(string) $r['pkey']] = array(
                 'text' => $text,

@@ -68,6 +68,7 @@ function kop_rinbox_test_conflicts(array $src, array $item, callable $check) {
     $check('conflicts: ranges and numbers are read from typing', kop_wbf_parse_value(array('op' => 'set_if_empty', 'value' => '{"min":1,"max":2}'), '12 to 18') === array('min' => 12, 'max' => 18)
         && kop_wbf_parse_value(array('op' => 'set_if_empty', 'value' => '40'), '45') === 45);
 
+    kop_rinbox_test_conflicts_closed($check);
     kop_rinbox_test_conflicts_rollup($check);
     kop_rinbox_test_conflicts_elsewhere($check);
 
@@ -214,4 +215,37 @@ function kop_rinbox_test_conflicts_elsewhere(callable $check) {
     }
     $builders['woodbury-facts'] = $real;
     kop_rinbox_sources(true);
+}
+
+/** A closure on a record already marked closed is no conflict: a year the record lacks is filled in, no year is on file. */
+function kop_rinbox_test_conflicts_closed(callable $check) {
+    $bad = array();
+    foreach (kop_rinbox_conflict_keys('woodbury-facts') as $k => $c) {
+        $r = kop_wbf_rows(array($k))[0] ?? null;
+        if (!$r || $r['op'] !== 'set_closed' || (int) $r['facility_id'] <= 0) continue;
+        $doc = kop_on_file_doc((int) $r['facility_id']);
+        $status = strtolower((string) ($doc['doc']['operatingPeriod']['status'] ?? ($doc['operatingPeriod']['status'] ?? '')));
+        if ($doc && in_array($status, array('closed', 'unknown', ''), true) && !kop_wbf_conflict_parts($doc['doc'] ?? $doc, $r)) $bad[] = $k;
+    }
+    $check('conflicts: no closure on a record already marked closed is a conflict', !$bad, count($bad) . ' left' . ($bad ? ': ' . implode(', ', array_slice($bad, 0, 5)) : ''));
+
+    // One with a year, on a closed record with no end year: Add fills the year in.
+    global $wpdb;
+    $opts = kop_wbf_opts();
+    foreach ((array) $wpdb->get_results('SELECT * FROM ' . kop_wbf_table() . " WHERE status = 'pending' AND op = 'set_closed' AND facility_id > 0", ARRAY_A) as $r) {
+        $v = kop_wbf_row_value($r);
+        if (empty($v['endYear'])) continue;
+        $stored = kop_facility_load((int) $r['facility_id'], $opts);
+        $op = $stored['doc']['operatingPeriod'] ?? array();
+        if (!$stored || strcasecmp((string) ($op['status'] ?? ''), 'Closed') !== 0 || !empty($op['endYear'])) continue;
+        $res = kop_wbf_apply(array($r), (int) $r['facility_id'], 'inbox-test')[$r['pkey']];
+        $after = kop_facility_load((int) $r['facility_id'], $opts)['doc']['operatingPeriod'];
+        $check('conflicts: a closing year for a closed record with none is added', !empty($res['ok']) && (int) $after['endYear'] === (int) $v['endYear'] && $after['status'] === 'Closed',
+            $r['label'] . ' -> ' . json_encode(array('status' => $after['status'], 'endYear' => $after['endYear'])));
+        kop_wbf_undo(kop_wbf_rows(array($r['pkey'])), 'inbox-test');
+        $back = kop_facility_load((int) $r['facility_id'], $opts)['doc']['operatingPeriod'];
+        $check('conflicts: ...and Undo takes the year off again', empty($back['endYear']) && kop_wbf_rows(array($r['pkey']))[0]['status'] === 'pending');
+        return;
+    }
+    echo "  (no closed record without an end year has a waiting closing year in the mirror)\n";
 }
