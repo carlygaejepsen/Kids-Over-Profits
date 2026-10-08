@@ -360,7 +360,10 @@ need the owner's accounts, devices or artwork.
     (Senate Finance report, p. 26); Slattery's Correctional Services Corp. bought it in 1999 (SEC 10-K, FY1999) and
     in 2005 he bought the youth business back and ran YSI himself (Democracy Now/HuffPost 2013), so the entry
     should say he owned it, not that he founded it; /corporatization/ (1987) and /war-on-drugs/ (1993) give two
-    years for Lichfield's Brightway Adolescent Hospital contract.
+    years for Lichfield's Brightway Adolescent Hospital contract: 1993 is right (Deseret News, 1998-03-14: the
+    Utah Alcoholism Foundation, the owner, ended its agreement with Lichfield, "who has managed the facility since
+    1993"). All six checked against the sources on 2026-10-08 (Buck v. Bell decided 1927-05-02; the Lovaas paper is
+    vol. 1, pp. 99-109; the misplaced 1933 line fits Devereux or the Southard School, the owner's call).
 
 ### Unconfirmed settings
 
