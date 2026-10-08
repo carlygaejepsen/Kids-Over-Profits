@@ -1866,7 +1866,31 @@ function kop_apply_text_fixes() {
     $allowed = array(
         'news_submissions' => array('summary', 'json_data', 'generated_output'),
     );
+    $posts_done = get_option('kop_post_text_fixes_done');
+    $posts_done = is_array($posts_done) ? $posts_done : array();
     foreach ($entries as $entry) {
+        // A page or post by slug: its swaps, in order, each phrase found
+        // exactly once, all or none; once per 'fix' id, the old text kept as
+        // a revision.
+        if (!empty($entry['post'])) {
+            $fix = (string) ($entry['fix'] ?? '');
+            if ($fix === '' || in_array($fix, $posts_done, true)) {
+                continue;
+            }
+            $post = get_page_by_path((string) $entry['post'], OBJECT, array('page', 'post'));
+            $new  = $post ? kop_text_fix_swaps($post->post_content, (array) ($entry['replace'] ?? array())) : null;
+            if ($new === null) {
+                continue;
+            }
+            wp_save_post_revision($post->ID);
+            $result = wp_update_post(array('ID' => $post->ID, 'post_content' => wp_slash($new)), true);
+            if ($result && !is_wp_error($result)) {
+                $posts_done[] = $fix;
+                update_option('kop_post_text_fixes_done', $posts_done, false);
+                $done[] = $entry['post'] . ':' . $fix;
+            }
+            continue;
+        }
         $table = (string) ($entry['table'] ?? '');
         $id    = (int) ($entry['id'] ?? 0);
         $swaps = is_array($entry['replace'] ?? null) ? $entry['replace'] : array();
@@ -1891,6 +1915,29 @@ function kop_apply_text_fixes() {
         }
     }
     return array_values(array_unique($done));
+}
+
+/**
+ * $content with each [from, to] pair swapped in order, or null when any
+ * 'from' is not there exactly once at its turn (the page was edited, or the
+ * fix is in already), so a page that changed is never half-fixed.
+ */
+function kop_text_fix_swaps($content, array $pairs) {
+    $content = str_replace(array("\r\n", "\r"), "\n", (string) $content);
+    if (!$pairs) {
+        return null;
+    }
+    foreach ($pairs as $pair) {
+        if (!is_array($pair) || count($pair) !== 2) {
+            return null;
+        }
+        $from = str_replace(array("\r\n", "\r"), "\n", (string) $pair[0]);
+        if ($from === '' || substr_count($content, $from) !== 1) {
+            return null;
+        }
+        $content = str_replace($from, str_replace(array("\r\n", "\r"), "\n", (string) $pair[1]), $content);
+    }
+    return $content;
 }
 /**
  * Lawsuit records assembled offline (seeds/lawsuits.json). Each case is
@@ -2477,7 +2524,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '109';
+    $version = '110';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

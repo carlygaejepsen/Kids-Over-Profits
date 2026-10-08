@@ -350,7 +350,8 @@ need the owner's accounts, devices or artwork.
     Joint Commission complaint number on the psychiatric hospitals page came from a search summary (check it);
     the disability page links NeuroRestorative's program page, which changes if that conversion is undone.
     Checked against the History articles (2026-10-08); the pages now link them where they meet. Errors found in
-    the articles themselves (not edited): /birth-of-the-tti/ and /idd-timeline/ date Buck v. Bell 1924 (decided
+    the articles themselves, all fixed on deploy by seeds/text-fixes.json (page entries, once each, the old text
+    kept as a revision; the 'mental defectives' line moved to Devereux 1935): /birth-of-the-tti/ and /idd-timeline/ date Buck v. Bell 1924 (decided
     1927, 274 U.S. 200; /juvenile-justice-timeline/ already says 1927); /idd-timeline/'s 1965 Lovaas citation
     (title and journal not found; the shock study is Lovaas, Schaeffer & Simmons, Journal of Experimental Research
     in Personality, 1965) and its line "Initially served 'mental defectives'..." under 1933, which reads as

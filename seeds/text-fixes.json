@@ -19,5 +19,88 @@
     "columns": ["summary", "json_data", "generated_output"],
     "replace": {"programmes": "programs", "programme": "program", "Programmes": "Programs", "Programme": "Program"},
     "note": "House style is \"program\" (2026-09-23)."
+  },
+  {
+    "post": "birth-of-the-tti",
+    "fix": "2026-10-08-buck-v-bell",
+    "note": "Buck v. Bell was decided May 2, 1927 (274 U.S. 200); 1924 is Virginia's sterilization act.",
+    "replace": [
+      [
+        "<em>Buck v. Bell</em> (1924)",
+        "<em>Buck v. Bell</em> (1927)"
+      ]
+    ]
+  },
+  {
+    "post": "idd-timeline",
+    "fix": "2026-10-08-history-check",
+    "note": "Buck v. Bell 1927 (moved after 1926); the 1965 Lovaas shock study's real title and journal; the 'mental defectives' line moved from the 1933 Nazi law to Devereux 1935.",
+    "replace": [
+      [
+        "\n\n<!-- wp:list-item -->\n<li><strong>1924</strong> – Buck v. Bell<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>U.S. Supreme Court upholds Virginia's Eugenical Sterilization Act.</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Carrie Buck, a teen institutionalized at the Virginia Colony for Epileptics and Feeble-Minded, was deemed \"unfit to reproduce.\"</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Legalized forced sterilization of institutionalized youth.</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Oliver Wendell Holmes writes: “Three generations of imbeciles are enough.”</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->",
+        ""
+      ],
+      [
+        "<!-- wp:list-item -->\n<li><strong>1926</strong> – Southard School Established<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Founded as the children’s division of the Menninger Clinic in Topeka, Kansas. Originally intended for children with intellectual disabilities, it gradually became a prototype for psychoanalytically oriented RTCs.</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->",
+        "<!-- wp:list-item -->\n<li><strong>1926</strong> – Southard School Established<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Founded as the children’s division of the Menninger Clinic in Topeka, Kansas. Originally intended for children with intellectual disabilities, it gradually became a prototype for psychoanalytically oriented RTCs.</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li><strong>1927</strong> – Buck v. Bell<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>U.S. Supreme Court upholds Virginia's Eugenical Sterilization Act.</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Carrie Buck, a teen institutionalized at the Virginia Colony for Epileptics and Feeble-Minded, was deemed \"unfit to reproduce.\"</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Legalized forced sterilization of institutionalized youth.</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>Oliver Wendell Holmes writes: “Three generations of imbeciles are enough.”</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->"
+      ],
+      [
+        "<strong>1965</strong> – “Behavioral Treatment of Autistic Children and Children with Other Developmental Disabilities”",
+        "<strong>1965</strong> – “Building Social Behavior in Autistic Children by Use of Electric Shock”"
+      ],
+      [
+        "<li>Published by Ivar Lovaas in <em>Journal of Human Behavior</em></li>",
+        "<li>Published by Ivar Lovaas, Benson Schaeffer and James Q. Simmons in the <em>Journal of Experimental Research in Personality</em>, vol. 1</li>"
+      ],
+      [
+        "\n\n<!-- wp:list-item -->\n<li>Initially served \"mental defectives,\" later rebranded as therapeutic I/DD care.</li>\n<!-- /wp:list-item -->",
+        ""
+      ],
+      [
+        "<li><strong>1935</strong> – Devereux Foundation Formally Incorporated</li>",
+        "<li><strong>1935</strong> – Devereux Foundation Formally Incorporated<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Initially served \"mental defectives,\" later rebranded as therapeutic I/DD care.</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>"
+      ]
+    ]
+  },
+  {
+    "post": "juvenile-justice-timeline",
+    "fix": "2026-10-08-ysi",
+    "note": "YSI was founded in 1991 by W. James Hindman with Jay Ripley (Senate Finance 2024, p. 26); Slattery's Correctional Services Corp. bought it in 1999 (SEC 10-K) and he took it back in 2005.",
+    "replace": [
+      [
+        "<li><strong>1989</strong> – Youth Services International (YSI) Founded",
+        "<li><strong>1991</strong> – Youth Services International (YSI) Founded"
+      ],
+      [
+        "<li>Founded by James F. Slattery, who had previously owned an adult prison company with abuse allegations.</li>",
+        "<li>Founded by W. James Hindman, who had founded Jiffy Lube, with Jay Ripley, who later co-founded Sequel. James F. Slattery, who had previously owned an adult prison company with abuse allegations, bought YSI through Correctional Services Corp. in 1999, and in 2005 took the youth business back and ran it himself.</li>"
+      ]
+    ]
+  },
+  {
+    "post": "corporatization",
+    "fix": "2026-10-08-brightway",
+    "note": "Lichfield managed Brightway from 1993 (Deseret News, 1998-03-14), as the War on Drugs timeline says; moved from 1987 to 1993.",
+    "replace": [
+      [
+        "\n\n<!-- wp:list-item -->\n<li><strong>1987</strong> – Bob Lichfield signs a contract to run Brightway Adolescent Hospital in St. George, Utah.<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Health officials said the hospital promptly started sending kids to tough-love behavior programs.</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->",
+        ""
+      ],
+      [
+        "<!-- wp:list-item -->\n<li><strong>1993</strong> – Brown Schools emerges from Chapter 11 and rebranded as Healthcare America</li>\n<!-- /wp:list-item -->",
+        "<!-- wp:list-item -->\n<li><strong>1993</strong> – Brown Schools emerges from Chapter 11 and rebranded as Healthcare America</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li><strong>1993</strong> – Bob Lichfield takes over the management of Brightway Adolescent Hospital in St. George, Utah, under an agreement with its owner, the Utah Alcoholism Foundation.<!-- wp:list -->\n<ul class=\"wp-block-list\"><!-- wp:list-item -->\n<li>Health officials said the hospital promptly started sending kids to tough-love behavior programs.</li>\n<!-- /wp:list-item -->\n\n<!-- wp:list-item -->\n<li>The foundation ended the agreement in 1998 and closed the hospital (<a href=\"https://www.deseret.com/1998/3/14/19368953/st-george-teen-hospital-to-close-doors/\">Deseret News, March 14, 1998</a>).</li>\n<!-- /wp:list-item --></ul>\n<!-- /wp:list --></li>\n<!-- /wp:list-item -->"
+      ]
+    ]
+  },
+  {
+    "post": "warehouses-of-neglect",
+    "fix": "2026-10-08-uhs-122m",
+    "note": "The report's p. 19: 'a $122 million settlement under the False Claims Act'.",
+    "replace": [
+      [
+        "UHS had to pay out approximately $150m in settlement money in 2020",
+        "UHS had to pay $122 million in settlement money in 2020"
+      ]
+    ]
   }
 ]

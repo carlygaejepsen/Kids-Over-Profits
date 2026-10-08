@@ -203,6 +203,9 @@ php scripts/test-hub-pages.php
 # Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
 # (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/ and /faq/, both published)
 php scripts/test-page-text.php
+# Fixes to a published page's words ship as 'post' entries in seeds/text-fixes.json (exact swaps, all or none, once per 'fix'
+# id, revision kept; kop_apply_text_fixes()); also fix the seeds/history/ copy. Never reseed an edited page
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-post-text-fixes.php   # every page entry applies once to the mirror's text
 # Related industries OUTSIDE the TTI (foster care, adult disability group homes, nursing homes, psychiatric hospitals) and their
 # /related-industries/ index: one shared template (templates/page-related-industry.php), text in js/data/pages/<slug>.json, Page Text.
 # No facility records; linked from the History hub's 'outside' block. Migrant shelters, juvenile detention, PRTFs/RTCs are TTI, never here
