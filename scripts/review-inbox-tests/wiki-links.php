@@ -46,24 +46,39 @@ function kop_rinbox_test_wiki_links(array $src, array $item, callable $check) {
     // Every card shows what the entry says and where each candidate can be looked at.
     $card = kop_rinbox_get_item('wiki-links', (string) $key);
     $says = array_values(array_filter($card['details'], function ($d) { return $d['label'] === 'The entry says'; }));
-    $unlinked = array_filter($card['details'], function ($d) { return preg_match('/^(Record|Company) /', $d['label']) && empty($d['url']); });
+    $unlinked = array_filter($card['details'], function ($d) { return preg_match('/^(Record|Company|Educational consultant|Mental health provider|Transporter) \d/', $d['label']) && empty($d['url']); });
     $check('wiki-links: the card shows what the entry says and links every candidate', $says && $says[0]['value'] !== '' && !$unlinked, $says[0]['value'] ?? '');
 
-    // A company: the list offers every company record and the link stores its name.
-    $companies = kop_rinbox_wlinks_companies();
-    $co = array_values(array_filter($card['actions'], function ($a) { return $a['id'] === 'link_company'; }))[0] ?? null;
-    $check('wiki-links: "Link to a company" lists every company', $co && count($co['params'][0]['options']) === count($companies) && count($companies) > 10, count($companies) . ' companies');
-    $pick = array_keys($companies)[0];
-    call_user_func($src['act'], (string) $key, 'link_company', array('company' => $pick));
-    $check('wiki-links: Link to a company stores the company', $row($key)['facility_unique_name'] === $pick && kop_rinbox_get_item('wiki-links', (string) $key)['status'] === 'linked');
-    call_user_func($src['act'], (string) $key, 'undo', array());
-
-    // The finder: any record by id.
+    // The finder picks any kind of record.
+    $finder = array_values(array_filter($card['actions'], function ($a) { return $a['id'] === 'link_other'; }))[0] ?? null;
+    $check('wiki-links: the finder looks through every kind of record', $finder && $finder['params'][0]['type'] === 'record');
     $other = (int) $pdo->query("SELECT id FROM facilities_v2 WHERE unique_name <> '' ORDER BY id LIMIT 1")->fetchColumn();
     call_user_func($src['act'], (string) $key, 'link_other', array('facility' => (string) $other));
     $un = $pdo->query('SELECT unique_name FROM facilities_v2 WHERE id = ' . $other)->fetchColumn();
-    $check('wiki-links: Link to another record takes the finder\'s pick', $row($key)['facility_unique_name'] === $un);
+    $check('wiki-links: a program from the finder is stored by its unique name', $row($key)['facility_unique_name'] === $un);
     call_user_func($src['act'], (string) $key, 'undo', array());
+
+    $prefix = $GLOBALS['wpdb']->prefix ?? 'wpdl_';
+    $co = $pdo->query("SELECT id, COALESCE(NULLIF(name, ''), unique_name) AS n FROM `{$prefix}kop_operators` ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    if ($co) {
+        call_user_func($src['act'], (string) $key, 'link_other', array('facility' => 'company:' . $co['id']));
+        $check('wiki-links: a company from the finder is stored by its name', $row($key)['facility_unique_name'] === $co['n'] && kop_rinbox_get_item('wiki-links', (string) $key)['status'] === 'linked');
+        call_user_func($src['act'], (string) $key, 'undo', array());
+    }
+    foreach (array_keys(kop_wiki_upd_other_kinds()) as $kind) {
+        $table = kop_wiki_upd_other_table($pdo, $kind);
+        $rec = $table !== '' ? $pdo->query("SELECT id, unique_name FROM `{$table}` WHERE unique_name <> '' ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC) : null;
+        if (!$rec) {
+            kop_rinbox_test_skip('wiki-links: link to a ' . $kind, 'no ' . $kind . ' rows on this copy');
+            continue;
+        }
+        call_user_func($src['act'], (string) $key, 'link_other', array('facility' => $kind . ':' . $rec['id']));
+        $got = kop_rinbox_get_item('wiki-links', (string) $key);
+        $check('wiki-links: a ' . $kind . ' from the finder is stored by its token and named on the card',
+            $row($key)['facility_unique_name'] === $kind . ':' . $rec['id'] && $got['status_label'] === 'Linked: ' . $rec['unique_name'], $got['status_label']);
+        call_user_func($src['act'], (string) $key, 'undo', array());
+    }
+    $check('wiki-links: Undo after a finder link puts back what the entry had', $row($key) == $before);
 
     $clear = array_keys(array_filter(kop_rinbox_wlinks_rows(), function ($e) { return $e['view'] === 'clear'; }));
     $res = call_user_func($src['tool'], 'link_clear', array());

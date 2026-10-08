@@ -4,7 +4,8 @@
  *
  * Step 1, links: each current wiki entry (one row per Reddit page, the newest)
  * is tied to its facilities_v2 record through wiki_submissions
- * .facility_unique_name. kop_wiki_upd_candidates() finds the records it may be
+ * .facility_unique_name (a company by its name; an educational consultant,
+ * mental health provider or transporter by its token, "consultant:12"). kop_wiki_upd_candidates() finds the records it may be
  * (name, then past/other names, inside the entry's states); the review inbox
  * source inc/review-inbox/wiki-links.php links them, one clear match at a
  * time or all at once, with Undo (option kop_wiki_link_log).
@@ -240,6 +241,108 @@ function kop_wiki_upd_entry_names(array $row) {
  */
 function kop_wiki_upd_candidates(array $entry, PDO $pdo = null) {
     $pdo = $pdo ?: kop_wiki_upd_pdo();
+    $out = kop_wiki_upd_candidates_records($entry, $pdo);
+    // Consultants, providers and transporters of the entry's name (person and firm pages:
+    // "Sue Scheff", a transport company). Above a company match on a page with no place.
+    if ($entry['kind'] !== 'list') {
+        $index = kop_wiki_upd_other_record_index($pdo);
+        $seen = array_flip(array_column($out, 'unique_name'));
+        foreach (kop_wiki_upd_entry_names($entry) as $n) {
+            foreach ($index[kop_wiki_upd_key($n)] ?? array() as $r) {
+                if (isset($seen[$r['unique_name']])) continue;
+                $seen[$r['unique_name']] = true;
+                $r['score'] = $entry['kind'] === 'program' ? 60 : 90;
+                $out[] = $r;
+            }
+        }
+        usort($out, function ($a, $b) { return $b['score'] <=> $a['score'] ?: strcmp($a['name'], $b['name']); });
+    }
+    return $out;
+}
+
+/** The kinds of record a wiki entry can be linked to besides a program and a company, with their labels. */
+function kop_wiki_upd_other_kinds() {
+    return array('consultant' => 'Educational consultant', 'provider' => 'Mental health provider', 'transporter' => 'Transporter');
+}
+
+/** The consultant/provider/transporter table of $kind on this copy (prefixed or not), or ''. */
+function kop_wiki_upd_other_table(PDO $pdo, $kind) {
+    $spec = function_exists('kop_wbc_record_tables') ? (kop_wbc_record_tables()[$kind] ?? null) : null;
+    if (!$spec) return '';
+    $prefix = isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : 'wpdl_';
+    foreach (array($prefix . $spec['table'], $spec['table']) as $t) {
+        try {
+            $pdo->query("SELECT 1 FROM `{$t}` LIMIT 1");
+            return $t;
+        } catch (Throwable $e) {
+            // Not under this name.
+        }
+    }
+    return '';
+}
+
+/**
+ * name key => [candidate] for every educational consultant (the firm and its
+ * people), mental health provider and transporter record. Their link is the
+ * record's token ("consultant:12"), which no facility name can be.
+ */
+function kop_wiki_upd_other_record_index(PDO $pdo) {
+    static $index = null;
+    if ($index !== null) return $index;
+    $index = array();
+    if (!function_exists('kop_wbc_record_tables')) return $index;
+    $labels = kop_wiki_upd_other_kinds();
+    foreach ($labels as $kind => $label) {
+        $table = kop_wiki_upd_other_table($pdo, $kind);
+        if ($table === '') continue;
+        foreach ($pdo->query("SELECT id, unique_name, json_data FROM `{$table}`")->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $payload = json_decode((string) $row['json_data'], true);
+            $payload = is_array($payload) ? $payload : array();
+            $place = kop_wbc_record_place($kind, $payload);
+            foreach (kop_wbc_record_names($kind, $row['unique_name'], $payload) as $n => $how) {
+                $k = kop_wiki_upd_key($n);
+                if ($k === '' || mb_strlen($k) < 4) continue;
+                $index[$k][] = array('id' => 0, 'unique_name' => $kind . ':' . (int) $row['id'], 'name' => (string) $row['unique_name'],
+                    'place' => $place, 'status' => '', 'record' => $kind,
+                    'reason' => 'same name, ' . ($how !== '' ? $how : strtolower($label)));
+            }
+        }
+    }
+    return $index;
+}
+
+/**
+ * What a finder pick ("12", "company:4", "consultant:7") is stored as, and
+ * its name: [value, label]. A program by its unique_name, a company by its
+ * name (as the wiki editor links one), anything else by its token.
+ */
+function kop_wiki_upd_pick(PDO $pdo, $token) {
+    $p = function_exists('kop_wbc_parse_record_token') ? kop_wbc_parse_record_token($token) : null;
+    if (!$p) return null;
+    list($kind, $id) = $p;
+    $prefix = isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : 'wpdl_';
+    if ($kind === 'facility') {
+        $st = $pdo->prepare('SELECT unique_name, name FROM facilities_v2 WHERE id = ?');
+        $st->execute(array($id));
+        $r = $st->fetch(PDO::FETCH_ASSOC);
+        return $r ? array((string) $r['unique_name'], (string) ($r['name'] ?: $r['unique_name'])) : null;
+    }
+    if ($kind === 'company') {
+        $st = $pdo->prepare("SELECT COALESCE(NULLIF(name, ''), unique_name) FROM `{$prefix}kop_operators` WHERE id = ?");
+        $st->execute(array($id));
+        $name = (string) $st->fetchColumn();
+        return $name !== '' ? array($name, $name) : null;
+    }
+    $table = kop_wiki_upd_other_table($pdo, $kind);
+    if ($table === '') return null;
+    $st = $pdo->prepare("SELECT unique_name FROM `{$table}` WHERE id = ?");
+    $st->execute(array($id));
+    $name = (string) $st->fetchColumn();
+    return $name !== '' ? array($kind . ':' . $id, $name) : null;
+}
+
+/** The program and company records an entry may be (kop_wiki_upd_candidates()). */
+function kop_wiki_upd_candidates_records(array $entry, PDO $pdo) {
     $names = kop_wiki_upd_entry_names($entry);
     if ($entry['kind'] === 'operator' || $entry['kind'] === 'other') {
         $ops = kop_wiki_upd_operator_index($pdo);
@@ -337,20 +440,6 @@ function kop_wiki_upd_candidates(array $entry, PDO $pdo = null) {
     return array_values($out);
 }
 
-/** Every company record: name => name, for a picker. */
-function kop_wiki_upd_operator_names(PDO $pdo) {
-    $prefix = isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : 'wpdl_';
-    $out = array();
-    try {
-        foreach ($pdo->query("SELECT name FROM {$prefix}kop_operators ORDER BY name")->fetchAll(PDO::FETCH_COLUMN) as $n) {
-            if (trim((string) $n) !== '') $out[(string) $n] = (string) $n;
-        }
-    } catch (Throwable $e) {
-        // No operators table on this copy.
-    }
-    return $out;
-}
-
 /** The start of an entry as plain text, for a card: no markdown, links as their words. */
 function kop_wiki_upd_excerpt(array $entry, $max = 420) {
     $md = kop_wiki_upd_markdown($entry);
@@ -403,17 +492,19 @@ function kop_wiki_upd_link_state(array $entry, array $cands) {
     return 'choose';
 }
 
-/** wiki id => {decision: link|skip, name, prev_name, prev_status, by, at}: what the review screen did, for Undo. */
+/** wiki id => {decision: link|skip, name, label, prev_name, prev_status, by, at}: what the review screen did, for Undo. */
 function kop_wiki_upd_link_log() {
     $log = get_option('kop_wiki_link_log', array());
     return is_array($log) ? $log : array();
 }
 
 /**
- * Link an entry to a record (or company) name as 'suggested', or set it aside
- * ($unique_name = '' and $decision 'skip'). Logged for Undo.
+ * Link an entry to a record (a program's unique_name, a company's name, or
+ * another record's token, kop_wiki_upd_pick()) as 'suggested', or set it
+ * aside ($unique_name = '' and $decision 'skip'). Logged for Undo, with the
+ * record's name as $label.
  */
-function kop_wiki_upd_link(PDO $pdo, $wiki_id, $unique_name, $by, $decision = 'link') {
+function kop_wiki_upd_link(PDO $pdo, $wiki_id, $unique_name, $by, $decision = 'link', $label = '') {
     $wiki_id = (int) $wiki_id;
     $st = $pdo->prepare('SELECT facility_unique_name, facility_link_status FROM wiki_submissions WHERE id = ?');
     $st->execute(array($wiki_id));
@@ -426,7 +517,7 @@ function kop_wiki_upd_link(PDO $pdo, $wiki_id, $unique_name, $by, $decision = 'l
             ->execute(array((string) $unique_name, $wiki_id));
     }
     $log = kop_wiki_upd_link_log();
-    $log[$wiki_id] = array('decision' => $decision, 'name' => (string) $unique_name,
+    $log[$wiki_id] = array('decision' => $decision, 'name' => (string) $unique_name, 'label' => (string) ($label !== '' ? $label : $unique_name),
         'prev_name' => $prev['facility_unique_name'], 'prev_status' => $prev['facility_link_status'],
         'by' => (string) $by, 'at' => gmdate('c'));
     update_option('kop_wiki_link_log', $log, false);
@@ -446,7 +537,7 @@ function kop_wiki_upd_unlink(PDO $pdo, $wiki_id) {
     update_option('kop_wiki_link_log', $log, false);
 }
 
-/** The facilities_v2 id an entry is linked to, or 0 (no link, or a company). */
+/** The facilities_v2 id an entry is linked to, or 0 (no link, a company, a consultant, provider or transporter). */
 function kop_wiki_upd_facility_id(array $entry, PDO $pdo = null) {
     $un = trim((string) $entry['facility_unique_name']);
     if ($un === '') return 0;

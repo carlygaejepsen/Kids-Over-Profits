@@ -5,6 +5,10 @@
  * no link are listed; the record they may be is found by name, past and other
  * names, and the words of the name inside the entry's states.
  *
+ * Candidates include companies, educational consultants (the firm or one of
+ * its people), mental health providers and transporters of the entry's name;
+ * the finder picks any of them too (kop_wiki_upd_pick()).
+ *
  * Tabs: One clear match (Link, or the tool links them all), Pick the record
  * (one button per candidate, or the finder), No record found (the finder),
  * Linked here and Set aside (each with Undo, which restores what the entry
@@ -25,7 +29,7 @@ kop_rinbox_register('wiki-links', function () {
     return array(
         'label'    => 'Wiki links',
         'group'    => 'Suggestions to check',
-        'help'     => 'Each r/troubledteens wiki entry tied to the KOP record it is about, so the entry can be brought up to date from the record (closures, news, lawsuits, deaths, findings). Link the record it describes; Set aside a page that is not about one program. Undo on the Linked here and Set aside tabs.',
+        'help'     => 'Each r/troubledteens wiki entry tied to the KOP record it is about, so the entry can be brought up to date from the record (closures, news, lawsuits, deaths, findings). Link the record it describes (a program, a company, an educational consultant, a mental health provider or a transporter); Set aside a page KOP has no record for. Undo on the Linked here and Set aside tabs.',
         'views'    => array('clear' => 'One clear match', 'choose' => 'Pick the record', 'none' => 'No record found', 'linked' => 'Linked here', 'skip' => 'Set aside'),
         'count'    => function () {
             $c = kop_rinbox_wlinks_view_counts();
@@ -59,13 +63,13 @@ function kop_rinbox_wlinks_rows($reset = false) {
     if ($rows !== null) return $rows;
     $pdo = kop_wiki_upd_pdo();
     $entries = kop_wiki_upd_entries($pdo);
-    $cached = get_transient('kop_rinbox_wiki_links_v2');
+    $cached = get_transient('kop_rinbox_wiki_links_v3');
     if (!is_array($cached)) {
         $cached = array();
         foreach ($entries as $id => $e) {
             if ($e['kind'] !== 'list') $cached[$id] = array_slice(kop_wiki_upd_candidates($e, $pdo), 0, 6);
         }
-        set_transient('kop_rinbox_wiki_links_v2', $cached, HOUR_IN_SECONDS);
+        set_transient('kop_rinbox_wiki_links_v3', $cached, HOUR_IN_SECONDS);
     }
     $log = kop_wiki_upd_link_log();
     $rows = array();
@@ -105,9 +109,16 @@ function kop_rinbox_wlinks_list(array $q) {
     return array('items' => $items, 'total' => count($rows));
 }
 
-/** "Name (Town, ST)" for a candidate. */
+/** "Name (Town, ST)" for a candidate, with its kind when it is not a program. */
 function kop_rinbox_wlinks_label(array $c) {
-    return $c['name'] . ($c['place'] !== '' ? ' (' . $c['place'] . ')' : '') . (!empty($c['operator']) ? ' (company)' : '');
+    $kind = !empty($c['operator']) ? 'company' : (!empty($c['record']) ? strtolower(kop_wiki_upd_other_kinds()[$c['record']] ?? '') : '');
+    return $c['name'] . ($c['place'] !== '' ? ' (' . $c['place'] . ')' : '') . ($kind !== '' ? ' (' . $kind . ')' : '');
+}
+
+/** "Record 1", "Company 1", "Educational consultant 1" for a candidate's line on the card. */
+function kop_rinbox_wlinks_detail_label(array $c, $i) {
+    $kind = !empty($c['operator']) ? 'Company' : (!empty($c['record']) ? (kop_wiki_upd_other_kinds()[$c['record']] ?? 'Record') : 'Record');
+    return $kind . ' ' . ($i + 1);
 }
 
 /**
@@ -131,11 +142,12 @@ function kop_rinbox_wlinks_item(array $e) {
     $details = array();
     if (($e['excerpt'] ?? '') !== '') $details[] = array('label' => 'The entry says', 'value' => $e['excerpt']);
     foreach ($e['cands'] as $i => $c) {
-        $details[] = array('label' => !empty($c['operator']) ? 'Company ' . ($i + 1) : 'Record ' . ($i + 1),
+        $details[] = array('label' => kop_rinbox_wlinks_detail_label($c, $i),
             'value' => kop_rinbox_wlinks_label($c) . ': ' . $c['reason'] . ($c['status'] !== '' ? '; ' . $c['status'] : ''),
             'url' => kop_rinbox_wlinks_url($c));
     }
-    if (!empty($log['name'])) $details[] = array('label' => 'Linked to', 'value' => $log['name'] . (!empty($log['by']) ? ' (by ' . $log['by'] . ')' : ''));
+    $linked_to = (string) ($log['label'] ?? $log['name'] ?? '');
+    if ($linked_to !== '') $details[] = array('label' => 'Linked to', 'value' => $linked_to . (!empty($log['by']) ? ' (by ' . $log['by'] . ')' : ''));
     $texts = array(
         'clear'  => 'One record matches this entry. Link it if the record is the program the entry describes.',
         'choose' => 'Several records may be this entry. Link the one it describes, or find another with the finder.',
@@ -158,12 +170,8 @@ function kop_rinbox_wlinks_item(array $e) {
                 'help' => 'Ties the wiki entry ' . $name . ' to the record ' . $c['name'] . ', so updates for the entry are drawn from that record.');
         }
         $actions[] = array('id' => 'link_other', 'label' => $actions ? 'Link to another record' : 'Link to a record', 'style' => $actions ? 'neutral' : 'approve',
-            'help' => 'Ties the wiki entry ' . $name . ' to the record picked in the finder.',
-            'params' => array(array('name' => 'facility', 'label' => 'Record', 'type' => 'facility', 'value' => '')));
-        $actions[] = array('id' => 'link_company', 'label' => 'Link to a company', 'style' => 'neutral',
-            'help' => 'Ties the wiki entry ' . $name . ' to a company record (for a page about a company, not one program).',
-            'params' => array(array('name' => 'company', 'label' => 'Company', 'type' => 'select', 'value' => '',
-                'options' => kop_rinbox_wlinks_companies())));
+            'help' => 'Ties the wiki entry ' . $name . ' to the record picked in the finder: a program, a company, an educational consultant (the firm or one of its people), a mental health provider or a transporter.',
+            'params' => array(array('name' => 'facility', 'label' => 'Program, company, consultant, provider or transporter', 'type' => 'record', 'value' => '')));
         $actions[] = array('id' => 'skip', 'label' => 'Set aside', 'style' => 'reject',
             'help' => 'Leaves ' . $name . ' unlinked (a topic page, or a program KOP has no record of); it moves to Set aside.');
     }
@@ -175,7 +183,7 @@ function kop_rinbox_wlinks_item(array $e) {
         'text'         => $texts[$view],
         'details'      => $details,
         'status'       => $view,
-        'status_label' => $view === 'linked' ? 'Linked: ' . ($log['name'] ?? '') : '',
+        'status_label' => $view === 'linked' ? 'Linked: ' . $linked_to : '',
         'created'      => (string) ($log['at'] ?? $e['updated_at']),
         'facility'     => $first && !empty($first['id']) ? kop_rinbox_facility((int) $first['id']) : null,
         'links'        => $links,
@@ -201,34 +209,19 @@ function kop_rinbox_wlinks_act($key, $action, array $params) {
         kop_rinbox_wlinks_rows(true);
         return array('message' => 'Set aside. ' . $name . ' stays unlinked; Undo is on the Set aside tab.');
     }
-    if ($action === 'link_company') {
-        $target = trim((string) ($params['company'] ?? ''));
-        if ($target === '' || !isset(kop_rinbox_wlinks_companies()[$target])) throw new RuntimeException('Pick a company first.');
-        $label = $target;
-    } elseif ($action === 'link_other') {
-        $fid = (int) ($params['facility'] ?? 0);
-        $st = $pdo->prepare('SELECT unique_name, name FROM facilities_v2 WHERE id = ?');
-        $st->execute(array($fid));
-        $rec = $st->fetch(PDO::FETCH_ASSOC);
-        if (!$rec) throw new RuntimeException('Pick a record in the finder first.');
-        $target = (string) $rec['unique_name'];
-        $label = (string) ($rec['name'] ?: $rec['unique_name']);
+    if ($action === 'link_other') {
+        $pick = kop_wiki_upd_pick($pdo, (string) ($params['facility'] ?? ''));
+        if (!$pick) throw new RuntimeException('Pick a record in the finder first.');
+        list($target, $label) = $pick;
     } elseif (preg_match('/^link_(\d+)$/', $action, $m) && isset($e['cands'][(int) $m[1]])) {
         $target = (string) $e['cands'][(int) $m[1]]['unique_name'];
         $label = (string) $e['cands'][(int) $m[1]]['name'];
     } else {
         throw new RuntimeException('Unknown action.');
     }
-    kop_wiki_upd_link($pdo, $e['id'], $target, $by);
+    kop_wiki_upd_link($pdo, $e['id'], $target, $by, 'link', $label);
     kop_rinbox_wlinks_rows(true);
     return array('message' => 'Linked. ' . $name . ' is tied to ' . $label . '; Undo is on the Linked here tab.');
-}
-
-/** Every company record, for the "Link to a company" list. */
-function kop_rinbox_wlinks_companies() {
-    static $list = null;
-    if ($list === null) $list = kop_wiki_upd_operator_names(kop_wiki_upd_pdo());
-    return $list;
 }
 
 function kop_rinbox_wlinks_tool($id, array $params) {
@@ -238,7 +231,7 @@ function kop_rinbox_wlinks_tool($id, array $params) {
     $done = 0;
     foreach (kop_rinbox_wlinks_rows() as $e) {
         if ($e['view'] !== 'clear' || empty($e['cands'][0]['unique_name'])) continue;
-        kop_wiki_upd_link($pdo, $e['id'], $e['cands'][0]['unique_name'], $by);
+        kop_wiki_upd_link($pdo, $e['id'], $e['cands'][0]['unique_name'], $by, 'link', $e['cands'][0]['name']);
         $done++;
     }
     kop_rinbox_wlinks_rows(true);
