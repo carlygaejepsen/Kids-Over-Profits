@@ -53,6 +53,11 @@ STATES = {'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'C
           'WI': 'Wisconsin', 'WY': 'Wyoming'}
 
 
+def clean_name(name):
+    """The entry's name without what the Reddit conversion left on it ("The Bethesda Home for Girls**()")."""
+    return re.sub(r'\s+', ' ', re.sub(r'\(\s*\)|\*+', '', name or '')).strip()
+
+
 def wiki_link(name, own=''):
     """[Name](its wiki page) when the wiki has a page of that title (not the entry's own), else the name."""
     k = re.sub(r'[^a-z0-9]+', ' ', name.lower()).strip()
@@ -215,7 +220,7 @@ def main(ids):
         entry_md = open(os.path.join(folder, 'entry.md'), encoding='utf-8').read().replace('\r\n', '\n')
         lines = entry_md.split('\n')
         gaps = json.load(open(os.path.join(folder, 'gaps.json'), encoding='utf-8'))
-        program = gaps['entry']['program_name'].strip()
+        program = clean_name(gaps['entry']['program_name'])
         rec = gaps.get('record', {})
         earlier_names = record_names(rec.get('id'))
         closed = rec.get('status') == 'Closed' or not re.search(r'present', gaps['entry'].get('years') or '', re.I) \
@@ -252,7 +257,14 @@ def main(ids):
                     continue  # a placeholder in the record ("RELOCATED", "Unknown"), not a company
                 hist_lines.append(f'{program} {"was" if closed else "is"} operated by {wiki_link(d.get("operator", ""), program)}.')
             elif g['kind'] == 'closure':
-                hist_lines.append(f'{program} closed in {d.get("end_year")}{cite(g)}.')
+                end = str(d.get('end_year') or '')
+                if not re.fullmatch(r'\d{4}', end):
+                    # The record says Closed with no year: say so, and leave the header's years alone.
+                    hist_lines.append(f'{program} has closed{cite(g)}.')
+                    hist_gids.append(g['gid'])
+                    hist_kop = hist_kop and bool(g.get('kop_source'))
+                    continue
+                hist_lines.append(f'{program} closed in {end}{cite(g)}.')
                 start = (gaps['entry'].get('years') or '').split('-')[0]
                 if start:
                     ops.append({'id': 'c0', 'by': 'script', 'op': 'set_header_years', 'years': f'{start}-{d.get("end_year")}',

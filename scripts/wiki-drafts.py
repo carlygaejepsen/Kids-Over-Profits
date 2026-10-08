@@ -12,6 +12,10 @@ verdict). An op adds text only:
 plus "by" (haiku/sonnet/opus), "verdict" (ok, fixed, dropped) and "note". Sections are found by their
 heading text without #, * and spaces, case ignored. ops with verdict "dropped" are not applied.
 
+The ops are placed as the wiki editor's template places them (js/wiki-generation.js, templated()): news article lines
+go under "In the Media" (the entry's own, else a new one after its abuse section), an addition replaces a section's
+stand-in text ("... has not been added yet"), and bold spacing is the editor's ("**Name** was", never "**Name**was").
+
 A closed program's entry (or one about an earlier name) also gets ops-tense.json, the one op that
 rewrites existing lines: {"id": "t1", "op": "past_tense", "lines": [{"old": "<exact line>", "new": "..."}]}.
 A line is taken only when the sole changes are verbs put in the past tense ("is" -> "was", "uses" ->
@@ -65,8 +69,99 @@ def reddit_format(md):
         if n == 0:
             line = re.sub(r'\*\*\(', '** (', line, count=1)
         line = HEAL_URL.sub(lambda m: heal_archive().get(heal_key(m.group(0)), m.group(0)), line)
-        out.append(line)
+        out.append(bold_spacing(line))
     return '\n'.join(out) + '\n'
+
+
+def bold_spacing(line):
+    """The wiki editor's normalizeBoldSpacing() (js/wiki-generation.js), which every entry it writes goes through:
+    "** text **" -> "**text**", "at**Name**" -> "at **Name**", "**Name**text" -> "**Name** text", "by*many*survivors" ->
+    "by *many* survivors". Table rows are left alone. The markers are paired in order, first with second, third with
+    fourth: the editor's regexes pair the end of one span with the start of the next on a line holding two ("**a** and
+    **b**" -> "**a ** and** b**"), which Reddit does not show as bold. A line with an odd number of markers keeps its bold
+    as it is. PHP: kop_wiki_drafts_bold_spacing(), must match."""
+    if line.lstrip().startswith('|'):
+        return line
+    parts = line.split('**')
+    if len(parts) > 1 and len(parts) % 2 == 1 and all(parts[k].strip() for k in range(1, len(parts), 2)):
+        for k in range(1, len(parts), 2):
+            parts[k] = parts[k].strip(' \t')
+            if parts[k - 1] and not re.search(r'[\s*|\[("\']$', parts[k - 1]):
+                parts[k - 1] += ' '
+            if parts[k + 1] and not re.match(r'[\s*|).,;:!?\'"\]]', parts[k + 1]):
+                parts[k + 1] = ' ' + parts[k + 1]
+        line = '**'.join(parts)
+    return re.sub(r'([A-Za-z])\*([A-Za-z][^*\n|]{0,60}?)\*([A-Za-z])', r'\1 *\2* \3', line)
+
+
+# The editor's stand-in text for an empty section (getPlaceholder() and isEffectivelyEmpty() in js/wiki-generation.js).
+# A section that gains a line loses its stand-in, as the editor would write it. PHP: kop_wiki_drafts_is_placeholder().
+PLACEHOLDER = re.compile(r'^(background information for |information about |detailed information about |documented information about '
+                         r'|no survivor testimonies for |no related media links for |no media coverage for |additional information about '
+                         r'|programs associated with |no information is known|no information available)', re.I)
+
+
+def is_placeholder(line):
+    t = line.strip()
+    if not t or len(t) > 350 or not PLACEHOLDER.match(t):
+        return False
+    low = t.lower()
+    if low.startswith('no information'):
+        # The older editor's stand-in: "No information is known about <Section> at <Program>. If you attended <Program> and
+        # would like to contribute information to help complete this page, please contact ...".
+        return len(t) < 120 or 'would like to contribute information to help complete this page' in low
+    return 'added' in low or low.startswith(('detailed ', 'documented '))
+
+
+# A news article line, as the editor's article form writes it: "[Title](url) (Outlet, 8/27/1994)", "- " in front or not.
+NEWS_LINE = re.compile(r'^(?:[-*] )?\[[^\]]+\]\(https?://[^)\s]+\) \([^()]*\b\d{1,2}/\d{1,2}/\d{4}\)$')
+MEDIA_SECTIONS = ('in the media', 'news articles', 'media coverage', 'news')
+# Where the editor's template puts "In the Media" when the entry has none: after the abuse section, else after the last of these.
+MEDIA_AFTER = ('rules and punishments', 'punishments', 'program structure', 'founders and notable staff', 'history and background information')
+
+
+def templated(md, ops):
+    """The ops as the wiki editor's template places them (js/wiki-generation.js): news articles go under "In the Media", the
+    rest of Related Media stays. A Related Media op's article lines move to the entry's own In the Media (or News Articles)
+    section; an entry without one gets the template's "In the Media" section after its abuse section, at that heading's
+    level, as a "- " list. Other ops are returned unchanged."""
+    lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
+    secs = sections(lines)
+    media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
+    abuse = next((s for s in secs if s[2].startswith('abuse') or 'lawsuit' in s[2] or s[2] == 'deaths'), None)
+    after = abuse or next((s for name in MEDIA_AFTER for s in secs if s[2] == name), None)
+    sep = next((l.strip() for l in lines[:footer_start(lines)] if SEPARATOR.match(l)), '---')
+    out, made = [], None
+    for op in ops:
+        if op.get('op') != 'append_to_section' or norm(op.get('section', '')) != 'related media' or op.get('verdict') == 'dropped':
+            out.append(op)
+            continue
+        items = [l for l in (op.get('text') or '').split('\n') if l.strip()]
+        news = [l for l in items if NEWS_LINE.match(l.strip())]
+        if not news or (not media and not after):
+            out.append(op)
+            continue
+        rest = [l for l in items if not NEWS_LINE.match(l.strip())]
+        if rest:
+            out.append(dict(op, text='\n\n'.join(rest)))
+        bare = [re.sub(r'^[-*] ', '', l.strip()) for l in news]
+        if media:
+            body = [l for l in lines[media[0] + 1:body_end(lines, media[0], media[1])] if l.strip() and not SEPARATOR.match(l)]
+            listed = body and all(re.match(r'^[-*] ', l.strip()) for l in body if not is_placeholder(l))
+            fresh = all(is_placeholder(l) for l in body)
+            text = '\n'.join('- ' + l for l in bare) if fresh or listed else '\n\n'.join(bare)
+            out.append(dict(op, id=op['id'] + 'm', section=re.sub(r'[#*]+', '', lines[media[0]]).strip(), text=text,
+                            note=(op.get('note') or '') + ' News articles go under In the Media, as in the wiki editor.'))
+        elif made is None:
+            level = re.match(r'\s*(#+)', lines[after[0]]).group(1)
+            made = dict(op, id=op['id'] + 'm', op='add_section', after_section=re.sub(r'[#*]+', '', lines[after[0]]).strip(),
+                        heading=f'{level} **In the Media**', separator=sep, text='\n'.join('- ' + l for l in bare),
+                        note=(op.get('note') or '') + " News articles go under In the Media, the wiki editor's section for them.")
+            made.pop('section', None)
+            out.append(made)
+        else:
+            made['text'] += '\n' + '\n'.join('- ' + l for l in bare)
+    return out
 
 
 # heal-online.org links -> HEAL's own capture from before 2023 (js/data/reddit-wiki/heal-archive-urls.json, built by
@@ -153,11 +248,16 @@ def apply(md, ops):
                 errors.append(f"{op.get('id')}: no section '{op.get('section')}'")
                 continue
             at = body_end(lines, s[0], s[1])
-            lines[at:at] = [''] + new
+            body = [k for k in range(s[0] + 1, at) if lines[k].strip() and not SEPARATOR.match(lines[k])]
+            if body and all(is_placeholder(lines[k]) for k in body):
+                # Only the editor's stand-in text: the addition takes its place.
+                lines[body[0]:at] = new
+            else:
+                lines[at:at] = [''] + new
         elif kind == 'add_section':
             s = find(lines, op.get('after_section', ''))
             at = body_end(lines, s[0], s[1]) if s else body_end(lines, 0, footer_start(lines))
-            lines[at:at] = ['', '---', '', op['heading'].strip(), ''] + new
+            lines[at:at] = ['', op.get('separator') or '---', '', op['heading'].strip(), ''] + new
         else:
             errors.append(f"{op.get('id')}: unknown op '{kind}'")
             continue
@@ -178,10 +278,15 @@ def check(original, draft, header_changed, kop_lines=frozenset(), kop_page_lines
     j = 0
     added = []
     for line in d:
+        # The editor's stand-in text for an empty section may go (apply() replaces it with the addition).
+        while j < len(o) and line != o[j] and is_placeholder(o[j]):
+            j += 1
         if j < len(o) and line == o[j]:
             j += 1
         else:
             added.append(line)
+    while j < len(o) and is_placeholder(o[j]):
+        j += 1
     if j < len(o):
         problems.append(f'original line {j + 1} is missing or changed: {o[j][:80]!r}')
     for line in added:
@@ -331,7 +436,7 @@ def add_kop_page(folder, md, ops):
         return False
     rec = gaps.get('record', {})
     url = rec.get('url') or ''
-    name = (gaps.get('entry', {}).get('program_name') or rec.get('name') or '').strip()   # the entry's own name
+    name = re.sub(r'\s+', ' ', re.sub(r'\(\s*\)|\*+', '', gaps.get('entry', {}).get('program_name') or rec.get('name') or '')).strip()   # the entry's own name
     if not url or not name or url in md or any(o.get('kop_page') or url in (o.get('text') or '') for o in ops):
         return False
     if not find(md.replace('\r\n', '\n').split('\n'), 'Related Media'):
@@ -366,6 +471,7 @@ def run(ids, write):
         fixed_md, fixes, fix_errors = apply_fixes(md, load_fixes(folder))
         base, tensed, tense_errors = apply_tense(fixed_md, tense_ops)
         tense_errors = fix_errors + tense_errors
+        ops = templated(base, ops)
         draft, applied, errors = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
         kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
@@ -423,7 +529,7 @@ def selftest():
 
 
 EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
-OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'years', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
+OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'separator', 'years', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
 
 
 def export(ids):
@@ -467,7 +573,7 @@ def export(ids):
             'column': entry.get('markdown_field', ''),
             'base_sha1': hashlib.sha1(base.encode('utf-8')).hexdigest(),
             'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
-            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in ops if op.get('verdict') != 'dropped'],
+            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(base, ops) if op.get('verdict') != 'dropped'],
             'tense': tense,
             'fixes': [{'id': f['id'], 'old': f['old'].rstrip('\r'), 'new': f['new'].rstrip('\r'), 'note': f.get('note', '')}
                       for f in load_fixes(folder)],

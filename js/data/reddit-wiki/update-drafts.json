@@ -23,13 +23,15 @@
      "kop_record": true
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Former Boys Town teacher, wife charged with child abuse](https://www.wowt.com/2026/07/31/former-boys-town-teacher-wife-charged-with-child-abuse/) (WOWT, 7/31/2026)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Former Boys Town teacher, wife charged with child abuse](https://www.wowt.com/2026/07/31/former-boys-town-teacher-wife-charged-with-child-abuse/) (WOWT, 7/31/2026)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -188,13 +190,13 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c2",
+     "id": "c2m",
      "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Abused child suffered scorpion bites, broken bones at Alabama residential treatment, lawsuit claims](https://www.al.com/news/2023/01/abused-child-suffered-scorpion-bites-broken-bones-in-alabama-residential-treatment-lawsuit-claims.html) (AL.com, 1/25/2023)",
+     "section": "In the Media",
+     "text": "- [Abused child suffered scorpion bites, broken bones at Alabama residential treatment, lawsuit claims](https://www.al.com/news/2023/01/abused-child-suffered-scorpion-bites-broken-bones-in-alabama-residential-treatment-lawsuit-claims.html) (AL.com, 1/25/2023)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, as in the wiki editor."
     },
     {
      "id": "k1",
@@ -350,13 +352,15 @@
      "kop_record": true
     },
     {
-     "id": "c3",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Takeaways from inside a teen treatment center for adoptees, funded by taxpayers: runaways, assaults](https://www.kctv5.com/2026/05/29/takeaways-inside-teen-treatment-center-adoptees-funded-by-taxpayers-runaways-assaults/) (KCTV5, 5/29/2026)\n\n[Investigation Raises Concerns Over Troubled Teen Treatment Center in Missouri](https://news.ssbcrack.com/investigation-raises-concerns-over-troubled-teen-treatment-center-in-missouri/) (SSBCrack News, 5/29/2026)\n\n[Inside a taxpayer-funded treatment center for adoptees, tales of abuse, neglect and little oversight](https://abcnews.com/Business/wireStory/inside-taxpayer-funded-treatment-center-adoptees-tales-abuse-133412068) (ABC News, 5/29/2026)\n\n['Welcome to hell': Kids allege physical, sexual abuse at Missouri treatment center](https://www.stlpr.org/law-order/2026-06-03/calo-students-abused-missouri-lake-ozarks-trauma-troubled-teens-lawsuits) (St. Louis Public Radio, 6/3/2026)",
+     "id": "c3m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Takeaways from inside a teen treatment center for adoptees, funded by taxpayers: runaways, assaults](https://www.kctv5.com/2026/05/29/takeaways-inside-teen-treatment-center-adoptees-funded-by-taxpayers-runaways-assaults/) (KCTV5, 5/29/2026)\n- [Investigation Raises Concerns Over Troubled Teen Treatment Center in Missouri](https://news.ssbcrack.com/investigation-raises-concerns-over-troubled-teen-treatment-center-in-missouri/) (SSBCrack News, 5/29/2026)\n- [Inside a taxpayer-funded treatment center for adoptees, tales of abuse, neglect and little oversight](https://abcnews.com/Business/wireStory/inside-taxpayer-funded-treatment-center-adoptees-tales-abuse-133412068) (ABC News, 5/29/2026)\n- ['Welcome to hell': Kids allege physical, sexual abuse at Missouri treatment center](https://www.stlpr.org/law-order/2026-06-03/calo-students-abused-missouri-lake-ozarks-trauma-troubled-teens-lawsuits) (St. Louis Public Radio, 6/3/2026)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -391,6 +395,33 @@
    "fixes": [],
    "conflicts": []
   },
+  "103": {
+   "program": "Copper Hills Youth Center",
+   "place": "West Jordan, UT",
+   "years": "1997-present",
+   "column": "original_markdown",
+   "base_sha1": "0d7281e0f19db8d70ab49b80a5c08b51f6ad0fb8",
+   "record": {
+    "id": 10370,
+    "name": "Copper Hills Youth Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Copper Hills Youth Center on Kids Over Profits](https://kidsoverprofits.org/facility/copper-hills-youth-center-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "105": {
    "program": "Diamond Ranch Academy",
    "place": "Hurricane, UT",
@@ -404,13 +435,13 @@
    },
    "ops": [
     {
-     "id": "c1",
+     "id": "c1m",
      "op": "append_to_section",
-     "section": "Related Media",
+     "section": "News Articles",
      "text": "[Their kids died in Utah teen treatment programs. Now, these parents are asking Utah lawmakers to beef up oversight.](https://www.sltrib.com/news/health/2025/02/21/troubled-teen-industry-utah/) (The Salt Lake Tribune, 2/21/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, as in the wiki editor."
     },
     {
      "id": "k1",
@@ -485,13 +516,15 @@
      "verdict": "ok"
     },
     {
-     "id": "h1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Former students report injuries and isolation at Utah facility for troubled teens](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783) (NBC News, 9/2/2024)",
+     "id": "h1m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Former students report injuries and isolation at Utah facility for troubled teens](https://www.nbcnews.com/news/us-news/utah-elevations-rtc-injuries-troubled-teen-facility-rcna159783) (NBC News, 9/2/2024)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "The article's own headline and the entry's date style (M/D/YYYY); section given by name."
+     "note": "The article's own headline and the entry's date style (M/D/YYYY); section given by name. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -557,13 +590,15 @@
      "kop_record": true
     },
     {
-     "id": "c4",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Falcon Ridge Ranch Academy Staff Member Arrested and Charged with Sexual Battery and Dealing Harmful Material](https://www.sltrib.com/news/2021/03/12/staff-member-troubled/) (The Salt Lake Tribune, 3/11/2021)",
+     "id": "c4m",
+     "op": "add_section",
+     "after_section": "Abuse and Neglect Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Falcon Ridge Ranch Academy Staff Member Arrested and Charged with Sexual Battery and Dealing Harmful Material](https://www.sltrib.com/news/2021/03/12/staff-member-troubled/) (The Salt Lake Tribune, 3/11/2021)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "s1",
@@ -1016,13 +1051,15 @@
    },
    "ops": [
     {
-     "id": "c1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Matt Bevin’s Despicable Legacy: From White Savior Adoptive Parent to Child Abandoner](https://therealadopteamoxie.substack.com/p/matt-bevins-despicable-legacy-from?r=1qajz5&utm_medium=ios&triedRedirect=true) (The Real Adoptea Moxie Blog, 8/9/2024)\n\n[Abandoned by parents in Jamaica, Traverse City teen finds hope in foster care](https://upnorthlive.com/news/local/abandoned-by-parents-in-jamaica-traverse-city-teen-finds-hope-in-foster-care-adoption-advocacy-grand-traverse-county) (Up North Live, 9/11/2024)\n\n[Former Kentucky Gov. Matt Bevin arrested in Bourbon County](https://www.courier-journal.com/story/news/crime/2026/09/03/former-kentucky-gov-matt-bevin-arrested/90426784007/) (Louisville Courier Journal, 9/3/2026)\n\n[Former Governor’s Adopted Son Claims Abuse at Jamaican Youth Facility](https://atlantablackstar.com/2026/09/24/ex-kentucky-gov-black-son-alleges-severe-abuse/) (Atlanta Black Star, 9/24/2026)",
+     "id": "c1m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Matt Bevin’s Despicable Legacy: From White Savior Adoptive Parent to Child Abandoner](https://therealadopteamoxie.substack.com/p/matt-bevins-despicable-legacy-from?r=1qajz5&utm_medium=ios&triedRedirect=true) (The Real Adoptea Moxie Blog, 8/9/2024)\n- [Abandoned by parents in Jamaica, Traverse City teen finds hope in foster care](https://upnorthlive.com/news/local/abandoned-by-parents-in-jamaica-traverse-city-teen-finds-hope-in-foster-care-adoption-advocacy-grand-traverse-county) (Up North Live, 9/11/2024)\n- [Former Kentucky Gov. Matt Bevin arrested in Bourbon County](https://www.courier-journal.com/story/news/crime/2026/09/03/former-kentucky-gov-matt-bevin-arrested/90426784007/) (Louisville Courier Journal, 9/3/2026)\n- [Former Governor’s Adopted Son Claims Abuse at Jamaican Youth Facility](https://atlantablackstar.com/2026/09/24/ex-kentucky-gov-black-son-alleges-severe-abuse/) (Atlanta Black Star, 9/24/2026)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -1096,6 +1133,82 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Date was wrong (they died September 21, 2006, not September 1); the source calls it an apparent suicide that the medical examiner could not classify and the family disputes; merged both deaths into one line with ages, runaway date and the Rangers probe."
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "203": {
+   "program": "The Bethesda Home for Girls**()",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "00aabcab1ddcabd9ca0fbb1aa8b5d32ed3f4a85b",
+   "record": {
+    "id": 13931,
+    "name": "Bethesda Home for Girls",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "The Bethesda Home for Girls has closed. It was operated by Roloff Homes.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Betty Wills** was the Cofounder of The Bethesda Home for Girls. Wills was also cofounder of Mountain Park Baptist Boarding Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Lester Roloff** was the Founder of The Bethesda Home for Girls. Roloff was also Founder (1967-1982) of [Anchor Home for Boys](https://www.reddit.com/r/troubledteens/wiki/index/anchorboys), founder / leader of [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah), photo displayed on campus of Agape Boarding School and founder of Roloff Evangelistic Enterprises.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Rev Bobby Ray \"Papa\" Wills** was the Cofounder of The Bethesda Home for Girls. Wills was also director of Christian Life Boarding Academy, cofounder, director of Mountain Park Baptist Boarding Academy and operator of [Rebekah Home for Girls](https://www.reddit.com/r/troubledteens/wiki/index/rebekah).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[The Bethesda Home for Girls on Kids Over Profits](https://kidsoverprofits.org/facility/bethesda-home-for-girls-ms/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "s1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In August of 1980, 14-year-old Connie Munson, who had run away from the Bethesda Home for Girls with nine other girls, was struck and killed by a pickup truck in Forrest County, Mississippi, while walking to a store to use a telephone. ([Hattiesburg American, 8/27/1980](https://www.newspapers.com/article/hattiesburg-american-august-27-1980-pag/17601164/?locale=en-US))",
+     "by": "sonnet",
+     "verdict": "fixed",
+     "note": "Newspapers.com clipping returns 403; its OCR text (via search) says she and another girl were hit by a pickup truck early Tuesday (Aug 26, 1980) after she and nine other runaways spent the night at a house nearby. KOP's 'August 1' date and 'during an escape attempt' are not what the source says; gave the month only and the circumstances as reported"
     }
    ],
    "tense": [],
@@ -1228,13 +1341,15 @@
    },
    "ops": [
     {
-     "id": "c1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Queen Creek police investigating alleged assault at Desert Lily Academy](https://www.yourvalley.net/queen-creek-independent/stories/queen-creek-police-investigating-alleged-assault-at-residential-school,615952) (Queen Creek Independent, 9/16/2025)",
+     "id": "c1m",
+     "op": "add_section",
+     "after_section": "Abuse and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Queen Creek police investigating alleged assault at Desert Lily Academy](https://www.yourvalley.net/queen-creek-independent/stories/queen-creek-police-investigating-alleged-assault-at-residential-school,615952) (Queen Creek Independent, 9/16/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "s2",
@@ -1282,13 +1397,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Runaways, findings of neglect and abuse cast shadow at Chamberlain school | GBH](https://www.wgbh.org/news/education-news/2016-08-16/runaways-findings-of-neglect-and-abuse-cast-shadow-at-chamberlain-school) (GBH News, 8/16/2016)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Runaways, findings of neglect and abuse cast shadow at Chamberlain school | GBH](https://www.wgbh.org/news/education-news/2016-08-16/runaways-findings-of-neglect-and-abuse-cast-shadow-at-chamberlain-school) (GBH News, 8/16/2016)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -1500,13 +1617,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Former employee of St. George youth facility accused of giving drugs to minors, showing nude photos](https://www.stgeorgeutah.com/arrests/former-employee-of-st-george-youth-facility-accused-of-giving-drugs-to-minors-showing-nude/article_33c17b33-2671-474b-932d-d45fd25f3bbb.html) (St. George News, 4/22/2025)\n\n[‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Former employee of St. George youth facility accused of giving drugs to minors, showing nude photos](https://www.stgeorgeutah.com/arrests/former-employee-of-st-george-youth-facility-accused-of-giving-drugs-to-minors-showing-nude/article_33c17b33-2671-474b-932d-d45fd25f3bbb.html) (St. George News, 4/22/2025)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -1625,6 +1744,33 @@
      "new": "Like other behavior-modification programs, Ashcreek Ranch Academy used a level-system consisting of four levels. These levels (as of 2012) were:"
     }
    ],
+   "fixes": [],
+   "conflicts": []
+  },
+  "493": {
+   "program": "Clearview Horizon",
+   "place": "Sandpoint, ID/Heron, MT",
+   "years": "1996-present",
+   "column": "original_markdown",
+   "base_sha1": "5387f66d72676c929f27da1627b21c1cabc32777",
+   "record": {
+    "id": 9698,
+    "name": "Clearview Horizon",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Clearview Horizon on Kids Over Profits](https://kidsoverprofits.org/facility/clearview-horizon-id/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
    "fixes": [],
    "conflicts": []
   },
@@ -1958,13 +2104,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Their kids died in Utah teen treatment programs. Now, these parents are asking Utah lawmakers to beef up oversight.](https://www.sltrib.com/news/health/2025/02/21/troubled-teen-industry-utah/) (The Salt Lake Tribune, 2/21/2025)\n\n[Parents say Discovery Ranch Academy’s negligence led to their son’s death in new lawsuit](https://www.sltrib.com/news/health/2025/05/17/parents-sue-utahs-discovery-ranch/) (Salt Lake Tribune, 5/17/2025)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Their kids died in Utah teen treatment programs. Now, these parents are asking Utah lawmakers to beef up oversight.](https://www.sltrib.com/news/health/2025/02/21/troubled-teen-industry-utah/) (The Salt Lake Tribune, 2/21/2025)\n- [Parents say Discovery Ranch Academy’s negligence led to their son’s death in new lawsuit](https://www.sltrib.com/news/health/2025/05/17/parents-sue-utahs-discovery-ranch/) (Salt Lake Tribune, 5/17/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -2371,13 +2519,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c13",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Kids forced to 'dig own graves,' eat vomit at hellish NY boarding school: survivor](https://nypost.com/2026/06/20/us-news/kids-were-forced-to-dig-their-own-graves-eat-vomit-at-hellish-upstate-ny-boarding-school-survivor/) (New York Post, 6/20/2026)",
+     "id": "c13m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Deaths, and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Kids forced to 'dig own graves,' eat vomit at hellish NY boarding school: survivor](https://nypost.com/2026/06/20/us-news/kids-were-forced-to-dig-their-own-graves-eat-vomit-at-hellish-upstate-ny-boarding-school-survivor/) (New York Post, 6/20/2026)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -2640,6 +2790,7 @@
     }
    ],
    "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "548": {
@@ -2685,13 +2836,15 @@
      "kop_record": true
     },
     {
-     "id": "c4",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
+     "id": "c4m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "s1",
@@ -2884,13 +3037,15 @@
      "note": "Moved from History to the lawsuits section, after p2, which introduces the suit (sonnet's filing sentence is folded in there); added the motion to dismiss and the December 2025 filing errors; the July 2026 ruling's details checked against the Press Herald article."
     },
     {
-     "id": "h1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Hyde School headmaster to step down](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/) (The Portland Press Herald, 1/16/2013)\n\n[Former students of Hyde School allege decades of abuse](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335) (NEWS CENTER Maine, 7/11/2025)\n\n[Former students allege abuse and neglect at Hyde School in Bath](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/) (Central Maine, 7/13/2025)\n\n[Former student sues Maine boarding school, alleging forced child labor](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063) (WMTW, 7/15/2025)\n\n[More former Hyde School students allege mistreatment. Others say experience was positive](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/) (Central Maine, 7/18/2025)\n\n[Hyde School asks judge to dismiss lawsuit alleging forced labor and abuse](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/) (Central Maine, 10/8/2025)\n\n[Lawsuit against Hyde School at risk after attorney errors](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/) (Central Maine, 12/15/2025)\n\n[Revisiting Hyde: Former students say abuse allegations reopened painful memories](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/) (Central Maine, 12/24/2025)\n\n[Legal battle over Hyde School lawsuit zeroes in on filing errors](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa) (NEWS CENTER Maine, 12/24/2025)\n\n[Attorney in Hyde School lawsuit sanctioned for AI misuse, but case will continue](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/) (The Portland Press Herald, 5/7/2026)\n\n[Federal judge allows suit against Hyde School to proceed](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/) (The Portland Press Herald, 7/28/2026)",
+     "id": "h1m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Lawsuits, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Hyde School headmaster to step down](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/) (The Portland Press Herald, 1/16/2013)\n- [Former students of Hyde School allege decades of abuse](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335) (NEWS CENTER Maine, 7/11/2025)\n- [Former students allege abuse and neglect at Hyde School in Bath](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/) (Central Maine, 7/13/2025)\n- [Former student sues Maine boarding school, alleging forced child labor](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063) (WMTW, 7/15/2025)\n- [More former Hyde School students allege mistreatment. Others say experience was positive](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/) (Central Maine, 7/18/2025)\n- [Hyde School asks judge to dismiss lawsuit alleging forced labor and abuse](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/) (Central Maine, 10/8/2025)\n- [Lawsuit against Hyde School at risk after attorney errors](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/) (Central Maine, 12/15/2025)\n- [Revisiting Hyde: Former students say abuse allegations reopened painful memories](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/) (Central Maine, 12/24/2025)\n- [Legal battle over Hyde School lawsuit zeroes in on filing errors](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa) (NEWS CENTER Maine, 12/24/2025)\n- [Attorney in Hyde School lawsuit sanctioned for AI misuse, but case will continue](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/) (The Portland Press Herald, 5/7/2026)\n- [Federal judge allows suit against Hyde School to proceed](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/) (The Portland Press Herald, 7/28/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Oldest first like the rest of the list, dates as M/D/YYYY like the entry; dropped the three letters to the editor (g4, g9, g10) and the 2014 WMTW item about an outsider on the campus (g15). Three headlines checked against the articles."
+     "note": "Oldest first like the rest of the list, dates as M/D/YYYY like the entry; dropped the three letters to the editor (g4, g9, g10) and the 2014 WMTW item about an outsider on the campus (g15). Three headlines checked against the articles. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -2904,6 +3059,7 @@
     }
    ],
    "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "563": {
@@ -3042,13 +3198,15 @@
    },
    "ops": [
     {
-     "id": "c1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Two Former Judge Rotenberg Center Employees Charged with Assault](https://www.wbur.org/news/2016/12/14/rotenberg-assault-allegations) (WBUR News, 12/14/2016)\n\n[Call to End Use of Electric Shock at Judge Rotenberg Center](https://www.huffpost.com/entry/abuse-is-not-the-answer-shut-down-the-judge-rotenberg_b_585be5dde4b068764965bab3) (HuffPost, 12/22/2016)\n\n[Disability Rights Activists Protest FDA to Demand Ban on Aversive Electric Shock Therapy](https://www.dcmediagroup.us/2018/03/22/stop-shock-fda-directors-home-beseiged-disability-rights-activists/) (DC Media Group, 3/22/2018)\n\n[Massachusetts allows school to continue with electric shocks](https://www.theguardian.com/education/2018/jul/12/judge-rotenberg-educational-center-electric-shocks) (The Guardian, 7/12/2018)\n\n[School Shocks Students With Disabilities. The FDA Is Moving To Ban The Practice](https://www.npr.org/2019/01/23/687636057/massachusetts-school-defends-use-of-electric-shock-treatments) (NPR, 1/23/2019)\n\n[FDA Bans Shock Device Used For 'Aggressive Behavior' On Mentally Disabled Patients At Massachusetts School](https://www.wgbh.org/news/local/2020-03-04/fda-bans-shock-device-used-for-aggressive-behavior-on-mentally-disabled-patients-at-massachusetts-school) (WGBH, 3/4/2020)\n\n[Time to end public funding of Judge Rotenberg Center](https://commonwealthbeacon.org/education/time-to-end-public-funding-of-judge-rotenberg-center/) (Commonwealth Beacon, 4/20/2021)\n\n[Decades-long fight over electric shock treatment led to an FDA ban](https://www.nbcnews.com/health/health-care/decades-long-fight-over-electric-shock-treatment-led-fda-ban-n1265546) (NBC News, 9/2/2021)\n\n[Massachusetts Supreme Judicial Court Weighs Legality of Electric Shock Treatment at Judge Rotenberg Center](https://www.bostonglobe.com/2023/05/21/opinion/judge-rotenberg-center-skin-shocks-sjc-massachusetts/) (Boston Globe, 5/21/2023)\n\n[Supreme Judicial Court allows Judge Rotenberg Educational Center in Canton to keep using skin shocks — and reminds state how it can stop them](https://www.bostonglobe.com/2023/09/11/opinion/jrc-sjc-rotenberg-center-skin-shocks-aversives/) (Boston Globe, 9/11/2023)\n\n[Top court in Massachusetts permits use of shock devices on institutionalized patients](https://www.abajournal.com/web/article/top-court-in-massachusetts-permits-use-of-shock-devices-on-institutionalized-patients) (ABA Journal, 9/11/2023)\n\n[Massachusetts Department of Children and Families Places Youth at Judge Rotenberg Center Amid Ongoing Controversy](https://www.boston25news.com/news/local/25-investigates-dcf-placing-kids-controversial-judge-rotenberg-center/XLPTRG57I5C6VIN75G4OQ7PTME/) (Boston 25 News, 9/21/2023)\n\n[I have had nightmares for 14 years: Former Canton school student testifies for bill to ban shock devices](https://www.wgbh.org/news/local/2023-11-13/i-have-had-nightmares-for-14-years-former-canton-school-student-testifies-for-bill-to-ban-shock-devices) (WGBH, 11/13/2023)\n\n[Once troubled youths, 2 New Yorkers describe time in Mass. facility that uses shocks for therapy](https://www.wcvb.com/article/inside-stories-of-judge-rotenberg-center-shock-therapy/60828351) (WCVB, 5/18/2024)\n\n[Long Effort to Ban Shocks as an Autism Treatment Faces Uncertainty](https://www.nytimes.com/2025/05/13/us/electric-shock-ban-disability.html) (The New York Times, 5/13/2025)",
+     "id": "c1m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Two Former Judge Rotenberg Center Employees Charged with Assault](https://www.wbur.org/news/2016/12/14/rotenberg-assault-allegations) (WBUR News, 12/14/2016)\n- [Call to End Use of Electric Shock at Judge Rotenberg Center](https://www.huffpost.com/entry/abuse-is-not-the-answer-shut-down-the-judge-rotenberg_b_585be5dde4b068764965bab3) (HuffPost, 12/22/2016)\n- [Disability Rights Activists Protest FDA to Demand Ban on Aversive Electric Shock Therapy](https://www.dcmediagroup.us/2018/03/22/stop-shock-fda-directors-home-beseiged-disability-rights-activists/) (DC Media Group, 3/22/2018)\n- [Massachusetts allows school to continue with electric shocks](https://www.theguardian.com/education/2018/jul/12/judge-rotenberg-educational-center-electric-shocks) (The Guardian, 7/12/2018)\n- [School Shocks Students With Disabilities. The FDA Is Moving To Ban The Practice](https://www.npr.org/2019/01/23/687636057/massachusetts-school-defends-use-of-electric-shock-treatments) (NPR, 1/23/2019)\n- [FDA Bans Shock Device Used For 'Aggressive Behavior' On Mentally Disabled Patients At Massachusetts School](https://www.wgbh.org/news/local/2020-03-04/fda-bans-shock-device-used-for-aggressive-behavior-on-mentally-disabled-patients-at-massachusetts-school) (WGBH, 3/4/2020)\n- [Time to end public funding of Judge Rotenberg Center](https://commonwealthbeacon.org/education/time-to-end-public-funding-of-judge-rotenberg-center/) (Commonwealth Beacon, 4/20/2021)\n- [Decades-long fight over electric shock treatment led to an FDA ban](https://www.nbcnews.com/health/health-care/decades-long-fight-over-electric-shock-treatment-led-fda-ban-n1265546) (NBC News, 9/2/2021)\n- [Massachusetts Supreme Judicial Court Weighs Legality of Electric Shock Treatment at Judge Rotenberg Center](https://www.bostonglobe.com/2023/05/21/opinion/judge-rotenberg-center-skin-shocks-sjc-massachusetts/) (Boston Globe, 5/21/2023)\n- [Supreme Judicial Court allows Judge Rotenberg Educational Center in Canton to keep using skin shocks — and reminds state how it can stop them](https://www.bostonglobe.com/2023/09/11/opinion/jrc-sjc-rotenberg-center-skin-shocks-aversives/) (Boston Globe, 9/11/2023)\n- [Top court in Massachusetts permits use of shock devices on institutionalized patients](https://www.abajournal.com/web/article/top-court-in-massachusetts-permits-use-of-shock-devices-on-institutionalized-patients) (ABA Journal, 9/11/2023)\n- [Massachusetts Department of Children and Families Places Youth at Judge Rotenberg Center Amid Ongoing Controversy](https://www.boston25news.com/news/local/25-investigates-dcf-placing-kids-controversial-judge-rotenberg-center/XLPTRG57I5C6VIN75G4OQ7PTME/) (Boston 25 News, 9/21/2023)\n- [I have had nightmares for 14 years: Former Canton school student testifies for bill to ban shock devices](https://www.wgbh.org/news/local/2023-11-13/i-have-had-nightmares-for-14-years-former-canton-school-student-testifies-for-bill-to-ban-shock-devices) (WGBH, 11/13/2023)\n- [Once troubled youths, 2 New Yorkers describe time in Mass. facility that uses shocks for therapy](https://www.wcvb.com/article/inside-stories-of-judge-rotenberg-center-shock-therapy/60828351) (WCVB, 5/18/2024)\n- [Long Effort to Ban Shocks as an Autism Treatment Faces Uncertainty](https://www.nytimes.com/2025/05/13/us/electric-shock-ban-disability.html) (The New York Times, 5/13/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -3963,13 +4121,15 @@
      "kop_record": true
     },
     {
-     "id": "c3",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[COVID-19 Outbreak Affects Dozens of Residents and Staff at Mingus Mountain Academy](https://www.azcentral.com/story/news/local/arizona/2020/05/07/mingus-mountain-academy-arizona-has-42-teens-covid-19/5172243002/) (The Arizona Republic, 5/7/2020)\n\n[COVID-19 Outbreak Reported at Mingus Mountain Academy](https://www.dcourier.com/archives/84-students-20-staff-test-positive-at-mingus-mountain-academy/article_678ddd5d-7226-5608-9844-8c4de0f63e95.html) (Daily Courier, 5/14/2020)\n\n[Mingus Mountain Academy Reports Staff Injuries and Student Custody After Incident](https://www.12news.com/video/news/local/arizona/2-staff-members-injured-5-students-in-custody-after-attack/75-3b406a73-148e-4686-9206-c80704bd7e46) (12News, 7/23/2020)\n\n[Five Students Detained Following Disturbance and Assaults at Mingus Mountain Academy](https://theprescotttimes.com/juvenile-students-at-mingus-mountain-academy-attack-staff-resulting-in-injuries-and-5-in-custody/article_8aea4c61-da4d-5996-89f4-c536e0187034.html) (The Prescott Times, 7/23/2020)\n\n[Prescott Valley police: Runaway teen still missing after 5 months](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/) (Arizona Republic, 3/31/2022)\n\n[Arizona lawmaker calls for investigation after ABC15 reports into facility for troubled teens](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens) (ABC 15 Arizona, 4/30/2025)",
+     "id": "c3m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and News",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [COVID-19 Outbreak Affects Dozens of Residents and Staff at Mingus Mountain Academy](https://www.azcentral.com/story/news/local/arizona/2020/05/07/mingus-mountain-academy-arizona-has-42-teens-covid-19/5172243002/) (The Arizona Republic, 5/7/2020)\n- [COVID-19 Outbreak Reported at Mingus Mountain Academy](https://www.dcourier.com/archives/84-students-20-staff-test-positive-at-mingus-mountain-academy/article_678ddd5d-7226-5608-9844-8c4de0f63e95.html) (Daily Courier, 5/14/2020)\n- [Mingus Mountain Academy Reports Staff Injuries and Student Custody After Incident](https://www.12news.com/video/news/local/arizona/2-staff-members-injured-5-students-in-custody-after-attack/75-3b406a73-148e-4686-9206-c80704bd7e46) (12News, 7/23/2020)\n- [Five Students Detained Following Disturbance and Assaults at Mingus Mountain Academy](https://theprescotttimes.com/juvenile-students-at-mingus-mountain-academy-attack-staff-resulting-in-injuries-and-5-in-custody/article_8aea4c61-da4d-5996-89f4-c536e0187034.html) (The Prescott Times, 7/23/2020)\n- [Prescott Valley police: Runaway teen still missing after 5 months](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/) (Arizona Republic, 3/31/2022)\n- [Arizona lawmaker calls for investigation after ABC15 reports into facility for troubled teens](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens) (ABC 15 Arizona, 4/30/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -4093,6 +4253,7 @@
     }
    ],
    "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "612": {
@@ -4671,28 +4832,8 @@
      "kop_page": true
     }
    ],
-   "tense": [
-    {
-     "id": "t1.1",
-     "old": "** Jared Balmer** is one of the founders of Oakley School. He began his career by co-founding the [Rivendell Psychiatric Hospital](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) , which was an extremely abusive facility that is known to have practiced extreme forms of conversion therapy. He later helped open several other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs, including the notorious and** confirmedly abusive** [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He is currently the Executive Director of [WayPoint Academy](https://www.reddit.com/r/troubledteens/wiki/index/waypoint) , which he helped found in 2013 with Mike Bulloch, who is involved with various [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the Oakley School.",
-     "new": "** Jared Balmer** was one of the founders of Oakley School. He began his career by co-founding the [Rivendell Psychiatric Hospital](https://www.reddit.com/r/troubledteens/wiki/index/rivendell) , which was an extremely abusive facility that is known to have practiced extreme forms of conversion therapy. He later helped open several other [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs, including the notorious and** confirmedly abusive** [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) and the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) , which was a branch of Island View. In 2006, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award. He is currently the Executive Director of [WayPoint Academy](https://www.reddit.com/r/troubledteens/wiki/index/waypoint) , which he helped found in 2013 with Mike Bulloch, who is involved with various [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) programs including the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the Oakley School."
-    },
-    {
-     "id": "t1.2",
-     "old": "** Lorin Broadbent** is one of the Founders of the Oakley School. He was also involved in founding [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/oakley) , a** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program.",
-     "new": "** Lorin Broadbent** was one of the Founders of the Oakley School. He was also involved in founding [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/oakley) , a** confirmedly abusive** [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program."
-    },
-    {
-     "id": "t1.3",
-     "old": "** W. Kimball DeLaMare** is one of the founders of the Oakley School. He was the previous director of the [KIDS of Greater Salt Lake](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) program, which was a** confirmedly abusive** drug treatment program and spin-off of [Straight, Inc.](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . KIDS was under investigation in 1989 for allegations of false imprisonment, unlawful detention and assault. Like Jared Balmer, DeLaMare also helped co-found the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) . In 2004, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award.",
-     "new": "** W. Kimball DeLaMare** was one of the founders of the Oakley School. He was the previous director of the [KIDS of Greater Salt Lake](https://www.reddit.com/r/troubledteens/wiki/index/kidscenters) program, which was a** confirmedly abusive** drug treatment program and spin-off of [Straight, Inc.](https://www.reddit.com/r/troubledteens/wiki/index/straightinc) . KIDS was under investigation in 1989 for allegations of false imprisonment, unlawful detention and assault. Like Jared Balmer, DeLaMare also helped co-found the [Aspen Institute For Behavioral Assessment](https://www.reddit.com/r/troubledteens/wiki/index/aspeninstitute) and the [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) . In 2004, he was the recipient of the [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) Leadership Award."
-    },
-    {
-     "id": "t1.4",
-     "old": "** James Meyer** is one of the Founders and the former Executive Director of the Oakley School. He continued to work as the Executive Director until 2013. he also served as a Board Member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) for 8 years, serving as Ethics Chair and later the Treasurer. He currently works as a the CEO and an Educational Consultant of Meyer Education and Family Services, which is an Ed Consultant firm that he founded with his wife in 2014.",
-     "new": "** James Meyer** was one of the Founders and the former Executive Director of the Oakley School. He continued to work as the Executive Director until 2013. he also served as a Board Member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) for 8 years, serving as Ethics Chair and later the Treasurer. He currently works as a the CEO and an Educational Consultant of Meyer Education and Family Services, which is an Ed Consultant firm that he founded with his wife in 2014."
-    }
-   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": [
     {
      "text": "The entry gives 2017 as the closing year; KOP's record says 2007.",
@@ -5174,108 +5315,7 @@
      "kop_page": true
     }
    ],
-   "tense": [
-    {
-     "id": "t1.1",
-     "old": "Provo Canyon School is a [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) behavior-modification program that was founded in 1971. It was initially opened in Provo, UT as an all-boys facility by Robert Crist and Jack Williams, but PCS opened two girls' program in the nearby town of Orem, UT and in 2005, Springville, UT. It is marketed as a Residential Treatment Center for teenagers aged 11-17. PCS states that it enrolls teenagers with a history of the following: Substance Abuse Behavior, Attention-Deficit/Hyperactivity, Anxiety & Trauma Disorders, Social Developmental Disorders, Conduct & Impulsive Behavior, Mood Disorders, Including Bipolar & Depression, Oppositional Defiant Disorder, Personality Disorders (Including: Borderline, Dependent, Histrionic, and Obsessive-Compulsive), Reactive Attachment Disorder, and more. The average length of stay is reported to be between 8 and 12 months but it is often substantially longer, especially if the teenager is deemed resistant. Provo Canyon School's tuition is reported to be over $12,500 per month.",
-     "new": "Provo Canyon School was a [Universal Health Services](https://www.reddit.com/r/troubledteens/wiki/index/uhs) behavior-modification program that was founded in 1971. It was initially opened in Provo, UT as an all-boys facility by Robert Crist and Jack Williams, but PCS opened two girls' program in the nearby town of Orem, UT and in 2005, Springville, UT. It was marketed as a Residential Treatment Center for teenagers aged 11-17. PCS stated that it enrolled teenagers with a history of the following: Substance Abuse Behavior, Attention-Deficit/Hyperactivity, Anxiety & Trauma Disorders, Social Developmental Disorders, Conduct & Impulsive Behavior, Mood Disorders, Including Bipolar & Depression, Oppositional Defiant Disorder, Personality Disorders (Including: Borderline, Dependent, Histrionic, and Obsessive-Compulsive), Reactive Attachment Disorder, and more. The average length of stay was reported to be between 8 and 12 months but it was often substantially longer, especially if the teenager was deemed resistant. Provo Canyon School's tuition was reported to be over $12,500 per month."
-    },
-    {
-     "id": "t1.2",
-     "old": "Provo Canyon School operates in a number of campuses. The original all-boys program is located at [4501 N University Ave, Provo, UT 84604](https://www.google.com/maps/place/Provo+Canyon+School/@40.2930141,-111.6630318,114m/data=!3m1!1e3!4m5!3m4!1s0x0:0xd906e84fa8af6517!8m2!3d40.2930435!4d-111.6625043) . The all-girls program was originally located at [1350 E 750 N St, Orem, UT 84097](https://www.google.com/maps/place/Provo+Canyon+Behavioral+Hospital/@40.3106225,-111.6639091,189m/data=!3m1!1e3!4m5!3m4!1s0x0:0x83ecc73f3b55174!8m2!3d40.310618!4d-111.663566) . However, in 2005 PCS built a new campus for the girls program, which is currently located at [763 N 1650 W, Springville, UT 84663](https://www.google.com/maps/place/Provo+Canyon+School+-+Springville+Campus/@40.1777389,-111.6393356,205m/data=!3m1!1e3!4m5!3m4!1s0x0:0x447fbcc594046e54!8m2!3d40.1776564!4d-111.6395224) . The former location of the Girl Campus is now the location of Provo Canyon Behavioral Hospital which is another all-girls program (with a small program for prepubescent boys on the first floor). Between these campuses, Provo Canyon School can enroll a maximum of 248 teenagers. These campuses are each divided between younger teenagers (aged 13-18) and older teenagers (aged 11-14). There is also an Elementary School program for children aged 8-13.",
-     "new": "Provo Canyon School operated in a number of campuses. The original all-boys program was located at [4501 N University Ave, Provo, UT 84604](https://www.google.com/maps/place/Provo+Canyon+School/@40.2930141,-111.6630318,114m/data=!3m1!1e3!4m5!3m4!1s0x0:0xd906e84fa8af6517!8m2!3d40.2930435!4d-111.6625043) . The all-girls program was originally located at [1350 E 750 N St, Orem, UT 84097](https://www.google.com/maps/place/Provo+Canyon+Behavioral+Hospital/@40.3106225,-111.6639091,189m/data=!3m1!1e3!4m5!3m4!1s0x0:0x83ecc73f3b55174!8m2!3d40.310618!4d-111.663566) . However, in 2005 PCS built a new campus for the girls program, which was located at [763 N 1650 W, Springville, UT 84663](https://www.google.com/maps/place/Provo+Canyon+School+-+Springville+Campus/@40.1777389,-111.6393356,205m/data=!3m1!1e3!4m5!3m4!1s0x0:0x447fbcc594046e54!8m2!3d40.1776564!4d-111.6395224) . The former location of the Girl Campus is now the location of Provo Canyon Behavioral Hospital which is another all-girls program (with a small program for prepubescent boys on the first floor). Between these campuses, Provo Canyon School could enroll a maximum of 248 teenagers. These campuses were each divided between younger teenagers (aged 13-18) and older teenagers (aged 11-14). There was also an Elementary School program for children aged 8-13."
-    },
-    {
-     "id": "t1.3",
-     "old": "Provo Canyon School was a member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) and had been since 2005. It appears that the school is no longer a member of NATSAP. It is accredited by the [Northwest Association of Accredited Schools (NAAS)](https://www.reddit.com/r/troubledteens/wiki/index/naas) , however, it is important to note that neither the United States Department of Education nor the Council for Higher Education Accreditation recognizes the Northwest Association of Accredited Schools as an accrediting agency for institutions of higher education. In fact, NAAS is most well-known in the public for the State of New York not accepting the diplomas given by the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) , which was a confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program which was also accredited by NAAS. NAAS has \"accredited\" many notoriously abusive behavior-modification programs, including*many*WWASP programs.",
-     "new": "Provo Canyon School was a member of [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) and had been since 2005. It appeared that the school was no longer a member of NATSAP. It was accredited by the [Northwest Association of Accredited Schools (NAAS)](https://www.reddit.com/r/troubledteens/wiki/index/naas) , however, it is important to note that neither the United States Department of Education nor the Council for Higher Education Accreditation recognizes the Northwest Association of Accredited Schools as an accrediting agency for institutions of higher education. In fact, NAAS is most well-known in the public for the State of New York not accepting the diplomas given by the [Academy at Ivy Ridge](https://www.reddit.com/r/troubledteens/wiki/index/ivyridge) , which was a confirmedly abusive [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program which was also accredited by NAAS. NAAS has \"accredited\" many notoriously abusive behavior-modification programs, including*many*WWASP programs."
-    },
-    {
-     "id": "t1.4",
-     "old": "*Provo Canyon School is considered something of a \"hub\" in the Troubled Teen Industry. Many of the individuals who work in the industry either began their careers or spent a number of years working at Provo Canyon School. Provo Canyon School is considered to be the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization, as WWASP's founders and many of its staff members came from PCS.*",
-     "new": "*Provo Canyon School was considered something of a \"hub\" in the Troubled Teen Industry. Many of the individuals who worked in the industry either began their careers or spent a number of years working at Provo Canyon School. Provo Canyon School was considered to be the birthplace of the [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) organization, as WWASP's founders and many of its staff members came from PCS.*"
-    },
-    {
-     "id": "t1.5",
-     "old": "**Robert H. Crist** is one of the Founders of Provo Canyon School. He also worked at PCS for many years as the Medical Director. In 2000, Crist left PCS to create his own behavior-modification program, [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) , with another PCS staff, Larry Carter. He was also involved in creating [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) with former Provo Canyon School CEO Kreg Gillan, which was shut down in 2016 following reported instances of sexual abuse.",
-     "new": "**Robert H. Crist** was one of the Founders of Provo Canyon School. He also worked at PCS for many years as the Medical Director. In 2000, Crist left PCS to create his own behavior-modification program, [Logan River Academy](https://www.reddit.com/r/troubledteens/wiki/index/loganriver) , with another PCS staff, Larry Carter. He was also involved in creating [Silverado Academy](https://www.reddit.com/r/troubledteens/wiki/index/silverado) with former Provo Canyon School CEO Kreg Gillan, which was shut down in 2016 following reported instances of sexual abuse."
-    },
-    {
-     "id": "t1.6",
-     "old": "** Jack Williams** is one of the Founders of Provo Canyon School. He later went on to create another program, [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) , which has been reported by many survivors to be an abusive program. He [died](https://thespectrum.newspapers.com/image/?clipping_id=73088128&fcfToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVlLXZpZXctaWQiOjI4Njg0OTQ4NiwiaWF0IjoxNjU5NDY0ODkzLCJleHAiOjE2NTk1NTEyOTN9.5bP_J6IIuY9Zfa4gBVwWpZDBhQGhMuNoJx7c35B8Zsw) on December 18, 2009 following a two-year battle with a terminal illness.",
-     "new": "** Jack Williams** was one of the Founders of Provo Canyon School. He later went on to create another program, [Cinnamon Hills Youth Crisis Center](https://www.reddit.com/r/troubledteens/wiki/index/cinnamonhills) , which has been reported by many survivors to be an abusive program. He [died](https://thespectrum.newspapers.com/image/?clipping_id=73088128&fcfToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVlLXZpZXctaWQiOjI4Njg0OTQ4NiwiaWF0IjoxNjU5NDY0ODkzLCJleHAiOjE2NTk1NTEyOTN9.5bP_J6IIuY9Zfa4gBVwWpZDBhQGhMuNoJx7c35B8Zsw) on December 18, 2009 following a two-year battle with a terminal illness."
-    },
-    {
-     "id": "t1.7",
-     "old": "** Adam McClain** is the current Group Director and CEO of Provo Canyon School. He is reported to have worked at various other confirmedly abusive programs, including as the Clinical Director of [Peninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) from 2003-2008, and the Executive Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) , which was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program.",
-     "new": "** Adam McClain** was the Group Director and CEO of Provo Canyon School. He is reported to have worked at various other confirmedly abusive programs, including as the Clinical Director of [Peninsula Village](https://www.reddit.com/r/troubledteens/wiki/index/thevillage) from 2003-2008, and the Executive Director of [Northwest Academy](https://www.reddit.com/r/troubledteens/wiki/index/northwestacademy) , which was a [WWASP](https://www.reddit.com/r/troubledteens/wiki/index/wwasp) program."
-    },
-    {
-     "id": "t1.8",
-     "old": "** Jennifer Morgan Smith** has worked at Provo Canyon School since 1998 in various roles, including Therapist, Executive Clinical Director, Director of Admissions, and Executive Director. She currently works as the Executive Director of Provo Canyon Behavioral Hospital.",
-     "new": "** Jennifer Morgan Smith** had worked at Provo Canyon School since 1998 in various roles, including Therapist, Executive Clinical Director, Director of Admissions, and Executive Director. She currently works as the Executive Director of Provo Canyon Behavioral Hospital."
-    },
-    {
-     "id": "t1.9",
-     "old": "** Wade Taylor** has worked as a Therapist at Provo Canyon School's boys program since 2001. Before coming to PCS, he worked as a Therapist at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) , a reportedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. In 2015, he was named in a [lawsuit](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf) against both Provo Canyon School and [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) alleging negligence and breach of fiduciary duties.",
-     "new": "** Wade Taylor** had worked as a Therapist at Provo Canyon School's boys program since 2001. Before coming to PCS, he worked as a Therapist at [Aspen Ranch](https://www.reddit.com/r/troubledteens/wiki/index/aspenranch) , a reportedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program. In 2015, he was named in a [lawsuit](https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf) against both Provo Canyon School and [Island View RTC](https://www.reddit.com/r/troubledteens/wiki/index/islandview) alleging negligence and breach of fiduciary duties."
-    },
-    {
-     "id": "t1.10",
-     "old": "PCS utilizes an “Acuity Based Care” (ABC) model that \"identifies and re-assesses the strengths and needs of individual students.\" The program's structure revolves around the idea of tough love, where the teens must \"acknowledge self destructive behaviors and grow beyond them.\" Upon entering the program, residents are stripped of their identities and given a number. They are referred to only by their assigned number, and are not allowed to use their name. Allegedly, all communication with parents is heavily restricted and monitored. Incoming and outgoing mail is reportedly read by staff and censored, and phone calls with parents are all closely monitored by staff.",
-     "new": "PCS utilized an “Acuity Based Care” (ABC) model that \"identifies and re-assesses the strengths and needs of individual students.\" The program's structure revolved around the idea of tough love, where the teens had to \"acknowledge self destructive behaviors and grow beyond them.\" Upon entering the program, residents were stripped of their identities and given a number. They were referred to only by their assigned number, and were not allowed to use their name. Allegedly, all communication with parents was heavily restricted and monitored. Incoming and outgoing mail was reportedly read by staff and censored, and phone calls with parents were all closely monitored by staff."
-    },
-    {
-     "id": "t1.11",
-     "old": "Like other behavior-modification programs, Provo Canyon School uses a level system consisting of eight levels. The levels are reported to be:",
-     "new": "Like other behavior-modification programs, Provo Canyon School used a level system consisting of eight levels. The levels were reported to be:"
-    },
-    {
-     "id": "t1.12",
-     "old": "***Orientation:** When a teenager arrives ar PCS, they are put onto Orientation. They are given no privileges. It is reported that this level typically lasts around 2 weeks.",
-     "new": "***Orientation:** When a teenager arrives ar PCS, they were put onto Orientation. They were given no privileges. It was reported that this level typically lasted around 2 weeks."
-    },
-    {
-     "id": "t1.13",
-     "old": "***Team:** This is reported to be the first level where teenagers are permitted to have any type of contact with their family.",
-     "new": "***Team:** This was reported to be the first level where teenagers were permitted to have any type of contact with their family."
-    },
-    {
-     "id": "t1.14",
-     "old": "***Advanced Team:** It is reported that on this level, residents are allowed to leave campus with their team for off-campus excursions.",
-     "new": "***Advanced Team:** It was reported that on this level, residents were allowed to leave campus with their team for off-campus excursions."
-    },
-    {
-     "id": "t1.15",
-     "old": "There is also a level called**Investment** which is used a punishment. Students accumulated “investment points” for offenses as minor as being late in line for dinner or talking back. If they accumulated too many of these points, they were put into the Investment Unit, where they were forced to sit do nothing but still perfectly still in a chair all day. If they were uncooperative, they would be kept in concrete 5x5 isolation rooms on what was called** Observation**. Observation is PCS's nickname for solitary confinement. Some teens would be in solitary confinement for weeks or months straight.",
-     "new": "There was also a level called**Investment** which was used a punishment. Students accumulated “investment points” for offenses as minor as being late in line for dinner or talking back. If they accumulated too many of these points, they were put into the Investment Unit, where they were forced to sit do nothing but still perfectly still in a chair all day. If they were uncooperative, they would be kept in concrete 5x5 isolation rooms on what was called** Observation**. Observation was PCS's nickname for solitary confinement. Some teens would be in solitary confinement for weeks or months straight."
-    },
-    {
-     "id": "t1.16",
-     "old": "However, it has been reported by numerous survivors who were at PCS after this injunction that the program has found numerous ways to get around these rules. Isolation and violent physical restraints are still reported to be staples of PCS's program.",
-     "new": "However, it has been reported by numerous survivors who were at PCS after this injunction that the program had found numerous ways to get around these rules. Isolation and violent physical restraints were reported to be staples of PCS's program."
-    },
-    {
-     "id": "t1.17",
-     "old": "If a resident breaks any of the rules at PCS, they are punished severely. Punishments include loss of levels and privileges, solitary confinement, violent restraint, and being put on \"investment\".",
-     "new": "If a resident broke any of the rules at PCS, they were punished severely. Punishments included loss of levels and privileges, solitary confinement, violent restraint, and being put on \"investment\"."
-    },
-    {
-     "id": "t1.18",
-     "old": "**Observation:** If they were uncooperative, they would be kept in concrete 5x5 isolation rooms on what was called Observation or \"Obs\". Observation is PCS's nickname for solitary confinement. Some teens would be in solitary confinement for weeks or months straight. According to one [survivor](https://www.reddit.com/r/troubledteens/comments/39t1ke/hello_i_was_in_provo_canyon_school_in_2007_and/) , \"OBs was a concrete room in investment. It had a drain or at least the one I was in- there were two. It was a \"quiet room\" I guess. It had this big thick door. It had mirrors in the corners so you couldn't hide from the camera or if someone was looking in the little window that was like safety chickenwire glass. I stayed there once for three days straight, with once a day let out to use the restroom connected to it to have a bowel movement. I used the drain for the other.. I had no clothing while in obs, wore none, it was reallly cold and I slept on the concrete floor. They also took my glasses and I couldn't see. I am legally blind without them so I got immense headaches. I was allowed two meals though a day in Obs (though I didn't eat them) and no silverware, not even plastic. Sometimes I could see someone watching through the window. I didn't know if it was night or day in it, and I kinda talked to myself during it.\"",
-     "new": "**Observation:** If they were uncooperative, they would be kept in concrete 5x5 isolation rooms on what was called Observation or \"Obs\". Observation was PCS's nickname for solitary confinement. Some teens would be in solitary confinement for weeks or months straight. According to one [survivor](https://www.reddit.com/r/troubledteens/comments/39t1ke/hello_i_was_in_provo_canyon_school_in_2007_and/) , \"OBs was a concrete room in investment. It had a drain or at least the one I was in- there were two. It was a \"quiet room\" I guess. It had this big thick door. It had mirrors in the corners so you couldn't hide from the camera or if someone was looking in the little window that was like safety chickenwire glass. I stayed there once for three days straight, with once a day let out to use the restroom connected to it to have a bowel movement. I used the drain for the other.. I had no clothing while in obs, wore none, it was reallly cold and I slept on the concrete floor. They also took my glasses and I couldn't see. I am legally blind without them so I got immense headaches. I was allowed two meals though a day in Obs (though I didn't eat them) and no silverware, not even plastic. Sometimes I could see someone watching through the window. I didn't know if it was night or day in it, and I kinda talked to myself during it.\""
-    },
-    {
-     "id": "t1.19",
-     "old": "**Dial 9:**\"Dial 9\" is the code PCS staff use for restraint. Staffers use walkie-talkies to “dial 9” when they perceive a child to be acting out. When a “dial 9” is called, the other students have to turn and face the wall so they won't see what one survivor described as “three large men coming to restrain a 120-pound girl” and bring her to an observation cell (solitary confinement). It is reported that these restraints are often used very excessively, and typically result in the child be severely injured. There have been reports of major bruising, abrasions, and even broken noses resulting from these restraints. A former staffer at PCS confirmed this. The staffer, who primarily worked at the boy's unit, said one violent \"Dial 9\" caused him to become so uncomfortable he quit his job. \"Staff would tackle kids -- I can't tell you how many times I saw that. One incident involved an African American boy at the school during my time. A staff member woke him up at 3 a.m. because he forgot to take his meds. The kid didn't like getting woken up in the middle of the night, and the staff ended up calling a 'Dial 9' and tackled him,\" the staffer said. He further claimed: \"We all had to go and watch staff pin this kid down, drag him to isolation. The guy who beat him was my boss. This was 100% instigated by staff. A bully picking on a defenseless little kid. I ended up quitting two weeks later.\"",
-     "new": "**Dial 9:**\"Dial 9\" was the code PCS staff used for restraint. Staffers used walkie-talkies to “dial 9” when they perceived a child to be acting out. When a “dial 9” was called, the other students had to turn and face the wall so they wouldn't see what one survivor described as “three large men coming to restrain a 120-pound girl” and bring her to an observation cell (solitary confinement). It was reported that these restraints were often used very excessively, and typically resulted in the child be severely injured. There have been reports of major bruising, abrasions, and even broken noses resulting from these restraints. A former staffer at PCS confirmed this. The staffer, who primarily worked at the boy's unit, said one violent \"Dial 9\" caused him to become so uncomfortable he quit his job. \"Staff would tackle kids -- I can't tell you how many times I saw that. One incident involved an African American boy at the school during my time. A staff member woke him up at 3 a.m. because he forgot to take his meds. The kid didn't like getting woken up in the middle of the night, and the staff ended up calling a 'Dial 9' and tackled him,\" the staffer said. He further claimed: \"We all had to go and watch staff pin this kid down, drag him to isolation. The guy who beat him was my boss. This was 100% instigated by staff. A bully picking on a defenseless little kid. I ended up quitting two weeks later.\""
-    },
-    {
-     "id": "t1.20",
-     "old": "**Investment:** Students accumulated “investment points” for offenses as minor as being late in line for dinner or talking back. If they accumulated too many of these points, they were put into the Investment Unit, and forced to sit in \"Chair Structure\", which means that they had to remain completely still with their feet flat on the floor. How long the resident had to remain in Investment was dependent on how many points that had accumulated and the \"class\" of their infraction. For example, a Class II infraction may result in a few hours of Investment, whereas a Class III infraction may result in day to weeks in Investment. The students were forced to wear sweatpants and were not allowed any of their personal items.",
-     "new": "**Investment:** Students accumulated “investment points” for offenses as minor as being late in line for dinner or talking back. If they accumulated too many of these points, they were put into the Investment Unit, and forced to sit in \"Chair Structure\", which means that they had to remain completely still with their feet flat on the floor. How long the resident had to remain in Investment was dependent on how many points that had accumulated and the \"class\" of their infraction. For example, a Class II infraction might result in a few hours of Investment, whereas a Class III infraction might result in day to weeks in Investment. The students were forced to wear sweatpants and were not allowed any of their personal items."
-    }
-   ],
+   "tense": [],
    "fixes": [],
    "conflicts": []
   },
@@ -5451,48 +5491,8 @@
      "kop_page": true
     }
    ],
-   "tense": [
-    {
-     "id": "t1.1",
-     "old": "***Earth Phase:** On this phase, the teenager has to accept their placement into the program and learn to comply with its rules. They are isolated from the other teenagers in order to increase pressure. The keywords for this phase are*Orientation*and*Acceptance*. The teenager is not allowed to talk to anyone and must complete a set of assignments before moving on to fire phase, including a 'life story' assignment. This phase typically lasts about a week.",
-     "new": "***Earth Phase:** On this phase, the teenager had to accept their placement into the program and learn to comply with its rules. They were isolated from the other teenagers in order to increase pressure. The keywords for this phase were*Orientation*and*Acceptance*. The teenager was not allowed to talk to anyone and had to complete a set of assignments before moving on to fire phase, including a 'life story' assignment. This phase typically lasted about a week."
-    },
-    {
-     "id": "t1.2",
-     "old": "***Fire Phase:** During this phase they are slowly being integrated into a peer group and given assignments within the daily framework. They have to share life story with their group and also write accountability letters to their parents. They also had to read [Man's Search for Meaning](https://en.wikipedia.org/wiki/Man%27s_Search_for_Meaning) . The keywords are*Accountability*and*Engagement*. They are also given more responsibilities and privileges.",
-     "new": "***Fire Phase:** During this phase they were slowly being integrated into a peer group and given assignments within the daily framework. They had to share life story with their group and also write accountability letters to their parents. They also had to read [Man's Search for Meaning](https://en.wikipedia.org/wiki/Man%27s_Search_for_Meaning) . The keywords were*Accountability*and*Engagement*. They were also given more responsibilities and privileges."
-    },
-    {
-     "id": "t1.3",
-     "old": "***Water Phase:** During this phase they have to show leadership skills while they continue their own work. The keywords are*Investment*and*Insight*. On this level, the teenager is deemed responsible and mature enough to handle additional privileges and responsibilities. They are also given a metal water bottle.",
-     "new": "***Water Phase:** During this phase they had to show leadership skills while they continued their own work. The keywords were*Investment*and*Insight*. On this level, the teenager was deemed responsible and mature enough to handle additional privileges and responsibilities. They were also given a metal water bottle."
-    },
-    {
-     "id": "t1.4",
-     "old": "Second Nature Entrada was a behavior-modification program that opened in 2004. It was marketed as a Wilderness Therapy Program for teenagers (13-17) who are struggling with range of emotional and behavioral issues including depression, learning differences, oppositional defiance, attention deficit, attachment, and substance abuse disorders.",
-     "new": "Second Nature Entrada was a behavior-modification program that opened in 2004. It was marketed as a Wilderness Therapy Program for teenagers (13-17) who were struggling with range of emotional and behavioral issues including depression, learning differences, oppositional defiance, attention deficit, attachment, and substance abuse disorders."
-    },
-    {
-     "id": "t1.5",
-     "old": "The teenagers are separated into numbered groups of between 8 and 10 teenagers each. Like other behavior-modification programs, Second Nature Uintas uses a level system consisting of levels. The levels are reported to be:",
-     "new": "The teenagers were separated into numbered groups of between 8 and 10 teenagers each. Like other behavior-modification programs, Second Nature Uintas used a level system consisting of levels. The levels were reported to be:"
-    },
-    {
-     "id": "t1.6",
-     "old": "***Air Phase:** The student are given leadership assignments such as using a compass and a map. The keywords are*Insight*and*Responsibility*. It is reported that the staff are allowed to give these residents extra food if they choose. It is also reported that very few teenagers are actually able to achieve this phase.",
-     "new": "***Air Phase:** The student were given leadership assignments such as using a compass and a map. The keywords were*Insight*and*Responsibility*. It was reported that the staff were allowed to give these residents extra food if they choose. It is also reported that very few teenagers were actually able to achieve this phase."
-    },
-    {
-     "id": "t1.7",
-     "old": "It is reported that*very few*teenagers are allowed to go home after they complete the program. Most are sent off to other longer-term placements including Residential Treatment Centers and Therapeutic Boarding Schools. Many survivors report that they were lied to about this, and told that they would be going home after only a few weeks at Second Nature.",
-     "new": "It was reported that*very few*teenagers were allowed to go home after they completed the program. Most were sent off to other longer-term placements including Residential Treatment Centers and Therapeutic Boarding Schools. Many survivors report that they were lied to about this, and told that they would be going home after only a few weeks at Second Nature."
-    },
-    {
-     "id": "t1.8",
-     "old": "Second Nature is reported by many survivors to be an abusive program. Allegations of abuse and neglect which have been reported by survivors include severe medical neglect, solitary confinement, over-medication, humiliation tactics, and restriction of food. Many survivors report that they have been diagnosed with PTSD following their time at Second Nature.",
-     "new": "Second Nature was reported by many survivors to be an abusive program. Allegations of abuse and neglect which have been reported by survivors include severe medical neglect, solitary confinement, over-medication, humiliation tactics, and restriction of food. Many survivors report that they have been diagnosed with PTSD following their time at Second Nature."
-    }
-   ],
+   "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "686": {
@@ -5696,13 +5696,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c6",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "['It was a cult': Traumatizing troubled teens](https://azmirror.com/2024/07/15/it-was-a-cult-traumatizing-troubled-teens-spring-ridge-academy/) (Arizona Mirror, 7/15/2024)\n\n[Spring Ridge Academy students claim harsh treatment at boarding school](https://www.azcentral.com/picture-gallery/news/local/arizona-education/2024/07/19/spring-ridge-academy-yavapai-county-arizona-lawsuit/74465954007/) (azcentral, 7/19/2024)\n\n[Spring Ridge Academy students describe harsh treatment after lawsuit](https://www.azcentral.com/story/news/local/arizona-education/2024/07/19/spring-ridge-academy-students-arizona-describe-harsh-treatment-after-lawsuit/74461275007/#) (Arizona Republic, 7/19/2024)\n\n[Why some say AZ's 'troubled teen industry' needs more accountability](https://www.kjzz.org/kjzz-news/2024-07-25/why-some-say-azs-troubled-teen-industry-needs-more-accountability) (KJZZ, 7/25/2024)\n\n[Former students describe Spring Ridge Academy as 'treated like we were criminals'](https://www.fox10phoenix.com/news/former-students-describe-spring-ridge-academy-treated-like-we-were-criminals) (FOX 10 Phoenix, 10/29/2024)\n\n[Former Spring Ridge Academy Students Say School Inflicted Abuse, Trauma](https://www.huffpost.com/entry/troubled-teens-spring-ridge-academy_n_68cc1b68e4b0df2833ccfa2c) (HuffPost, 10/10/2025)",
+     "id": "c6m",
+     "op": "add_section",
+     "after_section": "Abuse and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- ['It was a cult': Traumatizing troubled teens](https://azmirror.com/2024/07/15/it-was-a-cult-traumatizing-troubled-teens-spring-ridge-academy/) (Arizona Mirror, 7/15/2024)\n- [Spring Ridge Academy students claim harsh treatment at boarding school](https://www.azcentral.com/picture-gallery/news/local/arizona-education/2024/07/19/spring-ridge-academy-yavapai-county-arizona-lawsuit/74465954007/) (azcentral, 7/19/2024)\n- [Spring Ridge Academy students describe harsh treatment after lawsuit](https://www.azcentral.com/story/news/local/arizona-education/2024/07/19/spring-ridge-academy-students-arizona-describe-harsh-treatment-after-lawsuit/74461275007/#) (Arizona Republic, 7/19/2024)\n- [Why some say AZ's 'troubled teen industry' needs more accountability](https://www.kjzz.org/kjzz-news/2024-07-25/why-some-say-azs-troubled-teen-industry-needs-more-accountability) (KJZZ, 7/25/2024)\n- [Former students describe Spring Ridge Academy as 'treated like we were criminals'](https://www.fox10phoenix.com/news/former-students-describe-spring-ridge-academy-treated-like-we-were-criminals) (FOX 10 Phoenix, 10/29/2024)\n- [Former Spring Ridge Academy Students Say School Inflicted Abuse, Trauma](https://www.huffpost.com/entry/troubled-teens-spring-ridge-academy_n_68cc1b68e4b0df2833ccfa2c) (HuffPost, 10/10/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -5811,6 +5813,33 @@
      "op": "append_to_section",
      "section": "Related Media",
      "text": "[Summit School at Nyack on Kids Over Profits](https://kidsoverprofits.org/facility/summit-school-at-nyack-ny/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
+  "701": {
+   "program": "Sunrise RTC",
+   "place": "Hurricane, UT",
+   "years": "2000-present",
+   "column": "original_markdown",
+   "base_sha1": "3febc1d1aa38f5e6bab3577a7557f6fe2e643cbc",
+   "record": {
+    "id": 10536,
+    "name": "Sunrise RTC",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Sunrise RTC on Kids Over Profits](https://kidsoverprofits.org/facility/sunrise-rtc-ut/)",
      "by": "script",
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
@@ -5979,13 +6008,15 @@
      "kop_record": true
     },
     {
-     "id": "c3",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
+     "id": "c3m",
+     "op": "add_section",
+     "after_section": "Abuse and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -6154,13 +6185,15 @@
      "kop_record": true
     },
     {
-     "id": "h2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Shock coroner's report reveals death of boy, 12, at Trails Carolina 'wellness' camp was 'homicide' after he was sealed into sleeping bag-like 'burrito'](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy) (Daily Mail Online, 6/25/2024)\n\n[1 year after 12-year-old's death, advocates urge stricter oversight of therapeutic camps](https://foxchattanooga.com/news/local/trails-carolina-therapeutic-camp-death-one-year-transylvania-county-state-investigation-civil-complaints-momentum-unlicensed-program) (WLOS, 2/4/2025)\n\n[Federal lawsuit alleges abuse, exploitation of teen at Asheville Academy for Girls, Trails Carolina](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/) (Asheville Watchdog, 6/25/2025)\n\n[New lawsuit claims abuse, neglect at two Asheville-area teen centers](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/) (Asheville Citizen Times, 1/5/2026)\n\n[Federal lawsuit details alleged abuse, coercion at now-closed teen programs](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/) (WSOC TV, 1/7/2026)",
+     "id": "h2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Lawsuits, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Shock coroner's report reveals death of boy, 12, at Trails Carolina 'wellness' camp was 'homicide' after he was sealed into sleeping bag-like 'burrito'](https://www.dailymail.co.uk/news/article-13567565/camper-death-ruled-homicide-trails-carolina-autopsy) (Daily Mail Online, 6/25/2024)\n- [1 year after 12-year-old's death, advocates urge stricter oversight of therapeutic camps](https://foxchattanooga.com/news/local/trails-carolina-therapeutic-camp-death-one-year-transylvania-county-state-investigation-civil-complaints-momentum-unlicensed-program) (WLOS, 2/4/2025)\n- [Federal lawsuit alleges abuse, exploitation of teen at Asheville Academy for Girls, Trails Carolina](https://avlwatchdog.org/federal-lawsuit-alleges-abuse-exploitation-of-teen-at-asheville-academy-for-girls-trails-carolina/) (Asheville Watchdog, 6/25/2025)\n- [New lawsuit claims abuse, neglect at two Asheville-area teen centers](https://www.citizen-times.com/story/news/local/2026/01/05/asheville-teen-treatment-centers-sued-abuse-neglect/87990799007/) (Asheville Citizen Times, 1/5/2026)\n- [Federal lawsuit details alleged abuse, coercion at now-closed teen programs](https://www.wsoctv.com/news/local/federal-lawsuit-details-alleged-abuse-coercion-now-closed-teen-programs/BCX4XBR5GZAG7B6OWHPELDYMHY/) (WSOC TV, 1/7/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so they go there in that form. Removed g8 and g10 (Asheville Academy's closure and a death there: a different program) and the fbclid tail."
+     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so they go there in that form. Removed g8 and g10 (Asheville Academy's closure and a death there: a different program) and the fbclid tail. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -6173,103 +6206,7 @@
      "kop_page": true
     }
    ],
-   "tense": [
-    {
-     "id": "t1.1",
-     "old": "Trails Carolina is a [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) behavior-modification program that opened in 2008. It is marketed as a Wilderness Therapy Program for children and teenagers (10-17) who struggle with Depression, Anxiety, Family conflict, Low self-esteem, Trauma, Social isolation, Self-harm, Suicidal ideation, Adoption, Defiant behavior/Oppositional Defiant Disorder, Gaming and technology obsession, Substance abuse, Attachment issues, Manipulative behavior, Poor academic achievement, Learning differences, School refusal, ADHD, Mood dysregulation, and Autism (\"high functioning\"). The program has a maximum enrollment of 36 teens, who are divided into smaller groups based on their biological sex (M/F) and age (10-13 & 14-17). The typical length of the program is betwen 2 and 4 months. Trails Carolina has been a [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) member since 2009.",
-     "new": "Trails Carolina was a [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) behavior-modification program that opened in 2008. It was marketed as a Wilderness Therapy Program for children and teenagers (10-17) who struggled with Depression, Anxiety, Family conflict, Low self-esteem, Trauma, Social isolation, Self-harm, Suicidal ideation, Adoption, Defiant behavior/Oppositional Defiant Disorder, Gaming and technology obsession, Substance abuse, Attachment issues, Manipulative behavior, Poor academic achievement, Learning differences, School refusal, ADHD, Mood dysregulation, and Autism (\"high functioning\"). The program had a maximum enrollment of 36 teens, who were divided into smaller groups based on their biological sex (M/F) and age (10-13 & 14-17). The typical length of the program was betwen 2 and 4 months. Trails Carolina had been a [NATSAP](https://www.reddit.com/r/troubledteens/wiki/index/natsap) member since 2009."
-    },
-    {
-     "id": "t1.2",
-     "old": "Because Trails Carolina is a \"wilderness\" program, the program does not necessarily have a centralized campus. Instead, the residents are taken on backpacking trips around the area of [Lake Toxaway, NC](https://www.google.com/maps/place/Lake+Toxaway,+NC+28747/@35.1314326,-82.9574966,5472m/data=!3m1!1e3!4m5!3m4!1s0x8859070e7f621649:0xf93099564829c406!8m2!3d35.1323223!4d-82.9340266) . The official listed address associated with Trails Carolina is [500 Winding Gap Rd, Lake Toxaway, NC 28747](https://www.google.com/maps/place/Trails+Carolina/@35.1858383,-82.9578407,243m/data=!3m1!1e3!4m5!3m4!1s0x0:0x4397f3472279e632!8m2!3d35.18586!4d-82.956635) .",
-     "new": "Because Trails Carolina was a \"wilderness\" program, the program did not necessarily have a centralized campus. Instead, the residents were taken on backpacking trips around the area of [Lake Toxaway, NC](https://www.google.com/maps/place/Lake+Toxaway,+NC+28747/@35.1314326,-82.9574966,5472m/data=!3m1!1e3!4m5!3m4!1s0x8859070e7f621649:0xf93099564829c406!8m2!3d35.1323223!4d-82.9340266) . The official listed address associated with Trails Carolina was [500 Winding Gap Rd, Lake Toxaway, NC 28747](https://www.google.com/maps/place/Trails+Carolina/@35.1858383,-82.9578407,243m/data=!3m1!1e3!4m5!3m4!1s0x0:0x4397f3472279e632!8m2!3d35.18586!4d-82.956635) ."
-    },
-    {
-     "id": "t1.3",
-     "old": "** Graham Shannonhouse** is the Founder and Executive Director of Trails Carolina. She previously worked at [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) in in 1993, which was a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) wilderness program where a teenager lost their lfe. She eventually became the Program Director of SUWS in 1999. She left in 2008 in order to create Trails Carolina.",
-     "new": "** Graham Shannonhouse** was the Founder and Executive Director of Trails Carolina. She previously worked at [SUWS of Idaho](https://www.reddit.com/r/troubledteens/wiki/index/suwsidaho) in in 1993, which was a confirmedly abusive [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) wilderness program where a teenager lost their lfe. She eventually became the Program Director of SUWS in 1999. She left in 2008 in order to create Trails Carolina."
-    },
-    {
-     "id": "t1.4",
-     "old": "** Jeniveve Rollins** is the current Clinical Director of Trails Carolina. She previously worked as the Clinical Director of [Santiam Crossing](https://www.reddit.com/r/troubledteens/wiki/index/santiamxing) , a school associated with the [Catherine Freer Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/catherinefreer) .",
-     "new": "** Jeniveve Rollins** was the Clinical Director of Trails Carolina. She previously worked as the Clinical Director of [Santiam Crossing](https://www.reddit.com/r/troubledteens/wiki/index/santiamxing) , a school associated with the [Catherine Freer Wilderness Program](https://www.reddit.com/r/troubledteens/wiki/index/catherinefreer) ."
-    },
-    {
-     "id": "t1.5",
-     "old": "** Jeremy Whitworth** is the current Program Director of Trails Carolina. He previously worked at various weight-loss programs, including [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's weight-loss program [Wellspring Camps](https://www.reddit.com/r/troubledteens/wiki/index/wellspringcamps) and BalanceME.",
-     "new": "** Jeremy Whitworth** was the Program Director of Trails Carolina. He previously worked at various weight-loss programs, including [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) 's weight-loss program [Wellspring Camps](https://www.reddit.com/r/troubledteens/wiki/index/wellspringcamps) and BalanceME."
-    },
-    {
-     "id": "t1.6",
-     "old": "** Dottie Lank (Kopple)** is the current Admissions Director of Trails Carolina. She previously worked as the Admissions Director of the reportedly abusive [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) , which was an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, until the school's closure.",
-     "new": "** Dottie Lank (Kopple)** was the Admissions Director of Trails Carolina. She previously worked as the Admissions Director of the reportedly abusive [Cedars Academy](https://www.reddit.com/r/troubledteens/wiki/index/cedarsacademy) , which was an [Aspen Education Group](https://www.reddit.com/r/troubledteens/wiki/index/aspeneducation) program, until the school's closure."
-    },
-    {
-     "id": "t1.7",
-     "old": "** Travis Wireback** currently works as a Therapist at Trails Carolina. He began his career at Trails Carolina as a Clinical Intern from 2010 until 2014, when he left to work as a Family Counselor at Youth Villages in North Carolina. He then went on to work as a Therapist at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program. He returned to Trails Carolina as a Therapist in March of 2020.",
-     "new": "** Travis Wireback** worked as a Therapist at Trails Carolina. He began his career at Trails Carolina as a Clinical Intern from 2010 until 2014, when he left to work as a Family Counselor at Youth Villages in North Carolina. He then went on to work as a Therapist at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program. He returned to Trails Carolina as a Therapist in March of 2020."
-    },
-    {
-     "id": "t1.8",
-     "old": "** Amanda Mojave** currently works as a Therapist at Trails Carolina. She previously worked at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program, from 2015 until 2019.",
-     "new": "** Amanda Mojave** worked as a Therapist at Trails Carolina. She previously worked at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program, from 2015 until 2019."
-    },
-    {
-     "id": "t1.9",
-     "old": "** Taisir El-Souessi** currently works as a Therapist at Trails Carolina. She began her career working at [River Point Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/riverpointbh) in Jacksonville, FL from 2009 until 2011. She then worked as a Family Counselor at at Youth Villages in North Carolina from 2011 until 2012. She then went on to work as a Seasonal Therapist/Field Supervisor at [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) and [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) from 2011 until 2019. During this time, she also worked at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program, from 2013-2014. She also returned to Phoenix Outdoor & SUWS of the Carolinas as the Family Program Manager from 2014 until 2015, before joining Trails Carolina.",
-     "new": "** Taisir El-Souessi** worked as a Therapist at Trails Carolina. She began her career working at [River Point Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/riverpointbh) in Jacksonville, FL from 2009 until 2011. She then worked as a Family Counselor at at Youth Villages in North Carolina from 2011 until 2012. She then went on to work as a Seasonal Therapist/Field Supervisor at [SUWS of the Carolinas](https://www.reddit.com/r/troubledteens/wiki/index/suwsnc) and [Phoenix Outdoor](https://www.reddit.com/r/troubledteens/wiki/index/phoenixoutdoor) from 2011 until 2019. During this time, she also worked at the [Asheville Academy for Girls](https://www.reddit.com/r/troubledteens/wiki/index/ashevilleacademy) , another [Family Help & Wellness](https://www.reddit.com/r/troubledteens/wiki/index/famhelp) program, from 2013-2014. She also returned to Phoenix Outdoor & SUWS of the Carolinas as the Family Program Manager from 2014 until 2015, before joining Trails Carolina."
-    },
-    {
-     "id": "t1.10",
-     "old": "Like other behavior-modification programs, Trails Carolina uses a level-system consisting of 6 levels, called \"phases\". The phases are reported to be:",
-     "new": "Like other behavior-modification programs, Trails Carolina used a level-system consisting of 6 levels, called \"phases\". The phases were reported to be:"
-    },
-    {
-     "id": "t1.11",
-     "old": "***Phase 1: Trust**- This is the first phase a resident is placed on at Trails Carolina. This phase typically lasts about a week.",
-     "new": "***Phase 1: Trust**- This was the first phase a resident was placed on at Trails Carolina. This phase typically lasted about a week."
-    },
-    {
-     "id": "t1.12",
-     "old": "***Phase 2: Respect**- This phase typically lasts about 2 weeks.",
-     "new": "***Phase 2: Respect**- This phase typically lasted about 2 weeks."
-    },
-    {
-     "id": "t1.13",
-     "old": "***Phase 3: Accountability**- This phase typically lasts about 3 weeks.",
-     "new": "***Phase 3: Accountability**- This phase typically lasted about 3 weeks."
-    },
-    {
-     "id": "t1.14",
-     "old": "***Phase 4: Integrity**- This phase typically lasts about 3 weeks.",
-     "new": "***Phase 4: Integrity**- This phase typically lasted about 3 weeks."
-    },
-    {
-     "id": "t1.15",
-     "old": "***Phase 5: Leadership**- This phase typically lasts around 2 weeks. Most teens graduate once they reach this phase.",
-     "new": "***Phase 5: Leadership**- This phase typically lasted around 2 weeks. Most teens graduated once they reached this phase."
-    },
-    {
-     "id": "t1.16",
-     "old": "***Phase 6: Service**- This phase lasts until graduation. Most residents are allowed to graduate before achieving this level.",
-     "new": "***Phase 6: Service**- This phase lasted until graduation. Most residents were allowed to graduate before achieving this level."
-    },
-    {
-     "id": "t1.17",
-     "old": "While in this program, residents are required to abide by a strict set of rules. Some of these rules include:",
-     "new": "While in this program, residents were required to abide by a strict set of rules. Some of these rules included:"
-    },
-    {
-     "id": "t1.18",
-     "old": "According to survivors, punishments for breaking any of these rules include:",
-     "new": "According to survivors, punishments for breaking any of these rules included:"
-    },
-    {
-     "id": "t1.19",
-     "old": "According to many survivors, Trails Carolina is a reportedly abusive program. Allegations of abuse and neglect that have been reported by survivors of this program include severe medical neglect, attack therapy/emotional abuse, malnourishment, and cruel and severe punishments. Many survivors report developing PTSD and other trauma-related conditions as a result of their time at Trails Carolina.",
-     "new": "According to many survivors, Trails Carolina was a reportedly abusive program. Allegations of abuse and neglect that have been reported by survivors of this program included severe medical neglect, attack therapy/emotional abuse, malnourishment, and cruel and severe punishments. Many survivors report developing PTSD and other trauma-related conditions as a result of their time at Trails Carolina."
-    }
-   ],
+   "tense": [],
    "fixes": [],
    "conflicts": []
   },
@@ -6478,6 +6415,7 @@
     }
    ],
    "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "729": {
@@ -6645,6 +6583,33 @@
    "fixes": [],
    "conflicts": []
   },
+  "739": {
+   "program": "Viewpoint Center",
+   "place": "Syracuse, UT",
+   "years": "2014-present",
+   "column": "original_markdown",
+   "base_sha1": "8a3e062ffbcc2e7d760d714d5490eeeb2dc5bd90",
+   "record": {
+    "id": 10361,
+    "name": "Viewpoint Center",
+    "status": "Open"
+   },
+   "ops": [
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Viewpoint Center on Kids Over Profits](https://kidsoverprofits.org/facility/viewpoint-center-ut/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    }
+   ],
+   "tense": [],
+   "fixes": [],
+   "conflicts": []
+  },
   "742": {
    "program": "Waypoint Academy",
    "place": "Huntsville, UT",
@@ -6788,13 +6753,15 @@
      "kop_record": true
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Lawsuit: Upstate boarding school failed to protect resident from sexual assault](https://www.foxcarolina.com/2025/05/06/lawsuit-upstate-boarding-school-failed-protect-resident-sexual-assault/) (FOX Carolina, 5/6/2025)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Lawsuit: Upstate boarding school failed to protect resident from sexual assault](https://www.foxcarolina.com/2025/05/06/lawsuit-upstate-boarding-school-failed-protect-resident-sexual-assault/) (FOX Carolina, 5/6/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "s1",
@@ -6842,13 +6809,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "s1",
@@ -6969,13 +6938,15 @@
      "kop_record": true
     },
     {
-     "id": "c2",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Clarinda Academy students restrained and injured as punishment, records show](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/12/22/clarinda-academy-iowa-students-restrained-injured-punishment-investigation-woodward-academy/2387163002/) (Des Moines Register, 12/22/2018)",
+     "id": "c2m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Clarinda Academy students restrained and injured as punishment, records show](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/12/22/clarinda-academy-iowa-students-restrained-injured-punishment-investigation-woodward-academy/2387163002/) (Des Moines Register, 12/22/2018)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -7032,13 +7003,15 @@
      "note": "Written by script from the gap."
     },
     {
-     "id": "c4",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Former Yellowstone Boys and Girls Ranch staffer sentenced for child sex abuse](https://www.bozemandailychronicle.com/news/big-sky/former-yellowstone-boys-and-girls-ranch-staffer-timothy-westervelt-sentenced-for-child-sex-abuse/article_3bef73ab-23c4-5918-93e0-ca53675a6471.html) (Bozeman Daily Chronicle, 10/12/2023)\n\n[Man charged with sexual assault of girls at Yellowstone Boys and Girls Ranch](https://www.ktvq.com/news/crime-watch/man-charged-with-sexual-assault-of-girls-at-yellowstone-boys-and-girls-ranch) (Q2 News, 2/20/2025)\n\n[Man admits to raping girl at Billings Youth Care Facility](https://billingsgazette.com/news/local/crime-courts/article_b2d3557c-9812-405a-8c3f-6c7308326162.html) (Billings Gazette, 4/4/2025)\n\n[Ex-Yellowstone Boys and Girls Ranch worker charged with sexual assault of minors](https://www.ktvq.com/news/crime-watch/ex-yellowstone-boys-and-girls-ranch-worker-charged-with-sexual-assault-of-minors) (KQTV, 7/28/2025)",
+     "id": "c4m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Former Yellowstone Boys and Girls Ranch staffer sentenced for child sex abuse](https://www.bozemandailychronicle.com/news/big-sky/former-yellowstone-boys-and-girls-ranch-staffer-timothy-westervelt-sentenced-for-child-sex-abuse/article_3bef73ab-23c4-5918-93e0-ca53675a6471.html) (Bozeman Daily Chronicle, 10/12/2023)\n- [Man charged with sexual assault of girls at Yellowstone Boys and Girls Ranch](https://www.ktvq.com/news/crime-watch/man-charged-with-sexual-assault-of-girls-at-yellowstone-boys-and-girls-ranch) (Q2 News, 2/20/2025)\n- [Man admits to raping girl at Billings Youth Care Facility](https://billingsgazette.com/news/local/crime-courts/article_b2d3557c-9812-405a-8c3f-6c7308326162.html) (Billings Gazette, 4/4/2025)\n- [Ex-Yellowstone Boys and Girls Ranch worker charged with sexual assault of minors](https://www.ktvq.com/news/crime-watch/ex-yellowstone-boys-and-girls-ranch-worker-charged-with-sexual-assault-of-minors) (KQTV, 7/28/2025)",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap."
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -7252,13 +7225,15 @@
      "note": "One line per finding, oldest first, close paraphrase of each excerpt, cited by the report's state and date."
     },
     {
-     "id": "h1",
-     "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Ex-Laurel Ridge Treatment Center CEO faces 6 child sex charges in North Carolina, records indicate](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/) (KSAT 12 News, 6/10/2025)\n\n[Laurel Ridge Treatment Center faces Medicare, Medicaid termination over safety violations](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/) (KSAT, 4/17/2026)\n\n[Nearly 650 Laurel Ridge Treatment Center employees to be laid off](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/) (KSAT, 4/27/2026)",
+     "id": "h1m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Deaths, and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Ex-Laurel Ridge Treatment Center CEO faces 6 child sex charges in North Carolina, records indicate](https://www.ksat.com/news/local/2025/06/11/ex-laurel-ridge-treatment-center-ceo-faces-6-child-sex-charges-in-north-carolina-records-indicate/) (KSAT 12 News, 6/10/2025)\n- [Laurel Ridge Treatment Center faces Medicare, Medicaid termination over safety violations](https://www.ksat.com/news/local/2026/04/17/laurel-ridge-treatment-center-faces-medicare-medicaid-termination-over-safety-violations/) (KSAT, 4/17/2026)\n- [Nearly 650 Laurel Ridge Treatment Center employees to be laid off](https://www.ksat.com/news/local/2026/04/28/nearly-650-laurel-ridge-treatment-center-employees-to-be-laid-off/) (KSAT, 4/27/2026)",
      "by": "haiku",
      "verdict": "fixed",
-     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles directly under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so the three links go there in that form."
+     "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles directly under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so the three links go there in that form. News articles go under In the Media, the wiki editor's section for them."
     },
     {
      "id": "k1",
@@ -7272,6 +7247,7 @@
     }
    ],
    "tense": [],
+   "fixes": [],
    "conflicts": []
   },
   "776": {

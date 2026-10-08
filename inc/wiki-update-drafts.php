@@ -137,9 +137,51 @@ function kop_wiki_drafts_reddit_format($md) {
             $map = kop_wiki_drafts_heal_archive();
             return $map[kop_wiki_drafts_heal_key($m[0])] ?? $m[0];
         }, $line);
-        $lines[$n] = $line;
+        $lines[$n] = kop_wiki_drafts_bold_spacing($line);
     }
     return implode("\n", $lines) . "\n";
+}
+
+/**
+ * The wiki editor's normalizeBoldSpacing() (js/wiki-generation.js): "** text **" -> "**text**", "at**Name**" ->
+ * "at **Name**", "**Name**text" -> "**Name** text", "by*many*survivors" -> "by *many* survivors"; table rows
+ * left alone. The markers are paired in order (the editor's regexes pair the end of one span with the start
+ * of the next on a line holding two); an odd number of markers keeps the bold as it is. Same as
+ * scripts/wiki-drafts.py bold_spacing().
+ */
+function kop_wiki_drafts_bold_spacing($line) {
+    if (strpos(ltrim($line), '|') === 0) return $line;
+    $parts = explode('**', $line);
+    $n = count($parts);
+    $ok = $n > 1 && $n % 2 === 1;
+    for ($k = 1; $ok && $k < $n; $k += 2) if (trim($parts[$k]) === '') $ok = false;
+    if ($ok) {
+        for ($k = 1; $k < $n; $k += 2) {
+            $parts[$k] = trim($parts[$k], " \t");
+            if ($parts[$k - 1] !== '' && !preg_match('/[\s*|\[("\']$/u', $parts[$k - 1])) $parts[$k - 1] .= ' ';
+            if ($parts[$k + 1] !== '' && !preg_match('/^[\s*|).,;:!?\'"\]]/u', $parts[$k + 1])) $parts[$k + 1] = ' ' . $parts[$k + 1];
+        }
+        $line = implode('**', $parts);
+    }
+    return preg_replace('/([A-Za-z])\*([A-Za-z][^*\n|]{0,60}?)\*([A-Za-z])/u', '$1 *$2* $3', $line);
+}
+
+/**
+ * The editor's stand-in text for an empty section (getPlaceholder() / isEffectivelyEmpty() in
+ * js/wiki-generation.js, and the older "No information is known about <Section> at <Program>. If you
+ * attended ..."): an addition takes its place. Same as scripts/wiki-drafts.py is_placeholder().
+ */
+function kop_wiki_drafts_is_placeholder($line) {
+    $t = trim((string) $line);
+    if ($t === '' || mb_strlen($t) > 350) return false;
+    if (!preg_match('/^(background information for |information about |detailed information about |documented information about '
+        . '|no survivor testimonies for |no related media links for |no media coverage for |additional information about '
+        . '|programs associated with |no information is known|no information available)/i', $t)) return false;
+    $low = strtolower($t);
+    if (strpos($low, 'no information') === 0) {
+        return mb_strlen($t) < 120 || strpos($low, 'would like to contribute information to help complete this page') !== false;
+    }
+    return strpos($low, 'added') !== false || strpos($low, 'detailed ') === 0 || strpos($low, 'documented ') === 0;
 }
 
 /**
@@ -212,11 +254,21 @@ function kop_wiki_drafts_apply($md, array $ops) {
                 continue;
             }
             $at = kop_wiki_drafts_body_end($lines, $s[0], $s[1]);
-            array_splice($lines, $at, 0, array_merge(array(''), $new));
+            $body = array();
+            for ($k = $s[0] + 1; $k < $at; $k++) {
+                if (trim($lines[$k]) !== '' && !preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', $lines[$k])) $body[] = $k;
+            }
+            $stand_in = $body && count(array_filter($body, function ($k) use ($lines) { return kop_wiki_drafts_is_placeholder($lines[$k]); })) === count($body);
+            if ($stand_in) {
+                // Only the editor's stand-in text: the addition takes its place.
+                array_splice($lines, $body[0], $at - $body[0], $new);
+            } else {
+                array_splice($lines, $at, 0, array_merge(array(''), $new));
+            }
         } elseif ($kind === 'add_section') {
             $s = kop_wiki_drafts_find($lines, (string) ($op['after_section'] ?? ''));
             $at = $s ? kop_wiki_drafts_body_end($lines, $s[0], $s[1]) : kop_wiki_drafts_body_end($lines, 0, kop_wiki_drafts_footer($lines));
-            array_splice($lines, $at, 0, array_merge(array('', '---', '', trim((string) $op['heading']), ''), $new));
+            array_splice($lines, $at, 0, array_merge(array('', (string) ($op['separator'] ?? '') !== '' ? (string) $op['separator'] : '---', '', trim((string) $op['heading']), ''), $new));
         } else {
             $errors[] = $id . ': unknown change "' . $kind . '"';
             continue;
@@ -244,9 +296,12 @@ function kop_wiki_drafts_check($base, $draft, $header_changed) {
     $j = 0;
     $added = array();
     for ($i = $from; $i < count($d); $i++) {
+        // The editor's stand-in text for an empty section may go (kop_wiki_drafts_apply() replaces it).
+        while ($j < count($o) && $d[$i] !== $o[$j] && kop_wiki_drafts_is_placeholder($o[$j])) $j++;
         if ($j < count($o) && $d[$i] === $o[$j]) $j++;
         else $added[] = $i;
     }
+    while ($j < count($o) && kop_wiki_drafts_is_placeholder($o[$j])) $j++;
     if ($j < count($o)) $problems[] = 'line ' . ($j + 1 + $from) . ' of the entry would be lost or changed: ' . mb_substr($o[$j], 0, 80);
     return array($problems, $added);
 }
