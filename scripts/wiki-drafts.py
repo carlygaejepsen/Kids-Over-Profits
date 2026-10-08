@@ -495,6 +495,15 @@ def add_kop_page(folder, md, ops):
     return True
 
 
+def exported_tense(i):
+    """The past tense already in the export for an entry whose folder has no ops-tense.json, as one past_tense op."""
+    try:
+        pairs = json.load(open(EXPORT, encoding='utf-8'))['entries'].get(str(i), {}).get('tense', [])
+    except (FileNotFoundError, ValueError):
+        return []
+    return [{'id': 't0', 'op': 'past_tense', 'lines': [{'old': p['old'], 'new': p['new']} for p in pairs]}] if pairs else []
+
+
 def run(ids, write):
     ok = True
     for i in ids:
@@ -513,7 +522,7 @@ def run(ids, write):
             with open(path, 'w', encoding='utf-8', newline='\n') as f:
                 json.dump(ops_file, f, ensure_ascii=False, indent=1)
         tense_path = os.path.join(folder, 'ops-tense.json')
-        tense_ops = json.load(open(tense_path, encoding='utf-8')).get('ops', []) if os.path.exists(tense_path) else []
+        tense_ops = json.load(open(tense_path, encoding='utf-8')).get('ops', []) if os.path.exists(tense_path) else exported_tense(i)
         # The tense pass rewrites lines in place; the additions then go on top, and the check
         # compares with the tensed text, so every other original line must still be there.
         fixed_md, fixes, fix_errors = apply_fixes(md, load_fixes(folder))
@@ -615,6 +624,12 @@ def export(ids):
             for k, pair in enumerate(op.get('lines', [])):
                 tense.append({'id': f"{op.get('id')}.{k + 1}", 'old': pair['old'].rstrip('\r'), 'new': pair['new'].rstrip('\r')})
         entry, record = gaps.get('entry', {}), gaps.get('record', {})
+        kept = out['entries'].get(str(i), {})
+        if not os.path.exists(tense_path) and kept.get('tense'):
+            # The past tense was exported from a folder that no longer has its ops-tense.json: keep it, never drop it.
+            tense = kept['tense']
+        fixes = [{'id': f['id'], 'old': f['old'].rstrip('\r'), 'new': f['new'].rstrip('\r'), 'note': f.get('note', '')}
+                 for f in load_fixes(folder)] or (kept.get('fixes', []) if not os.path.exists(os.path.join(folder, 'ops-fix.json')) else [])
         out['entries'][str(i)] = {
             'program': entry.get('program_name', ''),
             'place': entry.get('place', ''),
@@ -624,8 +639,7 @@ def export(ids):
             'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
             'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(base, ops, entry_name(gaps)) if op.get('verdict') != 'dropped'],
             'tense': tense,
-            'fixes': [{'id': f['id'], 'old': f['old'].rstrip('\r'), 'new': f['new'].rstrip('\r'), 'note': f.get('note', '')}
-                      for f in load_fixes(folder)],
+            'fixes': fixes,
             'conflicts': [{'text': g.get('text', ''), 'source_label': g.get('source_label', ''), 'source_url': g.get('source_url', '')}
                           for g in gaps.get('gaps', []) if g.get('conflict')],
         }
