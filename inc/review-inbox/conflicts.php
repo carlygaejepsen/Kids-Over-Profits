@@ -119,6 +119,12 @@ function kop_rinbox_conflicts_item($key, $c) {
     $it['source_label'] = kop_rinbox_conflicts_queues()[$queue];
     $it['fields'] = array();
     $it['moves'] = array();
+    // The program leads the card: the queues' own titles ("Opened 1998", "Staff: ...") never name it.
+    $fac = $it['facility'] ?? (($c['facility_id'] ?? 0) > 0 ? kop_rinbox_facility((int) $c['facility_id']) : null);
+    $program = $fac ? (string) $fac['name'] : '';
+    if ($program !== '' && mb_stripos((string) ($it['title'] ?? ''), kop_rinbox_conflicts_facility_name((array) $c) ?: $program) === false) {
+        $it['title'] = $program . ': ' . ($it['title'] ?? '');
+    }
     if (!$c || in_array($it['status'] ?? '', array('applied', 'rejected', 'gone'), true)) {
         // Settled (or no longer in conflict): only the queue's Undo is offered.
         $it['actions'] = array_values(array_filter((array) ($it['actions'] ?? array()), function ($a) { return ($a['style'] ?? '') === 'undo'; }));
@@ -127,7 +133,7 @@ function kop_rinbox_conflicts_item($key, $c) {
     }
     $it['conflict'] = (string) $c['text'];
     if (($c['record'] ?? '') !== '' || ($c['item'] ?? '') !== '') {
-        $it['compare'] = array('heads' => array('On the record now', 'This item says'),
+        $it['compare'] = array('heads' => array($program !== '' ? 'On ' . $program . ' now' : 'On the record now', 'This item says'),
             'rows' => array(array('label' => kop_rinbox_conflicts_kinds()[$c['what'] ?? 'other'] ?? 'Value', 'values' => array((string) $c['record'], (string) $c['item']), 'differs' => true)));
     }
     $fname = kop_rinbox_conflicts_facility_name($c);
