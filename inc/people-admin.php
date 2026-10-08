@@ -32,25 +32,13 @@ function kop_people_admin_handle() {
     check_admin_referer('kop_people');
     $do = sanitize_key(wp_unslash($_POST['kop_people_do']));
     $id = (int) ($_POST['person'] ?? 0);
-    $t = kop_people_table('people');
     if ($do === 'sync') {
         $s = kop_people_sync();
         return sprintf('Synced: %d entries on %d facilities, %d new ids, %d entries given an id.', $s['entries'], $s['facilities'], $s['created'], $s['stamped']);
     }
     if ($do === 'save' && $id > 0) {
-        $state = kop_people_load();
-        if (!isset($state['rows'][$id])) return 'No such person.';
-        $row = $state['rows'][$id];
-        $name = trim(sanitize_text_field(wp_unslash($_POST['name'] ?? '')));
-        $key = kop_people_key($name);
-        if ($key === '') return 'A name needs a first and a last name.';
-        $aliases = kop_people_alias_list(sanitize_textarea_field(wp_unslash($_POST['aliases'] ?? '')));
-        // The old name stays an other name, so the entries written that way keep this id.
-        if ($key !== $row['name_key'] && !in_array($row['name'], $aliases, true)) $aliases[] = $row['name'];
-        $aliases = array_values(array_filter($aliases, static function ($a) use ($name) { return strcasecmp($a, $name) !== 0; }));
-        kop_facility_db_exec("UPDATE {$t} SET name = ?, name_key = ?, aliases = ?, notes = ? WHERE id = ?",
-            array($name, $key, implode("\n", $aliases), sanitize_textarea_field(wp_unslash($_POST['notes'] ?? '')), $id));
-        return 'Saved.';
+        $err = kop_people_save_details($id, wp_unslash($_POST['name'] ?? ''), wp_unslash($_POST['aliases'] ?? ''), wp_unslash($_POST['notes'] ?? ''));
+        return $err !== '' ? $err : 'Saved.';
     }
     if ($do === 'merge' && $id > 0) {
         $into = kop_people_admin_find(sanitize_text_field(wp_unslash($_POST['into'] ?? '')), $id);
@@ -72,6 +60,41 @@ function kop_people_admin_handle() {
         exit;
     }
     return '';
+}
+
+/**
+ * Saves one person's name, other names (one per line) and notes; '' when
+ * saved, else what is wrong. Also used by the Data Manager.
+ */
+function kop_people_save_details($id, $name, $aliases, $notes) {
+    $id = (int) $id;
+    $state = kop_people_load();
+    if (!isset($state['rows'][$id])) return 'No such person.';
+    $row = $state['rows'][$id];
+    $name = trim(sanitize_text_field((string) $name));
+    $key = kop_people_key($name);
+    if ($key === '') return 'A name needs a first and a last name.';
+    $aliases = kop_people_alias_list(sanitize_textarea_field((string) $aliases));
+    // The old name stays an other name, so the entries written that way keep this id.
+    if ($key !== $row['name_key'] && !in_array($row['name'], $aliases, true)) $aliases[] = $row['name'];
+    $aliases = array_values(array_filter($aliases, static function ($a) use ($name) { return strcasecmp($a, $name) !== 0; }));
+    kop_facility_db_exec('UPDATE ' . kop_people_table('people') . ' SET name = ?, name_key = ?, aliases = ?, notes = ? WHERE id = ?',
+        array($name, $key, implode("\n", $aliases), sanitize_textarea_field((string) $notes), $id));
+    kop_people_version_bump();
+    return '';
+}
+
+/** Others with the same last name as person $id: the likely "same person" picks. */
+function kop_people_similar(array $state, $id) {
+    $parts = explode(' ', $state['rows'][$id]['name_key']);
+    $last = end($parts);
+    $similar = array();
+    foreach ($state['rows'] as $o) {
+        if ($o['id'] === $id || $o['merged_into']) continue;
+        $op = explode(' ', $o['name_key']);
+        if (end($op) === $last) $similar[] = $o;
+    }
+    return $similar;
 }
 
 /** "#12", "12" or an exact name/other name -> a person id, or an error message. */
@@ -216,15 +239,7 @@ function kop_people_admin_person($id) {
     $p = $state['rows'][$id];
     $roles = kop_people_roles_of($id);
     $labels = array('administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO', 'map' => 'Person on the map');
-    // Others with the same last name: the likely "same person" picks.
-    $parts = explode(' ', $p['name_key']);
-    $last = end($parts);
-    $similar = array();
-    foreach ($state['rows'] as $o) {
-        if ($o['id'] === $id || $o['merged_into']) continue;
-        $op = explode(' ', $o['name_key']);
-        if (end($op) === $last) $similar[] = $o;
-    }
+    $similar = kop_people_similar($state, $id);
     ?>
     <p><a href="<?php echo esc_url(kop_people_admin_url()); ?>">All people</a></p>
     <h1><?php echo esc_html($p['name']); ?> <span class="kop-people__muted">person #<?php echo (int) $id; ?></span></h1>

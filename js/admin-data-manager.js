@@ -34,7 +34,8 @@
         referrers: 'Referrer',
         transporters: 'Transporter',
         providers: 'Mental Health Provider',
-        locations: 'Location'
+        locations: 'Location',
+        people: 'Person'
     };
 
     function icon(name) { return (typeof kopIcon === 'function') ? kopIcon(name) : ''; }
@@ -142,6 +143,9 @@
         if (it.kind === 'facility' || it.kind === 'young_adult' || it.kind === 'indigenous_school') {
             sub.push([it.place, it.status && it.status !== 'Unknown' ? it.status : '', '#' + it.id].filter(Boolean).join(' · '));
             if (it.companies && it.companies.length) sub.push('Company: ' + it.companies.join(', '));
+        } else if (it.kind === 'person') {
+            sub.push('Person #' + it.id + ' · named on ' + it.record_count + ' record' + (it.record_count === 1 ? '' : 's'));
+            if (it.aliases && it.aliases.length) sub.push('Also written: ' + it.aliases.join(', '));
         } else {
             sub.push(it.unique_name);
         }
@@ -240,6 +244,8 @@
                 );
             } else if (it.kind === 'young_adult' || it.kind === 'indigenous_school') {
                 actionDefs.push(['Rename', 'rename'], ['Edit details', 'edit']);
+            } else if (it.kind === 'person') {
+                actionDefs.push(['Where named', 'person_roles'], ['Edit', 'person_edit'], ['Same person as', 'person_merge'], ['People screen', 'edit']);
             } else {
                 // Auto-link only makes sense for actual programs, not location aggregates.
                 if (it.category !== 'locations') actionDefs.push([icon('sparkles') + ' Auto', 'auto']);
@@ -560,6 +566,7 @@
             });
         }
         if (kind === 'edit') { window.open(item.admin_url, '_blank', 'noopener'); return; }
+        if (kind === 'person_roles' || kind === 'person_edit' || kind === 'person_merge') return openPerson(item, kind);
         if (kind === 'rename' && item.kind && item.kind !== 'operator' && item.kind !== 'legacy') return actionRenameRecord(item);
         if (kind === 'docfolder' && item.kind === 'facility') return actionDocFolder(item, true);
         if (kind === 'auto') return actionAuto(item);
@@ -668,6 +675,136 @@
                 })
                 .catch(function () { setStatus('Network error.', 'error'); });
         });
+    }
+
+    // ---- one person (inc/people.php person ids) ----
+    // person_roles: every record that names them, with Separate (two people,
+    // one name); person_edit: name, other spellings, notes; person_merge: join
+    // this id into another (one person, two names), with Undo.
+    function openPerson(item, view) {
+        var title = { person_roles: 'Where named: ', person_edit: 'Edit: ', person_merge: 'Same person as: ' }[view];
+        var body = el('div', 'dm-form dm-person');
+        body.innerHTML = '<p class="dm-muted">Loading…</p>';
+        openModal(title + item.display_name, body);
+        getJson(API.manager + '?action=get_person&id=' + encodeURIComponent(item.id))
+            .then(function (d) {
+                if (!d || !d.success) { body.innerHTML = '<p class="dm-error">' + esc((d && d.error) || 'Could not load this person.') + '</p>'; return; }
+                renderPerson(body, d.person, item, view);
+            })
+            .catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
+    }
+
+    // The list row after a save or a separation, in place.
+    function personRowUpdate(item, p) {
+        item.display_name = item.unique_name = p.name;
+        item.aliases = (p.aliases || '').split(/\r?\n/).map(function (a) { return a.trim(); }).filter(Boolean);
+        var recs = {};
+        p.roles.forEach(function (r) { recs[r.record_kind + r.record_id] = true; });
+        item.record_count = Object.keys(recs).length;
+        if (item._nameCell) item._nameCell.innerHTML = nameCellHtml(item);
+    }
+
+    function renderPerson(body, p, item, view) {
+        var html = '';
+        if (view === 'person_roles') {
+            if (!p.roles.length) {
+                html += '<p class="dm-muted">No record names this person now (the entry was renamed or removed).</p>';
+            } else {
+                html += '<table class="dm-person-roles"><thead><tr><th>Record</th><th>List</th><th>Written as</th><th>Role</th><th></th></tr></thead><tbody>' +
+                    p.roles.map(function (r, i) {
+                        return '<tr><td>' + (r.record_url ? '<a href="' + esc(r.record_url) + '" target="_blank" rel="noopener">' + esc(r.record_name) + '</a>' : esc(r.record_name)) +
+                            ' <span class="dm-muted">' + esc(r.what) + '</span></td><td>' + esc(r.list_label) + '</td><td>' + esc(r.written_as) + '</td><td>' + esc(r.role) + '</td>' +
+                            '<td>' + (r.can_separate ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-person-sep" data-i="' + i + '" title="This entry is someone else with the same name">Separate</button>' : '') + '</td></tr>';
+                    }).join('') + '</tbody></table>' +
+                    '<p class="dm-muted">Separate gives one entry its own person id, for two people who share a name.</p>';
+            }
+        } else if (view === 'person_edit') {
+            html += '<label>Name</label><input type="text" class="dm-person-name" value="' + esc(p.name) + '">' +
+                '<label>Also written as (one per line)</label><textarea class="dm-person-aliases" rows="3">' + esc(p.aliases) + '</textarea>' +
+                '<label>Notes (admins only)</label><textarea class="dm-person-notes" rows="3">' + esc(p.notes) + '</textarea>' +
+                '<p class="dm-muted">A changed name keeps the old one as another spelling, so the entries written that way stay with this person.</p>' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+                '<button type="button" class="kop-dm-btn dm-person-save">Save</button></div>';
+        } else {
+            html += '<p>If ' + esc(p.name) + ' already has another id (a nickname, a maiden name, a misspelling), join this id into it. ' +
+                'Their entries move there and this id forwards to it. <a href="' + esc(p.merge_url) + '" target="_blank" rel="noopener">Merge People</a> lists likely pairs and every merge.</p>';
+            if (p.similar.length) {
+                html += '<div class="dm-person-similar">' + p.similar.map(function (o) {
+                    return '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-person-into" data-into="#' + esc(o.id) + '">Same person as ' + esc(o.name) + ' (#' + esc(o.id) + ')</button>';
+                }).join('') + '</div>';
+            }
+            html += '<label>Other person\'s name or id</label><input type="text" class="dm-person-intotext" placeholder="Name or #id">' +
+                '<div class="dm-form-actions"><button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+                '<button type="button" class="kop-dm-btn dm-person-merge">Same person</button></div>';
+        }
+        html += '<p><a href="' + esc(p.admin_url) + '" target="_blank" rel="noopener">Open on the People screen</a></p>';
+        body.innerHTML = html;
+        var cancel = body.querySelector('.dm-cancel');
+        if (cancel) cancel.addEventListener('click', closeModal);
+
+        Array.prototype.forEach.call(body.querySelectorAll('.dm-person-sep'), function (b) {
+            b.addEventListener('click', function () {
+                var r = p.roles[+b.getAttribute('data-i')];
+                if (!confirm('Give "' + r.written_as + '" on ' + r.record_name + ' its own person id? Use this when it is a different person with the same name.')) return;
+                setStatus('Separating…');
+                postJson(API.manager, { action: 'person_separate', id: p.id, facility_id: r.record_id, list: r.list, position: r.position }).then(function (res) {
+                    if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not done.'), 'error'); return; }
+                    setStatus(esc(res.data.message), 'ok');
+                    personRowUpdate(item, res.data.person);
+                    renderPerson(body, res.data.person, item, view);
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            });
+        });
+
+        var save = body.querySelector('.dm-person-save');
+        if (save) save.addEventListener('click', function () {
+            setStatus('Saving…');
+            postJson(API.manager, {
+                action: 'person_save', id: p.id,
+                name: body.querySelector('.dm-person-name').value.trim(),
+                aliases: body.querySelector('.dm-person-aliases').value,
+                notes: body.querySelector('.dm-person-notes').value
+            }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not saved.'), 'error'); return; }
+                setStatus('Saved.', 'ok');
+                personRowUpdate(item, res.data.person);
+                setTimeout(closeModal, 800);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+
+        function done(message, undoLog) {
+            body.innerHTML = '<p class="dm-status-ok">' + esc(message) + '</p>' +
+                '<div class="dm-form-actions">' + (undoLog ? '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-person-undo">Undo</button>' : '') +
+                '<button type="button" class="kop-dm-btn dm-done">Done</button></div>';
+            body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); load(); });
+            var undo = body.querySelector('.dm-person-undo');
+            if (undo) undo.addEventListener('click', function () {
+                setStatus('Undoing…');
+                postJson(API.manager, { action: 'person_undo_merge', log: undoLog }).then(function (u) {
+                    if (!u.data || !u.data.success) { setStatus(esc((u.data && u.data.error) || 'Undo failed.'), 'error'); return; }
+                    setStatus('');
+                    done(u.data.message, '');
+                }).catch(function () { setStatus('Network error.', 'error'); });
+            });
+        }
+
+        function merge(into) {
+            if (!into) { setStatus('Type the other person\'s id or name.', 'error'); return; }
+            setStatus('Merging…');
+            postJson(API.manager, { action: 'person_merge', id: p.id, into: into }).then(function (res) {
+                if (!res.data || !res.data.success) { setStatus(esc((res.data && res.data.error) || 'Not merged.'), 'error'); return; }
+                setStatus('');
+                removeRowDom(item);
+                state.total = Math.max(0, state.total - 1);
+                renderPagination();
+                done(res.data.message, res.data.undo_log);
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        }
+        Array.prototype.forEach.call(body.querySelectorAll('.dm-person-into'), function (b) {
+            b.addEventListener('click', function () { merge(b.getAttribute('data-into')); });
+        });
+        var mergeBtn = body.querySelector('.dm-person-merge');
+        if (mergeBtn) mergeBtn.addEventListener('click', function () { merge(body.querySelector('.dm-person-intotext').value.trim()); });
     }
 
     // Re-read one facility row's designation after a change, in place.

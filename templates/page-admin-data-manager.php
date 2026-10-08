@@ -23,10 +23,13 @@ get_header();
         <h1>Data Manager</h1>
         <p class="kop-dm-sub">
             Search every record across all categories: companies, each facility record, young adult
-            programs and Indian boarding schools. Use the row actions to rename, edit the
+            programs, Indian boarding schools and people. Use the row actions to rename, edit the
             document-library folder ID, move a company to a different category, reassign a facility,
             manage wiki links, or delete. A facility's Designation says what it is: its own program,
             a home of a program, a young adult program (18+) or an Indian boarding school.
+            People (everyone named on a staff list, one id each) show up under "All categories" when you
+            search; open one to see where they are named, fix their name, join two ids that are one person,
+            or separate two people who share a name.
         </p>
     </header>
 
@@ -43,6 +46,7 @@ get_header();
             <option value="transporters">Transporters</option>
             <option value="providers">Mental Health Providers</option>
             <option value="locations">Locations</option>
+            <option value="people">People (staff and executives)</option>
         </select>
         <button type="button" id="dmRefresh" class="kop-dm-btn kop-dm-btn-ghost">↻ Refresh</button>
         <button type="button" id="dmManageFolders" class="kop-dm-btn"><?php echo kop_icon('folder'); ?> Manage Folders</button>

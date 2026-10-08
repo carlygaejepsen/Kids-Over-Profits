@@ -24,9 +24,15 @@
  *      Wiki entries (submissions + master) linked to one program.
  *
  *      list also takes category=facilities (each facilities_v2 record),
- *      program_homes (programs and their homes), young_adult and
- *      indigenous_schools; every row carries a 'kind' (operator, legacy,
- *      facility, young_adult, indigenous_school).
+ *      program_homes (programs and their homes), young_adult,
+ *      indigenous_schools and people (person ids, inc/people.php; in "All"
+ *      only for a search); every row carries a 'kind' (operator, legacy,
+ *      facility, young_adult, indigenous_school, person).
+ *
+ * GET  ?action=get_person&id=   one person: details, where named, likely same-person picks
+ * POST {action:"person_save", id, name, aliases, notes}
+ * POST {action:"person_merge", id, into}  (into = "#id" or an exact name; Undo via person_undo_merge {log})
+ * POST {action:"person_separate", id, facility_id, list, position}
  *
  * GET  ?action=get_designation&facility_id=   what one facility record is now
  * GET  ?action=find_facility&q=               facility records by name (admin finder)
@@ -609,6 +615,107 @@ function kop_dm_side_items(string $kind, string $q): array {
     return $items;
 }
 
+// ---------------------------------------------------------------------------
+// People (inc/people.php): one id per person named on a staff list. The
+// actions are the People screen's own (kop_people_save_details(),
+// kop_pmerge_do_merge() with its Undo, kop_people_separate()).
+// ---------------------------------------------------------------------------
+
+function kop_dm_people_ready(): bool {
+    return function_exists('kop_people_load') && function_exists('kop_people_save_details') && get_option('kop_people_db');
+}
+
+/** List rows for people (not merged away) matching $q: name, other name, or "#id". */
+function kop_dm_people_items(string $q): array {
+    if (!kop_dm_people_ready()) return [];
+    $t = kop_people_table('people');
+    $r = kop_people_table('roles');
+    $where = 'p.merged_into IS NULL';
+    $params = [];
+    if ($q !== '' && ctype_digit(ltrim($q, '#'))) {
+        $where .= ' AND p.id = ?';
+        $params[] = (int)ltrim($q, '#');
+    } elseif ($q !== '') {
+        $where .= ' AND (p.name LIKE ? OR p.aliases LIKE ?)';
+        $like = '%' . $GLOBALS['wpdb']->esc_like($q) . '%';
+        $params[] = $like;
+        $params[] = $like;
+    }
+    $rows = kop_facility_db_rows("SELECT p.id, p.name, p.aliases, COUNT(DISTINCT CONCAT(r.record_kind, r.record_id)) AS records
+        FROM {$t} p LEFT JOIN {$r} r ON r.person_id = p.id WHERE {$where} GROUP BY p.id", $params);
+    $items = [];
+    foreach ($rows as $p) {
+        $aliases = kop_people_alias_list($p['aliases']);
+        $aka = null;
+        if ($q !== '' && !ctype_digit(ltrim($q, '#')) && mb_stripos((string)$p['name'], $q) === false) {
+            foreach ($aliases as $a) {
+                if (mb_stripos($a, $q) !== false) { $aka = [$a, 'other']; break; }
+            }
+        }
+        $n = (int)$p['records'];
+        $items[] = [
+            'id'                 => (int)$p['id'],
+            'unique_name'        => (string)$p['name'],
+            'category'           => 'people',
+            'kind'               => 'person',
+            'table'              => $t,
+            'display_name'       => (string)$p['name'],
+            'aliases'            => $aliases,
+            'record_count'       => $n,
+            'designation'        => $n ? '' : 'Not named on any record',
+            'facility_count'     => 0,
+            'document_folder_id' => null,
+            'is_stub'            => false,
+            'admin_url'          => kop_people_admin_url(['person' => (int)$p['id']]),
+            'matched_name'       => $aka ? $aka[0] : null,
+            'matched_kind'       => $aka ? $aka[1] : null,
+        ];
+    }
+    return $items;
+}
+
+/** One person for the Data Manager's modal: details, where named, likely same-person picks. */
+function kop_dm_person_detail(int $id): array {
+    $state = kop_people_load();
+    if (!isset($state['rows'][$id])) throw new RuntimeException('There is no person #' . $id . '.');
+    $resolved = kop_people_resolve($state, $id);
+    if ($resolved !== $id) throw new RuntimeException('Person #' . $id . ' was joined into person #' . $resolved . '.');
+    $p = $state['rows'][$id];
+    $labels = ['administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO', 'map' => 'Person on the map'];
+    $roles = kop_people_roles_of($id);
+    $out = [];
+    foreach ($roles as $r) {
+        $rec = kop_people_admin_record($r['record_kind'], $r['record_id']);
+        $isMap = $r['record_kind'] === 'map';
+        if ($isMap && $rec['url'] !== '') $rec['url'] .= '#open=' . rawurlencode((string)$r['ref']);
+        $out[] = [
+            'record_kind' => (string)$r['record_kind'],
+            'record_id'   => (int)$r['record_id'],
+            'record_name' => (string)$rec['name'],
+            'record_url'  => (string)$rec['url'],
+            'what'        => $isMap ? 'node ' . $r['ref'] : ($r['record_kind'] === 'operator' ? 'company #' : 'facility #') . $r['record_id'],
+            'list'        => (string)$r['list'],
+            'list_label'  => $labels[$r['list']] ?? (string)$r['list'],
+            'position'    => (int)$r['position'],
+            'written_as'  => (string)$r['name'],
+            'role'        => (string)$r['role'],
+            'can_separate' => $r['record_kind'] === 'facility' && count($roles) > 1,
+        ];
+    }
+    $similar = [];
+    foreach (kop_people_similar($state, $id) as $o) $similar[] = ['id' => (int)$o['id'], 'name' => (string)$o['name']];
+    return [
+        'id'        => $id,
+        'name'      => (string)$p['name'],
+        'aliases'   => (string)$p['aliases'],
+        'notes'     => (string)$p['notes'],
+        'roles'     => $out,
+        'similar'   => $similar,
+        'admin_url' => kop_people_admin_url(['person' => $id]),
+        'merge_url' => admin_url('admin.php?page=kop-merge-people'),
+    ];
+}
+
 /** Who made a change, for the modules that keep it. */
 function kop_dm_by(): string {
     $u = function_exists('wp_get_current_user') ? wp_get_current_user() : null;
@@ -712,7 +819,17 @@ try {
             if ($category === '' || $category === 'indigenous_schools') {
                 $items = array_merge($items, kop_dm_side_items('indigenous_school', $q));
             }
+            // People join "All categories" only for a search: thousands of
+            // names would bury the records otherwise.
+            if ($category === 'people' || ($category === '' && $q !== '')) {
+                $items = array_merge($items, kop_dm_people_items($q));
+            }
             foreach ($items as &$it) {
+                if ($it['kind'] === 'person') {
+                    $it['wiki_links'] = ['suggested' => 0, 'confirmed' => 0, 'total' => 0];
+                    $it['name_match_unlinked'] = 0;
+                    continue;
+                }
                 $it['wiki_links'] = $wikiCounts[$it['unique_name']] ?? ['suggested' => 0, 'confirmed' => 0, 'total' => 0];
                 $it['name_match_unlinked'] = $it['kind'] === 'facility' ? ($nameUnlinked[strtolower($it['unique_name'])] ?? 0) : 0;
             }
@@ -789,6 +906,18 @@ try {
                 'limit'   => $limit,
                 'offset'  => $offset,
             ]);
+            exit;
+        }
+
+        // ---- get_person ----
+        if ($action === 'get_person') {
+            try {
+                if (!kop_dm_people_ready()) throw new RuntimeException('People is not set up on this site.');
+                echo json_encode(['success' => true, 'person' => kop_dm_person_detail((int)($_GET['id'] ?? 0))]);
+            } catch (RuntimeException $e) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            }
             exit;
         }
 
@@ -978,11 +1107,6 @@ try {
         exit;
     }
 
-    // Every POST action edits the legacy tables; re-derive v2 after the request.
-    if (function_exists('kop_facility_v2_request_sync')) {
-        kop_facility_v2_request_sync();
-    }
-
     $input = json_decode(file_get_contents('php://input'), true);
     if (!is_array($input)) {
         http_response_code(400);
@@ -991,6 +1115,50 @@ try {
     }
 
     $action = $input['action'] ?? '';
+
+    // ---- People: person_save {id, name, aliases, notes}, person_merge {id,
+    // into: "#id" or an exact name}, person_undo_merge {log}, person_separate
+    // {id, facility_id, list, position}. The People screen's own functions;
+    // they keep their own tables, so no v2 re-derive.
+    if (in_array($action, ['person_save', 'person_merge', 'person_undo_merge', 'person_separate'], true)) {
+        try {
+            if (!kop_dm_people_ready()) throw new RuntimeException('People is not set up on this site.');
+            $pid = (int)($input['id'] ?? 0);
+            $result = ['success' => true];
+            if ($action === 'person_save') {
+                $err = kop_people_save_details($pid, (string)($input['name'] ?? ''), (string)($input['aliases'] ?? ''), (string)($input['notes'] ?? ''));
+                if ($err !== '') throw new RuntimeException($err);
+                $result['message'] = 'Saved.';
+                $result['person'] = kop_dm_person_detail($pid);
+            } elseif ($action === 'person_merge') {
+                $into = kop_people_admin_find((string)($input['into'] ?? ''), $pid);
+                if (is_string($into)) throw new RuntimeException($into);
+                $result['message'] = kop_pmerge_do_merge($into, $pid, kop_dm_by());
+                $log = kop_pmerge_log();
+                $result['undo_log'] = (string)($log[0]['id'] ?? '');
+                $result['into'] = (int)$into;
+            } elseif ($action === 'person_undo_merge') {
+                $result['message'] = kop_pmerge_do_undo((string)($input['log'] ?? ''));
+            } else {
+                $new = kop_people_separate((int)($input['facility_id'] ?? 0), (string)($input['list'] ?? ''), (int)($input['position'] ?? 0));
+                if (!$new) throw new RuntimeException('That entry is not there any more. Refresh and try again.');
+                kop_people_sync();
+                $result['message'] = 'That entry is now its own person (#' . $new . '), apart from #' . $pid . '.';
+                $result['new_id'] = $new;
+                $result['person'] = kop_dm_person_detail($pid);
+            }
+            echo json_encode($result);
+        } catch (RuntimeException $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        }
+        exit;
+    }
+
+    // Every other POST action edits the legacy tables; re-derive v2 after the request.
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
+    }
 
     // ---- set_designation ----
     // {facility_id, designation: home|not_home|young_adult|indigenous_school,

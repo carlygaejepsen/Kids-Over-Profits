@@ -130,6 +130,7 @@
 .dm-cat-facilities { background: var(--kop-midnight-blue, #000435); }
 .dm-cat-young_adult { background: var(--kop-chartreuse-ink, #5C7401); }
 .dm-cat-indigenous_schools { background: var(--kop-text-muted, #4A5568); }
+.dm-cat-people { background: var(--kop-coral-pink-fill, #B3404A); }
 
 /* Designation tag (home of / program / waiting for review) and page link */
 .dm-designation {
@@ -286,6 +287,30 @@ a.dm-page-link:hover, a.dm-page-link:focus { color: var(--kop-midnight-blue, #00
 }
 .dm-form input:focus, .dm-form select:focus { outline: none; border-color: var(--kop-orange, #EF9034); }
 .dm-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.dm-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 11px;
+    border: 2px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+}
+.dm-form textarea:focus { outline: none; border-color: var(--kop-orange, #EF9034); }
+
+/* Person dialog: where they are named, likely same-person picks */
+.dm-person-roles { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.dm-person-roles th, .dm-person-roles td { text-align: left; padding: 6px; border-bottom: 1px solid var(--kop-sand, #F2EEDF); vertical-align: top; }
+.dm-person-roles th { color: var(--kop-navy, #000080); }
+.dm-person-similar { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+@media (max-width: 600px) {
+    .dm-person-roles, .dm-person-roles tbody, .dm-person-roles tr, .dm-person-roles td { display: block; }
+    .dm-person-roles thead { display: none; }
+    .dm-person-roles tr { border-bottom: 1px solid var(--kop-sand, #F2EEDF); padding: 6px 0; }
+    .dm-person-roles td { border: 0; padding: 2px 0; }
+}
 
 /* Document folder row (input + browse button) */
 .dm-doc-row { display: flex; gap: 8px; align-items: stretch; }
