@@ -108,10 +108,13 @@ function kop_hub_config($slug) {
             // Set apart and labelled: these schools are not troubled teen programs.
             'outside' => array(
                 'heading' => 'Institutional abuse outside the troubled teen industry',
-                'intro'   => 'These are not troubled teen industry programs. They are listed here because their history is sometimes set beside the troubled teen industry\'s; each page says where the two meet and where they do not.',
+                'intro'   => 'These are not troubled teen industry programs. They are listed here because their history is sometimes set beside the troubled teen industry\'s, or because the same companies and practices turn up in both; each page says where the two meet and where they do not.',
                 'links'   => array(
                     array('label' => 'Indian boarding schools and residential schools', 'slug' => 'indian-boarding-schools',
                           'note'  => 'Government and church schools in the United States and Canada that took Indigenous children from their families. Not part of the troubled teen industry; the page is mostly directions to Indigenous-led organizations.'),
+                    // A draft until the owner publishes it; kop_hub_link() drops it for readers until then.
+                    array('label' => 'Related industries', 'slug' => 'related-industries',
+                          'note'  => 'Foster care, group homes for adults with developmental disabilities, nursing homes and psychiatric hospitals: what each is, which troubled teen industry companies also run them, and where to report abuse.'),
                 ),
             ),
         ),

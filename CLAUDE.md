@@ -203,6 +203,9 @@ php scripts/test-hub-pages.php
 # Pages whose words live in js/data/pages/<slug>.json, edited at KOP Tools > Page Text
 # (inc/page-text.php + inc/page-text-editor.php; e.g. /indian-boarding-schools/ and /faq/, both published)
 php scripts/test-page-text.php
+# Related industries OUTSIDE the TTI (foster care, adult disability group homes, nursing homes, psychiatric hospitals) and their
+# /related-industries/ index: one shared template (templates/page-related-industry.php), text in js/data/pages/<slug>.json, Page Text.
+# No facility records; linked from the History hub's 'outside' block. Migrant shelters, juvenile detention, PRTFs/RTCs are TTI, never here
 # Utility and legal page templates: shortcode/share behavior, case metadata and image alt text
 php scripts/test-utility-pages.php
 # Live content with local utility/legal template CSS, screenshots at 390/768/1440

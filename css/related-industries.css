@@ -1,0 +1,188 @@
+/*
+ * Related industries outside the troubled teen industry
+ * (templates/page-related-industry.php): the /related-industries/ index and
+ * one page each for foster care, disability group homes, nursing homes and
+ * psychiatric hospitals.
+ *
+ * Laid out like the Indian boarding schools page: one white card, one
+ * column. The "Not the troubled teen industry" statement comes right after
+ * the content note, and the reporting box is easy to find.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-ri-page {
+    max-width: 52rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.65;
+}
+
+/* Text never sits on the site's gradient: edge to edge on a phone. */
+@media (max-width: 600px) {
+    .kop-ri-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-ri-header {
+    margin-bottom: 1.5rem;
+}
+
+.kop-ri-tag {
+    margin: 0 0 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-ri-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ri-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ri-editor-content {
+    margin-bottom: 2rem;
+}
+
+.kop-ri-page section {
+    margin-top: 2.5rem;
+}
+
+.kop-ri-page h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.4rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-ri-page h3 {
+    margin: 1.5rem 0 0.4rem;
+    font-size: 1.1rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ri-page p,
+.kop-ri-page ul {
+    margin: 0 0 1rem;
+}
+
+.kop-ri-page li {
+    margin-bottom: 0.45rem;
+}
+
+.kop-ri-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+/* ---- Content note and the "not the TTI" statement ---------------------- */
+
+.kop-ri-note {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    font-size: 0.98rem;
+}
+
+.kop-ri-note p {
+    margin: 0;
+}
+
+.kop-ri-note p + p {
+    margin-top: 0.5rem;
+}
+
+.kop-ri-statement {
+    margin: 0;
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    font-size: 1.08rem;
+}
+
+.kop-ri-statement p:last-child {
+    margin-bottom: 0;
+}
+
+/* ---- Organizations and the index's page cards -------------------------- */
+
+.kop-ri-orgs {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+}
+
+.kop-ri-org {
+    margin: 0 0 0.9rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 8px;
+}
+
+.kop-ri-org-name {
+    font-weight: 700;
+}
+
+.kop-ri-org p {
+    margin: 0.3rem 0 0;
+    font-size: 0.98rem;
+}
+
+/* ---- Where to report ---------------------------------------------------- */
+
+.kop-ri-support {
+    padding: 1rem 1.2rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: 8px;
+}
+
+.kop-ri-support h2 {
+    font-size: 1.2rem;
+}
+
+.kop-ri-support ul {
+    padding-left: 1.2rem;
+}
+
+.kop-ri-support > :last-child {
+    margin-bottom: 0;
+}
+
+.kop-ri-phone {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.kop-ri-updated {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-ri-updated p {
+    margin: 0;
+}
+
+/* ---- Back to the index -------------------------------------------------- */
+
+.kop-ri-back {
+    margin: 2.5rem 0 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--kop-border-primary, #B6E3D4);
+}

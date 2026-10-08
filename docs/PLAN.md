@@ -337,6 +337,19 @@ need the owner's accounts, devices or artwork.
     the Converted tab. NeuroRestorative is warned (based in Dedham, MA: likely a real company); keep it with
     "It is a real company".
 
+21. **Related industries pages** (2026-10-08). Five drafts, created on deploy:
+    /related-industries/ (index) and /foster-care/, /disability-group-homes/, /nursing-homes/,
+    /psychiatric-hospitals/, each saying what the industry is, where it meets the TTI (the same companies:
+    UHS, Acadia, Devereux, Sequel, Vivant, Sevita/MENTOR, ResCare/BrightSpring, Onex), what investigations found,
+    where to report and who to learn from. Read each, edit at
+    [KOP Data Tools > Page Text](https://kidsoverprofits.org/wp-admin/admin.php?page=kop-page-text) or with the pencil,
+    then publish in wp-admin; the History hub's "outside" box lists the index once it is published. Questions the
+    research raised: UHS's Cedar Ridge Behavioral Hospital and other psychiatric hospitals sit among its TTI records
+    (the psychiatric hospitals page says hospitals are outside the TTI); the nursing homes page says the overlap is
+    smaller there and names Onex (Skilled Healthcare and ResCare) as the one owner documented on both sides; the
+    Joint Commission complaint number on the psychiatric hospitals page came from a search summary (check it);
+    the disability page links NeuroRestorative's program page, which changes if that conversion is undone.
+
 ### Unconfirmed settings
 
 19. Which mode production's `kop_data_model` / `kop_data_model_areas`

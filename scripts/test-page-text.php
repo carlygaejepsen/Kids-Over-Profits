@@ -60,6 +60,8 @@ function wp_json_encode($v, $f = 0) { return json_encode($v, $f); }
 function wp_strip_all_tags($s) { return strip_tags((string) $s); }
 function wp_date($f, $t) { return date($f, $t); }
 function get_edit_post_link() { return ''; }
+function get_the_ID() { return 1; }
+function get_post_field($f, $id = 0) { return $f === 'post_name' && isset($GLOBALS['kop_test_slug']) ? $GLOBALS['kop_test_slug'] : ''; }
 
 require dirname(__DIR__) . '/inc/page-text.php';
 require dirname(__DIR__) . '/inc/page-text-editor.php';
@@ -184,6 +186,47 @@ $doc = new DOMDocument();
 $doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
 $errs = array_filter(libxml_get_errors(), function ($e) { return !preg_match('/^Tag (main|header|section|nav) invalid/', trim($e->message)); });
 check(!$errs, 'the FAQ page parses as HTML without errors');
+
+echo "Related industries
+";
+// One template for the index and every industry page; it reads the page's own slug.
+$topics = array('foster-care', 'disability-group-homes', 'nursing-homes', 'psychiatric-hospitals');
+$topic_keys = array('note', 'outside', 'what', 'touch', 'documented', 'report', 'learn', 'wrong', 'updated');
+foreach (array_merge(array('related-industries'), $topics) as $slug) {
+    $page = kop_page_text_page($slug);
+    check($page && $page['prefix'] === 'kop-ri' && is_readable(dirname(__DIR__) . '/' . $page['file']), "$slug: registered, with its text file");
+    $keys = array_column(kop_page_text_defaults($slug), 'key');
+    if ($slug !== 'related-industries') {
+        check($keys === $topic_keys, "$slug: the nine sections in order" . ($keys === $topic_keys ? '' : ' (' . implode(', ', $keys) . ')'));
+    }
+    $GLOBALS['kop_test_slug'] = $slug;
+    $html = render_page('page-related-industry.php');
+    check(strpos($html, '<p class="kop-ri-tag">Not the troubled teen industry</p>') !== false && strpos($html, 'id="kop-ri-outside"') !== false, "$slug: labelled as not the troubled teen industry");
+    check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), "$slug: no format syntax left over");
+    preg_match_all('/href="([^"]+)"/', $html, $m);
+    $bad = array_filter($m[1], function ($u) { return !preg_match('#^(https://|tel:|\#kop-ri-)#', $u); });
+    check(!$bad, "$slug: every link is https, tel or an in-page anchor" . ($bad ? ': ' . implode(' ', $bad) : ''));
+    preg_match_all('/href="#([^"]+)"/', $html, $anchors);
+    $missing = array_filter($anchors[1], function ($a) use ($html) { return strpos($html, 'id="' . $a . '"') === false; });
+    check(!$missing, "$slug: every in-page link has its target" . ($missing ? ': ' . implode(' ', $missing) : ''));
+    if ($slug !== 'related-industries') {
+        check(strpos($html, 'href="#kop-ri-report"') !== false && strpos($html, '<section class="kop-ri-support" id="kop-ri-report"') !== false, "$slug: the content note links to where to report");
+        check(strpos($html, 'href="https://kidsoverprofits.org/report-abuse/"') !== false, "$slug: links our reporting directory");
+        check(substr_count($html, 'class="kop-ri-org"') >= 3, "$slug: organizations to learn from");
+    } else {
+        foreach ($topics as $t) {
+            check(strpos($html, '<a class="kop-ri-org-name" href="https://kidsoverprofits.org/' . $t . '/">') !== false, "related-industries: a card for $t");
+        }
+    }
+    libxml_clear_errors();
+    $doc = new DOMDocument();
+    $doc->loadHTML('<?xml encoding="utf-8"?>' . $html);
+    $errs = array_filter(libxml_get_errors(), function ($e) { return !preg_match('/^Tag (main|header|section) invalid/', trim($e->message)); });
+    check(!$errs, "$slug: parses as HTML without errors");
+}
+$GLOBALS['kop_test_slug'] = 'not-a-text-page';
+$html = render_page('page-related-industry.php');
+check(strpos($html, 'class="kop-ri-page"') !== false && strpos($html, '<section') === false, 'a page with no text file shows only its title and editor content');
 
 echo "Editor screen
 ";

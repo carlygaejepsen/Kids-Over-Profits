@@ -480,6 +480,14 @@ function kop_tool_page_specs() {
         // Programs for people 18 and older, kept apart from the TTI facilities
         // (inc/young-adult-programs.php). Published by the owner.
         array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'publish'),
+        // Industries outside the TTI that meet it (foster care, adult disability group
+        // homes, nursing homes, psychiatric hospitals) and their index. One shared
+        // template; text in js/data/pages/<slug>.json. Drafts until the owner publishes.
+        array('template' => 'page-related-industry.php', 'title' => 'Related Industries', 'slug' => 'related-industries', 'status' => 'draft', 'shared' => true),
+        array('template' => 'page-related-industry.php', 'title' => 'Foster Care', 'slug' => 'foster-care', 'status' => 'draft', 'shared' => true),
+        array('template' => 'page-related-industry.php', 'title' => 'Group Homes for Adults with Developmental Disabilities', 'slug' => 'disability-group-homes', 'status' => 'draft', 'shared' => true),
+        array('template' => 'page-related-industry.php', 'title' => 'Nursing Homes', 'slug' => 'nursing-homes', 'status' => 'draft', 'shared' => true),
+        array('template' => 'page-related-industry.php', 'title' => 'Psychiatric Hospitals and Psych Wards', 'slug' => 'psychiatric-hospitals', 'status' => 'draft', 'shared' => true),
         // State trackers share one template, so 'shared' creates the page by slug
         // even though other pages use the template. Oklahoma (owner, 2026-09-30).
         array('template' => 'page-state-reports.php', 'title' => 'Oklahoma Inspection Reports', 'slug' => 'ok-reports', 'status' => 'publish', 'shared' => true,
@@ -704,7 +712,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '25';
+    $version = '26';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

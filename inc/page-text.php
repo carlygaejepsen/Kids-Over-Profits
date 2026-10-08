@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
 
 /** Pages this system knows, by page slug. */
 function kop_page_text_pages() {
-    return array(
+    $pages = array(
         'indian-boarding-schools' => array(
             'title'  => 'Indian Boarding Schools and Residential Schools',
             'file'   => 'js/data/pages/indian-boarding-schools.json',
@@ -48,6 +48,23 @@ function kop_page_text_pages() {
             'css'    => 'css/faq.css',
         ),
     );
+    // Industries outside the TTI that meet it, all on templates/page-related-industry.php.
+    $related = array(
+        'related-industries'     => 'Related Industries',
+        'foster-care'            => 'Foster Care',
+        'disability-group-homes' => 'Group Homes for Adults with Developmental Disabilities',
+        'nursing-homes'          => 'Nursing Homes',
+        'psychiatric-hospitals'  => 'Psychiatric Hospitals and Psych Wards',
+    );
+    foreach ($related as $slug => $title) {
+        $pages[$slug] = array(
+            'title'  => $title,
+            'file'   => 'js/data/pages/' . $slug . '.json',
+            'prefix' => 'kop-ri',
+            'css'    => 'css/related-industries.css',
+        );
+    }
+    return $pages;
 }
 
 function kop_page_text_page($slug) {

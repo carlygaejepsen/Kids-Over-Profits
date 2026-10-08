@@ -1,0 +1,33 @@
+{
+  "_about": "Text of the /related-industries/ page (templates/page-related-industry.php, rendered by inc/page-text.php). Edit it in wp-admin at KOP Data Tools > Page Text, or here. Format: a blank line between paragraphs, '### ' for a subheading, '- ' for a list item, **bold**, *italic*, [link text](https://...). Phone numbers like 1-800-555-0100 become tap-to-call links. In a 'cards' section, a list item that starts with a link or a **bold name** and then a colon becomes an organization card.",
+  "sections": [
+    {
+      "key": "outside",
+      "label": "Not the troubled teen industry",
+      "style": "statement",
+      "heading": "Not the troubled teen industry",
+      "body": "The industries on these pages are not part of the troubled teen industry, and Kids Over Profits does not track their facilities. We list them because they meet it. Some of the same companies and investors run them, they use the same restraint, seclusion and sedation, and the same weak inspections let harm go on for years. Some young people pass from one system into the other.\n\nWe are not the experts on these industries. Each page points to the people and organizations who are."
+    },
+    {
+      "key": "pages",
+      "label": "The pages",
+      "style": "cards",
+      "heading": "Industries that meet the troubled teen industry",
+      "body": "- [Foster care](/foster-care/): Private foster care agencies, group homes and the residential programs that state child welfare agencies pay to hold children in their custody.\n- [Group homes for adults with developmental disabilities](/disability-group-homes/): Group homes and institutions for adults with intellectual and developmental disabilities, many run by large for-profit chains.\n- [Nursing homes](/nursing-homes/): Nursing homes and the private equity and real estate investors who own many of them.\n- [Psychiatric hospitals and psych wards](/psychiatric-hospitals/): Inpatient psychiatric care for adults and young people, including hospitals run by the companies that run many troubled teen programs."
+    },
+    {
+      "key": "inside",
+      "label": "What we count as the troubled teen industry",
+      "style": "plain",
+      "heading": "What we do count as the troubled teen industry",
+      "body": "Residential treatment centers, psychiatric residential treatment facilities for young people, therapeutic boarding schools, wilderness programs, shelters for migrant children and juvenile detention are all part of what we track. You will find them in our [program directory](/tti-program-index/). Programs for [young adults over 18](/young-adult-programs/) are kept in their own list, but they are part of the industry too.\n\nThe [Indian boarding schools and residential schools](/indian-boarding-schools/) of the United States and Canada are not an industry and are not on these pages. They have a page of their own."
+    },
+    {
+      "key": "wrong",
+      "label": "Tell us if we got this wrong",
+      "style": "plain",
+      "heading": "Tell us if we got this wrong",
+      "body": "If you work in one of these fields, or have lived in one of these places, and something on these pages is wrong, please [tell us](/contact/). We will change it."
+    }
+  ]
+}
