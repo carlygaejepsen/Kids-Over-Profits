@@ -129,6 +129,13 @@ if (!function_exists('kop_mobile_facility_payload')) {
         foreach ($keep as $k) {
             if (array_key_exists($k, $page)) $out[$k] = $page[$k];
         }
+        // A program made from a company record keeps the company's written history; the app gets it once published.
+        $ph = isset($page['program_history']['history']) && is_array($page['program_history']['history']) ? $page['program_history']['history'] : null;
+        $out['history'] = $ph && ($ph['status'] ?? '') === 'published' ? array(
+            'status'     => 'published',
+            'paragraphs' => array_values(array_map('strval', (array) ($ph['paragraphs'] ?? array()))),
+            'sources'    => array_values((array) ($ph['sources'] ?? array())),
+        ) : null;
         // A record with a written profile post (/elan/) is that post on the website: its /facility/ page 301s there.
         if (!empty($out['id']) && function_exists('kop_facility_page_url')) {
             $canonical = kop_facility_page_url((int) $out['id']);

@@ -104,6 +104,10 @@ php scripts/test-operator-history-seed.php      # fill, replace untouched drafts
 # a record it made if untouched. Program pages list homes + their news/lawsuits/serious findings; homes name their program;
 # company pages fold homes under it. Directory, map and search still list homes one by one (docs/PLAN.md)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes.php   # suggestions, group Newport Academy CA, pages, undo, on a temp copy
+# Parent companies that are one program (every record carries the company's own name, one state; inc/program-homes-convert.php): Program Homes >
+# Companies that are one program converts one: homes grouped under a program record, operator.history printed there (pencil phistory:<id>),
+# the company row deleted (saved whole in {prefix}kop_program_conversions), /operator/<slug>/ 301s to the program; exact Undo on the Converted tab
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes-convert.php [--list]   # converts every suggestion and undoes it on a temp copy
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
 # Inspection rankings (KOP Tools > Inspection Rankings, inc/inspection-rollup.php): worst companies, facilities and states by

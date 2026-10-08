@@ -318,6 +318,11 @@ $kop_fp_era_kinds = array(
 );
 
 $kop_fp_sections = array();
+// A program made from a company record (inc/program-homes-convert.php) keeps the company's written history.
+$kop_fp_ph = !empty($page['program_history']) ? $page['program_history'] : null;
+$kop_fp_ph_edit = ($kop_fp_ph && function_exists('kop_ie_attr')) ? kop_ie_attr('phistory:' . (int) $kop_fp_ph['operator_id'], 'its history') : '';
+$kop_fp_has_ph = $kop_fp_ph && (!empty($kop_fp_ph['history']) || $kop_fp_ph_edit !== '');
+if ($kop_fp_has_ph) $kop_fp_sections['history'] = 'History';
 // Homes of a program (inc/program-homes.php): a program lists them, a home lists the others.
 $kop_fp_homes = !empty($page['program_homes']['homes']) ? $page['program_homes']['homes'] : (!empty($page['home_of']['others']) ? $page['home_of']['others'] : array());
 $kop_fp_is_program = !empty($page['program_homes']['homes']);
@@ -603,6 +608,38 @@ get_header();
                     <a href="#<?php echo esc_attr($anchor); ?>"><?php echo esc_html($label); ?></a>
                 <?php endforeach; ?>
             </nav>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_ph) : $kop_fp_hist = $kop_fp_ph['history']; ?>
+            <section class="kop-fp-section kop-op-history" id="<?php echo $kop_fp_id('history'); ?>">
+                <h2>History</h2>
+                <?php if ($kop_fp_hist) : ?>
+                    <div class="kop-op-history-text"<?php echo $kop_fp_ph_edit; ?>>
+                        <?php if ($kop_fp_hist['status'] === 'draft') : ?>
+                            <p class="kop-op-draft"><strong>Draft.</strong> Only admins see this history. Check it against its sources, then use the pencil to correct it and set it to Published.</p>
+                            <?php if (!empty($kop_fp_hist['notes'])) : ?>
+                                <details class="kop-op-review-notes" open>
+                                    <summary>What to check before publishing</summary>
+                                    <p><?php echo esc_html($kop_fp_hist['notes']); ?></p>
+                                </details>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        <?php foreach ($kop_fp_hist['paragraphs'] as $kop_fp_para) : ?>
+                            <p><?php echo kop_operator_history_paragraph_html($kop_fp_para); // Escaped inside. ?></p>
+                        <?php endforeach; ?>
+                        <?php if ($kop_fp_hist['sources']) : ?>
+                            <h3 class="kop-fp-subhead">Sources</h3>
+                            <ol class="kop-op-sources">
+                                <?php foreach ($kop_fp_hist['sources'] as $kop_fp_src) : ?>
+                                    <li><?php if ($kop_fp_src['url'] !== '') : ?><a href="<?php echo esc_url($kop_fp_src['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_src['label']); ?></a><?php else : ?><?php echo esc_html($kop_fp_src['label']); ?><?php endif; ?></li>
+                                <?php endforeach; ?>
+                            </ol>
+                        <?php endif; ?>
+                    </div>
+                <?php else : ?>
+                    <p class="kop-op-draft"<?php echo $kop_fp_ph_edit; ?>>No written history yet. Use the pencil to add one; it stays a draft, seen only by admins, until it is set to Published.</p>
+                <?php endif; ?>
+            </section>
             <?php endif; ?>
 
             <?php if ($kop_fp_homes) : ?>

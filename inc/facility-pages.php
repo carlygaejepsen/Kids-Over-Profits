@@ -401,6 +401,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'merged:' . implode(',', kop_facility_pages_merged_profiles());
         // Homes grouped under a program record (inc/program-homes.php).
         $parts[] = 'program-homes:' . (function_exists('kop_program_homes_cache_key') ? kop_program_homes_cache_key() : '-');
+        // ...and companies converted into a program, whose history prints there (inc/program-homes-convert.php).
+        $parts[] = 'program-conversions:' . (function_exists('kop_phc_cache_key') ? kop_phc_cache_key() : '-');
         $parts[] = 'v:5';
         return md5(implode(';', $parts));
     }
@@ -2999,6 +3001,8 @@ if (!function_exists('kop_facility_page_data')) {
             ),
             'siblings'      => $siblings,
             'program_homes' => $program_homes,
+            // A company converted into this program: its written history (inc/program-homes-convert.php).
+            'program_history' => function_exists('kop_phc_program_history') ? kop_phc_program_history($facility_id) : null,
             'home_of'       => $home_of,
             'addresses'     => $addresses,
             'former_locations' => $former,

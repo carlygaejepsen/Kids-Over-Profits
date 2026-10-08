@@ -470,6 +470,7 @@ if (function_exists('add_filter')) {
         $tables[] = array('t' => $p . 'kop_program_homes', 'c' => 'home_id', 'k' => 'id');
         $tables[] = array('t' => $p . 'kop_program_homes', 'c' => 'program_id', 'k' => 'id');
         $tables[] = array('t' => $p . 'kop_program_groups', 'c' => 'program_id', 'k' => 'id');
+        $tables[] = array('t' => $p . 'kop_program_conversions', 'c' => 'program_id', 'k' => 'id');
         return $tables;
     }, 10, 2);
 }
@@ -735,6 +736,8 @@ if (!function_exists('kop_program_homes_handle_post')) {
             } elseif ($do === 'remove_home') {
                 kop_program_homes_remove_home((int) ($_POST['home_id'] ?? 0));
                 $msg = 'Home taken out of the program.';
+            } elseif (($do === 'convert' || $do === 'convert_undo') && function_exists('kop_phc_handle')) {
+                $msg = kop_phc_handle($do);
             }
         } catch (Throwable $e) {
             $msg = 'Not done: ' . $e->getMessage();
@@ -765,6 +768,11 @@ if (!function_exists('kop_program_homes_page')) {
         $suggestions = kop_program_homes_suggestions(isset($_GET['refresh']));
         $map = kop_program_homes_map(true);
         $dismissed = kop_program_homes_dismissed();
+        // Companies that are one program (inc/program-homes-convert.php).
+        $conv = function_exists('kop_phc_suggestions');
+        if ($conv) kop_phc_install();
+        $companies = $conv ? kop_phc_suggestions() : array();
+        $converted = $conv ? kop_phc_rows(true) : array();
         ?>
         <div class="wrap kop-ph">
             <h1>Program homes</h1>
@@ -773,6 +781,10 @@ if (!function_exists('kop_program_homes_page')) {
             <nav class="nav-tab-wrapper">
                 <a class="nav-tab<?php echo $tab === 'suggested' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base); ?>">Suggested (<?php echo count($suggestions); ?>)</a>
                 <a class="nav-tab<?php echo $tab === 'grouped' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=grouped'); ?>">Grouped (<?php echo count($map['programs']); ?>)</a>
+                <?php if ($conv) : ?>
+                <a class="nav-tab<?php echo $tab === 'companies' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=companies'); ?>">Companies that are one program (<?php echo count($companies); ?>)</a>
+                <a class="nav-tab<?php echo $tab === 'converted' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=converted'); ?>">Converted (<?php echo count($converted); ?>)</a>
+                <?php endif; ?>
                 <a class="nav-tab<?php echo $tab === 'dismissed' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=dismissed'); ?>">Not one program (<?php echo count($dismissed); ?>)</a>
             </nav>
             <form method="get" class="kop-ph-search">
@@ -783,10 +795,21 @@ if (!function_exists('kop_program_homes_page')) {
             <?php
             if ($tab === 'grouped') {
                 kop_program_homes_page_grouped($map, $q, $hidden);
+            } elseif ($tab === 'companies' && $conv) {
+                kop_phc_page_suggested($companies, $q, $hidden);
+            } elseif ($tab === 'converted' && $conv) {
+                kop_phc_page_converted($q, $hidden);
             } elseif ($tab === 'dismissed') {
+                global $wpdb;
                 foreach ($dismissed as $key => $when) {
-                    if ($q !== '' && stripos($key, $q) === false) continue;
-                    echo '<div class="kop-ph-card"><p><strong>' . esc_html(ucwords(str_replace('|', ' in ', $key))) . '</strong></p><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+                    // "company:<id>" is a company kept as a company (the Companies that are one program tab).
+                    $label = ucwords(str_replace('|', ' in ', $key));
+                    if (strpos($key, 'company:') === 0) {
+                        $cname = (string) $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}kop_operators WHERE id = %d", (int) substr($key, 8)));
+                        $label = 'Company: ' . ($cname !== '' ? $cname : '#' . substr($key, 8));
+                    }
+                    if ($q !== '' && stripos($label, $q) === false) continue;
+                    echo '<div class="kop-ph-card"><p><strong>' . esc_html($label) . '</strong></p><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
                     $hidden(array('do' => 'undismiss', 'key' => $key));
                     echo '<button class="button">Suggest it again</button></form></div>';
                 }

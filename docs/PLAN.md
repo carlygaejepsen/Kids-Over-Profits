@@ -328,6 +328,14 @@ need the owner's accounts, devices or artwork.
     homes, rename the program), or mark it "Not one program". Groups with a warning start with a company's
     name (CERTS, Straight, Ascend) and are probably separate programs. Not done yet: the facility directory,
     the network map and search still list each home on its own.
+    Its tab [Companies that are one program](https://kidsoverprofits.org/wp-admin/admin.php?page=kop-program-homes&tab=companies)
+    (2026-10-08) lists 15 parent companies that are really one program: 9 groups of same-named homes (Dimondale,
+    Heritage Youth Services, New Hope of Arizona, New Horizon Youth Homes, Center for Positive Changes, PACE,
+    NeuroRestorative IL, Beloved Ones, Four Directions) and 6 companies that are one record (Key Assets Group
+    Homes, Chad, D.O.V.E.S., Linden Oaks, Ridge House, Summit School at Nyack). "Make it one program" groups the
+    homes, moves the company's history draft to the program page, and 301s /operator/<slug>/ there; Undo on
+    the Converted tab. NeuroRestorative is warned (based in Dedham, MA: likely a real company); keep it with
+    "It is a real company".
 
 ### Unconfirmed settings
 
