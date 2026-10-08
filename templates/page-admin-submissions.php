@@ -309,6 +309,7 @@ get_header();
                         <h3>Not a news article?</h3>
                         <div id="refileForm">
                             <p class="refile-help">Put the link on a facility record instead. It leaves the news queue (filed as rejected, with a note saying where it went) and can be undone here.</p>
+                            <p class="refile-help">About an Indian boarding school? Use the <strong>Indian boarding school</strong> button on the card instead: the article goes on the Indian boarding schools page, off the news list, with Undo.</p>
                             <fieldset class="refile-targets">
                                 <legend>Move it as</legend>
                                 <label><input type="radio" name="refileTarget" value="website" checked> Facility website</label>

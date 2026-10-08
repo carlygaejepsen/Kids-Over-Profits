@@ -92,6 +92,7 @@ NEWS = {
                {"name": "article_type", "label": "Category", "type": "select", "category": True, "value": "general",
                 "options": {"general": "General", "closure": "Closure", "lawsuit": "Lawsuit"}}],
     "moves": [{"id": "lawsuit", "label": "Move to Lawsuits"},
+              {"id": "indigenous", "label": "Move to Indian boarding schools", "params": [{"name": "school_id", "label": "About", "type": "select", "options": {"0": "Indian boarding schools in general", "3": "Carlisle"}, "value": "0"}]},
               {"id": "website", "label": "Move to Facility website", "params": [{"name": "facility_id", "label": "Facility", "type": "facility", "value": 0}]}],
     "actions": [], "tags": ["Neglect"], "links": [],
     "approve_help": "Puts this article on the site.", "reject_help": "Nothing on the site changes.",
@@ -283,6 +284,12 @@ def main():
             check("SCIAD NET (2)" in pg.locator("#originFilter").inner_text(), f"@{width} Came from lists the page's own origins with counts")
             pg.locator("#originFilter").select_option("sciad")
             check(pg.evaluate("window.kopRefreshes") >= 1, f"@{width} choosing an origin reloads the page's own list")
+            school = pg.locator(".rinbox-native button[aria-expanded]", has_text="Indian boarding school")
+            check(school.count() == 1 and school.is_visible(), f"@{width} a news card has its own Indian boarding school button")
+            check(pg.locator(".rinbox-native select[aria-label='Move to another queue'] option[value='indigenous']").count() == 0, f"@{width} ...and it is not in the Move to list twice")
+            school.click()
+            check(pg.locator(".rinbox-native .rinbox-move-form select[data-field='school_id']").is_visible(), f"@{width} the school button asks which school")
+            school.click()
             pg.locator(".rinbox-native select[aria-label='Move to another queue']").select_option("website")
             check(pg.locator(".rinbox-native .rinbox-move-form input[data-field='facility_id']").is_visible(), f"@{width} a facility destination asks for the facility first")
             pg.locator(".rinbox-native .rinbox-move-form input[data-field='facility_id']").fill("12")

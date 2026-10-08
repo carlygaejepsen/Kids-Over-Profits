@@ -735,29 +735,55 @@
         wrap.appendChild(mv);
         wrap.appendChild(form);
         mv.addEventListener('change', function () {
-            form.innerHTML = '';
-            form.hidden = true;
             var m = (item.moves || []).filter(function (x) { return x.id === mv.value; })[0];
-            if (!m) return;
-            if (!m.params || !m.params.length) { go({ to: m.id }); return; }
-            var inputs = m.params.map(function (p) {
-                var input = fieldInput(p, prefix + 'mv-' + m.id + '-');
-                form.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', input]));
-                return input;
-            });
-            form.appendChild(el('button', {
-                type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: m.label,
-                onclick: function () {
-                    var params = { to: m.id };
-                    inputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
-                    go(params);
-                }
-            }));
-            form.hidden = false;
-            if (typeof window.kopFacilityFinderAttach === 'function') {
-                form.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
-            }
+            fillMoveForm(form, m, prefix, go);
         });
+        return wrap;
+    }
+
+    /** The move's own questions (facility, school, program) and its button; a move with none goes at once. */
+    function fillMoveForm(form, m, prefix, go) {
+        form.innerHTML = '';
+        form.hidden = true;
+        if (!m) return;
+        if (!m.params || !m.params.length) { go({ to: m.id }); return; }
+        var inputs = m.params.map(function (p) {
+            var input = fieldInput(p, prefix + 'mv-' + m.id + '-');
+            form.appendChild(el('label', { class: 'rinbox-param' }, [p.label + ' ', input]));
+            return input;
+        });
+        form.appendChild(el('button', {
+            type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: m.label,
+            onclick: function () {
+                var params = { to: m.id };
+                inputs.forEach(function (input) { params[input.dataset.field] = readInput(input); });
+                go(params);
+            }
+        }));
+        form.hidden = false;
+        if (typeof window.kopFacilityFinderAttach === 'function') {
+            form.querySelectorAll('input[data-kop-facility-finder]').forEach(window.kopFacilityFinderAttach);
+        }
+    }
+
+    /**
+     * One move as a button of its own on the card (an article about an Indian
+     * boarding school), so it is not hidden in the "Move to" list.
+     */
+    function moveButton(m, text, prefix, go) {
+        var wrap = el('span', { class: 'rinbox-move' });
+        var form = el('span', { class: 'rinbox-move-form', hidden: true });
+        wrap.appendChild(el('button', {
+            type: 'button', class: 'rinbox-btn rinbox-btn-neutral', text: text, title: m.label,
+            'aria-expanded': 'false',
+            onclick: function (e) {
+                var open = form.hidden;
+                if (open) fillMoveForm(form, m, prefix, go);
+                else { form.hidden = true; form.innerHTML = ''; }
+                e.currentTarget.setAttribute('aria-expanded', open ? 'true' : 'false');
+            }
+        }));
+        wrap.appendChild(form);
         return wrap;
     }
 
@@ -1567,10 +1593,12 @@
             row.appendChild(el('label', { class: 'rinbox-quick-field' }, [category.label + ' ', cat]));
         }
         row.appendChild(tagEditor(item, src, row));
-        if (item.moves && item.moves.length) {
-            row.appendChild(moveControl(item, 'rinbox-n' + item.key + '-', function (params) {
-                go('act', { action: 'move', params: params });
-            }));
+        var moveGo = function (params) { go('act', { action: 'move', params: params }); };
+        var school = (item.moves || []).filter(function (m) { return m.id === 'indigenous'; })[0];
+        if (school) row.appendChild(moveButton(school, 'Indian boarding school', 'rinbox-n' + item.key + '-', moveGo));
+        var others = (item.moves || []).filter(function (m) { return m !== school; });
+        if (others.length) {
+            row.appendChild(moveControl(Object.assign({}, item, { moves: others }), 'rinbox-n' + item.key + '-', moveGo));
         }
         (item.actions || []).forEach(function (a) {
             row.appendChild(el('button', {
