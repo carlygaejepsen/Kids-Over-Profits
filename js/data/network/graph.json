@@ -6,7 +6,7 @@
    "nodes": 1432,
    "edges": 2777,
    "facilityMatches": 536,
-   "withYears": 382,
+   "withYears": 383,
    "withDeaths": 27,
    "rebranded": 91,
    "profileEdges": 469,
@@ -36411,7 +36411,7 @@
     "x": 919.79,
     "y": 224.46
    },
-   "years": "2000-2008"
+   "years": "2000-2024"
   },
   {
    "id": "eagle-ranch-academy",
@@ -40025,6 +40025,7 @@
     "x": 870.74,
     "y": 179.6
    },
+   "years": "until 2025",
    "formerNames": [
     "Rock Creek Center"
    ]
