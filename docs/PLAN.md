@@ -349,6 +349,15 @@ need the owner's accounts, devices or artwork.
     smaller there and names Onex (Skilled Healthcare and ResCare) as the one owner documented on both sides; the
     Joint Commission complaint number on the psychiatric hospitals page came from a search summary (check it);
     the disability page links NeuroRestorative's program page, which changes if that conversion is undone.
+    Checked against the History articles (2026-10-08); the pages now link them where they meet. Errors found in
+    the articles themselves (not edited): /birth-of-the-tti/ and /idd-timeline/ date Buck v. Bell 1924 (decided
+    1927, 274 U.S. 200; /juvenile-justice-timeline/ already says 1927); /idd-timeline/'s 1965 Lovaas citation
+    (title and journal not found; the shock study is Lovaas, Schaeffer & Simmons, Journal of Experimental Research
+    in Personality, 1965) and its line "Initially served 'mental defectives'..." under 1933, which reads as
+    Devereux's; /warehouses-of-neglect/ says UHS paid about $150m in 2020 (the report's p. 19 says $122 million);
+    /juvenile-justice-timeline/ names James F. Slattery as YSI's 1989 founder (the Senate report names Jay Ripley as
+    a co-founder, company histories W. James Hindman); /corporatization/ (1987) and /war-on-drugs/ (1993) give two
+    years for Lichfield's Brightway Adolescent Hospital contract.
 
 ### Unconfirmed settings
 
