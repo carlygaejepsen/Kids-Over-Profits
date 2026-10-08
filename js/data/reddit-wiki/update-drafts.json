@@ -36,6 +36,76 @@
      "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
     },
     {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for Boys Town has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Boys Town has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Locations",
+     "filler": true,
+     "text": "Additional information about Boys Town has not been added yet. If you have reliable updates or references to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Boys Town has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Boys Town has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Boys Town have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e8",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Boys Town have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "c1",
      "op": "append_to_section",
      "section": "History and Background Information",
@@ -119,6 +189,46 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for InnerChange has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "filler": true,
+     "text": "Information about the founders or notable staff at InnerChange has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving InnerChange has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for InnerChange have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c2",
@@ -4181,6 +4291,36 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Azleway Boys Ranch has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Azleway Boys Ranch has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Azleway Boys Ranch have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "k1",
      "op": "append_to_section",
      "section": "Related Media",
@@ -4238,6 +4378,66 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for The Bethesda Home for Girls has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at The Bethesda Home for Girls has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at The Bethesda Home for Girls has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving The Bethesda Home for Girls has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonies",
+     "filler": true,
+     "text": "No survivor testimonies for The Bethesda Home for Girls have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for The Bethesda Home for Girls have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -4473,6 +4673,46 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at San Marcos Treatment Center has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at San Marcos Treatment Center has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving San Marcos Treatment Center has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for San Marcos Treatment Center have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -8066,6 +8306,46 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Embark at Hobble Creek has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Embark at Hobble Creek has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Embark at Hobble Creek have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Embark at Hobble Creek have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "c1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -8200,6 +8480,36 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Integrity House RTC has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Closure and Rebranding",
+     "filler": true,
+     "text": "Additional information about Integrity House RTC has not been added yet. If you have reliable updates or references to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Integrity House RTC have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -8395,6 +8705,16 @@
      "by": "script",
      "verdict": "ok",
      "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Judge Rotenberg Center have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "k1",
@@ -9978,6 +10298,56 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Maryville Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Maryville Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Maryville Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Maryville Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Maryville Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "k1",
      "op": "append_to_section",
      "section": "Related Media",
@@ -10054,6 +10424,46 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for Meadowridge Academy has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Meadowridge Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Meadowridge Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonies",
+     "filler": true,
+     "text": "No survivor testimonies for Meadowridge Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -10349,6 +10759,56 @@
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, the wiki editor's section for them."
     },
     {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for Mountain Home Academy has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Mountain Home Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Mountain Home Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Mountain Home Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Mountain Home Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "s1",
      "op": "append_to_section",
      "section": "History and Background Information",
@@ -10490,6 +10950,66 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for Mountain Youth Academy has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Mountain Youth Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Mountain Youth Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Mountain Youth Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Mountain Youth Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Mountain Youth Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "c1",
      "op": "append_to_section",
      "section": "History and Background Information",
@@ -10549,6 +11069,56 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Natchez Trace Youth Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Natchez Trace Youth Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Natchez Trace Youth Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Natchez Trace Youth Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Natchez Trace Youth Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -11199,6 +11769,26 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Novitas Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Novitas Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "c0",
      "op": "set_header_years",
      "years": "2014-2022",
@@ -11560,6 +12150,56 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Oak Plains Academy has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Oak Plains Academy has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Lawsuits, and Deaths",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Oak Plains Academy has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Oak Plains Academy have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Oak Plains Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "k1",
      "op": "append_to_section",
      "section": "Related Media",
@@ -11636,6 +12276,26 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at The Oliverian School has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for The Oliverian School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -13372,6 +14032,36 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Second Nature Entrada has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Second Nature Entrada have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Second Nature Entrada have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "s1",
@@ -16139,6 +16829,26 @@
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, the wiki editor's section for them."
     },
     {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Turnbridge has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Turnbridge has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "c1",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -16257,6 +16967,66 @@
      "by": "script",
      "verdict": "ok",
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "e2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "filler": true,
+     "text": "Background information for Utah Youth Village has not been added yet. If you have reliable historical details or sources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Utah Youth Village has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Utah Youth Village has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Utah Youth Village has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonials",
+     "filler": true,
+     "text": "No survivor testimonies for Utah Youth Village have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Utah Youth Village have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "c1",
@@ -17389,6 +18159,46 @@
      "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     },
     {
+     "id": "e5",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "filler": true,
+     "text": "Information about the program structure at Youth Villages has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e6",
+     "op": "append_to_section",
+     "section": "Abuse Allegations, Deaths, and Lawsuits",
+     "filler": true,
+     "text": "Information about abuse allegations, neglect, or lawsuits involving Youth Villages has not been added yet. If you have reliable reports or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e7",
+     "op": "append_to_section",
+     "section": "Survivor/Parent Testimonies",
+     "filler": true,
+     "text": "No survivor testimonies for Youth Villages have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
+     "id": "e8",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "filler": true,
+     "text": "No related media links for Youth Villages have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
+    },
+    {
      "id": "s1",
      "op": "append_to_section",
      "section": "Abuse Allegations, Deaths, and Lawsuits",
@@ -17446,6 +18256,16 @@
      "by": "haiku",
      "verdict": "fixed",
      "note": "Haiku added a second \"News Articles\" heading after Related Media; this entry lists articles directly under Related Media as \"[Title](url) (Outlet, M/D/YYYY)\", oldest first, so the three links go there in that form. News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "e3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "filler": true,
+     "text": "Information about the founders or notable staff at Laurel Ridge Treatment Center has not been added yet. If you have reliable names, roles, or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
      "id": "s1",

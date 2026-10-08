@@ -190,6 +190,21 @@ def templated(md, ops, name=''):
                     'note': "The wiki editor's empty section: the page has none, so it asks readers for information."})
         present[canon] = canon
         level_of[canon] = level
+    # A section the entry has with nothing under it (no text, no subsection) gets the editor's stand-in too, worded
+    # for its heading as getPlaceholder() words it ("Survivor/Parent Testimonials", "Locations", ...).
+    for n, (start, end, key) in enumerate(secs):
+        depth = len(re.match(r'\s*(#+)', lines[start]).group(1))
+        if start == 0 or not name:
+            continue   # the page title ("# **Name** (years) Town, ST", some at "##")
+        nxt = secs[n + 1] if n + 1 < len(secs) else None
+        if nxt and len(re.match(r'\s*(#+)', lines[nxt[0]]).group(1)) > depth:
+            continue   # its body is its subsections
+        if any(l.strip() and not SEPARATOR.match(l) for l in lines[start + 1:end]):
+            continue
+        heading = re.sub(r'[#*]+', '', lines[start]).strip()
+        fill.append({'id': 'e' + str(n + 1), 'by': 'script', 'op': 'append_to_section', 'section': heading,
+                     'text': placeholder(heading, name), 'gids': [], 'verdict': 'ok', 'filler': True,
+                     'note': "The wiki editor's empty section: nothing is written under it, so it asks readers for information."})
     # The empty sections come first: an addition the record has for a section the entry lacked then lands in it,
     # in place of its request for information.
     return fill + out
@@ -337,6 +352,28 @@ TEMPLATE = [
     ('Related Media', lambda k: 'related media' in k,
      'No related media links for {name} have been added yet. If you have reliable external resources to share, please contact {contact}.'),
 ]
+
+
+PLACEHOLDER_BY_HEADING = [
+    (('history', 'background'), TEMPLATE[0][2]),
+    (('founders', 'staff'), TEMPLATE[1][2]),
+    (('structure',), TEMPLATE[2][2]),
+    (('rules', 'punishments'), TEMPLATE[3][2]),
+    (('abuse', 'neglect', 'lawsuits'), TEMPLATE[4][2]),
+    (('survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'), TEMPLATE[6][2]),
+    (('related media',), TEMPLATE[7][2]),
+    (('related programs', 'affiliated programs'),
+     'Programs associated with {name} have not been added yet. If you have reliable information about operated, affiliated, or successor programs to share, please contact {contact}.'),
+    (('media',), TEMPLATE[5][2]),
+]
+
+
+def placeholder(heading, name):
+    """getPlaceholder() in js/wiki-generation.js: the stand-in text for an empty section, by its heading."""
+    low = heading.lower()
+    text = next((t for terms, t in PLACEHOLDER_BY_HEADING if any(w in low for w in terms)),
+                'Additional information about {name} has not been added yet. If you have reliable updates or references to share, please contact {contact}.')
+    return text.format(name=name, contact=CONTACT_LINK)
 
 
 def entry_name(gaps):
