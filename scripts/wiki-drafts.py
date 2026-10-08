@@ -404,6 +404,86 @@ def find(lines, name):
     return None
 
 
+MONTH_NAMES = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+               'november', 'december']
+TIMELINE_SECTION = re.compile(r'abuse|lawsuit|allegation|incident|death|timeline')
+TIMELINE_DATE = re.compile(r'(?:\b(?:(' + '|'.join(MONTH_NAMES) + r')\s*(?:and|to|through|-|–)\s*)?'   # "October and November 2023"
+                           r'(' + '|'.join(MONTH_NAMES) + r')\s+(?:(\d{1,2})(?:\^\((?:st|nd|rd|th)\)|st|nd|rd|th)?,?\s+)?(?:of\s+)?)?'
+                           r'(?<![\d/:.-])((?:19|20)\d\d)(?![\d-]|s\b)', re.I)
+# A paragraph that dates itself from the one before ("Only a week after Clark's death", "The same day", "Shortly
+# after, on ...") stays with it.
+TIMELINE_RELATIVE = re.compile(r'(?:only|just|shortly|soon|later|then|also|following|after|afterwards|meanwhile|the same|'
+                               r'the following|the next|that same|a (?:day|week|month|year)s? (?:later|after))\b', re.I)
+TIMELINE_NUMERIC = re.compile(r'^\W*(\d{1,2})/(\d{1,2})/((?:19|20)\d\d)\b')
+
+
+def timeline_key(line):
+    """The date a paragraph of the abuse section is about: the first date on its first line, (year, month, day), or
+    None for a paragraph that is not about a dated event (a list, a quote, a general description). Same as
+    kop_wiki_drafts_timeline_key()."""
+    t = line.strip()
+    m = TIMELINE_NUMERIC.match(t)
+    if m:
+        return (int(m.group(3)), int(m.group(1)), int(m.group(2)))
+    if not re.match(r'[A-Za-z]', t) or TIMELINE_RELATIVE.match(t):
+        return None
+    # Only the first sentence: a general paragraph that names a year further on ("between 2015 and 2020") is not
+    # about that year.
+    first = re.match(r'(.+?[.!?]["”)\]]*)(?=\s+["“(\[*]*[A-Z])', t)
+    m = TIMELINE_DATE.search(first.group(1) if first else t)
+    if not m:
+        return None
+    name = m.group(1) or m.group(2)
+    month = MONTH_NAMES.index(name.lower()) + 1 if name else 0
+    day = int(m.group(3)) if m.group(3) and not m.group(1) else 0
+    return (int(m.group(4)), month, day)
+
+
+def timeline_order(md):
+    """The abuse section's paragraphs in date order (owner, 2026-10-08: the incident timeline was not chronological;
+    additions go at the end of the section, and earlier rounds were pasted that way). A paragraph with no date stays
+    with the one before it (the list or quote that paragraph introduces); paragraphs before the first dated one stay
+    on top. Runs after the no-loss check: every line is still there, only moved. -> (md, order), order[new] = old
+    line number. Same as kop_wiki_drafts_timeline_order()."""
+    lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
+    order = list(range(len(lines)))
+    for start, end, key in reversed(sections(lines)):
+        if not TIMELINE_SECTION.search(key):
+            continue
+        stop = body_end(lines, start, end)
+        blocks, cur = [], []
+        for k in range(start + 1, stop):
+            if lines[k].strip():
+                cur.append(k)
+            elif cur:
+                blocks.append(cur)
+                cur = []
+        if cur:
+            blocks.append(cur)
+        head, groups = [], []
+        for b in blocks:
+            d = timeline_key(lines[b[0]])
+            if d is not None:
+                groups.append((d, [b]))
+            elif groups:
+                groups[-1][1].append(b)
+            else:
+                head.append(b)
+        ordered = head + [b for _, bs in sorted(groups, key=lambda g: g[0]) for b in bs]
+        if ordered == blocks:
+            continue
+        seq = [start]
+        for n, b in enumerate(ordered):
+            seq += b
+            if n < len(ordered) - 1:
+                seq.append(None)   # one blank line between paragraphs
+        new_lines = [lines[k] if k is not None else '' for k in seq]
+        new_order = [order[k] if k is not None else None for k in seq]
+        lines[start:stop] = new_lines
+        order[start:stop] = new_order
+    return '\n'.join(lines) + '\n', order
+
+
 def apply(md, ops):
     lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
     applied, errors = [], []
@@ -677,6 +757,7 @@ def run(ids, write):
                               for l in (o.get('text') or '').split('\n') if l.strip())
         kop_page_lines = frozenset((o.get('text') or '').strip() for o in ops if o.get('kop_page') and o.get('verdict') != 'dropped')
         problems, added = check(base, draft, header, kop_lines, kop_page_lines)
+        draft = timeline_order(draft)[0]
         problems = tense_errors + errors + problems
         status = 'OK' if not problems else 'REFUSED'
         print(f'{i}: {status}, {len(applied)} ops applied, {sum(1 for a in added if a.strip())} lines added, {tensed} put in the past tense'

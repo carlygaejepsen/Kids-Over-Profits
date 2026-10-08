@@ -230,6 +230,79 @@ function kop_wiki_drafts_apply_tense($md, array $pairs) {
     return array(implode("\n", $lines) . "\n", $changed, $errors);
 }
 
+/**
+ * The date a paragraph of the abuse section is about: the first date on its first line, [year, month, day], or null
+ * for one that is not about a dated event (a list, a quote, a general description). Same as
+ * scripts/wiki-drafts.py timeline_key().
+ */
+function kop_wiki_drafts_timeline_key($line) {
+    static $months = array('january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december');
+    $t = trim((string) $line);
+    if (preg_match('~^\W*(\d{1,2})/(\d{1,2})/((?:19|20)\d\d)\b~u', $t, $m)) return array((int) $m[3], (int) $m[1], (int) $m[2]);
+    // A paragraph that dates itself from the one before ("Only a week after", "The same day") stays with it.
+    if (!preg_match('/^[A-Za-z]/', $t) || preg_match('/^(?:only|just|shortly|soon|later|then|also|following|after|afterwards|meanwhile|the same|'
+        . 'the following|the next|that same|a (?:day|week|month|year)s? (?:later|after))\b/i', $t)) return null;
+    $mn = implode('|', $months);
+    $re = '~(?:\b(?:(' . $mn . ')\s*(?:and|to|through|-|\x{2013})\s*)?(' . $mn . ')\s+(?:(\d{1,2})(?:\^\((?:st|nd|rd|th)\)|st|nd|rd|th)?,?\s+)?(?:of\s+)?)?'
+        . '(?<![\d/:.-])((?:19|20)\d\d)(?![\d-]|s\b)~iu';
+    // Only the first sentence: a general paragraph that names a year further on is not about that year.
+    $first = preg_match('~^(.+?[.!?]["\x{201d})\]]*)(?=\s+["\x{201c}(\[*]*[A-Z])~u', $t, $fm) ? $fm[1] : $t;
+    if (!preg_match($re, $first, $m)) return null;
+    $name = ($m[1] ?? '') !== '' ? $m[1] : ($m[2] ?? '');
+    $month = $name !== '' ? array_search(strtolower($name), $months, true) + 1 : 0;
+    $day = ($m[3] ?? '') !== '' && ($m[1] ?? '') === '' ? (int) $m[3] : 0;
+    return array((int) $m[4], $month, $day);
+}
+
+/**
+ * The abuse section's paragraphs in date order (owner, 2026-10-08): a paragraph with no date stays with the one
+ * before it, paragraphs before the first dated one stay on top. Runs after the no-loss check: lines only move.
+ * -> [md, order] with order[new line] = old line (null for a blank line it added). Same as
+ * scripts/wiki-drafts.py timeline_order().
+ */
+function kop_wiki_drafts_timeline_order($md) {
+    $lines = kop_wiki_drafts_lines($md);
+    $order = range(0, count($lines) - 1);
+    foreach (array_reverse(kop_wiki_drafts_sections($lines)) as $s) {
+        list($start, $end, $key) = $s;
+        if (!preg_match('/abuse|lawsuit|allegation|incident|death|timeline/', $key)) continue;
+        $stop = kop_wiki_drafts_body_end($lines, $start, $end);
+        $blocks = array();
+        $cur = array();
+        for ($k = $start + 1; $k < $stop; $k++) {
+            if (trim($lines[$k]) !== '') $cur[] = $k;
+            elseif ($cur) { $blocks[] = $cur; $cur = array(); }
+        }
+        if ($cur) $blocks[] = $cur;
+        $head = array();
+        $groups = array();
+        foreach ($blocks as $b) {
+            $d = kop_wiki_drafts_timeline_key($lines[$b[0]]);
+            if ($d !== null) $groups[] = array($d, array($b));
+            elseif ($groups) $groups[count($groups) - 1][1][] = $b;
+            else $head[] = $b;
+        }
+        usort($groups, function ($a, $b) { return $a[0] <=> $b[0]; });   // stable since PHP 8.0
+        $ordered = $head;
+        foreach ($groups as $g) foreach ($g[1] as $b) $ordered[] = $b;
+        if ($ordered === $blocks) continue;
+        $seq = array($start);
+        foreach ($ordered as $n => $b) {
+            foreach ($b as $k) $seq[] = $k;
+            if ($n < count($ordered) - 1) $seq[] = null;
+        }
+        $new_lines = array();
+        $new_order = array();
+        foreach ($seq as $k) {
+            $new_lines[] = $k === null ? '' : $lines[$k];
+            $new_order[] = $k === null ? null : $order[$k];
+        }
+        array_splice($lines, $start, $stop - $start, $new_lines);
+        array_splice($order, $start, $stop - $start, $new_order);
+    }
+    return array(implode("\n", $lines) . "\n", $order);
+}
+
 /** Additions. -> [md, applied ids, errors]. */
 function kop_wiki_drafts_apply($md, array $ops) {
     $lines = kop_wiki_drafts_lines($md);
@@ -345,6 +418,11 @@ function kop_wiki_drafts_build($id, $current_md, $edits = null) {
     $header = (bool) array_filter($ops, function ($o) use ($applied) { return ($o['op'] ?? '') === 'set_header_years' && in_array($o['id'], $applied, true); });
     list($problems, $added) = kop_wiki_drafts_check($tensed_md, $md, $header);
     if ($header && !in_array(0, $added, true)) array_unshift($added, 0);
+    // The abuse section in date order; the added line numbers follow their lines.
+    list($md, $order) = kop_wiki_drafts_timeline_order($md);
+    $was_added = array_flip($added);
+    $added = array();
+    foreach ($order as $new => $old) if ($old !== null && isset($was_added[$old])) $added[] = $new;
     $new_lines = kop_wiki_drafts_lines($md);
     $tensed = array();
     foreach ($tense as $p) {

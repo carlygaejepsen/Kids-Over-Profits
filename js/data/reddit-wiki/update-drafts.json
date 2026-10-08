@@ -981,7 +981,7 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "John and Jane Doe sued their health insurer, Excellus Health Plan, in New York State Supreme Court in Monroe County (*Doe v. Excellus Health Plan, Inc.*, No. E2019007017) after it refused to pay for their teenage son's stays at two residential treatment centers, Ironwood in Maine and Elevations in Utah. Excellus argued the treatment was not medically necessary and that the external reviews upholding its denials were binding. In April 2023 the court ruled that an external review does not bar a lawsuit, denied Excellus summary judgment on the breach-of-contract claim over the first program and dismissed the claim for interest ([source](https://law.justia.com/cases/new-york/other-courts/2023/2023-ny-slip-op-23117.html)).",
+     "text": "In April 2023, New York State Supreme Court in Monroe County let John and Jane Doe's breach-of-contract claim against their health insurer, Excellus Health Plan, go forward (*Doe v. Excellus Health Plan, Inc.*, No. E2019007017). The Does sued after Excellus refused to pay for their teenage son's stays at two residential treatment centers, Ironwood in Maine and Elevations in Utah, arguing the treatment was not medically necessary and that the external reviews upholding its denials were binding. The court ruled that an external review does not bar a lawsuit, denied Excellus summary judgment on the claim over the first program and dismissed the claim for interest ([source](https://law.justia.com/cases/new-york/other-courts/2023/2023-ny-slip-op-23117.html)).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
@@ -6247,7 +6247,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "In February of 2015, a former resident at DR and his family filed a lawsuit against the school reporting that the boy was violently and repeatedly sexually assaulted by another resident at the program. They report that in January 2104, the boy was placed in a dorm at Discovery Ranch with three other boys, one who began grooming him and another resident for “sexual victimization” until he was “violently sodomized.” The attacker “used threats of violence, coercion, guilt, and the merit system of Discovery Ranch to manipulate (the boy) to avoid reporting increasingly deviant sexual behaviors, including discussions about sex, pornography, masturbation, and sexual violence.” According to the complaint, “Discovery Ranch’s merit system also prevented (him) from reporting the assaults because he believed that his inferior status and past interactions with Discovery Ranch staff and administrators would result in him being punished if he attempted to disclose the assaults.\" The family claims the sexual assaults “went undiscovered and unchecked throughout the months of January and February and were only revealed when he [the assailant] was transferred from Discovery Ranch after being discovered engaging in bestiality with a horse.” The family says that Discovery Ranch failed to adequately investigate the assailant “for psychosexually deviant and violent tendencies before admitting him to Discovery Ranch and placing him in the dorm.” Additional Information: [Family Alleges Bestiality at Alternative School](https://www.courthousenews.com/family-alleges-bestiality-at-alternative-school)",
+     "new": "In February of 2015, a former resident at DR and his family filed a lawsuit against the school reporting that the boy was violently and repeatedly sexually assaulted by another resident at the program. They report that in January 2104, the boy was placed in a dorm at Discovery Ranch with three other boys, one who began grooming him and another resident for “sexual victimization” until he was “violently sodomized.” The attacker “used threats of violence, coercion, guilt, and the merit system of Discovery Ranch to manipulate (the boy) to avoid reporting increasingly deviant sexual behaviors, including discussions about sex, pornography, masturbation, and sexual violence.” According to the complaint, “Discovery Ranch’s merit system also prevented (him) from reporting the assaults because he believed that his inferior status and past interactions with Discovery Ranch staff and administrators would result in him being punished if he attempted to disclose the assaults.\" The family claims the sexual assaults “went undiscovered and unchecked throughout the months of January and February and were only revealed when he [the assailant] was transferred from Discovery Ranch after being discovered engaging in bestiality with a horse.” The family says that Discovery Ranch failed to adequately investigate the assailant “for psychosexually deviant and violent tendencies before admitting him to Discovery Ranch and placing him in the dorm.” ([source](https://www.courthousenews.com/family-alleges-bestiality-at-alternative-school))",
+     "note": "Owner, 2026-10-08: the sexual assault lawsuit needs a citation. The Courthouse News report was only an 'Additional Information' link after the paragraph; it is now the paragraph's citation."
+    }
+   ],
    "conflicts": []
   },
   "513": {
@@ -6992,16 +6999,6 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "NY Post blocks fetching; checked against the gap summary plus Hoodline and HelpingSurvivors coverage of the same suit (filed June 5, 2026, federal court, operators + village/police named): the graves and vomit are alleged of students generally, not only the plaintiff; moved from History to the lawsuits section"
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Deaths, and Lawsuits",
-     "text": "A 17-year-old from Virginia, whose name is not known, died on March 4, 2004 after falling from a second-story balcony at the Family Foundation School.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     },
     {
      "id": "n2",
@@ -8098,7 +8095,7 @@
    "place": "Bath, ME",
    "years": "1966-present",
    "column": "original_markdown",
-   "base_sha1": "c9d6e87cda342c7e0e0133c070f50393aad2b8fe",
+   "base_sha1": "9771d6739f3cd0520285aeab8eb4fba1b2141f6c",
    "record": {
     "id": 11021,
     "name": "Hyde School",
@@ -8106,64 +8103,63 @@
    },
    "ops": [
     {
-     "id": "f4",
-     "op": "add_section",
-     "after_section": "Program Structure",
-     "heading": "## **Rules and Punishments**",
-     "separator": "---",
-     "filler": true,
-     "text": "Information about the rules, consequences, or disciplinary practices at Hyde School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
-     "by": "script",
-     "verdict": "ok",
-     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
-    },
-    {
-     "id": "h1m",
-     "op": "add_section",
-     "after_section": "Abuse Allegations, Lawsuits, and Deaths",
-     "heading": "## **In the Media**",
-     "separator": "---",
-     "text": "- [Hyde School headmaster to step down](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/) (The Portland Press Herald, 1/16/2013)\n- [Former students of Hyde School allege decades of abuse](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335) (NEWS CENTER Maine, 7/11/2025)\n- [Former students allege abuse and neglect at Hyde School in Bath](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/) (Central Maine, 7/13/2025)\n- [Former student sues Maine boarding school, alleging forced child labor](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063) (WMTW, 7/15/2025)\n- [More former Hyde School students allege mistreatment. Others say experience was positive](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/) (Central Maine, 7/18/2025)\n- [Hyde School asks judge to dismiss lawsuit alleging forced labor and abuse](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/) (Central Maine, 10/8/2025)\n- [Lawsuit against Hyde School at risk after attorney errors](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/) (Central Maine, 12/15/2025)\n- [Revisiting Hyde: Former students say abuse allegations reopened painful memories](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/) (Central Maine, 12/24/2025)\n- [Legal battle over Hyde School lawsuit zeroes in on filing errors](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa) (NEWS CENTER Maine, 12/24/2025)\n- [Attorney in Hyde School lawsuit sanctioned for AI misuse, but case will continue](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/) (The Portland Press Herald, 5/7/2026)\n- [Federal judge allows suit against Hyde School to proceed](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/) (The Portland Press Herald, 7/28/2026)\n- [The Silence After Hyde](https://heropenheart.substack.com/p/the-silence-after-hyde) (Her Open Heart, 7/25/2025)\n- [Thousands removed from Maine Sex Offender Registry](https://www.wmtw.com/article/thousands-removed-from-maine-sex-offender-registry/2013073) (WMTW, 4/28/2016)\n- [Hyde School reporting may misunderstand the school | Letter](https://www.pressherald.com/2026/01/11/hyde-school-reporting-risks-being-overblown-letter/) (The Portland Press Herald, 1/11/2026)\n- [Hyde School coverage missed the mark | Letter](https://www.centralmaine.com/2025/07/21/hyde-school-coverage-missed-the-mark-letter/) (Central Maine, 7/21/2025)\n- [The real story about Hyde School](https://www.centralmaine.com/2025/07/20/the-real-story-about-hyde-school-letter/) (Central Maine, 7/20/2025)\n- [Police: Convicted sex offender wanted in 'Peeping Tom' incidents](https://www.wmtw.com/article/police-convicted-sex-offender-wanted-in-peeping-tom-incidents/2005699) (WMTW, 11/25/2014)",
-     "by": "haiku",
-     "verdict": "fixed",
-     "note": "Oldest first like the rest of the list, dates as M/D/YYYY like the entry; dropped the three letters to the editor (g4, g9, g10) and the 2014 WMTW item about an outsider on the campus (g15). Three headlines checked against the articles. News articles go under In the Media, the wiki editor's section for them."
-    },
-    {
      "id": "p1",
      "op": "append_to_section",
-     "section": "Founders and Notable Staff",
-     "text": "** Don MacMillan** was the Headmaster of Hyde School. In January 2013, he announced that he would step down at the end of the school year, after nearly 30 years at Hyde, the last five as headmaster. Laura Gauld was named to succeed him as Head of School ([source](https://www.pressherald.com/2013/01/16/hyde-school-headmaster-to-step-down/)).",
+     "section": "History and Background Information",
+     "text": "Hyde has been run by the Gauld family since it opened. Tuition is $68,300 a year. In 2020 the school reported $13.3 million in revenue and $43 million in assets. The Woodstock campus at 150 Route 169 operated from 1996 to 2007. Besides the Bath campus, Hyde uses two wilderness properties in Maine: the Lennox Outdoor Leadership Center in Eustis and Seguin Island. Hyde lists Central Florida Leadership Academy in Orlando, Florida, and Hyde Leadership Charter School in Brooklyn, New York, as partner schools. It is a member of the New England Association of Schools and Colleges, the Small Boarding School Association, the National Association of Independent Schools and the Association of Independent Schools in New England.",
      "by": "opus",
      "verdict": "ok",
-     "note": "A news gap written as a staff line: MacMillan is not named in the entry."
+     "note": "From the KOP profile's facts box and Ownership and Leadership section (owner, 2026-10-08: the draft draws on the KOP profile). The entry's $62,000 tuition is left as written; the profile's current figure is added.",
+     "kop_record": true
     },
     {
      "id": "p2",
      "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "On July 11, 2025, Jessica Fuller, a former student who attended Hyde from about July 2014 to February 2015, filed a class action lawsuit, *Fuller v. Hyde School* (U.S. District Court for the District of Maine, No. 2:25-cv-00354-NT), under the federal Trafficking Victims Protection Reauthorization Act and Maine's human trafficking law ([source](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf)). The suit claims that Hyde operated a system of forced labor and psychological abuse presented as character education, that students were emotionally and physically abused and denied medical care, and that they were made to do unpaid labor that the school and the Gauld family profited from, including work at Seguin Island and at the school's wilderness property in Eustis ([source](https://kidsoverprofits.org/wp-content/uploads/2025/07/Fuller-vs.-Hyde-Complaint-With-Docket-.pdf); [source](https://www.wmtw.com/article/former-student-sues-maine-boarding-school-alleging-forced-child-labor/65404063)). Fuller alleges that she was physically restrained and made to do manual labor as punishment ([source](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). The suit seeks class status for students who experienced forced labor at the school since 2015 ([source](https://www.centralmaine.com/2025/12/24/revisiting-hyde-former-students-say-abuse-allegations-reopened-painful-memories/)).\n\nIn July 2025, other former students described forced labor, shame-based group therapy and humiliating punishments at Hyde, while other former students and parents defended the school. The president of Hyde's Board of Governors said the allegations \"grossly mischaracterize Hyde's policies and practices over time or are patently false\" ([source](https://www.centralmaine.com/2025/07/13/former-students-recount-abuse-and-neglect-at-hyde-school-in-bath/); [source](https://www.centralmaine.com/2025/07/18/more-former-hyde-school-students-allege-mistreatment-others-say-experience-was-positive/); [source](https://www.newscentermaine.com/article/news/local/courts-news/hyde-school-bath-maine-lawsuit-abuse-allegations-hidden-curriculum/97-ca1c5caa-d075-4aad-919b-22fbaac7c335)).",
+     "section": "Founders and Notable Staff",
+     "text": "Before founding Hyde, Joe Gauld taught and worked in administration at Berwick Academy and New Hampton School. The board allegedly forced him out in the late 1970s over \"extreme teaching methods and physical abuse,\" including his bragging about slapping a 16-year-old, and slamming students into walls, grabbing them by the neck and poking their sternums hard enough to leave bruises. Gauld has publicly made racist and misogynistic remarks, including suggesting in a news article that Black people have lower IQs. Headmaster **Edward Legg** left Hyde two years after Gauld did, and by the fall of the 1984-85 school year the school's survival was in doubt. A group of former Hyde parents offered money to restore the school on the condition that Gauld return as chief executive. The Board of Trustees resigned \"en masse,\" and Gauld returned in January 1985. He stayed until he retired in 2021.\n\n**Georgia Gauld MacMillan** is the Executive Director of Family Education at Hyde.\n\n**Laurie Gauld Hurd** is the Director of Community Engagement at Hyde.\n\n**Bob Felt** works in Engagement at Hyde.\n\n**Sarah Clifford** is the Chief Financial Officer of Hyde.\n\n**Will Bridgeo** is the Director of Development at Hyde.",
      "by": "opus",
      "verdict": "ok",
-     "note": "Complaint facts checked in KOP's copy of the complaint (Fuller at Hyde about July 2014 to February 2015, Seguin Island, Eustis, the Gauld family). KOP's 'could set national precedent' line left out as framing. Board president's words checked against Central Maine 7/13/2025."
+     "note": "From the profile's Introduction, Ownership and Leadership (executive team as listed by the school) and Physical and Emotional Abuse sections. Malcolm Gauld, Laura Gauld, Rich Truluck and Tom Bragg are already in the entry and are not repeated.",
+     "kop_record": true
     },
     {
-     "id": "s1",
+     "id": "p3",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "text": "Hyde calls its approach \"character education.\" It is built on \"Five Words\" (Courage, Integrity, Leadership, Curiosity and Concern) and \"Five Principles,\" adopted in 1988: Destiny, Humility, Conscience, Truth and Brother's Keeper. Survivors say these principles were used to teach that suffering was how students found their \"true selves,\" that challenging staff showed a lack of humility, that conscience and truth meant whatever the school said they meant, and that turning in friends for punishment was an act of care (\"Brother's Keeper\").\n\nThe school runs on an \"Action/Reflection Cycle.\" The action side is academics, required athletics, performing arts (students must sing or dance alone in front of the whole school), \"community action\" (unpaid work), daily campus jobs and wilderness trips. The reflection side is admissions interviews about the private lives of students and parents, peer \"challenge teams,\" school meetings and seminars where students are pressed to disclose past trauma and criticize themselves in front of their peers, and senior evaluations. In a senior evaluation, the whole school community critiques a student's character and past behavior and debates whether the student has \"earned\" a diploma, and the student is expected to answer with gratitude and agreement. Hyde also grades students on \"Building Blocks\" such as \"Motions,\" \"Effort\" and \"Excellence.\"\n\nNone of the peer groups, seminars or interviews are run by licensed mental health professionals. The school's own materials say its teachers are not trained therapists. In 1977 Hyde started the Family Learning Center (FLC), which brings parents into the same system through Parents Weekends with seminars and family exercises and monthly regional parent meetings. Parents are coached to treat their child's resistance as a sign of dysfunction. Students' contact with their families is restricted and monitored: letters are read, calls are supervised, and families are told to cut off contact entirely if a child runs away.",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "From the profile's Philosophy and Lack of Licensed Therapeutic Professionals sections; replaces the section's request for information. The profile's readings of the principles are given as what survivors say.",
+     "kop_record": true
+    },
+    {
+     "id": "p4",
+     "op": "append_to_section",
+     "section": "Rules and Punishments",
+     "text": "Hyde says it disciplines \"attitudes\" rather than actions, which lets staff punish a student for how they seem to feel. Students must report one another for breaking rules, and a student who fails to report is punished along with the one who broke the rule. At large confession events called \"busts,\" students are pressed to admit what they have done and to name others.\n\nPunishments are mostly labor and exercise, described in Hyde's own materials as community service and character building:\n\n- **5:30**: the basic punishment. The student gets up at 5:30 AM for chores and hard exercise. Survivors report students passing out, vomiting and getting hurt, and being made to run on broken toes, with shin splints, in freezing weather and during untreated asthma attacks.\n- **2-4 (Work Crew)**: the student is taken out of classes and all regular programming, often for weeks, and does hard labor such as shoveling snow, digging holes, moving rocks, cleaning staff bathrooms without protective gear and landscaping. Some tasks are meaningless on purpose. Survivors say students on 2-4 were isolated, not allowed to speak and kept on very little food, for example three peanut butter and jelly sandwiches a day, sometimes eaten off the ground.\n- **Wilderness Outpost / \"Tude Trip\"**: students who do not comply are taken to wilderness sites or islands to build campsites and hiking trails, and come back only when their attitude is judged to have changed.\n\nSurvivors say they were made to build and maintain Hyde's wilderness properties. At the Lennox Outdoor Leadership Center in Eustis they camped for days without enough clothing or food while building structures and clearing trails. On Seguin Island they cleared brush, moved boulders and built a stone walkway. Survivors also describe medical neglect, public humiliation and verbal degradation meant to convince them they did not deserve love or protection.",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "From the profile's Extreme Discipline and Surveillance and Isolation, Deprivation and Humiliation sections; replaces the section's request for information.",
+     "kop_record": true
+    },
+    {
+     "id": "p5",
      "op": "append_to_section",
      "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "Hyde School denied the allegations and in October 2025 asked the court to dismiss the case ([source](https://www.centralmaine.com/2025/10/08/hyde-school-asks-judge-to-dismiss-lawsuit-alleging-forced-labor-and-abuse/)). In December 2025, the defense pointed to errors in the plaintiff's filings, including two federal cases cited improperly and a misquoted Maine statute ([source](https://www.centralmaine.com/2025/12/15/hyde-school-lawsuits-future-unclear-following-attorney-errors-in-legal-docs/); [source](https://www.newscentermaine.com/article/news/local/courts-news/legal-battle-hyde-school-lawsuit-filing-errors/97-b8340ef5-e648-4067-b003-c92d219bb1fa)). In May 2026, the plaintiff's attorney was sanctioned for using artificial intelligence that produced inaccurate legal citations, and the case continued ([source](https://www.pressherald.com/2026/05/07/attorney-in-hyde-school-lawsuit-sanctioned-for-ai-misuse-but-case-will-continue/)). In July 2026, U.S. District Judge Stacey Neumann denied the school's request to dismiss the case. She dismissed parts of two trafficking counts, removed three former school leaders as defendants because they did not work at the school while Fuller attended, and allowed the forced labor and class claims to go forward ([source](https://www.pressherald.com/2026/07/28/federal-judge-will-allow-hyde-school-abuse-and-forced-labor-case-to-proceed/)).",
-     "by": "sonnet",
-     "verdict": "fixed",
-     "note": "Moved from History to the lawsuits section, after p2, which introduces the suit (sonnet's filing sentence is folded in there); added the motion to dismiss and the December 2025 filing errors; the July 2026 ruling's details checked against the Press Herald article."
+     "text": "Survivors report that staff routinely called students derogatory names, including homophobic and racial slurs. Lawsuits against the school claim staff used physical restraints that injured students. Others claim that student proctors coerced classmates into sexual acts by threatening them with more forced labor and physical harm. Jessica Fuller says Hyde's methods led her to blame herself for her sexual assault and her mental health problems, and that during a mental health crisis staff withheld her prescribed psychiatric medication. Her lawsuit also brings claims of negligence, negligence per se and negligent infliction of emotional distress, alongside the forced labor and labor trafficking claims (18 U.S.C. §§ 1584, 1589, 1590; 5 M.R.S. § 4701).\n\nOn February 19, 2021, a plaintiff named as Jane Doe sued Hyde School at South Woodstock, Inc. in Connecticut Superior Court (Judicial District of Windham at Putnam, docket WWM-CV21-5012142-S) over the school's \"Summer Leadership Challenge\" camp at the Woodstock campus. She says Hyde failed to supervise and train its staff and campers or put safety procedures in place, and that she was sexually assaulted by two male campers in a secluded spot. She reports post-traumatic stress disorder, depression and pelvic pain. Her claims are negligence, negligent infliction of emotional distress and negligent supervision and training ([source](https://civilinquiry.jud.ct.gov/CaseDetail/PublicCaseDetail.aspx?DocketNo=WWMCV215012142S); [source](https://kidsoverprofits.org/anonymous-v-hyde-connecticut/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "From the profile's Physical and Emotional Abuse, Lack of Licensed Therapeutic Professionals and Lawsuits sections. The 2021 Woodstock case is not in the entry; it cites the court's case page and KOP's copies of the filings. Fuller's filing date and court are already in the entry.",
+     "kop_record": true
     },
     {
-     "id": "k1",
+     "id": "n1",
      "op": "append_to_section",
-     "section": "Related Media",
-     "text": "[Hyde School on Kids Over Profits](https://kidsoverprofits.org/facility/hyde-school-me/)",
-     "by": "script",
+     "section": "In the Media",
+     "text": "- [Police: Convicted sex offender wanted in 'Peeping Tom' incidents](https://www.wmtw.com/article/police-convicted-sex-offender-wanted-in-peeping-tom-incidents/2005699) (WMTW, 11/25/2014)\n- [Thousands removed from Maine Sex Offender Registry](https://www.wmtw.com/article/thousands-removed-from-maine-sex-offender-registry/2013073) (WMTW, 4/28/2016)\n- [The real story about Hyde School | Letter](https://www.centralmaine.com/2025/07/20/the-real-story-about-hyde-school-letter/) (Central Maine, 7/20/2025)\n- [Hyde School coverage missed the mark | Letter](https://www.centralmaine.com/2025/07/21/hyde-school-coverage-missed-the-mark-letter/) (Central Maine, 7/21/2025)\n- [The Silence After Hyde](https://heropenheart.substack.com/p/the-silence-after-hyde) (Her Open Heart, 7/25/2025)\n- [Hyde School reporting may misunderstand the school | Letter](https://www.pressherald.com/2026/01/11/hyde-school-reporting-risks-being-overblown-letter/) (The Portland Press Herald, 1/11/2026)",
+     "by": "opus",
      "verdict": "ok",
-     "note": "KOP's facility page for the record, as the last Related Media item.",
-     "kop_page": true
+     "note": "Every article on KOP's record goes in (owner, 2026-10-08). Oldest first; the 2014 and 2016 WMTW items are about a sex offender sought for 'Peeping Tom' incidents on the Hyde campus."
     }
    ],
    "tense": [],
@@ -8265,15 +8261,6 @@
      "note": "The KOP source (Deseret News 2007 list) does not name Integrity House or the middle name Michelle; it says a 'hiking fall near St. George' at an unnamed treatment center. The Deseret News 12/25/2002 article names Integrity House and Bloomington Cave, so the line cites that and uses her name as it gives it."
     },
     {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations and Death",
-     "text": "Kiley Michelle Jaquays, 17, died on December 24, 2002, when she fell from a ledge inside Bloomington Cave on a program outing with Integrity House ([source](https://www.deseret.com/2007/10/11/20046402/5-teens-have-died-while-participating-in-utah-based-programs/)).",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
-    },
-    {
      "id": "n3",
      "op": "append_to_section",
      "section": "Founders and Notable Staff",
@@ -8364,7 +8351,7 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse Allegations",
-     "text": "John and Jane Doe sued their health insurer, Excellus Health Plan, in New York State Supreme Court in Monroe County (*Doe v. Excellus Health Plan, Inc.*, No. E2019007017) after it refused to pay for their teenage son's stays at two residential treatment centers, Ironwood in Maine (now The Ridge Maine) and Elevations in Utah. Excellus argued the treatment was not medically necessary and that the external reviews upholding its denials were binding. In April 2023 the court ruled that an external review does not bar a lawsuit, denied Excellus summary judgment on the breach-of-contract claim over the first program and dismissed the claim for interest ([source](https://law.justia.com/cases/new-york/other-courts/2023/2023-ny-slip-op-23117.html)).",
+     "text": "In April 2023, New York State Supreme Court in Monroe County let John and Jane Doe's breach-of-contract claim against their health insurer, Excellus Health Plan, go forward (*Doe v. Excellus Health Plan, Inc.*, No. E2019007017). The Does sued after Excellus refused to pay for their teenage son's stays at two residential treatment centers, Ironwood in Maine (now The Ridge Maine) and Elevations in Utah, arguing the treatment was not medically necessary and that the external reviews upholding its denials were binding. The court ruled that an external review does not bar a lawsuit, denied Excellus summary judgment on the claim over the first program and dismissed the claim for interest ([source](https://law.justia.com/cases/new-york/other-courts/2023/2023-ny-slip-op-23117.html)).",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
@@ -15130,15 +15117,6 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "Abuse Allegations, Lawsuits, and Deaths",
-     "text": "Clark Harman, 12, died at Trails Carolina on February 3, 2024, of asphyxia while zipped into a bivy sleeping bag used to restrain him. His death was ruled a homicide ([source](https://foxchattanooga.com/news/local/trails-carolina-therapeutic-camp-death-one-year-transylvania-county-state-investigation-civil-complaints-momentum-unlicensed-program)).",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
     },
     {
      "id": "n7",
