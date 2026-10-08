@@ -42,6 +42,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Boys Town has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -162,6 +174,54 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f3",
+     "op": "add_section",
+     "after_section": "Founders and Notable Employees",
+     "heading": "## **Program Structure**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the program structure at InnerChange has not been added yet. If you have reliable descriptions or source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at InnerChange has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for InnerChange has been added yet. If you have seen a news item about InnerChange and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f7",
+     "op": "add_section",
+     "after_section": "In the Media",
+     "heading": "## **Survivor Testimonies**",
+     "separator": "---",
+     "filler": true,
+     "text": "No survivor testimonies for InnerChange have been added here yet. If you have a firsthand account or reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -313,6 +373,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Ascent Wilderness Program has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Ascent Wilderness Program has been added yet. If you have seen a news item about Ascent Wilderness Program and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -389,6 +473,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "The abcnews.com link returns 404; cited the same AP story on MyNorthwest. Per the AP text: concerns about training/transparency came from state agencies; the families named allege sexual assault by another girl (not 'physical and sexual assault'); added the $20,000-a-month fee and taxpayer funding as reported."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Change Academy at Lake of the Ozarks (CALO) has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -416,6 +512,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Copper Hills Youth Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Copper Hills Youth Center has been added yet. If you have seen a news item about Copper Hills Youth Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -461,6 +581,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Read the complaint PDF: all claims hold. Tightened to its wording: the fourth claim is intentional infliction of emotional distress; 'lasting' paralysis now 'which she says she still has'; clothing and isolation as the complaint describes them."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Diamond Ranch Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -617,6 +749,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Falcon Ridge Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -689,6 +833,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Academy at Sisters has been added yet. If you have seen a news item about Academy at Sisters and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -801,6 +957,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Alpine Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Alpine Academy has been added yet. If you have seen a news item about Alpine Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -891,6 +1071,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Arivaca Boys Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Arivaca Boys Ranch has been added yet. If you have seen a news item about Arivaca Boys Ranch and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -1032,6 +1236,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Aspen Achievement Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1097,6 +1313,18 @@
      "by": "sonnet",
      "verdict": "ok",
      "note": "Matches Up North Live 2024-09-11 (teen named only as Elijah, Atlantis in Treasure Beach; hearing waived, CPS then foster placement)."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Atlantis Leadership Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1133,6 +1361,30 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Date was wrong (they died September 21, 2006, not September 1); the source calls it an apparent suicide that the medical examiner could not classify and the family disputes; merged both deaths into one line with ages, runaway date and the Rangers probe."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Azleway Boys Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Azleway Boys Ranch has been added yet. If you have seen a news item about Azleway Boys Ranch and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1209,6 +1461,30 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Newspapers.com clipping returns 403; its OCR text (via search) says she and another girl were hit by a pickup truck early Tuesday (Aug 26, 1980) after she and nine other runaways spent the night at a house nearby. KOP's 'August 1' date and 'during an escape attempt' are not what the source says; gave the month only and the circumstances as reported"
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at The Bethesda Home for Girls has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for The Bethesda Home for Girls has been added yet. If you have seen a news item about The Bethesda Home for Girls and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1246,6 +1522,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Blue Ridge Therapeutic Wilderness has been added yet. If you have seen a news item about Blue Ridge Therapeutic Wilderness and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1322,6 +1610,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at San Marcos Treatment Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for San Marcos Treatment Center has been added yet. If you have seen a news item about San Marcos Treatment Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1369,6 +1681,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Canyon State Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1416,6 +1740,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Chamberlain International School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1489,6 +1825,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Cherokee Creek Boys School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Cherokee Creek Boys School has been added yet. If you have seen a news item about Cherokee Creek Boys School and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1543,6 +1903,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Cherry Gulch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Cherry Gulch has been added yet. If you have seen a news item about Cherry Gulch and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1589,6 +1973,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Chrysalis has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Chrysalis has been added yet. If you have seen a news item about Chrysalis and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1645,6 +2053,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Matched the article: vapes and mushrooms went to residents/a student (not 'distributing'), the nude images were of a former resident shown to current students (not 'sharing nude images of a minor'), the felony is second-degree; framed as charging-document accusations; added his age"
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Cinnamon Hills Youth Crisis Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1700,6 +2120,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Ashcreek Ranch Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Ashcreek Ranch Academy has been added yet. If you have seen a news item about Ashcreek Ranch Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -1768,6 +2212,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Clearview Horizon has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Clearview Horizon has been added yet. If you have seen a news item about Clearview Horizon and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1831,6 +2299,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Crossroads Academy RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Crossroads Academy RTC has been added yet. If you have seen a news item about Crossroads Academy RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -1886,6 +2378,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Deschutes Wilderness Therapy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Deschutes Wilderness Therapy has been added yet. If you have seen a news item about Deschutes Wilderness Therapy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -1980,6 +2496,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for The Glenholme School has been added yet. If you have seen a news item about The Glenholme School and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2070,6 +2598,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Discovery Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Discovery Academy has been added yet. If you have seen a news item about Discovery Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -2141,6 +2693,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Cited article (SLTrib 11/19/2024) is about the parents' notice of claim and has no lawsuit, Pilcrow, state findings or fine; recited from the SLTrib 5/17/2025 lawsuit article (Schreifels, the one KOP's record was imported from), corrected 'fined' to the $10,000+ civil penalty and 'remains licensed' to good standing as of May 2025, added the Feb 25, 2026 joint dismissal with prejudice (Daily Herald)"
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Discovery Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2188,6 +2752,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Discovery Ranch for Girls has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Discovery Ranch for Girls has been added yet. If you have seen a news item about Discovery Ranch for Girls and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2224,6 +2812,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Eagle Ranch Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Eagle Ranch Academy has been added yet. If you have seen a news item about Eagle Ranch Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2260,6 +2872,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Elk Mountain Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Elk Mountain Academy has been added yet. If you have seen a news item about Elk Mountain Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2350,6 +2986,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Elk River Treatment Program has been added yet. If you have seen a news item about Elk River Treatment Program and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -2392,6 +3040,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Explorations has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Explorations has been added yet. If you have seen a news item about Explorations and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2547,6 +3219,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "NY Post blocks fetching; checked against the gap summary plus Hoodline and HelpingSurvivors coverage of the same suit (filed June 5, 2026, federal court, operators + village/police named): the graves and vomit are alleged of students generally, not only the plaintiff; moved from History to the lawsuits section"
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at The Family Foundation School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2632,6 +3316,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Fulshear Treatment to Transition has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Fulshear Treatment to Transition has been added yet. If you have seen a news item about Fulshear Treatment to Transition and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2668,6 +3376,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Gateway Academy has been added yet. If you have seen a news item about Gateway Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2787,6 +3507,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Grove School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Lawsuits, and Death",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Grove School has been added yet. If you have seen a news item about Grove School and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2864,6 +3608,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Havenwood Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2900,6 +3656,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Heartlight Ministries has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Heartlight Ministries has been added yet. If you have seen a news item about Heartlight Ministries and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2954,6 +3734,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Heritage Schools Inc. has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Heritage Schools Inc. has been added yet. If you have seen a news item about Heritage Schools Inc. and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -2991,6 +3795,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Embark at Hobble Creek has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Embark at Hobble Creek has been added yet. If you have seen a news item about Embark at Hobble Creek and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3056,6 +3884,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Hyde School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3132,6 +3972,30 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "The KOP source (Deseret News 2007 list) does not name Integrity House or the middle name Michelle; it says a 'hiking fall near St. George' at an unnamed treatment center. The Deseret News 12/25/2002 article names Integrity House and Bloomington Cave, so the line cites that and uses her name as it gives it."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Integrity House RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Death",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Integrity House RTC has been added yet. If you have seen a news item about Integrity House RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3179,6 +4043,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at The Ridge RTC Maine has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for The Ridge RTC Maine has been added yet. If you have seen a news item about The Ridge RTC Maine and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3235,6 +4123,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Date was wrong: the court ruled Sept. 7, 2023 (Sept. 11 is the article date). 'Last resort' was the 2018 trial finding, not a condition the court set; conditions now as the article gives them (decree wording, physician plan, probate court permission). Added the court's own limit on the ruling."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Judge Rotenberg Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3272,6 +4172,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Kaizen Academy/Birdseye Boys Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse, Rebrands, and the Fire",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Kaizen Academy/Birdseye Boys Ranch has been added yet. If you have seen a news item about Kaizen Academy/Birdseye Boys Ranch and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3371,6 +4295,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Kolob Canyon RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Kolob Canyon RTC has been added yet. If you have seen a news item about Kolob Canyon RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3425,6 +4373,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at La Europa Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for La Europa Academy has been added yet. If you have seen a news item about La Europa Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3524,6 +4496,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Lake House Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Lake House Academy has been added yet. If you have seen a news item about Lake House Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -3590,6 +4586,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Lakeland Girls Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Investigations, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Lakeland Girls Academy has been added yet. If you have seen a news item about Lakeland Girls Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -3646,6 +4666,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Laurel Oaks Behavioral Health Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Laurel Oaks Behavioral Health Center has been added yet. If you have seen a news item about Laurel Oaks Behavioral Health Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3738,6 +4782,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Lava Heights Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Lava Heights Academy has been added yet. If you have seen a news item about Lava Heights Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3792,6 +4860,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Read the PDF: the copy has no filing stamp or case number, so 'filed in' became 'for' the court; added the complaint's own statement that the cause of death was unknown (died in his sleep, para. 37) so readers do not infer an overdose; 'caused or contributed' as pleaded."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for LifeLine for Youth has been added yet. If you have seen a news item about LifeLine for Youth and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3837,6 +4917,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Logan River Academy has been added yet. If you have seen a news item about Logan River Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3882,6 +4974,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Maple Hall Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Maple Hall Academy has been added yet. If you have seen a news item about Maple Hall Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -3934,6 +5050,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Maple Lake Academy has been added yet. If you have seen a news item about Maple Lake Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -3979,6 +5107,30 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Illinois Supreme Court opinion Wallace v. Smyth (No. 93144, filed Dec 19, 2002) gives the name as Waketta Roy Wallace, a boy, and states the restraint and death as the complaint's allegations; cause (positional asphyxia after a 4+ hour prone restraint) is the complaint's. KOP labels this source 'Federal Court'; it is the Illinois Supreme Court."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Maryville Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Maryville Academy has been added yet. If you have seen a news item about Maryville Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4046,6 +5198,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Meadowridge Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Meadowridge Academy has been added yet. If you have seen a news item about Meadowridge Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4082,6 +5258,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Arrests",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Meridell Achievement Center has been added yet. If you have seen a news item about Meridell Achievement Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4167,6 +5355,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "azcentral blocks fetching; circumstances (ran away on a pass in her father's custody, Oct 2021) from Daily Courier/KAFF coverage found by search. Added that she was later found safe (Daily Courier headline 'Prescott Valley girl, missing since October 2021, has been found safe') so the entry does not leave a named child missing."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Mingus Mountain Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4203,6 +5403,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Moonridge Academy has been added yet. If you have seen a news item about Moonridge Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4250,6 +5462,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Mountain Home Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Mountain Home Academy has been added yet. If you have seen a news item about Mountain Home Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4296,6 +5532,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Mountain Valley Treatment Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Mountain Valley Treatment Center has been added yet. If you have seen a news item about Mountain Valley Treatment Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4333,6 +5593,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Mountain Youth Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Mountain Youth Academy has been added yet. If you have seen a news item about Mountain Youth Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4370,6 +5654,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Natchez Trace Youth Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Natchez Trace Youth Academy has been added yet. If you have seen a news item about Natchez Trace Youth Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4455,6 +5763,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at New Haven RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for New Haven RTC has been added yet. If you have seen a news item about New Haven RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4500,6 +5832,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at New Leaf Academy of Oregon has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for New Leaf Academy of Oregon has been added yet. If you have seen a news item about New Leaf Academy of Oregon and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -4670,6 +6026,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Northwest Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Northwest Academy has been added yet. If you have seen a news item about Northwest Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4715,6 +6095,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Novitas Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Novitas Academy has been added yet. If you have seen a news item about Novitas Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -4830,6 +6234,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Oakley School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Oakley School has been added yet. If you have seen a news item about Oakley School and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4881,6 +6309,30 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "The obituary (403 to fetch; text confirmed through search results and its copies) gives the date, Clarksville hospital and that she was an Oak Plains patient, but no cause, so 'overdose of medication from the facility' was removed. KOP links her to the Nov 2022 Benadryl overdose; the sheriff's timeline fits (one girl died Nov 29, the other the next day), but no source checked names her."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Oak Plains Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Lawsuits, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Oak Plains Academy has been added yet. If you have seen a news item about Oak Plains Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4944,6 +6396,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at The Oliverian School has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for The Oliverian School has been added yet. If you have seen a news item about The Oliverian School and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -4971,6 +6447,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Olympus Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Closure",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Olympus Academy has been added yet. If you have seen a news item about Olympus Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5103,6 +6603,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Outback Therapeutic Expeditions has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse/Neglect Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Outback Therapeutic Expeditions has been added yet. If you have seen a news item about Outback Therapeutic Expeditions and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5167,6 +6691,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Pacific Quest has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Pacific Quest has been added yet. If you have seen a news item about Pacific Quest and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5350,6 +6898,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at ROOTs Transition has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for ROOTs Transition has been added yet. If you have seen a news item about ROOTs Transition and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5386,6 +6958,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Shiloh Treatment Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse, Deaths, and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Shiloh Treatment Center has been added yet. If you have seen a news item about Shiloh Treatment Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5452,6 +7048,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at The Ridge RTC NH has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for The Ridge RTC NH has been added yet. If you have seen a news item about The Ridge RTC NH and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5489,6 +7109,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Second Nature Entrada has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Second Nature Entrada has been added yet. If you have seen a news item about Second Nature Entrada and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5546,6 +7190,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Second Nature Uintas has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Second Nature Uintas has been added yet. If you have seen a news item about Second Nature Uintas and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5623,6 +7291,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Solstice RTC has been added yet. If you have seen a news item about Solstice RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5780,6 +7460,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Summit Achievement has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Death",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Summit Achievement has been added yet. If you have seen a news item about Summit Achievement and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5817,6 +7521,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Summit School at Nyack has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Lawsuits, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Summit School at Nyack has been added yet. If you have seen a news item about Summit School at Nyack and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5844,6 +7572,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Sunrise RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5889,6 +7629,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Sunset Bay Academy has been added yet. If you have seen a news item about Sunset Bay Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5925,6 +7677,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Telos RTC has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Telos RTC has been added yet. If you have seen a news item about Telos RTC and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -5961,6 +7737,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Village Behavioral Health Treatment Center has been added yet. If you have seen a news item about Village Behavioral Health Treatment Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6027,6 +7815,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Three Points Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -6249,6 +8049,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Triple Divide Lodge has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Triple Divide Lodge has been added yet. If you have seen a news item about Triple Divide Lodge and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [
@@ -6302,6 +8126,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at True North Wilderness Program has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for True North Wilderness Program has been added yet. If you have seen a news item about True North Wilderness Program and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6458,6 +8306,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Turnabout/Stillwater Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Turnabout/Stillwater Academy has been added yet. If you have seen a news item about Turnabout/Stillwater Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6495,6 +8367,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Turnbridge has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Turnbridge has been added yet. If you have seen a news item about Turnbridge and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6531,6 +8427,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Turning Winds Academic Institute has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Turning Winds Academic Institute has been added yet. If you have seen a news item about Turning Winds Academic Institute and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6577,6 +8497,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Utah Youth Village has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Utah Youth Village has been added yet. If you have seen a news item about Utah Youth Village and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6604,6 +8548,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Viewpoint Center has been added yet. If you have seen a news item about Viewpoint Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6641,6 +8597,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Waypoint Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations & Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Waypoint Academy has been added yet. If you have seen a news item about Waypoint Academy and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6781,6 +8761,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Whetstone Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6837,6 +8829,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at White River Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6909,6 +8913,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Willow Springs Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Investigations",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Willow Springs Center has been added yet. If you have seen a news item about Willow Springs Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -6957,6 +8985,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Woodward Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -7058,6 +9098,18 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "'Three more residents later came forward' was wrong: three girls in all (14, 15, 16), the first included. Charges stated as the article gives them."
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Yellowstone Boys and Girls Ranch has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -7124,6 +9176,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Youth Care Inc. has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse and Death",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Youth Care Inc. has been added yet. If you have seen a news item about Youth Care Inc. and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -7160,6 +9236,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Youth Villages has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations, Deaths, and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for Youth Villages has been added yet. If you have seen a news item about Youth Villages and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -7244,6 +9344,18 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Laurel Ridge Treatment Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],
@@ -7290,6 +9402,30 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at San Marcos Treatment Center has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "f6",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "filler": true,
+     "text": "No media coverage for San Marcos Treatment Center has been added yet. If you have seen a news item about San Marcos Treatment Center and would like to share it, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
     }
    ],
    "tense": [],

@@ -398,6 +398,11 @@ function isIgnoredWikiMetaLink(title, url, lineText = '') {
 
     if (!normalizedUrl) return false;
 
+    // The modmail link every request for information names (CONTACT_URL in
+    // js/wiki-generation.js) is never an article or a resource; reading it as
+    // one turned an empty "In the Media" into "- [r/troubledteens modmail](...)".
+    if (/^https?:\/\/(?:www\.|old\.)?reddit\.com\/message\/compose\b/.test(normalizedUrl)) return true;
+
     // Any Reddit user/profile link is a meta-link, not real content.
     const isUserLink = /\/(?:u|user)\/[^/]+\/?$/.test(normalizedUrl)
         || normalizedUrl.startsWith('https://www.reddit.com/user/')

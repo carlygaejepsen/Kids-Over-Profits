@@ -14,7 +14,8 @@ heading text without #, * and spaces, case ignored. ops with verdict "dropped" a
 
 The ops are placed as the wiki editor's template places them (js/wiki-generation.js, templated()): news article lines
 go under "In the Media" (the entry's own, else a new one after its abuse section), an addition replaces a section's
-stand-in text ("... has not been added yet"), and bold spacing is the editor's ("**Name** was", never "**Name**was").
+stand-in text ("... has not been added yet"), every template section the entry lacks is added with the editor's request
+for information and its modmail link, and bold spacing is the editor's ("**Name** was", never "**Name**was").
 
 A closed program's entry (or one about an earlier name) also gets ops-tense.json, the one op that
 rewrites existing lines: {"id": "t1", "op": "past_tense", "lines": [{"old": "<exact line>", "new": "..."}]}.
@@ -116,11 +117,12 @@ MEDIA_SECTIONS = ('in the media', 'news articles', 'media coverage', 'news')
 MEDIA_AFTER = ('rules and punishments', 'punishments', 'program structure', 'founders and notable staff', 'history and background information')
 
 
-def templated(md, ops):
+def templated(md, ops, name=''):
     """The ops as the wiki editor's template places them (js/wiki-generation.js): news articles go under "In the Media", the
     rest of Related Media stays. A Related Media op's article lines move to the entry's own In the Media (or News Articles)
     section; an entry without one gets the template's "In the Media" section after its abuse section, at that heading's
-    level, as a "- " list. Other ops are returned unchanged."""
+    level, as a "- " list. Every other template section the entry lacks is added with the editor's request for
+    information (ops "f<n>", "filler": true). Other ops are returned unchanged."""
     lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
     secs = sections(lines)
     media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
@@ -157,7 +159,57 @@ def templated(md, ops):
             out.append(made)
         else:
             made['text'] += '\n' + '\n'.join('- ' + l for l in bare)
+    # Every section of the template that the entry lacks, with the editor's request for information (getPlaceholder()):
+    # after the nearest earlier template section, at its heading's level. Owner, 2026-10-08: all of them, as the editor does.
+    present = {c: next((re.sub(r'[#*]+', '', lines[s[0]]).strip() for s in secs if is_c(s[2])), None) for c, is_c, _ in TEMPLATE}
+    levels = {s[2]: re.match(r'\s*(#+)', lines[s[0]]).group(1) for s in secs}
+    if made:
+        present['In the Media'] = 'In the Media'
+    level_of = {c: levels.get(norm(h), '##') for c, h in present.items() if h}
+    for n, (canon, _, text) in enumerate(TEMPLATE):
+        if present[canon] or not name:
+            continue
+        anchor = next((present[c] for c, _, _ in reversed(TEMPLATE[:n]) if present[c]), None)
+        if not anchor:
+            continue
+        level = level_of.get(next(c for c, _, _ in reversed(TEMPLATE[:n]) if present[c]), '##')
+        out.append({'id': 'f' + str(n + 1), 'by': 'script', 'op': 'add_section', 'after_section': anchor,
+                    'heading': f'{level} **{canon}**', 'separator': sep, 'text': text.format(name=name, contact=CONTACT_LINK),
+                    'gids': [], 'verdict': 'ok', 'filler': True,
+                    'note': "The wiki editor's empty section: the page has none, so it asks readers for information."})
+        present[canon] = canon
+        level_of[canon] = level
     return out
+
+
+# The modmail link every request for information names (js/wiki-generation.js CONTACT_LINK, api/lib-wiki-contact.php).
+CONTACT_LINK = '[r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens)'
+# The program template's sections in the editor's order (generateWikiMarkdown()), how an entry's own heading is recognised
+# as one of them, and the editor's stand-in text for it (getPlaceholder()).
+TEMPLATE = [
+    ('History and Background Information', lambda k: 'history' in k or 'background' in k,
+     'Background information for {name} has not been added yet. If you have reliable historical details or sources to share, please contact {contact}.'),
+    ('Founders and Notable Staff', lambda k: 'staff' in k or 'founder' in k or 'employee' in k,
+     'Information about the founders or notable staff at {name} has not been added yet. If you have reliable names, roles, or source material to share, please contact {contact}.'),
+    ('Program Structure', lambda k: 'structure' in k or 'level system' in k or 'phase' in k,
+     'Information about the program structure at {name} has not been added yet. If you have reliable descriptions or source material to share, please contact {contact}.'),
+    ('Rules and Punishments', lambda k: 'rule' in k or 'punishment' in k,
+     'Information about the rules, consequences, or disciplinary practices at {name} has not been added yet. If you have reliable source material to share, please contact {contact}.'),
+    ('Abuse/Neglect Allegations and Lawsuits', lambda k: 'abuse' in k or 'lawsuit' in k or 'allegation' in k,
+     'Information about abuse allegations, neglect, or lawsuits involving {name} has not been added yet. If you have reliable reports or source material to share, please contact {contact}.'),
+    ('In the Media', lambda k: k in MEDIA_SECTIONS,
+     'No media coverage for {name} has been added yet. If you have seen a news item about {name} and would like to share it, please contact {contact}.'),
+    ('Survivor Testimonies', lambda k: 'testimon' in k,
+     'No survivor testimonies for {name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact {contact}.'),
+    ('Related Media', lambda k: 'related media' in k,
+     'No related media links for {name} have been added yet. If you have reliable external resources to share, please contact {contact}.'),
+]
+
+
+def entry_name(gaps):
+    """The entry's program name as the page should print it, without what the Reddit conversion left on it ("**()")."""
+    name = (gaps.get('entry', {}).get('program_name') or gaps.get('record', {}).get('name') or '')
+    return re.sub(r'\s+', ' ', re.sub(r'\(\s*\)|\*+', '', name)).strip()
 
 
 # heal-online.org links -> HEAL's own capture from before 2023 (js/data/reddit-wiki/heal-archive-urls.json, built by
@@ -467,7 +519,8 @@ def run(ids, write):
         fixed_md, fixes, fix_errors = apply_fixes(md, load_fixes(folder))
         base, tensed, tense_errors = apply_tense(fixed_md, tense_ops)
         tense_errors = fix_errors + tense_errors
-        ops = templated(base, ops)
+        gaps_path = os.path.join(folder, 'gaps.json')
+        ops = templated(base, ops, entry_name(json.load(open(gaps_path, encoding='utf-8'))) if os.path.exists(gaps_path) else '')
         draft, applied, errors = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
         kop_lines = frozenset(l.strip() for o in ops if o.get('kop_record') and o.get('verdict') != 'dropped'
@@ -525,7 +578,7 @@ def selftest():
 
 
 EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
-OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'separator', 'years', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
+OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'separator', 'years', 'filler', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
 
 
 def export(ids):
@@ -569,7 +622,7 @@ def export(ids):
             'column': entry.get('markdown_field', ''),
             'base_sha1': hashlib.sha1(base.encode('utf-8')).hexdigest(),
             'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
-            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(base, ops) if op.get('verdict') != 'dropped'],
+            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(base, ops, entry_name(gaps)) if op.get('verdict') != 'dropped'],
             'tense': tense,
             'fixes': [{'id': f['id'], 'old': f['old'].rstrip('\r'), 'new': f['new'].rstrip('\r'), 'note': f.get('note', '')}
                       for f in load_fixes(folder)],
