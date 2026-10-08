@@ -55,15 +55,42 @@ function kop_rinbox_menu_registry($tools) {
     return $tools;
 }
 
+/**
+ * Screens that stay on the sidebar although the inbox covers them: they hold
+ * tools the inbox does not (Program Homes: Companies that are one program).
+ */
+function kop_rinbox_menu_keep_listed() {
+    return array('kop-program-homes');
+}
+
+/**
+ * The sidebar entries hidden for the covered screens: [submenu slugs, top-level slugs].
+ * Hidden with CSS, never remove_submenu_page()/remove_menu_page(): a screen taken
+ * out of the menu loses its registration and its address answers 403
+ * ("Sorry, you are not allowed to access this page").
+ */
+function kop_rinbox_menu_hidden() {
+    if (!function_exists('kop_rinbox_sources')) return array(array(), array());
+    $subs = array_values(array_diff(kop_rinbox_menu_covered_screens(), kop_rinbox_menu_keep_listed()));
+    $subs[] = 'edit.php?post_type=' . (defined('KOP_EXT_SOURCE_CPT') ? KOP_EXT_SOURCE_CPT : 'kop_source');
+    return array($subs, array('anonymous-docs'));
+}
+
+add_action('admin_head', function () {
+    list($subs, $tops) = kop_rinbox_menu_hidden();
+    $rules = array();
+    foreach ($subs as $slug) {
+        $href = strpos($slug, '.php') !== false ? $slug : 'admin.php?page=' . $slug;
+        $rules[] = '#adminmenu .wp-submenu li:has(> a[href="' . esc_attr($href) . '"])';
+    }
+    foreach ($tops as $slug) $rules[] = '#adminmenu #toplevel_page_' . sanitize_html_class($slug);
+    if ($rules) echo '<style id="kop-rinbox-menu">' . implode(",\n", $rules) . ' { display: none; }</style>';
+});
+
 /** Take the covered screens off the sidebar (still reachable by address) and put the waiting count on Review Inbox. */
 add_action('admin_menu', function () {
     if (!function_exists('kop_rinbox_sources') || !function_exists('kop_tools_parent_slug')) return;
     $parent = kop_tools_parent_slug();
-    foreach (kop_rinbox_menu_covered_screens() as $slug) {
-        remove_submenu_page($parent, $slug);
-    }
-    remove_submenu_page($parent, 'edit.php?post_type=' . (defined('KOP_EXT_SOURCE_CPT') ? KOP_EXT_SOURCE_CPT : 'kop_source'));
-    remove_menu_page('anonymous-docs');
 
     global $submenu;
     $waiting = kop_rinbox_menu_waiting();
