@@ -355,8 +355,11 @@ need the owner's accounts, devices or artwork.
     (title and journal not found; the shock study is Lovaas, Schaeffer & Simmons, Journal of Experimental Research
     in Personality, 1965) and its line "Initially served 'mental defectives'..." under 1933, which reads as
     Devereux's; /warehouses-of-neglect/ says UHS paid about $150m in 2020 (the report's p. 19 says $122 million);
-    /juvenile-justice-timeline/ names James F. Slattery as YSI's 1989 founder (the Senate report names Jay Ripley as
-    a co-founder, company histories W. James Hindman); /corporatization/ (1987) and /war-on-drugs/ (1993) give two
+    /juvenile-justice-timeline/ has "1989 – YSI founded by James F. Slattery": YSI was founded in 1991 by W. James
+    Hindman (Jiffy Lube's founder; referenceforbusiness.com company history), with Jay Ripley as a co-founder
+    (Senate Finance report, p. 26); Slattery's Correctional Services Corp. bought it in 1999 (SEC 10-K, FY1999) and
+    in 2005 he bought the youth business back and ran YSI himself (Democracy Now/HuffPost 2013), so the entry
+    should say he owned it, not that he founded it; /corporatization/ (1987) and /war-on-drugs/ (1993) give two
     years for Lichfield's Brightway Adolescent Hospital contract.
 
 ### Unconfirmed settings
