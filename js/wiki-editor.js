@@ -482,7 +482,7 @@ Here: ${sample.ours || '(nothing)'}`;
             : [];
 
         // Basic fields to clear
-        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','staffMisc','levelSystemType','levelCount','levelSystemDesc','educationType','educationAccreditor','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','staffMisc','levelSystemType','levelCount','levelSystemDesc','educationType','educationAccreditor','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','alternateNames','headquarters','parentCompany','parentCompanyLink'];
         clearInputs(fieldIds);
 
         // Reset arrays and lists
@@ -1156,6 +1156,7 @@ Here: ${sample.ours || '(nothing)'}`;
         setFieldValue('customAllegations', data.customAllegations);
         setFieldValue('rebrand', data.rebrand);
         setFieldValue('rebrandLink', data.rebrandLink);
+        setFieldValue('alternateNames', data.alternateNames);
 
         // These notes fields were just filled from imported/loaded data, so flag
         // them as imported. The generator will substitute (not append) them while
@@ -2995,6 +2996,7 @@ Here: ${sample.ours || '(nothing)'}`;
                         relatedMediaMisc: parsedData.relatedMediaMisc || '',
                         rebrand: parsedData.rebrand || '',
                         rebrandLink: parsedData.rebrandLink || '',
+                        alternateNames: parsedData.alternateNames || '',
                         staffMembers: parsedData.staffMembers || [],
                         punishments: parsedData.punishments || [],
                         lawsuits: parsedData.lawsuits || [],

@@ -549,6 +549,7 @@ function parseWikiMarkdown(markdown) {
         yearsActive: '',
         cityState: '',
         programType: '',
+        alternateNames: '',
         yearFounded: '',
         headquarters: '',
         parentCompany: '',
@@ -1349,6 +1350,13 @@ function parseWikiMarkdown(markdown) {
     }
     if (typeMatch && !parsedData.programType) {
         parsedData.programType = typeMatch[1].trim();
+    }
+
+    // The bold-italic names line the generator writes above the type line:
+    // "***Previous & alternate names: Old Name, Other Name***".
+    const altNamesMatch = headZone.match(/^\s*\*{3}\s*(?:previous|former|other)?\s*(?:&|and)?\s*(?:alternate|other|previous|former)?\s*names\s*:\s*([^*\n]+?)\s*\*{3}\s*$/im);
+    if (altNamesMatch) {
+        parsedData.alternateNames = altNamesMatch[1].trim();
     }
 
     // A "*Formerly Old Name*" note under the header names the prior identity.
@@ -2768,7 +2776,8 @@ function parseWikiMarkdown(markdown) {
     // a "*Formerly X*" rebrand note) must not be re-salvaged as content.
     const headerNoteLines = [
         typeMatch && typeMatch[0].trim(),
-        rebrandNoteMatch && rebrandNoteMatch[0].trim()
+        rebrandNoteMatch && rebrandNoteMatch[0].trim(),
+        altNamesMatch && altNamesMatch[0].trim()
     ].filter(Boolean);
     const dropTypeLine = (text) => headerNoteLines.length
         ? text.split('\n').filter(line => !headerNoteLines.includes(line.trim())).join('\n')

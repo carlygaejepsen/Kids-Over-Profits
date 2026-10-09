@@ -740,7 +740,7 @@ function generateWikiMarkdown(formData) {
 
     const output = `
 ${headerLine}
-*${formData.programType || '[Program Type]'}*
+${alternateNamesLine(formData)}*${formData.programType || '[Program Type]'}*
 
 ***
 
@@ -1147,7 +1147,7 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
 
     const output = `
 ${headerLine}
-*${escapeMarkdown(organizationType)}*
+${alternateNamesLine(formData)}*${escapeMarkdown(organizationType)}*
 
 ***
 
@@ -1285,6 +1285,16 @@ function buildProgramsTableMd(programs, yearsLabel, includeReopened) {
     const sep = `|${columns.map(() => '---').join('|')}|`;
     const rows = programs.map(prog => `| ${columns.map(c => c.cell(prog)).join(' | ')} |`);
     return `${header}\n${sep}\n${rows.join('\n')}`;
+}
+
+// The bold-italic line above the type line naming the program's previous and alternate
+// names ("***Previous & alternate names: Old Name, Other Name***\n"); '' when there are none.
+// The parser reads it back into alternateNames.
+function alternateNamesLine(formData) {
+    const names = String((formData && formData.alternateNames) || '')
+        .split(/\s*[;,\n]\s*/).map(n => n.replace(/\*/g, '').trim()).filter(Boolean);
+    if (!names.length) return '';
+    return `***Previous & alternate names: ${[...new Set(names)].map(escapeMarkdown).join(', ')}***\n`;
 }
 
 // Format sections the parser captured into `unparsedContent` (titles it couldn't

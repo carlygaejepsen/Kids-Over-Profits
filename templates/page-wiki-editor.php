@@ -252,6 +252,12 @@ get_header();
                         <input type="text" id="rebrandLink" name="rebrandLink" placeholder="e.g., /r/troubledteens/wiki/...">
                     </div>
                 </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label for="alternateNames">Previous &amp; Alternate Names:</label>
+                        <input type="text" id="alternateNames" name="alternateNames" placeholder="e.g., Copper Canyon Academy, Aspen Ranch (separate with commas)">
+                    </div>
+                </div>
                 <div class="field-row facility-only-field">
                     <div class="field-group">
                         <label for="avgStay">Avg. Stay:</label>
