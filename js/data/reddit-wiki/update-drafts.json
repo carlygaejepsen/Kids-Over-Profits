@@ -751,7 +751,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "** Ken Huey** was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) , where he served as",
+     "new": "** Ken Huey** was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco).",
+     "note": "The live wiki line breaks off at \"where he served as\" (owner, 2026-10-09): the unfinished clause is cut."
+    }
+   ],
    "conflicts": []
   },
   "103": {
