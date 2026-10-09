@@ -1195,7 +1195,8 @@
             });
         }
         var titleRow = pick || renameBtn ? el('span', { class: 'rinbox-title-row' }, [pick, title, renameBtn]) : title;
-        node.appendChild(el('header', { class: 'rinbox-card-head' }, [titleRow, meta, renameForm]));
+        var head = el('header', { class: 'rinbox-card-head' }, [titleRow, meta, renameForm]);
+        node.appendChild(head);
         // A conflict with the record (or another source) is always marked, above everything else.
         var conflictIcon = function () {
             if (typeof window.kopIcon !== 'function') return null;
@@ -1403,7 +1404,12 @@
             if (a.help && a.style !== 'undo') does.appendChild(el('li', { class: 'rinbox-does-' + (a.style || 'neutral') }, [el('strong', { text: a.label + ': ' }), a.help]));
         });
         bar.appendChild(laterControl(item, src, node));
-        if (decide.childNodes.length) node.appendChild(decide);
+        // A card with Copy (a wiki update ready for Reddit) has its buttons right under the title,
+        // above the whole-entry frame, so copying never means scrolling past the entry.
+        if (decide.childNodes.length && item.copy) {
+            decide.classList.add('rinbox-decide-top');
+            node.insertBefore(decide, head.nextSibling);
+        } else if (decide.childNodes.length) node.appendChild(decide);
         if (askForms.childNodes.length) node.appendChild(askForms);
         if (does.childNodes.length) node.appendChild(does);
         node.appendChild(bar);

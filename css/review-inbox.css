@@ -814,6 +814,13 @@ a.rinbox-btn-go:focus-visible {
     outline-offset: 2px;
 }
 
+.rinbox-decide-top {
+    margin: 8px 0 4px;
+    padding: 0 0 10px;
+    border-top: 0;
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+}
+
 .rinbox-copied {
     font-size: 13px;
     color: var(--kop-text-muted, #4A5568);
