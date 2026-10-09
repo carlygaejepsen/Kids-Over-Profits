@@ -52,11 +52,24 @@ function kop_wiki_drafts_all() {
 
 /* ---- Previous & alternate names ------------------------------------------------ */
 
-/** The bold-italic line under the header that the wiki editor writes (js/wiki-generation.js alternateNamesLine()). */
-const KOP_WIKI_DRAFTS_NAMES_RE = '/^\s*\*{3}\s*previous\s*(?:&|and)\s*alternate\s+names\s*:\s*(.*?)\s*\*{3}\s*$/iu';
+/**
+ * The bold line under the header that the wiki editor writes (js/wiki-generation.js alternateNamesLine()); the
+ * first drafts wrote it in bold italics, which is read too and rewritten in bold.
+ */
+const KOP_WIKI_DRAFTS_NAMES_RE = '/^\s*\*{2,3}\s*previous\s*(?:&|and)\s*alternate\s+names\s*:\s*(.*?)\s*\*{2,3}\s*$/iu';
 
 function kop_wiki_drafts_names_line(array $names) {
-    return $names ? '***Previous & alternate names: ' . implode(', ', $names) . '***' : '';
+    return $names ? '**Previous & alternate names: ' . implode(', ', $names) . '**' : '';
+}
+
+/** A name's years as the wiki writes them: "1998-2014", "1998" (one year), "from 1998", "until 2014", '' when unknown. */
+function kop_wiki_drafts_years_label($start, $end) {
+    $start = (int) $start;
+    $end = (int) $end;
+    if ($start && $end) return $start === $end ? (string) $start : $start . '-' . $end;
+    if ($start) return 'from ' . $start;
+    if ($end) return 'until ' . $end;
+    return '';
 }
 
 /** "A, B; C" -> unique names, in order, never two with one name key. */
@@ -102,14 +115,32 @@ function kop_wiki_drafts_add_names(array $all) {
             foreach (is_array($v) ? $v : preg_split('/\s*[;,]\s*/u', (string) $v) as $n) if (is_string($n)) $list[] = $n;
         }
         $list[] = (string) ($ident['currentName'] ?? '');
+        // Each name's years where known ("Copper Canyon Academy (1998-2014)"): the record's own rename entries or the
+        // map's rename lines with the Map Renames years, as the facility page's name sections read them.
+        $years = array();
+        try {
+            $chain = function_exists('kop_facility_eras_chain') ? kop_facility_eras_chain((int) $f['id'], is_array($doc) ? $doc : array()) : array();
+        } catch (Throwable $e) {
+            $chain = array();
+        }
+        foreach ($chain as $era) {
+            $list[] = (string) $era['name'];
+            $label = kop_wiki_drafts_years_label($era['start'] ?? null, $era['end'] ?? null);
+            if ($label !== '') $years[kop_wiki_upd_key($era['name'])] = $label;
+        }
         // The entry's own name never lists itself; kop_wiki_drafts_apply() also drops the header's name.
         $own = kop_wiki_upd_key((string) ($d['program'] ?? ''));
         $names = array_values(array_filter(kop_wiki_drafts_split_names(implode(';', $list)), function ($n) use ($own) {
             return kop_wiki_upd_key($n) !== $own;
         }));
         if (!$names) continue;
+        foreach ($names as $i => $n) {
+            // A name that carries its years already ("Integrity House (2001-2013)") keeps them.
+            $label = $years[kop_wiki_upd_key($n)] ?? '';
+            if ($label !== '' && !preg_match('/\([^)]*\d{4}[^)]*\)\s*$/u', $n)) $names[$i] = $n . ' (' . $label . ')';
+        }
         array_unshift($all[$id]['ops'], array('id' => 'names', 'op' => 'set_alternate_names', 'by' => 'site', 'text' => implode(', ', $names),
-            'note' => 'From the record\'s names; printed in bold italics above the type line.'));
+            'note' => 'From the record\'s names, with the years each was used where known; printed in bold above the type line.'));
     }
     return $all;
 }
@@ -208,7 +239,7 @@ function kop_wiki_drafts_reddit_format($md) {
 
 /** One line as kop_wiki_drafts_reddit_format() writes it ($first = the header line); the review card shows corrected lines this way too. */
 function kop_wiki_drafts_format_line($line, $first = false) {
-    // The bold-italic names line is not a lost bullet.
+    // The names line is kept as it is (in bold italics it is not a lost bullet).
     if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, (string) $line)) return trim((string) $line);
     $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', (string) $line);
     $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
@@ -468,14 +499,15 @@ function kop_wiki_drafts_apply($md, array $ops) {
             }
             $lines[0] = $changed;
         } elseif ($kind === 'set_alternate_names') {
-            // Under the header, above the *type* line; names already on an existing line stay first.
+            // Under the header, above the *type* line. An existing names line is rewritten: this change's names (with
+            // their years) first, then any other name it had.
             $at = null;
-            $names = array();
+            $had = '';
             for ($k = 1; $k < min(count($lines), 8); $k++) {
-                if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[$k], $m)) { $at = $k; $names = kop_wiki_drafts_split_names($m[1]); break; }
+                if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[$k], $m)) { $at = $k; $had = $m[1]; break; }
             }
             $own = preg_match('/^#+\s*\*\*(.+?)\*\*/u', $lines[0], $h) ? kop_wiki_upd_key($h[1]) : '';
-            $names = array_values(array_filter(kop_wiki_drafts_split_names($text, $names), function ($n) use ($own) { return kop_wiki_upd_key($n) !== $own; }));
+            $names = array_values(array_filter(kop_wiki_drafts_split_names($had, kop_wiki_drafts_split_names($text)), function ($n) use ($own) { return kop_wiki_upd_key($n) !== $own; }));
             $line = kop_wiki_drafts_names_line($names);
             if ($line === '' || ($at !== null && $lines[$at] === $line)) continue;
             if ($at !== null) $lines[$at] = $line;
@@ -689,7 +721,7 @@ function kop_wiki_drafts_refresh_approved(PDO $pdo) {
     return $out;
 }
 
-define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '4');   // 1: editorial voice cut from 23 entries; 2: copy-edit; 3: Ballard Sheppard at closed Rivendell in the past (2026-10-09); 4: previous & alternate names line (2026-10-09)
+define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '5');   // 1: editorial voice cut from 23 entries; 2: copy-edit; 3: Ballard Sheppard at closed Rivendell in the past (2026-10-09); 4: previous & alternate names line (2026-10-09); 5: names line in bold, with each name's years
 
 add_action('init', function () {
     if (get_option('kop_wiki_drafts_refresh_version') === KOP_WIKI_DRAFTS_REFRESH_VERSION || get_transient('kop_wiki_drafts_refresh_running')) return;

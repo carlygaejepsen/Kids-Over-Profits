@@ -1352,9 +1352,9 @@ function parseWikiMarkdown(markdown) {
         parsedData.programType = typeMatch[1].trim();
     }
 
-    // The bold-italic names line the generator writes above the type line:
-    // "***Previous & alternate names: Old Name, Other Name***".
-    const altNamesMatch = headZone.match(/^\s*\*{3}\s*(?:previous|former|other)?\s*(?:&|and)?\s*(?:alternate|other|previous|former)?\s*names\s*:\s*([^*\n]+?)\s*\*{3}\s*$/im);
+    // The bold names line the generator writes above the type line:
+    // "**Previous & alternate names: Old Name (1998-2014), Other Name**" (bold; the first version wrote it in bold italics).
+    const altNamesMatch = headZone.match(/^\s*\*{2,3}\s*(?:previous|former|other)?\s*(?:&|and)?\s*(?:alternate|other|previous|former)?\s*names\s*:\s*([^*\n]+?)\s*\*{2,3}\s*$/im);
     if (altNamesMatch) {
         parsedData.alternateNames = altNamesMatch[1].trim();
     }

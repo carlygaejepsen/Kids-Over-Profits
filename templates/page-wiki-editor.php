@@ -255,7 +255,7 @@ get_header();
                 <div class="field-row">
                     <div class="field-group">
                         <label for="alternateNames">Previous &amp; Alternate Names:</label>
-                        <input type="text" id="alternateNames" name="alternateNames" placeholder="e.g., Copper Canyon Academy, Aspen Ranch (separate with commas)">
+                        <input type="text" id="alternateNames" name="alternateNames" placeholder="e.g., Copper Canyon Academy (1998-2014), Aspen Ranch (separate with commas; years used in brackets if known)">
                     </div>
                 </div>
                 <div class="field-row facility-only-field">

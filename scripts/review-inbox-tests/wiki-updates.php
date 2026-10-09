@@ -39,21 +39,29 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     }
     $check('wiki-updates: the site builds exactly the script\'s draft for every local draft', $same && !$diff, count($same) . ' same; differ: ' . implode(', ', $diff));
 
-    // Previous & alternate names: one bold-italic line right under the header, above the type line, kept as it is for
-    // Reddit, never the entry's own name; building again from that text changes nothing.
-    $named = $bad = array();
+    // Previous & alternate names: one bold line right under the header, above the type line, kept as it is for
+    // Reddit, never the entry's own name, years after the names that have them; building again from that text
+    // changes nothing, and an old bold-italic line is rewritten in bold.
+    $named = $bad = $dated = array();
     foreach (kop_wiki_drafts_all() as $id => $d) {
         if (($d['ops'][0]['op'] ?? '') !== 'set_alternate_names' || !is_file("$dir/$id/entry.md")) continue;
-        $lines = kop_wiki_drafts_lines(kop_wiki_drafts_build($id, file_get_contents("$dir/$id/entry.md"), array())['md']);
+        $entry = file_get_contents("$dir/$id/entry.md");
+        $lines = kop_wiki_drafts_lines(kop_wiki_drafts_build($id, $entry, array())['md']);
         $own = preg_match('/^#+\s*\*\*(.+?)\*\*/u', $lines[0], $h) ? kop_wiki_upd_key($h[1]) : '';
-        $ok = preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[1], $m) && !in_array($own, array_map('kop_wiki_upd_key', kop_wiki_drafts_split_names($m[1])), true);
+        $ok = preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[1], $m) && strpos($lines[1], '***') === false
+            && !in_array($own, array_map('kop_wiki_upd_key', kop_wiki_drafts_split_names($m[1])), true);
         $again = kop_wiki_drafts_build($id, implode("\n", $lines), array());
         $again_lines = kop_wiki_drafts_lines($again['md']);
         $ok = $ok && !$again['problems'] && count(preg_grep(KOP_WIKI_DRAFTS_NAMES_RE, $again_lines)) === 1 && $again_lines[1] === $lines[1];
+        $old = $lines;
+        $old[1] = '***' . trim($lines[1], '*') . '***';
+        $ok = $ok && kop_wiki_drafts_lines(kop_wiki_drafts_build($id, implode("\n", $old), array())['md'])[1] === $lines[1];
         if ($ok) $named[] = $id;
         else $bad[] = $id;
+        if (preg_match('/\(\D*\d{4}/', $lines[1])) $dated[$id] = $lines[1];
     }
-    $check('wiki-updates: drafts with other names get one bold-italic names line under the header', $named && !$bad, count($named) . ' named; wrong: ' . implode(', ', $bad));
+    $check('wiki-updates: drafts with other names get one bold names line under the header', $named && !$bad, count($named) . ' named; wrong: ' . implode(', ', $bad));
+    $check('wiki-updates: names carry the years they were used where known', (bool) $dated, count($dated) . ' with years, e.g. ' . implode(' | ', array_slice($dated, 0, 3)));
 
     // An entry whose text is still the one drafted from (an entry already approved and pasted holds the additions
     // itself, so leaving a line out could not take it off): the first such card stands in for the harness's pick.

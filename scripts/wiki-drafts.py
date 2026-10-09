@@ -56,8 +56,8 @@ def norm(heading):
 FOOTER = re.compile(r'^\s*(last revised by\b|#{1,6}\s*page title\s*$)', re.I)
 
 
-# The wiki editor's bold-italic names line under the header (PHP KOP_WIKI_DRAFTS_NAMES_RE).
-NAMES_LINE = re.compile(r'^\s*\*{3}\s*previous\s*(?:&|and)\s*alternate\s+names\s*:\s*(.*?)\s*\*{3}\s*$', re.I)
+# The wiki editor's bold names line under the header, bold italics in the first drafts (PHP KOP_WIKI_DRAFTS_NAMES_RE).
+NAMES_LINE = re.compile(r'^\s*\*{2,3}\s*previous\s*(?:&|and)\s*alternate\s+names\s*:\s*(.*?)\s*\*{2,3}\s*$', re.I)
 
 
 def reddit_format(md):
@@ -73,7 +73,7 @@ def reddit_format(md):
         lines.pop()
     out = []
     for n, line in enumerate(lines):
-        if NAMES_LINE.match(line):   # the bold-italic names line is not a lost bullet
+        if NAMES_LINE.match(line):   # kept as it is (in bold italics it is not a lost bullet)
             out.append(line.strip())
             continue
         line = re.sub(r'^\*\*\*(?=\S)', '* **', line)
