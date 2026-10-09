@@ -200,6 +200,8 @@ function kop_rinbox_wupd_item(array $r) {
     );
     if ($fields) $item['fields'] = $fields;
     if ($compare) $item['compare'] = $compare;
+    // Approve / Set aside, Copy / Pasted on Reddit come before the lines (js/review-inbox.js)
+    $item['decide_first'] = true;
     if ($view === 'ready') {
         // Copy, Edit it on Reddit and Pasted on Reddit side by side on the card (js/review-inbox.js),
         // so pasting needs no trip to the whole-entry page. KOP's copy is the approved text.

@@ -1404,9 +1404,9 @@
             if (a.help && a.style !== 'undo') does.appendChild(el('li', { class: 'rinbox-does-' + (a.style || 'neutral') }, [el('strong', { text: a.label + ': ' }), a.help]));
         });
         bar.appendChild(laterControl(item, src, node));
-        // A card with Copy (a wiki update ready for Reddit) has its buttons right under the title,
-        // above the whole-entry frame, so copying never means scrolling past the entry.
-        if (decide.childNodes.length && item.copy) {
+        // A card with Copy, or one whose queue asks for it (item.decide_first: Wiki updates), has its
+        // buttons right under the title, before the lines and the whole-entry frame.
+        if (decide.childNodes.length && (item.copy || item.decide_first)) {
             decide.classList.add('rinbox-decide-top');
             node.insertBefore(decide, head.nextSibling);
         } else if (decide.childNodes.length) node.appendChild(decide);
