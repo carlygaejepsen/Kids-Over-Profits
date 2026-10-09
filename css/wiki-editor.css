@@ -83,6 +83,29 @@ body {
     font-weight: 600;
 }
 
+/* Names that are, or may be, one person (js/wiki-editor.js renderStaffNameCheck()) */
+.staff-name-check {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border: 2px solid var(--kop-orange-ink, #A3570D);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+.staff-name-check .staff-name-check-head {
+    margin: 0 0 6px;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+.staff-name-check ul {
+    margin: 0;
+    padding-left: 20px;
+}
+.staff-name-check li,
+.staff-name-check strong {
+    color: var(--kop-midnight-blue, #000435);
+}
+
 /* ============================================
    VERTICAL LAYOUT FOR MANAGEMENT
    ============================================ */
@@ -592,7 +615,7 @@ fieldset.facility-only-field {
 }
 
 .entry-mode-badge.mode-org {
-    background: var(--kop-soft-yellow, #FFF5CB);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
     color: #6a5000;
     border: 1px solid #e5c800;
 }

@@ -1462,24 +1462,161 @@ function isClosedYears(years) {
     return /(?:19|20)\d\d\s*$/.test(y) && !/present|current|ongoing|now\b/i.test(y);
 }
 
-// One paragraph per person: staff entries naming the same person (case, punctuation and a "Dr."/"Rabbi" in front
-// ignored) become one, the first keeping its role and the others' roles listed after it.
+// ---- One person, many names ------------------------------------------------
+// Known other names (inc/name-variants.php: the people table's aliases and merges, the network map, the names checked
+// by hand in js/data/people/name-variants-reviewed.json) and nicknames (js/data/people/nicknames.json) arrive as
+// window.KOP_NAME_VARIANTS = {groups: [[name, ...]], distinct: [[a, b]], nicknames: {same: [[...]], maybe: [[...]]}}.
+// samePerson(): one key, one known group, or a first name that can only be the other's ("Charlie"/"Charles") with
+// the same last name; never a "distinct" pair. possibleSamePerson(): what to ask about instead of merging.
+
+// Case, punctuation and a title in front ignored: the key inc/name-variants.php kop_name_variants_key() writes.
 function staffNameKey(name) {
     return String(name || '').toLowerCase().replace(/\b(?:dr|rabbi|rev|mr|mrs|ms|miss)\.?\s+/g, '')
         .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
 }
 
+let NAME_VARIANT_INDEX = null;
+
+// For the tests, or a page that loads the data later.
+function setNameVariants(data) {
+    NAME_VARIANT_INDEX = null;
+    if (typeof window !== 'undefined') window.KOP_NAME_VARIANTS = data;
+    else setNameVariants.data = data;
+}
+
+function nameVariantIndex() {
+    if (NAME_VARIANT_INDEX) return NAME_VARIANT_INDEX;
+    let data = (typeof window !== 'undefined' && window.KOP_NAME_VARIANTS) || setNameVariants.data || null;
+    if (!data && typeof require === 'function') {
+        try {   // node (tests, batch import): the files themselves; the people table's groups need the site
+            const nick = require('./data/people/nicknames.json');
+            const reviewed = require('./data/people/name-variants-reviewed.json');
+            data = { groups: (reviewed.same || []).map(g => g.names), distinct: (reviewed.distinct || []).map(d => d.names), nicknames: nick };
+        } catch (e) { data = null; }
+    }
+    data = data || {};
+    const idx = { same: new Map(), maybe: new Map(), group: new Map(), distinct: new Set() };
+    ((data.nicknames || {}).same || []).forEach((g) => g.forEach((n) => { if (!idx.same.has(n)) idx.same.set(n, g[0]); }));
+    ((data.nicknames || {}).maybe || []).forEach((g, i) => g.forEach((n) => {
+        if (!idx.maybe.has(n)) idx.maybe.set(n, new Set());
+        idx.maybe.get(n).add(i);
+    }));
+    NAME_VARIANT_INDEX = idx;   // personKey() below reads idx.same
+    (data.groups || []).forEach((g, i) => g.forEach((n) => {
+        [staffNameKey(n), personKey(n)].forEach((k) => { if (k && !idx.group.has(k)) idx.group.set(k, i); });
+    }));
+    (data.distinct || []).forEach(([a, b]) => {
+        [[staffNameKey(a), staffNameKey(b)], [personKey(a), personKey(b)]].forEach(([x, y]) => {
+            if (x && y) idx.distinct.add([x, y].sort().join('|'));
+        });
+    });
+    return idx;
+}
+
+// A name's words: titles, credentials, "Jr.", initials and quoted nicknames gone; a hyphen splits ("Quinney-Packard").
+function personTokens(name) {
+    const plain = String(name || '').replace(/["“”][^"“”]*["“”]|\([^)]*\)/g, ' ').replace(/,.*$/, '').replace(/-/g, ' ');
+    const drop = /^(?:jr|sr|ii|iii|iv|phd|md|psyd|lcsw|lpc|lmft|rn|ma|ms|msw|edd|med|lmhc|lcpc|cmhc|ncc)$/;
+    return staffNameKey(plain).split(' ').filter(t => t.length > 1 && !drop.test(t));
+}
+
+// "first last" with the first name folded to the one name it can be ("Charlie Smith" -> "charles smith").
+function personKey(name) {
+    const t = personTokens(name);
+    if (t.length < 2) return '';
+    const idx = NAME_VARIANT_INDEX || nameVariantIndex();
+    return `${idx.same.get(t[0]) || t[0]} ${t[t.length - 1]}`;
+}
+
+function isDistinctPair(a, b) {
+    const idx = nameVariantIndex();
+    return [[staffNameKey(a), staffNameKey(b)], [personKey(a), personKey(b)]]
+        .some(([x, y]) => x && y && idx.distinct.has([x, y].sort().join('|')));
+}
+
+function samePerson(a, b) {
+    const ka = staffNameKey(a), kb = staffNameKey(b);
+    if (!ka || !kb || isDistinctPair(a, b)) return false;
+    if (ka === kb) return true;
+    const idx = nameVariantIndex();
+    const pa = personKey(a), pb = personKey(b);
+    const ga = idx.group.has(ka) ? idx.group.get(ka) : idx.group.get(pa);
+    const gb = idx.group.has(kb) ? idx.group.get(kb) : idx.group.get(pb);
+    if (ga !== undefined && ga === gb) return true;
+    return Boolean(pa) && pa === pb;
+}
+
+function editDistance(a, b) {
+    const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+    for (let j = 1; j <= b.length; j++) d[0][j] = j;
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+            if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+        }
+    }
+    return d[a.length][b.length];
+}
+
+// Why two names might be one person ('' when nothing suggests it): Merge People's tests (inc/people-merge.php) plus
+// the nickname table's "maybe" names.
+function possibleSamePerson(a, b) {
+    if (samePerson(a, b) || isDistinctPair(a, b)) return '';
+    const ta = personTokens(a), tb = personTokens(b);
+    if (ta.length < 2 || tb.length < 2) return '';
+    const idx = nameVariantIndex();
+    const fa = ta[0], fb = tb[0], la = ta[ta.length - 1], lb = tb[tb.length - 1];
+    const fold = (f) => idx.same.get(f) || f;
+    const firstSame = fold(fa) === fold(fb);
+    const firstMaybe = [...(idx.maybe.get(fa) || [])].some(i => (idx.maybe.get(fb) || new Set()).has(i));
+    const firstShort = fa[0] === fb[0] && Math.min(fa.length, fb.length) >= 3 && (fa.startsWith(fb) || fb.startsWith(fa));
+    const lastSpelling = la !== lb && editDistance(la, lb) <= (Math.min(la.length, lb.length) >= 8 ? 2 : 1);
+    if (la === lb && (firstMaybe || firstShort) && !firstSame) return `"${a.trim()}" may be a nickname or short form of "${b.trim()}"`;
+    if ((firstSame || firstMaybe) && lastSpelling) return `the last names are spelled one letter apart`;
+    if ((firstSame || firstMaybe) && la !== lb && (ta.slice(1).includes(lb) || tb.slice(1).includes(la))) {
+        return 'one may be a maiden or married name';
+    }
+    if (fa === lb && la === fb) return 'first and last names swapped';
+    if (la === lb && !firstSame && fa !== fb && editDistance(fa, fb) === 1 && Math.min(fa.length, fb.length) >= 4) return 'the first names are spelled one letter apart';
+    return '';
+}
+
+// Names that open a staff paragraph in imported text ("**Jane Roe** was ...").
+function staffNamesInText(md) {
+    const out = [];
+    String(md || '').split('\n').forEach((line) => {
+        const m = line.match(/^\s*(?:[-*]\s+)?\*\*\s*([^*\n]{3,80}?)\s*\*\*/);
+        if (m && !/[:\d]/.test(m[1]) && /\s/.test(m[1].trim())) out.push(m[1].trim());
+    });
+    return out;
+}
+
+// Every pair among the names that is one person ("same": merged on the page) or might be ("maybe": a question).
+function findStaffNameMatches(names) {
+    const list = [...new Set((names || []).map(n => String(n || '').trim()).filter(Boolean))];
+    const out = [];
+    for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+            if (staffNameKey(list[i]) === staffNameKey(list[j])) continue;
+            if (samePerson(list[i], list[j])) out.push({ a: list[i], b: list[j], kind: 'same', reason: 'known to be the same person' });
+            else {
+                const why = possibleSamePerson(list[i], list[j]);
+                if (why) out.push({ a: list[i], b: list[j], kind: 'maybe', reason: why });
+            }
+        }
+    }
+    return out;
+}
+
+// One paragraph per person: staff entries naming the same person (samePerson()) become one, the first keeping its
+// name and role and the others' roles listed after it.
 function mergeStaffByName(list) {
-    const byKey = new Map();
     const out = [];
     (list || []).forEach((s) => {
         if (!s) return;
-        const key = staffNameKey(s.name);
-        const first = key ? byKey.get(key) : null;
+        const first = s.name ? out.find(o => o.name && samePerson(o.name, s.name)) : null;
         if (!first) {
-            const copy = { ...s, extraRoles: [] };
-            if (key) byKey.set(key, copy);
-            out.push(copy);
+            out.push({ ...s, extraRoles: [] });
             return;
         }
         if (s.role && staffNameKey(s.role) !== staffNameKey(first.role)) first.extraRoles.push(s.role);
@@ -1569,9 +1706,12 @@ function escapeMarkdown(text) {
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { generateWikiMarkdown, sanitizeUrl, normalizeContactTag, normalizePunctSpacing, staffRoleClause, mergeStaffByName, isClosedYears };
+    module.exports = { generateWikiMarkdown, sanitizeUrl, normalizeContactTag, normalizePunctSpacing, staffRoleClause, mergeStaffByName, isClosedYears,
+        setNameVariants, samePerson, possibleSamePerson, findStaffNameMatches, staffNamesInText };
 } else if (typeof window !== 'undefined') {
     window.generateWikiMarkdown = generateWikiMarkdown;
     window.sanitizeUrlForWiki = sanitizeUrl;
     window.normalizeContactTag = normalizeContactTag;
+    // The editor's staff check (js/wiki-editor.js renderStaffNameCheck()).
+    window.kopStaffNames = { findStaffNameMatches, staffNamesInText, samePerson };
 }

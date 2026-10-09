@@ -188,6 +188,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php 
 # no "Former" or abbreviations in a role, a year only as "from X to Y", a closed program's staff in the past, one paragraph per person;
 # normalizePunctSpacing() must match scripts/wiki-drafts.py punct_spacing() and kop_wiki_drafts_reddit_format()
 node scripts/test-wiki-generation-rules.js       # role sentences, merging, a whole page; spacing JS == Python on every draft line
+# One person, many names (inc/name-variants.php -> window.KOP_NAME_VARIANTS on the wiki editor): the people table's other names and
+# merges, the map's, js/data/people/name-variants-reviewed.json (checked by hand: "same" groups, "distinct" pairs) and
+# js/data/people/nicknames.json ("same": only that name, merged, Charlie = Charles; "maybe": warned, Sam = Samuel or Samantha).
+# The editor writes one paragraph per person and lists names that may be one person above the staff list
+php -d extension=pdo_sqlite scripts/test-name-variants.php   # every merge and other name is a group, on tmp/prod.sqlite; writes tmp/name-variants.json (run before the JS test)
 # Wiki entries brought up to date from KOP (docs/PLAN.md 3.12, inc/wiki-updates.php): each entry (newest row per Reddit page) is
 # linked to its facilities_v2 record at KOP Tools > Review inbox > Wiki links (wiki_submissions.facility_unique_name, 'suggested',
 # Undo); gaps = what kop_facility_page_data() holds that the entry's markdown lacks (closure, names, operator, news, lawsuits,

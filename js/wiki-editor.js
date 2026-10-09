@@ -833,7 +833,47 @@ Here: ${sample.ours || '(nothing)'}`;
         renderStaffList();
     }
 
+    // Names in the staff list and the imported staff text that are one person, or may be (js/wiki-generation.js
+    // findStaffNameMatches(): known other names, nicknames, one letter apart, maiden/married names, swapped names).
+    // One person gets one paragraph: the page merges the known ones; the rest are a question for the editor.
+    function renderStaffNameCheck() {
+        const list = document.getElementById('staffListOutput');
+        const check = window.kopStaffNames;
+        if (!list || !check) return;
+        let box = document.getElementById('staffNameCheck');
+        if (!box) {
+            box = document.createElement('div');
+            box.id = 'staffNameCheck';
+            box.className = 'staff-name-check';
+            box.setAttribute('role', 'status');
+            list.parentNode.insertBefore(box, list);
+        }
+        const misc = document.getElementById('staffMisc');
+        const names = staffMembers.map(m => m && m.name).concat(check.staffNamesInText(misc ? misc.value : ''));
+        const matches = check.findStaffNameMatches(names);
+        box.innerHTML = '';
+        box.style.display = matches.length ? 'block' : 'none';
+        if (!matches.length) return;
+        const head = document.createElement('p');
+        head.className = 'staff-name-check-head';
+        head.textContent = 'One person, one paragraph: check these names.';
+        box.appendChild(head);
+        const ul = document.createElement('ul');
+        matches.forEach((m) => {
+            const li = document.createElement('li');
+            const names = document.createElement('strong');
+            names.textContent = `${m.a} and ${m.b}`;
+            li.appendChild(names);
+            li.appendChild(document.createTextNode(m.kind === 'same'
+                ? ` are the same person (${m.reason}). Staff list entries are written as one paragraph; text typed in Additional Staff Notes is not, so keep one.`
+                : `: ${m.reason}. If they are one person, keep one paragraph under one name.`));
+            ul.appendChild(li);
+        });
+        box.appendChild(ul);
+    }
+
     function renderStaffList() {
+        renderStaffNameCheck();
         const container = document.getElementById('staffListOutput');
         if (!container) return;
         container.innerHTML = '';
@@ -908,6 +948,11 @@ Here: ${sample.ours || '(nothing)'}`;
     }
 
     renderStaffList();
+    {
+        const misc = document.getElementById('staffMisc');
+        let timer = null;
+        if (misc) misc.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(renderStaffNameCheck, 400); });
+    }
 
     const setFieldValue = (id, value = '') => {
         const el = document.getElementById(id);

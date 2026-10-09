@@ -104,5 +104,42 @@ has('**Jane Roe** was a therapist. Roe also worked in admissions.', 'merged pers
 has('**John Doe** was the executive director from 2003 to 2006.', 'role with a span');
 if ((md.match(/\*\*Jane Roe\*\*/g) || []).length !== 1) { bad++; console.log('FAIL page: Jane Roe printed twice'); }
 
+// 4. One person, many names: the site's data (tmp/name-variants.json from scripts/test-name-variants.php) when
+// present, else the files alone (nicknames + the reviewed names).
+const variantsFile = path.join(root, 'tmp', 'name-variants.json');
+if (fs.existsSync(variantsFile)) g.setNameVariants(JSON.parse(fs.readFileSync(variantsFile, 'utf8')));
+const same = (a, b, want) => eq(g.samePerson(a, b), want, `samePerson("${a}", "${b}")`);
+const maybe = (a, b, want) => eq(Boolean(g.possibleSamePerson(a, b)), want, `possibleSamePerson("${a}", "${b}")`);
+same('Charlie Smith', 'Charles Smith', true);        // a nickname that is only Charles
+same('Chuck Dederich', 'Charles Dederich', true);
+same('Bill Jones', 'William R. Jones', true);
+same('Dr. Ken Huey', 'Ken Huey', true);
+same('Tom Kovalesky', 'Tom Kovaleski', true);         // reviewed
+same('Jerry Spanos', 'Gerald Spanos', true);
+same('Nale Fakahua', 'Salesi Misinale Fakahua', true);
+same('Oscar Fakahua', 'Nale Fakahua', false);          // two people (owner)
+maybe('Oscar Fakahua', 'Nale Fakahua', false);
+same('Sam Jones', 'Samuel Jones', false);              // Sam may be Samantha: asked, not merged
+maybe('Sam Jones', 'Samuel Jones', true);
+maybe('Kathy Lee', 'Katherine Lee', true);
+maybe('Paul Ravenscraft', 'Paul Ravenscroft', true);   // one letter apart
+maybe('Adele Logan', 'Adele Logan Smith', true);       // maiden or married name
+maybe('Roe Jane', 'Jane Roe', true);                   // swapped
+maybe('Jane Roe', 'John Roe', false);
+maybe('Jane Roe', 'Mary Smith', false);
+if (fs.existsSync(variantsFile)) {
+    same('Robert Christ', 'Robert H. Crist', true);   // the people table's other names
+    same('Kris Archer', 'Kristen Archer', true);      // a Merge People merge
+}
+eq(JSON.stringify(g.staffNamesInText('**Jane Roe** was a therapist.\n\n** Charlie Smith** was a teacher.\n**Orientation:** none')), '["Jane Roe","Charlie Smith"]', 'names in staff text');
+const found = g.findStaffNameMatches(['Charlie Smith', 'Charles Smith', 'Sam Jones', 'Samuel Jones', 'Jane Roe']);
+eq(found.map(m => m.kind).join(','), 'same,maybe', 'the editor\'s check: one known, one to ask');
+const page = g.generateWikiMarkdown({
+    programName: 'Test Academy', yearsActive: '1994-2010', cityState: 'Provo, UT', programType: 'Residential Treatment Center',
+    staffMembers: [{ name: 'Charlie Smith', role: 'Therapist' }, { name: 'Charles Smith', role: 'Program Director' }, { name: 'Sam Jones', role: 'Teacher' }, { name: 'Samuel Jones', role: 'Teacher' }],
+});
+eq((page.match(/\*\*Charl(?:ie|es) Smith\*\*/g) || []).length, 1, 'Charlie and Charles Smith are one paragraph');
+eq((page.match(/\*\*Sam(?:uel)? Jones\*\*/g) || []).length, 2, 'Sam and Samuel Jones stay two until someone says');
+
 console.log(bad ? `${bad} failed` : 'all passed');
 process.exit(bad ? 1 : 0);

@@ -1,0 +1,22 @@
+{
+ "_about": "People whose names were checked by hand (inc/name-variants.php adds them to what the people table knows). 'same': one person under every name in the list. 'distinct': two people the names would otherwise suggest are one; the editor never merges or flags them. Add a pair here when a review settles it, or merge the two ids at KOP Tools > Merge People.",
+ "same": [
+  {"names": ["Karr Farnsworth", "Karr Fransworth"], "note": "Provo Canyon School draft, owner 2026-10-08"},
+  {"names": ["Kreg Gillman", "Kreg Gillan"], "note": "Provo Canyon School draft, owner 2026-10-08"},
+  {"names": ["Tom Kovaleski", "Tom Kovalesky"], "note": "The Family Foundation School draft, 2026-10-08"},
+  {"names": ["Michele Medwin", "Rabbi Michele Medwin"], "note": "The Family Foundation School draft, 2026-10-08"},
+  {"names": ["Jeremy Nunnelley", "Jeremy Nunelley"], "note": "Cherokee Creek Boys School draft, 2026-10-08"},
+  {"names": ["Genelle Petry", "Genelle Petrey Boeggeman", "Genelle Boeggeman"], "note": "Cherokee Creek Boys School draft, 2026-10-08"},
+  {"names": ["Kendra Meikeljohn", "Kendra Meiklejohn"], "note": "Chrysalis draft, 2026-10-08"},
+  {"names": ["Adele Logan", "Adele Logan O'Keefe", "Adele O'Keefe"], "note": "Shortridge Academy draft, 2026-10-08"},
+  {"names": ["Trina Packard", "Trina Quinney-Packard", "Trina Quinney"], "note": "Youth Care draft, 2026-10-08"},
+  {"names": ["Ken Huey", "Dr. Ken Huey"], "note": "West Ridge Academy draft, 2026-10-08"},
+  {"names": ["Jerry Spanos", "Gerald Spanos"], "note": "Heritage Schools draft, 2026-10-08"},
+  {"names": ["Tabitha Sayler Pack", "Tabitha Salyer", "Tabitha Sayler", "Tabitha Pack"], "note": "Lake House Academy draft, 2026-10-08"},
+  {"names": ["Salesi Misinale Fakahua", "Nale Fakahua", "Salesi Fakahua"], "note": "the entry's 'aka Nale Fakahua'"}
+ ],
+ "distinct": [
+  {"names": ["Oscar Fakahua", "Salesi Misinale Fakahua"], "note": "two people (owner, 2026-10-08); Salesi is also Nale Fakahua"},
+  {"names": ["Oscar Fakahua", "Nale Fakahua"], "note": "two people (owner, 2026-10-08)"}
+ ]
+}

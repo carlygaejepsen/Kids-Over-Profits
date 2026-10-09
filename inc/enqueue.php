@@ -1867,6 +1867,10 @@ function kop_enqueue_wiki_editor_assets() {
         file_exists($generation_path) ? filemtime($generation_path) : time(),
         true
     );
+    // Every known other name and nickname of a person, for the staff check (inc/name-variants.php).
+    if (function_exists('kop_name_variants_data')) {
+        wp_add_inline_script('kop-wiki-generation-script', 'window.KOP_NAME_VARIANTS = ' . wp_json_encode(kop_name_variants_data()) . ';', 'before');
+    }
 
     // FileBird folder browser (shared) — load before the picker that uses it.
     kop_enqueue_filebird_folder_browser();

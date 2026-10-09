@@ -189,6 +189,7 @@ require_once get_stylesheet_directory() . '/inc/facility-merge.php';
 require_once get_stylesheet_directory() . '/inc/people.php';
 require_once get_stylesheet_directory() . '/inc/people-admin.php';
 require_once get_stylesheet_directory() . '/inc/people-merge.php';
+require_once get_stylesheet_directory() . '/inc/name-variants.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 // Facilities a state's published list names that our records do not: link, create or dismiss (KOP Tools > State Lists)
