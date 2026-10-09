@@ -9175,7 +9175,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "***Suicide Watch:** Sleep on a cot in the hall with your hands visible loss of visits with their parents,",
+     "new": "***Suicide Watch:** Residents sleep on a cot in the hall with their hands visible and lose visits with their parents.",
+     "note": "The live wiki line runs two items together and ends on a comma (owner, 2026-10-09): one sentence, no facts added."
+    }
+   ],
    "conflicts": []
   },
   "578": {
