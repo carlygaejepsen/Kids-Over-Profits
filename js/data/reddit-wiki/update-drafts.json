@@ -5343,7 +5343,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "Like other behavior-modification programs, Chrysalis uses a level-system consisting of levels. The levels are reported to be:",
+     "new": "Like other behavior-modification programs, Chrysalis uses a level system of six phases. The phases are reported to be:",
+     "note": "wording: \"a level-system consisting of levels\" (the number was missing); the entry lists six phases (owner, 2026-10-09)"
+    }
+   ],
    "conflicts": []
   },
   "248": {
