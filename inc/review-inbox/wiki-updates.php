@@ -90,6 +90,7 @@ function kop_rinbox_wupd_list(array $q) {
 function kop_rinbox_wupd_op_label(array $op) {
     switch ($op['op'] ?? '') {
         case 'set_header_years': return 'Header years';
+        case 'set_alternate_names': return 'Previous & alternate names (above the type line)';
         case 'add_section': return 'New section: ' . trim(preg_replace('/[#*]+/', '', (string) ($op['heading'] ?? '')));
         default: return 'Adds to ' . trim(preg_replace('/[#*]+/', '', (string) ($op['section'] ?? '')));
     }
@@ -123,7 +124,7 @@ function kop_rinbox_wupd_item(array $r) {
             $details[] = array('label' => $out ? $label . ' (left out)' : $label, 'value' => $out ? '' : $value);
             if (!$out && trim((string) ($op['note'] ?? '')) !== '') $details[] = array('label' => 'Checked', 'value' => (string) $op['note']);
             $fields[] = array('name' => (string) $op['id'], 'label' => $label . ' (empty it to leave this out)',
-                'type' => ($op['op'] ?? '') === 'set_header_years' ? 'text' : 'textarea', 'value' => $value);
+                'type' => in_array($op['op'] ?? '', array('set_header_years', 'set_alternate_names'), true) ? 'text' : 'textarea', 'value' => $value);
         }
         $tense = (array) ($d['tense'] ?? array());
         if ($tense) {

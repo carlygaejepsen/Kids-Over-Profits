@@ -46,6 +46,71 @@ function kop_wiki_drafts_all() {
         }
         $all[(int) $id] = $d;
     }
+    $all = kop_wiki_drafts_add_names($all);
+    return $all;
+}
+
+/* ---- Previous & alternate names ------------------------------------------------ */
+
+/** The bold-italic line under the header that the wiki editor writes (js/wiki-generation.js alternateNamesLine()). */
+const KOP_WIKI_DRAFTS_NAMES_RE = '/^\s*\*{3}\s*previous\s*(?:&|and)\s*alternate\s+names\s*:\s*(.*?)\s*\*{3}\s*$/iu';
+
+function kop_wiki_drafts_names_line(array $names) {
+    return $names ? '***Previous & alternate names: ' . implode(', ', $names) . '***' : '';
+}
+
+/** "A, B; C" -> unique names, in order, never two with one name key. */
+function kop_wiki_drafts_split_names($text, array $names = array()) {
+    $seen = array();
+    foreach ($names as $n) $seen[kop_wiki_upd_key($n)] = true;
+    foreach (preg_split('/\s*[;,\n]\s*/u', (string) $text) as $n) {
+        $n = trim(str_replace('*', '', $n));
+        $k = kop_wiki_upd_key($n);
+        if ($n === '' || $k === '' || isset($seen[$k])) continue;
+        $seen[$k] = true;
+        $names[] = $n;
+    }
+    return $names;
+}
+
+/**
+ * Every draft gets a 'names' op first: the record's name, past, other and current names that are not the entry's own
+ * name, read from facilities_v2 now (so a name added to the record reaches the drafts), as the line above the type line.
+ * The reviewer edits or empties it like any added line.
+ */
+function kop_wiki_drafts_add_names(array $all) {
+    $ids = array();
+    foreach ($all as $d) if (!empty($d['record']['id'])) $ids[] = (int) $d['record']['id'];
+    $docs = array();
+    if ($ids) {
+        try {
+            $pdo = kop_wiki_upd_pdo();
+            $st = $pdo->query('SELECT id, name, unique_name, json_data FROM facilities_v2 WHERE id IN (' . implode(',', array_unique($ids)) . ')');
+            foreach ($st->fetchAll(PDO::FETCH_ASSOC) as $f) $docs[(int) $f['id']] = $f;
+        } catch (Throwable $e) {
+            return $all;   // No records DB here: the drafts go without the line.
+        }
+    }
+    foreach ($all as $id => $d) {
+        $f = $docs[(int) ($d['record']['id'] ?? 0)] ?? null;
+        if (!$f) continue;
+        $doc = json_decode((string) $f['json_data'], true);
+        $ident = is_array($doc['identification'] ?? null) ? $doc['identification'] : array();
+        $list = array((string) ($f['name'] ?: $f['unique_name']));
+        foreach (array('pastNames', 'otherNames') as $field) {
+            $v = $ident[$field] ?? array();
+            foreach (is_array($v) ? $v : preg_split('/\s*[;,]\s*/u', (string) $v) as $n) if (is_string($n)) $list[] = $n;
+        }
+        $list[] = (string) ($ident['currentName'] ?? '');
+        // The entry's own name never lists itself; kop_wiki_drafts_apply() also drops the header's name.
+        $own = kop_wiki_upd_key((string) ($d['program'] ?? ''));
+        $names = array_values(array_filter(kop_wiki_drafts_split_names(implode(';', $list)), function ($n) use ($own) {
+            return kop_wiki_upd_key($n) !== $own;
+        }));
+        if (!$names) continue;
+        array_unshift($all[$id]['ops'], array('id' => 'names', 'op' => 'set_alternate_names', 'by' => 'site', 'text' => implode(', ', $names),
+            'note' => 'From the record\'s names; printed in bold italics above the type line.'));
+    }
     return $all;
 }
 
@@ -143,6 +208,8 @@ function kop_wiki_drafts_reddit_format($md) {
 
 /** One line as kop_wiki_drafts_reddit_format() writes it ($first = the header line); the review card shows corrected lines this way too. */
 function kop_wiki_drafts_format_line($line, $first = false) {
+    // The bold-italic names line is not a lost bullet.
+    if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, (string) $line)) return trim((string) $line);
     $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', (string) $line);
     $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
     if ($first) $line = preg_replace('/\*\*\(/', '** (', $line, 1);
@@ -335,6 +402,20 @@ function kop_wiki_drafts_apply($md, array $ops) {
                 continue;
             }
             $lines[0] = $changed;
+        } elseif ($kind === 'set_alternate_names') {
+            // Under the header, above the *type* line; names already on an existing line stay first.
+            $at = null;
+            $names = array();
+            for ($k = 1; $k < min(count($lines), 8); $k++) {
+                if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[$k], $m)) { $at = $k; $names = kop_wiki_drafts_split_names($m[1]); break; }
+            }
+            $own = preg_match('/^#+\s*\*\*(.+?)\*\*/u', $lines[0], $h) ? kop_wiki_upd_key($h[1]) : '';
+            $names = array_values(array_filter(kop_wiki_drafts_split_names($text, $names), function ($n) use ($own) { return kop_wiki_upd_key($n) !== $own; }));
+            $line = kop_wiki_drafts_names_line($names);
+            if ($line === '' || ($at !== null && $lines[$at] === $line)) continue;
+            if ($at !== null) $lines[$at] = $line;
+            // A blank line after it, or Reddit runs it into the *type* line below.
+            else array_splice($lines, 1, 0, isset($lines[1]) && trim($lines[1]) !== '' ? array($line, '') : array($line));
         } elseif ($kind === 'append_to_section') {
             $s = kop_wiki_drafts_find($lines, (string) ($op['section'] ?? ''));
             if (!$s) {
@@ -384,8 +465,9 @@ function kop_wiki_drafts_check($base, $draft, $header_changed) {
     $j = 0;
     $added = array();
     for ($i = $from; $i < count($d); $i++) {
-        // The editor's stand-in text for an empty section may go (kop_wiki_drafts_apply() replaces it).
-        while ($j < count($o) && $d[$i] !== $o[$j] && kop_wiki_drafts_is_placeholder($o[$j])) $j++;
+        // The editor's stand-in text for an empty section may go (kop_wiki_drafts_apply() replaces it), and so may
+        // an earlier names line (the names op rewrites it with every name it had).
+        while ($j < count($o) && $d[$i] !== $o[$j] && (kop_wiki_drafts_is_placeholder($o[$j]) || preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $o[$j]))) $j++;
         if ($j < count($o) && $d[$i] === $o[$j]) $j++;
         else $added[] = $i;
     }
@@ -542,7 +624,7 @@ function kop_wiki_drafts_refresh_approved(PDO $pdo) {
     return $out;
 }
 
-define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '3');   // 1: editorial voice cut from 23 entries; 2: copy-edit; 3: Ballard Sheppard at closed Rivendell in the past (2026-10-09)
+define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '4');   // 1: editorial voice cut from 23 entries; 2: copy-edit; 3: Ballard Sheppard at closed Rivendell in the past (2026-10-09); 4: previous & alternate names line (2026-10-09)
 
 add_action('init', function () {
     if (get_option('kop_wiki_drafts_refresh_version') === KOP_WIKI_DRAFTS_REFRESH_VERSION || get_transient('kop_wiki_drafts_refresh_running')) return;

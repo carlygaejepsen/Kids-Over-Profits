@@ -24,12 +24,29 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $same = $diff = array();
     foreach (kop_wiki_drafts_all() as $id => $d) {
         if (!is_file("$dir/$id/entry.md") || !is_file("$dir/$id/draft.md")) continue;
-        $b = kop_wiki_drafts_build($id, file_get_contents("$dir/$id/entry.md"), array());
+        // The names line comes from the record on the site only (kop_wiki_drafts_add_names()): compared without it.
+        $b = kop_wiki_drafts_build($id, file_get_contents("$dir/$id/entry.md"), array('names' => ''));
         $want = str_replace("\r\n", "\n", file_get_contents("$dir/$id/draft.md"));
         if ($b['md'] === $want && !$b['errors'] && !$b['stale']) $same[] = $id;
         else $diff[] = $id . ($b['errors'] ? ' (' . $b['errors'][0] . ')' : '');
     }
     $check('wiki-updates: the site builds exactly the script\'s draft for every local draft', $same && !$diff, count($same) . ' same; differ: ' . implode(', ', $diff));
+
+    // Previous & alternate names: one bold-italic line right under the header, above the type line, kept as it is for
+    // Reddit, never the entry's own name; building again from that text changes nothing.
+    $named = $bad = array();
+    foreach (kop_wiki_drafts_all() as $id => $d) {
+        if (($d['ops'][0]['op'] ?? '') !== 'set_alternate_names' || !is_file("$dir/$id/entry.md")) continue;
+        $lines = kop_wiki_drafts_lines(kop_wiki_drafts_build($id, file_get_contents("$dir/$id/entry.md"), array())['md']);
+        $own = preg_match('/^#+\s*\*\*(.+?)\*\*/u', $lines[0], $h) ? kop_wiki_upd_key($h[1]) : '';
+        $ok = preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[1], $m) && !in_array($own, array_map('kop_wiki_upd_key', kop_wiki_drafts_split_names($m[1])), true);
+        $again = kop_wiki_drafts_build($id, implode("\n", $lines), array());
+        $again_lines = kop_wiki_drafts_lines($again['md']);
+        $ok = $ok && !$again['problems'] && count(preg_grep(KOP_WIKI_DRAFTS_NAMES_RE, $again_lines)) === 1 && $again_lines[1] === $lines[1];
+        if ($ok) $named[] = $id;
+        else $bad[] = $id;
+    }
+    $check('wiki-updates: drafts with other names get one bold-italic names line under the header', $named && !$bad, count($named) . ' named; wrong: ' . implode(', ', $bad));
 
     // An entry whose text is still the one drafted from (an entry already approved and pasted holds the additions
     // itself, so leaving a line out could not take it off): the first such card stands in for the harness's pick.
