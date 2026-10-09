@@ -40,12 +40,26 @@ if (!defined('ABSPATH')) {
     }
 }
 
+// Who may do more than send in a new article: a signed-in admin on this site,
+// or the site's own jobs (X-KOP-Internal, api/lib-internal-token.php). Everyone
+// else (the public News Processor form, the nightly discovery) can only add a
+// new article, always as 'submitted'; reading rows back and editing one by id
+// are refused.
+require_once __DIR__ . '/lib-internal-token.php';
+$kopTrusted = kop_internal_token_ok('news-save')
+    || (function_exists('current_user_can') && current_user_can('manage_options') && kop_request_same_site());
+
 // kop_sync_news_facility_links lives in api/news-mentions.php (shared with
 // manage-submissions.php so admin edits keep news_facility_links in sync).
 
 try {
     // GET request - retrieve submissions
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!$kopTrusted) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Sign in as an admin to read submissions.']);
+            exit;
+        }
         $id = $_GET['id'] ?? null;
         $status = $_GET['status'] ?? null;
         $type = $_GET['type'] ?? null;
@@ -213,6 +227,16 @@ try {
     $submittedBy = $data['submittedBy'] ?? $data['submitted_by'] ?? '';
     $submissionNotes = $data['submissionNotes'] ?? $data['submission_notes'] ?? '';
     $submissionId = $data['id'] ?? null;
+    if (!$kopTrusted) {
+        if ($submissionId) {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'error' => 'Sign in as an admin to change an article already on file.']);
+            exit;
+        }
+        $status = 'submitted';
+    } elseif (!in_array($status, ['draft', 'submitted', 'approved', 'published', 'rejected', 'deleted', 'promotional'], true)) {
+        $status = 'submitted';
+    }
     
     // Validate required fields
     if (empty($articleTitle)) {

@@ -229,10 +229,14 @@ function kop_enrich_news_ids(PDO $pdo, $limit, array $ids = array()) {
 }
 
 function kop_enrich_post_json($url, array $body, $timeout) {
+    // The save endpoints take edits by id only from an admin or the site itself (api/lib-internal-token.php).
+    require_once __DIR__ . '/lib-internal-token.php';
+    $headers = array('Content-Type' => 'application/json');
+    if (($token = kop_internal_token('news-save')) !== '') $headers['X-KOP-Internal'] = $token;
     $res = wp_remote_post($url, array(
         'timeout' => $timeout,
         'user-agent' => 'kids-over-profits-enrich/1.0 (+https://kidsoverprofits.org)',
-        'headers' => array('Content-Type' => 'application/json'),
+        'headers' => $headers,
         'body'    => wp_json_encode($body),
     ));
     if (is_wp_error($res)) {
