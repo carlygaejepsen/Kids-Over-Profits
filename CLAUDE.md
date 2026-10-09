@@ -110,6 +110,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes.php
 # the company row deleted (saved whole in {prefix}kop_program_conversions), /operator/<slug>/ 301s to the program; exact Undo on the Converted tab
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes-convert.php [--list]   # converts every suggestion and undoes it on a temp copy
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
+# A program with homes under it (Program Homes) is one card there, linked as a unit ("Same program"; "Only <home>" for a row one home
+# suggested); rows a home already shows are not offered; "Link an entry by hand" links any row to any record
 php scripts/test-inspection-links.php --file=<scraper --out json> [--state=PA]   # prints the suggestions, checks a linked row reaches the page
 # Inspection rankings (KOP Tools > Inspection Rankings, inc/inspection-rollup.php): worst companies, facilities and states by
 # approved serious findings (deaths, staff assaults, ...) and the states' own verdicts (citations, high-risk, repeat,

@@ -16,6 +16,10 @@
  * every same-town pair of a state at once. "Not this one" can be taken back
  * from its own tab (kop_inspection_links_save()'s 'unreject').
  *
+ * A program with homes under it (inc/program-homes.php) comes as one
+ * record: "Same program" links the entry to the program as a unit; an entry
+ * first suggested for one of its homes can go to that home instead.
+ *
  * Keys: "<facility id>-<inspection row id>", on every tab.
  */
 
@@ -70,7 +74,8 @@ function kop_rinbox_ilinks_all($fresh = false) {
                     'key'       => $key,
                     'state'     => $state,
                     'record'    => array('id' => (int) $rec['id'], 'name' => (string) $rec['name'], 'names' => array_values((array) $rec['names']),
-                        'city' => (string) $rec['city'], 'status' => (string) $rec['status']),
+                        'city' => (string) $rec['city'], 'status' => (string) $rec['status'], 'homes' => array_values((array) ($rec['homes'] ?? array()))),
+                    'home'      => $c['home'] ?? null,
                     'row'       => array('id' => (int) $row['id'], 'facility_name' => (string) $row['facility_name'],
                         'full_address' => (string) $row['full_address'], 'program_name' => (string) ($row['program_name'] ?? ''), 'reports' => (int) $row['reports']),
                     'same_town' => (bool) $c['same_town'],
@@ -91,6 +96,9 @@ function kop_rinbox_ilinks_pairs() {
         $rid = $p['row']['id'];
         if (in_array($rid, array_map('intval', (array) ($stored['links'][$fid] ?? array())), true)) continue;
         if (in_array($rid, array_map('intval', (array) ($stored['rejected'][$fid] ?? array())), true)) continue;
+        // Given to the home it was suggested for.
+        $hid = (int) ($p['home']['id'] ?? 0);
+        if ($hid && in_array($rid, array_map('intval', (array) ($stored['links'][$hid] ?? array())), true)) continue;
         $out[$key] = $p;
     }
     uasort($out, function ($a, $b) {
@@ -152,7 +160,8 @@ function kop_rinbox_ilinks_decided($which) {
         $out[$fid . '-' . $rid] = array(
             'key'       => $fid . '-' . $rid,
             'state'     => (string) $rows[$rid]['state'],
-            'record'    => array('id' => $fid, 'name' => (string) $rec['name'], 'names' => array(), 'city' => (string) $rec['city'], 'status' => (string) $rec['status']),
+            'record'    => array('id' => $fid, 'name' => (string) $rec['name'], 'names' => array(), 'city' => (string) $rec['city'], 'status' => (string) $rec['status'],
+                'homes' => kop_rinbox_ilinks_homes($fid)),
             'row'       => array('id' => $rid, 'facility_name' => (string) $rows[$rid]['facility_name'], 'full_address' => (string) $rows[$rid]['full_address'],
                 'program_name' => (string) $rows[$rid]['program_name'], 'reports' => null),
             'same_town' => false,
@@ -161,6 +170,16 @@ function kop_rinbox_ilinks_decided($which) {
         );
     }
     uasort($out, function ($a, $b) { return strcmp($a['state'], $b['state']) ?: strcasecmp($a['record']['name'], $b['record']['name']); });
+    return $out;
+}
+
+/** [{id, name}] of a program record's homes (empty when it is not a program). */
+function kop_rinbox_ilinks_homes($fid) {
+    if (!function_exists('kop_program_homes_homes_of') || !function_exists('kop_program_homes_home_rows')) return array();
+    $ids = kop_program_homes_homes_of($fid);
+    if (!$ids) return array();
+    $out = array();
+    foreach (kop_program_homes_home_rows($ids) as $h) $out[] = array('id' => (int) $h['id'], 'name' => (string) $h['name']);
     return $out;
 }
 
@@ -197,6 +216,9 @@ function kop_rinbox_ilinks_item(array $p) {
     $linked = !empty($p['linked']);
     $rejected = !empty($p['rejected']);
     $others = array_values(array_diff($rec['names'], array($rec['name'])));
+    $homes = (array) ($rec['homes'] ?? array());
+    $home = $p['home'] ?? null;
+    if ($homes) $others[] = 'Program with ' . count($homes) . ' home' . (count($homes) === 1 ? '' : 's') . ': ' . implode(', ', array_column($homes, 'name'));
     $program = $row['program_name'] !== '' && $row['program_name'] !== $row['facility_name'] ? $row['program_name'] : '';
     $compare = kop_rinbox_compare_rows(
         array('Facility record (#' . $rec['id'] . ')', 'State licensing entry (' . $p['state'] . ' #' . $row['id'] . ')'),
@@ -228,14 +250,21 @@ function kop_rinbox_ilinks_item(array $p) {
         $text = 'Marked not the same place, so it is not suggested.';
     } else {
         $actions = array(
-            array('id' => 'link', 'label' => 'Approve: same facility', 'style' => 'approve',
-                'help' => 'The facility page of ' . $rec['name'] . ' shows the ' . $p['state'] . ' inspection reports filed under ' . $row['facility_name'] . '.'),
-            array('id' => 'reject', 'label' => 'Reject: not this one', 'style' => 'reject',
-                'help' => 'Nothing on the site changes; this pair is not suggested again.'),
+            array('id' => 'link', 'label' => $homes ? 'Approve: same program' : 'Approve: same facility', 'style' => 'approve',
+                'help' => $homes
+                    ? 'The program page of ' . $rec['name'] . ' shows the ' . $p['state'] . ' inspection reports filed under ' . $row['facility_name'] . ' as the program\'s own, beside its homes\' reports.'
+                    : 'The facility page of ' . $rec['name'] . ' shows the ' . $p['state'] . ' inspection reports filed under ' . $row['facility_name'] . '.'),
         );
-        $text = $p['same_town']
-            ? 'The licensing entry is in the record\'s town, so this one starts ticked. Leave a pair for later by doing nothing.'
-            : 'Every distinguishing word of the record\'s name is in the entry\'s name, but the town does not match (or is not known). Leave a pair for later by doing nothing.';
+        if ($home) {
+            $actions[] = array('id' => 'link_home', 'label' => 'Approve: only ' . $home['name'], 'style' => 'approve',
+                'help' => 'The page of the home ' . $home['name'] . ' shows these reports; the program page shows them with its homes\' reports.');
+        }
+        $actions[] = array('id' => 'reject', 'label' => 'Reject: not this one', 'style' => 'reject',
+            'help' => 'Nothing on the site changes; this pair is not suggested again.');
+        $text = ($homes ? 'A program with homes under it, taken as one unit' . ($home ? ' (suggested from its home ' . $home['name'] . ')' : '') . '. ' : '')
+            . ($p['same_town']
+                ? 'The licensing entry is in ' . ($homes ? 'the town of the program or one of its homes' : 'the record\'s town') . ', so this one starts ticked. Leave a pair for later by doing nothing.'
+                : 'Every distinguishing word of the ' . ($homes ? 'program\'s or a home\'s' : 'record\'s') . ' name is in the entry\'s name, but the town does not match (or is not known). Leave a pair for later by doing nothing.');
     }
     return array(
         'key'          => $p['key'],
@@ -258,6 +287,13 @@ function kop_rinbox_ilinks_act($key, $action, array $params) {
         case 'link':
             kop_inspection_links_save(array('decide' => array($key => 'link')));
             return array('message' => 'Linked. The facility\'s page shows that entry\'s inspection reports now. Remove is on the Linked tab.');
+        case 'link_home':
+            $p = kop_rinbox_ilinks_pairs()[$key] ?? null;
+            $hid = (int) ($p['home']['id'] ?? 0);
+            if (!$hid) throw new RuntimeException('That entry was not suggested for one of the program\'s homes.');
+            kop_inspection_links_save(array('decide' => array($key => 'home:' . $hid)));
+            delete_transient('kop_rinbox_inspection_links');
+            return array('message' => 'Linked to ' . $p['home']['name'] . '. Its page and the program\'s page show that entry\'s reports now. Remove is on the Linked tab.');
         case 'reject':
             kop_inspection_links_save(array('decide' => array($key => 'reject')));
             return array('message' => 'Marked not the same. This pair will not be suggested again; "Suggest it again" is on the Not this one tab.');

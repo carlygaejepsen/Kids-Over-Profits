@@ -4,16 +4,22 @@
  * (inc/review-inbox/inspection-links.php over inc/inspection-links.php):
  * the suggestions of every state in one list, "Same facility" stores the
  * link and moves the pair to Linked, Remove puts it back in the
- * suggestions, "Not this one" keeps it out.
+ * suggestions, "Not this one" keeps it out. A program with homes under it
+ * is one record ("Same program"), its homes get no card of their own, and
+ * an entry can be linked to a program by hand.
  */
 
 require_once __DIR__ . '/_shared.php';
 require_once dirname(__DIR__, 2) . '/inc/inspection-links.php';
+require_once dirname(__DIR__, 2) . '/inc/program-homes.php';
 
 if (kop_rinbox_test_wants('inspection-links')) {
     // inspection_reports is too big to copy; the suggestions only count rows in it.
     $GLOBALS['pdo']->exec('CREATE TABLE IF NOT EXISTS inspection_reports (id INTEGER PRIMARY KEY, facility_id INTEGER, report_id TEXT, report_date TEXT, report_url TEXT,
         raw_content TEXT, content_length INTEGER, is_structured INTEGER, summary TEXT, categories_json TEXT, created_at TEXT, updated_at TEXT, featured INTEGER, featured_note TEXT)');
+    // Programs and their homes, so a program comes as one card.
+    kop_rinbox_test_copy_tables(array('wpdl_kop_program_homes', 'wpdl_kop_program_groups'));
+    $GLOBALS['kop_test_options']['kop_program_homes_db'] = KOP_PROGRAM_HOMES_DB_VERSION;
 }
 
 function kop_rinbox_test_inspection_links(array $src, array $item, callable $check) {
@@ -74,6 +80,46 @@ function kop_rinbox_test_inspection_links(array $src, array $item, callable $che
     sort($want);
     sort($linked);
     $check('inspection-links: "link every same-town pair" links exactly those of the state', $linked === $want, count($want) . ' pairs; ' . $res['message']);
+
+    // Programs with homes: one card, linked as a unit.
+    $map = kop_program_homes_map(true);
+    $pairs = kop_rinbox_ilinks_pairs();
+    $program_pairs = array_filter($pairs, function ($p) { return !empty($p['record']['homes']); });
+    $home_ids = array();
+    foreach ($program_pairs as $p) foreach ($p['record']['homes'] as $h) $home_ids[$h['id']] = $p['record']['id'];
+    $own_cards = array_filter($pairs, function ($p) use ($home_ids) { return isset($home_ids[$p['record']['id']]); });
+    $check('inspection-links: programs with homes come as one card', count($program_pairs) > 0, count($program_pairs) . ' program pairs');
+    $check('inspection-links: their homes have no cards of their own', !$own_cards, count($own_cards) . ' home pairs');
+    if ($program_pairs) {
+        $pk = array_keys($program_pairs)[0];
+        $pp = $program_pairs[$pk];
+        $item = kop_rinbox_get_item('inspection-links', $pk);
+        $check('inspection-links: a program card says "same program"', $item['actions'][0]['label'] === 'Approve: same program', $pp['record']['name']);
+        $res = call_user_func($src['act'], $pk, 'link', array());
+        $check('inspection-links: same program links the entry to the program record', in_array($pp['row']['id'], kop_inspection_links_for($pp['record']['id']), true), $res['message']);
+        call_user_func($src['act'], $pk, 'unlink', array());
+        // Any row already shown by a home is never offered to the program.
+        $reached = array();
+        foreach ($program_pairs as $p) foreach ($p['record']['homes'] as $h) foreach (kop_inspection_links_for($h['id']) as $rid) $reached[] = $p['record']['id'] . '-' . $rid;
+        $check('inspection-links: a home\'s linked entries are not offered to its program', !array_intersect($reached, array_keys($program_pairs)));
+    }
+    $from_home = array_filter($pairs, function ($p) { return !empty($p['home']); });
+    if ($from_home) {
+        $hk = array_keys($from_home)[0];
+        $hp = $from_home[$hk];
+        $res = call_user_func($src['act'], $hk, 'link_home', array());
+        $check('inspection-links: "only <home>" links the entry to that home', in_array($hp['row']['id'], kop_inspection_links_for($hp['home']['id']), true)
+            && !in_array($hp['row']['id'], kop_inspection_links_for($hp['record']['id']), true) && !isset(kop_rinbox_ilinks_pairs()[$hk]), $res['message']);
+        kop_inspection_links_save(array('unlink' => array($hp['home']['id'] . '-' . $hp['row']['id'])));
+    } else {
+        kop_rinbox_test_skip('inspection-links: "only <home>"', 'no entry suggested from a home in the mirror');
+    }
+    // By hand: a program and any entry, given as the picker's "Name, address #id".
+    $pid = (int) array_keys($map['programs'])[0];
+    $n = kop_inspection_links_save(array('manual_record' => (string) $pid, 'manual_row' => 'Anything, Somewhere #' . $rid));
+    $check('inspection-links: an entry linked to a program by hand', $n === 1 && in_array($rid, kop_inspection_links_for($pid), true));
+    kop_inspection_links_save(array('unlink' => array($pid . '-' . $rid)));
+
     if ($saved === null) unset($GLOBALS['kop_test_options'][KOP_INSPECTION_LINKS_OPTION]);
     else $GLOBALS['kop_test_options'][KOP_INSPECTION_LINKS_OPTION] = $saved;
 }
