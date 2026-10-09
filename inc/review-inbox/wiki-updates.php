@@ -131,13 +131,13 @@ function kop_rinbox_wupd_item(array $r) {
             $fields[] = array('name' => '_tense', 'label' => 'Put the lines below in the past tense (the program has closed or changed its name)', 'type' => 'checkbox', 'value' => $on ? '1' : '');
             if ($on) {
                 $compare = array('heads' => array('The entry says', 'In the past tense'), 'rows' => array());
-                foreach ($tense as $p) $compare['rows'][] = array('label' => '', 'values' => array($p['old'], $p['new']));
+                foreach ($tense as $p) $compare['rows'][] = array('label' => '', 'values' => array($p['old'], kop_wiki_drafts_format_line($p['new'])));
             } else {
                 $details[] = array('label' => 'Past tense', 'value' => 'Left out: the entry keeps its present tense.');
             }
         }
         foreach ((array) ($d['fixes'] ?? array()) as $f) {
-            $details[] = array('label' => 'Corrects a line', 'value' => $f['new'] . (($f['note'] ?? '') !== '' ? ' (' . $f['note'] . ')' : ''));
+            $details[] = array('label' => 'Corrects a line', 'value' => kop_wiki_drafts_format_line($f['new']) . (($f['note'] ?? '') !== '' ? ' (' . $f['note'] . ')' : ''));
         }
         foreach ((array) ($d['conflicts'] ?? array()) as $c) {
             $details[] = array('label' => 'KOP\'s record says otherwise', 'value' => $c['text'] . ($c['source_label'] !== '' ? ' (' . $c['source_label'] . ')' : ''),

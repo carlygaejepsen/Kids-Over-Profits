@@ -137,22 +137,25 @@ function kop_wiki_drafts_reddit_format($md) {
     $lines = kop_wiki_drafts_lines($md);
     $lines = array_slice($lines, 0, kop_wiki_drafts_footer($lines));
     while ($lines && (trim(end($lines)) === '' || preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', end($lines)))) array_pop($lines);
-    foreach ($lines as $n => $line) {
-        $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', $line);
-        $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
-        if ($n === 0) $line = preg_replace('/\*\*\(/', '** (', $line, 1);
-        $line = preg_replace_callback('#(?<![/\w])https?://(?:www\.)?heal-online\.org(?::\d+)?(?:/[^\s)\]]*)?#i', function ($m) {
-            $map = kop_wiki_drafts_heal_archive();
-            return $map[kop_wiki_drafts_heal_key($m[0])] ?? $m[0];
-        }, $line);
-        $line = kop_wiki_drafts_bold_spacing($line);
-        // No space before . , ) ] that ends a word ("[Name](url) , which"), nor before ; : ! ? after a link, no empty
-        // date ("(FOX 13 News, )"). Same as scripts/wiki-drafts.py punct_spacing() and normalizePunctSpacing() (js/wiki-generation.js).
-        $line = preg_replace('/(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))/u', '', $line);
-        $line = preg_replace('/(?<=\)) +(?=[;:!?](?:\s|$))/u', '', $line);
-        $lines[$n] = str_replace(',)', ')', $line);
-    }
+    foreach ($lines as $n => $line) $lines[$n] = kop_wiki_drafts_format_line($line, $n === 0);
     return implode("\n", $lines) . "\n";
+}
+
+/** One line as kop_wiki_drafts_reddit_format() writes it ($first = the header line); the review card shows corrected lines this way too. */
+function kop_wiki_drafts_format_line($line, $first = false) {
+    $line = preg_replace('/^\*\*\*(?=\S)/u', '* **', (string) $line);
+    $line = preg_replace('/(^|[\s(\[])\*\* +(?=\S)/u', '$1**', $line);
+    if ($first) $line = preg_replace('/\*\*\(/', '** (', $line, 1);
+    $line = preg_replace_callback('#(?<![/\w])https?://(?:www\.)?heal-online\.org(?::\d+)?(?:/[^\s)\]]*)?#i', function ($m) {
+        $map = kop_wiki_drafts_heal_archive();
+        return $map[kop_wiki_drafts_heal_key($m[0])] ?? $m[0];
+    }, $line);
+    $line = kop_wiki_drafts_bold_spacing($line);
+    // No space before . , ) ] that ends a word ("[Name](url) , which"), nor before ; : ! ? after a link, no empty
+    // date ("(FOX 13 News, )"). Same as scripts/wiki-drafts.py punct_spacing() and normalizePunctSpacing() (js/wiki-generation.js).
+    $line = preg_replace('/(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))/u', '', $line);
+    $line = preg_replace('/(?<=\)) +(?=[;:!?](?:\s|$))/u', '', $line);
+    return str_replace(',)', ')', $line);
 }
 
 /**
@@ -539,7 +542,7 @@ function kop_wiki_drafts_refresh_approved(PDO $pdo) {
     return $out;
 }
 
-define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '1');   // 1: editorial voice cut from 23 entries (2026-10-09)
+define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '2');   // 1: editorial voice cut from 23 entries; 2: copy-edit + Ballard Sheppard's tense (2026-10-09)
 
 add_action('init', function () {
     if (get_option('kop_wiki_drafts_refresh_version') === KOP_WIKI_DRAFTS_REFRESH_VERSION || get_transient('kop_wiki_drafts_refresh_running')) return;
