@@ -1115,6 +1115,2370 @@
       "near": "Lakeside Academy of Kansas",
       "status": "open",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "20 Peaks Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mountain Meadow Youth Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "A World of Opportunity, LLC",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Adrienne’s House",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Abundant Life and Adolescent Growth",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Adolescent Growth",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Academy of the Sierras",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wellspring Academy of the Carolinas",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 2007",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wellspring Academies",
+      "kind": "facility",
+      "network": "Aspen",
+      "near": "Aspen Education Group",
+      "dates": "2004-2014",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Alabama Sheriff’s Ranches",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Boys & Girls Ranches of AL",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Alaska Baptist Family Services",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Birchwood",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Andrew Drumm Institute",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Drumm Farm Center for Children",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Youth Villages – Inner Harbour Campus",
+      "kind": "facility",
+      "network": "Eckerd",
+      "near": "Anneewakee School",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Anneewakee Treatment Center for Emotionally Disturbed Youth",
+      "kind": "facility",
+      "network": "Eckerd",
+      "near": "Anneewakee School",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Arizona Ranch School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Chazen Institute",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Ascend Behavioral Health",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mingus Mountain Estate Residential Center, Inc.",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Aspen Youth Alternatives of South Carolina",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp Aspen",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Avon Park Youth Academy",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Highlands Youth Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bartow Youth Training Center",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Polk Halfway House",
+      "dates": "from 1995",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "AMIKids Polk Inc",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Polk Halfway House",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Beaufort Marine Institute",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "AMIkids Beaufort",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Becket Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Becket House at Belgrade",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Behavior Research Institute of California",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Tobinworld",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "1977-2019",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bell County Juvenile Facility/ Bell County Youth Training Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 1999",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bell County Juvenile Services",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bellewood & Brooklawn",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Uspiritus Bellewood Louisville Residential",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Uspiritus Brooklawn Residential",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bellewood Presbyterian Home for Children",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Berea Children’s Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Ohio GuideStone",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Blue Creek Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Joshua Scott Boarding School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Blue Ridge Industrial School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Blue Ridge School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Boys Farm",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Presbyterian Hospitality House – Chena Hot Springs Rd Farm",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Bremwood Children’s Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "LSI Bremwood",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Brookside School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Hillcrest Educational Foundation Brookside ITU",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp Consequence",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Parent Help Center Summer Success Camp",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp Dorothy Kirby",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Dorothy Kirby Center SYTF",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp E-How-Kee",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "Youth Opportunity Investments",
+      "dates": "from 1968",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Youth Challenge Program",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "Youth Opportunity Investments",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp E-Ku-Sumee",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Connects Boys Residential Academy at Candor",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp E-Ma-Etu",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Connects Boys Residential Academy at Boomer",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp E-Ten-Etu",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Connects Girls Residential Academy at Kerr Lake",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp Sand Hills",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "AMIkids Sand Hills",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camp White Pines",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "AMIkids White Pines",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Caribe Vista School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Caribbean Mountain Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Casa Oakview",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Sunol Hills at Oakview",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Center for Discovery",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Discovery Mood & Anxiety Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Center of Progressive Strides",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Glenside Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Chad Youth Enhancement Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Oak Plains Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cherry Gulch Boys Ranch",
+      "kind": "facility",
+      "network": "HOPE Group",
+      "near": "Cherry Gulch",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Children’s Ark",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Axios Youth Community",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Choteau Ranch For Boys",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Choteau Youth Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cornell Interventions",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Abraxas Alliance Woodridge Interventions",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Coronado Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "New Summit Academy Costa Rica",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Big Sky Academy",
+      "kind": "facility",
+      "network": "Asst. (north)",
+      "near": "Cramer Creek School",
+      "dates": "until 2010",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cumberland Hospital",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cumberland Hospital for Children and Adolescents",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Custer Youth Corrections Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Youth Challenge Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cuyahoga Boys School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cuyahoga Hills JCF",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Doctor Franklin Perkins School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "RFK Alliance",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eagles Rest Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Havenwood Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Academy at Brooksville",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "Youth Opportunity Investments",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Brooksville Youth Academy",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "Youth Opportunity Investments",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eckerd Youth Development Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 1982",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Okeechobee Youth Development Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Elk Ridge Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Madsen Alternatives",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Escuela Caribe",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "F.L. Chamberlain School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Chamberlain International School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Galena Ridge Wilderness Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Gerard Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Nexus-Gerard Family Healing",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Girls Transition Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "University of Utah Neuropsychiatric Institute – Youth Residential Treatment",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Clock Tower Schools",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Glen Mills School",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Philadelphia House of Refuge",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Glen Mills School",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Newport Academy – Port Townsend",
+      "kind": "facility",
+      "network": "Aspen",
+      "near": "Gray Wolf Ranch",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Great Circle",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "KVC Missouri",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Harbor Oaks Boarding School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wolf Creek Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Hazel House RTC",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Honey Lake Clinic",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Highland Girls Academy",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Kansas City Girls Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Imani House",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Janus Youth Programs – Atlas",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Inner Harbour for Children and Families",
+      "kind": "facility",
+      "network": "Eckerd",
+      "near": "Anneewakee School",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Integrity House of Cedar City, UT",
+      "kind": "facility",
+      "aliases": [
+        "Integrity House of Cedar City, UT"
+      ],
+      "network": "HOPE Group",
+      "near": "Academy of Eastern Arizona",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Integrity House RTC",
+      "kind": "facility",
+      "network": "HOPE Group",
+      "near": "Havenwood Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Intermountain Children's Home and Services",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Intermountain Deaconess Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Iowa Institution for Feeble-Minded Children",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Glenwood Resource Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Iowa Soldiers’ Orphans’ Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wittenmyer Youth Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Jay McCaffery School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Desert Hills Center for Youth and Families",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "1973-1999",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Jefferson Hills",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Jefferson Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Jubilee Youth Ranch Christian School and Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Master’s Ranch West",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Julian Youth Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "River View Christian Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Juneau Youth Services Lighthouse Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "SEARHC Raven’s Way Lighthouse Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "State Industrial School for Girls",
+      "kind": "facility",
+      "network": "YSI",
+      "near": "Kansas Industrial School for GIrls",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Kids Helping Kids of Cincinnati",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pathway Family Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "2006-2008",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Straight – Yorba Linda",
+      "kind": "facility",
+      "network": "Synanon",
+      "near": "KIDS of Southern California",
+      "dates": "1989-1990",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "King County Juvenile Detention Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Judge Patricia H. Clark Children and Family Justice Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Kiwanis Vocational Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Coffee Creek Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "KVC Hospitals",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Camber Children’s Residential Mental Health Treatment",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Leake & Watts RTC",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Rising Ground RTC",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Liberty Canyon Boys Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Summit Youth Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 1982",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Little Keswick School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Keswick School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Lonaconing Forestry Camp for Boys",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Savage Mountain Youth Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Luv-N-Arms",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Laurelwood Group Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Lyman Ward Military Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Southern Preparatory Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Silver Springs Youth Academy",
+      "kind": "facility",
+      "aliases": [
+        "Silver Springs Youth Academy"
+      ],
+      "network": "Vivant",
+      "near": "Marion Youth Academy",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mohican Juvenile Correctional Facility",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mohican Young Star Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Monarch Center for Family Healing",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Trailhead Wilderness School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mount Carmel Youth Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Triangle Cross Boys Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 1992",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Muskegon River Pathway of Hope",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pathway Youth Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "New Beginnings Residential School",
+      "kind": "facility",
+      "network": "Rite of Passage",
+      "near": "Pathway of Madison County",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "New Hampshire Youth Development Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "John H. Sununu Youth Services Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "New Hope Home II",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Healthy Choices",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "New Morgan Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Abraxas Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Northeastern Nevada Juvenile Detention Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Elko County Juvenile Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Northstar Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Mountain House Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Oak Ridge Treatment Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Necco Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "OH Close School for Boys",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "OH Close Youth Correctional Facilitiy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pinellas Marine Institute",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "AMIkids Pinellas",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pines RTC: Kempsville Campus",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Kempsville Center for Behavioral Health Adolescent Residential Treatment Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pratt Ranch Boys Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Prayer Mountain Boys Academy",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Teen Challenge",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Pine Mountain Boys Academy",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Teen Challenge",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Preston School of Industry",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Preston Youth Correctional Facility",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Realistic Change by Choice Winchester",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Miracle Houses Winchester I",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Reality Trek Wilderness Program",
+      "kind": "facility",
+      "network": "Asst. (north)",
+      "near": "Distant Drums Beginnings",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Remuda Ranch",
+      "kind": "facility",
+      "network": "WWASPS",
+      "near": "The Meadows Ranch",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Reno Adolescent Boys Teen Challenge",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Teen Challenge",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Eagle Springs Teen Boys Center",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Teen Challenge",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Rivendell of Montana, Children's Comprehensive Services, Kids Behavioral Health of Montana",
+      "kind": "facility",
+      "network": "Embark",
+      "near": "Acadia Healthcare",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Acadia Montana",
+      "kind": "facility",
+      "network": "Embark",
+      "near": "Acadia Healthcare",
+      "dates": "2006-2019",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Riverbend",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Beacon Medical Group Behavioral Health",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Rock Creek Center",
+      "kind": "facility",
+      "network": "Embark",
+      "near": "Timberline Knolls RTC",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Salem Orphanage",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Salem4youth",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Samaya RTC",
+      "kind": "facility",
+      "network": "FHW",
+      "near": "Solstice West",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Second Chance Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "King Family Ministries",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Second Nature Wilderness Program",
+      "kind": "facility",
+      "network": "Aspiro",
+      "near": "Second Nature Uintas",
+      "dates": "from 1998",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Brighter Transition Youth Treatment Center/Falls Academy",
+      "kind": "facility",
+      "near": "Sequel Transition Academy",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Shamrock Acres",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Shamrock Educational Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Shelby Training Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Shelby County Youth Justice and Educational Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Ridge New Hampshire",
+      "kind": "facility",
+      "network": "Altior",
+      "near": "Shortridge Academy",
+      "dates": "from 2023",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Shuman Juvenile Detention Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Highland Detention at Shuman Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Silverado Academy",
+      "kind": "facility",
+      "network": "Eckerd",
+      "near": "Silverado Boys Ranch",
+      "dates": "from 2006",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "South Dakota State Training School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Aurora Plains Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "South Mountain Secure Treatment Unit",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Abraxas Youth Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Southern Nevada Child and Adolescent Oasis On Campus Treatment Homes",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Nevada PRTF Services for Children – Oasis",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Sovereign Health Group",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Adeona Healthcare",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "from 2014",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Spring Creek Community School",
+      "kind": "facility",
+      "network": "WWASPS",
+      "near": "Spring Creek Lodge Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "St. Joseph’s Villa",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Villa of Hope",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Straight – Midwest, Inc.",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Substance Abuse – Family Education",
+      "kind": "facility",
+      "network": "Synanon",
+      "near": "Straight Inc Orlando",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Tallulah Youth Prison",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Christian Acres Youth Center Inc.",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Teen Challenge Vero Beach",
+      "kind": "facility",
+      "network": "Teen Challenge",
+      "near": "Anderson Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Scotts Valley School",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown School at the Oaks",
+      "kind": "facility",
+      "aliases": [
+        "The Brown Schools at the Oaks"
+      ],
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Austin Oaks Hospital",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown Schools at Cedar Springs",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "dates": "from 1923",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Cedar Springs Hospital",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown Schools at Laurel Ridge",
+      "kind": "facility",
+      "network": "Brown Schools/CEDU",
+      "near": "The Brown Schools",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Laurel Ridge Treatment Center RTC",
+      "kind": "facility",
+      "aliases": [
+        "Laurel Ridge Treatment Center"
+      ],
+      "network": "Brown Schools/CEDU",
+      "near": "The Brown Schools",
+      "dates": "from 1987",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown Schools at San Marcos",
+      "kind": "facility",
+      "network": "Brown Schools/CEDU",
+      "near": "San Marcos Treatment Center",
+      "dates": "from 1940",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown Schools Rehabilitation Center",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Ranch",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Brown Schools Seguin Community Living Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Seguin Assisted Living",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Jones School & Home for Friendless Children",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Applewood Centers Residential Treatment Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Open Residential Firesetting and Sexual Behavior Treatment Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Abraxas Specialized Treatment Program",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Texas NeuroRehab Center",
+      "kind": "facility",
+      "network": "UHS",
+      "near": "Universal Health Services",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs New Beginnings",
+      "kind": "facility",
+      "network": "Rite of Passage",
+      "near": "Pathway of Madison County",
+      "dates": "from 1996",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs of Courtland",
+      "kind": "facility",
+      "network": "Rite of Passage",
+      "near": "Brighter Path Courtland",
+      "dates": "from 1990",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs of Marion",
+      "kind": "facility",
+      "network": "Vivant",
+      "near": "Marion Youth Academy",
+      "dates": "from 2007",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Sequel TSI of North Carolina",
+      "kind": "facility",
+      "near": "Sequel TSI North Carolina",
+      "dates": "2009-2010",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs of Osceola",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "Kissimmee Youth Academy",
+      "dates": "from 2002",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs of St. Johns",
+      "kind": "facility",
+      "network": "YOI",
+      "near": "St Augustine Youth Academy",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Three Springs School of Tuskegee",
+      "kind": "facility",
+      "near": "Sequel TSI Tuskegee",
+      "dates": "from 2001",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "THRIVE Girls Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Thrive Girls Ranch and Home",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "TurnAround Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Turning D Ranch",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wood Creek Academy",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "dates": "2004-2021",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "United Presbyterian Home for Children",
+      "kind": "facility",
+      "network": "Evolve",
+      "near": "Mars Home for Youth",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Ventura School for Girls",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Ventura Youth Correctional Facility",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Victor Cullen Center",
+      "kind": "facility",
+      "near": "Victor Cullen Academy",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "VisionQuest Wagon Train",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "KidsQuest Wagon Train",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wellington Retreat RTC for Children and Adolescents",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Family Center for Recovery Teen Addiction Treatment & Rehab Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wilderness Academy",
+      "kind": "facility",
+      "network": "Aspen",
+      "near": "Aspen Achievement Academy",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Wilderness Conquest",
+      "kind": "facility",
+      "network": "Brown Schools/CEDU",
+      "near": "Wilderness Quest",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "The Hills Youth and Family Services",
+      "kind": "facility",
+      "network": "Evolve",
+      "near": "Woodland Hills RTC",
+      "status": "closed",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Woodland Hills Youth Development Center",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Gateway to Independence",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Woodridge Northeast",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Perimeter Behavioral of West Memphis",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Woodridge of Forrest City",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Perimeter Behavioral of Forrest City",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Woodridge of the Ozarks",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Perimeter of the Ozarks",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Youth Forestry Camp",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "unmarked",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "STAR Academy for Youth",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Youth Homes of Mid-America",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "closed or rebranded",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Ellipsis Ross Campus RTC",
+      "kind": "facility",
+      "network": "Unframed",
+      "near": "Accelerated Christian Education",
+      "status": "open",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
     }
   ],
   "lines": [
@@ -2354,6 +4718,1273 @@
       "relationship": "operates (current)",
       "category": "corporate",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "20 Peaks Ranch",
+      "to": "Mountain Meadow Youth Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "A World of Opportunity, LLC",
+      "to": "Adrienne’s House",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Abundant Life and Adolescent Growth",
+      "to": "Adolescent Growth",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Academy of the Sierras",
+      "to": "Wellspring Academy of the Carolinas",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Academy of the Sierras",
+      "to": "Wellspring Academies",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Alabama Sheriff’s Ranches",
+      "to": "Boys & Girls Ranches of AL",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Alaska Baptist Family Services",
+      "to": "Birchwood",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Andrew Drumm Institute",
+      "to": "Drumm Farm Center for Children",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Anneewakee School",
+      "to": "Youth Villages – Inner Harbour Campus",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Anneewakee Treatment Center for Emotionally Disturbed Youth",
+      "to": "Anneewakee School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Arizona Ranch School",
+      "to": "The Chazen Institute",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Ascend Behavioral Health",
+      "to": "Mingus Mountain Estate Residential Center, Inc.",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Aspen Youth Alternatives of South Carolina",
+      "to": "Camp Aspen",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Avon Park Youth Academy",
+      "to": "Highlands Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bartow Youth Training Center",
+      "to": "AMIKids Polk Inc",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Beaufort Marine Institute",
+      "to": "AMIkids Beaufort",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Becket Academy",
+      "to": "Becket House at Belgrade",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Behavior Research Institute of California",
+      "to": "Tobinworld",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bell County Juvenile Facility/ Bell County Youth Training Center",
+      "to": "Bell County Juvenile Services",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bellewood & Brooklawn",
+      "to": "Uspiritus Bellewood Louisville Residential",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bellewood & Brooklawn",
+      "to": "Uspiritus Brooklawn Residential",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bellewood Presbyterian Home for Children",
+      "to": "Bellewood & Brooklawn",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Berea Children’s Home",
+      "to": "Ohio GuideStone",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Blue Creek Academy",
+      "to": "Joshua Scott Boarding School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Blue Ridge Industrial School",
+      "to": "Blue Ridge School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Boys Farm",
+      "to": "Presbyterian Hospitality House – Chena Hot Springs Rd Farm",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Bremwood Children’s Home",
+      "to": "LSI Bremwood",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Brookside School",
+      "to": "Hillcrest Educational Foundation Brookside ITU",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp Consequence",
+      "to": "The Parent Help Center Summer Success Camp",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp Dorothy Kirby",
+      "to": "Dorothy Kirby Center SYTF",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp E-How-Kee",
+      "to": "Eckerd Youth Challenge Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp E-Ku-Sumee",
+      "to": "Eckerd Connects Boys Residential Academy at Candor",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp E-Ma-Etu",
+      "to": "Eckerd Connects Boys Residential Academy at Boomer",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp E-Ten-Etu",
+      "to": "Eckerd Connects Girls Residential Academy at Kerr Lake",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp Sand Hills",
+      "to": "AMIkids Sand Hills",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Camp White Pines",
+      "to": "AMIkids White Pines",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Caribe Vista School",
+      "to": "Caribbean Mountain Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Casa Oakview",
+      "to": "Sunol Hills at Oakview",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Center for Discovery",
+      "to": "Discovery Mood & Anxiety Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Center of Progressive Strides",
+      "to": "Glenside Home",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Chad Youth Enhancement Center",
+      "to": "Oak Plains Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Cherry Gulch Boys Ranch",
+      "to": "Cherry Gulch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Children’s Ark",
+      "to": "Axios Youth Community",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Choteau Ranch For Boys",
+      "to": "Choteau Youth Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Cornell Interventions",
+      "to": "Abraxas Alliance Woodridge Interventions",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Coronado Academy",
+      "to": "New Summit Academy Costa Rica",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Cramer Creek School",
+      "to": "Big Sky Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Cumberland Hospital",
+      "to": "Cumberland Hospital for Children and Adolescents",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Custer Youth Corrections Center",
+      "to": "Youth Challenge Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Cuyahoga Boys School",
+      "to": "Cuyahoga Hills JCF",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Doctor Franklin Perkins School",
+      "to": "RFK Alliance",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Eagles Rest Ranch",
+      "to": "Havenwood Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Eckerd Academy at Brooksville",
+      "to": "Brooksville Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Eckerd Youth Challenge Program",
+      "to": "Eckerd Academy at Brooksville",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Eckerd Youth Development Center",
+      "to": "Okeechobee Youth Development Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Elk Ridge Home",
+      "to": "Madsen Alternatives",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Escuela Caribe",
+      "to": "Caribe Vista School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "F.L. Chamberlain School",
+      "to": "Chamberlain International School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Galena Ridge Wilderness Program",
+      "to": "20 Peaks Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Gerard Academy",
+      "to": "Nexus-Gerard Family Healing",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Girls Transition Center",
+      "to": "University of Utah Neuropsychiatric Institute – Youth Residential Treatment",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Glen Mills School",
+      "to": "The Clock Tower Schools",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Glen Mills School",
+      "to": "Philadelphia House of Refuge",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Gray Wolf Ranch",
+      "to": "Newport Academy – Port Townsend",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Great Circle",
+      "to": "KVC Missouri",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Harbor Oaks Boarding School",
+      "to": "Wolf Creek Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Hazel House RTC",
+      "to": "Honey Lake Clinic",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Highland Girls Academy",
+      "to": "Kansas City Girls Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Imani House",
+      "to": "Janus Youth Programs – Atlas",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Inner Harbour for Children and Families",
+      "to": "Anneewakee Treatment Center for Emotionally Disturbed Youth",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Integrity House of Cedar City, UT",
+      "to": "Academy of Eastern Arizona",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Integrity House RTC",
+      "to": "Havenwood Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Intermountain Children's Home and Services",
+      "to": "Intermountain Deaconess Home",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Iowa Institution for Feeble-Minded Children",
+      "to": "Glenwood Resource Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Iowa Soldiers’ Orphans’ Home",
+      "to": "Wittenmyer Youth Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Jay McCaffery School",
+      "to": "Desert Hills Center for Youth and Families",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Jefferson Hills",
+      "to": "Jefferson Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Jubilee Youth Ranch Christian School and Academy",
+      "to": "Master’s Ranch West",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Julian Youth Academy",
+      "to": "River View Christian Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Juneau Youth Services Lighthouse Program",
+      "to": "SEARHC Raven’s Way Lighthouse Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Kansas Industrial School for GIrls",
+      "to": "State Industrial School for Girls",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Kids Helping Kids of Cincinnati",
+      "to": "Pathway Family Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "KIDS of Southern California",
+      "to": "Straight – Yorba Linda",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "King County Juvenile Detention Center",
+      "to": "Judge Patricia H. Clark Children and Family Justice Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Kiwanis Vocational Home",
+      "to": "Coffee Creek Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "KVC Hospitals",
+      "to": "Camber Children’s Residential Mental Health Treatment",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Leake & Watts RTC",
+      "to": "Rising Ground RTC",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Liberty Canyon Boys Ranch",
+      "to": "Summit Youth Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Little Keswick School",
+      "to": "Keswick School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Lonaconing Forestry Camp for Boys",
+      "to": "Savage Mountain Youth Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Luv-N-Arms",
+      "to": "Laurelwood Group Home",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Lyman Ward Military Academy",
+      "to": "Southern Preparatory Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Marion Youth Academy",
+      "to": "Silver Springs Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Mohican Juvenile Correctional Facility",
+      "to": "Mohican Young Star Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Monarch Center for Family Healing",
+      "to": "Trailhead Wilderness School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Mount Carmel Youth Ranch",
+      "to": "Triangle Cross Boys Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Muskegon River Pathway of Hope",
+      "to": "Pathway Youth Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "New Beginnings Residential School",
+      "to": "Pathway of Madison County",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "New Hampshire Youth Development Center",
+      "to": "John H. Sununu Youth Services Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "New Hope Home II",
+      "to": "Healthy Choices",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "New Morgan Academy",
+      "to": "Abraxas Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Northeastern Nevada Juvenile Detention Center",
+      "to": "Elko County Juvenile Home",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Northstar Academy",
+      "to": "Mountain House Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Oak Ridge Treatment Center",
+      "to": "Necco Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "OH Close School for Boys",
+      "to": "OH Close Youth Correctional Facilitiy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Philadelphia House of Refuge",
+      "to": "Glen Mills School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Pinellas Marine Institute",
+      "to": "AMIkids Pinellas",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Pines RTC: Kempsville Campus",
+      "to": "Kempsville Center for Behavioral Health Adolescent Residential Treatment Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Polk Halfway House",
+      "to": "AMIKids Polk Inc",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Pratt Ranch Boys Home",
+      "to": "Liberty Canyon Boys Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Prayer Mountain Boys Academy",
+      "to": "Pine Mountain Boys Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Preston School of Industry",
+      "to": "Preston Youth Correctional Facility",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Realistic Change by Choice Winchester",
+      "to": "Miracle Houses Winchester I",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Reality Trek Wilderness Program",
+      "to": "Distant Drums Beginnings",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Remuda Ranch",
+      "to": "The Meadows Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Reno Adolescent Boys Teen Challenge",
+      "to": "Eagle Springs Teen Boys Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Ridge Creek School",
+      "to": "Hidden Lake Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Rivendell of Montana, Children's Comprehensive Services, Kids Behavioral Health of Montana",
+      "to": "Acadia Montana",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Riverbend",
+      "to": "Beacon Medical Group Behavioral Health",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Rock Creek Center",
+      "to": "Timberline Knolls RTC",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Salem Orphanage",
+      "to": "Salem4youth",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Samaya RTC",
+      "to": "Solstice West",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Second Chance Ranch",
+      "to": "King Family Ministries",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Second Nature Cascades",
+      "to": "Evoke Cascades",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Second Nature Entrada",
+      "to": "Evoke Entrada",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Second Nature Uintas",
+      "to": "Second Nature Wilderness Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Sequel Transition Academy",
+      "to": "Brighter Transition Youth Treatment Center/Falls Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Shamrock Acres",
+      "to": "Shamrock Educational Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Shelby Training Center",
+      "to": "Shelby County Youth Justice and Educational Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Shortridge Academy",
+      "to": "The Ridge New Hampshire",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Shuman Juvenile Detention Center",
+      "to": "Highland Detention at Shuman Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Silverado Boys Ranch",
+      "to": "Silverado Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Solstice RTC",
+      "to": "Samaya RTC",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "South Dakota State Training School",
+      "to": "Aurora Plains Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "South Mountain Secure Treatment Unit",
+      "to": "Abraxas Youth Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Southern Nevada Child and Adolescent Oasis On Campus Treatment Homes",
+      "to": "Nevada PRTF Services for Children – Oasis",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Sovereign Health Group",
+      "to": "Adeona Healthcare",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Spring Creek Community School",
+      "to": "Spring Creek Lodge Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "St. Joseph’s Villa",
+      "to": "Villa of Hope",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "State Industrial School for Girls",
+      "to": "Youth Center at Beloit",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Straight – Midwest, Inc.",
+      "to": "Kids Helping Kids of Cincinnati",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Straight Inc Orlando",
+      "to": "Substance Abuse – Family Education",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Tallulah Youth Prison",
+      "to": "Christian Acres Youth Center Inc.",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Teen Challenge Vero Beach",
+      "to": "Anderson Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Academy",
+      "to": "Scotts Valley School",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown School at the Oaks",
+      "to": "Austin Oaks Hospital",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown Schools at Cedar Springs",
+      "to": "Cedar Springs Hospital",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown Schools at Laurel Ridge",
+      "to": "Laurel Ridge Treatment Center RTC",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown Schools at San Marcos",
+      "to": "San Marcos Treatment Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown Schools Rehabilitation Center",
+      "to": "The Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Brown Schools Seguin Community Living Center",
+      "to": "Seguin Assisted Living",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Jones School & Home for Friendless Children",
+      "to": "Applewood Centers Residential Treatment Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Open Residential Firesetting and Sexual Behavior Treatment Program",
+      "to": "Abraxas Specialized Treatment Program",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "The Ranch",
+      "to": "Texas NeuroRehab Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs New Beginnings",
+      "to": "Pathway of Madison County",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs of Courtland",
+      "to": "Brighter Path Courtland",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs of Marion",
+      "to": "Marion Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs of Marion",
+      "to": "Silver Springs Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Sequel TSI North Carolina",
+      "to": "Sequel TSI of North Carolina",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs of Osceola",
+      "to": "Kissimmee Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs of St. Johns",
+      "to": "St Augustine Youth Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Three Springs School of Tuskegee",
+      "to": "Sequel TSI Tuskegee",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "THRIVE Girls Academy",
+      "to": "Thrive Girls Ranch and Home",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "TurnAround Ranch",
+      "to": "Turning D Ranch",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Turning D Ranch",
+      "to": "Wood Creek Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "United Presbyterian Home for Children",
+      "to": "Mars Home for Youth",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Ventura School for Girls",
+      "to": "Ventura Youth Correctional Facility",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Victor Cullen Academy",
+      "to": "Victor Cullen Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "VisionQuest Wagon Train",
+      "to": "KidsQuest Wagon Train",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Wellington Retreat RTC for Children and Adolescents",
+      "to": "Family Center for Recovery Teen Addiction Treatment & Rehab Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Westwood Program",
+      "to": "Meridell Achievement Center",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Wilderness Academy",
+      "to": "Aspen Achievement Academy",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Wilderness Conquest",
+      "to": "Wilderness Quest",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Woodland Hills RTC",
+      "to": "The Hills Youth and Family Services",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Woodland Hills Youth Development Center",
+      "to": "Gateway to Independence",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Woodridge Northeast",
+      "to": "Perimeter Behavioral of West Memphis",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Woodridge of Forrest City",
+      "to": "Perimeter Behavioral of Forrest City",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Woodridge of the Ozarks",
+      "to": "Perimeter of the Ozarks",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Youth Challenge Center",
+      "to": "Youth Forestry Camp",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Youth Forestry Camp",
+      "to": "STAR Academy for Youth",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Youth Homes of Mid-America",
+      "to": "Ellipsis Ross Campus RTC",
+      "relationship": "rebrand",
+      "category": "corporate",
+      "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
     }
   ],  "views": {
     "historical": {
