@@ -682,6 +682,17 @@ def tense_only(old, new):
     # A link's address is never a verb ("2003/may/25" -> "2003/could/25" broke one).
     if LINK_URL.findall(old) != LINK_URL.findall(new):
         return 'changes a link'
+    why = _tense_diff(old, new)
+    # The present perfect may become the simple past ("Two children have died" -> "Two children died", "Survivors have
+    # reported" -> "Survivors reported", "has worked there since 2019" -> "worked there from 2019"), never the past perfect
+    # with nothing later for it to come before ("had died"). Reported speech keeps it ("reported that they had developed").
+    if why:
+        why = why if _tense_diff(perfect_to_past(old), new) else ''
+    return why
+
+
+def _tense_diff(old, new):
+    import difflib
     a, b = TOKEN.findall(old), TOKEN.findall(new)
     if ''.join(a) != old or ''.join(b) != new:
         return 'could not read the line'
@@ -690,17 +701,48 @@ def tense_only(old, new):
             continue
         olds = [t for t in a[i1:i2] if t.strip()]
         news = [t for t in b[j1:j2] if t.strip()]
+        low_o, low_n = [t.lower() for t in olds], [t.lower() for t in news]
         if tag == 'delete' or (tag == 'replace' and not news):
             if all(t.lower() in DROPPABLE or t == ',' for t in olds):
                 continue
             return 'removes ' + ' '.join(olds)
         if tag == 'insert':
+            if low_n == ['had']:   # reported speech kept in the past perfect
+                continue
             return 'adds ' + ' '.join(news)
+        if (low_o, low_n) in ((['since'], ['from', 'the', 'time']), (['since', 'then'], ['from', 'then', 'on'])) \
+                or (low_o in (['was'], ['were']) and low_n == ['had', 'been']):
+            continue
         # A replaced run: pair the words up after dropping droppable ones.
         olds = [t for t in olds if t.lower() not in DROPPABLE]
-        if len(olds) != len(news) or not all(x == y or tense_pair(x, y) for x, y in zip(olds, news)):
+        if len(olds) != len(news) or not all(x == y or tense_pair(x, y) or (x.lower(), y.lower()) in SINCE for x, y in zip(olds, news)):
             return f"changes '{' '.join(a[i1:i2]).strip()}' to '{' '.join(b[j1:j2]).strip()}'"
     return ''
+
+
+# "has worked there since 2019" -> "worked there from 2019"; "has since moved" -> "later moved".
+SINCE = {('since', 'from'), ('since', 'later')}
+PERFECT = re.compile(r"\b(has|have)\s+((?:(?:also|not|never|long|since|already|reportedly|allegedly|previously|repeatedly|"
+                     r"consistently|often|always|even|ever|frequently|recently|publicly|openly|widely)\s+)*)([A-Za-z]+)\b", re.I)
+PARTICIPLE = {'been': None, 'had': 'had', 'done': 'did', 'seen': 'saw', 'come': 'came', 'become': 'became', 'gone': 'went',
+              'given': 'gave', 'taken': 'took', 'written': 'wrote', 'known': 'knew', 'shown': 'showed', 'grown': 'grew',
+              'spoken': 'spoke', 'run': 'ran', 'begun': 'began', 'chosen': 'chose', 'driven': 'drove', 'fallen': 'fell',
+              'forgotten': 'forgot', 'hidden': 'hid', 'risen': 'rose', 'stolen': 'stole', 'thrown': 'threw', 'worn': 'wore',
+              'drawn': 'drew', 'eaten': 'ate', 'broken': 'broke', 'beaten': 'beat', 'undergone': 'underwent', 'overseen': 'oversaw',
+              'withdrawn': 'withdrew', 'gotten': 'got', 'proven': 'proved'}
+
+
+def perfect_to_past(text):
+    """Every present perfect in text put in the simple past ("have died" -> "died", "has been" -> "was")."""
+    def one(m):
+        aux, adv, part = m.group(1).lower(), m.group(2), m.group(3)
+        low = part.lower()
+        if low == 'been':
+            past = 'was' if aux == 'has' else 'were'
+            return past + (' ' + adv.strip() if adv.strip() else '')
+        past = PARTICIPLE.get(low) or (part if low.endswith(('ed', 'nt', 'ld', 'ft', 'ght', 'id', 'ad', 'ot', 'et', 'ut', 'it', 'ost', 'ound', 'old', 'ept', 'ent')) else None)
+        return adv + past if past else m.group(0)
+    return PERFECT.sub(one, text)
 
 
 def apply_tense(md, ops):
@@ -840,6 +882,12 @@ def selftest():
         ('The teen has to accept it.', 'The teen has to accept it.', True),
         ('Staff must restrain them.', 'Staff had to hold them.', False),
         ('He is [quoted](https://x.org/2003/may/25/a.htm).', 'He was [quoted](https://x.org/2003/could/25/a.htm).', False),
+        ('**Two children have died while attending Trails Carolina.**', '**Two children died while attending Trails Carolina.**', True),
+        ('Survivors have reported that they have developed PTSD.', 'Survivors reported that they had developed PTSD.', True),
+        ('There have been many claims.', 'There were many claims.', True),
+        ('He has worked there since 2019.', 'He worked there from 2019.', True),
+        ('The program has since moved.', 'The program later moved.', True),
+        ('Two children have died.', 'Two children were killed.', False),
     ]
     bad = 0
     for old, new, want in cases:
