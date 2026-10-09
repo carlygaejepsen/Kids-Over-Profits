@@ -85,7 +85,7 @@ function kop_mobile_test_build_fixture($path) {
     $pdo->exec('CREATE TABLE wpdl_posts (ID INTEGER PRIMARY KEY, post_title TEXT, post_excerpt TEXT, post_name TEXT, post_content TEXT, post_modified TEXT, post_modified_gmt TEXT, post_date TEXT, post_status TEXT, post_type TEXT)');
     $pdo->exec('CREATE TABLE wpdl_postmeta (meta_id INTEGER PRIMARY KEY, post_id INTEGER, meta_key TEXT, meta_value TEXT)');
     $pdo->exec('CREATE TABLE news_submissions (id INTEGER PRIMARY KEY, article_title TEXT, alternate_title TEXT, author TEXT, publication_name TEXT, publication_date TEXT,
-        article_url TEXT, article_type TEXT, article_location TEXT, tags TEXT, facilities_mentioned TEXT, staff_mentioned TEXT, survivors_mentioned TEXT, content_warnings TEXT, summary TEXT,
+        article_url TEXT, archive_url TEXT, article_type TEXT, article_location TEXT, tags TEXT, facilities_mentioned TEXT, staff_mentioned TEXT, survivors_mentioned TEXT, content_warnings TEXT, summary TEXT,
         json_data TEXT, generated_output TEXT, story_group_id INTEGER, story_arc_id INTEGER, status TEXT, submitted_by TEXT, submission_notes TEXT, reviewer_notes TEXT, reviewed_by TEXT,
         reviewed_at TEXT, created_at TEXT, updated_at TEXT)');
     $pdo->exec('CREATE TABLE news_facility_links (news_id INTEGER, facility_id INTEGER, link_type TEXT, created_at TEXT, created_by TEXT)');
@@ -392,7 +392,7 @@ $problems = $walk($feed);
 $check('news feed has no private key, HTML or sentinel', !$problems, implode('; ', array_slice($problems, 0, 3)));
 $bad = $bad_urls($urls($feed));
 $check('news urls are absolute or site paths', !$bad, implode(' ', array_slice($bad, 0, 3)));
-$item_keys = array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'type', 'summary', 'content_warnings', 'image', 'facilities', 'story_arc', 'story_group_id');
+$item_keys = array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'archive_url', 'type', 'summary', 'content_warnings', 'image', 'facilities', 'story_arc', 'story_group_id');
 $check('news item keys', $feed['items'] && array_keys($feed['items'][0]) === $item_keys, implode(',', array_keys($feed['items'][0] ?? array())));
 $dates = array_map(function ($i) { return $i['date']; }, $feed['items']);
 $sorted = $dates; rsort($sorted);

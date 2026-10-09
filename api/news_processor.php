@@ -110,9 +110,17 @@ get_header();
                             <div class="news-saved-tags" data-category="publications"></div>
                         </div>
                         <div class="news-form-group">
-                            <label>URL</label>
+                            <label>URL (the article itself)</label>
                             <input type="url" name="url" class="news-input" placeholder="https://...">
                         </div>
+                    </div>
+
+                    <div class="news-form-group">
+                        <label>Archived copy</label>
+                        <input type="url" name="archiveUrl" class="news-input" placeholder="https://web.archive.org/web/... or https://archive.ph/...">
+                        <p class="news-help-text" style="margin: 4px 0 0; font-size: 0.85em;">
+                            Optional. A Wayback Machine or archive.today copy, shown beside the article's own link. A Wayback link pasted in the URL box moves here by itself.
+                        </p>
                     </div>
 
                     <div class="news-form-group">

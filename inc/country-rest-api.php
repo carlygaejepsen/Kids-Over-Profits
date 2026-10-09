@@ -212,7 +212,7 @@ function kop_country_collect_news($country_name) {
     $like_tag = '%"' . $wpdb->esc_like($country_name) . '"%';
 
     $sql = "SELECT id, article_title, alternate_title, author, publication_name, publication_date,
-                   article_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
+                   article_url, archive_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
             FROM news_submissions
             WHERE status IN ('approved','published')
               AND (article_location LIKE %s OR tags LIKE %s)" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "

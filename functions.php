@@ -100,6 +100,8 @@ require_once get_stylesheet_directory() . '/inc/newsletter-signup.php';
 
 // "Send to Kids Over Profits" browser extension intake (browser-extension/send-to-kop/)
 require_once get_stylesheet_directory() . '/inc/source-submissions.php';
+// The News Processor in the extension's reviewer panel: AI read, archive lookup, publish
+require_once get_stylesheet_directory() . '/inc/extension-news-processor.php';
 
 // The same intake for the mobile app, public: links and facility information to the review queues
 require_once get_stylesheet_directory() . '/inc/mobile-submit.php';
@@ -183,6 +185,8 @@ require_once get_stylesheet_directory() . '/inc/inspection-rollup.php';
 require_once get_stylesheet_directory() . '/inc/content-images.php';
 // Links read as words, never as long web addresses (the_content filter + js/url-labels.js)
 require_once get_stylesheet_directory() . '/inc/url-labels.php';
+// An article's real link and its archived copy (news_submissions.archive_url)
+require_once get_stylesheet_directory() . '/inc/news-archive-links.php';
 // One review inbox for every queue, drawn on the Submissions Review page (inc/review-inbox/ holds a source per queue)
 require_once get_stylesheet_directory() . '/inc/review-inbox.php';
 require_once get_stylesheet_directory() . '/inc/review-inbox-menu.php';

@@ -334,6 +334,13 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-submit.php
 # inc/send-page.php, templates/send-page.php, js/send-page.js, prefill ?url=&title=&text=)
 php scripts/test-send-page.php
 npx web-ext lint --source-dir browser-extension/send-to-kop   # 1 expected warning: Firefox ignores background.service_worker
+# Signed-in reviewers get the News Processor in the extension's popup (inc/extension-news-processor.php): AI fill from the tab's text
+# (buildPrompt in api/lib-news-ai.php through kop_ai_generate_alternating), every processor field, "Publish on the site now" (admins,
+# filed approved, Undo in Recently done) or the review queue
+# Articles keep two links: article_url = the article itself, archive_url = its archived copy (Wayback / archive.today). A Wayback link
+# given as the article splits into both (api/lib-news-archive.php == js/news-archive-links.js == the extension's archive.js); readers
+# print the title linked to the original and "(archived copy)" beside it. archive.today short links hide the address, so they stay alone
+php -d extension=pdo_sqlite scripts/test-news-archive.php [--list]   # rules, PHP == both JS copies, the one-time split on a copy of the mirror
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked

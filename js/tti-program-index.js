@@ -310,6 +310,14 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const escapeAttribute = value => escapeHtml(value);
+    // An article's link: the real one first, else its archived copy (js/news-archive-links.js), and the
+    // " (archived copy)" link printed after the title when both are known.
+    const newsHref = n => {
+        const links = typeof window.kopNewsLinks === 'function' ? window.kopNewsLinks(n.article_url, n.archive_url) : null;
+        return (links && (links.original || links.archive)) || n.article_url || '';
+    };
+    const newsArchiveHtml = n => (typeof window.kopNewsArchiveLinkHtml === 'function'
+        ? window.kopNewsArchiveLinkHtml(n.article_url, n.archive_url) : '');
 
     // True when a field's string entries are sentences rather than short
     // labels; those rows span both detail-grid columns.
@@ -1486,7 +1494,7 @@ function displayFacilities(facilitiesData, containerId) {
             const itemsHtml = operatorLinkedNews.map(n => {
                 const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
                 const titleHtml = n.article_url
-                    ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                    ? `<a href="${escapeAttribute(newsHref(n))}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>${newsArchiveHtml(n)}`
                     : `<span class="facility-news-title">${title}</span>`;
                 const meta = [];
                 if (n.publication_name) meta.push(escapeHtml(n.publication_name));
@@ -1502,7 +1510,7 @@ function displayFacilities(facilitiesData, containerId) {
             const latest = operatorLinkedNews[0];
             const latestTitle = escapeHtml(latest.display_title || latest.article_title || '(untitled)');
             const latestTitleHtml = latest.article_url
-                ? `<a href="${escapeAttribute(latest.article_url)}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>`
+                ? `<a href="${escapeAttribute(newsHref(latest))}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>${newsArchiveHtml(latest)}`
                 : `<span class="facility-latest-news-title">${latestTitle}</span>`;
             const latestMeta = [];
             if (latest.publication_name) latestMeta.push(escapeHtml(latest.publication_name));
@@ -2105,7 +2113,7 @@ function displayFacilities(facilitiesData, containerId) {
                 const latest = linkedNews[0];
                 const latestTitle = escapeHtml(latest.display_title || latest.article_title || '(untitled)');
                 const latestTitleHtml = latest.article_url
-                    ? `<a href="${escapeAttribute(latest.article_url)}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>`
+                    ? `<a href="${escapeAttribute(newsHref(latest))}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>${newsArchiveHtml(latest)}`
                     : `<span class="facility-latest-news-title">${latestTitle}</span>`;
                 const latestMeta = [];
                 if (latest.publication_name) latestMeta.push(escapeHtml(latest.publication_name));
@@ -2121,7 +2129,7 @@ function displayFacilities(facilitiesData, containerId) {
                 const itemsHtml = linkedNews.map(n => {
                     const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
                     const titleHtml = n.article_url
-                        ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                        ? `<a href="${escapeAttribute(newsHref(n))}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>${newsArchiveHtml(n)}`
                         : `<span class="facility-news-title">${title}</span>`;
                     const metaParts = [];
                     if (n.publication_name) metaParts.push(escapeHtml(n.publication_name));

@@ -332,6 +332,14 @@ function initLocationIndex() {
         return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
     const escapeAttribute = value => escapeHtml(value);
+    // An article's link: the real one first, else its archived copy (js/news-archive-links.js), and the
+    // " (archived copy)" link printed after the title when both are known.
+    const newsHref = n => {
+        const links = typeof window.kopNewsLinks === 'function' ? window.kopNewsLinks(n.article_url, n.archive_url) : null;
+        return (links && (links.original || links.archive)) || n.article_url || '';
+    };
+    const newsArchiveHtml = n => (typeof window.kopNewsArchiveLinkHtml === 'function'
+        ? window.kopNewsArchiveLinkHtml(n.article_url, n.archive_url) : '');
     const textCollator = new Intl.Collator(undefined, {
         numeric: true,
         sensitivity: 'base'
@@ -1023,7 +1031,7 @@ function initLocationIndex() {
                     const newsItemsHtml = linkedNews.map(n => {
                         const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
                         const titleHtml = n.article_url
-                            ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                            ? `<a href="${escapeAttribute(newsHref(n))}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>${newsArchiveHtml(n)}`
                             : `<span class="facility-news-title">${title}</span>`;
                         const metaParts = [];
                         if (n.publication_name) metaParts.push(escapeHtml(n.publication_name));

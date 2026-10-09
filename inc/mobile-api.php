@@ -436,7 +436,8 @@ if (!function_exists('kop_mobile_news_card')) {
     /**
      * One article as the app draws it, from a kop_facility_pages_news() /
      * operator news item: {id, title, outlet, date, date_label, url, type,
-     * summary, image; aside = a celebrity or viral story the page collapses}.
+     * summary, image; aside = a celebrity or viral story the page collapses;
+     * archive_url = the archived copy when url is the real article}.
      * Named keys only.
      */
     function kop_mobile_news_card($item) {
@@ -445,6 +446,7 @@ if (!function_exists('kop_mobile_news_card')) {
         foreach (array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'type', 'summary', 'image', 'link_type', 'about', 'aside') as $k) {
             if (array_key_exists($k, $item)) $card[$k] = $item[$k];
         }
+        if (array_key_exists('url', $item)) $card['archive_url'] = (string) ($item['archive'] ?? '');
         return $card;
     }
 }
@@ -453,6 +455,7 @@ if (!function_exists('kop_mobile_news_public_columns')) {
     /** The news_submissions columns the feed reads. Nothing else is ever selected here. */
     function kop_mobile_news_public_columns($alias = 'n') {
         $cols = array('id', 'article_title', 'alternate_title', 'publication_name', 'publication_date', 'article_url', 'article_type', 'summary', 'content_warnings', 'story_group_id', 'story_arc_id');
+        if (kop_mobile_news_has_column('archive_url')) $cols[] = 'archive_url';
         return implode(', ', array_map(function ($c) use ($alias) { return $alias . '.' . $c; }, $cols));
     }
 }
@@ -483,13 +486,17 @@ if (!function_exists('kop_mobile_news_item')) {
         $date = (string) ($row['publication_date'] ?? '');
         $warnings = json_decode((string) ($row['content_warnings'] ?? ''), true);
         $arc_id = (int) ($row['story_arc_id'] ?? 0);
+        // url = the real article (else the archived copy); archive_url = the archived copy beside it.
+        require_once get_stylesheet_directory() . '/api/lib-news-archive.php';
+        $links = kop_news_links((string) ($row['article_url'] ?? ''), (string) ($row['archive_url'] ?? ''));
         return array(
             'id'               => $id,
             'title'            => trim((string) (!empty($row['alternate_title']) ? $row['alternate_title'] : $row['article_title'])),
             'outlet'           => trim((string) ($row['publication_name'] ?? '')),
             'date'             => $date,
             'date_label'       => ($date !== '' && function_exists('kop_facility_pages_date_label')) ? kop_facility_pages_date_label($date) : $date,
-            'url'              => (string) ($row['article_url'] ?? ''),
+            'url'              => $links['original'] !== '' ? $links['original'] : ($links['archive'] !== '' ? $links['archive'] : (string) ($row['article_url'] ?? '')),
+            'archive_url'      => $links['original'] !== '' ? $links['archive'] : '',
             'type'             => trim((string) ($row['article_type'] ?? '')),
             'summary'          => trim((string) ($row['summary'] ?? '')),
             'content_warnings' => is_array($warnings) ? array_values(array_filter(array_map('strval', $warnings), 'strlen')) : array(),

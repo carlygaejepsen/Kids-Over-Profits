@@ -18,6 +18,7 @@ global $wpdb; // Use global WPDB or the custom connection if preferred, but exis
 // Let's use the same PDO logic as the API for consistency with the JSON data structure.
 require_once get_stylesheet_directory() . '/api/config.php';
 require_once get_stylesheet_directory() . '/api/news-mentions.php';
+require_once get_stylesheet_directory() . '/api/lib-news-archive.php';
 
 // Pagination settings
 $per_page = 50;
@@ -111,7 +112,7 @@ try {
         }
         $gid_ph = implode(',', array_fill(0, count($page_gids), '?'));
         $cov_sql = "SELECT id, article_title, alternate_title, publication_name,
-                           publication_date, article_url, story_group_id
+                           publication_date, article_url, archive_url, story_group_id
                     FROM news_submissions
                     WHERE story_group_id IN ($gid_ph) AND status IN ($placeholders)$ischools_exclude
                     ORDER BY publication_date DESC, id DESC";
@@ -165,7 +166,7 @@ try {
         $show_ongoing = !$current_arc && $story_slug === '' && !$archive_month && $current_page === 1;
         if ($ongoing_arcs && $show_ongoing) {
             $dev_stmt = $pdo->prepare(
-                "SELECT article_title, alternate_title, publication_name, publication_date, article_url
+                "SELECT article_title, alternate_title, publication_name, publication_date, article_url, archive_url
                  FROM news_submissions
                  WHERE story_arc_id = ? AND status IN ('approved', 'published')
                  ORDER BY publication_date DESC, id DESC
@@ -276,10 +277,12 @@ try {
                                 <?php foreach ($oa['latest'] as $dev):
                                     $devTitle = !empty($dev['alternate_title']) ? $dev['alternate_title'] : $dev['article_title'];
                                     $devDate = !empty($dev['publication_date']) ? date('M j', strtotime($dev['publication_date'])) : '';
+                                    $devLinks = kop_news_links($dev['article_url'] ?? '', $dev['archive_url'] ?? '');
+                                    $devHref = $devLinks['original'] ?: ($devLinks['archive'] ?: ($dev['article_url'] ?? ''));
                                 ?>
                                     <li>
                                         <?php if (!empty($dev['article_url'])): ?>
-                                            <a href="<?php echo esc_url($dev['article_url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($devTitle); ?></a>
+                                            <a href="<?php echo esc_url($devHref); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($devTitle); ?></a><?php echo kop_news_archive_link_html($dev['article_url'] ?? '', $dev['archive_url'] ?? ''); ?>
                                         <?php else: ?>
                                             <?php echo esc_html($devTitle); ?>
                                         <?php endif; ?>
@@ -609,6 +612,9 @@ try {
                 // Re-reading news_processor.php: "Original title is sensationalist... (create alternate title)"
                 // So yes, alternate_title is likely the preferred one for display if it exists.
                 $displayTitle = !empty($item['alternate_title']) ? $item['alternate_title'] : $item['article_title'];
+                // The title and "Read Original Article" open the real article; the archived copy sits beside the title.
+                $itemLinks = kop_news_links($item['article_url'] ?? '', $item['archive_url'] ?? '');
+                $itemHref = $itemLinks['original'] ?: ($itemLinks['archive'] ?: ($item['article_url'] ?? ''));
 
                 $news_json = json_decode($item['json_data'] ?? '{}', true);
                 $news_json = is_array($news_json) ? $news_json : [];
@@ -650,9 +656,9 @@ try {
                             </a>
                         <?php endif; ?>
                         <h2 class="news-card-title">
-                            <a href="<?php echo esc_url($item['article_url']); ?>" target="_blank" rel="noopener noreferrer">
+                            <a href="<?php echo esc_url($itemHref); ?>" target="_blank" rel="noopener noreferrer">
                                 <?php echo esc_html($displayTitle); ?>
-                            </a>
+                            </a><?php echo kop_news_archive_link_html($item['article_url'] ?? '', $item['archive_url'] ?? ''); ?>
                         </h2>
                     </div>
 
@@ -680,11 +686,13 @@ try {
                                 $covOutlet = $cov['publication_name'] ?: (parse_url($cov['article_url'] ?? '', PHP_URL_HOST) ?: 'Unknown outlet');
                                 $covDate = !empty($cov['publication_date']) ? date('M j, Y', strtotime($cov['publication_date'])) : '';
                                 $covLabel = $covOutlet . ($covDate ? " ($covDate)" : '');
+                                $covLinks = kop_news_links($cov['article_url'] ?? '', $cov['archive_url'] ?? '');
+                                $covHref = $covLinks['original'] ?: ($covLinks['archive'] ?: ($cov['article_url'] ?? ''));
                             ?>
                                 <?php if (!empty($cov['article_url'])): ?>
-                                    <a class="coverage-link" href="<?php echo esc_url($cov['article_url']); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo esc_attr($covTitle); ?>">
+                                    <a class="coverage-link" href="<?php echo esc_url($covHref); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo esc_attr($covTitle); ?>">
                                         <?php echo esc_html($covLabel); ?>
-                                    </a>
+                                    </a><?php echo kop_news_archive_link_html($cov['article_url'] ?? '', $cov['archive_url'] ?? ''); ?>
                                 <?php else: ?>
                                     <span class="coverage-link" title="<?php echo esc_attr($covTitle); ?>"><?php echo esc_html($covLabel); ?></span>
                                 <?php endif; ?>
@@ -738,7 +746,7 @@ try {
                     <?php endif; ?>
 
                     <div class="news-card-footer">
-                        <a href="<?php echo esc_url($item['article_url']); ?>" target="_blank" rel="noopener noreferrer" class="read-more-btn">
+                        <a href="<?php echo esc_url($itemHref); ?>" target="_blank" rel="noopener noreferrer" class="read-more-btn">
                             Read Original Article 
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />

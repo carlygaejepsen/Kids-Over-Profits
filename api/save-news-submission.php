@@ -26,6 +26,7 @@ require_once __DIR__ . '/news-mentions.php';
 require_once __DIR__ . '/news-tags.php';
 require_once __DIR__ . '/facility-aliases.php';
 require_once __DIR__ . '/url-dedupe.php';
+require_once __DIR__ . '/lib-news-archive.php';
 require_once __DIR__ . '/news-story-groups.php';
 require_once __DIR__ . '/news-story-arcs.php';
 require_once __DIR__ . '/lawsuit-news-links.php';
@@ -167,6 +168,14 @@ try {
     $publicationName = $data['publicationName'] ?? $data['publication_name'] ?? '';
     $publicationDate = $data['publicationDate'] ?? $data['publication_date'] ?? null;
     $articleUrl = $data['url'] ?? $data['article_url'] ?? '';
+    // The real link and the archived copy; a Wayback link in the URL box splits into both.
+    $split = kop_news_split_urls(is_string($articleUrl) ? $articleUrl : '', (string) ($data['archiveUrl'] ?? $data['archive_url'] ?? ''));
+    $articleUrl = $split['url'];
+    $archiveUrl = $split['archive'];
+    $data['url'] = $articleUrl;
+    $data['archiveUrl'] = $archiveUrl;
+    unset($data['archive_url']);
+    kop_news_archive_ensure($pdo);
     $articleType = $data['articleType'] ?? $data['article_type'] ?? 'general';
     $location = $data['location'] ?? $data['article_location'] ?? '';
     
@@ -237,7 +246,7 @@ try {
         // The same duplicate guards as the insert path, excluding the row
         // being edited — otherwise an edit could steer article_url or the
         // title into an existing entry and create a silent duplicate.
-        $dupUrls = kop_collect_urls($articleUrl);
+        $dupUrls = kop_collect_urls($articleUrl, $archiveUrl);
         if (!empty($dupUrls)) {
             $urlDupes = array_values(array_filter(
                 kop_check_url_duplicates($pdo, 'news', $dupUrls),
@@ -259,6 +268,7 @@ try {
                     publication_name = ?,
                     publication_date = ?,
                     article_url = ?,
+                    archive_url = ?,
                     article_type = ?,
                     article_location = ?,
                     tags = ?,
@@ -283,6 +293,7 @@ try {
             $publicationName,
             $publicationDate,
             $articleUrl,
+            $archiveUrl !== '' ? $archiveUrl : null,
             $articleType,
             $location,
             json_encode($tags, JSON_UNESCAPED_UNICODE),
@@ -327,7 +338,7 @@ try {
         // identity key), then by identical title on the same outlet (catches
         // AMP/print/share-link URL variants of one page). Rejected entries
         // also block resubmission; only deleted rows free a URL again.
-        $dupUrls = kop_collect_urls($articleUrl);
+        $dupUrls = kop_collect_urls($articleUrl, $archiveUrl);
         if (!empty($dupUrls)) {
             kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'news', $dupUrls));
         }
@@ -336,10 +347,10 @@ try {
         // Create new submission
         $sql = "INSERT INTO news_submissions
                     (article_title, alternate_title, author, publication_name, publication_date,
-                     article_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
-                     survivors_mentioned, content_warnings, summary, json_data, 
+                     article_url, archive_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
+                     survivors_mentioned, content_warnings, summary, json_data,
                      generated_output, status, submitted_by, submission_notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
@@ -349,6 +360,7 @@ try {
             $publicationName,
             $publicationDate,
             $articleUrl,
+            $archiveUrl !== '' ? $archiveUrl : null,
             $articleType,
             $location,
             json_encode($tags, JSON_UNESCAPED_UNICODE),

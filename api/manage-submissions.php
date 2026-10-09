@@ -138,7 +138,7 @@ function kop_editable_fields($type) {
             ];
         case 'news':
             return [
-                'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','article_location','tags','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
+                'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','archive_url','article_type','article_location','tags','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
                 // The News Processor's per-type details live in json_data too.
                 'json_fields' => array_merge(['organizationLogoName','organizationLogoUrl','promoKind'],
                     function_exists('kop_rinbox_native_news_detail_keys') ? kop_rinbox_native_news_detail_keys() : []),
@@ -1077,6 +1077,21 @@ try {
                 if ($type === 'news' && $col === 'article_location') {
                     $newsJsonFields['location'] = trim((string)$val); // json_data keeps a copy, as the processor saved it
                 }
+                if ($type === 'news' && $col === 'archive_url') {
+                    // The archived copy (api/lib-news-archive.php); json_data keeps a copy too.
+                    require_once __DIR__ . '/lib-news-archive.php';
+                    kop_news_archive_ensure($pdo);
+                    $val = is_string($val) ? trim($val) : '';
+                    if ($val !== '' && !preg_match('#^https?://#i', $val)) {
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'error' => 'The archived copy must be a web address (https://...).']);
+                        exit;
+                    }
+                    $newsJsonFields['archiveUrl'] = $val;
+                    $set[] = "`$col` = ?";
+                    $params[] = $val === '' ? null : $val;
+                    continue;
+                }
                 if ($col === 'jurisdiction' || $col === 'article_location') {
                     $val = trim((string)$val);
                 }
@@ -1194,6 +1209,9 @@ try {
                 }
                 if (array_key_exists('location', $newsJsonFields)) {
                     $newsJson['location'] = $newsJsonFields['location'];
+                }
+                if (array_key_exists('archiveUrl', $newsJsonFields)) {
+                    $newsJson['archiveUrl'] = $newsJsonFields['archiveUrl'];
                 }
                 if (function_exists('kop_rinbox_native_news_details_merge')) {
                     $newsJson = kop_rinbox_native_news_details_merge($newsJson, $newsJsonFields);

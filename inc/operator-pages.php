@@ -721,9 +721,10 @@ if (!function_exists('kop_operator_page_data')) {
             }
             if ($news_ids) {
                 require_once get_stylesheet_directory() . '/api/news-tags.php';
+                require_once get_stylesheet_directory() . '/api/lib-news-archive.php';
                 $nin = implode(',', array_map('intval', array_keys($news_ids)));
                 $nrows = $wpdb->get_results(
-                    "SELECT id, article_title, alternate_title, publication_name, publication_date, article_url, article_type, summary, tags
+                    "SELECT id, article_title, alternate_title, publication_name, publication_date, article_url, archive_url, article_type, summary, tags
                        FROM news_submissions WHERE id IN ({$nin}) AND status IN ('approved','published')
                       ORDER BY publication_date DESC, id DESC",
                     ARRAY_A
@@ -731,13 +732,15 @@ if (!function_exists('kop_operator_page_data')) {
                 foreach ((array) $nrows as $r) {
                     if (isset($seen_news[(int) $r['id']])) continue;
                     $seen_news[(int) $r['id']] = true;
+                    $links = kop_news_links((string) $r['article_url'], (string) ($r['archive_url'] ?? ''));
                     $news[] = array(
                         'id'         => (int) $r['id'],
                         'title'      => trim((string) ($r['alternate_title'] ?: $r['article_title'])),
                         'outlet'     => trim((string) $r['publication_name']),
                         'date'       => (string) $r['publication_date'],
                         'date_label' => $r['publication_date'] ? kop_facility_pages_date_label($r['publication_date']) : '',
-                        'url'        => (string) $r['article_url'],
+                        'url'        => $links['original'] !== '' ? $links['original'] : ($links['archive'] !== '' ? $links['archive'] : (string) $r['article_url']),
+                        'archive'    => $links['original'] !== '' ? $links['archive'] : '',
                         'type'       => trim((string) $r['article_type']),
                         'summary'    => trim((string) $r['summary']),
                         'about'      => $news_ids[(int) $r['id']],

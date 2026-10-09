@@ -68,13 +68,17 @@ class KOP_News_Reel_Widget extends WP_Widget {
                     ? date('M j, Y', strtotime($article['publication_date']))
                     : '';
                 $meta = implode(' &bull; ', array_filter([$pub, $date]));
+                $links = function_exists('kop_news_links')
+                    ? kop_news_links($article['article_url'] ?? '', $article['archive_url'] ?? '')
+                    : array('original' => (string) ($article['article_url'] ?? ''), 'archive' => '');
+                $href = $links['original'] ?: ($links['archive'] ?: ($article['article_url'] ?? ''));
                 ?>
                 <li class="kop-news-reel-item">
                     <a class="kop-news-reel-link"
-                       href="<?php echo esc_url($article['article_url']); ?>"
+                       href="<?php echo esc_url($href); ?>"
                        target="_blank" rel="noopener noreferrer">
                         <?php echo esc_html($display_title); ?>
-                    </a>
+                    </a><?php echo function_exists('kop_news_archive_link_html') ? kop_news_archive_link_html($article['article_url'] ?? '', $article['archive_url'] ?? '') : ''; ?>
                     <?php if ($meta): ?>
                         <span class="kop-news-reel-meta"><?php echo wp_kses($meta, array()); ?></span>
                     <?php endif; ?>
@@ -96,7 +100,7 @@ class KOP_News_Reel_Widget extends WP_Widget {
         global $wpdb;
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT article_title, alternate_title, article_url, publication_name, publication_date
+                "SELECT article_title, alternate_title, article_url, archive_url, publication_name, publication_date
                  FROM news_submissions
                  WHERE status IN ('approved', 'published')" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "
                  ORDER BY publication_date DESC, created_at DESC

@@ -126,7 +126,7 @@ $kop_fp_news_card = static function (array $n) {
             </p>
             <h3 class="kop-fp-news-title">
                 <?php if ($has_url) : ?>
-                    <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
+                    <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a><?php if (!empty($n['archive'])) : ?> <a class="kop-archived-link" href="<?php echo esc_url($n['archive']); ?>" target="_blank" rel="noopener noreferrer">archived copy</a><?php endif; ?>
                 <?php else : ?>
                     <?php echo esc_html($n['title']); ?>
                 <?php endif; ?>

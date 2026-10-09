@@ -182,7 +182,7 @@ function kop_ischools_news(PDO $pdo, $all = false) {
     if (!kop_ischools_ready($pdo)) {
         return array();
     }
-    $sql = 'SELECT l.school_id, n.id, n.article_title, n.publication_name, n.publication_date, n.article_url, n.status
+    $sql = 'SELECT l.school_id, n.id, n.article_title, n.publication_name, n.publication_date, n.article_url, n.archive_url, n.status
             FROM indigenous_school_news l JOIN news_submissions n ON n.id = l.news_id'
         . ($all ? '' : " WHERE n.status IN ('approved', 'published')")
         . ' ORDER BY n.publication_date DESC, n.id DESC';
@@ -521,9 +521,12 @@ function kop_ischools_article_item(array $a) {
     $e = 'kop_page_text_esc';
     $date = $a['publication_date'] ? strtotime($a['publication_date']) : false;
     $meta = trim(implode(', ', array_filter(array($a['publication_name'], $date ? date('F j, Y', $date) : ''))));
-    $url = preg_match('#^https?://#i', (string) $a['article_url']) ? $a['article_url'] : '';
+    // The title opens the real article; the archived copy is linked beside it.
+    require_once dirname(__DIR__) . '/api/lib-news-archive.php';
+    $links = kop_news_links((string) $a['article_url'], (string) ($a['archive_url'] ?? ''));
+    $url = $links['original'] !== '' ? $links['original'] : $links['archive'];
     $title = $e($a['article_title'] ?: 'Untitled article');
-    return '<li>' . ($url !== '' ? '<a href="' . $e($url) . '">' . $title . '</a>' : $title)
+    return '<li>' . ($url !== '' ? '<a href="' . $e($url) . '">' . $title . '</a>' . kop_news_archive_link_html((string) $a['article_url'], (string) ($a['archive_url'] ?? '')) : $title)
         . ($meta !== '' ? ' <span class="kop-ibs-school-src">' . $e($meta) . '</span>' : '') . '</li>';
 }
 

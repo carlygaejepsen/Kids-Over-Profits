@@ -20,6 +20,15 @@
         })[ch]);
     };
 
+    // An article's link: the real one first, else its archived copy (js/news-archive-links.js), and the
+    // " (archived copy)" link printed after the title when both are known.
+    const newsHref = n => {
+        const links = typeof window.kopNewsLinks === 'function' ? window.kopNewsLinks(n.article_url, n.archive_url) : null;
+        return (links && (links.original || links.archive)) || n.article_url || '';
+    };
+    const newsArchiveHtml = n => (typeof window.kopNewsArchiveLinkHtml === 'function'
+        ? window.kopNewsArchiveLinkHtml(n.article_url, n.archive_url) : '');
+
     // An admin's pencil (inc/inline-edit.php prints KOP_INLINE_EDIT for admins only).
     const kopEdit = (ref, label) => (window.KOP_INLINE_EDIT && ref)
         ? ` data-kop-edit="${escapeHtml(ref)}" data-kop-edit-label="${escapeHtml(label || '')}"`
@@ -857,9 +866,9 @@
         }
         return `<ul class="facility-news-list">${items.map(n => `
             <li class="facility-news-item">
-                <a href="${escapeHtml(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">
+                <a href="${escapeHtml(newsHref(n))}" target="_blank" rel="noopener" class="facility-news-title">
                     ${escapeHtml(n.display_title || n.article_title)}
-                </a>
+                </a>${newsArchiveHtml(n)}
                 <div class="facility-news-meta">
                     ${n.publication_name ? escapeHtml(n.publication_name) + ' · ' : ''}
                     ${formatDate(n.publication_date)}
@@ -1799,9 +1808,9 @@
                     <li class="news-item"${kopEdit(n.id ? `rec:news:${parseInt(n.id, 10)}` : '', 'this article')}>
                         <div class="news-item-header">
                             <span class="news-type-badge type-${escapeHtml(n.article_type)}">${escapeHtml(n.article_type)}</span>
-                            <a href="${escapeHtml(n.article_url)}" target="_blank" rel="noopener" class="news-title">
+                            <a href="${escapeHtml(newsHref(n))}" target="_blank" rel="noopener" class="news-title">
                                 ${escapeHtml(n.display_title || n.article_title)}
-                            </a>
+                            </a>${newsArchiveHtml(n)}
                         </div>
                         <div class="news-meta">
                             ${n.author ? escapeHtml(n.author) + ' · ' : ''}

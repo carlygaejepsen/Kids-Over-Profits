@@ -310,7 +310,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                     ?>
                     <li>
                         <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
-                            <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a>
+                            <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a><?php if (!empty($n['archive'])) : ?> <a class="kop-archived-link" href="<?php echo esc_url($n['archive']); ?>" target="_blank" rel="noopener noreferrer">archived copy</a><?php endif; ?>
                         <?php else : ?>
                             <span><?php echo esc_html($n['title']); ?></span>
                         <?php endif; ?>

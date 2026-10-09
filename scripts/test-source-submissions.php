@@ -73,7 +73,11 @@ function wp_json_encode($v, $flags = 0) { return json_encode($v, $flags); }
 function admin_url($p = '') { return 'https://kidsoverprofits.org/wp-admin/' . $p; }
 function get_current_user_id() { return 7; }
 function wp_get_current_user() { return new KOP_Test_User(); }
-function current_user_can() { return true; }
+// Publishing from the extension's panel needs manage_options; $GLOBALS['kop_is_admin'] = false plays an editor.
+function current_user_can($cap = '') { return $cap !== 'manage_options' || ($GLOBALS['kop_is_admin'] ?? true); }
+function current_time($type) { return gmdate('Y-m-d H:i:s'); }
+function kop_rinbox_native_news_detail_keys() { return array('plaintiffs', 'defendants', 'closureDate'); }
+function kop_rinbox_log_native($type, array $before, $action) { $GLOBALS['kop_rinbox_logged'][] = array($type, array_keys($before), $action); }
 function kop_submission_review_url($type) { return 'https://kidsoverprofits.org/review/?type=' . $type; }
 function kop_notify_admins($type, $title) { $GLOBALS['kop_notified'][] = $type; return true; }
 
@@ -169,6 +173,52 @@ check(strpos($n['submission_notes'], 'Check the second half.') === 0 && strpos($
 check(strpos($n['facilities_mentioned'], 'Example Academy') !== false, 'article facility mention stored');
 $r2 = submit(array('type' => 'article', 'url' => 'https://example-news.test/2026/09/30/story/', 'title' => 'Again'));
 check($r2 instanceof WP_REST_Response && $r2->status === 409, 'sending the new article again -> 409');
+
+// The real link and the archived copy (api/lib-news-archive.php). Its admin emails are set aside.
+$notifiedBefore = $GLOBALS['kop_notified'] ?? array();
+$r = submit(array('type' => 'article', 'url' => 'https://web.archive.org/web/20250101000000/https://example-news.test/2025/archived-story', 'title' => 'An archived story'));
+$n = $r instanceof WP_REST_Response ? row($pdo, 'news_submissions', $r->data['id']) : array();
+check(($n['article_url'] ?? '') === 'https://example-news.test/2025/archived-story'
+    && ($n['archive_url'] ?? '') === 'https://web.archive.org/web/20250101000000/https://example-news.test/2025/archived-story',
+    'a Wayback link sent as the article splits into article_url + archive_url');
+$r2 = submit(array('type' => 'article', 'url' => 'https://example-news.test/2025/archived-story', 'title' => 'Same, by its real link'));
+check($r2 instanceof WP_REST_Response && $r2->status === 409, 'its real link is then on file -> 409');
+$r2 = submit(array('type' => 'article', 'url' => 'https://web.archive.org/web/2024/https://example-news.test/2025/archived-story', 'title' => 'Another copy'));
+check($r2 instanceof WP_REST_Response && $r2->status === 409, 'another Wayback copy of it -> 409');
+
+// The admin panel: the processor's fields, published at once.
+$GLOBALS['kop_notified'] = array();
+$full = array('type' => 'article', 'url' => 'https://example-news.test/2026/10/09/panel', 'archive_url' => 'https://archive.ph/AbCd1',
+    'title' => 'Panel story', 'site_name' => 'Example News', 'published' => '2026-10-08', 'full' => 1, 'publish' => 1,
+    'alternate_title' => 'A calmer title', 'article_type' => 'lawsuit', 'location' => 'Provo, UT',
+    'facilities' => array('Example Academy', 'Other Ranch'), 'staff' => array('Pat Owner'), 'survivors' => array('J.D.'),
+    'content_warnings' => array('Physical Restraint'), 'summary' => 'A factual summary.', 'tags' => array('Wilderness Therapy'),
+    'details' => array('plaintiffs' => 'J.D.', 'closureDate' => '', 'evil' => 'x'));
+$r = submit($full);
+$n = $r instanceof WP_REST_Response ? row($pdo, 'news_submissions', $r->data['id']) : array();
+check($r instanceof WP_REST_Response && $r->status === 201 && !empty($r->data['published']), 'panel publish -> 201 published');
+check(($n['status'] ?? '') === 'approved' && ($n['reviewed_by'] ?? '') === 'Test Admin (browser extension)' && !empty($n['reviewed_at']), 'stored approved, reviewer stamped');
+check(($n['archive_url'] ?? '') === 'https://archive.ph/AbCd1' && ($n['article_url'] ?? '') === 'https://example-news.test/2026/10/09/panel', 'both links stored');
+check(($n['alternate_title'] ?? '') === 'A calmer title' && ($n['article_type'] ?? '') === 'lawsuit' && ($n['article_location'] ?? '') === 'Provo, UT'
+    && ($n['summary'] ?? '') === 'A factual summary.', 'alternate title, type, location, summary');
+check(strpos($n['facilities_mentioned'] ?? '', 'Other Ranch') !== false && strpos($n['staff_mentioned'] ?? '', 'Pat Owner') !== false
+    && strpos($n['survivors_mentioned'] ?? '', 'J.D.') !== false && strpos($n['content_warnings'] ?? '', 'Physical Restraint') !== false, 'facilities, staff, survivors, warnings');
+$j = json_decode($n['json_data'] ?? '', true);
+check(($j['plaintiffs'] ?? '') === 'J.D.' && !isset($j['evil']) && !isset($j['closureDate']) && ($j['archiveUrl'] ?? '') === 'https://archive.ph/AbCd1', 'details kept by name only, json_data has the archive link');
+check(in_array('news', $GLOBALS['kop_notified'], true) === false, 'a published article mails no "new submission"');
+check(($GLOBALS['kop_rinbox_logged'][0] ?? null) === array('news', array((int) $n['id']), 'approve'), 'published article logged for Undo');
+
+$GLOBALS['kop_is_admin'] = false;
+$r = submit(array_merge($full, array('url' => 'https://example-news.test/2026/10/09/editor', 'archive_url' => '', 'title' => 'Editor story')));
+$n = $r instanceof WP_REST_Response ? row($pdo, 'news_submissions', $r->data['id']) : array();
+check(($n['status'] ?? '') === 'submitted' && empty($r->data['published']) && ($n['article_type'] ?? '') === 'lawsuit', 'an editor\'s "publish" waits in the queue, fields kept');
+$GLOBALS['kop_is_admin'] = true;
+
+$r = submit(array('type' => 'article', 'url' => 'https://example-news.test/2026/10/09/plain', 'title' => 'Plain send', 'summary' => 'Injected', 'publish' => 1,
+    'article_type' => 'closure', 'description' => 'Page description'));
+$n = $r instanceof WP_REST_Response ? row($pdo, 'news_submissions', $r->data['id']) : array();
+check(($n['status'] ?? '') === 'submitted' && ($n['summary'] ?? '') === 'Page description' && ($n['article_type'] ?? '') === 'general', 'without full=1: no publish, no summary or type from the payload');
+$GLOBALS['kop_notified'] = $notifiedBefore;
 
 $r = submit(array('type' => 'lawsuit', 'url' => 'https://www.courtlistener.com/docket/999999/doe-v-example/', 'title' => 'Doe v. Example Academy',
     'case_number' => '2:26-cv-01234', 'court' => 'U.S. District Court for the District of Utah', 'jurisdiction' => 'UT', 'facility' => 'Example Academy'));

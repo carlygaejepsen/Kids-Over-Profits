@@ -3188,7 +3188,7 @@ if (!function_exists('kop_facility_pages_news')) {
         global $wpdb;
         if (!kop_facility_pages_table_exists('news_facility_links') || !kop_facility_pages_table_exists('news_submissions')) return array();
         $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT n.id, n.article_title, n.alternate_title, n.publication_name, n.publication_date, n.article_url, n.article_type, n.summary, n.tags, l.link_type
+            "SELECT n.id, n.article_title, n.alternate_title, n.publication_name, n.publication_date, n.article_url, n.archive_url, n.article_type, n.summary, n.tags, l.link_type
                FROM news_facility_links l
                JOIN news_submissions n ON n.id = l.news_id
               WHERE l.facility_id = %d AND n.status IN ('approved','published')
@@ -3196,15 +3196,19 @@ if (!function_exists('kop_facility_pages_news')) {
             (int) $facility_id
         ), ARRAY_A);
         require_once get_stylesheet_directory() . '/api/news-tags.php';
+        require_once get_stylesheet_directory() . '/api/lib-news-archive.php';
         $out = array();
         foreach ((array) $rows as $r) {
+            // The title links the real article; 'archive' is the archived copy printed beside it.
+            $links = kop_news_links((string) $r['article_url'], (string) ($r['archive_url'] ?? ''));
             $out[] = array(
                 'id'        => (int) $r['id'],
                 'title'     => trim((string) ($r['alternate_title'] ?: $r['article_title'])),
                 'outlet'    => trim((string) $r['publication_name']),
                 'date'      => (string) $r['publication_date'],
                 'date_label' => $r['publication_date'] ? kop_facility_pages_date_label($r['publication_date']) : '',
-                'url'       => (string) $r['article_url'],
+                'url'       => $links['original'] !== '' ? $links['original'] : ($links['archive'] !== '' ? $links['archive'] : (string) $r['article_url']),
+                'archive'   => $links['original'] !== '' ? $links['archive'] : '',
                 'type'      => trim((string) $r['article_type']),
                 'summary'   => trim((string) $r['summary']),
                 'link_type' => (string) $r['link_type'],

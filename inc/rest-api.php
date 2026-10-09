@@ -5533,7 +5533,7 @@ function kop_state_attach_related_records(array &$facilities, $state_name) {
         $rows = $wpdb->get_results($wpdb->prepare(
             "SELECT l.facility_id, l.link_type,
                     n.id AS news_id, n.article_title, n.alternate_title, n.author,
-                    n.publication_name, n.publication_date, n.article_url,
+                    n.publication_name, n.publication_date, n.article_url, n.archive_url,
                     n.article_type, n.summary
              FROM news_facility_links l
              JOIN news_submissions n ON n.id = l.news_id
@@ -5552,6 +5552,7 @@ function kop_state_attach_related_records(array &$facilities, $state_name) {
                 'publication_name' => $r['publication_name'],
                 'publication_date' => $r['publication_date'],
                 'article_url'      => $r['article_url'],
+                'archive_url'      => (string) ($r['archive_url'] ?? ''),
                 'article_type'     => $r['article_type'],
                 'summary'          => $r['summary'],
                 'link_type'        => $r['link_type'],
@@ -5714,7 +5715,7 @@ function kop_state_collect_news($state_name) {
     $like_tag = '%"' . $wpdb->esc_like($state_name) . '"%';
 
     $sql = "SELECT id, article_title, alternate_title, author, publication_name, publication_date,
-                   article_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
+                   article_url, archive_url, article_type, article_location, summary, tags, facilities_mentioned, content_warnings
             FROM news_submissions
             WHERE status IN ('approved','published')
               AND (article_location LIKE %s OR tags LIKE %s)" . (function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql() : '') . "

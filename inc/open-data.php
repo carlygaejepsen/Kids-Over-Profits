@@ -374,10 +374,10 @@ function kop_open_data_datasets() {
         $sets['news'] = array(
             'title'       => 'News coverage index',
             'group'       => 'Lawsuits, legislation and news',
-            'description' => 'Approved news coverage of the TTI: headline, outlet, author, date, link, location, our summary and the facilities and staff it names. Article text belongs to the publishers and is not included.',
+            'description' => 'Approved news coverage of the TTI: headline, outlet, author, date, link and archived copy, location, our summary and the facilities and staff it names. Article text belongs to the publishers and is not included.',
             'rows'        => static function () use ($pdo) {
                 foreach (kop_open_data_pdo_rows($pdo,
-                    'id, article_title, alternate_title, author, publication_name, publication_date, article_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned, content_warnings, summary',
+                    'id, article_title, alternate_title, author, publication_name, publication_date, article_url, archive_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned, content_warnings, summary',
                     "news_submissions WHERE status IN ('approved','published')") as $row) {
                     foreach (array('tags', 'staff_mentioned', 'content_warnings') as $f) {
                         $row[$f] = kop_open_data_json_list($row[$f]);

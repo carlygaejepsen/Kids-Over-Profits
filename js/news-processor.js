@@ -3,7 +3,7 @@
     const SAVED_VALUES_KEY = 'news_processor_saved_values';
     
     const formData = {
-        title: '', author: '', publicationDate: '', publicationName: '', url: '',
+        title: '', author: '', publicationDate: '', publicationName: '', url: '', archiveUrl: '',
         location: '', tags: '',
         organizationLogoName: '', organizationLogoUrl: '',
         facilities: [], staff: '', survivors: '', contentWarnings: [],
@@ -273,6 +273,23 @@
                 });
             }
         });
+        // A Wayback link in the URL box: the page inside it is the article, the link its archived copy.
+        const urlBox = document.querySelector('input[name="url"]');
+        if (urlBox) urlBox.addEventListener('change', () => splitArchiveLink());
+    }
+
+    function splitArchiveLink() {
+        if (typeof window.kopNewsIsArchiveUrl !== 'function') return;
+        const url = (formData.url || '').trim();
+        if (!url || !window.kopNewsIsArchiveUrl(url)) return;
+        const inner = window.kopNewsUnwrapArchiveUrl(url);
+        if (!formData.archiveUrl) formData.archiveUrl = url;
+        if (inner) formData.url = inner;
+        const urlBox = document.querySelector('input[name="url"]');
+        const archiveBox = document.querySelector('input[name="archiveUrl"]');
+        if (urlBox) urlBox.value = formData.url;
+        if (archiveBox) archiveBox.value = formData.archiveUrl;
+        saveToLocalStorage();
     }
 
     function setupContentWarnings() {
@@ -583,6 +600,7 @@
                 publicationDate: formData.publicationDate,
                 publicationName: formData.publicationName,
                 url: formData.url,
+                archiveUrl: formData.archiveUrl,
                 location: formData.location,
                 tags: filterGenericTags((formData.tags || '').split('\n').filter(t => t.trim())),
                 facilities: (Array.isArray(formData.facilities) ? formData.facilities : [])
@@ -657,7 +675,9 @@
         text += `Publication: ${formData.publicationName}\n`;
         text += `Date: ${formData.publicationDate}\n`;
         text += `Location: ${formData.location}\n`;
-        text += `URL: ${formData.url}\n\n`;
+        text += `URL: ${formData.url}\n`;
+        if (formData.archiveUrl) text += `Archived copy: ${formData.archiveUrl}\n`;
+        text += '\n';
         
         if (output.basicDetails.tags.length > 0) {
             text += 'Tags:\n';
@@ -1364,7 +1384,10 @@
                 const data = result.data;
 
                 // Copy URL to main form field
-                if (url) formData.url = url;
+                if (url) {
+                    formData.url = url;
+                    splitArchiveLink();
+                }
                 if (data.title) formData.title = data.title;
                 if (data.author) formData.author = data.author;
                 if (data.publicationDate) formData.publicationDate = data.publicationDate;
@@ -1478,6 +1501,7 @@
                 publicationName: formData.publicationName,
                 publicationDate: formData.publicationDate,
                 url: formData.url,
+                archiveUrl: formData.archiveUrl,
                 location: formData.location,
                 tags: filterGenericTags((formData.tags || '').split('\n')).join('\n'),
                 organizationLogoName: formData.organizationLogoName,

@@ -223,7 +223,9 @@ if (!function_exists('kop_normalize_url')) {
                 // 'rejected' is NOT ignored: an article we reviewed and turned
                 // down stays blocked so it can't be resubmitted. Only 'deleted'
                 // (cleanup of mistaken rows) frees a URL for resubmission.
-                return ['table' => 'news_submissions', 'urlColumns' => ['article_url'],
+                // archive_url: the archived copy (api/lib-news-archive.php), so a
+                // Wayback link sent in matches the article filed under its real link.
+                return ['table' => 'news_submissions', 'urlColumns' => ['article_url', 'archive_url'],
                         'statusCol' => 'status', 'ignoreStatuses' => ['deleted'],
                         'titleCol' => 'article_title', 'keepFragment' => false];
             case 'legislation':
@@ -260,6 +262,17 @@ if (!function_exists('kop_normalize_url')) {
         $cfg = kop_url_dedupe_config($type);
         if (!$cfg) {
             return [];
+        }
+        if ($type === 'news') {
+            require_once __DIR__ . '/lib-news-archive.php';
+            kop_news_archive_ensure($pdo);
+            if (!kop_is_assoc($input)) {
+                // The page inside a Wayback link is the article too.
+                foreach ($input as $u) {
+                    $inner = is_string($u) ? kop_news_unwrap_archive_url(preg_match('#^[a-z]+://#i', $u) ? $u : 'https://' . $u) : '';
+                    if ($inner !== '') $input[] = $inner;
+                }
+            }
         }
         $keepFragment = !empty($cfg['keepFragment']);
 

@@ -274,7 +274,7 @@ function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
 
     $sql = "SELECT l.facility_id, l.link_type,
                    n.id AS news_id, n.article_title, n.alternate_title,
-                   n.publication_name, n.publication_date, n.article_url,
+                   n.publication_name, n.publication_date, n.article_url, n.archive_url,
                    n.article_type, n.summary, n.status
             FROM news_facility_links l
             JOIN news_submissions n ON n.id = l.news_id
@@ -296,6 +296,7 @@ function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
             'publication_name'  => $r['publication_name'],
             'publication_date'  => $r['publication_date'],
             'article_url'       => $r['article_url'],
+            'archive_url'       => (string) ($r['archive_url'] ?? ''),
             'article_type'      => $r['article_type'],
             'summary'           => $r['summary'],
             'link_type'         => $r['link_type'],

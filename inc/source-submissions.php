@@ -169,6 +169,7 @@ function kop_ext_load_record_libs() {
     foreach (array(
         'url-dedupe.php', 'news-mentions.php', 'news-tags.php', 'news-story-groups.php',
         'news-story-arcs.php', 'lawsuit-news-links.php', 'lawsuit-facility-links.php', 'lib-journalists.php',
+        'lib-news-archive.php',
     ) as $file) {
         require_once $api . $file;
     }
@@ -335,7 +336,8 @@ function kop_ext_find_duplicates(PDO $pdo, array $p) {
         }
     };
 
-    $urls = kop_collect_urls($url);
+    $archive = trim((string) ($p['archive_url'] ?? ''));
+    $urls = kop_collect_urls($url, $archive);
     if ($urls) {
         $add('news', kop_check_url_duplicates($pdo, 'news', $urls));
         $add('lawsuit', kop_check_url_duplicates($pdo, 'lawsuit', array('source_urls' => $url, 'document_urls' => $url)));
@@ -369,40 +371,106 @@ function kop_ext_find_duplicates(PDO $pdo, array $p) {
 
 /* ---------- Inserts, one per queue ---------- */
 
-function kop_ext_insert_news(PDO $pdo, array $p, $submitter, $note) {
+/**
+ * The News Processor's fields from the extension's admin panel (reviewer route
+ * only): alternate title, type, location, staff, survivors, warnings, the
+ * per-type details. Every other send arrives with the basics.
+ */
+function kop_ext_news_full_fields(array $p) {
+    $types = array('lawsuit', 'event', 'expose', 'arrest', 'closure', 'corporate', 'general');
+    $type  = sanitize_key((string) ($p['article_type'] ?? 'general'));
+    $out = array(
+        'alternate_title'  => kop_ext_text($p['alternate_title'] ?? '', 500),
+        'article_type'     => in_array($type, $types, true) ? $type : 'general',
+        'article_location' => kop_ext_text($p['location'] ?? '', 255),
+        'staff'            => kop_ext_list($p['staff'] ?? array()),
+        'survivors'        => kop_ext_list($p['survivors'] ?? array()),
+        'content_warnings' => kop_ext_list($p['content_warnings'] ?? array()),
+        'facilities'       => kop_ext_list($p['facilities'] ?? array()),
+        'details'          => array(),
+    );
+    $keys = function_exists('kop_rinbox_native_news_detail_keys') ? kop_rinbox_native_news_detail_keys() : array();
+    $details = is_array($p['details'] ?? null) ? $p['details'] : array();
+    foreach ($keys as $k) {
+        if (isset($details[$k]) && !is_array($details[$k]) && trim((string) $details[$k]) !== '') {
+            $out['details'][$k] = kop_ext_textarea($details[$k], 2000);
+        }
+    }
+    return $out;
+}
+
+/**
+ * $full: the admin panel's fields (kop_ext_news_full_fields()) plus 'status'
+ * ('submitted' or 'approved'); null for every public and quick send.
+ */
+function kop_ext_insert_news(PDO $pdo, array $p, $submitter, $note, $full = null) {
     $title      = kop_ext_text($p['title'] ?? '', 500);
-    $url        = esc_url_raw((string) $p['url']);
+    $links      = kop_news_split_urls((string) $p['url'], (string) ($p['archive_url'] ?? ''));
+    $url        = esc_url_raw($links['url']);
+    $archive    = $links['archive'] !== '' ? esc_url_raw($links['archive']) : '';
     $outlet     = kop_ext_text($p['site_name'] ?? '', 255);
     $author     = kop_ext_text($p['author'] ?? '', 255);
     $date       = kop_ext_date($p['published'] ?? '');
     $tags       = kop_news_tags_normalize(kop_ext_list($p['tags'] ?? array()));
     $facility   = kop_ext_text($p['facility'] ?? '', 255);
-    $facilities = kop_normalize_facility_mentions($facility !== '' ? array($facility) : array());
-    $summary    = kop_ext_textarea($p['description'] ?? '', 2000);
+    $names      = $facility !== '' ? array($facility) : array();
+    $summary    = kop_ext_textarea(is_array($full) && isset($p['summary']) ? $p['summary'] : ($p['description'] ?? ''), 2000);
+    $status     = 'submitted';
+    $alt = ''; $type = 'general'; $location = ''; $staff = array(); $survivors = array(); $warnings = array();
+    if (is_array($full)) {
+        $alt       = $full['alternate_title'];
+        $type      = $full['article_type'];
+        $location  = $full['article_location'];
+        $staff     = $full['staff'];
+        $survivors = $full['survivors'];
+        $warnings  = $full['content_warnings'];
+        $names     = array_values(array_unique(array_merge($names, $full['facilities'])));
+        if (($full['status'] ?? '') === 'approved') $status = 'approved';
+    }
+    $facilities = kop_normalize_facility_mentions($names);
+    $approved   = $status === 'approved';
 
     $json = array(
-        'title' => $title, 'url' => $url, 'publicationName' => $outlet, 'author' => $author,
+        'title' => $title, 'url' => $url, 'archiveUrl' => $archive, 'publicationName' => $outlet, 'author' => $author,
         'publicationDate' => $date, 'tags' => $tags, 'facilities' => $facilities,
         'summary' => $summary, 'source' => 'browser-extension',
     );
+    if (is_array($full)) {
+        $json += array(
+            'alternateTitle' => $alt, 'needsAlternateTitle' => $alt !== '', 'articleType' => $type, 'location' => $location,
+            'staff' => $staff, 'survivors' => $survivors, 'contentWarnings' => $warnings,
+        );
+        $json += $full['details'];
+    }
 
+    kop_news_archive_ensure($pdo);
     $stmt = $pdo->prepare(
         "INSERT INTO news_submissions
             (article_title, alternate_title, author, publication_name, publication_date,
-             article_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
+             article_url, archive_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
              survivors_mentioned, content_warnings, summary, json_data,
-             generated_output, status, submitted_by, submission_notes)
-         VALUES (?, '', ?, ?, ?, ?, 'general', '', ?, ?, '[]', '[]', '[]', ?, ?, '', 'submitted', ?, ?)"
+             generated_output, status, submitted_by, submission_notes, reviewed_by, reviewed_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '', ?, ?, ?, ?, ?)"
     );
     $stmt->execute(array(
-        $title, $author, $outlet, $date, $url,
+        $title, $alt, $author, $outlet, $date, $url, $archive !== '' ? $archive : null, $type, $location,
         wp_json_encode($tags, JSON_UNESCAPED_UNICODE),
         wp_json_encode($facilities, JSON_UNESCAPED_UNICODE),
+        wp_json_encode($staff, JSON_UNESCAPED_UNICODE),
+        wp_json_encode($survivors, JSON_UNESCAPED_UNICODE),
+        wp_json_encode($warnings, JSON_UNESCAPED_UNICODE),
         $summary,
         wp_json_encode($json, JSON_UNESCAPED_UNICODE),
-        $submitter, $note,
+        $status, $submitter, $note,
+        $approved ? $submitter : null,
+        $approved ? current_time('mysql') : null,
     ));
     $id = (int) $pdo->lastInsertId();
+
+    // Published from the extension: listed in Recently done, with the same Undo as an approval on the review page.
+    if ($approved && function_exists('kop_rinbox_log_native')) {
+        kop_rinbox_log_native('news', array($id => array('status' => 'submitted', 'title' => $title)), 'approve');
+    }
 
     // The same follow-ups api/save-news-submission.php runs on insert. The row
     // is saved by now, so a failed link sync is logged, never reported as a
@@ -422,7 +490,7 @@ function kop_ext_insert_news(PDO $pdo, array $p, $submitter, $note) {
         }
     }
 
-    if (function_exists('kop_notify_admins')) {
+    if (!$approved && function_exists('kop_notify_admins')) {
         kop_notify_admins('news', $title, '', array(
             'Publication' => $outlet, 'URL' => $url, 'Submitted by' => $submitter, 'Reference' => '#' . $id,
         ));
@@ -601,8 +669,14 @@ function kop_ext_rest_submit(WP_REST_Request $req) {
         $note = kop_ext_note($p);
         switch ($type) {
             case 'article':
-                $id = kop_ext_insert_news($pdo, $p, $submitter, $note);
-                $queue = 'news';
+                // The extension's admin panel (inc/extension-news-processor.php) sends the processor's fields.
+                $full = null;
+                if (!empty($p['full'])) {
+                    $full = kop_ext_news_full_fields($p);
+                    $full['status'] = !empty($p['publish']) && current_user_can('manage_options') ? 'approved' : 'submitted';
+                }
+                $id = kop_ext_insert_news($pdo, $p, $submitter, $note, $full);
+                $queue = $full && $full['status'] === 'approved' ? 'news_published' : 'news';
                 break;
             case 'lawsuit':
                 $id = kop_ext_insert_lawsuit($pdo, $p, $submitter, $note);
@@ -624,6 +698,15 @@ function kop_ext_rest_submit(WP_REST_Request $req) {
         return $id;
     }
 
+    if ($queue === 'news_published') {
+        return new WP_REST_Response(array(
+            'id'         => $id,
+            'type'       => 'news',
+            'published'  => true,
+            'queue'      => 'the published news',
+            'review_url' => kop_ext_review_url('news'),
+        ), 201);
+    }
     return new WP_REST_Response(array(
         'id'         => $id,
         'type'       => $queue,
@@ -641,6 +724,7 @@ function kop_ext_rest_check(WP_REST_Request $req) {
     try {
         $dupes = kop_ext_find_duplicates($pdo, array(
             'url'          => (string) $req['url'],
+            'archive_url'  => (string) $req['archive_url'],
             'title'        => (string) $req['title'],
             'site_name'    => (string) $req['site_name'],
             'type'         => (string) $req['type'],
@@ -656,6 +740,7 @@ function kop_ext_rest_check(WP_REST_Request $req) {
         'duplicates' => $dupes,
         'review_url' => $dupes ? $dupes[0]['review_url'] : null,
         'user'       => wp_get_current_user()->display_name,
+        'can_publish' => current_user_can('manage_options'),
     );
 }
 
