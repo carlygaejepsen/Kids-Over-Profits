@@ -15,6 +15,31 @@ if (!function_exists('kop_internal_token')) {
     }
 }
 
+if (!function_exists('kop_internal_token_load_salts')) {
+    /**
+     * For scripts that run without WordPress (scripts/discover-articles.php):
+     * read AUTH_KEY and AUTH_SALT out of the nearest wp-config.php as text,
+     * without running it. True when both were found.
+     */
+    function kop_internal_token_load_salts($from_dir) {
+        if (defined('AUTH_KEY') && defined('AUTH_SALT')) return true;
+        $dir = $from_dir;
+        for ($i = 0; $i < 8 && $dir && $dir !== dirname($dir); $i++, $dir = dirname($dir)) {
+            $file = $dir . '/wp-config.php';
+            if (!is_file($file)) continue;
+            $text = (string) @file_get_contents($file);
+            foreach (array('AUTH_KEY', 'AUTH_SALT') as $name) {
+                if (!defined($name) && preg_match("/define\(\s*['\"]" . $name . "['\"]\s*,\s*'((?:[^'\\\\]|\\\\.)*)'\s*\)/", $text, $m)) {
+                    // A single-quoted PHP string: only \\ and \' are escapes.
+                    define($name, preg_replace('/\\\\([\\\\\'])/', '$1', $m[1]));
+                }
+            }
+            break;
+        }
+        return defined('AUTH_KEY') && defined('AUTH_SALT');
+    }
+}
+
 if (!function_exists('kop_internal_token_ok')) {
     /** True when this request carries the key for $purpose. */
     function kop_internal_token_ok($purpose) {

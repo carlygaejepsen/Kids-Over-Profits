@@ -37,6 +37,18 @@ require_once __DIR__ . '/ai-providers.php';
 // Enable detailed error logging (set to false in production if too verbose)
 define('AI_DEBUG_LOGGING', true);
 require_once __DIR__ . '/lib-news-ai.php';
+require_once __DIR__ . '/lib-internal-token.php';
+
+// Every call spends the site's shared Groq/Gemini free quota: only a signed-in
+// admin on this site or the site's own jobs (X-KOP-Internal: the hourly enrich,
+// the nightly discovery) may ask. The extension's panel has its own signed-in
+// route (inc/extension-news-processor.php).
+if (!kop_internal_token_ok('news-ai')
+    && !(function_exists('current_user_can') && current_user_can('manage_options') && kop_request_same_site())) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Sign in as an admin to use the AI assistant.']);
+    exit;
+}
 
 // Get JSON input
 $input = file_get_contents('php://input');

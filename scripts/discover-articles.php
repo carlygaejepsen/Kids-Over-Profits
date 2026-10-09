@@ -79,6 +79,12 @@ define('FACILITIES_URL', API_BASE . '/wp-json/kop/v1/facilities');
 define('AI_ENDPOINT', API_BASE . '/wp-content/themes/child/api/process-news-ai.php');
 define('SUBMIT_ENDPOINT', API_BASE . '/wp-content/themes/child/api/save-news-submission.php');
 
+// The AI endpoint answers only admins and the site's own jobs: on the server this
+// script proves it is one by the key from wp-config's salts (api/lib-internal-token.php).
+require_once dirname(__DIR__) . '/api/lib-internal-token.php';
+kop_internal_token_load_salts(__DIR__);
+define('KOP_INTERNAL_AI_TOKEN', getenv('KOP_INTERNAL_AI_TOKEN') ?: kop_internal_token('news-ai'));
+
 define('AI_PROVIDER', getenv('AI_PROVIDER') ?: 'auto');
 define('SHARD_COUNT', (int)(getenv('SHARD_COUNT') ?: 7));
 
@@ -325,10 +331,12 @@ function fetch_text(string $url, array $opts = []): string {
 
 /** POST JSON; returns ['status'=>, 'ok'=>, 'body'=>array] (body has rawText on parse failure). */
 function post_json(string $url, array $body, array $opts = []): array {
+    $headers = ['Content-Type' => 'application/json'];
+    if ($url === AI_ENDPOINT && KOP_INTERNAL_AI_TOKEN !== '') $headers['X-KOP-Internal'] = KOP_INTERNAL_AI_TOKEN;
     try {
         $res = http_request($url, [
             'method' => 'POST',
-            'headers' => ['Content-Type' => 'application/json'],
+            'headers' => $headers,
             'body' => json_encode($body, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
             'timeoutMs' => $opts['timeoutMs'] ?? REQUEST_TIMEOUT_MS,
         ]);

@@ -28,6 +28,8 @@ get_header();
             </div>
 
             <!-- AI Assistant -->
+            <?php // The AI spends the site's shared free quota: admins only (api/process-news-ai.php checks too). ?>
+            <?php if (current_user_can('manage_options')) : ?>
             <div class="news-section news-ai-section">
                 <div class="news-ai-header">
                     <div class="news-ai-toggle-wrapper">
@@ -67,6 +69,9 @@ get_header();
                     <div id="ai-status" class="news-ai-status"></div>
                 </div>
             </div>
+            <?php else : ?>
+            <div class="news-section"><p class="news-help-text" style="margin:0;">The AI assistant is for signed-in admins. Fill in the fields below by hand; a reviewer checks every article before it appears.</p></div>
+            <?php endif; ?>
 
             <!-- Basic Details Section -->
             <div class="news-section">
