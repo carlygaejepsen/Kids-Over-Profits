@@ -1131,7 +1131,10 @@
                     opt.addEventListener('mouseleave', () => { opt.style.background = ''; });
 
                     const nameSpan = document.createElement('div');
-                    nameSpan.textContent = item.unique_name;
+                    // Companies and facilities come back together and can share a name (inc/kind-pill.php)
+                    const pill = window.kopKindPillNode ? window.kopKindPillNode(item.kind) : null;
+                    if (pill) nameSpan.appendChild(pill);
+                    nameSpan.appendChild(document.createTextNode(item.unique_name));
                     nameSpan.style.fontWeight = '500';
                     opt.appendChild(nameSpan);
 

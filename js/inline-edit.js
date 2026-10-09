@@ -212,6 +212,10 @@
         api('GET', null, ref).then(function (data) {
             spec = data;
             title.textContent = data.title || 'Edit';
+            // A company and a facility can share a name: say which record this is (inc/kind-pill.php)
+            var refKind = String(ref).split(':')[0];
+            var pill = (refKind === 'facility' || refKind === 'operator') && window.kopKindPillNode ? window.kopKindPillNode(refKind) : null;
+            if (pill) title.insertBefore(pill, title.firstChild);
             if (data.help) body.appendChild(el('p', { class: 'kop-ie-help', text: data.help }));
             var section = null;
             var holder = body;

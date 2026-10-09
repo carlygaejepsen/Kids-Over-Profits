@@ -212,8 +212,15 @@ function kop_facility_finder_print_assets() {
         var ajax = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
         var nonce = <?php echo wp_json_encode(wp_create_nonce('kop_facility_finder')); ?>;
 
-        function meta(f) {
-            if (f.kind && f.kind !== 'facility') return [f.label, f.detail, '#' + f.id].filter(Boolean).join(' · ');
+        // A company and a program can share a name (Embark Behavioral Health), so a
+        // finder that lists any record pills them (inc/kind-pill.php) and the
+        // meta line drops the "Company (operator)" words the pill already says.
+        function pill(f) {
+            return window.kopKindPillNode ? window.kopKindPillNode(f.kind || 'facility') : null;
+        }
+
+        function meta(f, pilled) {
+            if (f.kind && f.kind !== 'facility') return [pilled && pill(f) ? '' : f.label, f.detail, '#' + f.id].filter(Boolean).join(' · ');
             var place = [f.city, f.state || f.country].filter(Boolean).join(', ');
             var years = f.start_year || f.end_year ? (f.start_year || '?') + '–' + (f.end_year || '') : '';
             var bits = [place, f.status && f.status !== 'Unknown' ? f.status : '', years, '#' + f.id].filter(Boolean);
@@ -262,8 +269,10 @@ function kop_facility_finder_print_assets() {
                 name.textContent = f.name;
                 if (f.url) { name.href = f.url; name.target = '_blank'; name.rel = 'noopener'; }
                 picked.appendChild(document.createTextNode('Picked: '));
+                var pp = anyKind ? pill(f) : null;
+                if (pp) picked.appendChild(pp);
                 picked.appendChild(name);
-                picked.appendChild(document.createTextNode(' (' + meta(f) + ')'));
+                picked.appendChild(document.createTextNode(' (' + meta(f, !!pp) + ')'));
                 q.value = '';
                 close();
             }
@@ -283,9 +292,11 @@ function kop_facility_finder_print_assets() {
                     if (i === active) li.className = 'on';
                     var b = document.createElement('strong');
                     b.textContent = f.name;
+                    var p = anyKind ? pill(f) : null;
                     var m = document.createElement('span');
                     m.className = 'kop-ff-meta';
-                    m.textContent = meta(f);
+                    m.textContent = meta(f, !!p);
+                    if (p) li.appendChild(p);
                     li.appendChild(b);
                     li.appendChild(m);
                     li.addEventListener('mousedown', function (e) { e.preventDefault(); choose(f); });

@@ -219,8 +219,10 @@
                         meta.push((row.matched_kind === 'past' ? 'Formerly ' : row.matched_kind === 'current' ? 'Now known as ' : 'Also known as ')
                             + escapeHtml(row.matched_name));
                     }
+                    // Companies and facilities come back together and can share a name (inc/kind-pill.php)
                     var rowEl = el('button', 'kop-pp-result',
-                        '<span class="kop-pp-result-name">' + escapeHtml(row.name || row.unique_name) + '</span>' +
+                        '<span class="kop-pp-result-name">' + (window.kopKindPill ? window.kopKindPill(row.kind) : '')
+                        + escapeHtml(row.name || row.unique_name) + '</span>' +
                         (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +
                         '<span class="kop-pp-result-id">#' + escapeHtml(row.id) + '</span>');
                     rowEl.type = 'button';

@@ -117,7 +117,9 @@ function kop_global_search_collect($phrase) {
             if ($alias_hint !== '') {
                 $meta = $meta !== '' ? $meta . ' - ' . $alias_hint : $alias_hint;
             }
-            return array('title' => $r['display'], 'url' => $url, 'meta' => $meta);
+            // kind: the popup pills companies and facilities (inc/kind-pill.php),
+            // one name can be both
+            return array('title' => $r['display'], 'url' => $url, 'meta' => $meta, 'kind' => $r['kind']);
         };
         $items = array_map($to_item, array_merge($v2['operators'], $v2['facilities']));
         if ($items) {

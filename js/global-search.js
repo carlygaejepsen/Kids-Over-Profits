@@ -281,7 +281,11 @@
                     link.target = '_blank';
                     link.rel = 'noopener';
                 }
-                link.appendChild(el('span', 'kop-global-search__result-title', item.title));
+                var title = el('span', 'kop-global-search__result-title', '');
+                var pill = window.kopKindPillNode ? window.kopKindPillNode(item.kind) : null;
+                if (pill) title.appendChild(pill);
+                title.appendChild(document.createTextNode(item.title));
+                link.appendChild(title);
                 if (item.meta) {
                     link.appendChild(el('span', 'kop-global-search__result-meta', item.meta));
                 }

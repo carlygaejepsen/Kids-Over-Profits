@@ -21,6 +21,9 @@ require_once get_stylesheet_directory() . '/inc/utilities.php';
 // Inline SVG icons (kop_icon() / kopIcon()), used in place of emojis
 require_once get_stylesheet_directory() . '/inc/icons.php';
 
+// "Company" / "Facility" pill for lists that hold both (kop_kind_pill() / kopKindPill())
+require_once get_stylesheet_directory() . '/inc/kind-pill.php';
+
 // Shared source citation links and previews
 require_once get_stylesheet_directory() . '/inc/citations.php';
 

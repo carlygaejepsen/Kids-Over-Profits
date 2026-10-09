@@ -122,7 +122,9 @@
                     }
                     d.data.forEach(function (row) {
                         var meta = [aliasLabel(row), row.city, row.state, row.status].filter(Boolean).join(' · ');
+                        // Companies and facilities come back together and can share a name (inc/kind-pill.php)
                         var b = el('button', 'dm-progsearch-row',
+                            (window.kopKindPill ? window.kopKindPill(row.kind) : '') +
                             '<strong>' + esc(row.name || row.unique_name) + '</strong>' +
                             (meta ? ' <span class="dm-muted">' + esc(meta) + '</span>' : '') +
                             ' <span class="dm-id">#' + esc(row.id) + '</span>');

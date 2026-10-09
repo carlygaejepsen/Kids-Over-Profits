@@ -285,6 +285,9 @@ try {
             'matched_name' => $row['matched_name'] ?? null,
             // 'past' / 'other' / 'current': how to word it ("Formerly X").
             'matched_kind' => $row['matched_kind'] ?? null,
+            // Company rows and facility rows come back together and can share a
+            // name (Embark Behavioral Health); pickers pill them (inc/kind-pill.php).
+            'kind'         => (is_array($project) && !empty($project['__facility_ref'])) ? 'facility' : 'operator',
         ];
     }, $rows);
 

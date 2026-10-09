@@ -237,6 +237,7 @@ global $wpdb;
                 ?>
                 <li class="kop-search-result kop-result-facility">
                     <div class="kop-result-main">
+                        <?php if (isset($r['kind']) && function_exists('kop_kind_pill')) echo kop_kind_pill($r['kind']); ?>
                         <?php if ($result_url): ?>
                             <a class="kop-result-name kop-result-link" href="<?php echo esc_url($result_url); ?>">
                                 <?php echo esc_html($r['display']); ?>
@@ -244,7 +245,8 @@ global $wpdb;
                         <?php else: ?>
                             <span class="kop-result-name"><?php echo esc_html($r['display']); ?></span>
                         <?php endif; ?>
-                        <?php if ($r['operator'] && $r['operator'] !== $r['display']): ?>
+                        <?php // A facility named like its company still says who runs it ?>
+                        <?php if ($r['operator'] && ($r['operator'] !== $r['display'] || ($r['kind'] ?? '') === 'facility')): ?>
                             <span class="kop-result-meta">Operator: <?php echo esc_html($r['operator']); ?></span>
                         <?php endif; ?>
                         <?php if ($r['location']): ?>
