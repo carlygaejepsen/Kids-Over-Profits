@@ -1,19 +1,19 @@
 {
  "meta": {
-  "sourceHash": "6c769881b11a",
+  "sourceHash": "eb3d221bc5b1",
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 1726,
    "edges": 3038,
    "facilityMatches": 696,
-   "withYears": 409,
+   "withYears": 417,
    "withDeaths": 31,
    "rebranded": 248,
    "profileEdges": 544,
    "staffMovementEdges": 17,
    "staffListEdges": 818,
    "addedPeople": 440,
-   "withPersonId": 764,
+   "withPersonId": 765,
    "kind_person": 768,
    "kind_facility": 817,
    "kind_parent": 94,
@@ -4323,7 +4323,7 @@
     "x": -135.48,
     "y": -681.24
    },
-   "personId": 178
+   "personId": 2479
   },
   {
    "id": "brian-rossiter",
@@ -12579,7 +12579,8 @@
    "board": {
     "x": -814.12,
     "y": -386.07
-   }
+   },
+   "years": "until 2001"
   },
   {
    "id": "three-springs-of-marion",
@@ -18457,7 +18458,7 @@
     "x": -426.8,
     "y": -663.65
    },
-   "years": "from 2007"
+   "years": "2007-2020"
   },
   {
    "id": "matthew-lovell",
@@ -20938,7 +20939,8 @@
    "board": {
     "x": -740.58,
     "y": -573.65
-   }
+   },
+   "years": "until 2025"
   },
   {
    "id": "village-behavioral-health-treatment-center",
@@ -25447,7 +25449,8 @@
    "board": {
     "x": -977.83,
     "y": -552.89
-   }
+   },
+   "years": "until 2011"
   },
   {
    "id": "eckerd-connects-boys-residential-academy-at-candor",
@@ -25887,7 +25890,11 @@
    "board": {
     "x": -950.67,
     "y": -546.1
-   }
+   },
+   "years": "until 2018",
+   "otherNames": [
+    "Galena Ridge Wilderness Programs"
+   ]
   },
   {
    "id": "gateway-academy-teen-challenge",
@@ -35535,7 +35542,7 @@
     "x": -434.49,
     "y": -277.18
    },
-   "years": "from 1940"
+   "years": "1940-2005"
   },
   {
    "id": "the-clock-tower-schools",
@@ -36028,7 +36035,8 @@
    "board": {
     "x": 870.74,
     "y": 177.9
-   }
+   },
+   "years": "until 2025"
   },
   {
    "id": "todd-hockenbury",
@@ -40185,7 +40193,7 @@
     "x": 919.79,
     "y": 222.76
    },
-   "years": "from 2000"
+   "years": "2000-2024"
   },
   {
    "id": "drumm-farm-center-for-children",
@@ -40369,7 +40377,8 @@
    "addedFrom": [
     "consultant records"
    ],
-   "edCon": true
+   "edCon": true,
+   "personId": 2481
   },
   {
    "id": "elk-ridge-home",
@@ -41819,7 +41828,8 @@
    "board": {
     "x": 52.16,
     "y": 474.26
-   }
+   },
+   "years": "from 1850"
   },
   {
    "id": "jubilee-youth-ranch-christian-school-and-academy",
@@ -44838,7 +44848,8 @@
    "board": {
     "x": 245.05,
     "y": 691.65
-   }
+   },
+   "years": "until 2025"
   },
   {
    "id": "remuda-ranch",
@@ -45319,6 +45330,7 @@
     "x": -940.49,
     "y": -529.13
    },
+   "years": "from 1895",
    "deaths": 1,
    "otherNames": [
     "Salem Ranch",
