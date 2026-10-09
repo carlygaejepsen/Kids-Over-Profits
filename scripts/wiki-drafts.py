@@ -130,7 +130,10 @@ def is_placeholder(line):
 
 
 # A news article line, as the editor's article form writes it: "[Title](url) (Outlet, 8/27/1994)", "- " in front or not.
-NEWS_LINE = re.compile(r'^(?:[-*] )?\[[^\]]+\]\(https?://[^)\s]+\) \([^()]*\b\d{1,2}/\d{1,2}/\d{4}\)$')
+# Owner, 2026-10-09: every news article goes under In the Media, Related Media is for websites about the program. So an
+# article without a date ("(Fox 4 KC)") or with brackets in its outlet ("(archive.md (archived), 2/14/2015)") is news too;
+# the only other line the drafts add to Related Media is the KOP page link (add_kop_page()), which has no outlet.
+NEWS_LINE = re.compile(r'^(?:[-*] )?\[[^\]]+\]\(https?://[^)\s]+\) \(.+\)$')
 MEDIA_SECTIONS = ('in the media', 'news articles', 'media coverage', 'news')
 # Where the editor's template puts "In the Media" when the entry has none: after the abuse section, else after the last of these.
 MEDIA_AFTER = ('rules and punishments', 'punishments', 'program structure', 'founders and notable staff', 'history and background information')
