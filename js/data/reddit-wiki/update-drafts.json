@@ -497,19 +497,19 @@
     {
      "id": "c0",
      "op": "set_header_years",
-     "years": "1994-2005",
+     "years": "1994-2010",
      "by": "script",
      "verdict": "ok",
-     "note": "Closing year from the record."
+     "note": "Closing year from the record. Owner, 2026-10-08: Ascent closed in 2010."
     },
     {
      "id": "c1",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Ascent Wilderness Program closed in 2005. It was formerly called Caribou Ridge Intervention.",
+     "text": "Ascent Wilderness Program was formerly called Caribou Ridge Intervention.",
      "by": "script",
      "verdict": "ok",
-     "note": "Written by script from the gap.",
+     "note": "Written by script from the gap. Owner, 2026-10-08: Ascent closed in 2010. The closure is already in the history paragraph.",
      "kop_record": true
     },
     {
@@ -575,16 +575,6 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
-    },
-    {
-     "id": "n1",
-     "op": "append_to_section",
-     "section": "History and Background Information",
-     "text": "Ascent Wilderness Program closed in 2010.",
-     "by": "script",
-     "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
-     "kop_record": true
     },
     {
      "id": "n4",
@@ -13071,10 +13061,10 @@
      "id": "n1",
      "op": "append_to_section",
      "section": "Abuse and Lawsuits",
-     "text": "In August 2021, Aaron Ross, who was placed at Provo Canyon School at 13 in 2001, sued Universal Health Services and the school in federal court in Utah (*Ross v. Universal Health Services, Inc. et al.*, No. 2:22-cv-00053, D. Utah). He alleged he was forced to perform oral sex on a staff member at least a dozen times under threat of punishment and starvation, was locked in solitary confinement for weeks at a time, was overmedicated with Seroquel, Depakote, Trileptal and Celexa, and went two years without being allowed outdoors. The court dismissed the case ([source](https://dockets.justia.com/docket/utah/utdce/2:2022cv00053/130104)).",
+     "text": "In 2022, Aaron Ross, who was placed at Provo Canyon School at 13 in 2001, sued Universal Health Services and the school in federal court in Utah (*Ross v. Universal Health Services, Inc. et al.*, No. 2:22-cv-00053, D. Utah). He alleged he was forced to perform oral sex on a staff member at least a dozen times under threat of punishment and starvation, was locked in solitary confinement for weeks at a time, was overmedicated with Seroquel, Depakote, Trileptal and Celexa, and went two years without being allowed outdoors. The court dismissed the case ([source](https://dockets.justia.com/docket/utah/utdce/2:2022cv00053/130104)).",
      "by": "script",
      "verdict": "ok",
-     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+     "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Owner, 2026-10-08: the federal case number (2:22-cv-00053) dates the filing to 2022."
     },
     {
      "id": "n5",
