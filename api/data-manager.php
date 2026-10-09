@@ -652,7 +652,8 @@ function kop_dm_people_items(string $q): array {
         $params[] = $like;
         $params[] = $like;
     }
-    $rows = kop_facility_db_rows("SELECT p.id, p.name, p.aliases, COUNT(DISTINCT CONCAT(r.record_kind, r.record_id)) AS records
+    $pool = kop_people_has_pool() ? 'p.pool' : "'industry' AS pool";
+    $rows = kop_facility_db_rows("SELECT p.id, p.name, p.aliases, {$pool}, COUNT(DISTINCT CONCAT(r.record_kind, r.record_id)) AS records
         FROM {$t} p LEFT JOIN {$r} r ON r.person_id = p.id WHERE {$where} GROUP BY p.id", $params);
     $items = [];
     foreach ($rows as $p) {
@@ -673,7 +674,7 @@ function kop_dm_people_items(string $q): array {
             'display_name'       => (string)$p['name'],
             'aliases'            => $aliases,
             'record_count'       => $n,
-            'designation'        => $n ? '' : 'Not named on any record',
+            'designation'        => $n ? ($p['pool'] !== 'industry' ? (kop_people_pools()[$p['pool']] ?? '') : '') : 'Not named on any record',
             'facility_count'     => 0,
             'document_folder_id' => null,
             'is_stub'            => false,
@@ -692,7 +693,7 @@ function kop_dm_person_detail(int $id): array {
     $resolved = kop_people_resolve($state, $id);
     if ($resolved !== $id) throw new RuntimeException('Person #' . $id . ' was joined into person #' . $resolved . '.');
     $p = $state['rows'][$id];
-    $labels = ['administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO', 'map' => 'Person on the map'];
+    $labels = kop_people_list_labels();
     $roles = kop_people_roles_of($id);
     $out = [];
     foreach ($roles as $r) {
@@ -704,13 +705,13 @@ function kop_dm_person_detail(int $id): array {
             'record_id'   => (int)$r['record_id'],
             'record_name' => (string)$rec['name'],
             'record_url'  => (string)$rec['url'],
-            'what'        => $isMap ? 'node ' . $r['ref'] : ($r['record_kind'] === 'operator' ? 'company #' : 'facility #') . $r['record_id'],
+            'what'        => kop_people_admin_what($r),
             'list'        => (string)$r['list'],
             'list_label'  => $labels[$r['list']] ?? (string)$r['list'],
             'position'    => (int)$r['position'],
             'written_as'  => (string)$r['name'],
             'role'        => (string)$r['role'],
-            'can_separate' => $r['record_kind'] === 'facility' && count($roles) > 1,
+            'can_separate' => kop_people_admin_can_separate($r, count($roles)),
         ];
     }
     $similar = [];
@@ -720,6 +721,7 @@ function kop_dm_person_detail(int $id): array {
         'name'      => (string)$p['name'],
         'aliases'   => (string)$p['aliases'],
         'notes'     => (string)$p['notes'],
+        'pool'      => kop_people_pools()[$p['pool']] ?? 'Industry',
         'roles'     => $out,
         'similar'   => $similar,
         'admin_url' => kop_people_admin_url(['person' => $id]),

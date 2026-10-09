@@ -280,6 +280,10 @@ node scripts/test-testimony-move.js
 # node, a merged person drawn as one node). Facility/company careers group by kop_people_group_key(). "Separate" splits one name.
 # KOP Tools > Merge People (inc/people-merge.php): pairs found automatically (short first name, maiden/married name, one letter
 # apart, swapped, same initial at one program, same name under two ids), one-click merge, exact Undo from the Merged tab
+# Everyone else named gets an id too, linked by name (kop_people_named_sources(); docs not rewritten): facility owners, consultants,
+# transport/provider people, published lawsuits' staff + plaintiffs, the memorial, young adult staff, current wiki entries' staff, journalists.
+# Pools (kop_people.pool): industry / harmed (victims, plaintiffs) / press: a name finds an id only in its own pool; map + pages read industry.
+# A different middle initial is a different person (Robert W. and Robert B. Lichfield, father and son; kop_people_find())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list] [--no-build]   # sync, pairs, merge+undo, PHP/JS key parity, a map build into tmp/
 # Public data form (/tti-data-submission/) opens on a guided start (js/data-form/data-wizard.js, css/data-wizard.css): find the
 # record or add a new facility/company/provider/transporter/referrer, pick topics, see only those sections; saves still go
@@ -502,7 +506,7 @@ to the program aggregate otherwise.
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
 - `{prefix}kop_volunteers` / `{prefix}kop_volunteer_recs` - Volunteer reviewers (name, hash of their link's token) and their approve/reject/not sure recommendations on review inbox items, closed with the admin's decision (`inc/review-volunteers.php`)
-- `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named on a staff list (`personId` on each `facilities_v2` staff entry) and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)
+- `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named anywhere in the records (`personId` on each `facilities_v2` staff entry; everyone else linked by name), its pool (industry, harmed, press), and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
 - `inspection_report_counts` - Each inspection report's state verdicts (citations, high-risk, repeat, complaints, substantiated) as JSON, its year and a content hash so a report stored twice counts once; filled hourly (`inc/inspection-rollup.php`)
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)

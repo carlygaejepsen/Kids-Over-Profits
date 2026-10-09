@@ -34,7 +34,8 @@ function kop_people_admin_handle() {
     $id = (int) ($_POST['person'] ?? 0);
     if ($do === 'sync') {
         $s = kop_people_sync();
-        return sprintf('Synced: %d entries on %d facilities, %d new ids, %d entries given an id.', $s['entries'], $s['facilities'], $s['created'], $s['stamped']);
+        return sprintf('Synced: %d entries on %d facilities, %d names on other records, %d new ids, %d entries given an id.',
+            $s['entries'], $s['facilities'], $s['named'], $s['created'], $s['stamped']);
     }
     if ($do === 'save' && $id > 0) {
         $err = kop_people_save_details($id, wp_unslash($_POST['name'] ?? ''), wp_unslash($_POST['aliases'] ?? ''), wp_unslash($_POST['notes'] ?? ''));
@@ -84,13 +85,13 @@ function kop_people_save_details($id, $name, $aliases, $notes) {
     return '';
 }
 
-/** Others with the same last name as person $id: the likely "same person" picks. */
+/** Others with the same last name as person $id, in the same pool: the likely "same person" picks. */
 function kop_people_similar(array $state, $id) {
     $parts = explode(' ', $state['rows'][$id]['name_key']);
     $last = end($parts);
     $similar = array();
     foreach ($state['rows'] as $o) {
-        if ($o['id'] === $id || $o['merged_into']) continue;
+        if ($o['id'] === $id || $o['merged_into'] || $o['pool'] !== $state['rows'][$id]['pool']) continue;
         $op = explode(' ', $o['name_key']);
         if (end($op) === $last) $similar[] = $o;
     }
@@ -106,7 +107,12 @@ function kop_people_admin_find($text, $not) {
         $id = kop_people_resolve($state, (int) $text);
         if ($id === 0) return 'No person #' . $text . '.';
     } else {
-        $ids = array_values(array_diff($state['by_key'][kop_people_key($text)] ?? array(), array((int) $not)));
+        // Any pool: joining a plaintiff to the staff member they are is done by hand.
+        $ids = array();
+        foreach (array_keys(kop_people_pools()) as $pool) {
+            $ids = array_merge($ids, $state['by_key'][kop_people_pool_key($pool, kop_people_key($text))] ?? array());
+        }
+        $ids = array_values(array_diff($ids, array((int) $not)));
         if (count($ids) !== 1) return $ids ? 'More than one person has that name: use the id.' : 'Nobody else has that name.';
         $id = $ids[0];
     }
@@ -115,26 +121,18 @@ function kop_people_admin_find($text, $not) {
 
 /** Name and page URL of a record, cached per request. */
 function kop_people_admin_record($kind, $id) {
-    static $names = array();
-    $k = $kind . $id;
-    if (isset($names[$k])) return $names[$k];
-    $id = (int) $id;
-    if ($kind === 'map') {
-        $map = function_exists('kop_facility_pages_page_url_by_template') ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/') : '';
-        return $names[$k] = array('name' => 'Network map', 'url' => $map);
-    }
-    if ($kind === 'operator') {
-        $rows = kop_facility_db_rows('SELECT name FROM ' . kop_facility_table('operators') . ' WHERE id = ?', array($id));
-        return $names[$k] = array('name' => $rows ? (string) $rows[0]['name'] : 'Operator #' . $id, 'url' => '');
-    }
-    $rows = kop_facility_db_rows('SELECT name, state FROM facilities_v2 WHERE id = ?', array($id));
-    $url = '';
-    if (function_exists('kop_facility_pages_index')) {
-        $index = kop_facility_pages_index();
-        if (!empty($index['ids'][$id]['slug'])) $url = kop_facility_pages_url_for_slug($index['ids'][$id]['slug']);
-    }
-    $name = $rows ? $rows[0]['name'] . ($rows[0]['state'] ? ', ' . $rows[0]['state'] : '') : 'Facility #' . $id . ' (gone)';
-    return $names[$k] = array('name' => $name, 'url' => $url);
+    return kop_people_record_label($kind, $id);
+}
+
+/** "facility #12", "lawsuit #3", "node robert-w-lichfield": the record's kind and id. */
+function kop_people_admin_what(array $r) {
+    if ($r['record_kind'] === 'map') return 'node ' . $r['ref'];
+    return (kop_people_kinds()[$r['record_kind']] ?? $r['record_kind']) . ' #' . (int) $r['record_id'];
+}
+
+/** Whether "Separate" works on this row: a facility staff entry, the only entries that carry their id. */
+function kop_people_admin_can_separate(array $r, $count) {
+    return $r['record_kind'] === 'facility' && in_array($r['list'], explode(',', KOP_PEOPLE_LISTS), true) && $count > 1;
 }
 
 function kop_people_admin_page() {
@@ -169,6 +167,13 @@ function kop_people_admin_list() {
     $per = 100;
     $where = 'p.merged_into IS NULL';
     $params = array();
+    $pools = kop_people_pools();
+    $pool = sanitize_key(wp_unslash($_GET['pool'] ?? ''));
+    $has_pool = kop_people_has_pool();
+    if ($has_pool && isset($pools[$pool])) {
+        $where .= ' AND p.pool = ?';
+        $params[] = $pool;
+    }
     if ($q !== '') {
         if (ctype_digit(ltrim($q, '#'))) {
             $where .= ' AND p.id = ?';
@@ -181,14 +186,18 @@ function kop_people_admin_list() {
         }
     }
     $total = (int) (kop_facility_db_rows("SELECT COUNT(*) AS n FROM {$t} p WHERE {$where}", $params)[0]['n'] ?? 0);
-    $rows = kop_facility_db_rows("SELECT p.id, p.name, p.aliases, COUNT(r.person_id) AS n, COUNT(DISTINCT CONCAT(r.record_kind, r.record_id)) AS records
+    $rows = kop_facility_db_rows("SELECT p.id, p.name, p.aliases, " . ($has_pool ? 'p.pool' : "'industry' AS pool") . ", COUNT(r.person_id) AS n, COUNT(DISTINCT CONCAT(r.record_kind, r.record_id)) AS records
         FROM {$t} p LEFT JOIN {$r} r ON r.person_id = p.id WHERE {$where}
         GROUP BY p.id ORDER BY records DESC, p.name LIMIT {$per} OFFSET " . (($paged - 1) * $per), $params);
     $last = get_option('kop_people_last_sync', array());
     ?>
     <h1>People</h1>
-    <p class="kop-people__intro">Everyone named on a facility's or a company's staff list has a person id. One person keeps one id across
-        every record, so their career can be followed from program to program. New names get an id within the hour.
+    <p class="kop-people__intro">Everyone the records name has a person id: facility and company staff, people on the network map, owners,
+        consultants, transport companies' people, providers' staff, the staff and plaintiffs of published lawsuits, the memorial, young adult
+        program staff, the staff of each r/troubledteens wiki entry, and journalists. One person keeps one id across every record, so their
+        career can be followed from program to program. New names get an id within the hour. Victims and plaintiffs, and journalists, have
+        their own ids: a name there is never joined to a staff member who shares it. A different middle initial is a different person
+        (Robert W. and Robert B. Lichfield).
         Open a person to fix their name, join two ids that are one person, or split one name that is two people.</p>
     <form method="post" class="kop-people__bar">
         <?php kop_people_admin_hidden('sync'); ?>
@@ -199,17 +208,25 @@ function kop_people_admin_list() {
         <input type="hidden" name="page" value="<?php echo esc_attr(KOP_PEOPLE_ADMIN_PAGE); ?>">
         <label for="kop-people-q" class="screen-reader-text">Search people</label>
         <input type="search" id="kop-people-q" name="q" value="<?php echo esc_attr($q); ?>" placeholder="Name, other name or id">
+        <label for="kop-people-pool" class="screen-reader-text">Who</label>
+        <select id="kop-people-pool" name="pool">
+            <option value="">Everyone</option>
+            <?php foreach ($pools as $k => $label) : ?>
+                <option value="<?php echo esc_attr($k); ?>"<?php selected($pool, $k); ?>><?php echo esc_html($label); ?></option>
+            <?php endforeach; ?>
+        </select>
         <button type="submit" class="button">Search</button>
         <span><?php echo esc_html(number_format($total) . ($total === 1 ? ' person' : ' people')); ?></span>
     </form>
     <table class="widefat striped">
-        <thead><tr><th>Id</th><th>Name</th><th>Also written</th><th>Records</th></tr></thead>
+        <thead><tr><th>Id</th><th>Name</th><th>Also written</th><th>Who</th><th>Records</th></tr></thead>
         <tbody>
         <?php foreach ($rows as $p) : ?>
             <tr>
                 <td>#<?php echo (int) $p['id']; ?></td>
                 <td><a href="<?php echo esc_url(kop_people_admin_url(array('person' => (int) $p['id']))); ?>"><?php echo esc_html($p['name']); ?></a></td>
                 <td><?php echo esc_html(implode(', ', kop_people_alias_list($p['aliases']))); ?></td>
+                <td><?php echo esc_html($pools[$p['pool']] ?? $pools['industry']); ?></td>
                 <td><?php echo (int) $p['records'] ?: '<span class="kop-people__muted">none</span>'; ?></td>
             </tr>
         <?php endforeach; ?>
@@ -219,7 +236,7 @@ function kop_people_admin_list() {
     if ($total > $per) {
         echo '<p class="kop-people__bar">';
         for ($i = 1; $i <= (int) ceil($total / $per); $i++) {
-            echo $i === $paged ? '<strong>' . $i . '</strong> ' : '<a href="' . esc_url(kop_people_admin_url(array('q' => $q, 'paged' => $i))) . '">' . $i . '</a> ';
+            echo $i === $paged ? '<strong>' . $i . '</strong> ' : '<a href="' . esc_url(kop_people_admin_url(array('q' => $q, 'pool' => $pool, 'paged' => $i))) . '">' . $i . '</a> ';
         }
         echo '</p>';
     }
@@ -238,11 +255,12 @@ function kop_people_admin_person($id) {
     }
     $p = $state['rows'][$id];
     $roles = kop_people_roles_of($id);
-    $labels = array('administrator' => 'Administrator', 'notableStaff' => 'Staff', 'founders' => 'Founder', 'keyExecutives' => 'Executive', 'ceo' => 'CEO', 'map' => 'Person on the map');
+    $labels = kop_people_list_labels();
     $similar = kop_people_similar($state, $id);
     ?>
     <p><a href="<?php echo esc_url(kop_people_admin_url()); ?>">All people</a></p>
-    <h1><?php echo esc_html($p['name']); ?> <span class="kop-people__muted">person #<?php echo (int) $id; ?></span></h1>
+    <h1><?php echo esc_html($p['name']); ?> <span class="kop-people__muted">person #<?php echo (int) $id; ?>,
+        <?php echo esc_html(strtolower(kop_people_pools()[$p['pool']] ?? 'industry')); ?></span></h1>
 
     <h2>Where they are named</h2>
     <?php if (!$roles) : ?>
@@ -255,14 +273,14 @@ function kop_people_admin_person($id) {
             $rec = kop_people_admin_record($r['record_kind'], $r['record_id']);
             $is_map = $r['record_kind'] === 'map';
             if ($is_map && $rec['url'] !== '') $rec['url'] .= '#open=' . rawurlencode((string) $r['ref']);
-            $what = $is_map ? 'node ' . $r['ref'] : ($r['record_kind'] === 'operator' ? 'company #' : 'facility #') . $r['record_id']; ?>
+            $what = kop_people_admin_what($r); ?>
             <tr>
                 <td><?php echo $rec['url'] !== '' ? '<a href="' . esc_url($rec['url']) . '">' . esc_html($rec['name']) . '</a>' : esc_html($rec['name']); ?>
                     <span class="kop-people__muted"><?php echo esc_html($what); ?></span></td>
                 <td><?php echo esc_html($labels[$r['list']] ?? $r['list']); ?></td>
                 <td><?php echo esc_html($r['name']); ?></td>
                 <td><?php echo esc_html($r['role']); ?></td>
-                <td><?php if ($r['record_kind'] === 'facility' && count($roles) > 1) : ?>
+                <td><?php if (kop_people_admin_can_separate($r, count($roles))) : ?>
                     <form method="post">
                         <?php kop_people_admin_hidden('separate', $id); ?>
                         <input type="hidden" name="facility" value="<?php echo (int) $r['record_id']; ?>">

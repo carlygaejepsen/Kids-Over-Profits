@@ -64,7 +64,7 @@ if (!function_exists('kop_pmerge_find_pairs')) {
             $parts = explode(' ', (string) $p['name_key']);
             if (count($parts) !== 2) continue;
             $info[$id] = array('first' => $parts[0], 'last' => $parts[1], 'key' => $p['name_key'], 'tokens' => kop_pmerge_tokens($p['name']),
-                'records' => array_flip($records[$id] ?? array()));
+                'records' => array_flip($records[$id] ?? array()), 'mid' => kop_people_middle_initials($p['name']));
             $by_last[$parts[1]][] = $id;
             $by_first[$parts[0]][] = $id;
         }
@@ -76,6 +76,8 @@ if (!function_exists('kop_pmerge_find_pairs')) {
             if (isset($out[$pk]) || isset($dismissed[$pk])) return;
             $x = $info[$a];
             $y = $info[$b];
+            // Another middle initial is another person (Robert W. and Robert B. Lichfield, father and son).
+            if ($x['mid'] && $y['mid'] && !array_intersect_key($x['mid'], $y['mid'])) return;
             $shared = (bool) array_intersect_key($x['records'], $y['records']);
             $reason = null;
             if ($x['key'] === $y['key']) {
@@ -147,13 +149,6 @@ if (!function_exists('kop_pmerge_log')) {
 if (!function_exists('kop_pmerge_record_rows')) {
     /** person id => [{kind, id, name, role, url}] from kop_person_roles, with record names. */
     function kop_pmerge_record_rows(array $opts = array()) {
-        $names = array();
-        foreach (kop_facility_db_rows('SELECT id, name, state FROM ' . kop_facility_table('facilities', $opts), array(), $opts) as $r) {
-            $names['facility' . $r['id']] = $r['name'] . ($r['state'] ? ', ' . $r['state'] : '');
-        }
-        foreach (kop_facility_db_rows('SELECT id, name FROM ' . kop_facility_table('operators', $opts), array(), $opts) as $r) {
-            $names['operator' . $r['id']] = (string) $r['name'];
-        }
         $map_url = function_exists('kop_facility_pages_page_url_by_template') ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/') : '';
         $out = array();
         foreach (kop_facility_db_rows('SELECT person_id, record_kind, record_id, list, role, ref FROM ' . kop_people_table('roles', $opts)
@@ -164,8 +159,9 @@ if (!function_exists('kop_pmerge_record_rows')) {
                 $name = 'Network map';
                 if ($map_url !== '') $url = $map_url . '#open=' . rawurlencode((string) $r['ref']);
             } else {
-                $name = $names[$kind . $r['record_id']] ?? ucfirst($kind) . ' #' . $r['record_id'];
-                if ($kind === 'facility' && function_exists('kop_facility_page_url')) $url = (string) kop_facility_page_url((int) $r['record_id']);
+                $rec = kop_people_record_label($kind, (int) $r['record_id'], $opts);
+                $name = $rec['name'];
+                $url = $rec['url'];
             }
             $out[(int) $r['person_id']][] = array('kind' => $kind, 'id' => (int) $r['record_id'], 'name' => $name, 'role' => (string) $r['role'], 'url' => $url);
         }
@@ -200,7 +196,12 @@ if (!function_exists('kop_pmerge_screen_data')) {
                 'n' => count($recs), 'url' => function_exists('kop_people_admin_url') ? kop_people_admin_url(array('person' => $id)) : '');
         };
         $out = array();
-        foreach (kop_pmerge_find_pairs($people, $keys, kop_pmerge_dismissed()) as $p) {
+        // Pairs within a pool only: a memorial name or a journalist is never offered as a staff member's other spelling.
+        $by_pool = array();
+        foreach ($people as $id => $r) $by_pool[$r['pool'] ?? 'industry'][$id] = $r;
+        $pairs = array();
+        foreach ($by_pool as $group) $pairs = array_merge($pairs, kop_pmerge_find_pairs($group, $keys, kop_pmerge_dismissed()));
+        foreach ($pairs as $p) {
             $a = $side($p['a']);
             $b = $side($p['b']);
             $out[] = array('key' => $p['a'] . ':' . $p['b'], 'tab' => $p['reason']['level'], 'reason' => $p['reason']['label'],

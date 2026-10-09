@@ -1203,7 +1203,10 @@ function readPeople() {
         const { DatabaseSync } = require('node:sqlite');
         const db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
         const has = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wpdl_kop_people'").get();
-        rows = has ? db.prepare('SELECT id, name, name_key, aliases, merged_into FROM wpdl_kop_people ORDER BY id').all() : null;
+        /* Industry people only: victims, plaintiffs and journalists have ids of their own (pool) and are never on the map. */
+        const pooled = has && db.prepare("SELECT name FROM pragma_table_info('wpdl_kop_people') WHERE name = 'pool'").get();
+        rows = has ? db.prepare('SELECT id, name, name_key, aliases, merged_into FROM wpdl_kop_people'
+            + (pooled ? " WHERE pool = 'industry'" : '') + ' ORDER BY id').all() : null;
         /* The id the sync gave each node last time: two board nodes with one name stay two people. */
         const hasRoles = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'wpdl_kop_person_roles'").get();
         refs = hasRoles ? db.prepare("SELECT ref, person_id FROM wpdl_kop_person_roles WHERE record_kind = 'map'").all() : [];

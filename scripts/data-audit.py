@@ -282,8 +282,11 @@ def check_operator_inherited(recs, graph):
 
 def check_people(con, recs):
     out = []
+    # Industry people only: victims, plaintiffs and journalists keep ids of their own (inc/people.php pools).
+    pooled = any(r[1] == 'pool' for r in con.execute("PRAGMA table_info('wpdl_kop_people')"))
     people = {pid: (name, nk) for pid, name, nk, merged in
-              con.execute('SELECT id, name, name_key, merged_into FROM wpdl_kop_people') if not merged}
+              con.execute('SELECT id, name, name_key, merged_into FROM wpdl_kop_people'
+                          + (" WHERE pool = 'industry'" if pooled else '')) if not merged}
     at = defaultdict(set)
     roles = defaultdict(list)
     for kind, rec_id, pid, role in con.execute(

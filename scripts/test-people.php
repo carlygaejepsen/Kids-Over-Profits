@@ -51,6 +51,7 @@ function set_transient() { return true; }
 function delete_transient() { return true; }
 function home_url($p = '') { return 'https://example.test/' . ltrim($p, '/'); }
 function get_page_by_path() { return null; }
+function get_stylesheet_directory() { return dirname(__DIR__); }
 function remove_accents($s) { return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', (string) $s); }
 $GLOBALS['wpdb'] = (object) array('prefix' => 'wpdl_');
 require $root . '/inc/facility-store.php';
@@ -68,18 +69,24 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->exec('PRAGMA synchronous = OFF');
 $pdo->exec('PRAGMA journal_mode = MEMORY');
 $pdo->exec('ATTACH DATABASE ' . $pdo->quote($db_path) . ' AS src');
-foreach (array('facilities_v2', $prefix . 'kop_operators', $prefix . 'kop_operator_facilities', 'memorial_victims', 'referrers_master') as $t) {
-    $pdo->exec($pdo->query("SELECT sql FROM src.sqlite_master WHERE type = 'table' AND name = " . $pdo->quote($t))->fetchColumn());
+foreach (array('facilities_v2', $prefix . 'kop_operators', $prefix . 'kop_operator_facilities', 'memorial_victims', 'referrers_master',
+    $prefix . 'transporters_master', 'providers_master', 'lawsuits', 'young_adult_programs', 'wiki_submissions', 'journalists') as $t) {
+    $sql = $pdo->query("SELECT sql FROM src.sqlite_master WHERE type = 'table' AND name = " . $pdo->quote($t))->fetchColumn();
+    if (!$sql) { echo "  (no $t in the mirror)
+"; continue; }
+    $pdo->exec($sql);
     $pdo->exec("INSERT INTO main.`$t` SELECT * FROM src.`$t`");
 }
 $pdo->exec('DETACH DATABASE src');
 // The MySQL tables of kop_people_install(), in SQLite.
 $pdo->exec("CREATE TABLE {$prefix}kop_people (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, name_key TEXT NOT NULL,
-    aliases TEXT, merged_into INTEGER, notes TEXT, created_at TEXT, updated_at TEXT)");
+    aliases TEXT, merged_into INTEGER, notes TEXT, pool TEXT NOT NULL DEFAULT 'industry', created_at TEXT, updated_at TEXT)");
 $pdo->exec("CREATE TABLE {$prefix}kop_person_roles (record_kind TEXT NOT NULL, record_id INTEGER NOT NULL, list TEXT NOT NULL,
     position INTEGER NOT NULL, person_id INTEGER NOT NULL, name TEXT NOT NULL DEFAULT '', role TEXT, ref TEXT NOT NULL DEFAULT '',
     PRIMARY KEY (record_kind, record_id, list, position))");
 $graph = json_decode(file_get_contents($root . '/js/data/network/graph.json'), true);
+// The deployed graph carries the site's person ids; this table starts empty, so the nodes start without them.
+foreach ($graph['nodes'] as $i => $n) unset($graph['nodes'][$i]['personId']);
 $opts = array('pdo' => $pdo, 'prefix' => $prefix, 'graph' => $graph);
 
 $fails = 0;
@@ -108,6 +115,13 @@ function entry_id($pdo, $fid, $list, $pos) {
     return (int) ($doc['staff'][$list][$pos]['personId'] ?? 0);
 }
 
+// The mirror's documents carry the site's person ids; start from documents without them, as the first sync did.
+$upd = $pdo->prepare('UPDATE facilities_v2 SET json_data = ? WHERE id = ?');
+foreach (docs($pdo) as $id => $json) {
+    $doc = json_decode($json, true);
+    $bare = is_array($doc) ? strip_ids($doc) : $doc;
+    if ($bare != $doc) $upd->execute(array(kop_facility_json_encode($bare), $id));
+}
 $before = docs($pdo);
 
 // ---- Sync ---------------------------------------------------------------------
@@ -151,8 +165,60 @@ check($both > 50, "$both map people are the same ids as facility staff");
 
 echo "Second sync\n";
 $s2 = kop_people_sync($opts);
-check($s2['created'] === 0 && $s2['stamped'] === 0 && $s2['docs_written'] === 0, 'changes nothing');
+check($s2['created'] === 0 && $s2['stamped'] === 0 && $s2['docs_written'] === 0, 'changes nothing' . ($s2['created'] || $s2['stamped'] || $s2['docs_written'] ? ' ' . json_encode($s2) : ''));
 check($s2['roles'] === $s['roles'], 'same links');
+
+// ---- Everyone else the records name ----------------------------------------------
+echo "Other records\n";
+$pool_of = array();
+foreach ($pdo->query("SELECT id, pool FROM {$prefix}kop_people")->fetchAll(PDO::FETCH_NUM) as $r) $pool_of[(int) $r[0]] = $r[1];
+$want = array('consultant:consultant' => 'industry', 'transport:personnel' => 'industry', 'lawsuit:staff' => 'industry', 'lawsuit:plaintiff' => 'harmed',
+    'memorial:victim' => 'harmed', 'youngadult:staff' => 'industry', 'wiki:staff' => 'industry', 'journalist:byline' => 'press');
+$by_slot = array();
+$wrong_pool = 0;
+foreach ($pdo->query("SELECT record_kind, list, person_id FROM {$prefix}kop_person_roles")->fetchAll(PDO::FETCH_NUM) as $r) {
+    $slot = $r[0] . ':' . $r[1];
+    $by_slot[$slot] = ($by_slot[$slot] ?? 0) + 1;
+    $expect = $want[$slot] ?? 'industry';
+    if (($pool_of[(int) $r[2]] ?? '') !== $expect) $wrong_pool++;
+}
+foreach ($want as $slot => $pool) check(!empty($by_slot[$slot]), sprintf('%s named (%d)', $slot, $by_slot[$slot] ?? 0));
+check($wrong_pool === 0, 'every name has an id in its own pool (' . $wrong_pool . ' not)');
+// A journalist or a memorial name that is also a staff member's is two ids.
+$shared = (int) $pdo->query("SELECT COUNT(*) FROM {$prefix}kop_people a JOIN {$prefix}kop_people b ON a.name_key = b.name_key AND a.id < b.id
+    AND a.pool <> b.pool")->fetchColumn();
+$crossed = (int) $pdo->query("SELECT COUNT(*) FROM (SELECT person_id FROM {$prefix}kop_person_roles GROUP BY person_id
+    HAVING SUM(record_kind = 'journalist') > 0 AND SUM(record_kind IN ('facility', 'operator', 'map')) > 0)")->fetchColumn();
+check($crossed === 0, "no journalist shares an id with staff ($shared names in two pools)");
+// Robert W. and Robert B. Lichfield are father and son.
+$w = $pdo->query("SELECT DISTINCT person_id FROM {$prefix}kop_person_roles WHERE name LIKE 'Robert W.%Lichfield'")->fetchAll(PDO::FETCH_COLUMN);
+$b = $pdo->query("SELECT DISTINCT person_id FROM {$prefix}kop_person_roles WHERE name LIKE 'Robert B.%Lichfield'")->fetchAll(PDO::FETCH_COLUMN);
+check($w && $b && count($w) === 1 && count($b) === 1 && $w !== $b, 'Robert W. and Robert B. Lichfield are two people, each one id');
+$st = array('rows' => array(), 'by_key' => array(), 'keys' => array(), 'initials' => array());
+$st['rows'][1] = array('id' => 1, 'name' => 'Robert B. Lichfield', 'name_key' => 'robert lichfield', 'aliases' => '', 'merged_into' => 0, 'pool' => 'industry');
+$st['rows'][2] = array('id' => 2, 'name' => 'Robert W. Lichfield', 'name_key' => 'robert lichfield', 'aliases' => '', 'merged_into' => 0, 'pool' => 'industry');
+kop_people_index_row($st, 1);
+kop_people_index_row($st, 2);
+check(kop_people_find($st, 'Robert W. Lichfield') === 2 && kop_people_find($st, 'Robert B Lichfield') === 1 && kop_people_find($st, 'Robert Lichfield') === 1
+    && kop_people_find($st, 'Robert Lichfield', 'press') === 0, 'a middle initial picks the person, none takes the lowest id, another pool finds nobody');
+$fake_pairs = kop_pmerge_find_pairs(array(1 => array('name' => 'Robert B. Lichfield', 'name_key' => 'robert lichfield'),
+    2 => array('name' => 'Robert W. Lichfield', 'name_key' => 'robert lichfield')), array());
+check(!$fake_pairs, 'Merge People does not offer two middle initials as one person');
+// What reads as a name.
+$yes = array('Sonny Faaootoa', 'Siuta S. Faaootoa', "John J. O'Connor", 'Gwendolyn Lockwood Hales', 'Mary Ann McMahan-McWhorter', 'C. Richard Wyatt',
+    'Frederic H. Yeomans IV', "Ja\u{2019}Ceon Terry", 'Dr. Matthew L. Israel');
+$no = array('Provo Canyon School', 'Jane Doe 1', 'FNU Bell', 'Kathy [LNU]', 'Teamvestment L.L.C.', 'United States of America', 'Anonymous survivors',
+    'Golden Ark Enterprises', 'LMSW-CASAC', 'Unknown', '(Unnamed boy)', 'Class of boys placed at Provo Canyon School', 'Hawkins');
+$bad = array();
+foreach ($yes as $n) if (!kop_people_is_person_name($n)) $bad[] = "not: $n";
+foreach ($no as $n) if (kop_people_is_person_name($n)) $bad[] = "is: $n";
+check(!$bad, 'person names told from companies and stand-ins' . ($bad ? ' (' . implode('; ', $bad) . ')' : ''));
+$split = kop_people_split_list('Oliver Whitcomb and Amy Clifford, on behalf of an anonymous survivor');
+check($split === array('Oliver Whitcomb', 'Amy Clifford'), 'a party list splits into its people: ' . implode(' | ', $split));
+check(kop_people_split_list('The Estate of Jason Britt') === array('Jason Britt'), 'an estate is the person it was');
+check(kop_people_split_named('Bobby Tredinnick, LMSW-CASAC (CEO)') === array('Bobby Tredinnick', 'CEO'), 'a personnel line gives name and role');
+$owners = $pdo->query("SELECT name FROM {$prefix}kop_person_roles WHERE list IN ('owners', 'owner')")->fetchAll(PDO::FETCH_COLUMN);
+check(!array_intersect($owners, array('Twin Oaks', 'Vision Quest', 'New Passages', 'Western Maine', 'Catholic Charities')), 'company and region owners get no id (' . implode(', ', $owners) . ')');
 
 // ---- Pair finder ---------------------------------------------------------------
 echo "Pair finder\n";
