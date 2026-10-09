@@ -542,7 +542,7 @@ function kop_wiki_drafts_refresh_approved(PDO $pdo) {
     return $out;
 }
 
-define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '2');   // 1: editorial voice cut from 23 entries; 2: copy-edit + Ballard Sheppard's tense (2026-10-09)
+define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '3');   // 1: editorial voice cut from 23 entries; 2: copy-edit; 3: Ballard Sheppard at closed Rivendell in the past (2026-10-09)
 
 add_action('init', function () {
     if (get_option('kop_wiki_drafts_refresh_version') === KOP_WIKI_DRAFTS_REFRESH_VERSION || get_transient('kop_wiki_drafts_refresh_running')) return;
