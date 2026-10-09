@@ -110,10 +110,6 @@ function kop_rinbox_wupd_item(array $r) {
     $text = '';
 
     $rec = (array) ($d['record'] ?? array());
-    if (!empty($rec['name'])) {
-        $url = !empty($rec['id']) && function_exists('kop_facility_page_url') ? (string) kop_facility_page_url((int) $rec['id']) : '';
-        $details[] = array('label' => 'Drawn from the record', 'value' => $rec['name'] . (!empty($rec['status']) ? ' (' . $rec['status'] . ')' : ''), 'url' => $url);
-    }
 
     if ($view === 'review') {
         $b = kop_wiki_drafts_build($id, $row['markdown'], $edits);
@@ -200,8 +196,13 @@ function kop_rinbox_wupd_item(array $r) {
     );
     if ($fields) $item['fields'] = $fields;
     if ($compare) $item['compare'] = $compare;
-    // Approve / Set aside, Copy / Pasted on Reddit come before the lines (js/review-inbox.js)
+    // Approve / Set aside, Copy / Pasted on Reddit come before the lines (js/review-inbox.js), and the
+    // lines and the past-tense table start folded, each under a "Show ..." line
     $item['decide_first'] = true;
+    if ($view === 'review') {
+        $item['details_fold'] = 'Show the lines this update adds, each with its check';
+        if ($compare) $item['compare_fold'] = 'Show the lines put in the past tense';
+    }
     if ($view === 'ready') {
         // Copy, Edit it on Reddit and Pasted on Reddit side by side on the card (js/review-inbox.js),
         // so pasting needs no trip to the whole-entry page. KOP's copy is the approved text.

@@ -821,6 +821,16 @@ a.rinbox-btn-go:focus-visible {
     border-bottom: 1px solid var(--kop-sand, #F2EEDF);
 }
 
+details.rinbox-fold {
+    margin: 8px 0;
+}
+
+details.rinbox-fold > summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--kop-navy, #000080);
+}
+
 .rinbox-copied {
     font-size: 13px;
     color: var(--kop-text-muted, #4A5568);

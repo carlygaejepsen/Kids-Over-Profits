@@ -1229,7 +1229,8 @@
                 else dd.textContent = Array.isArray(d.value) ? d.value.join(', ') : String(d.value === null || d.value === undefined ? '' : d.value);
                 dl.appendChild(dd);
             });
-            node.appendChild(dl);
+            // item.details_fold: the list starts folded under that line (Wiki updates: 100+ lines)
+            node.appendChild(item.details_fold ? fold(item.details_fold, dl) : dl);
         }
         if (item.compare && item.compare.rows && item.compare.rows.length) {
             var table = el('table', { class: 'rinbox-compare' });
@@ -1243,7 +1244,8 @@
                 body.appendChild(tr);
             });
             table.appendChild(body);
-            node.appendChild(el('div', { class: 'rinbox-compare-wrap' }, [table]));
+            var compareWrap = el('div', { class: 'rinbox-compare-wrap' }, [table]);
+            node.appendChild(item.compare_fold ? fold(item.compare_fold, compareWrap) : compareWrap);
         }
         if (item.preview && safeHref(item.preview.url)) {
             var frameBox = el('div', { class: 'rinbox-preview', hidden: true });
@@ -1449,6 +1451,10 @@
         }).catch(function (e) {
             fillCard(node, item, s, src, e.message, true);
         });
+    }
+
+    function fold(label, body) {
+        return el('details', { class: 'rinbox-fold' }, [el('summary', { text: label }), body]);
     }
 
     function copyText(text, status) {
