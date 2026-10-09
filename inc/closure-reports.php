@@ -569,6 +569,15 @@ function kop_closure_apply(PDO $pdo, $id, $reviewer, $facility_id = 0, $end_year
         $end_year = (int) substr($report['closure_date'], 0, 4);
     }
     $note = kop_closure_source_note($report);
+    // A renamed program merged into one record: a closure dated in an earlier
+    // name's years is that name ending, and the place kept operating.
+    if ($report['target_status'] === 'Closed' && $end_year && function_exists('kop_facility_eras_doc_name_at')) {
+        $then = kop_facility_eras_doc_name_at($stored['doc'], $end_year);
+        if ($then !== '') {
+            throw new RuntimeException('In ' . (int) $end_year . ' this program was still called ' . $then
+                . ', which was renamed and kept operating: the record stays as it is. Reject the report, or give a later closure year if it closed again.');
+        }
+    }
 
     kop_v2_with_write_lock($pdo, function () use ($pdo, $opts, $stored, $report, $end_year, $note, $reviewer, $fid, $id) {
         list($doc, $previous_status, $previous_end) = kop_closure_doc_apply($stored['doc'], $report['target_status'], $end_year, $note);

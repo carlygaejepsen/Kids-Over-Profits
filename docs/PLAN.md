@@ -820,6 +820,33 @@ What stood in the way:
   Bethel Boys Academy, Gulf Coast Academy and Bethel Baptist Children's
   Home, so articles using those names link to the current name.
 
+Owner's rule, 2026-10-08: when a renamed program's two records are merged
+into one, the open and closure dates stay different for each name, and the
+facts stay with the name they came from.
+
+Done 2026-10-08 (`php scripts/test-rename-merge.php [--list]`):
+- **Merge as a rename.** KOP Tools > Merge Duplicates has a **Renamed
+  programs** tab (52 pairs on the 2026-10-08 mirror: one record lists the
+  other as a past name or says what it is called now), and "Merge as a
+  rename" for any two records. A plain merge of a renamed pair is refused.
+  - The later name's record is kept, with its own years from the rename
+    year. The earlier name goes to pastNames.
+  - The earlier name keeps its years, status, operator and notes on its
+    `legacy.mergedFacilities` entry (`rename`). The data form's round trip
+    keeps that entry.
+  - Its company links move over as past operators.
+  - Map Renames gets the year at once. Undo puts all of it back.
+- **Facts stay with their name.** The merge records the keys of what each
+  record's page listed (deaths, findings, lawsuits, incidents, news, staff).
+  The page cuts the record by its own names (`kop_facility_eras_doc_chain()`)
+  and puts each item under the name it was filed under, whatever its date.
+  Only items neither record held are placed by date.
+- **Dates per name everywhere.** The "Formerly" line prints each earlier
+  name's years. The map build gives the earlier name its own years and keeps
+  the rename line. A closure dated in an earlier name's years is refused
+  for the record (item 3 below, for merged records).
+- The data audit's "merge these" notes now say to merge as a rename.
+
 Done 2026-09-29:
 - **Map Renames** (KOP Data Tools > Map Renames, `inc/network-renames.php`,
   `php scripts/test-network-renames.php`) lists every rename line with both

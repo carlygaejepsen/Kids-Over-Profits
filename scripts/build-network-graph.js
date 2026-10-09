@@ -456,6 +456,9 @@ function loadFacilityIndex() {
              * name still lead to the record that kept it. */
             const mergedInto = new Map();
             const mergedNames = [];
+            /* A renamed program merged as a rename (its 'rename' entry): the
+             * earlier name keeps its own years, name key -> {years, recordId}. */
+            const renamed = new Map();
             rows.forEach(function (row) {
                 let doc = null;
                 try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { doc = null; }
@@ -463,6 +466,9 @@ function loadFacilityIndex() {
                 merged.forEach(function (m) {
                     if (m && m.facility_id) mergedInto.set(Number(m.facility_id), row.id);
                     if (m && m.name) mergedNames.push([m.name, row.id]);
+                    if (m && m.name && m.rename && Number(m.rename.year) > 0) {
+                        renamed.set(nameKey(m.name), { years: formatYears(m.rename.startYear, m.rename.endYear || m.rename.year), recordId: row.id });
+                    }
                 });
             });
             rows.forEach(function (row) {
@@ -490,7 +496,7 @@ function loadFacilityIndex() {
                 if (!record || !key || index.has(key)) return;
                 index.set(key, [record]);
             });
-            return { source: 'facilities_v2', index: index, loose: loose, byId: byId, mergedInto: mergedInto, count: rows.length };
+            return { source: 'facilities_v2', index: index, loose: loose, byId: byId, mergedInto: mergedInto, renamed: renamed, count: rows.length };
         } catch (err) {
             console.warn('  ! could not read ' + path.basename(SQLITE_FILE) + ': ' + err.message);
         }
@@ -631,7 +637,10 @@ function deriveYears(nodes, facilities, overrides) {
         if (Object.prototype.hasOwnProperty.call(overrides.years, node.name)) {
             years = String(overrides.years[node.name] || '');
         }
-        if (!years && node.facilityId && facilities && facilities.byId) {
+        /* An earlier name merged into its later name's record has its own years, not the record's. */
+        const earlier = facilities && facilities.renamed ? facilities.renamed.get(nameKey(node.name)) : null;
+        if (!years && earlier && earlier.recordId === node.facilityId) years = earlier.years;
+        if (!years && !earlier && node.facilityId && facilities && facilities.byId) {
             const record = facilities.byId.get(node.facilityId);
             if (record && record.years) years = record.years;
         }
@@ -704,7 +713,9 @@ function deriveDeaths(nodes, facilities, overrides) {
     nodes.forEach(function (node) {
         if (node.kind === 'person') return;
         [node.name].concat(node.aliases || []).forEach(function (name) { add(nameKey(name), node); });
-        if (node.facilityId && facilities && facilities.byId) {
+        /* An earlier name merged into its later name's record is not that record's current name. */
+        const earlier = facilities && facilities.renamed && facilities.renamed.has(nameKey(node.name));
+        if (!earlier && node.facilityId && facilities && facilities.byId) {
             const record = facilities.byId.get(node.facilityId);
             if (record) add(nameKey(record.name), node);
         }
@@ -869,8 +880,11 @@ function readProfileClaims(nodes, overrides) {
             profileTexts(ident.knownReferrers).forEach(function (name) { claim(name, node, 'referral', 'referrer', 'facility profile'); });
             profileTexts(staff.administrator).forEach(function (name) { claim(name, node, 'leadership', 'administrator', 'facility profile', true); });
             profileTexts(staff.notableStaff).forEach(function (name) { claim(name, node, 'staff', 'staff', 'facility profile', true); });
-            /* A record merged into this one is the same place, never a rename. */
-            const mergedAway = new Set(((facility.legacy && facility.legacy.mergedFacilities) || []).map(function (m) { return nameKey((m && m.name) || ''); }));
+            /* A record merged into this one is the same place, never a rename,
+             * unless it was merged as a rename (its earlier name). */
+            const mergedAway = new Set(((facility.legacy && facility.legacy.mergedFacilities) || [])
+                .filter(function (m) { return !(m && m.rename && Number(m.rename.year) > 0); })
+                .map(function (m) { return nameKey((m && m.name) || ''); }));
             [['past', ident.pastNames], ['other', ident.otherNames]].forEach(function (list) {
                 profileTexts(list[1]).forEach(function (name) {
                     if (mergedAway.has(nameKey(name))) {

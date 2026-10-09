@@ -480,7 +480,9 @@ get_header();
             <p class="kop-fp-formerly">Now known as <?php echo esc_html($page['current_name']); ?></p>
         <?php endif; ?>
         <?php if ($page['formerly']) : ?>
-            <p class="kop-fp-formerly">Formerly <?php echo esc_html(implode(', ', $page['formerly'])); ?><?php $kop_fp_sources($page['fact_sources']['formerly'] ?? array(), 'span'); ?></p>
+            <p class="kop-fp-formerly">Formerly <?php echo esc_html(implode(', ', array_map(static function ($n) use ($page) {
+                return isset($page['formerly_years'][$n]) ? $n . ' (' . $page['formerly_years'][$n] . ')' : $n;
+            }, $page['formerly']))); ?><?php $kop_fp_sources($page['fact_sources']['formerly'] ?? array(), 'span'); ?></p>
         <?php endif; ?>
         <?php if ($page['aka']) : ?>
             <p class="kop-fp-formerly">Also known as <?php echo esc_html(implode(', ', $page['aka'])); ?></p>
@@ -699,12 +701,16 @@ get_header();
 
             <?php foreach ($kop_fp_eras ? $kop_fp_eras['list'] : array() as $kop_fp_era) :
                 $kop_fp_era_meta = array_filter(array($kop_fp_era['years'], $kop_fp_era['operators'] ? implode(', ', $kop_fp_era['operators']) : ''), 'strlen');
-                $kop_fp_era_parts = 0;
+                $kop_fp_era_notes = (array) ($kop_fp_era['notes'] ?? array());
+                $kop_fp_era_parts = count($kop_fp_era_notes);
                 ?>
             <section class="kop-fp-section kop-fp-era" id="<?php echo esc_attr($kop_fp_era['id']); ?>">
                 <h2><span class="kop-fp-era-as">As</span> <?php echo esc_html($kop_fp_era['name']); ?></h2>
                 <?php if ($kop_fp_era_meta) : ?><p class="kop-fp-era-meta"><?php echo esc_html(implode(' | ', $kop_fp_era_meta)); ?></p><?php endif; ?>
                 <?php if ($kop_fp_era['url'] !== '') : ?><p class="kop-fp-count"><a href="<?php echo esc_url($kop_fp_era['url']); ?>">The record kept under this name</a></p><?php endif; ?>
+                <?php if ($kop_fp_era_notes) : ?>
+                <ul class="kop-fp-notes kop-fp-era-notes"><?php foreach ($kop_fp_era_notes as $kop_fp_note) : ?><li><?php echo kop_facility_pages_cited_html((string) $kop_fp_note); ?></li><?php endforeach; ?></ul>
+                <?php endif; ?>
                 <?php foreach ($kop_fp_era_kinds as $kop_fp_k => $kop_fp_kind) :
                     $kop_fp_items = $kop_fp_era[$kop_fp_k];
                     if (!$kop_fp_items) continue;

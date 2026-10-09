@@ -523,12 +523,51 @@ if (!function_exists('kop_fmerge_row')) {
     }
 }
 
+if (!function_exists('kop_fmerge_rename_facts')) {
+    /**
+     * kind => item keys of what a record's page lists now, for a rename merge
+     * to remember which name each item was filed under. Items its own earlier
+     * names already claim are left to them. array() where the page code is
+     * not loaded (the plain offline merge test).
+     */
+    function kop_fmerge_rename_facts($id, array $doc) {
+        if (!function_exists('kop_facility_eras_record_items') || !function_exists('kop_facility_eras_list_keys')) return array();
+        $items = kop_facility_eras_record_items((int) $id);
+        if (!is_array($items)) return array();
+        $keys = kop_facility_eras_list_keys($items);
+        $chain = kop_facility_eras_doc_chain($doc);
+        if ($chain) {
+            $claims = kop_facility_eras_doc_claims($doc, $chain);
+            $last = count($chain) - 1;
+            foreach ($keys as $kind => $list) {
+                $keys[$kind] = array_values(array_filter($list, function ($k) use ($claims, $last) { return !isset($claims[$k]) || $claims[$k] === $last; }));
+            }
+        }
+        return array_filter($keys);
+    }
+}
+
+if (!function_exists('kop_fmerge_operator_names')) {
+    /** Names of the companies a record is filed under (kop_operator_facilities). */
+    function kop_fmerge_operator_names(PDO $pdo, $prefix, $id) {
+        $of = $prefix . 'kop_operator_facilities';
+        $op = $prefix . 'kop_operators';
+        if (!kop_fmerge_table_columns($pdo, $of) || !kop_fmerge_table_columns($pdo, $op)) return array();
+        $s = $pdo->prepare("SELECT o.name FROM `{$of}` f JOIN `{$op}` o ON o.id = f.operator_id WHERE f.facility_id = ? ORDER BY f.sort_order, o.name");
+        $s->execute(array((int) $id));
+        return array_values(array_filter(array_map('trim', $s->fetchAll(PDO::FETCH_COLUMN)), 'strlen'));
+    }
+}
+
 if (!function_exists('kop_fmerge_execute')) {
     /**
      * Fold facility $drop into $keep. $opts: folder_keep / folder_drop (the
      * FileBird folder each page shows; found from the documents otherwise),
-     * by (user login). Runs inside the caller's transaction (the screen wraps
-     * it in kop_v2_with_write_lock()). Returns the log entry, undo included.
+     * by (user login), rename (the two are one program under two names, $drop
+     * the earlier: {year, earlier: {start, end}, later: {start, end}}; each
+     * name keeps its own years, status and facts, see kop_mfd_merge_docs()).
+     * Runs inside the caller's transaction (the screen wraps it in
+     * kop_v2_with_write_lock()). Returns the log entry, undo included.
      */
     function kop_fmerge_execute(PDO $pdo, $prefix, $keep_id, $drop_id, array $opts = array()) {
         kop_fmerge_load_mfd();
@@ -540,7 +579,30 @@ if (!function_exists('kop_fmerge_execute')) {
         if (!$keep) throw new RuntimeException('Record #' . $keep_id . ' is not on file (already merged?).');
         if (!$drop) throw new RuntimeException('Record #' . $drop_id . ' is not on file (already merged?).');
 
-        $doc = kop_mfd_merge_docs($keep['doc'], $drop['doc'], array('id' => $drop_id, 'unique_name' => $drop['unique_name']));
+        $rename = null;
+        if (!empty($opts['rename'])) {
+            $r = (array) $opts['rename'];
+            $year = (int) ($r['year'] ?? 0);
+            if ($year < 1800 || $year > (int) gmdate('Y')) throw new RuntimeException('Give the year of the rename (1800 to ' . gmdate('Y') . ').');
+            $yr = function ($v) { return (is_numeric($v) && (int) $v > 0) ? (int) $v : null; };
+            $e = (array) ($r['earlier'] ?? array());
+            $l = (array) ($r['later'] ?? array());
+            $e_start = array_key_exists('start', $e) ? $yr($e['start']) : $yr($drop['doc']['operatingPeriod']['startYear'] ?? null);
+            if ($e_start && $e_start > $year) throw new RuntimeException('The earlier name cannot start after the rename (' . $e_start . ' > ' . $year . ').');
+            $l_start = $yr($l['start'] ?? null) ?: $year;
+            $l_end = $yr($l['end'] ?? null);
+            if ($l_end && $l_end < $l_start) throw new RuntimeException('The later name cannot end before it starts (' . $l_end . ' < ' . $l_start . ').');
+            $rename = array(
+                'year'    => $year,
+                'earlier' => array('start' => $e_start, 'end' => $yr($e['end'] ?? null) ?: $year,
+                    'status' => (string) ($drop['doc']['operatingPeriod']['status'] ?? ''),
+                    'operators' => kop_fmerge_operator_names($pdo, $prefix, $drop_id)),
+                'later'   => array('start' => $l_start, 'end' => $l_end),
+                'facts'   => array('earlier' => kop_fmerge_rename_facts($drop_id, $drop['doc']), 'later' => kop_fmerge_rename_facts($keep_id, $keep['doc'])),
+            );
+        }
+
+        $doc = kop_mfd_merge_docs($keep['doc'], $drop['doc'], array('id' => $drop_id, 'unique_name' => $drop['unique_name']), $rename);
         $undo = array();
         $report = array('rows' => array(), 'files' => 0, 'subfolders' => 0, 'folders_deleted' => 0);
 
@@ -587,6 +649,8 @@ if (!function_exists('kop_fmerge_execute')) {
             $to = $ref['k'] === 'name' ? $keep['unique_name'] : $keep_id;
             $extra = array();
             if (!empty($ref['with'])) $extra[$ref['with']] = $keep['unique_name'];
+            // The earlier name's companies ran it then: past operators of the program.
+            if ($rename && $ref['t'] === $prefix . 'kop_operator_facilities') $extra['relationship'] = 'past';
             list($moved, $removed) = kop_fmerge_move_rows($pdo, $ref['t'], $ref['c'], $from, $to, $undo, $extra, (string) ($ref['where'] ?? ''));
             if ($moved || $removed) $report['rows'][$ref['t'] . '.' . $ref['c']] = $moved + $removed;
         }
@@ -645,6 +709,8 @@ if (!function_exists('kop_fmerge_execute')) {
             'drop'     => array('id' => $drop_id, 'name' => (string) ($drop['doc']['identification']['name'] ?? ''), 'unique_name' => $drop['unique_name']),
             'at'       => gmdate('Y-m-d H:i:s'),
             'by'       => (string) ($opts['by'] ?? ''),
+            'rename'   => $rename ? array('year' => $rename['year'], 'earlier' => array_intersect_key($rename['earlier'], array('start' => 1, 'end' => 1)),
+                'later' => $rename['later']) : null,
             'report'   => $report,
             'undo'     => array('keep_raw' => $keep['raw'], 'drop_raw' => $drop['raw'], 'steps' => $undo),
         );
@@ -831,6 +897,23 @@ if (!function_exists('kop_fmerge_side')) {
     }
 }
 
+if (!function_exists('kop_fmerge_side_ctx')) {
+    /** What kop_fmerge_side() reads for every record: companies, article and lawsuit counts, folders. */
+    function kop_fmerge_side_ctx(PDO $pdo, $prefix) {
+        $ctx = array('pdo' => $pdo, 'prefix' => $prefix, 'op_names' => array(), 'ops' => array(), 'counts' => array(), 'doc_counts' => array());
+        foreach ($pdo->query("SELECT id, name FROM `{$prefix}kop_operators`")->fetchAll(PDO::FETCH_NUM) as $o) $ctx['op_names'][(int) $o[0]] = (string) $o[1];
+        foreach ($pdo->query("SELECT facility_id, operator_id FROM `{$prefix}kop_operator_facilities`")->fetchAll(PDO::FETCH_NUM) as $o) $ctx['ops'][(int) $o[0]][] = (int) $o[1];
+        foreach (array('news_facility_links' => 'news', 'lawsuit_facility_links' => 'lawsuits') as $t => $k) {
+            try {
+                foreach ($pdo->query("SELECT facility_id, COUNT(*) FROM `{$t}` GROUP BY facility_id")->fetchAll(PDO::FETCH_NUM) as $c) $ctx['counts'][(int) $c[0]][$k] = (int) $c[1];
+            } catch (Throwable $e) {
+            }
+        }
+        $ctx['folders'] = kop_fmerge_folder_rows($pdo, $prefix);
+        return $ctx;
+    }
+}
+
 if (!function_exists('kop_fmerge_screen_data')) {
     /**
      * Everything the screen shows: {pairs: [{key, tab, reason, a, b, keep}], merged, dismissed}.
@@ -843,18 +926,9 @@ if (!function_exists('kop_fmerge_screen_data')) {
         }
         global $wpdb;
         $pdo = kop_seed_pdo();
-        if (!$pdo) return array('pairs' => array(), 'merged' => array(), 'dismissed' => array());
+        if (!$pdo) return array('pairs' => array(), 'renames' => array(), 'merged' => array(), 'dismissed' => array());
         $prefix = $wpdb->prefix;
-        $ctx = array('pdo' => $pdo, 'prefix' => $prefix, 'op_names' => array(), 'ops' => array(), 'counts' => array(), 'doc_counts' => array());
-        foreach ($pdo->query("SELECT id, name FROM `{$prefix}kop_operators`")->fetchAll(PDO::FETCH_NUM) as $o) $ctx['op_names'][(int) $o[0]] = (string) $o[1];
-        foreach ($pdo->query("SELECT facility_id, operator_id FROM `{$prefix}kop_operator_facilities`")->fetchAll(PDO::FETCH_NUM) as $o) $ctx['ops'][(int) $o[0]][] = (int) $o[1];
-        foreach (array('news_facility_links' => 'news', 'lawsuit_facility_links' => 'lawsuits') as $t => $k) {
-            try {
-                foreach ($pdo->query("SELECT facility_id, COUNT(*) FROM `{$t}` GROUP BY facility_id")->fetchAll(PDO::FETCH_NUM) as $c) $ctx['counts'][(int) $c[0]][$k] = (int) $c[1];
-            } catch (Throwable $e) {
-            }
-        }
-        $ctx['folders'] = kop_fmerge_folder_rows($pdo, $prefix);
+        $ctx = kop_fmerge_side_ctx($pdo, $prefix);
 
         $rows = $pdo->query('SELECT id, unique_name, json_data FROM facilities_v2')->fetchAll(PDO::FETCH_ASSOC);
         $by_id = array();
@@ -915,6 +989,16 @@ if (!function_exists('kop_fmerge_screen_data')) {
                 'homes'  => function_exists('kop_fmerge_homes_plan') ? kop_fmerge_homes_plan($a['id'], $a['name'], $b['id'], $b['name']) : null,
             );
         }
+        // Renamed programs kept as two records: merged only as a rename.
+        $renames = array();
+        foreach (kop_fmerge_find_renames($rows, $dismissed) as $r) {
+            if (!isset($by_id[$r['earlier']], $by_id[$r['later']])) continue;
+            $renames[] = kop_fmerge_rename_plan($by_id[$r['earlier']], $by_id[$r['later']], $side($r['earlier']), $side($r['later']), $r['why']);
+        }
+        usort($renames, function ($x, $y) {
+            return strcasecmp($x['later']['place'] ?? '', $y['later']['place'] ?? '') ?: strcasecmp($x['later']['name'], $y['later']['name']);
+        });
+
         $rank = array('likely' => 0, 'check' => 1, 'address' => 2, 'homes' => 3);
         usort($out, function ($x, $y) use ($rank) {
             return ($rank[$x['tab']] <=> $rank[$y['tab']]) ?: strcasecmp($x['a']['place'], $y['a']['place']) ?: strcasecmp($x['a']['name'], $y['a']['name']);
@@ -922,7 +1006,7 @@ if (!function_exists('kop_fmerge_screen_data')) {
 
         $merged = array();
         foreach (kop_fmerge_log() as $e) {
-            $merged[] = array('id' => $e['id'], 'keep' => $e['keep'], 'drop' => $e['drop'], 'at' => $e['at'], 'by' => $e['by'],
+            $merged[] = array('id' => $e['id'], 'keep' => $e['keep'], 'drop' => $e['drop'], 'at' => $e['at'], 'by' => $e['by'], 'rename' => $e['rename'] ?? null,
                 'report' => $e['report'], 'undone' => !empty($e['undone']), 'canUndo' => empty($e['undone']) && !empty($e['undo']),
                 'page' => function_exists('kop_facility_page_url') ? kop_facility_page_url((int) $e['keep']['id']) : '');
         }
@@ -937,21 +1021,114 @@ if (!function_exists('kop_fmerge_screen_data')) {
             list($x, $y) = array_map('intval', explode(':', $key));
             $dis[] = array('key' => $key, 'a' => $side($x), 'b' => $side($y), 'by' => $d['by'] ?? '', 'at' => $d['at'] ?? '', 'homes' => $homes_of[$key] ?? null);
         }
-        $data = array('pairs' => $out, 'merged' => $merged, 'dismissed' => $dis);
+        $data = array('pairs' => $out, 'renames' => $renames, 'merged' => $merged, 'dismissed' => $dis);
         set_transient('kop_fmerge_screen', $data, HOUR_IN_SECONDS);
         return $data;
     }
 }
 
+if (!function_exists('kop_fmerge_rename_line')) {
+    /**
+     * The map's rename line between two records' names: {key ("a>b" as the
+     * board drew it), earlier_is_source, decision} or null. Ids of the earlier
+     * and the later record.
+     */
+    function kop_fmerge_rename_line($earlier, $later) {
+        $graph = function_exists('kop_network_map_graph') ? kop_network_map_graph() : null;
+        if (!$graph) return null;
+        $earlier = (int) $earlier;
+        $later = (int) $later;
+        $of = array();
+        foreach ((array) $graph['nodes'] as $n) {
+            $f = function_exists('kop_facility_merge_resolve') ? kop_facility_merge_resolve((int) ($n['facilityId'] ?? 0)) : (int) ($n['facilityId'] ?? 0);
+            if ($f === $earlier || $f === $later) $of[(string) $n['id']] = $f;
+        }
+        foreach ((array) ($graph['edges'] ?? array()) as $e) {
+            if (!in_array('rebrand', (array) ($e['roles'] ?? array()), true)) continue;
+            $a = (string) $e['source'];
+            $b = (string) $e['target'];
+            if (!isset($of[$a], $of[$b]) || $of[$a] === $of[$b]) continue;
+            $decisions = function_exists('kop_network_renames_decisions') ? kop_network_renames_decisions() : array();
+            return array('key' => $a . '>' . $b, 'earlier_is_source' => $of[$a] === $earlier, 'decision' => $decisions[$a . '>' . $b] ?? null);
+        }
+        return null;
+    }
+}
+
+if (!function_exists('kop_fmerge_rename_of')) {
+    /**
+     * Whether two records are one program's earlier and later name: by their
+     * own names (pastNames, currentName) or a rename line on the map.
+     * array(earlier id, later id, why) or null.
+     */
+    function kop_fmerge_rename_of(array $a, array $b) {
+        $pa = kop_fmerge_prepare($a);
+        $pb = kop_fmerge_prepare($b);
+        if ($pa && $pb && ($dir = kop_fmerge_rename_direction($pa, $pb))) return $dir;
+        $line = kop_fmerge_rename_line((int) $a['id'], (int) $b['id']);
+        if ($line && (($line['decision']['decision'] ?? '') !== 'skipped')) {
+            $saved = ($line['decision']['decision'] ?? '') === 'saved';
+            $a_first = $line['earlier_is_source'] !== ($saved && !empty($line['decision']['swapped']));
+            $na = (string) ($pa['name'] ?? ('#' . $a['id']));
+            $nb = (string) ($pb['name'] ?? ('#' . $b['id']));
+            return $a_first
+                ? array((int) $a['id'], (int) $b['id'], 'The network map draws ' . $na . ' renamed ' . $nb)
+                : array((int) $b['id'], (int) $a['id'], 'The network map draws ' . $nb . ' renamed ' . $na);
+        }
+        return null;
+    }
+}
+
+if (!function_exists('kop_fmerge_rename_plan')) {
+    /**
+     * What a rename merge of two records would write, for the screen to show
+     * and the owner to correct: {earlier, later (card sides with start/end),
+     * year, why, map_year}. The year comes from Map Renames when saved there,
+     * else the earlier record's end year, else the later record's start year
+     * when it is after the earlier one's start; 0 when nothing tells it.
+     */
+    function kop_fmerge_rename_plan(array $e_row, array $l_row, array $side_e, array $side_l, $why) {
+        $e_op = (array) (json_decode((string) $e_row['json_data'], true)['operatingPeriod'] ?? array());
+        $l_op = (array) (json_decode((string) $l_row['json_data'], true)['operatingPeriod'] ?? array());
+        $int = function ($v) { return (is_numeric($v) && (int) $v > 0) ? (int) $v : 0; };
+        $e_start = $int($e_op['startYear'] ?? null);
+        $e_end = $int($e_op['endYear'] ?? null);
+        $l_start = $int($l_op['startYear'] ?? null);
+        $l_end = $int($l_op['endYear'] ?? null);
+        $line = kop_fmerge_rename_line((int) $e_row['id'], (int) $l_row['id']);
+        $map_year = (($line['decision']['decision'] ?? '') === 'saved') ? (int) ($line['decision']['year'] ?? 0) : 0;
+        $year = $map_year ?: ($e_end ?: (($l_start && $l_start > $e_start) ? $l_start : 0));
+        $side_e['start'] = $e_start && (!$year || $e_start <= $year) ? $e_start : 0;
+        $side_e['end'] = $year;
+        $side_l['start'] = $year && (!$l_start || $l_start < $year) ? $year : $l_start;
+        $side_l['end'] = $l_end;
+        return array('key' => min((int) $e_row['id'], (int) $l_row['id']) . ':' . max((int) $e_row['id'], (int) $l_row['id']),
+            'earlier' => $side_e, 'later' => $side_l, 'year' => $year, 'map_year' => $map_year, 'why' => (string) $why);
+    }
+}
+
 if (!function_exists('kop_fmerge_do_merge')) {
-    /** Merge from the screen: the database work, the log, the redirect. Returns the message. */
-    function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login) {
+    /**
+     * Merge from the screen: the database work, the log, the redirect. Returns
+     * the message. $rename (the dropped record is the kept one's earlier name):
+     * {year, earlier: {start, end}, later: {start, end}}; without it, two
+     * records that are a renamed program are refused.
+     */
+    function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login, array $rename = null) {
         if (function_exists('kop_v2_writes_active') && !kop_v2_writes_active($pdo, $prefix)) {
             throw new RuntimeException('The v2 write switch is off, so a merge would not stick.');
         }
         $k = kop_fmerge_row($pdo, $keep);
         $d = kop_fmerge_row($pdo, $drop);
         if (!$k || !$d) throw new RuntimeException('One of these records is no longer on file. The list has been refreshed.');
+        $is_rename = kop_fmerge_rename_of($k['raw'], $d['raw']);
+        if ($rename === null && $is_rename) {
+            throw new RuntimeException('These are one program under two names (' . $is_rename[2] . '). Merge them as a rename, '
+                . 'so each name keeps its own years and facts: the Renamed programs tab, or "Merge as a rename" above.');
+        }
+        if ($rename !== null && $is_rename && (int) $is_rename[0] === (int) $keep) {
+            throw new RuntimeException('Keep the later name\'s record: "' . ($d['doc']['identification']['name'] ?? '') . '" is the later name. Swap them.');
+        }
         $old_slug = '';
         if (function_exists('kop_facility_pages_index')) {
             $index = kop_facility_pages_index();
@@ -961,11 +1138,21 @@ if (!function_exists('kop_fmerge_do_merge')) {
             'folder_keep' => kop_fmerge_page_folder($keep, $k['doc'], $k['unique_name']),
             'folder_drop' => kop_fmerge_page_folder($drop, $d['doc'], $d['unique_name']),
             'by'          => $login,
+            'rename'      => $rename,
         );
+        $line = $rename !== null ? kop_fmerge_rename_line($drop, $keep) : null;
         $entry = kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $keep, $drop, $opts) {
             return kop_fmerge_execute($pdo, $prefix, $keep, $drop, $opts);
         });
         $entry['old_slug'] = $old_slug;
+        if ($line && function_exists('kop_network_renames_decisions')) {
+            // The map's line between the two names gets the rename year at once, as Map Renames would save it.
+            $decisions = kop_network_renames_decisions();
+            $entry['map_rename'] = array('key' => $line['key'], 'before' => $decisions[$line['key']] ?? null);
+            $decisions[$line['key']] = array('decision' => 'saved', 'year' => (int) $entry['rename']['year'], 'swapped' => !$line['earlier_is_source'],
+                'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
+            update_option('kop_network_rename_review', $decisions, false);
+        }
         $log = kop_fmerge_log();
         array_unshift($log, $entry);
         // Undo data for the newest 200 merges; older ones keep their summary.
@@ -975,8 +1162,25 @@ if (!function_exists('kop_fmerge_do_merge')) {
         $map['ids'][$drop] = $keep;
         if ($old_slug !== '') $map['slugs'][strtolower($old_slug)] = $drop;
         update_option('kop_facility_merged_into', $map, false);
+        if ($rename !== null) {
+            return 'Merged as a rename: "' . $entry['drop']['name'] . '" (' . kop_fmerge_years_text($entry['rename']['earlier']) . ') is the earlier name of "'
+                . $entry['keep']['name'] . '" (' . kop_fmerge_years_text($entry['rename']['later']) . '), and everything filed under it stays with it'
+                . ($entry['report']['files'] ? '; ' . $entry['report']['files'] . ' documents moved into the library' : '') . '.';
+        }
         return 'Merged: "' . $entry['drop']['name'] . '" is now part of "' . $entry['keep']['name'] . '"'
             . ($entry['report']['files'] ? ', with ' . $entry['report']['files'] . ' documents moved into its library' : '') . '.';
+    }
+}
+
+if (!function_exists('kop_fmerge_years_text')) {
+    /** "1998 to 2014" from {start, end}. */
+    function kop_fmerge_years_text(array $y) {
+        $s = (int) ($y['start'] ?? 0);
+        $e = (int) ($y['end'] ?? 0);
+        if ($s && $e) return $s === $e ? (string) $s : $s . ' to ' . $e;
+        if ($s) return 'from ' . $s;
+        if ($e) return 'until ' . $e;
+        return 'years not known';
     }
 }
 
@@ -991,6 +1195,13 @@ if (!function_exists('kop_fmerge_do_undo')) {
         kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $entry) {
             return kop_fmerge_undo($pdo, $prefix, $entry);
         });
+        if (!empty($entry['map_rename']['key']) && function_exists('kop_network_renames_decisions')) {
+            // The map's line goes back to what Map Renames had.
+            $decisions = kop_network_renames_decisions();
+            if (is_array($entry['map_rename']['before'])) $decisions[$entry['map_rename']['key']] = $entry['map_rename']['before'];
+            else unset($decisions[$entry['map_rename']['key']]);
+            update_option('kop_network_rename_review', $decisions, false);
+        }
         unset($log[$found]['undo']);
         $log[$found]['undone'] = gmdate('Y-m-d H:i:s');
         update_option('kop_facility_merge_log', $log, false);
@@ -1152,6 +1363,9 @@ if (!function_exists('kop_fmerge_ajax')) {
     /**
      * POST action=kop_facility_merge, nonce, op:
      *   merge      keep, drop
+     *   rename     earlier, later, year, earlier_start, later_start, later_end
+     *              (one program under two names: the later record is kept)
+     *   rename_plan a, b   (what a rename merge of any two records would write)
      *   dismiss    a, b      (not the same place)
      *   undismiss  a, b
      *   undo       log       (a merge's log id)
@@ -1175,6 +1389,24 @@ if (!function_exists('kop_fmerge_ajax')) {
         try {
             if ($op === 'merge') {
                 $note = kop_fmerge_do_merge($pdo, $prefix, (int) ($_POST['keep'] ?? 0), (int) ($_POST['drop'] ?? 0), $login);
+            } elseif ($op === 'rename') {
+                $year = (int) ($_POST['year'] ?? 0);
+                $note = kop_fmerge_do_merge($pdo, $prefix, (int) ($_POST['later'] ?? 0), (int) ($_POST['earlier'] ?? 0), $login, array(
+                    'year'    => $year,
+                    'earlier' => array('start' => (int) ($_POST['earlier_start'] ?? 0) ?: null, 'end' => $year),
+                    'later'   => array('start' => (int) ($_POST['later_start'] ?? 0) ?: $year, 'end' => (int) ($_POST['later_end'] ?? 0) ?: null),
+                )) . ' Undo is on the Merged tab.';
+            } elseif ($op === 'rename_plan') {
+                $a = kop_fmerge_row($pdo, (int) ($_POST['a'] ?? 0));
+                $b = kop_fmerge_row($pdo, (int) ($_POST['b'] ?? 0));
+                if (!$a || !$b || $a['id'] === $b['id']) throw new RuntimeException('Find the two records first (two different ones).');
+                $dir = kop_fmerge_rename_of($a['raw'], $b['raw']);
+                // Nothing says which came first: the one picked as "earlier" is.
+                list($e, $l) = $dir ? (((int) $dir[0] === $a['id']) ? array($a, $b) : array($b, $a)) : array($b, $a);
+                $ctx = kop_fmerge_side_ctx($pdo, $prefix);
+                $plan = kop_fmerge_rename_plan($e['raw'], $l['raw'], kop_fmerge_side($e['raw'], $ctx), kop_fmerge_side($l['raw'], $ctx),
+                    $dir ? $dir[2] : 'Picked by hand');
+                wp_send_json_success(array('message' => '', 'plan' => $plan, 'data' => kop_fmerge_screen_data()));
             } elseif ($op === 'undo') {
                 $note = kop_fmerge_do_undo($pdo, $prefix, (string) ($_POST['log'] ?? ''));
             } elseif ($op === 'dismiss' || $op === 'undismiss') {
@@ -1224,17 +1456,25 @@ if (!function_exists('kop_fmerge_page')) {
                 the company's name in front, or the same street address. Pick the record to keep and press
                 <strong>Merge into one</strong>. Everything the other record had moves onto it: its facts and staff,
                 articles, lawsuits, inspection links, Woodbury and Fornits items, and every document in its library.
-                Its name is kept as another name and its page forwards to the kept one. Renamed programs
-                (Copper Canyon / Sedona Sky) are never listed: each name stays its own record.
+                Its name is kept as another name and its page forwards to the kept one.
                 Every merge can be undone from the <strong>Merged</strong> tab.
                 Two records that are separate homes or cottages of one program are not duplicates: press
                 <strong>Homes of one program</strong> to list both on the program's page instead (Undo on the <strong>Not the same</strong> tab).
+            </p>
+            <p class="kop-fm__intro">
+                <strong>Renamed programs</strong> (Copper Canyon Academy became Sedona Sky Academy) are one program under two names.
+                They are never merged as duplicates: the <strong>Renamed programs</strong> tab merges them as a rename. The later name's
+                record is kept; the earlier name becomes its past name with its own years, its operator becomes a past operator, and
+                everything that was filed under each name (articles, lawsuits, deaths, findings, incidents, staff, notes) stays with that
+                name on the page. Check the years before you press the button: the earlier name runs until the rename year, the later
+                name from it.
             </p>
             <div class="kop-fm__any">
                 <strong>Merge any two records:</strong>
                 <label>keep <?php echo kop_facility_finder_field('', '', ' class="kop-fm__any-keep"'); ?></label>
                 <label>fold in <?php echo kop_facility_finder_field('', '', ' class="kop-fm__any-drop"'); ?></label>
                 <button type="button" class="button kop-fm__any-go">Merge into one</button>
+                <button type="button" class="button kop-fm__any-rename">Merge as a rename...</button>
             </div>
             <div class="kop-fm__bar">
                 <div class="kop-fm__tabs" role="tablist">
@@ -1242,6 +1482,7 @@ if (!function_exists('kop_fmerge_page')) {
                     <button type="button" data-tab="check" aria-selected="false">Worth a look <span></span></button>
                     <button type="button" data-tab="address" aria-selected="false">Same street address <span></span></button>
                     <button type="button" data-tab="homes" aria-selected="false">Looks like homes of one program <span></span></button>
+                    <button type="button" data-tab="renames" aria-selected="false">Renamed programs <span></span></button>
                     <button type="button" data-tab="dismissed" aria-selected="false">Not the same <span></span></button>
                     <button type="button" data-tab="merged" aria-selected="false">Merged <span></span></button>
                 </div>
@@ -1282,6 +1523,10 @@ if (!function_exists('kop_fmerge_page')) {
             .kop-fm__homes { margin-top: 10px; padding: 10px 12px; background: #f6f7f7; border-radius: 6px; }
             .kop-fm__homes-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin: 6px 0; }
             .kop-fm__empty { padding: 24px; background: #fff; border: 1px dashed #c3c4c7; border-radius: 6px; text-align: center; }
+            .kop-fm__card.is-rename { border-left-color: #000080; }
+            .kop-fm__years { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 10px; padding: 10px 12px; background: #f6f7f7; border-radius: 6px; }
+            .kop-fm__years input { width: 6.5em; }
+            .kop-fm__arrow { align-self: center; font-weight: 600; color: #50575e; }
         </style>
         <script>
         (function () {
@@ -1292,6 +1537,9 @@ if (!function_exists('kop_fmerge_page')) {
             var filter = document.querySelector('.kop-fm__filter');
             var tab = 'likely';
             var keepChoice = {};
+            var handPlan = null;
+            var swapped = {};
+            var yearsTyped = {};
 
             function el(tag, cls, text) {
                 var n = document.createElement(tag);
@@ -1318,7 +1566,15 @@ if (!function_exists('kop_fmerge_page')) {
                         var d = json && json.data ? json.data : {};
                         if (d.data) D = d.data;
                         if (!json || !json.success) throw new Error(d.message || 'Not saved.');
-                        status.textContent = d.message || 'Saved.';
+                        if (d.plan) {
+                            // A pair picked by hand: its rename card leads the Renamed programs tab.
+                            handPlan = d.plan;
+                            tab = 'renames';
+                            status.textContent = 'Check the years, then press Merge as a rename.';
+                        } else {
+                            if (params.op === 'rename') handPlan = null;
+                            status.textContent = d.message || 'Saved.';
+                        }
                         render();
                     })
                     .catch(function (e) {
@@ -1451,6 +1707,69 @@ if (!function_exists('kop_fmerge_page')) {
                 return f;
             }
 
+            // One program under two names: the later record is kept, each name keeps its years and what was filed under it.
+            function renameCard(p, byHand) {
+                var flip = !!swapped[p.key];
+                var e = flip ? p.later : p.earlier;
+                var l = flip ? p.earlier : p.later;
+                var c = el('article', 'kop-fm__card is-rename');
+                c.appendChild(el('p', 'kop-fm__why', (byHand ? 'Picked by hand' : p.why) + (p.map_year ? ' · Map Renames: ' + p.map_year : '')));
+                var pair = el('div', 'kop-fm__pair');
+                var se = side(e, false, null, false);
+                se.insertBefore(el('span', 'kop-fm__pick', 'Earlier name'), se.firstChild);
+                var sl = side(l, true, null, false);
+                sl.insertBefore(el('span', 'kop-fm__pick', 'Later name, kept'), sl.firstChild);
+                pair.appendChild(se);
+                pair.appendChild(sl);
+                c.appendChild(pair);
+                var t = yearsTyped[p.key] || {};
+                function yearBox(label, value, key) {
+                    var lab = el('label', '', label + ' ');
+                    var i = el('input'); i.type = 'number'; i.min = '1800'; i.max = String(new Date().getFullYear()); i.placeholder = 'year';
+                    i.value = t[key] !== undefined ? t[key] : (value ? String(value) : '');
+                    i.addEventListener('input', function () { yearsTyped[p.key] = yearsTyped[p.key] || {}; yearsTyped[p.key][key] = i.value; });
+                    lab.appendChild(i);
+                    return { label: lab, input: i };
+                }
+                var ys = el('div', 'kop-fm__years');
+                var eStart = yearBox('"' + e.name + '" from', flip ? 0 : e.start, 'es');
+                var year = yearBox('renamed "' + l.name + '" in', flip ? 0 : p.year, 'y');
+                var lEnd = yearBox('which ran until', flip ? 0 : l.end, 'le');
+                ys.appendChild(eStart.label);
+                ys.appendChild(year.label);
+                ys.appendChild(lEnd.label);
+                ys.appendChild(el('span', 'kop-fm__muted', '(leave the last one blank while it still runs)'));
+                c.appendChild(ys);
+                var actions = el('div', 'kop-fm__actions');
+                var go = el('button', 'button button-primary', 'Merge as a rename');
+                go.type = 'button';
+                go.addEventListener('click', function () {
+                    var y = Number(year.input.value) || 0;
+                    if (!y) { status.className = 'kop-fm__status is-bad'; status.textContent = 'Give the year "' + e.name + '" became "' + l.name + '".'; return; }
+                    send({ op: 'rename', earlier: e.id, later: l.id, year: y, earlier_start: Number(eStart.input.value) || 0,
+                        later_start: y, later_end: Number(lEnd.input.value) || 0 }, c);
+                });
+                actions.appendChild(go);
+                var sw = el('button', 'button', 'The other way round');
+                sw.type = 'button';
+                sw.addEventListener('click', function () { swapped[p.key] = !flip; delete yearsTyped[p.key]; render(); });
+                actions.appendChild(sw);
+                if (byHand) {
+                    var drop = el('button', 'button', 'Close');
+                    drop.type = 'button';
+                    drop.addEventListener('click', function () { handPlan = null; render(); });
+                    actions.appendChild(drop);
+                } else {
+                    var no = el('button', 'button', 'Not the same program');
+                    no.type = 'button';
+                    no.addEventListener('click', function () { send({ op: 'dismiss', a: p.earlier.id, b: p.later.id }, c); });
+                    actions.appendChild(no);
+                }
+                actions.appendChild(el('span', 'kop-fm__muted', 'Keeps "' + l.name + '"; "' + e.name + '" becomes its past name, with its own years and everything filed under it.'));
+                c.appendChild(actions);
+                return c;
+            }
+
             function dismissedCard(x) {
                 var c = el('article', 'kop-fm__card');
                 c.appendChild(el('p', 'kop-fm__why', 'Marked not the same' + (x.by ? ' by ' + x.by : '') + (x.at ? ' on ' + x.at.slice(0, 10) : '')));
@@ -1478,7 +1797,8 @@ if (!function_exists('kop_fmerge_page')) {
 
             function mergedCard(m) {
                 var c = el('article', 'kop-fm__card');
-                var h = el('p', 'kop-fm__why', '"' + m.drop.name + '" (#' + m.drop.id + ') merged into "' + m.keep.name + '" (#' + m.keep.id + ')');
+                var h = el('p', 'kop-fm__why', '"' + m.drop.name + '" (#' + m.drop.id + ') merged into "' + m.keep.name + '" (#' + m.keep.id + ')'
+                    + (m.rename ? ' as its earlier name, renamed in ' + m.rename.year : ''));
                 c.appendChild(h);
                 var r = m.report || {};
                 var moved = [];
@@ -1505,12 +1825,13 @@ if (!function_exists('kop_fmerge_page')) {
             function matches(x, q) {
                 if (!q) return true;
                 var text = JSON.stringify([x.a ? [x.a.name, x.a.aka, x.a.place, x.a.companies] : '', x.b ? [x.b.name, x.b.aka, x.b.place, x.b.companies] : '',
+                    x.earlier ? [x.earlier.name, x.earlier.aka, x.earlier.place] : '', x.later ? [x.later.name, x.later.aka, x.later.place] : '',
                     x.keep && x.keep.name ? x.keep.name : '', x.drop && x.drop.name ? x.drop.name : '']).toLowerCase();
                 return text.indexOf(q) !== -1;
             }
 
             function render() {
-                var counts = { likely: 0, check: 0, address: 0, homes: 0, dismissed: D.dismissed.length, merged: D.merged.filter(function (m) { return !m.undone; }).length };
+                var counts = { likely: 0, check: 0, address: 0, homes: 0, renames: (D.renames || []).length, dismissed: D.dismissed.length, merged: D.merged.filter(function (m) { return !m.undone; }).length };
                 D.pairs.forEach(function (p) { counts[p.tab]++; });
                 document.querySelectorAll('.kop-fm__tabs button').forEach(function (b) {
                     var t = b.getAttribute('data-tab');
@@ -1522,6 +1843,10 @@ if (!function_exists('kop_fmerge_page')) {
                 var shown;
                 if (tab === 'merged') shown = D.merged.filter(function (x) { return matches(x, q); }).map(mergedCard);
                 else if (tab === 'dismissed') shown = D.dismissed.filter(function (x) { return matches(x, q); }).map(dismissedCard);
+                else if (tab === 'renames') {
+                    shown = (D.renames || []).filter(function (x) { return matches(x, q); }).map(function (x) { return renameCard(x, false); });
+                    if (handPlan) shown.unshift(renameCard(handPlan, true));
+                }
                 else shown = D.pairs.filter(function (p) { return p.tab === tab && matches(p, q); }).map(pairCard);
                 if (!shown.length) list.appendChild(el('p', 'kop-fm__empty', tab === 'merged' ? 'No merges yet.' : 'Nothing here.'));
                 shown.forEach(function (n) { list.appendChild(n); });
@@ -1536,6 +1861,16 @@ if (!function_exists('kop_fmerge_page')) {
                     return;
                 }
                 if (window.confirm('Fold record #' + drop + ' into record #' + keep + '?')) send({ op: 'merge', keep: keep, drop: drop }, null);
+            });
+            document.querySelector('.kop-fm__any-rename').addEventListener('click', function () {
+                var a = Number(document.querySelector('.kop-fm__any-keep').value) || 0;
+                var b = Number(document.querySelector('.kop-fm__any-drop').value) || 0;
+                if (!a || !b || a === b) {
+                    status.className = 'kop-fm__status is-bad';
+                    status.textContent = 'Find the two records first: the later name in "keep", the earlier one in "fold in".';
+                    return;
+                }
+                send({ op: 'rename_plan', a: a, b: b }, null);
             });
             document.querySelectorAll('.kop-fm__tabs button').forEach(function (b) {
                 b.addEventListener('click', function () { tab = b.getAttribute('data-tab'); status.textContent = ''; render(); });

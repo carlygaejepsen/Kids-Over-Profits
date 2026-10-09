@@ -18,8 +18,10 @@
  * or when both give the same street address.
  *
  * Never a pair:
- *   - a pastNames match: each name of a renamed program is its own record
- *     (Copper Canyon Academy / Sedona Sky Academy; docs/PLAN.md 3.7)
+ *   - a pastNames match: a renamed program (Copper Canyon Academy / Sedona
+ *     Sky Academy; docs/PLAN.md 3.7). Those are listed on their own by
+ *     kop_fmerge_find_renames(), merged only as a rename, each name keeping
+ *     its own years and facts
  *   - the extra or changed word is a number, II, a direction, Boys/Girls or
  *     Unit: "Forward In Life" and "Forward In Life II" are two homes
  *   - sibling houses that share everything but the house name ("RMBHS -
@@ -141,7 +143,12 @@ if (!function_exists('kop_fmerge_prepare')) {
             if (is_array($n)) $n = $n['name'] ?? '';
             if (is_string($n) && trim($n) !== '') $past[] = implode(' ', kop_fmerge_words($n));
         }
-        if (!empty($idn['currentName']) && is_string($idn['currentName'])) $past[] = implode(' ', kop_fmerge_words($idn['currentName']));
+        $past_only = $past;
+        $now = '';
+        if (!empty($idn['currentName']) && is_string($idn['currentName'])) {
+            $now = implode(' ', kop_fmerge_words($idn['currentName']));
+            $past[] = $now;
+        }
         $city = mb_strtolower(trim((string) ($loc['city'] ?? '')));
         $city = trim(preg_replace('/\s+/', ' ', preg_replace('/[^\w\s]/u', '', $city)));
         $city = preg_replace('/^saint\b/', 'st', $city);
@@ -154,6 +161,8 @@ if (!function_exists('kop_fmerge_prepare')) {
             'ops'    => array_values(array_map('intval', (array) ($row['ops'] ?? array()))),
             'alts'   => $alts,
             'past'   => $past,
+            'pastNames' => $past_only,
+            'now'    => $now,
             'state'  => $state ?: '',
             'place'  => $state ? $state : 'C:' . mb_strtolower(trim((string) ($loc['country'] ?? ''))),
             'city'   => $city,
@@ -243,6 +252,55 @@ if (!function_exists('kop_fmerge_pair_reason')) {
             }
         }
         return null;
+    }
+}
+
+if (!function_exists('kop_fmerge_rename_direction')) {
+    /**
+     * Whether two prepared records are one program's earlier and later name:
+     * array(earlier id, later id, why) or null. The later record lists the
+     * earlier as a past name, or the earlier one says what it is called now.
+     */
+    function kop_fmerge_rename_direction(array $a, array $b) {
+        $ka = implode(' ', $a['words']);
+        $kb = implode(' ', $b['words']);
+        if ($ka === '' || $kb === '' || $ka === $kb) return null;
+        if (in_array($kb, $a['pastNames'] ?? array(), true)) return array($b['id'], $a['id'], $a['name'] . ' lists ' . $b['name'] . ' as its past name');
+        if (in_array($ka, $b['pastNames'] ?? array(), true)) return array($a['id'], $b['id'], $b['name'] . ' lists ' . $a['name'] . ' as its past name');
+        if (($b['now'] ?? '') === $ka) return array($b['id'], $a['id'], $b['name'] . ' says it is now called ' . $a['name']);
+        if (($a['now'] ?? '') === $kb) return array($a['id'], $b['id'], $a['name'] . ' says it is now called ' . $b['name']);
+        return null;
+    }
+}
+
+if (!function_exists('kop_fmerge_find_renames')) {
+    /**
+     * Renamed programs kept as two records in one state or country:
+     * [{earlier, later, why}], each pair once. $dismissed keys "a:b" (lower id first).
+     */
+    function kop_fmerge_find_renames(array $rows, array $dismissed = array()) {
+        $by_place = array();
+        foreach ($rows as $row) {
+            $p = kop_fmerge_prepare($row);
+            if ($p !== null) $by_place[$p['place']][] = $p;
+        }
+        $out = array();
+        foreach ($by_place as $list) {
+            $by_key = array();
+            foreach ($list as $p) $by_key[implode(' ', $p['words'])][] = $p;
+            foreach ($list as $p) {
+                foreach (array_merge($p['pastNames'], $p['now'] !== '' ? array($p['now']) : array()) as $k) {
+                    foreach ($by_key[$k] ?? array() as $q) {
+                        if ($q['id'] === $p['id']) continue;
+                        $key = min($p['id'], $q['id']) . ':' . max($p['id'], $q['id']);
+                        if (isset($out[$key]) || isset($dismissed[$key])) continue;
+                        $dir = kop_fmerge_rename_direction($p, $q);
+                        if ($dir) $out[$key] = array('earlier' => $dir[0], 'later' => $dir[1], 'why' => $dir[2]);
+                    }
+                }
+            }
+        }
+        return array_values($out);
     }
 }
 

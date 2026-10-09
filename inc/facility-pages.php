@@ -1472,8 +1472,14 @@ if (!function_exists('kop_facility_pages_add_map_people')) {
      */
     function kop_facility_pages_add_map_people(array $staff, $facility_id) {
         if (!function_exists('kop_network_map_facility_connections')) return $staff;
-        $entry = kop_network_map_facility_connections()[(int) $facility_id] ?? null;
-        if (!$entry || empty($entry['links'])) return $staff;
+        // A record merged in keeps its map name's people until the map is rebuilt with the kept id.
+        $ids = function_exists('kop_facility_merge_expand_ids') ? kop_facility_merge_expand_ids(array((int) $facility_id)) : array((int) $facility_id);
+        $connections = kop_network_map_facility_connections();
+        $entry = array('links' => array());
+        foreach ($ids as $id) {
+            foreach ((array) ($connections[(int) $id]['links'] ?? array()) as $link) $entry['links'][] = $link;
+        }
+        if (!$entry['links']) return $staff;
         $have = array();
         foreach (array('administrator', 'notableStaff') as $k) {
             foreach ($staff[$k] ?? array() as $p) {
@@ -1725,7 +1731,8 @@ if (!function_exists('kop_facility_pages_person_career')) {
 
         foreach (kop_facility_pages_people_index()[$key] ?? array() as $hit) {
             list($fid, $fname, $role) = $hit;
-            if ($fid === $here) continue;
+            // A record merged into this one (until the hourly people sync moves its roles) is this place.
+            if ($fid === $here || (function_exists('kop_facility_merge_resolve') && kop_facility_merge_resolve($fid) === $here)) continue;
             // "Director (2008, Woodbury Reports), left": the year stays, the citation and the "left" go.
             $role = trim(preg_replace_callback('/\s*\(([^()]*)\)/', static function ($m) {
                 if (!preg_match('/Woodbury|HEAL|wiki|Fornits/i', $m[1])) return $m[0];
@@ -1735,7 +1742,7 @@ if (!function_exists('kop_facility_pages_person_career')) {
         }
         foreach (kop_facility_pages_map_people()[$key] ?? array() as $hit) {
             list($place, $role, $fid, $kind) = $hit;
-            if ($fid && $fid === $here) continue;
+            if ($fid && ($fid === $here || (function_exists('kop_facility_merge_resolve') && kop_facility_merge_resolve($fid) === $here))) continue;
             $url = '';
             if ($fid && isset($index_ids[$fid])) {
                 $url = kop_facility_page_url($fid);
@@ -2984,7 +2991,15 @@ if (!function_exists('kop_facility_page_data')) {
             $eras = kop_facility_eras_build($facility_id, array(
                 'memorials' => $memorials, 'violations' => $violations, 'lawsuits' => $lawsuits,
                 'incidents' => $incidents, 'news' => $news, 'staff' => $staff,
-            ));
+            ), $doc);
+        }
+        // A merged renamed program's earlier names carry their own years ("Copper Canyon Academy, 1998 to 2014").
+        $formerly_years = array();
+        if (function_exists('kop_facility_eras_former_years')) {
+            $by_name = kop_facility_eras_former_years($doc);
+            foreach ($formerly as $n) {
+                if (isset($by_name[strtolower($n)])) $formerly_years[$n] = $by_name[strtolower($n)];
+            }
         }
 
         return array(
@@ -2995,6 +3010,7 @@ if (!function_exists('kop_facility_page_data')) {
             'unique_name'   => $unique_name,
             'current_name'  => $current_name,
             'formerly'      => $formerly,
+            'formerly_years' => $formerly_years,
             'aka'           => $aka,
             'status'        => $status,
             'status_class'  => sanitize_html_class(strtolower($status)),

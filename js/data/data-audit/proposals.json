@@ -2280,7 +2280,7 @@
    },
    {
     "type": "manual",
-    "text": "Timberline Academy (100084) and Daytona Juvenile Residential Facility (9606) look like one program on one site; merge them at KOP Tools > Merge Duplicates (keep 9606, the current name)."
+    "text": "Timberline Academy (100084) and Daytona Juvenile Residential Facility (9606) look like one program on one site; merge them as a rename at KOP Tools > Merge Duplicates > Renamed programs (keep 9606, the current name)."
    }
   ]
  },
@@ -3787,7 +3787,7 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 at KOP Tools > Merge Duplicates, or find what became of it and set status Closed (2009) or Open."
+    "text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 as a rename at KOP Tools > Merge Duplicates (Merge as a rename), or find what became of it and set status Closed (2009) or Open."
    }
   ]
  },
@@ -3837,7 +3837,7 @@
    },
    {
     "type": "manual",
-    "text": "Brighter Path Tuskegee (13641) and Sequel TSI of Tuskegee (100078) are this program's later names: merge 9657 and 100078 into 13641 at KOP Tools > Merge Duplicates, and confirm it still runs (latest source 2021-22) before setting status Open; the current operator \"Alabama Department of Human Resources\" is a placing agency, not the operator."
+    "text": "Brighter Path Tuskegee (13641) and Sequel TSI of Tuskegee (100078) are this program's later names: merge 9657 and 100078 into 13641 as renames at KOP Tools > Merge Duplicates > Renamed programs, and confirm it still runs (latest source 2021-22) before setting status Open; the current operator \"Alabama Department of Human Resources\" is a placing agency, not the operator."
    }
   ]
  },
@@ -3869,7 +3869,7 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Island View RTC is the earlier name of Elevations RTC (record 10356, Family Help & Wellness, which lists Island View RTC as its past name): Aspen sold it in April 2014 and it was renamed. Merge 10348 into 10356 at KOP Tools > Merge Duplicates."
+    "text": "Island View RTC is the earlier name of Elevations RTC (record 10356, Family Help & Wellness, which lists Island View RTC as its past name): Aspen sold it in April 2014 and it was renamed. Merge 10348 into 10356 as a rename (renamed 2014) at KOP Tools > Merge Duplicates > Renamed programs, so each name keeps its own years and facts."
    }
   ]
  },
@@ -4217,7 +4217,7 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Copper Canyon Academy is the earlier name of Sedona Sky Academy (record 12161, which lists it as a past name). Merge 12155 into 12161 at KOP Tools > Merge Duplicates."
+    "text": "Copper Canyon Academy is the earlier name of Sedona Sky Academy (record 12161, which lists it as a past name). Merge 12155 into 12161 as a rename (renamed 2014) at KOP Tools > Merge Duplicates > Renamed programs, so each name keeps its own years and facts."
    }
   ]
  },

@@ -117,7 +117,7 @@ if (!function_exists('kop_mobile_facility_payload')) {
      */
     function kop_mobile_facility_payload(array $page) {
         $keep = array(
-            'id', 'slug', 'url', 'name', 'unique_name', 'current_name', 'formerly', 'aka', 'status', 'end_year',
+            'id', 'slug', 'url', 'name', 'unique_name', 'current_name', 'formerly', 'formerly_years', 'aka', 'status', 'end_year',
             'place', 'city', 'state_code', 'state_name', 'country', 'hub_name', 'hub_url',
             'operator', 'siblings', 'program_homes', 'home_of', 'addresses', 'former_locations', 'operated',
             'summary', 'facts', 'fact_sources', 'practices', 'incidents', 'staff', 'notes', 'field_notes',

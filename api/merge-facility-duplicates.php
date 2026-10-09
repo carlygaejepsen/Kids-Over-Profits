@@ -128,8 +128,37 @@ function kop_mfd_rank(array $row) {
 
 /**
  * Fold $drop's document into $keep's. Both are v2 documents.
+ *
+ * $rename is set when the two records are one program under two names and
+ * $keep holds the later name (KOP Tools > Merge Duplicates > Renamed): each
+ * name keeps its own years, status and facts (docs/PLAN.md 3.7). Keys:
+ *   year       the year the earlier name became the later one
+ *   earlier    {start, end, status, operators[]}: the earlier name's own
+ *   later      {start, end}: the kept record's years from now on (null = as is)
+ *   facts      {earlier: kind => keys, later: kind => keys}: what each record
+ *              held before the merge (kop_facility_eras_item_key()), so every
+ *              item stands under the name it was filed under
+ * The earlier name goes to pastNames, never otherNames. Nothing in its
+ * operatingPeriod fills the kept one: its years, status and notes stay on
+ * its legacy.mergedFacilities entry under 'rename', which the facility page
+ * (inc/facility-eras.php) and the map build read. Its operator becomes a
+ * past operator.
  */
-function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta) {
+function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta, array $rename = null) {
+    $drop_period = is_array($drop['operatingPeriod'] ?? null) ? $drop['operatingPeriod'] : array();
+    $drop_operator = trim((string) ($drop['identification']['currentOperator'] ?? ''));
+    if ($rename !== null) {
+        // The earlier name's dates, status and notes are its own: none of them fill the later name's.
+        $drop['operatingPeriod'] = array();
+        if (is_array($drop['identification'] ?? null)) {
+            unset($drop['identification']['currentOperator'], $drop['identification']['currentName']);
+            if ($drop_operator !== '') {
+                $past = is_array($drop['identification']['pastOperators'] ?? null) ? $drop['identification']['pastOperators'] : array();
+                $past[] = $drop_operator;
+                $drop['identification']['pastOperators'] = $past;
+            }
+        }
+    }
     $merged = kop_mfd_deep_merge($keep, $drop);
     $merged['schema_version'] = $keep['schema_version'] ?? KOP_FACILITY_SCHEMA_VERSION;
     $merged['facility_id'] = $keep['facility_id'];
@@ -148,8 +177,25 @@ function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta) {
     if ($merged['identification']['currentName'] === '') {
         $merged['identification']['currentName'] = (string)($drop['identification']['currentName'] ?? '');
     }
-    // A genuinely different spelling is worth keeping as another name.
-    if ($drop_name !== '' && kop_facility_name_key($drop_name) !== kop_facility_name_key($name)) {
+    if ($rename !== null) {
+        // The earlier name is a past name, listed once.
+        $drop_key = kop_facility_name_key($drop_name);
+        $merged['identification']['otherNames'] = array_values(array_filter((array) ($merged['identification']['otherNames'] ?? array()), function ($n) use ($drop_key) {
+            return !is_string($n) || kop_facility_name_key($n) !== $drop_key;
+        }));
+        if ($drop_name !== '' && $drop_key !== kop_facility_name_key($name)) {
+            $merged['identification']['pastNames'] = kop_mfd_union(array($merged['identification']['pastNames'] ?? array(), array($drop_name)));
+        }
+        $later = (array) ($rename['later'] ?? array());
+        $period = is_array($merged['operatingPeriod'] ?? null) ? $merged['operatingPeriod'] : array();
+        foreach (array('start' => 'startYear', 'end' => 'endYear') as $k => $field) {
+            if (isset($later[$k]) && is_numeric($later[$k]) && (int) $later[$k] > 0) $period[$field] = (int) $later[$k];
+        }
+        // The text form of the years would still give the whole site's life.
+        if (!empty($later['start']) || !empty($later['end'])) $period['yearsOfOperation'] = '';
+        $merged['operatingPeriod'] = $period;
+    } elseif ($drop_name !== '' && kop_facility_name_key($drop_name) !== kop_facility_name_key($name)) {
+        // A genuinely different spelling is worth keeping as another name.
         $merged['identification']['otherNames'] = kop_mfd_union(array($merged['identification']['otherNames'] ?? array(), array($drop_name)));
     }
 
@@ -167,12 +213,33 @@ function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta) {
 
     $legacy = is_array($merged['legacy'] ?? null) ? $merged['legacy'] : array();
     $legacy['mergedFacilities'] = kop_mfd_is_list($legacy['mergedFacilities'] ?? null) ? $legacy['mergedFacilities'] : array();
-    $legacy['mergedFacilities'][] = array(
+    $entry = array(
         'facility_id' => (int)$drop_meta['id'],
         'unique_name' => (string)$drop_meta['unique_name'],
         'name'        => $drop_name,
         'mergedAt'    => gmdate('c'),
     );
+    if ($rename !== null) {
+        $earlier = (array) ($rename['earlier'] ?? array());
+        $int = function ($v) { return (is_numeric($v) && (int) $v > 0) ? (int) $v : null; };
+        $operators = array();
+        foreach (array_merge($drop_operator !== '' ? array($drop_operator) : array(), (array) ($earlier['operators'] ?? array())) as $o) {
+            $o = trim((string) $o);
+            if ($o !== '' && !in_array(mb_strtolower($o), array_map('mb_strtolower', $operators), true)) $operators[] = $o;
+        }
+        $entry['rename'] = array(
+            'year'       => (int) $rename['year'],
+            'startYear'  => array_key_exists('start', $earlier) ? $int($earlier['start']) : $int($drop_period['startYear'] ?? null),
+            'endYear'    => $int($earlier['end'] ?? null) ?? (int) $rename['year'],
+            'status'     => (string) ($earlier['status'] ?? ($drop_period['status'] ?? '')),
+            'notes'      => array_values(array_filter((array) ($drop_period['notes'] ?? array()), 'is_string')),
+            'operators'  => $operators,
+            'facts'      => (array) ($rename['facts']['earlier'] ?? array()),
+            'laterName'  => $name,
+            'laterFacts' => (array) ($rename['facts']['later'] ?? array()),
+        );
+    }
+    $legacy['mergedFacilities'][] = $entry;
     $merged['legacy'] = $legacy;
 
     return $merged;

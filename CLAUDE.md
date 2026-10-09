@@ -135,6 +135,12 @@ php api/scan-highlight-summaries.php [--try|apply] [--limit=10] [--ids=704]   # 
 # Import loads (Woodbury facts.json, Fornits batches, Drive Docs links.json) write the build's old ids back: kop_fmerge_follow_waiting()
 # re-points waiting rows of merged-away records after each load and hourly (a Fornits thread link gets the kept record's key)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-merge.php [--list]   # real merges + undo on an in-memory copy
+# Renamed programs are never merged as duplicates (a plain merge is refused): Merge Duplicates > Renamed programs (or "Merge as a rename")
+# keeps the later name's record with its own years; the earlier name goes to pastNames and keeps its years, status, operator (moved company
+# links become 'past') and notes on its legacy.mergedFacilities entry ('rename'), with the keys of what each record listed
+# (kop_facility_eras_item_key()). The page cuts by those names (kop_facility_eras_doc_chain()) and an item stays with the name it was filed
+# under whatever its date; the map build gives that name its own years; a closure dated in its years never closes the record
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-rename-merge.php [--list]   # Copper Canyon into Sedona Sky + undo on a scratch copy; --list = every renamed pair
 # Review inbox: every approval queue on the Submissions Review page (inc/review-inbox.php, js/review-inbox.js). Each queue is
 # a source in inc/review-inbox/<name>.php, registered with kop_rinbox_register(), calling the queue's own apply/undo functions;
 # cards edit name/details, category, tags (shared {prefix}kop_review_tags unless the queue keeps its own), "Move to" another queue,

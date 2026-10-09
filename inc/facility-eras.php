@@ -19,6 +19,14 @@
  * and since nothing can be sorted by date each record's items stand under
  * that record's name (so it shows where each name has its own record).
  *
+ * A renamed program merged into one record (KOP Tools > Merge Duplicates >
+ * Renamed) carries its names itself: each earlier name's years, status,
+ * operators and notes on its legacy.mergedFacilities entry ('rename'), and
+ * what each record held before the merge ('facts' / 'laterFacts'). That
+ * record's names come from there, not the map, and an item filed under one
+ * name stands under that name whatever its date; only what neither record
+ * held (or both did) is placed by date.
+ *
  * The names can be one record or several. Where another name has its own
  * record, that record's items are shown here too, and its page shows this
  * one's: both pages print every name's section. An item goes to the name in
@@ -100,6 +108,153 @@ if (!function_exists('kop_facility_eras_map')) {
     }
 }
 
+if (!function_exists('kop_facility_eras_item_key')) {
+    /**
+     * One item's key, the same at merge time and on the page: kind:id for
+     * rows with an id, a hash of the words otherwise; staff by the person's
+     * name. Used to remember which name an item was filed under.
+     */
+    function kop_facility_eras_item_key($kind, array $item) {
+        if ($kind === 'staff') {
+            $who = trim((string) ($item['name'] ?? '')) ?: trim((string) ($item['text'] ?? ''));
+            return 'staff:' . md5(strtolower(preg_replace('/\s+/', ' ', $who)));
+        }
+        return $kind . ':' . (isset($item['id']) ? (int) $item['id'] : md5((string) ($item['text'] ?? serialize($item))));
+    }
+}
+
+if (!function_exists('kop_facility_eras_list_keys')) {
+    /** kind => item keys of a record's lists (kind => items, staff by group), for a merge to remember. */
+    function kop_facility_eras_list_keys(array $lists) {
+        $out = array();
+        foreach (kop_facility_eras_kinds() as $kind) {
+            $items = (array) ($lists[$kind] ?? array());
+            if ($kind === 'staff') {
+                $people = array();
+                foreach ($items as $group) foreach ((array) $group as $p) $people[] = $p;
+                $items = $people;
+            }
+            $keys = array();
+            foreach ($items as $item) if (is_array($item)) $keys[kop_facility_eras_item_key($kind, $item)] = true;
+            if ($keys) $out[$kind] = array_keys($keys);
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_eras_doc_renames')) {
+    /** The rename entries a record's document carries (legacy.mergedFacilities with 'rename'), oldest rename first. */
+    function kop_facility_eras_doc_renames(array $doc) {
+        $out = array();
+        foreach ((array) ($doc['legacy']['mergedFacilities'] ?? array()) as $m) {
+            if (!is_array($m) || !is_array($m['rename'] ?? null) || trim((string) ($m['name'] ?? '')) === '') continue;
+            if ((int) ($m['rename']['year'] ?? 0) <= 0) continue;
+            $out[] = $m;
+        }
+        usort($out, function ($a, $b) {
+            return ((int) $a['rename']['year'] <=> (int) $b['rename']['year']) ?: ((int) ($a['rename']['startYear'] ?? 0) <=> (int) ($b['rename']['startYear'] ?? 0));
+        });
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_eras_doc_chain')) {
+    /**
+     * A merged renamed program's names from its own document, earliest first,
+     * shaped like kop_facility_eras_chain(), plus 'status' and 'notes'; the
+     * last is the record's own name with its operatingPeriod. array() when
+     * the document has no rename entries.
+     */
+    function kop_facility_eras_doc_chain(array $doc) {
+        $renames = kop_facility_eras_doc_renames($doc);
+        if (!$renames) return array();
+        $fid = (int) ($doc['facility_id'] ?? 0);
+        $name = trim((string) ($doc['identification']['name'] ?? ''));
+        $chain = array();
+        $cut = null;
+        foreach ($renames as $m) {
+            $r = $m['rename'];
+            if (strcasecmp(trim((string) $m['name']), $name) === 0) continue;
+            $year = (int) $r['year'];
+            $start = (int) ($r['startYear'] ?? 0);
+            $end = (int) ($r['endYear'] ?? 0) ?: $year;
+            $chain[] = array(
+                'node' => '', 'name' => trim((string) $m['name']), 'start' => $start ?: $cut, 'end' => $end, 'cut' => $cut,
+                'facility_id' => $fid, 'operators' => array_values(array_filter(array_map('strval', (array) ($r['operators'] ?? array())), 'strlen')),
+                'status' => (string) ($r['status'] ?? ''), 'notes' => array_values(array_filter((array) ($r['notes'] ?? array()), 'is_string')),
+            );
+            $cut = $year;
+        }
+        if (!$chain) return array();
+        $op = is_array($doc['operatingPeriod'] ?? null) ? $doc['operatingPeriod'] : array();
+        $operator = trim((string) ($doc['identification']['currentOperator'] ?? ''));
+        $start = (int) ($op['startYear'] ?? 0);
+        $chain[] = array(
+            'node' => '', 'name' => $name, 'start' => ($start && $start >= $cut) ? $start : $cut, 'end' => (int) ($op['endYear'] ?? 0) ?: null, 'cut' => $cut,
+            'facility_id' => $fid, 'operators' => $operator !== '' ? array($operator) : array(),
+            'status' => (string) ($op['status'] ?? ''), 'notes' => array(),
+        );
+        return $chain;
+    }
+}
+
+if (!function_exists('kop_facility_eras_doc_claims')) {
+    /**
+     * item key => index in $chain of the name it was filed under, from the
+     * rename entries' 'facts' and 'laterFacts'. A key two names claim is
+     * left out (placed by date).
+     */
+    function kop_facility_eras_doc_claims(array $doc, array $chain) {
+        $at = array();
+        foreach ($chain as $i => $era) $at[strtolower($era['name'])] = $i;
+        $claims = array();
+        $add = function ($name, $facts) use (&$claims, $at) {
+            $i = $at[strtolower(trim((string) $name))] ?? null;
+            if ($i === null) return;
+            foreach ((array) $facts as $keys) {
+                foreach ((array) $keys as $key) {
+                    $key = (string) $key;
+                    if (!isset($claims[$key])) $claims[$key] = $i;
+                    elseif ($claims[$key] !== $i) $claims[$key] = -1;
+                }
+            }
+        };
+        foreach (kop_facility_eras_doc_renames($doc) as $m) {
+            $add($m['name'], $m['rename']['facts'] ?? array());
+            $add($m['rename']['laterName'] ?? '', $m['rename']['laterFacts'] ?? array());
+        }
+        return array_filter($claims, function ($i) { return $i >= 0; });
+    }
+}
+
+if (!function_exists('kop_facility_eras_former_years')) {
+    /** lowercased earlier name => "1998 to 2014", for the "Formerly" line of a merged renamed program. */
+    function kop_facility_eras_former_years(array $doc) {
+        $out = array();
+        $chain = kop_facility_eras_doc_chain($doc);
+        array_pop($chain);
+        foreach ($chain as $era) {
+            $label = kop_facility_eras_years_label($era['start'], $era['end']);
+            if ($label !== '') $out[strtolower($era['name'])] = $label;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_eras_doc_name_at')) {
+    /**
+     * For a merged renamed program: the earlier name in use in $year, or ''
+     * when the record's own name was (or the record has no earlier names).
+     */
+    function kop_facility_eras_doc_name_at(array $doc, $year) {
+        $year = (int) $year;
+        $chain = kop_facility_eras_doc_chain($doc);
+        if (!$chain || $year <= 0) return '';
+        $at = kop_facility_eras_place($chain, $year, '', -1);
+        return $at >= 0 && $at < count($chain) - 1 ? $chain[$at]['name'] : '';
+    }
+}
+
 if (!function_exists('kop_facility_eras_chain')) {
     /**
      * The facility's names in order, earliest first, or array() when its
@@ -109,7 +264,12 @@ if (!function_exists('kop_facility_eras_chain')) {
      * what dated items are sorted by; 0 when the rename was saved without
      * its year and the names' own years do not tell it.
      */
-    function kop_facility_eras_chain($facility_id) {
+    function kop_facility_eras_chain($facility_id, array $doc = null) {
+        // A merged renamed program knows its own names.
+        if ($doc !== null) {
+            $own = kop_facility_eras_doc_chain($doc);
+            if (count($own) >= 2) return $own;
+        }
         $map = kop_facility_eras_map();
         $mine = $map['facility'][(int) $facility_id] ?? array();
         if (!$mine) return array();
@@ -285,17 +445,20 @@ if (!function_exists('kop_facility_eras_build')) {
     /**
      * The page's name sections, or null when the page stays whole.
      * $own is this record's lists (kind => items, as kop_facility_page_data()
-     * read them). Returns:
-     *   'list'   => [{id, name, years, operators, url, memorials, violations,
-     *                 lawsuits, incidents, news, staff}], earliest name first
+     * read them); $doc its document, for a merged renamed program's own names.
+     * Returns:
+     *   'list'   => [{id, name, years, operators, url, status, notes, memorials,
+     *                 violations, lawsuits, incidents, news, staff}], earliest name first
      *   'rest'   => kind => what no name took (the page's ordinary sections)
      *   'totals' => kind => how many the page holds in all (staff: people)
      * Every item carries '_fid', the record it came from.
      */
-    function kop_facility_eras_build($facility_id, array $own) {
+    function kop_facility_eras_build($facility_id, array $own, array $doc = null) {
         $facility_id = (int) $facility_id;
-        $chain = kop_facility_eras_chain($facility_id);
+        $chain = kop_facility_eras_chain($facility_id, $doc);
         if (count($chain) < 2) return null;
+        // Which name each item was filed under, for a merged renamed program.
+        $claims = ($doc !== null && kop_facility_eras_doc_chain($doc)) ? kop_facility_eras_doc_claims($doc, $chain) : array();
 
         // Each record's lists, and the one name a record's undated items belong to.
         $records = array($facility_id => $own);
@@ -330,6 +493,9 @@ if (!function_exists('kop_facility_eras_build')) {
                 'years'     => kop_facility_eras_years_label($era['start'], $era['end']),
                 'operators' => $era['operators'],
                 'url'       => ($fid > 0 && $fid !== $facility_id) ? kop_facility_page_url($fid) : '',
+                // An earlier name of a merged record: its status when the name ended, and its own notes.
+                'status'    => ($i < count($chain) - 1) ? (string) ($era['status'] ?? '') : '',
+                'notes'     => ($i < count($chain) - 1 && function_exists('kop_facility_pages_clean_notes')) ? kop_facility_pages_clean_notes($era['notes'] ?? array()) : array_values((array) ($era['notes'] ?? array())),
             );
             foreach ($kinds as $kind) $entry[$kind] = array();
             $list[$i] = $entry;
@@ -345,17 +511,20 @@ if (!function_exists('kop_facility_eras_build')) {
                     foreach ($staff as $group => $people) {
                         foreach ($people as $person) {
                             $person['_fid'] = $fid;
-                            if ($home >= 0) $list[$home]['staff'][$group][] = $person;
+                            $claim = $claims[kop_facility_eras_item_key('staff', $person)] ?? null;
+                            if ($claim !== null) $list[$claim]['staff'][$group][] = $person;
+                            elseif ($home >= 0) $list[$home]['staff'][$group][] = $person;
                             elseif ($fid === $facility_id) $rest['staff'][$group][] = $person;
                         }
                     }
                     continue;
                 }
                 foreach ((array) ($lists[$kind] ?? array()) as $item) {
-                    $key = $kind . ':' . (isset($item['id']) ? (int) $item['id'] : md5((string) ($item['text'] ?? serialize($item))));
+                    $key = kop_facility_eras_item_key($kind, $item);
                     if (isset($seen[$key])) continue;
                     $year = $dated ? kop_facility_eras_item_year($kind, $item) : 0;
-                    $at = kop_facility_eras_place($chain, $year, kop_facility_eras_item_text($kind, $item), $home);
+                    // Filed under one name before a merge: it stays with that name.
+                    $at = $claims[$key] ?? kop_facility_eras_place($chain, $year, kop_facility_eras_item_text($kind, $item), $home);
                     // Another record's undated item with no name to stand under is not this page's.
                     if ($at < 0 && $fid !== $facility_id) continue;
                     $seen[$key] = true;
@@ -379,7 +548,7 @@ if (!function_exists('kop_facility_eras_build')) {
             return $kind === 'staff' ? count($items['administrator'] ?? array()) + count($items['notableStaff'] ?? array()) + count($items['pastTTIJobs'] ?? array()) : count($items);
         };
         foreach ($list as $i => $entry) {
-            $has = 0;
+            $has = count($entry['notes']);
             foreach ($kinds as $kind) {
                 if (isset($sorts[$kind])) usort($list[$i][$kind], $sorts[$kind]);
                 $has += $count($kind, $list[$i][$kind]);
