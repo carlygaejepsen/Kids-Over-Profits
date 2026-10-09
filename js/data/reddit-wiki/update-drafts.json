@@ -757,6 +757,18 @@
      "old": "** Ken Huey** was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco) , where he served as",
      "new": "** Ken Huey** was the CEO and Co-Founder of CALO. He began his career in the TTI working at the confirmedly abusive [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) as a Therapist and the Director of Business Management from 2002-2005. He then went on to work as the Clinical Director of the confirmedly abusive [West Ridge Academy](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 2005 until 2006, when he left to open CALO, where he worked from 2006 until 2015. He left CALO to open [Red Mountain Colorado](https://www.reddit.com/r/troubledteens/wiki/index/redmountainco).",
      "note": "The live wiki line breaks off at \"where he served as\" (owner, 2026-10-09): the unfinished clause is cut."
+    },
+    {
+     "id": "f2",
+     "old": "In June of 2017, a 50-year-old employee at CALO, [Gary Wayne Gann](https://www.mshp.dps.missouri.gov/CJ38/OffenderDetails?id=907960) , was arrested after a 16-year-old resident of CALO filed a complaint that Gann was touching her inappropriately. She alleged she and Gann were sitting on a couch together watching a movie when he reached his hand under her shirt and grabbed her. An investigation was conducted and Gann was subsequently arrested and charged. He pled guilty to 1st degree sexual misconduct in 2018 and was placed on probation for 2 years. He was also ordered to register as a Sex Offender for",
+     "new": "In June of 2017, a 50-year-old employee at CALO, [Gary Wayne Gann](https://www.mshp.dps.missouri.gov/CJ38/OffenderDetails?id=907960) , was arrested after a 16-year-old resident of CALO filed a complaint that Gann was touching her inappropriately. She alleged she and Gann were sitting on a couch together watching a movie when he reached his hand under her shirt and grabbed her. An investigation was conducted and Gann was subsequently arrested and charged. He pled guilty to 1st degree sexual misconduct in 2018 and was placed on probation for 2 years. He was also ordered to register as a Sex Offender.",
+     "note": "The live wiki line breaks off mid-sentence (owner, 2026-10-09): \"register as a Sex Offender for\" ends at \"Sex Offender.\""
+    },
+    {
+     "id": "f3",
+     "old": "Many survivors have reported that CALO is an abusive program. Allegations of abuse and neglect that have been reported by survivors include attack therapy, violent physical restraints resulting in injuries and broken bones, sexual abuse, discrimination against LGBTQ+ residents,",
+     "new": "Many survivors have reported that CALO is an abusive program. Allegations of abuse and neglect that have been reported by survivors include attack therapy, violent physical restraints resulting in injuries and broken bones, sexual abuse, and discrimination against LGBTQ+ residents.",
+     "note": "The live wiki line breaks off mid-sentence (owner, 2026-10-09): the list of allegations ends at its last item."
     }
    ],
    "conflicts": []
@@ -6021,7 +6033,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "f1",
+     "old": "** Brittany Larson** worked as a receptionist at the Glenholme School. In October of 2011, she was arrested for sexually abusing a 16-year-old male resident at the program. She pled guilty under the Alfwas sentenced to",
+     "new": "** Brittany Larson** worked as a receptionist at the Glenholme School. In October of 2011, she was arrested for sexually abusing a 16-year-old male resident at the program. She pled guilty.",
+     "note": "The live wiki line breaks off mid-sentence (owner, 2026-10-09): \"She pled guilty under the Alfwas sentenced to\" keeps only what it says."
+    }
+   ],
    "conflicts": []
   },
   "510": {
@@ -8249,6 +8268,12 @@
      "old": "**Jerry Spanos** is the Founder and CEO of the Heritage Community. He began his career in behavior-modification by working as the Director of Social Services at the** confirmedly abusive** [Utah Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 1974-1976. He then went on to work as a Supervising Therapist at the notorious and** confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 1976-1984. He then left to create the Heritage Community, where he remains the CEO.",
      "new": "**Jerry Spanos** (Gerald Spanos) is the Founder and CEO of the Heritage Community. He began his career in behavior-modification by working as the Director of Social Services at the** confirmedly abusive** [Utah Boys Ranch](https://www.reddit.com/r/troubledteens/wiki/index/westridge) from 1974-1976. He then went on to work as a Supervising Therapist at the notorious and** confirmedly abusive** [Provo Canyon School](https://www.reddit.com/r/troubledteens/wiki/index/provocanyon) from 1976-1984. He then left to create the Heritage Community, where he remains the CEO.",
      "note": "One paragraph per person (owner, 2026-10-08): his other name, from the record."
+    },
+    {
+     "id": "f2",
+     "old": "***Level 4:** On this level, the resident has all of the privileges of Level 3, plus they can \"check out\" to the circle with other level 4's and 5's and go on Level 4 & 5 activities that were co-ed. They can also",
+     "new": "***Level 4:** On this level, the resident has all of the privileges of Level 3, plus they can \"check out\" to the circle with other level 4's and 5's and go on Level 4 & 5 activities that were co-ed.",
+     "note": "The live wiki line breaks off mid-sentence (owner, 2026-10-09): the unfinished \"They can also\" is cut."
     }
    ],
    "conflicts": []
