@@ -344,5 +344,24 @@
         "update": true
       }
     ]
+  },
+  {
+    "name": "Three Points Center",
+    "unique_name": "Three Points Center (company)",
+    "operator": {
+      "notes": []
+    },
+    "facilities": [
+      {
+        "id": 10545,
+        "unique_name": "Three Points Center, LLC",
+        "relationship": "current"
+      },
+      {
+        "id": 11939,
+        "unique_name": "Three Points Center",
+        "relationship": "current"
+      }
+    ]
   }
 ]

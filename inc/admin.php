@@ -1591,6 +1591,11 @@ function kop_apply_facility_merge_seeds() {
  * facility keeps its own current company first. Idempotent: an existing
  * company of that name is reused and existing links are left alone; a listed
  * facility is linked only when its unique_name still matches.
+ *
+ * A company named like one of its programs (Three Points Center) gives its
+ * own 'unique_name' ("Three Points Center (company)"): the record key must
+ * differ from the program's, the name people read stays the same, as for
+ * Embark (key "Embark", name "Embark Behavioral Health").
  */
 function kop_apply_operator_record_seeds() {
     $done = array();
@@ -1620,14 +1625,15 @@ function kop_apply_operator_record_seeds() {
             $find->execute(array($name));
             $id = (int) $find->fetchColumn();
             if (!$id) {
-                if (kop_v2_name_taken($pdo, $prefix, $name)) {
-                    continue; // a program record has this name: leave it for a person to sort out
+                $key = trim((string) ($entry['unique_name'] ?? '')) ?: $name;
+                if (kop_v2_name_taken($pdo, $prefix, $key)) {
+                    continue; // a program record has this key: leave it for a person to sort out
                 }
                 $data = array(
                     'operator'   => array('name' => $name) + $entry['operator'],
                     'facilities' => array(),
                 );
-                $result = kop_v2_save_form_project($pdo, $prefix, $name, $data, 'companies', array('partial' => true, 'timestamp' => gmdate('c')));
+                $result = kop_v2_save_form_project($pdo, $prefix, $key, $data, 'companies', array('partial' => true, 'timestamp' => gmdate('c')));
                 $id = (int) ($result['operator_id'] ?? 0);
             } else {
                 // An existing company only gains the seed's notes it does not have yet; nothing else is touched.
@@ -2524,7 +2530,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '110';
+    $version = '111';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
