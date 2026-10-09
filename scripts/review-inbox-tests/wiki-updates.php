@@ -107,6 +107,25 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $refused = false;
     try { call_user_func($src['act'], (string) $key, 'undo', array()); } catch (RuntimeException $e) { $refused = true; }
     $check('wiki-updates: Undo refuses when the entry was edited after approving', $refused);
+    $skipped = kop_wiki_drafts_refresh_approved($pdo);
+    $check('wiki-updates: a draft fix leaves an entry edited after approving as it is', $row($key)[$col] === $want . 'x'
+        && in_array($key, array_column($skipped, 0), true));
+
+    // An entry approved before a later fix to its draft (stood in for by an older approved text) is built again,
+    // pasted ones go back to Ready for Reddit, and Undo still puts back the text from before approving.
+    $older = str_replace("\n", "\n\n", $want);
+    $pdo->prepare("UPDATE wiki_submissions SET $col = ? WHERE id = ?")->execute(array($older, $key));
+    $s = kop_wiki_drafts_state()[$key];
+    $s['sha1'] = sha1($older);
+    $s['view'] = 'posted';
+    kop_wiki_drafts_set_state($key, $s);
+    $done = kop_wiki_drafts_refresh_approved($pdo);
+    kop_rinbox_wupd_rows(true);
+    $check('wiki-updates: a draft fix reaches an approved entry, pasted ones go back to Ready for Reddit', $row($key)[$col] === $want
+        && kop_wiki_drafts_state()[$key]['view'] === 'ready' && in_array($key, array_column($done, 0), true), json_encode($done));
+    $check('wiki-updates: a second run changes nothing', !in_array($key, array_column(kop_wiki_drafts_refresh_approved($pdo), 0), true));
+    call_user_func($src['act'], (string) $key, 'undo', array());
+    $check('wiki-updates: and Undo still puts back the text from before approving', $row($key)[$col] === $before[$col]);
     $pdo->prepare("UPDATE wiki_submissions SET original_markdown = ?, generated_markdown = ?, updated_at = ? WHERE id = ?")
         ->execute(array($before['original_markdown'], $before['generated_markdown'], $before['updated_at'], $key));
     kop_wiki_drafts_set_state($key, null);

@@ -497,6 +497,63 @@ function kop_wiki_drafts_undo(PDO $pdo, $id) {
     kop_wiki_drafts_set_state($id, null);
 }
 
+/**
+ * An approved entry holds the text built when it was approved, so a later fix to its draft (update-drafts.json) never
+ * reaches it. This builds each approved entry again from the text it had before approving, as Undo + Approve would,
+ * unless someone edited it since. An entry already pasted on Reddit goes back to Ready for Reddit to be pasted again.
+ * Runs once per KOP_WIKI_DRAFTS_REFRESH_VERSION (bump it after exporting fixes to approved entries).
+ * -> list of [id, program, what happened].
+ */
+function kop_wiki_drafts_refresh_approved(PDO $pdo) {
+    $out = array();
+    foreach (kop_wiki_drafts_state() as $id => $state) {
+        if (!is_array($state) || !in_array($state['view'] ?? '', array('ready', 'posted'), true) || !isset(kop_wiki_drafts_all()[$id])) continue;
+        $old = get_option('kop_wiki_draft_old_' . $id, null);
+        if (!is_array($old) || !isset($old['column'], $old['text'])) continue;
+        try {
+            $row = kop_wiki_drafts_row($pdo, $id);
+        } catch (RuntimeException $e) {
+            continue;
+        }
+        $now_md = (string) $row[$old['column']];
+        if (sha1($now_md) !== (string) ($state['sha1'] ?? '')) {
+            $out[] = array($id, $row['program_name'], 'edited since approving, left as it is');
+            continue;
+        }
+        $b = kop_wiki_drafts_build($id, $old['text']);
+        if ($b['problems']) {
+            $out[] = array($id, $row['program_name'], 'not rebuilt: ' . implode('; ', $b['problems']));
+            continue;
+        }
+        if ($b['md'] === $now_md) continue;
+        $pdo->prepare('UPDATE wiki_submissions SET ' . $old['column'] . ' = ?, updated_at = ? WHERE id = ?')
+            ->execute(array($b['md'], gmdate('Y-m-d H:i:s'), $id));
+        $was = $state['view'];
+        $state['view'] = 'ready';
+        $state['sha1'] = sha1($b['md']);
+        $state['lines'] = count($b['added']);
+        $state['tensed'] = count($b['tensed']);
+        kop_wiki_drafts_set_state($id, $state);
+        $out[] = array($id, $row['program_name'], $was === 'posted' ? 'updated, back on Ready for Reddit to paste again' : 'updated');
+    }
+    return $out;
+}
+
+define('KOP_WIKI_DRAFTS_REFRESH_VERSION', '1');   // 1: editorial voice cut from 23 entries (2026-10-09)
+
+add_action('init', function () {
+    if (get_option('kop_wiki_drafts_refresh_version') === KOP_WIKI_DRAFTS_REFRESH_VERSION || get_transient('kop_wiki_drafts_refresh_running')) return;
+    set_transient('kop_wiki_drafts_refresh_running', 1, 10 * MINUTE_IN_SECONDS);
+    try {
+        $done = kop_wiki_drafts_refresh_approved(kop_wiki_upd_pdo());
+        update_option('kop_wiki_drafts_refresh_version', KOP_WIKI_DRAFTS_REFRESH_VERSION, false);
+        update_option('kop_wiki_drafts_refresh_last', array('at' => gmdate('c'), 'entries' => $done), false);
+    } catch (Throwable $e) {
+        update_option('kop_wiki_drafts_refresh_last', array('at' => gmdate('c'), 'error' => $e->getMessage()), false);
+    }
+    delete_transient('kop_wiki_drafts_refresh_running');
+}, 30);
+
 /** The entry's Reddit address: its page, else the page of its title (js/data/reddit-wiki/page-urls.json). */
 function kop_wiki_drafts_reddit_url(array $entry) {
     if (!empty($entry['page'])) return 'https://www.reddit.com/r/troubledteens/wiki/' . trim($entry['page'], '/') . '/';
