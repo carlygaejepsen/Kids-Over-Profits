@@ -9,7 +9,8 @@ verdict). An op adds text only:
    "heading": "## **Closure**", "text": "...", "gids": ["g1"]}
   {"id": "o3", "op": "set_header_years", "years": "2008-2024", "gids": ["g1"]}
 
-plus "by" (haiku/sonnet/opus), "verdict" (ok, fixed, dropped) and "note". Sections are found by their
+plus "by" (haiku/sonnet/opus), "verdict" (ok, fixed, dropped) and "note"; "final": true marks text corrected by hand,
+which the staff-line rules (plain_citations()) leave as it is. Sections are found by their
 heading text without #, * and spaces, case ignored. ops with verdict "dropped" are not applied.
 
 The ops are placed as the wiki editor's template places them (js/wiki-generation.js, templated()): news article lines
@@ -137,8 +138,9 @@ def templated(md, ops, name=''):
     secs = sections(lines)
     # ", left" after a role ("Therapist (2017-2025), left of X") goes: a past range already says they left (owner,
     # 2026-10-08; kop_wiki_drafts_all() in inc/wiki-update-drafts.php does the same for drafts exported before).
+    # An op marked "final" was corrected by hand (a copy-edit of what the rules below wrote): it is printed as it is.
     ops = [dict(op, text=plain_citations(re.sub(r'(?<=[)\w]), left(?= of )', '', op['text']), staff=is_staff_section(op.get('section', ''))))
-           if isinstance(op.get('text'), str) else op for op in ops]
+           if isinstance(op.get('text'), str) and not op.get('final') else op for op in ops]
     media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
     abuse = next((s for s in secs if s[2].startswith('abuse') or 'lawsuit' in s[2] or s[2] == 'deaths'), None)
     after = abuse or next((s for name in MEDIA_AFTER for s in secs if s[2] == name), None)
