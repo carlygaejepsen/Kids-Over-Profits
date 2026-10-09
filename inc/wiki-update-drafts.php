@@ -147,7 +147,7 @@ function kop_wiki_drafts_reddit_format($md) {
         }, $line);
         $line = kop_wiki_drafts_bold_spacing($line);
         // No space before . , ) ] that ends a word ("[Name](url) , which"), nor before ; : ! ? after a link, no empty
-        // date ("(FOX 13 News, )"). Same as scripts/wiki-drafts.py punct_spacing().
+        // date ("(FOX 13 News, )"). Same as scripts/wiki-drafts.py punct_spacing() and normalizePunctSpacing() (js/wiki-generation.js).
         $line = preg_replace('/(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))/u', '', $line);
         $line = preg_replace('/(?<=\)) +(?=[;:!?](?:\s|$))/u', '', $line);
         $lines[$n] = str_replace(',)', ')', $line);

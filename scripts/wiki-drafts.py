@@ -78,7 +78,8 @@ def reddit_format(md):
 def punct_spacing(line):
     """The conversion left a space after every link ("[Name](url) , which", "(url) )."): no space before . , ) ] that ends a
     word, nor before ; : ! ? after a link (a survivor's "HERE !" stays as written), and an empty date after a news outlet goes
-    ("(FOX 13 News, )" -> "(FOX 13 News)"). PHP: the same lines in kop_wiki_drafts_reddit_format()."""
+    ("(FOX 13 News, )" -> "(FOX 13 News)"). PHP: the same lines in kop_wiki_drafts_reddit_format(); the wiki editor:
+    normalizePunctSpacing() (js/wiki-generation.js, scripts/test-wiki-generation-rules.js checks they match)."""
     line = re.sub(r'(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("\'*]))', '', line)
     line = re.sub(r'(?<=\)) +(?=[;:!?](?:\s|$))', '', line)
     return re.sub(r',\)', ')', line)

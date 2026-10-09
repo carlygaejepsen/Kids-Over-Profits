@@ -202,14 +202,6 @@ function generateWikiMarkdown(formData) {
 
     const normalizeForComparison = normalizeGeneratedText;
 
-    const addRoleArticle = (text) => {
-        const trimmed = (text || '').trim();
-        if (!trimmed) return '';
-        if (/^(?:the|a|an|one of|in)\b/i.test(trimmed)) {
-            return trimmed;
-        }
-        return `the ${trimmed}`;
-    };
 
     // Helper: Determine verb tense for staff members
     const roleVerb = (staffMember) => {
@@ -257,8 +249,7 @@ function generateWikiMarkdown(formData) {
             ensureBoldNameSpacing,
             stripRedundantRoleIntro,
             normalizeForComparison,
-            addRoleArticle,
-            isEffectivelyEmpty
+                isEffectivelyEmpty
         });
     }
 
@@ -424,8 +415,10 @@ function generateWikiMarkdown(formData) {
         : '';
     // Sort staff: current staff first, then former staff — then render each as
     // a "**Name** is/was the Role. Bio" paragraph.
+    // A closed program's staff are all written in the past ("was a therapist").
+    const pastProgram = isClosedYears(formData.yearsActive);
     const buildStaffEntries = (staffList) => {
-        const sortedStaff = [...staffList].sort((a, b) => {
+        const sortedStaff = mergeStaffByName(staffList).sort((a, b) => {
             const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
             const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
             if (aIsFormer && !bIsFormer) return 1;
@@ -435,14 +428,8 @@ function generateWikiMarkdown(formData) {
 
         return sortedStaff.map(s => {
             const safeStaffName = escapeMarkdown((s.name || '').trim());
-            let roleText = escapeMarkdown(s.role);
-
-            const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
-            const isFormerStaff = s.isFormer || roleHasFormer;
-
-            if (isFormerStaff) {
-                roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
-            }
+            const roleText = escapeMarkdown(s.role);
+            const past = pastProgram || s.isFormer || /\b(former|previous|ex[\s-])/i.test(s.role || '');
 
             // If no role is defined, just output "**Name** Bio"
             if (!s.role) {
@@ -450,22 +437,10 @@ function generateWikiMarkdown(formData) {
                 return `**${safeStaffName}** ${bio}`.trim();
             }
 
-            const articleRole = addRoleArticle(roleText);
-
-            let verb, descriptor;
-            if (s.isFormer && !roleHasFormer) {
-                verb = 'was';
-                descriptor = articleRole;
-            } else if (roleHasFormer) {
-                verb = 'was';
-                descriptor = articleRole;
-            } else {
-                verb = 'is';
-                descriptor = articleRole;
-            }
-
-            // Ensure proper spacing between name and verb
-            const roleSentence = ensureSentence(`**${safeStaffName}** ${verb} ${descriptor}`);
+            // "**Name** was a therapist" / "is the Executive Director" / "worked in admissions"; the same
+            // person's other roles at the program follow ("Roe was also the program director").
+            const roleSentence = [ensureSentence(`**${safeStaffName}** ${staffRoleClause(roleText, past)}`),
+                staffExtraRolesSentence(safeStaffName, (s.extraRoles || []).map(escapeMarkdown), past)].filter(Boolean).join(' ');
 
             let previousSentence = '';
             if (s.previousRoles && s.previousRoles.length) {
@@ -822,7 +797,7 @@ ${relatedMediaSection}
     const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return dropDuplicateParagraphs(normalizeBoldSpacing(sanitizedOutput)).trim();
+    return dropDuplicateParagraphs(normalizePunctSpacing(normalizeBoldSpacing(sanitizedOutput))).trim();
 }
 
 function generateOrganizationWikiMarkdown(formData, helpers) {
@@ -835,7 +810,6 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         ensureBoldNameSpacing,
         stripRedundantRoleIntro,
         normalizeForComparison,
-        addRoleArticle,
         isEffectivelyEmpty
     } = helpers;
 
@@ -941,8 +915,9 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     const staffNotesText = (formData.staffMisc && !isEffectivelyEmpty(formData.staffMisc))
         ? formData.staffMisc.trim()
         : '';
+    const pastOrganization = isClosedYears(formData.yearsActive);
     const buildStaffEntries = (staffList) => {
-        const sortedStaff = [...staffList].sort((a, b) => {
+        const sortedStaff = mergeStaffByName(staffList).sort((a, b) => {
             const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
             const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
             if (aIsFormer && !bIsFormer) return 1;
@@ -952,24 +927,17 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
 
         return sortedStaff.map((s) => {
             const safeStaffName = escapeMarkdown((s.name || '').trim());
-            let roleText = escapeMarkdown(s.role);
-
-            const roleHasFormer = /\b(former|previous|ex[\s-])/i.test(s.role || '');
-            const isFormerStaff = s.isFormer || roleHasFormer;
-
-            if (isFormerStaff) {
-                roleText = roleText.replace(/\bcurrent\s+/gi, '').trim();
-            }
+            const roleText = escapeMarkdown(s.role);
+            const past = pastOrganization || s.isFormer || /\b(former|previous|ex[\s-])/i.test(s.role || '');
 
             if (!s.role) {
                 const bio = ensureSentence(s.bio || '');
                 return `**${safeStaffName}** ${bio}`.trim();
             }
 
-            const articleRole = addRoleArticle(roleText);
-            const verb = isFormerStaff ? 'was' : 'is';
-            const descriptor = articleRole;
-            const roleSentence = ensureSentence(`**${safeStaffName}** ${verb} ${descriptor}`);
+            // The same role sentence as a program's staff (staffRoleClause()).
+            const roleSentence = [ensureSentence(`**${safeStaffName}** ${staffRoleClause(roleText, past)}`),
+                staffExtraRolesSentence(safeStaffName, (s.extraRoles || []).map(escapeMarkdown), past)].filter(Boolean).join(' ');
 
             let previousSentence = '';
             if (s.previousRoles && s.previousRoles.length) {
@@ -1170,7 +1138,7 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     if (orgTestimoniesNotes) orgTestimoniesSection = `## **Survivor Testimonies**\n\n${orgTestimoniesNotes}\n\n***\n\n`;
 
     let headerLine = formData.yearsActive
-        ? `# **${escapeMarkdown(programName)}**(${formData.yearsActive})`
+        ? `# **${escapeMarkdown(programName)}** (${formData.yearsActive})`
         : `# **${escapeMarkdown(programName)}**`;
     const orgLocation = String(formData.headquarters || formData.cityState || '').trim();
     if (orgLocation) {
@@ -1216,7 +1184,7 @@ ${relatedMediaSection}
     const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return dropDuplicateParagraphs(normalizeBoldSpacing(sanitizedOutput)).trim();
+    return dropDuplicateParagraphs(normalizePunctSpacing(normalizeBoldSpacing(sanitizedOutput))).trim();
 }
 
 // --- Helper Functions ---
@@ -1409,6 +1377,118 @@ function dropDuplicateParagraphs(md) {
     return kept.join('\n\n');
 }
 
+// No space before . , ) ] that ends a word, nor before ; : ! ? after a link
+// ("[Name](url) , which" -> "[Name](url), which"; a survivor's "HERE !" stays as
+// written), and an empty date after a source goes ("(FOX 13 News, )" ->
+// "(FOX 13 News)"). scripts/wiki-drafts.py punct_spacing() and
+// kop_wiki_drafts_reddit_format() (inc/wiki-update-drafts.php) do the same.
+function normalizePunctSpacing(md) {
+    return String(md || '').split('\n').map((line) => line
+        .replace(/(?<=\S) +(?=[.,)\]](?:\s|$|[.,;:!?)\]("'*]))/g, '')
+        .replace(/(?<=\)) +(?=[;:!?](?:\s|$))/g, '')
+        .replace(/,\)/g, ')')).join('\n');
+}
+
+// ---- Staff role sentences -------------------------------------------------
+// The rules the wiki update drafts settled on (scripts/wiki-drafts.py role_phrase(),
+// role_article(), also_roles(); owner, 2026-10-08): a title one person holds at a
+// time takes "the" ("the Executive Director"), any other job "a"/"an" ("a
+// therapist"); a department is "worked in admissions", never "was the Admissions";
+// abbreviations are written out; "Former"/"current" never stay in the role (the
+// verb says it); a year in the role only as a span ("from 2008 to 2010"), a lone
+// year that only dates a source goes; staff of a closed program are "was".
+const ONE_HOLDER_ROLE = /^(?!(assistant|associate|deputy|vice|co-?|former )\b)[^,]*\b(director|ceo|coo|cfo|cmo|cto|president|founder|owner|headmaster|headmistress|head of|principal|superintendent|administrator|chair(man|woman|person)?|chief|dean)\b/i;
+const ROLE_ABBREVIATIONS = [
+    [/\bexec\b\.?/gi, 'executive'], [/\basst\b\.?/gi, 'assistant'], [/\bdir\b\.?/gi, 'director'],
+    [/\bbiz\.?\s*dev\b\.?/gi, 'business development'], [/\bmktg\b\.?/gi, 'marketing'], [/\bops\b/gi, 'operations'],
+    [/\bVP\b/g, 'vice president'], [/\bspecial ed\b\.?/gi, 'special education']
+];
+const ROLE_DEPARTMENT = /^(?:admissions|marketing|facilities|maintenance|logistics|food services?|business development|enrollment(?: development)?|outreach|development|human resources|finance|accounting|intake|referral relations)(?:\s*(?:,|and|&|\/)\s*(?:admissions|marketing|facilities|maintenance|logistics|food services?|business development|enrollment(?: development)?|outreach|development|human resources|finance|accounting|intake|referral relations))*$/i;
+
+function roleArticle(role) {
+    if (ONE_HOLDER_ROLE.test(role)) return 'the';
+    if (/^[A-Z]{2}/.test(role)) return /^[AEFHILMNORSX]/.test(role) ? 'an' : 'a';   // read by its letters: "an RN", "a CNA"
+    return /^(?:[aeiou]|hono|hour)/i.test(role) && !/^(?:uni|use|eu|one)/i.test(role) ? 'an' : 'a';
+}
+
+// "Program / Clinical Director (2007-2010)" -> {phrase: "the program and clinical director", span: " from 2007 to 2010"}.
+function staffRolePhrase(role) {
+    let r = String(role || '').trim();
+    let span = '';
+    const range = r.match(/\s*(?:\(|\bin\s+|\bfrom\s+)?((?:19|20)\d\d)\s*[-–]\s*((?:19|20)\d\d|present)\)?/i);
+    if (range) {
+        span = /present/i.test(range[2]) ? ` from ${range[1]}` : ` from ${range[1]} to ${range[2]}`;
+        r = r.replace(range[0], ' ');
+    }
+    r = r.replace(/\s*\((?:19|20)\d\d\)/g, ' ').replace(/\s+in\s+(?:19|20)\d\d\s*$/i, ' ');   // a lone year dates the source
+    r = r.replace(/\b(?:former|previous|current|ex-)\s*/gi, ' ');
+    ROLE_ABBREVIATIONS.forEach(([re, word]) => { r = r.replace(re, word); });
+    r = r.replace(/\s*\/\s*/g, ' and ').replace(/\s+&\s+/g, ' and ').replace(/\s+/g, ' ').replace(/^[,\s]+|[,\s]+$/g, '');
+    if (!r) return { phrase: '', span, worked: false };
+    if (/^(?:the|a|an|one of|in)\b/i.test(r)) return { phrase: r, span, worked: false };
+    if (ROLE_DEPARTMENT.test(r)) return { phrase: r.toLowerCase(), span, worked: true };
+    // A role written in sentence case ("Adventure therapy coordinator") reads as words mid-sentence; a one-word job
+    // many people hold too ("Teacher" -> "a teacher"); titles ("the Headmaster", "Family Teacher") stay as written.
+    if (/^staff$/i.test(r)) r = 'staff member';
+    else if (/^[A-Z][a-z]+(?: (?:[a-z][\w&/-]*|&))+$/.test(r)) r = r[0].toLowerCase() + r.slice(1);
+    else if (/^[A-Z][a-z]+$/.test(r) && roleArticle(r) !== 'the') r = r.toLowerCase();
+    return { phrase: `${roleArticle(r)} ${r}`, span, worked: false };
+}
+
+// "**Name** was a therapist from 2008 to 2010" (no full stop: the caller adds it).
+function staffRoleClause(role, past) {
+    const p = staffRolePhrase(role);
+    if (!p.phrase) return '';
+    if (p.worked) return `${past ? 'worked' : 'works'} in ${p.phrase}${p.span}`;
+    return `${past ? 'was' : 'is'} ${p.phrase}${p.span}`;
+}
+
+// The same person's other roles at the program: "Roe was also the program director and a therapist. Roe also worked in admissions."
+function staffExtraRolesSentence(name, roles, past) {
+    const surname = String(name || '').trim().split(/\s+/).pop();
+    const was = [], worked = [];
+    (roles || []).forEach((r) => {
+        const p = staffRolePhrase(r);
+        if (p.phrase) (p.worked ? worked : was).push(p.phrase + p.span);
+    });
+    const join = (xs) => (xs.length < 3 ? xs.join(' and ') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`);
+    return [was.length ? `${surname} ${past ? 'was' : 'is'} also ${join(was)}.` : '',
+        worked.length ? `${surname} also ${past ? 'worked' : 'works'} in ${join(worked)}.` : ''].filter(Boolean).join(' ');
+}
+
+// A program whose years end in a year ("1994-2010", "2001-2005/2010") is closed: its staff are written in the past.
+function isClosedYears(years) {
+    const y = String(years || '').trim();
+    return /(?:19|20)\d\d\s*$/.test(y) && !/present|current|ongoing|now\b/i.test(y);
+}
+
+// One paragraph per person: staff entries naming the same person (case, punctuation and a "Dr."/"Rabbi" in front
+// ignored) become one, the first keeping its role and the others' roles listed after it.
+function staffNameKey(name) {
+    return String(name || '').toLowerCase().replace(/\b(?:dr|rabbi|rev|mr|mrs|ms|miss)\.?\s+/g, '')
+        .replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+function mergeStaffByName(list) {
+    const byKey = new Map();
+    const out = [];
+    (list || []).forEach((s) => {
+        if (!s) return;
+        const key = staffNameKey(s.name);
+        const first = key ? byKey.get(key) : null;
+        if (!first) {
+            const copy = { ...s, extraRoles: [] };
+            if (key) byKey.set(key, copy);
+            out.push(copy);
+            return;
+        }
+        if (s.role && staffNameKey(s.role) !== staffNameKey(first.role)) first.extraRoles.push(s.role);
+        if (s.bio && !String(first.bio || '').includes(String(s.bio).trim())) first.bio = [first.bio, s.bio].filter(Boolean).join(' ');
+        if (s.previousRoles && s.previousRoles.length) first.previousRoles = [...(first.previousRoles || []), ...s.previousRoles];
+    });
+    return out;
+}
+
 function getPlaceholder(category, programName) {
     const name = programName || '[Program Name]';
     const lowerCategory = (category || '').toLowerCase();
@@ -1489,7 +1569,7 @@ function escapeMarkdown(text) {
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { generateWikiMarkdown, sanitizeUrl, normalizeContactTag };
+    module.exports = { generateWikiMarkdown, sanitizeUrl, normalizeContactTag, normalizePunctSpacing, staffRoleClause, mergeStaffByName, isClosedYears };
 } else if (typeof window !== 'undefined') {
     window.generateWikiMarkdown = generateWikiMarkdown;
     window.sanitizeUrlForWiki = sanitizeUrl;

@@ -184,6 +184,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-follow
 # -> js/data/reddit-wiki/live-compare.json (commit it) -> editor index badge + /wiki-feed/ note; no result = no mark
 python scripts/reddit-wiki-live.py fetch [--slugs a b] [--refresh] && python scripts/reddit-wiki-live.py compare [--list]   # sync tmp/prod.sqlite first
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, live-result states
+# The editor (js/wiki-generation.js) writes staff as the drafts do: "a therapist" / "the Executive Director" / "worked in admissions",
+# no "Former" or abbreviations in a role, a year only as "from X to Y", a closed program's staff in the past, one paragraph per person;
+# normalizePunctSpacing() must match scripts/wiki-drafts.py punct_spacing() and kop_wiki_drafts_reddit_format()
+node scripts/test-wiki-generation-rules.js       # role sentences, merging, a whole page; spacing JS == Python on every draft line
 # Wiki entries brought up to date from KOP (docs/PLAN.md 3.12, inc/wiki-updates.php): each entry (newest row per Reddit page) is
 # linked to its facilities_v2 record at KOP Tools > Review inbox > Wiki links (wiki_submissions.facility_unique_name, 'suggested',
 # Undo); gaps = what kop_facility_page_data() holds that the entry's markdown lacks (closure, names, operator, news, lawsuits,
