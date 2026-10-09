@@ -1328,6 +1328,19 @@
                 }
             }));
         }
+        // item.copy {label, text}: a Copy button; item.go {label, url}: a link drawn as a button.
+        // Both sit first in the decision row (Wiki updates: Copy, Edit it on Reddit, Pasted on Reddit).
+        if (item.copy && item.copy.text) {
+            var copied = el('span', { class: 'rinbox-copied', role: 'status' });
+            decide.appendChild(el('button', {
+                type: 'button', class: 'rinbox-btn rinbox-btn-neutral rinbox-btn-primary',
+                onclick: function () { copyText(item.copy.text, copied); }
+            }, [item.copy.label || 'Copy']));
+            decide.appendChild(copied);
+        }
+        if (item.go && safeHref(item.go.url)) {
+            decide.appendChild(el('a', { class: 'rinbox-btn rinbox-btn-go', href: item.go.url, target: '_blank', rel: 'noopener', text: item.go.label }));
+        }
         var askForms = el('div', { class: 'rinbox-ask-forms' });
         (item.actions || []).forEach(function (a) {
             var paramInputs = (a.params || []).map(function (p) { return fieldInput(p, prefix + 'p-' + a.id + '-'); });
@@ -1418,6 +1431,9 @@
             var next = res.item || null;
             if (next) {
                 fillCard(node, next, s, src, res.message);
+                // A refilled card is often much shorter (an approved wiki update): bring it back
+                // into view instead of leaving the reader among the cards below.
+                if (node.getBoundingClientRect().top < 0) node.scrollIntoView({ block: 'start', behavior: 'smooth' });
             } else {
                 node.classList.add('rinbox-gone');
                 node.innerHTML = '';
@@ -1427,6 +1443,22 @@
         }).catch(function (e) {
             fillCard(node, item, s, src, e.message, true);
         });
+    }
+
+    function copyText(text, status) {
+        function done(ok) { status.textContent = ok ? 'Copied.' : 'Could not copy: open "Show the whole entry" and copy it by hand.'; }
+        function fallback() {
+            var t = el('textarea', { readonly: true, 'aria-hidden': 'true', tabindex: '-1', style: 'position:absolute;left:-9999px' });
+            t.value = text;
+            document.body.appendChild(t);
+            t.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            t.remove();
+            done(ok);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done(true); }, fallback);
+        else fallback();
     }
 
     function tagEditor(item, src, node) {

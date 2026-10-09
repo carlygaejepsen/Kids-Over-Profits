@@ -786,6 +786,39 @@ button.rinbox-btn-primary {
     font-size: 15px;
 }
 
+/* item.go: a link drawn as an outlined button, every state named (Kadence colours a and a:focus) */
+a.rinbox-btn-go,
+a.rinbox-btn-go:link,
+a.rinbox-btn-go:visited,
+a.rinbox-btn-go:hover,
+a.rinbox-btn-go:focus,
+a.rinbox-btn-go:active {
+    display: inline-block;
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy, #000080);
+    box-shadow: inset 0 0 0 2px var(--kop-navy, #000080);
+}
+
+a.rinbox-btn-go:hover,
+a.rinbox-btn-go:focus {
+    text-decoration: underline;
+}
+
+a.rinbox-btn-go:focus-visible {
+    outline: 2px solid var(--kop-navy, #000080);
+    outline-offset: 2px;
+}
+
+.rinbox-copied {
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 .rinbox-btn-icon {
     display: inline-flex;
     margin-right: 6px;

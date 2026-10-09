@@ -151,7 +151,7 @@ function kop_rinbox_wupd_item(array $r) {
             . '. Every added line names its source; check each, change or empty any line in "Edit details", then approve.'
             . ($b['stale'] ? ' The entry was edited after this draft was made: the additions are placed by section heading, so check where they sit in "Show the whole entry".' : '');
     } elseif ($view === 'ready') {
-        $text = 'Approved: KOP\'s copy of the entry has the update. Open "Show the whole entry", copy it, paste it over the page on Reddit (Edit it on Reddit), then mark it pasted.';
+        $text = 'Approved: KOP\'s copy of the entry has the update. Copy the whole entry, paste it over the page on Reddit (Edit it on Reddit), then click Pasted on Reddit.';
     } elseif ($view === 'posted') {
         $text = 'Pasted on Reddit.';
     } else {
@@ -163,7 +163,7 @@ function kop_rinbox_wupd_item(array $r) {
     $links = array();
     if ($reddit !== '') $links[] = array('label' => 'The entry on the Reddit wiki', 'url' => $reddit);
     $links[] = array('label' => 'The whole entry with the changes, and Copy', 'url' => kop_wiki_drafts_view_url($id));
-    if ($view === 'ready' && ($edit = kop_wiki_drafts_reddit_edit_url($reddit)) !== '') $links[] = array('label' => 'Edit it on Reddit', 'url' => $edit);
+    $edit = $view === 'ready' ? kop_wiki_drafts_reddit_edit_url($reddit) : '';
 
     if ($view === 'review') {
         $actions = array(
@@ -200,6 +200,12 @@ function kop_rinbox_wupd_item(array $r) {
     );
     if ($fields) $item['fields'] = $fields;
     if ($compare) $item['compare'] = $compare;
+    if ($view === 'ready') {
+        // Copy, Edit it on Reddit and Pasted on Reddit side by side on the card (js/review-inbox.js),
+        // so pasting needs no trip to the whole-entry page. KOP's copy is the approved text.
+        $item['copy'] = array('label' => 'Copy the whole entry', 'text' => (string) $row['markdown']);
+        if ($edit !== '') $item['go'] = array('label' => 'Edit it on Reddit', 'url' => $edit);
+    }
     return $item;
 }
 

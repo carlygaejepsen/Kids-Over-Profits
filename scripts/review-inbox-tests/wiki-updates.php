@@ -126,6 +126,8 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $check('wiki-updates: the entry is the newest row again', $after['updated_at'] !== $before['updated_at']);
     $got = kop_rinbox_get_item('wiki-updates', (string) $key);
     $check('wiki-updates: it moves to Ready for Reddit with Pasted on Reddit and Undo', $got['status'] === 'ready' && array_column($got['actions'], 'id') === array('posted', 'undo'));
+    $check('wiki-updates: the ready card copies the approved text itself, with Edit it on Reddit beside it',
+        ($got['copy']['text'] ?? null) === $want && (!isset($got['go']) || strpos($got['go']['url'], '/wiki/edit/') !== false));
     call_user_func($src['act'], (string) $key, 'posted', array());
     $check('wiki-updates: Pasted on Reddit moves it to On Reddit', kop_rinbox_get_item('wiki-updates', (string) $key)['status'] === 'posted');
     call_user_func($src['act'], (string) $key, 'undo', array());
