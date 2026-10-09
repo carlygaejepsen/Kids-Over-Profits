@@ -17,6 +17,9 @@ The ops are placed as the wiki editor's template places them (js/wiki-generation
 go under "In the Media" (the entry's own, else a new one after its abuse section), an addition replaces a section's
 stand-in text ("... has not been added yet"), every template section the entry lacks is added with the editor's request
 for information and its modmail link, and bold spacing is the editor's ("**Name** was", never "**Name**was").
+News articles the entry itself lists under Related Media (tmp/wiki-updates/related-news.json, sorted by hand from the
+websites) move there too: one "move_to_section" op per entry names them by link (owner, 2026-10-09: Related Media is
+for websites about the program).
 
 A closed program's entry (or one about an earlier name) also gets ops-tense.json, the one op that
 rewrites existing lines: {"id": "t1", "op": "past_tense", "lines": [{"old": "<exact line>", "new": "..."}]}.
@@ -139,7 +142,7 @@ MEDIA_SECTIONS = ('in the media', 'news articles', 'media coverage', 'news')
 MEDIA_AFTER = ('rules and punishments', 'punishments', 'program structure', 'founders and notable staff', 'history and background information')
 
 
-def templated(md, ops, name=''):
+def templated(md, ops, name='', moves=()):
     """The ops as the wiki editor's template places them (js/wiki-generation.js): news articles go under "In the Media", the
     rest of Related Media stays. A Related Media op's article lines move to the entry's own In the Media (or News Articles)
     section; an entry without one gets the template's "In the Media" section after its abuse section, at that heading's
@@ -227,9 +230,41 @@ def templated(md, ops, name=''):
         fill.append({'id': 'e' + str(n + 1), 'by': 'script', 'op': 'append_to_section', 'section': heading,
                      'text': placeholder(heading, name), 'gids': [], 'verdict': 'ok', 'filler': True,
                      'note': "The wiki editor's empty section: nothing is written under it, so it asks readers for information."})
+    # News articles the entry itself lists under Related Media (moves: exact lines, reviewed in
+    # tmp/wiki-updates/related-news.json) move to In the Media: the entry's own, else the one made or filled in above.
+    rm = next((s for s in secs if 'related media' in s[2]), None)
+    # Matched by the line's link, so a line corrected since (ops-fix.json) moves in its corrected wording.
+    urls = {first_url(l) for l in moves} - {''}
+    moving = [l for l in lines[rm[0] + 1:rm[1]] if first_url(l) in urls] if rm else []
+    if moving:
+        bare = [re.sub(r'^\s*[-*+] ', '', l).strip() for l in moving]
+        target, text = 'In the Media', '\n'.join('- ' + l for l in bare)
+        if media:
+            target = re.sub(r'[#*]+', '', lines[media[0]]).strip()
+            body = [l for l in lines[media[0] + 1:body_end(lines, media[0], media[1])] if l.strip() and not SEPARATOR.match(l)]
+            listed = body and all(re.match(r'^[-*] ', l.strip()) for l in body if not is_placeholder(l))
+            if body and not listed and not all(is_placeholder(l) for l in body):
+                text = '\n\n'.join(bare)
+        out.append({'id': 'm1', 'by': 'script', 'op': 'move_to_section', 'from_section': re.sub(r'[#*]+', '', lines[rm[0]]).strip(),
+                    'section': target, 'text': text, 'empty_text': placeholder('Related Media', name) if name else '',
+                    'gids': [], 'verdict': 'ok',
+                    'note': 'News articles the entry listed under Related Media, moved to In the Media (Related Media is for '
+                            'websites about the program). Delete a line here to leave it where it is.'})
     # The empty sections come first: an addition the record has for a section the entry lacked then lands in it,
     # in place of its request for information.
     return fill + out
+
+
+def load_moves(i):
+    """tmp/wiki-updates/related-news.json: {entry id: [exact lines of its Related Media that are news articles]}, each as
+    its correction in ops-fix.json has it (a repaired link is then found by the new link)."""
+    path = os.path.join(ROOT, 'tmp', 'wiki-updates', 'related-news.json')
+    try:
+        lines = json.load(open(path, encoding='utf-8')).get(str(i), [])
+    except FileNotFoundError:
+        return []
+    fixed = {f['old'].rstrip('\r'): f['new'].rstrip('\r') for f in load_fixes(os.path.join(DRAFTS, str(i)))}
+    return [fixed.get(l, l) for l in lines]
 
 
 REDDIT_WIKI = re.compile(r'^https?://(www\.|old\.)?reddit\.com/r/troubledteens/wiki/', re.I)
@@ -544,9 +579,56 @@ def timeline_order(md):
     return '\n'.join(lines) + '\n', order
 
 
+def first_url(line):
+    m = re.search(r'\]\((https?://[^)\s]+)\)', line)
+    return m.group(1) if m else ''
+
+
+def append_lines(lines, s, new):
+    """new at the end of section s; a section holding only the editor's stand-in text gets new in its place."""
+    at = body_end(lines, s[0], s[1])
+    body = [k for k in range(s[0] + 1, at) if lines[k].strip() and not SEPARATOR.match(lines[k])]
+    if body and all(is_placeholder(lines[k]) for k in body):
+        lines[body[0]:at] = new
+    else:
+        lines[at:at] = [''] + new
+
+
+def move_out(lines, op, errors, removed):
+    """move_to_section: each line of the op's text names a line of from_section by its first link; that line leaves the
+    section -> the lines found, in the entry's wording as it is now (corrections and the past tense included), with
+    the op line's "- " or not. A blank line left doubled goes too; a section left empty gets empty_text."""
+    src = find(lines, op.get('from_section', ''))
+    if not src:
+        errors.append(f"{op.get('id')}: no section '{op.get('from_section')}'")
+        return []
+    start, end = src[0], src[1]
+    found = []
+    for t in (op.get('text') or '').split('\n'):
+        url = first_url(t)
+        if not t.strip():
+            continue
+        hit = next((k for k in range(start + 1, end) if url and first_url(lines[k]) == url), None)
+        if hit is None:
+            errors.append(f"{op.get('id')}: not under {op.get('from_section')}: {t.strip()[:70]!r}")
+            continue
+        line = lines.pop(hit)
+        removed.append(line)
+        end -= 1
+        if hit < end and not lines[hit].strip() and not lines[hit - 1].strip():
+            removed.append(lines.pop(hit))
+            end -= 1
+        found.append(('- ' if re.match(r'^\s*- ', t) else '') + re.sub(r'^\s*[-*+] ', '', line).strip())
+    at = body_end(lines, start, end)
+    if found and op.get('empty_text') and not any(lines[k].strip() and not SEPARATOR.match(lines[k]) for k in range(start + 1, at)):
+        lines[at:at] = ['', op['empty_text']]
+    return found
+
+
 def apply(md, ops):
+    """-> (md, applied ids, errors, removed): removed = the entry's lines a move took out of their section."""
     lines = md.replace('\r\n', '\n').rstrip('\n').split('\n')
-    applied, errors = [], []
+    applied, errors, removed = [], [], []
     for op in ops:
         if op.get('verdict') == 'dropped':
             continue
@@ -567,13 +649,16 @@ def apply(md, ops):
             if not s:
                 errors.append(f"{op.get('id')}: no section '{op.get('section')}'")
                 continue
-            at = body_end(lines, s[0], s[1])
-            body = [k for k in range(s[0] + 1, at) if lines[k].strip() and not SEPARATOR.match(lines[k])]
-            if body and all(is_placeholder(lines[k]) for k in body):
-                # Only the editor's stand-in text: the addition takes its place.
-                lines[body[0]:at] = new
-            else:
-                lines[at:at] = [''] + new
+            append_lines(lines, s, new)
+        elif kind == 'move_to_section':
+            # News articles the entry listed under Related Media go to In the Media (owner, 2026-10-09).
+            if not find(lines, op.get('section', '')):
+                errors.append(f"{op.get('id')}: no section '{op.get('section')}'")
+                continue
+            found = move_out(lines, op, errors, removed)
+            if not found:
+                continue
+            append_lines(lines, find(lines, op.get('section', '')), found)
         elif kind == 'add_section':
             s = find(lines, op.get('after_section', ''))
             at = body_end(lines, s[0], s[1]) if s else body_end(lines, 0, footer_start(lines))
@@ -582,11 +667,13 @@ def apply(md, ops):
             errors.append(f"{op.get('id')}: unknown op '{kind}'")
             continue
         applied.append(op.get('id'))
-    return '\n'.join(lines) + '\n', applied, errors
+    return '\n'.join(lines) + '\n', applied, errors, removed
 
 
-def check(original, draft, header_changed, kop_lines=frozenset(), kop_page_lines=frozenset()):
-    """Every original line is still there, in order (the header may only change its years); every added line cites a link."""
+def check(original, draft, header_changed, kop_lines=frozenset(), kop_page_lines=frozenset(), removed=()):
+    """Every original line is still there, in order (the header may only change its years), but the lines a move took out
+    of their section (removed; they come back among the added lines); every added line cites a link."""
+    gone = set(removed)
     o = original.replace('\r\n', '\n').rstrip('\n').split('\n')
     d = draft.rstrip('\n').split('\n')
     problems = []
@@ -599,13 +686,13 @@ def check(original, draft, header_changed, kop_lines=frozenset(), kop_page_lines
     added = []
     for line in d:
         # The editor's stand-in text for an empty section may go (apply() replaces it with the addition).
-        while j < len(o) and line != o[j] and is_placeholder(o[j]):
+        while j < len(o) and line != o[j] and (is_placeholder(o[j]) or o[j] in gone):
             j += 1
         if j < len(o) and line == o[j]:
             j += 1
         else:
             added.append(line)
-    while j < len(o) and is_placeholder(o[j]):
+    while j < len(o) and (is_placeholder(o[j]) or o[j] in gone):
         j += 1
     if j < len(o):
         problems.append(f'original line {j + 1} is missing or changed: {o[j][:80]!r}')
@@ -855,14 +942,14 @@ def run(ids, write):
         base, tensed, tense_errors = apply_tense(fixed_md, tense_ops)
         tense_errors = fix_errors + tense_errors
         gaps_path = os.path.join(folder, 'gaps.json')
-        ops = templated(base, ops, entry_name(json.load(open(gaps_path, encoding='utf-8'))) if os.path.exists(gaps_path) else '')
-        draft, applied, errors = apply(base, ops)
+        ops = templated(base, ops, entry_name(json.load(open(gaps_path, encoding='utf-8'))) if os.path.exists(gaps_path) else '', load_moves(i))
+        draft, applied, errors, removed = apply(base, ops)
         header = any(o.get('op') == 'set_header_years' and o.get('verdict') != 'dropped' for o in ops)
         # Lines standing on KOP's own record, or citing a source named in words with no link, need no link.
         kop_lines = frozenset(l.strip() for o in ops if (o.get('kop_record') or o.get('text_cited')) and o.get('verdict') != 'dropped'
                               for l in (o.get('text') or '').split('\n') if l.strip())
         kop_page_lines = frozenset((o.get('text') or '').strip() for o in ops if o.get('kop_page') and o.get('verdict') != 'dropped')
-        problems, added = check(base, draft, header, kop_lines, kop_page_lines)
+        problems, added = check(base, draft, header, kop_lines, kop_page_lines, removed)
         draft = timeline_order(draft)[0]
         problems = tense_errors + errors + problems
         status = 'OK' if not problems else 'REFUSED'
@@ -922,7 +1009,7 @@ def selftest():
 
 
 EXPORT = os.path.join(ROOT, 'js', 'data', 'reddit-wiki', 'update-drafts.json')
-OP_KEYS = ('id', 'op', 'section', 'after_section', 'heading', 'separator', 'years', 'filler', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
+OP_KEYS = ('id', 'op', 'section', 'from_section', 'empty_text', 'after_section', 'heading', 'separator', 'years', 'filler', 'text', 'by', 'verdict', 'note', 'kop_record', 'kop_page')
 
 
 def export(ids):
@@ -972,7 +1059,7 @@ def export(ids):
             'column': entry.get('markdown_field', ''),
             'base_sha1': hashlib.sha1(base.encode('utf-8')).hexdigest(),
             'record': {'id': record.get('id'), 'name': record.get('name', ''), 'status': record.get('status', '')},
-            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(base, ops, entry_name(gaps)) if op.get('verdict') != 'dropped'],
+            'ops': [{k: op[k] for k in OP_KEYS if k in op} for op in templated(apply_fixes(base, load_fixes(folder))[0], ops, entry_name(gaps), load_moves(i)) if op.get('verdict') != 'dropped'],
             'tense': tense,
             'fixes': fixes,
             'conflicts': [{'text': g.get('text', ''), 'source_label': g.get('source_label', ''), 'source_url': g.get('source_url', '')}

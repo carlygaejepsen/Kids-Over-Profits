@@ -608,6 +608,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): case, \"Counsellor\" spelling, repeated role merged"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Ascent Wilderness Program have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Teen Sues North Idaho Therapy Camps Family Says Boy was Abused](https://www.spokesman.com/stories/1996/jul/11/teen-sues-north-idaho-therapy-cs-family-says/) (Spokesman - 1996)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -833,6 +844,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): \"Senior VP business dev\"",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Change Academy at Lake of the Ozarks (CALO) have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Employee At Calo Accused of Having Sex with 14-Year Old Girl](https://www.krmsradio.com/employee-at-calo-accused-of-having-sex-with-14-year-old-girl/) (KRMS Radio, 12/29/2017)\n- [Former Calo Worker Sent to Prison for Violating Probation](https://www.krmsradio.com/former-calo-worker-sent-to-prison-for-violating-probation/) (KRMS Radio, 2/20/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -979,6 +1001,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Copper Hills Youth Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Teen Behavior Programs in Spotlight](https://apnews.com/article/fc51136c0d2f12549ba669e2682ad571) (Associated Press, 1/19/1998)\n- [Idaho juveniles removed from Utah facility after misconduct](https://idahonews.com/news/local/idaho-juveniles-removed-from-utah-facility-after-misconduct) (Associated Press, 5/7/2015)\n- [Idaho juveniles removed from Utah facility after report of sexual misconduct](https://idahonews.com/news/local/idaho-juveniles-removed-from-utah-facility-after-report-of-sexual-misconduct) (Associated Press, 5/7/2015)\n- [5 juveniles removed from Utah facility after sexual misconduct](https://www.ktvb.com/article/news/regional/5-juveniles-removed-from-utah-facility-after-sexual-misconduct/277-175760356) (KTVB, 5/7/2015)\n- [Copper Hills Youth Center investigated in early 2000s](https://www.idahopress.com/members/copper-hills-youth-center-investigated-in-early-2000s/article_17da5580-f60b-11e4-91cf-07a2cc035c21.html) (Idaho Press, 5/9/2015)\n- [Teens arrested for riot at youth treatment center](https://kutv.com/news/local/12-teens-arrested-after-west-jordan-youth-center-riot) (KUTV, 11/2/2015)\n- [Former worker of West Jordan youth center not surprised by riot](https://www.fox13now.com/2015/11/02/former-worker-of-west-jordan-youth-center-not-surprised-by-riot/) (Fox 13, 11/2/2015)\n- [Counselor arrested for alleged inappropriate relationship with St. George teen](https://www.stgeorgeutah.com/news/archive/2017/11/03/kss-counselor-arrested-for-inappropriate-relationship-with-st-george-teen/#.YBmrGndKjVo) (St. George News, 11/3/2017)\n- [Counselor had inappropriate relationship with teen girl, charges state](https://www.deseret.com/2017/11/3/20635764/counselor-had-inappropriate-relationship-with-teen-girl-charges-state) (Deseret News, 11/3/2017)\n- [Midvale man charged with sexual exploitation of St. George minor](https://gephardtdaily.com/local/midvale-man-charged-with-sexual-exploitation-of-st-george-minor/) (Gephart Daily, 11/3/2017)\n- [Lawsuit: Utah youth center failed to supervise kids who victimized boy](https://www.deseret.com/utah/2019/8/27/20835660/lawsuit-utah-youth-center-failed-to-supervise-kids-who-victimized-boy) (Deseret News, 8/27/2019)\n- [Utah treatment center sued after boys engaged in sex acts in a seclusion room](https://www.sltrib.com/news/2019/08/27/utah-treatment-center/) (Salt Lake Tribune, 8/27/2019)\n- [Are Utah’s private youth facilities keeping struggling children safe?](https://centerforhealthjournalism.org/2019/10/12/are-utah-s-private-youth-facilities-keeping-struggling-children-safe) (Center for Health Journalism, 10/28/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -1659,6 +1692,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Elevations RTC have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Family sues Dr. Phil, Utah treatment center](https://www.deseret.com/2014/1/29/20534024/family-sues-dr-phil-utah-treatment-center) (Deseret News, 1/29/2014)\n- [The Troubled Teen Industry has been a Disaster for Decades. And it's still not Fixed.](https://testkitchen.huffingtonpost.com/island-view/#troubled-teen-industry/) (The Huffington Post, 8/23/2016)\n- [“Treatment Centers” for Troubled Teens Are Gothic Nightmares](https://web.archive.org/web/20210614040317/https://slate.com/human-interest/2016/08/the-huffington-post-publishes-a-horrifying-piece-about-troubled-teen-residential-treatment-centers.html) (Slate, 8/24/2016)\n- [HOW DO BRUTAL TEEN BOOT CAMPS STILL LURE PARENTS?](https://web.archive.org/web/20210223003240/https://www.ozy.com/news-and-politics/brutal-teen-treatment-centers-are-a-growing-industry/225939/) (OZY, 10/30/2019)\n- [Utah Has Seen Abuse In ‘Troubled Teen’ Programs For Decades. Now, Momentum Slowly Builds For Change.](https://www.kuer.org/health-science-environment/2020-12-17/utah-has-seen-abuse-in-troubled-teen-programs-for-decades-now-momentum-slowly-builds-for-change) (KUER, 12/17/2020)\n- [COVID-19 Case Count Grows At Davis County Youth Residential Treatment Facility](https://web.archive.org/web/20210126163442/https://www.kuer.org/health-science-environment/2020-12-18/covid-19-case-count-grows-at-davis-county-youth-residential-treatment-facility) (KUER, 12/18/2020)\n- [Actor, Advocate Misha Osherovich On How The ‘Troubled Teen’ Industry Affects Families](https://web.archive.org/web/20210228135424/https://www.kuer.org/health-science-environment/2021-02-15/actor-advocate-misha-osherovich-on-how-the-troubled-teen-industry-affects-on-families) (KUER, 2/15/2021)\n- [Dr. Phil should be very afraid of Misha Osherovich’s new series](https://archive.ph/NslV5#selection-383.0-383.63) (Queerty, 4/14/2022)\n- [Fremantle Sets Troubled Teen Reform Industry Series](https://archive.ph/d8ll8#selection-2579.0-2579.51) (TVDrama, 4/14/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -1949,6 +1993,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Falcon Ridge Ranch have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [New data shows how often staffers at Utah teen treatment centers have been fired for sexual misconduct](https://archive.ph/fDXKK#selection-115.0-115.102) (Salt Lake Tribune, 3/15/2022)\n- [Montana is sending troubled kids to out-of-state programs that have been accused of abuse](https://archive.ph/oH9UM#selection-3177.26-3177.115) (Missoulian, 3/25/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -2145,6 +2200,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): \"an admissions office\""
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Academy at Sisters have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Bend youth organization sued after student allegedly 'terrorized' other girls](https://www.bendbulletin.com/localstate/crimeandjustice/bend-youth-organization-sued-after-student-allegedly-terrorized-other-girls/article_5b07d9f4-f47e-11eb-9667-477cfe33432c.html?fbclid=IwAR2Qo8HutNpN-78IYb-Gc2Uv4Zh6IzyFv_jq6Bnj2fnuZwp2ZWJv1yoruCU#utm_campaign=blox&utm_source=facebook&utm_medium=social) (Bend Bulletin, 8/3/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -3106,6 +3172,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): comma-joined home name"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Alpine Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Far From Home: Utah Makes Millions On 'Troubled Teens'](https://www.nprillinois.org/post/far-home-utah-makes-millions-troubled-teens#stream/0) (NPR Illinois, 12/18/2019)\n- [Ex-employee admits sex with teen at school for troubled girls](https://archive.sltrib.com/story.php?ref=/news/ci_12998536) (Salt Lake Tribune, 8/5/2009)\n- [Up to 30 years for man who raped girl at home for troubled youth](https://archive.sltrib.com/story.php?ref=/news/ci_13498460) (Salt Lake Tribune, 10/6/2009)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -4605,6 +4682,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Aspen Achievement Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "[Train them like rats](https://www.theguardian.com/media/2006/feb/22/realitytv.comment) (The Guardian, 2/22/2006)\n\n[Utah wilderness, youth therapy programs closing](https://archive.sltrib.com/article.php?id=51502528&itype=CMSID) (Salt Lake Tribune, 3/25/2011)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -4949,6 +5037,17 @@
      "by": "sonnet",
      "verdict": "ok",
      "note": "Matches Up North Live 2024-09-11 (teen named only as Elijah, Atlantis in Treasure Beach; hearing waived, CPS then foster placement). Copy-edited (owner, 2026-10-08): comma after state, stray space"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Atlantis Leadership Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Parents: Profit trumped helping troubled teens](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2016/04/16/utah-iowa-marketing-profitable-fix-troubled-teens/82671274/) This article mentions ALA founder, Randall Cook, and his connection to Midwest Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -5153,6 +5252,17 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Date was wrong (they died September 21, 2006, not September 1); the source calls it an apparent suicide that the medical examiner could not classify and the family disputes; merged both deaths into one line with ages, runaway date and the Rangers probe. Copy-edited (owner, 2026-10-08): stray space before closing parenthesis"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Azleway Boys Ranch have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Azleway Boys’ Ranch prepares for transition process towards family-based care](https://www.kltv.com/2018/12/12/azleway-boys-ranch-prepares-transition-process-towards-family-based-care/) (KLTV, 12/12/2018)\n- [Claims against caregivers at Azleway Boys Ranch revealed](https://www.cbs19.tv/article/news/local/claims-against-caregivers-at-azleway-boys-ranch-revealed/501-625263949) (CBS 19, 12/28/2018)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -5454,6 +5564,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): \"a field staff\"",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Blue Ridge Therapeutic Wilderness have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Kidnapping Isn't Therapy, Dad & Son Say](https://web.archive.org/web/20160530163354/http://www.courthousenews.com/2013/07/03/59062.htm) (Courthouse News Service, 7/3/2013)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -5746,6 +5867,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Canyon State Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [MURDERING THE TRUTH](https://www.phoenixnewtimes.com/news/murdering-the-truth-6425048) (Phoenix New Times, 12/29/1994)\n- [The New Camp Kush: Former Terror of Tempe Is Still Watching Devils, but Now It’s at Reform School](https://www.latimes.com/archives/la-xpm-1996-11-14-sp-64539-story.html) (LA Times, 11/14/1996)\n- [Teen at Arizona Boys Ranch dies after collapsing during training](http://nospank.net/n-b38.htm) (The Arizona Republic, 3/4/1998)\n- [Teen dies after restraint at Arizona Boys Ranch](https://nospank.net/n-b39.htm) (The Arizona Republic, 3/28/1998)\n- [A Puzzling Death at Boys Ranch](https://www.latimes.com/archives/la-xpm-1998-jun-14-me-59904-story.html) (LA Times, 6/14/1998)\n- [State slams Arizona Boys Ranch, Operating license will be yanked today, sources say](http://www.nospank.net/n-d14.htm) (Arizona Daily Star, 8/26/1998)\n- [Arizona denies license to 'boot camp' after death Calif. teen died of 'abuse, neglect' at juvenile facility](https://www.baltimoresun.com/news/bs-xpm-1998-08-27-1998239023-story.html) (Baltimore Sun, 8/27/1998)\n- [Abuse allegations have Arizona Boys Ranch surrounded](https://www.deseret.com/1998/8/28/19398585/abuse-allegations-have-arizona-boys-ranch-surrounded) (Deseret News, 8/28/1998)\n- [Death Camp](https://www.phoenixnewtimes.com/news/death-camp-6421818) (Phoenix New Times, 9/3/1998)\n- [5 Indicted in Death at Arizona Youth Ranch](https://www.latimes.com/archives/la-xpm-1998-oct-02-mn-28543-story.html) (LA Times, 10/2/1998)\n- [Arizona Boys Ranch Staff Indicted In Teen's Death -- Five, Including Nurse, Face Abuse Charges After 16-Year-Old Died](https://archive.seattletimes.com/archive/?date=19981002&slug=2775433) (Seattle Times, 10/2/1998)\n- [Meanwhile, Back at the Ranch](https://www.phoenixnewtimes.com/news/meanwhile-back-at-the-ranch-6421732) (Phoenix New Times, 10/15/1998)\n- [Mother of dead boy reaches settlement with Boys Ranch](https://azdailysun.com/mother-of-dead-boy-reaches-settlement-with-boys-ranch/article_6344870c-c2d9-583d-bb88-1a372beba8e3.html) (7/10/1999)\n- [Worker accused of sex with teen](https://www.eastvalleytribune.com/news/worker-accused-of-sex-with-teen/article_97db1f5e-9c27-5d2f-bc5f-bb7a9cf9133d.html) (East Valley Tribune, 2/25/2003)\n- [Parents Tell Of Horrors At Youth Boot Camps](http://november.org/stayinfo/breaking07/CampHorrors.html) (Arizona Republic, 10/11/2007)\n- [11 students arrested after Queen Creek brawl](https://tucson.com/news/11-students-arrested-after-queen-creek-brawl/article_c3364280-3ada-55c0-a543-e99935b5910b.html) (Tucson.com, 6/26/2009)\n- [17-year-old student pronounced dead after being found unresponsive at Queen Creek school](https://www.12news.com/article/news/local/valley/student-found-unresponsive-queen-creek/75-0da0a54d-1c2e-459a-ad07-e64dc36a83fa) (12 News, 1/22/2020)\n- [17-year-old Canyon State Academy student dies after being found unresponsive](https://www.azcentral.com/story/news/local/pinal/2020/01/23/17-year-old-canyon-state-academy-student-dies/4558938002/) (AZ Central, 1/23/2020)\n- [Staff member speaks out after COVID-19 outbreak at Queen Creek boarding school](https://www.azfamily.com/news/continuing_coverage/coronavirus_coverage/staff-member-speaks-out-after-covid-19-outbreak-at-queen-creek-boarding-school/article_5ed028c8-bcd7-11ea-828e-0f6b670af99a.html) (AZ Family, 7/2/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -5842,6 +5974,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Chamberlain International School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Report Finds Neglect And Abuse At Mass. Special Education School](https://www.wbur.org/news/2016/08/16/chamberlain-school-dlc-report) (WBUR, 8/16/2016)\n- [DLC reports neglect, abuse at Chamberlain school](https://www.southcoasttoday.com/special/20160825/dlc-reports-neglect-abuse-at-chamberlain-school) (South Coast Today, 8/25/2016)\n- [Runaways, Neglect And Abuse Cast Shadow On Massachusetts School](https://www.huffpost.com/entry/runaways-neglect-and-abuse-cast-doubt-on-massachusetts-school_n_57c04e17e4b04193420ec403) (Huff Post, 8/26/2016)\n- [School’s payments to leader’s trust raise questions](https://www.bostonglobe.com/metro/2016/10/07/middleborough-special-education-school-funnels-money-top-executive-through-multiple-channels/FQSVI4mGCJBFNDqxnmKiJI/story.html) (The Boston Globe, 10/11/2016)\n- [Cash Flows Through Multiple Channels To Executive At Middleborough Special Education School](https://www.wbur.org/news/2016/10/11/doherty-chamberlain-money-questions) (WBUR, 10/11/2016)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -6434,6 +6577,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Chrysalis have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Eureka Montana News - Chrysalis](https://web.archive.org/web/20111008050908/http://www.eurekamontananews.com/2009/10/eureka-montana-chrysalis-school-more.html) (10/12/2009)\n- ['Fox guards henhouse' in Montana programs for troubled teens](https://missoulian.com/news/state-and-regional/fox-guards-henhouse-in-montana-programs-for-troubled-teens/article_86736f9b-eb6e-59f9-b312-3a9388361075.html) (Missoulian, 1/21/2019)\n- [Montana isn't alone in failure to beef up regulations of programs for troubled teens](https://web.archive.org/web/20190123203909/https://missoulian.com/news/local/montana-isn-t-alone-in-failure-to-beef-up-regulations/article_5b589364-453d-5e15-9e74-6398af96e472.html) (Missoulian, 1/21/2019)\n- [Private teen programs air concerns over new rules](https://missoulian.com/news/state-and-regional/govt-and-politics/private-teen-programs-air-concerns-over-new-rules/article_f38a2a9c-94a3-5b1c-b5d4-bf191040687c.html) (Missoulian, 9/12/2019)\n- [New Regulations For Youth Treatment Programs Receive Mixed Feedback](https://www.mtpr.org/post/new-regulations-youth-treatment-programs-receive-mixed-feedback) (Montana Public Radio, 9/12/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -6716,6 +6870,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): year range as start/end",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Cinnamon Hills Youth Crisis Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Man busted for sex with 17-year-old runaway](https://www.deseret.com/2008/1/24/20066479/man-busted-for-sex-with-17-year-old-runaway) (Deseret News, 1/24/2008)\n- [Woman accused of sex with teen appears in court](https://www.deseret.com/2008/10/31/20283248/woman-accused-of-sex-with-teen-appears-in-court) (Deseret News, 10/31/2008)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -7066,6 +7231,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Clearview Horizon have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Former Students Describe Isolation, Physical Punishments, and 'Cuddle Puddles'](https://missoulian.com/news/state-and-regional/former-students-describe-isolation-physical-punishments-cuddle-puddles/article_8a4c6430-c7f4-54c3-8c21-f44ab406e7d7.html) (Missoulian)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -7516,6 +7692,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for The Glenholme School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Where Children Can Begin New Lives](https://timesmachine.nytimes.com/timesmachine/1993/10/10/806093.html?pageNumber=602) (New York Times Archives, 10/10/1993)\n- [Torrington woman free to travel after probation terms loosened](https://www.registercitizen.com/news/article/Torrington-woman-free-to-travel-after-probation-12073906.php) (Register Citizen, 8/28/2017)\n- [Murder Trial Delays Case of New Milford Woman Accused of Having Sex With Male Student, 16, at Washington School](http://www.countytimes.com/news/murder-trial-delays-case-of-new-milford-woman-accused-of-having-sex-with-male-student/article_6fae01cf-5cd4-5720-b6e5-e6d44124cc25.html) (County Times, 1/16/2012)\n- [Glenholme School worker sentenced to 9 months in prison for sex assault of teen](https://www.registercitizen.com/news/article/Glenholme-School-worker-sentenced-to-9-months-in-12005470.php) (Register Citizen, 5/21/2013)\n- [Suit alleges sex abuse at Washington's Glenholme school](https://www.newstimes.com/local/article/Suit-alleges-sex-abuse-at-Washington-s-12229793.php) (News Times, 9/25/2017)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -7758,6 +7945,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Discovery Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Provo youth facility sued](https://web.archive.org/web/20150718162817/https://www.heraldextra.com/news/local/provo-youth-facility-sued/article_0530e8bd-1016-567d-815a-1ec95d211f10.html) (Herald Dextra, 7/13/2007)\n- [Suit targets Discovery Academy](https://www.deseret.com/2007/7/15/20029850/suit-targets-discovery-academy) (Deseret News, 7/25/2007)\n- [Far From Home: Utah Makes Millions On 'Troubled Teens'](https://www.nprillinois.org/post/far-home-utah-makes-millions-troubled-teens#stream/0) (NPR Illinois, 12/18/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -8207,6 +8405,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Discovery Ranch have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Family Alleges Bestiality at Alternative School](https://web.archive.org/web/20150225214720/https://www.courthousenews.com/2015/02/13/family-alleges-bestiality-at-alternative-school.htm)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -8908,6 +9117,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Elk River Treatment Program have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Huntsville school officials defend alternative school after owners' sons face drug charges](https://www.al.com/breaking/2012/09/huntsville_school_officials_de.html#incart_river_default) (AL, 9/14/2012)\n- [Pinnacle Schools security officer investigated for assaulting student](https://archive.ph/hsP4E#selection-487.1-487.70) (Private Officer, 10/19/2012)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -9148,6 +9368,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): capitalisation"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Explorations have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- ['Fox guards henhouse' in Montana programs for troubled teens](https://missoulian.com/news/state-and-regional/fox-guards-henhouse-in-montana-programs-for-troubled-teens/article_86736f9b-eb6e-59f9-b312-3a9388361075.html) (Missoulian, 1/21/2019)\n- [12 years, 58 complaints, no sanctions at Montana residential programs](https://missoulian.com/news/state-and-regional/12-years-58-complaints-no-sanctions-at-montana-residential-programs/article_7c8a1677-8e10-522c-bb28-c8b6d258be50.html) (Missoulian, 1/23/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -9622,6 +9853,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): capitalisation"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for The Family Foundation School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [‘It’s Like, Who’s Next?’: A Troubled School’s Alarming Death Rate](https://www.nytimes.com/2018/09/02/nyregion/suicide-school-overdose-deaths-ny-family-foundation.html) (New York Times, 9/2/2018)\n- [One school with an alarming death rate has its alumni fighting for answers](https://www.independent.co.uk/news/long_reads/new-york-hancock-school-overdose-death-suicide-education-america-a8531006.html) (Independent, 9/19/2018)\n- [‘When my children came back, they were broken’](https://web.archive.org/web/20190611232918/http://www.royalgazette.com/news/article/20190410/when-my-children-came-back-they-were-broken) (The Royal Gazette, 4/10/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -10388,6 +10630,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): missing articles, capitalisation"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Grove School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Man sues Grove School in Madison over injuries (document)](https://www.nhregister.com/news/article/Man-sues-Grove-School-in-Madison-over-injuries-11561284.php) (New Haven Register, 1/17/2011)\n- [Madison teacher files lawsuit after being fired over controversial photos](https://www.wfsb.com/news/madison-teacher-files-lawsuit-after-being-fired-over-controversial-photos/article_0bf3bcd0-93ae-11e9-b931-9bd458afe492.html) (WFSB, 6/20/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -10541,6 +10794,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Havenwood Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [A girl, her hands zip tied, was forced to sit in a horse trough at a Utah ‘troubled-teen’ center](https://web.archive.org/web/20210326133641/https://www.sltrib.com/news/2021/03/26/girl-her-hands-zip-tied/) (Salt Lake Tribune, 3/26/2021)\n- [Employee at Utah ‘troubled-teen’ facility charged with sexual abuse of a minor](https://www.sltrib.com/news/2022/02/23/employee-utah-troubled/) (Salt Lake Tribune, 2/23/2022)\n- [Police in Enoch arrest, accuse residential treatment facility employee of kissing minor girl](https://www.stgeorgeutah.com/news/archive/2022/02/23/prc-ksl-police-in-enoch-arrest-accuse-residential-treatment-facility-employee-of-kissing-minor-girl/#.ZBIPK-zMJAc) (St George News, 2/23/2022)\n- [New data shows how often staffers at Utah teen treatment centers have been fired for sexual misconduct](https://archive.ph/fDXKK#selection-115.0-115.102) (Salt Lake Tribune, 3/15/2022)\n- [Discreet discipline: Why Utah will soon make it easier to search a teen treatment program’s violation history](https://archive.ph/bTS3C#selection-115.0-115.109) (Salt Lake Tribune, 3/29/2022)\n- [Utah will make it easier to search a teen treatment program’s violation history](https://archive.ph/mks8B#selection-2799.9-2799.88) (KUER, 3/29/2022)\n- [‘Shining a light into dark places,’ collaborative podcast investigates Cedar City youth treatment center](https://archive.ph/FuXTj#selection-267.0-267.104) (St George News, 4/1/2022)\n- [Former treatment center worker sentenced to 4 months in jail, 4 years of probation for attempted sex abuse](https://www.stgeorgeutah.com/news/archive/2022/11/21/jmr-former-treatment-center-worker-sentenced-to-4-months-in-jail-4-years-of-probation-for-attempted-sex-abuse/#.ZBIPLezMJAc) (St George News, 11/21/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -10701,6 +10965,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Heartlight Ministries have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Sarah has been saved! 'Pray the gay away' clinic releases 17-year-old cousin of 'Supergirl' star after viral campaign as mom denies she was locked up for her 'sexuality'](https://www.dailymail.co.uk/news/article-3634364/Sarah-saved-Pray-gay-away-clinic-releases-17-year-old-cousin-Supergirl-star-mom-denies-locked-sexuality.html) (DailyMail, 6/9/2016)\n- [East Texas facility says it did not provide gay conversion for teen](https://www.news-journal.com/news/local/east-texas-facility-says-it-did-not-provide-gay-conversion-for-teen/article_257445f3-b2f4-5f97-a694-31a9bcc5b62a.html) (Longview News-Journal, 6/9/2016)\n- [Christian Boarding School Denies Jeremy Jordan's Claim It Was Practicing Gay Conversion Therapy on His Cousin](https://people.com/celebrity/boarding-school-denies-jeremy-jordans-claims-it-uses-gay-conversion-therapy/) (People, 6/9/2016)\n- [Texas Girl Reportedly Forced to Attend Gay Conversion Program Has Left the Facility](https://jezebel.com/texas-girl-reportedly-forced-to-attend-gay-conversion-p-1781623594) (Jezebel, 6/9/2016)\n- [How the campaign started to 'Save Sarah' from a Texas ministry](https://www.smh.com.au/world/how-the-campaign-started-to-save-sarah-from-a-texas-ministry-20160610-gpfwbo.html) (The Sydney Morning Herald, 6/10/2016)\n- [Update: Conversion Camps Still Exist. This Girl’s Out, But What Damage is Being Done to Others?](https://www.yahoo.com/news/conversion-camps-still-exist-help-this-girl-get-130855718.html) (Yahoo News, 6/10/2016)\n- [Jeremy Jordan Opens Up About Allegations His Gay Cousin Was Held at Christian Boarding School](https://people.com/celebrity/jeremy-jordan-gay-cousin-abc-news/) (People, 3/10/2017)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -11200,6 +11475,17 @@
      "by": "opus",
      "verdict": "ok",
      "note": "Every article on KOP's record goes in (owner, 2026-10-08). Oldest first; the 2014 and 2016 WMTW items are about a sex offender sought for 'Peeping Tom' incidents on the Hyde campus."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Hyde School have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [A School to Shape Character as Well as Mind](https://www.nbcconnecticut.com/news/local/connecticut-school-looks-to-shape-character-of-students/1877005/) (NBC Connecticut, 2/17/2010)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -11376,6 +11662,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Integrity House RTC have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [*Sent Away*Podcast](https://features.apmreports.org/sent-away/)\n- [Two employees at Cedar City treatment center arrested amid allegations of sexual assault](https://www.deseret.com/2013/6/1/20520523/two-employees-at-cedar-city-treatment-center-arrested-amid-allegations-of-sexual-assault) (Deseret News, 6/1/2013)\n- [Director, supervisor of youth center arrested for rape, assault](https://www.ksl.com/article/25423604/director-supervisor-of-youth-center-arrested-for-rape-assault) (KSL, 6/1/2013)\n- [Administrator of home for teenage girls arrested on felony rape, abuse charges](https://archives.stgeorgeutah.com/news/archive/2013/06/01/kuzmanicadministrator-of-home-for-teenage-girls-arrested-on-felony-rape-abuse-charges/#.ZAdsu-zMJAc) (St. George News, 6/1/2013)\n- [Sex charges dismissed against youth home worker](https://www.thespectrum.com/story/news/2014/04/04/sex-charges-dismissed-against-youth-home-worker/7329531/) (The Spectrum, 4/4/2014)\n- [Cedar City man ‘gratified’ that sex abuse case dismissed](https://www.deseret.com/2014/4/8/20539039/cedar-city-man-gratified-that-sex-abuse-case-dismissed) (Deseret News, 4/8/2014)\n- [How 'inappropriate boundaries' for staff can lead to sexual abuse at Utah teen treatment centers](https://www.apmreports.org/story/2022/03/15/sexual-abuse-utah-teen-treatment-centers) (APM Reports, 3/15/2022)\n- [Even after serious allegations, here’s why shutting down a Utah teen treatment facility is no easy task](https://www.sltrib.com/news/2022/03/22/even-after-serious/) (Salt Lake Tribune, 3/22/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -11475,6 +11772,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): article; dangling 'arguing' (it was the insurer's argument)"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for The Ridge RTC Maine have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Ex-police chief accused of child sex assaults worked at Maine teen facility](https://www.pressherald.com/2014/05/14/bail_set_for_ex-maine_police_chief_accused_of_child_sex_assaults_/) (Portland Press Herald, 5/14/2014)\n- [Former Howland police chief charged with sexual assault](https://www.newscentermaine.com/article/news/former-howland-police-chief-charged-with-sexual-assault/97-265583167) (News Center Maine, 5/14/2014)\n- [Vermont school shooting plot suspect recently left Maine treatment center](https://bangordailynews.com/2018/02/21/news/new-england/vermont-school-shooting-plot-suspect-recently-left-maine-treatment-center/) (Bangor Daily News, 2/21/2018)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -11659,6 +11967,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): 'tax-payer-funded' spelling"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Judge Rotenberg Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [1982 Investigation Report into the BRI of California](https://www.motherjones.com/wp-content/uploads/legacy/news/feature/2007/09/ca_investigation_1982.pdf)\n- [School Told to Stop Use Of Physical Punishments](https://timesmachine.nytimes.com/timesmachine/1978/12/19/110986223.html?pageNumber=25) (New York Times, 12/19/1978)\n- [Autistic Man Dies After “White Noise” Therapy](https://apnews.com/article/a9daa8c5b61ea71abf10e73a6943818d) (AP News, 7/26/1985)\n- [Closed After Northridge Fire : Autistic Youth Institute to Reopen--in Sunland](https://www.latimes.com/archives/la-xpm-1986-05-13-me-6008-story.html) (The LA Times, 5/13/1986)\n- [JUDGE BACKS DISCIPLINE AT INSTITUTE FOR AUTISTIC](https://timesmachine.nytimes.com/timesmachine/1986/06/05/969186.html?pageNumber=16) (The New York Times, 6/5/1986)\n- [NEGLIGENCE IS CITED IN DEATH](https://timesmachine.nytimes.com/timesmachine/1987/01/08/238787.html?pageNumber=38) (The New York Times, 1/8/1987)\n- [Student at Controversial School For Autistic Dies After Heart Attack](https://apnews.com/article/e26bb25c999014420c810b9f2aea6bd2) (AP news, 6/25/1987)\n- [Mass. Teen Jumps Out of School Bus](https://apnews.com/article/2bae46b3217728dcd13c05502f8671ab) (AP News, 5/6/1998)\n- [School of Shock](https://www.villagevoice.com/2006/10/03/school-of-shock/) (The Village Voice, 10/3/2006)\n- [The Shocking Truth](https://www.bostonmagazine.com/2008/06/17/the-shocking-truth/) (Boston Magazine, 6/17/2008)\n- [Founder Forced To Leave Controversial Special Needs School](https://www.wbur.org/news/2011/05/26/rotenberg) (WBUR, 5/26/2011)\n- [CONTROVERSIAL PSYCHOLOGIST FOUND WORKING AT SPECIAL ED SCHOOLS](https://edsource.org/2015/state-suspends-certification-tobinworld-matthew-israel-aversive-therapy/85342) (EdSource, 8/27/2015)\n- [Judge Rotenberg Center tortures its disabled students](https://miscellanynews.org/2019/05/02/opinions/judge-rotenberg-center-tortures-its-disabled-students/) (The Miscellany News, 5/2/2019)\n- [After FDA bans Judge Rotenberg Center from using electric shock devices, advocates seek public apology, reparations](https://www.masslive.com/news/2020/03/after-fda-bans-judge-rotenberg-center-from-using-electric-shock-devices-advocates-seek-public-apology-reparations.html) (MassLive, 3/9/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -11763,6 +12082,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Kaizen Academy/Birdseye Boys Ranch have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Boys ranch director accused of sexually abusing teenage boy](https://www.heraldextra.com/news/local/boys-ranch-director-accused-of-sexually-abusing-teenage-boy/article_5c39206a-f1c6-5436-bd42-c1319e312782.html) (Herald Extra, 4/28/2014)\n- [Police: Former director of Birdseye Boys Ranch reportedly abused teen resident](https://www.fox13now.com/2014/04/28/police-former-director-of-birdseye-boys-ranch-reportedly-abused-teen-resident/) (Fox 13, 4/28/2014)\n- [Boys home director accused of sex abuse of teen](https://www.ksl.com/article/29686285) (KSL, 4/29/2014)\n- [Former Utah treatment center director jailed for sexual misconduct](https://archive.sltrib.com/article.php?id=58508063&itype=CMSID) (Salt Lake Tribune, 10/10/2014)\n- [Flames destroy former boys ranch in Utah County](https://www.fox13now.com/2015/05/12/flames-destroy-former-boys-ranch-in-utah-county/) (Fox 13, 5/12/2015)\n- [Flames rip through boys ranch in Spanish Fork Canyon](https://www.heraldextra.com/news/local/fire/flames-rip-through-boys-ranch-in-spanish-fork-canyon/article_45c457dc-666b-5768-935f-08a45dab0696.html) (Herald Extra, 7/7/2015)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -12164,6 +12494,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): repeated title, case"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for La Europa Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Utah therapist accused of sexually abusing underage girl during sessions](https://www.wtvr.com/2017/09/27/utah-therapist-accused-of-sexually-abusing-underage-girl-during-sessions) (WTVR, 9/27/2017)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -12707,6 +13048,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Lakeland Girls Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Girl dies after being denied treatment for stomach pain while living at Lakeland children's home](https://www.fox13news.com/news/child-dies-after-being-denied-treatment-for-stomach-pain-while-living-at-lakeland-childrens-home) (Fox 13 News, 6/29/2021)\n- [Former students of Lakeland girls school come forward to describe conditions at facility where girl died](https://www.fox13news.com/news/former-students-of-lakeland-girls-school-come-forward-to-describe-conditions-at-facility-where-girl-died) (Fox 13 News, 6/30/2021)\n- [Roommate of girl who died at Lakeland boarding school says medical requests were not taken seriously](https://www.fox13news.com/news/roommate-of-girl-who-died-at-lakeland-boarding-school-says-medical-requests-were-not-taken-seriously) (Fox 13 News, 7/1/2021)\n- [A Lakeland boarding school is under investigation after a teen died in their care](https://www.baynews9.com/fl/tampa/news/2021/07/01/teenager-dies-at-boarding-school-) (Bay News 9, 7/1/2021)\n- [Parents, Director, Roommate Respond on Teen’s Death](https://www.lkldnow.com/parents-director-roommate-respond-on-teens-death/) (LKLD Now, 7/2/2021)\n- [Faith-based Lakeland Girls Academy draws scrutiny after teen's death](https://www.theledger.com/story/news/local/2021/07/03/faith-based-lakeland-girls-academy-draws-scrutiny-after-teens-death/7823815002/) (The Ledger, 7/3/2021)\n- [The Shadow Penal System for Struggling Kids](https://www.newyorker.com/magazine/2021/10/18/the-shadow-penal-system-for-struggling-kids) (The New Yorker, 10/11/2021)\n- [17-year-old’s death at Lakeland Girls Academy ruled natural, no charges filed against leadership](https://www.wfla.com/news/polk-county/case-closed-in-death-of-17-year-old-girl-at-lakeland-girls-academy-death-investigation-report-shows/) (WFLA, 11/9/2021)\n- [No criminal charges filed after investigation into girl's death at Lakeland boarding school](https://www.fox13news.com/news/no-criminal-charges-filed-after-investigation-into-girls-death-at-lakeland-boarding-school) (Fox 13 News, 11/9/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -12858,6 +13210,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Laurel Oaks Behavioral Health Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Former health worker convicted of molesting teenage girl](https://12ft.io/proxy?q=https%3A%2F%2Fdothaneagle.com%2Farticle_1aff2017-c30c-55c0-8488-10b33c68c1b2.html) (Dothan Eagle, 8/10/2011)\n- [Psychiatric worker in Dothan convicted of assaulting patient](https://archive.ph/LDKnZ#selection-1783.0-1783.60) (AL.com, 8/11/2011)\n- [Former health worker gets 30 year prison sentence](https://12ft.io/proxy?q=https%3A%2F%2Fdothaneagle.com%2Fnews%2Fformer-health-worker-gets-30-year-prison-sentence%2Farticle_ae4ce8ac-8cfe-5651-9212-5b36908a3021.html) (Dothan Eagle, 9/21/2011)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -13147,6 +13510,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): garbled role list; stray \"(2013-2019)\" repeated the first sentence's years",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Lava Heights Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Mother angry over S. Utah treatment center's response after son runs away](https://www.thespectrum.com/story/news/2018/02/23/mother-angry-over-s-utah-treatment-centers-response-after-son-runs-away/367456002/) (The Spectrum, 2/23/2018)\n- [After a riot, increasing violence and now sex abuse allegations, Red Rock Canyon school will close](https://www.sltrib.com/news/2019/07/10/after-riot-increasing/) (Salt Lake Tribune, 7/10/2019)\n- [‘Tragic and offensive:’ Man faces drug, porn charges after Summerlin teen’s death](https://archive.ph/pEdiX#selection-2525.0-2552.0) (Las Vegas Review-Journal, 12/4/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -13256,6 +13630,17 @@
      "by": "sonnet",
      "verdict": "fixed",
      "note": "Read the PDF: the copy has no filing stamp or case number, so 'filed in' became 'for' the court; added the complaint's own statement that the cause of death was unknown (died in his sleep, para. 37) so readers do not infer an overdose; 'caused or contributed' as pleaded. Copy-edited (owner, 2026-10-08): stray space before closing parenthesis"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for LifeLine for Youth have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [KIDS PROGRAM FACES NEW CHARGES IN UTAH](http://web.archive.org/web/20210225185326/http://survivingstraightinc.com/KIDS/1989-October-24-TheRecord-KidsProgramFaces_Redacted.pdf) (Lexis Nexis, 10/24/1989)\n- [KIDS OF GREATER SALT LAKE LOSES ITS LICENSE, WILL LEAVE THE AREA, STATE OFFICIALS SAY](https://web.archive.org/web/20210803171853/https://www.deseret.com/platform/amp/1990/6/18/18866940/kids-of-greater-salt-lake-loses-its-license-will-leave-the-area-state-officials-say) (Deseret News, 6/18/1990)\n- [ROUGH GOING FOR KIDS CLINIC](https://web.archive.org/web/20210124001929/http://survivingstraightinc.com/KIDS/1990-Aug-16-TheRecord-RoughGoing.pdf) (News Bank, 8/16/1990)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -13576,6 +13961,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): run-on split, 'exec director', repeated therapist merged",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Logan River Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Logan River Academy Website Homepage](https://loganriver.com/)\n- [Anonymous targets Logan River Academy over allegations of abuse](https://www.hjnews.com/allaccess/anonymous-targets-logan-river-academy-over-allegations-of-abuse/article_07cfbe8a-4a88-11e3-aac6-001a4bcf887a.html) (HJ News, 11/10/2013)\n- [Hacker group alleges Logan River Academy abuses clients](https://www.ksl.com/article/27596428/hacker-group-alleges-logan-river-academy-abuses-clients) (KSL, 11/11/2013)\n- [Samantha Gerson](https://nyunews.com/2015/03/12/samantha-gerson/) (Washington Square News, 3/13/2015)\n- [Logan River Academy student charged with molesting others accepts plea deal](https://www.cachevalleydaily.com/news/archive/2019/03/14/logan-river-academy-student-charged-with-molesting-others-accepts-plea-deal/#.X_Z6m-lKjR1) (Cache Valley Daily, 3/14/2019)\n- [Teen treatment center employee arrested for allegedly molesting student](https://www.cachevalleydaily.com/news/archive/2021/03/05/teen-treatment-center-employee-arrested-for-allegedly-molesting-student/#.YETtBZNKj6Y) (Cache Valley Daily, 3/5/2021)\n- [Police: Logan teen treatment center employee arrested for forcible sexual abuse](http://web.archive.org/web/20210309064415/https://kutv.com/news/local/police-logan-teen-treatment-center-employee-arrested-for-forcible-sexual-abuse) (KUTV, 3/8/2021)\n- [Teen treatment center employee bound over for trial for allegedly molesting student](https://www.cachevalleydaily.com/news/archive/2021/09/02/teen-treatment-center-employee-bound-over-for-trial-for-allegedly-molesting-student/#.YtiBM-zMITW) (Cache Valley Daily, 9/2/2021)\n- [Sex abuse case dismissed against former Logan teen treatment center employee](https://web.archive.org/web/20211104202539/https://www.cachevalleydaily.com/news/archive/2021/11/01/sex-abuse-case-dismissed-against-former-logan-teen-treatment-center-employee/#.YYRBy-zP0TV) (Cache Valley Daily, 11/1/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -13939,6 +14335,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Maple Lake Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Utah regulators say a girl died after a youth treatment center didn’t give ‘necessary medical care’](https://www.sltrib.com/news/2022/02/14/utah-regulators-say-girl/) (The Salt Lake Tribune, 2/14/2022)\n- [Utah places Maple Lake Academy’s license on conditional status](https://kslnewsradio.com/1964137/utah-places-maple-lake-academys-license-on-conditional-status/) (KSL News Radio, 2/14/2022)\n- [Utah increased oversight of its troubled-teen industry. Has it worked?](https://archive.ph/hHSN3#selection-2791.9-2791.79) (KUER, 4/12/2022)\n- [In a rare move, Utah regulators will shut down Spanish Fork teen treatment center](https://archive.ph/WBHpu#selection-115.0-118.0) (The Salt Lake Tribune, 5/25/2022)\n- [“Does this mean that another child has to die?”: Utah teen treatment program will keep its license after girl’s death](https://www.sltrib.com/news/2022/08/18/utah-regulators-back-down-now/) (The Salt Lake Tribune, 8/18/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -14374,6 +14781,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Meridell Achievement Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- ['Bureaucratic monster' blamed for Illinois child neglect](https://idnc.library.illinois.edu/cgi-bin/illinois?a=d&d=DIL19730905.2.40&e=-------en-20--1--img-txIN-%22meridell+achievement%22--------) (5/9/1973)\n- [Child welfare Center under investigation](https://texashistory.unt.edu/ark:/67531/metapth1147196/m1/1/?q=%22meridell%20achievement%22) (Levelland Daily Sun News, 7/26/1973)\n- [Mesquite teen with mental illness struggled in a broken system](https://www.dallasnews.com/news/2010/07/04/mesquite-teen-with-mental-disability-struggled-in-a-broken-system/) (Dallas News, 7/4/2010)\n- [WilCo nurse charged with injury to a child](https://cbsaustin.com/news/local/wilco-nurse-charged-with-injury-to-a-child) (CBS Austin, 11/20/2015)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -14548,6 +14966,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): repeated role",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Mingus Mountain Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Coronavirus outbreak escalates at Mingus Mountain Academy](https://www.verdenews.com/news/2020/may/14/coronavirus-outbreak-escalates-mingus-mountain-aca/) (Verde Valley Independent Bugle, 5/14/2020)\n- [5 teens facing charges after attack on staff at all-girls school in Prescott Valley](https://www.azfamily.com/news/5-teens-facing-charges-after-attack-on-staff-at-all-girls-school-in-prescott-valley/article_60095a8e-cc5e-11ea-8b92-2746cc2dc63c.html) (AZ Family, 7/22/2020)\n- [Mingus Mountain Academy Students Attack Staff, 5 Arrested](https://arizonadailyindependent.com/2020/07/22/mingus-mountain-academy-students-attack-staff-5-arrested/) (Arizona Daily Independent, 7/22/2020)\n- [5 students in custody after allegedly attacking staff at Prescott Valley school](https://www.12news.com/article/news/local/arizona/5-students-in-custody-after-allegedly-attacking-staff-at-prescott-valley-school/75-0cf125d4-370f-4adc-b56c-be5ce9d3d608) (12 News, 7/23/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -14790,6 +15219,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Mountain Home Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Washington Foster Kids Detail Abuse At Sequel Group Homes](https://www.invw.org/2020/12/02/washington-foster-kids-detail-abuse-at-sequel-group-homes/) (INVW, 12/2/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -15287,6 +15727,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): run-on list split into sentences, repeated titles merged, lone year (2003) dropped, years as start/end",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for New Haven RTC have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Therapist accused of raping teen patient at Utah County youth treatment center](https://web.archive.org/web/20210114205155/https://www.sltrib.com/news/2017/09/26/therapist-accused-of-raping-teen-patient-at-utah-county-youth-treatment-center/) (The Salt Lake Tribune, 9/26/2017)\n- [Therapist who worked with troubled youth arrested for raping patient, police say](https://web.archive.org/web/20201112041900/https://www.deseret.com/2017/9/26/20620290/therapist-who-worked-with-troubled-youth-arrested-for-raping-patient-police-say) (Deseret News, 9/26/2017)\n- [Utah therapist arrested on rape and sexual abuse charges](https://web.archive.org/web/20201111195543/https://kutv.com/news/local/utah-therapist-arrested-on-rape-and-sexual-abuse-charges) (KUTV, 9/26/2017)\n- [Therapist at Utah youth treatment center told victim he was a ‘sex addict,’ police say](https://www.deseret.com/2017/10/16/20635167/therapist-at-utah-youth-treatment-center-told-victim-he-was-a-sex-addict-police-say) (Deseret News, 10/16/2017)\n- [Utah therapist charged with 17 felonies told victim he was a ‘sex addict,’ police say](https://www.ksl.com/article/46180980/utah-therapist-charged-with-17-felonies-told-victim-he-was-a-sex-addict-police-say) (KSL, 10/16/2017)\n- [Warrant reveals details about rape, assault allegations against therapist](https://kutv.com/news/local/warrant-revealed-details-about-allegations) (KUTV, 10/16/2017)\n- [Therapist may spend life in prison for sexual relationship with 16-year-old patient](https://www.heraldextra.com/news/local/crime-and-courts/therapist-may-spend-life-in-prison-for-sexual-relationship-with/article_cb6664fe-2c05-5ec6-a6e5-50c755d06834.html) (Herald Extra, 1/8/2018)\n- [Utah therapist who pleaded guilty to raping teenage patient sentenced to prison for up to life](https://www.sltrib.com/news/2018/01/09/utah-therapist-accused-of-raping-teenage-patient-sentenced-to-prison-for-up-to-life/) (Salt Lake Tribune, 1/9/2018)\n- [Man accused of child sex abuse trial set for November](https://sanpetemessenger.com/man-accused-of-child-sex-abuse-trial-set-for-november/) (Sanpete Messenger, 6/22/2022)\n- [Sanpete man sentenced to prison for child sex abuse](https://midutahradio.com/news/local-news/sanpete-man-sentenced-to-prison-for-child-sex-abuse/) (MidUtah Radio, 3/29/2023)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -15797,6 +16248,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): articles, repeated titles, lone year dropped",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Northwest Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Parents, Authorities Trying To Get To Bottom Of Riot No Charges Filed After Violent Outbreak At Academy For Troubled Teens](https://www.spokesman.com/stories/1997/jan/11/parents-authorities-trying-to-get-to-bottom-of/) (The Spokesman, 1/11/1997)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -16683,6 +17145,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Olympus Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [FOUND: 2 teenage girls run away from group home; public assistance requested](https://www.stgeorgeutah.com/news/archive/2015/09/14/missing-2-teenage-girls-run-away-from-group-home-public-assistance-requested/#.X9V13-lKhsN) (St. George News, 09/14/2015)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -16985,6 +17458,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): \"exec director\", split run-on, merged repeats",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Outback Therapeutic Expeditions have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Utah therapist accused of sexually abusing underage girl during sessions](https://web.archive.org/web/20210115161349/https://www.wtvr.com/2017/09/27/utah-therapist-accused-of-sexually-abusing-underage-girl-during-sessions) (WTVR, 9/27/2017)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -17297,6 +17781,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Pacific Quest have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Hawai‘i Department of Health’s Office of Health Care Assurance cites Pacific Quest Corp. for illegally operating unlicensed special treatment facilities or therapeutic living programs](https://health.hawaii.gov/news/newsroom/hawaii-department-of-healths-office-of-health-care-assurance-cites-pacific-quest-corp-for-illegally-operating-unlicensed-special-treatment-facilities-or-therapeutic-living-programs/) (Hawaii.gov, 1/13/2020)\n- [Report: Hawai‘i Department of Health’s Office of Health Care Assurance cites Pacific Quest Corp. for illegally operating unlicensed special treatment facilities or therapeutic living programs](https://health.hawaii.gov/news/files/2020/01/20-004-OHCA-cites-Pacific-Quest-Corp.-for-illegal-STF-or-TLP-1.pdf) (1/13/2020)\n- [Unlicensed Kea‘au Treatment Facilities Ordered to Shut Down](https://bigislandnow.com/2020/01/14/unlicensed-keaau-treatment-facilities-ordered-to-shut-down/) (Big Island Now, 1/14/2020)\n- [State orders illegal care homes to cease and desist](https://www.hawaiitribune-herald.com/2020/01/15/hawaii-news/state-orders-illegal-care-homes-to-cease-and-desist/) (Hawaii Tribune, 1/15/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -18468,6 +18963,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Shiloh Treatment Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Death at residential treatment center ruled a homicide](https://www.myplainview.com/news/article/Death-at-residential-treatment-center-ruled-a-8822579.php) (My Plainview, 5/15/2002)\n- [Mother sues facility in death of teen girl](https://www.chron.com/news/houston-texas/article/Mother-sues-facility-in-death-of-teen-girl-2083509.php) (Chron, 9/28/2002)\n- [Closure of center for troubled kids follows years of woes](https://www.chron.com/news/houston-texas/article/Closure-of-center-for-troubled-kids-follows-years-1687768.php) (Chron, 1/7/2011)\n- [Federal agency's shelter oversight raises questions](https://www.houstonchronicle.com/news/article/Federal-agency-s-shelter-oversight-raises-5969617.php) (The Houston Chronicle, 12/19/2014)\n- [Trump Administration Using Contractors Accused of Abuse to Detain Undocumented Children](https://legacy.tyt.com/2018/05/28/trump-administration-using-contractors-accused-of-abuse-to-detain-undocumented-children/) (TYT Network, 5/28/2018)\n- [Separated migrant children are headed toward shelters with a history of abuse and neglect](https://www.ktsm.com/local/el-paso-news/separated-migrant-children-are-headed-toward-shelters-with-a-history-of-abuse-and-neglect/) (KTSM, 6/20/2018)\n- [Doctor giving migrant kids psychotropic drugs lost certification years ago](https://www.texastribune.org/2018/06/26/doctor-giving-migrant-kids-psychotropic-drugs-lost-certification-years/) (The Texas Tribune, 6/26/2018)\n- [Feds sent immigrant kids to dangerous Texas youth facility, despite serious warning signs](https://www.texastribune.org/2018/08/08/feds-sent-immigrant-kids-dangerous-texas-facility-despite-warning-sign/) (The Texas Tribune, 8/8/2018)\n- [Kids Were Killed at Texas Youth Facility. Then Feds Sent Migrant Children There.](https://www.thedailybeast.com/kids-were-abused-and-killed-at-texas-youth-facility-why-did-feds-send-migrant-children-there) (The Daily Beast, 8/8/2018)\n- [Former resident at troubled youth facility shares story of sexual abuse by live-in counselor](https://revealnews.org/article/former-resident-at-troubled-youth-facility-shares-story-of-sexual-abuse-by-live-in-counselor/) (Reveal News, 8/8/2018)\n- [Shiloh had a history of death and drugging. Texas schools keep sending students there](https://revealnews.org/article/shiloh-had-a-history-of-death-and-drugging-texas-schools-keep-sending-students-there/) (Reveal News, 10/10/2018)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -19086,6 +19592,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): stray capital in first name (WIllow)",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Second Nature Uintas have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Kidnapping Isn't Therapy, Dad & Son Say](https://web.archive.org/web/20130707150808/www.courthousenews.com/2013/07/03/59062.htm) (Courthouse News, 7/3/2013)\n- [Sex abuse alleged at camp for youths](https://web.archive.org/web/20140816125305/https://www.theclaytontribune.com/view/full_story_free/24436033/article-Sex-abuse-alleged-at-camp-for-youths?instance=breakingNews_article) (The Clayton Tribune, 1/23/2014)\n- [I went into the woods a teenage drug addict and came out sober. Was it worth it?](https://www.vox.com/2016/7/7/12081150/wilderness-therapy) (Vox, 7/7/2016)\n- [“I Was Forced To Sculpt My Rape”: What Is Happening Inside The Troubled Teen Industry?](https://archive.ph/HZTVX#selection-231.0-231.86) (Refinery29, 6/29/2021)\n- [Can the $300 million ‘troubled teen’ therapy sector be reformed by legislation and public pressure?](https://archive.ph/wtaFQ#selection-365.0-365.99) (Deseret News, 7/12/2021)\n- [Tom Hanks’ troubled son blamed father’s fame for ‘self-destructive’ behaviour](https://archive.ph/ILMOh#selection-385.1-409.77) (Express, 7//6/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -19416,6 +19933,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Solstice RTC have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Missing teens out of Layton found safe](https://www.fox13now.com/news/local-news/layton-police-ask-for-help-to-find-missing-teens) (2/7/2021)\n- [Police locate two girls reported missing Wednesday](https://www.sltrib.com/news/2021/02/05/police-looking-two/) (Salt Lake Tribune, 2/8/2021)\n- [‘You’d hear girls screaming, crying.’ Former clients, state allege abuses at Solstice East](https://www.citizen-times.com/story/news/2021/03/04/solstice-east-teen-abuse-allegations-arise-state-former-clients/6868303002/) (Citizen Times, 3/4/2021)\n- [Alleged survivors of Solstice East decry abuse, neglect in protest, call for its closure](https://wlos.com/news/local/alleged-survivors-of-solstice-east-decry-abuse-neglect-in-protest-call-for-facility-closure) (ABC 13, 3/6/2021)\n- [Police search for teen who ran away from Layton treatment center](https://www.abc4.com/news/police-search-for-teen-who-ran-away-from-layton-treatment-center/) (ABC4, 8/6/2022)\n- [TEEN GIRL MISSING FROM UTAH TREATMENT CENTER WAS TRAFFICKED, FAMILY SAYS](https://www.courttv.com/news/teen-girl-missing-from-utah-treatment-center-was-trafficked-family-says/) (CourtTV, 8/9/2022)\n- [Teen sex trafficking victim missing after fleeing treatment center in Layton](https://kutv.com/news/local/teen-sex-trafficking-victim-missing-after-fleeing-treatment-center-in-layton) (KUTV, 8/9/2022)\n- [Teen girl missing from Layton treatment center found safe](https://www.fox13now.com/news/local-news/teen-girl-missing-from-layton-treatment-center-is-victim-of-human-trafficking-family-says) (Fox 13, 8/9/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -19762,6 +20290,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): repeated role",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Spring Ridge Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [“I Was Forced To Sculpt My Rape”: What Is Happening Inside The Troubled Teen Industry?](https://www.refinery29.com/en-us/2021/06/10401693/troubled-teens-programs-industry-problem) (Refinery 29, 6/29/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -20220,6 +20759,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Summit Achievement have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Michigan teen shot by police believed to have been client of Stow's Summit Achievement](https://www.conwaydailysun.com/news/michigan-teen-shot-by-police-believed-to-have-been-client-of-stows-summit-achievement/article_03daca5e-e563-515d-a3ff-44f2263904db.html) (Conway Daily Sun, 7/23/2016)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -20360,6 +20910,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): caps",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Summit School at Nyack have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Metro Briefing | New York: Upper Nyack: Student Charged In Fatal Plunge](https://www.nytimes.com/2002/10/10/nyregion/metro-briefing-new-york-upper-nyack-student-charged-in-fatal-plunge.html) (The New York Times, 10/10/2002)\n- [15-year-old's death at Summit school ruled suicide](https://www.lohud.com/story/news/local/rockland/2014/09/09/summit-school-death-ruled-suicide/15335699/) (LoHud, 9/9/2014)\n- [Long Island man arrested with cache of weapons after threatening his former high school](https://www.nydailynews.com/new-york/nyc-crime/man-arrested-cache-weapons-threatening-n-y-school-article-1.3935425) (NY Daily News, 4/15/2018)\n- [Music Exec Survivor speaks out against child abuse in his NY State funded school, Upper Nyack, NY’s The Summit School](https://www.einnews.com/pr_news/535559092/music-exec-survivor-speaks-out-against-child-abuse-in-his-ny-state-funded-school-upper-nyack-ny-s-the-summit-school) (EIN Presswire, 2/16/2021)\n- [Former Summit Students Make Claims About Abuse In Nyack School](https://theimpactnews.com/multimedia/impact-now/2021/10/07/series-of-abuse-unreported-at-nyack-school/) (The Impact News, 10/7/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -21098,6 +21659,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Village Behavioral Health Treatment Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Potomac Teen Gets Probation in Sexual Assault on Escort](https://www.washingtonpost.com/archive/local/2003/05/29/potomac-teen-gets-probation-in-sexual-assault-on-escort/de4d9f3b-2ebd-4920-ad6f-680045364754/) (Washington Post, 5/29/2003)\n- [Md. Seeks Return of Teen in Sex Case](https://www.washingtonpost.com/archive/local/2003/07/01/md-seeks-return-of-teen-in-sex-case/330bd602-2be6-429c-9e9e-74d82cffb060/) (Washington Post, 7/1/2003)\n- [Employee at Louisville teen rehab facility charged with providing drugs to minor patient, engaging in 'illicit physical relationship'](https://www.thedailytimes.com/news/employee-at-louisville-teen-rehab-facility-charged-with-providing-drugs/article_c6ce81df-8d03-567b-85a9-cc587d1c7c8d.html) (The Daily Times, 4/12/2017)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -21379,6 +21951,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): fragment \"Storm was also Clinician (2012-2014). Previously worked ... and of [Auldern]\" rebuilt; NOTE the Auldern role repeats the Three Points years, the source field may be mixed up",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Three Points Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Three Utah teen treatment centers disciplined for assaults, ‘unnecessary’ seclusion and painful restraints](https://archive.ph/dV0Q9#selection-109.0-112.0) (The Salt Lake Tribune, 8/12/2022)\n- [Family asks for help finding teen runaway last seen heading toward Washington City](https://archive.ph/IQ3aF#selection-261.0-266.0) (St George News, 8/22/2022)\n- [Authorities find teens who ran away from Hurricane treatment facility; all ‘alive and well’](https://archive.ph/aZZQX#selection-261.0-266.0) (St George News, 8/23/2022)\n- [MISSING: Authorities, family ask for help to find 2 runaway teens possibly seen in Hurricane](https://archive.ph/glMH3#selection-261.0-261.92) (St George News, 8/25/2022)\n- [Hurricane youth center founder opens up about recent runaways and conditional licensing](https://archive.ph/0wQ7j#selection-263.0-268.0) (St George News, 9/7/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -21814,6 +22397,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Trails Carolina have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Atlanta teen missing from wilderness therapy program](https://www.smokymountainnews.com/archives/item/14655-atlanta-teen-missing-from-wilderness-therapy-program) (Smoky Mountain News, 11/19/2014)\n- [Autopsy: Hypothermia killed teen found near Cashiers](https://www.citizen-times.com/story/news/local/2014/11/25/autopsy-hypothermia-killed-teen-found-near-cashiers/70098576/) (Citizen Times, 11/25/2014)\n- [Autopsy: Missing teen fell, broke hip, died of hypothermia](https://www.wyff4.com/article/autopsy-missing-teen-fell-broke-hip-died-of-hypothermia/7011704#) (WYFF4, 11/26/2014)\n- [Investigation underway after male juvenile dies at Transylvania County camp](https://wlos.com/news/local/death-investigation-trails-carolina-wilderness-camp-juvenile-male-lake-toxaway-transylvania-county-sheriffs-office-western-north-carolina-therapy-programs) (ABC 13, 2/5/2024)\n- [Preteen boy dies 1 day after enrolling in controversial North Carolina therapy camp: 'Suspicious death'](https://www.foxnews.com/us/preteen-boy-dies-1-day-after-enrolling-controversial-north-carolina-therapy-camp-suspicious-death) (FOX News, 2/7/2024)\n- [Wilderness therapy camp where boy, 12, died is not cooperating with ‘suspicious’ investigation: cops](https://nypost.com/2024/02/08/news/boy-12-died-suspicious-death-at-trails-carolina-therapy-camp/) (NY Post, 2/8/2024)\n- [Trails Carolina rails against claims it's not cooperating with child death investigation](https://abcnews4.com/news/local/trails-carolina-therapy-camp-rails-against-sheriff-claims-not-fully-cooperating-camper-child-death-investigation-transylvania-county-sheriffs-office-cited-state-health-department-deficiencies) (ABC4, 2/8/2024)\n- [Boy, 12, dies one day after enrolling in North Carolina camp](https://www.newsnationnow.com/crime/boy-12-dies-one-day-after-enrolling-north-carolina-camp/) (News Nation, 2/9/2024)\n- [12-Year-Old Child Dies Hours After Arriving at Wilderness Camp](https://www.thedailybeast.com/12-year-old-child-dies-hours-after-arriving-at-wilderness-camp) (The Daily Beast, 2/9/2024)\n- [NC wilderness camp faces questions over a child’s death — and it isn’t the first time](https://www.charlotteobserver.com/news/state/north-carolina/article285275287.html) (The Charlotte Observer, 2/10/2024)\n- [Warrant: 12-year-old boy found cold, stiff at NC wilderness camp](https://www.wbtv.com/2024/02/12/warrant-12-year-old-boy-found-cold-stiff-nc-wilderness-camp/) (WBTV, 2/12/2024)\n- [Warrants show clearer timeline, disturbing details after boy found dead at Trails Carolina](https://wlos.com/newsletter-daily/trails-carolina-death-investigation-lake-toxaway-transylvnia-county-search-warrants-disturbing-details-12-year-old-boy-timeline-state-oversight-requirements-north-carolina-department-health-human-services-regulation) (WLOS, 2/12/2024)\n- [State orders NC wilderness camp to stop admitting kids after death of 12-year-old](https://www.charlotteobserver.com/news/state/north-carolina/article285402692.html) (The Charlotte Observer, 2/12/2024)\n- [Wilderness camp where boy recently died is accused of ignoring sexual assault in new lawsuit](https://www.nbcnews.com/news/us-news/wilderness-camp-boy-recently-died-accused-ignoring-sexual-assault-new-rcna138425) (NBC, 2/12/2024)\n- [Lawsuit says sexual assaults went unreported at NC wilderness camp where child died](https://www.wsoctv.com/news/local/lawsuit-says-sexual-assaults-went-unreported-nc-wilderness-camp-where-child-died/ZM4AE3DG6BBSTDXXEEW7Q5Y6AU/) (WSOC-TV, 2/12/2024)\n- [NC therapy camp Trails Carolina where 2 have died faces lawsuit over child sexual assault](https://myfox8.com/news/north-carolina/nc-therapy-camp-trails-carolina-where-2-have-died-faces-lawsuit-over-child-sexual-assault/) (Fox 8, 2/13/2024)\n- [Did wilderness camp ignore kids’ sex assault claims? NC program faces new allegations.](https://www.charlotteobserver.com/news/state/north-carolina/article285379627.html) (The Charlotte Observer, 2/13/2024)\n- [Boy at NC wilderness camp suffered panic attack night before his death, warrants say](https://www.charlotteobserver.com/news/state/north-carolina/article285417377.html) (The Charlotte Observer, 2/13/2024)\n- [Trails Carolina staff where child died blocked social workers, NC health regulators say](https://www.citizen-times.com/story/news/local/2024/02/13/nc-camp-where-child-died-blocked-social-workers-health-regulators-say/72576589007/) (Citizen Times, 2/13/2024)\n- [NC camp where 12-year-old died not allowed to accept new admissions, state says](https://www.wcnc.com/article/news/local/nc-camp-not-allowed-to-accept-new-admissions/275-d6012777-7a96-43e1-93b6-f7ab9b5a8b8f) (WCNC, 2/13/2024)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [
@@ -23008,6 +23602,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Turnabout/Stillwater Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Just Call Them Crazy](https://www.alternet.org/2003/06/just_call_them_crazy/) (WireTap, 6/12/2003)\n- ['The Trouble with Troubled Teen Programs' by Maia Szalavitz](https://web.archive.org/web/20100412163128/https://reason.com/archives/2006/12/28/the-trouble-with-troubled-teen/1/) (*Reason* Magazine, January 2007)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -23251,6 +23856,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Turning Winds Academic Institute have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- ['Fox guards henhouse' in Montana programs for troubled teens ](https://missoulian.com/news/state-and-regional/fox-guards-henhouse-in-montana-programs-for-troubled-teens/article_86736f9b-eb6e-59f9-b312-3a9388361075.html) (Missoulian, 1/21/2019)\n- [Tangled web of owners, administrators, at Montana residential programs](https://missoulian.com/news/state-and-regional/tangled-web-of-owners-administrators-at-montana-residential-programs/article_3fa1742f-80ce-5a4c-8c63-9c50e6a80d82.html) (Missoulian, 1/26/2019)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -23671,6 +24287,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Waypoint Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Green Valley Academy changes name to Waypoint Academy](https://archive.ph/vfGbf#selection-451.1-451.54) (Ogden Valley Utah Forum, 12/21/2012)\n- [Troubled Youth Steals Van and Escapes From Waypoint Academy](https://archive.ph/xSDZY#selection-451.1-451.60) (Ogden Valley Utah Forum, 12/19/2013)\n- [Neighbors upset with arrival of home for teens](https://archive.ph/EWmlQ#selection-1305.0-1326.0) (Fox 13, 5/7/2014)\n- [Police: Youth Counselor Tried To Meet With Teen For Sex](https://ksltv.com/406994/police-youth-counselor-tried-meet-teen-sex/?) (KSL, 1/25/2019)\n- [WayPoint Academy Joins the Ascent Family of Programs](https://www.newswire.com/news/waypoint-academy-joins-the-ascent-family-of-programs-21797348) (NewsWire, 8/18/2022)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -24401,6 +25028,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for White River Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Millard teen arrested in stabbing at school](https://archive.ph/uNONQ) (Deseret News, 1/15/2007)\n- [‘Wilderness Experience’ Called a Private Prison](https://www.courthousenews.com/wilderness-experience-called-a-private-prison/) (Courthouse News Service, 5/6/2014)\n- [Two Utah teen centers under fire for using ‘gooseneck’ holds and other ‘painful restraints’](https://archive.ph/9BBvq#selection-115.0-115.91) (Salt Lake Tribune, 11/19/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -24579,6 +25217,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): \"a Community Liaison, Marketing Team\""
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Willow Springs Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [51 people test positive for coronavirus at Reno's Willow Springs Center](https://mynews4.com/news/local/24-youth-11-staff-test-positive-for-coronavirus-at-renos-willow-springs-center) (MSNBC News 4, 4/3/2020)\n- [Short-staffed children's hospital fined $17,000 after COVID-19 outbreak led to riots](https://www.rgj.com/story/news/2020/05/21/covid-19-reno-willow-springs-childrens-hospital-fined-outbreak-riots-coronavirus/5240400002/) (Reno Gazette Journal, 5/21/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -24778,6 +25427,17 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Woodward Academy have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [WA Sent Abused Kids To Jail-Like Iowa Group Home With “Abusive” Practices](https://www.invw.org/2018/10/17/washington-sent-abused-neglected-kids-to-jail-like-iowa-group-home-with-abusive-practices/) (INVW, 10/17/2018)\n- [Iowa probing abuse allegations at home for troubled youths](https://apnews.com/article/8934172adbe84055a7dbca7f313364c4) (Associated Press, 11/28/2018)\n- [Firm accused of abusing troubled teens in Iowa, elsewhere under fire again](https://www.desmoinesregister.com/story/news/2019/07/18/firm-accused-abusing-troubled-teens-iowa-elsewhere-under-fire-again/1749599001/) (Des Moines Register, 7/18/2019)\n- [‘It’s never OK’: Sexual abuse persists in juvenile facilities despite years of reform](https://www.iowawatch.org/2020/10/06/its-never-ok-sexual-abuse-persists-in-juvenile-facilities-despite-years-of-reform/) (Iowa Watch, 10/6/2020)\n- [Washington Foster Kids Detail Abuse At Sequel Group Homes](https://www.invw.org/2020/12/02/washington-foster-kids-detail-abuse-at-sequel-group-homes/) (INVW, 12/2/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -24955,6 +25615,17 @@
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): 'a VP at Professional Relations of'"
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Yellowstone Boys and Girls Ranch have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [California Youth Claims Abuse in Montana Treatment Center](http://www.salem-news.com/articles/october232007/montana_kid_102307.php) (Salem News, 10/23/2003)\n- [Lawsuit: Center failed to protect boy from sexual abuse in Billings](https://www.greatfallstribune.com/story/news/2018/07/13/lawsuit-center-failed-protect-boy-sexual-abuse-billings/784329002/) (Great Falls Tribune, 7/13/2018)\n- [Jury awards $300K in sex abuse case at Billings youth center](https://www.greatfallstribune.com/story/news/2018/07/19/billings-montana-yellowstone-boys-and-girls-ranch-sex-abuse/799721002/) (Great Falls Tribune, 7/19/2018)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -25080,6 +25751,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): repeated title",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Youth Care Inc. have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Care Center on Probation After Boy's Death](https://www.ksl.com/article/1969129/care-center-on-probation-after-boys-death) (KSL, 10/13/2007)\n- [Four recent Utah deaths in treatment programs](https://archive.sltrib.com/story.php?ref=/news/ci_7166739) (Salt Lake Tribune, 10/13/2007)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -25448,6 +26130,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for Laurel Ridge Treatment Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [A Nationwide Pattern of Death](https://archive.md/aZvsq#selection-119.0-119.29) (The Courant, 10/11/1998)\n- [HUNDREDS OF THE NATION'S MOST VULNERABLE HAVE BEEN KILLED BY THE SYSTEM INTENDED TO CARE FOR THEM.](https://www.courant.com/news/connecticut/hc-xpm-1998-10-11-9810090779-story.html) (The Hartford Courant, 10/11/1998)\n- [RESTRAINTS STILL KILLING PATIENTS AT CENTERS](https://www.courant.com/news/connecticut/hc-xpm-2000-02-20-0002200017-story.html) (The Hartford Courant, 2/20/2000)\n- [29 kids in 2 1/2 years died in state's care-- 2 stopped breathing while restrained recently](http://web.archive.org/web/20200219221217/http://www.nospank.net:80/n-g20.htm) (The Associated Press, 4/18/2000)\n- [Far From Home](https://www.texastribune.org/2010/06/14/out-of-state-kids-may-suffer-in-texas-rtcs/) (The Texas Tribune, 6/14/2010)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],
@@ -25592,6 +26285,17 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). Copy-edited (owner, 2026-10-08): year range, run-on split, repeated title merged",
      "kop_record": true
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "No related media links for San Marcos Treatment Center have been added yet. If you have reliable external resources to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "text": "- [Alaska teen paralyzed in Texas facility](https://www.adn.com/alaska-news/article/alaska-teen-paralyzed-texas-facility/2010/01/24/) (Anchorage Daily News, 1/23/2010)\n- [San Marcos police calm ‘riot’ at treatment center](http://smmercury.com/2012/06/24/san-marcos-police-quell-riot-at-treatment-center/) (San Marcos Mercury, 6/24/2012)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
     }
    ],
    "tense": [],

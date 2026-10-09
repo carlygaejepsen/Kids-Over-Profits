@@ -92,6 +92,7 @@ function kop_rinbox_wupd_op_label(array $op) {
         case 'set_header_years': return 'Header years';
         case 'set_alternate_names': return 'Previous & alternate names (above the type line)';
         case 'add_section': return 'New section: ' . trim(preg_replace('/[#*]+/', '', (string) ($op['heading'] ?? '')));
+        case 'move_to_section': return 'Moves from ' . ($op['from_section'] ?? '') . ' to ' . ($op['section'] ?? '');
         default: return 'Adds to ' . trim(preg_replace('/[#*]+/', '', (string) ($op['section'] ?? '')));
     }
 }

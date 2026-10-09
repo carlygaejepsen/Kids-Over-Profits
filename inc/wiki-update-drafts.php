@@ -379,11 +379,76 @@ function kop_wiki_drafts_timeline_order($md) {
     return array(implode("\n", $lines) . "\n", $order);
 }
 
-/** Additions. -> [md, applied ids, errors]. */
+function kop_wiki_drafts_first_url($line) {
+    return preg_match('/\]\((https?:\/\/[^)\s]+)\)/', (string) $line, $m) ? $m[1] : '';
+}
+
+/** $new at the end of section $s; a section holding only the editor's stand-in text gets $new in its place. */
+function kop_wiki_drafts_append_lines(array &$lines, array $s, array $new) {
+    $at = kop_wiki_drafts_body_end($lines, $s[0], $s[1]);
+    $body = array();
+    for ($k = $s[0] + 1; $k < $at; $k++) {
+        if (trim($lines[$k]) !== '' && !preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', $lines[$k])) $body[] = $k;
+    }
+    $stand_in = $body && count(array_filter($body, function ($k) use ($lines) { return kop_wiki_drafts_is_placeholder($lines[$k]); })) === count($body);
+    if ($stand_in) array_splice($lines, $body[0], $at - $body[0], $new);
+    else array_splice($lines, $at, 0, array_merge(array(''), $new));
+}
+
+/**
+ * move_to_section (scripts/wiki-drafts.py move_out()): each line of the op's text names a line of from_section by
+ * its first link; that line leaves the section. -> the lines found, in the entry's wording as it is now, with the op
+ * line's "- " or not. A blank line left doubled goes too; a section left empty gets empty_text. The entry's lines
+ * taken out go on $removed for kop_wiki_drafts_check().
+ */
+function kop_wiki_drafts_move_out(array &$lines, array $op, array &$errors, array &$removed) {
+    $id = (string) ($op['id'] ?? '');
+    $from = (string) ($op['from_section'] ?? '');
+    $src = kop_wiki_drafts_find($lines, $from);
+    if (!$src) {
+        $errors[] = $id . ': the entry has no section "' . $from . '"';
+        return array();
+    }
+    $start = $src[0];
+    $end = $src[1];
+    $found = array();
+    foreach (explode("\n", str_replace("\r\n", "\n", (string) ($op['text'] ?? ''))) as $t) {
+        if (trim($t) === '') continue;
+        $url = kop_wiki_drafts_first_url($t);
+        $hit = null;
+        for ($k = $start + 1; $k < $end && $url !== ''; $k++) {
+            if (kop_wiki_drafts_first_url($lines[$k]) === $url) { $hit = $k; break; }
+        }
+        if ($hit === null) {
+            $errors[] = $id . ': not under ' . $from . ': ' . mb_substr(trim($t), 0, 70);
+            continue;
+        }
+        $line = $lines[$hit];
+        $removed[] = $line;
+        array_splice($lines, $hit, 1);
+        $end--;
+        if ($hit < $end && trim($lines[$hit]) === '' && trim($lines[$hit - 1]) === '') {
+            $removed[] = $lines[$hit];
+            array_splice($lines, $hit, 1);
+            $end--;
+        }
+        $found[] = (preg_match('/^\s*- /', $t) ? '- ' : '') . trim(preg_replace('/^\s*[-*+] /', '', $line));
+    }
+    $at = kop_wiki_drafts_body_end($lines, $start, $end);
+    $empty = true;
+    for ($k = $start + 1; $k < $at; $k++) {
+        if (trim($lines[$k]) !== '' && !preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', $lines[$k])) { $empty = false; break; }
+    }
+    if ($found && $empty && (string) ($op['empty_text'] ?? '') !== '') array_splice($lines, $at, 0, array('', (string) $op['empty_text']));
+    return $found;
+}
+
+/** Additions. -> [md, applied ids, errors, removed (the entry's lines a move took out of their section)]. */
 function kop_wiki_drafts_apply($md, array $ops) {
     $lines = kop_wiki_drafts_lines($md);
     $applied = array();
     $errors = array();
+    $removed = array();
     foreach ($ops as $op) {
         if (($op['verdict'] ?? '') === 'dropped') continue;
         $kind = (string) ($op['op'] ?? '');
@@ -422,18 +487,16 @@ function kop_wiki_drafts_apply($md, array $ops) {
                 $errors[] = $id . ': the entry has no section "' . ($op['section'] ?? '') . '"';
                 continue;
             }
-            $at = kop_wiki_drafts_body_end($lines, $s[0], $s[1]);
-            $body = array();
-            for ($k = $s[0] + 1; $k < $at; $k++) {
-                if (trim($lines[$k]) !== '' && !preg_match('/^\s*(-{3,}|\*{3,}|_{3,})\s*$/', $lines[$k])) $body[] = $k;
+            kop_wiki_drafts_append_lines($lines, $s, $new);
+        } elseif ($kind === 'move_to_section') {
+            // News articles the entry listed under Related Media go to In the Media (owner, 2026-10-09).
+            if (!kop_wiki_drafts_find($lines, (string) ($op['section'] ?? ''))) {
+                $errors[] = $id . ': the entry has no section "' . ($op['section'] ?? '') . '"';
+                continue;
             }
-            $stand_in = $body && count(array_filter($body, function ($k) use ($lines) { return kop_wiki_drafts_is_placeholder($lines[$k]); })) === count($body);
-            if ($stand_in) {
-                // Only the editor's stand-in text: the addition takes its place.
-                array_splice($lines, $body[0], $at - $body[0], $new);
-            } else {
-                array_splice($lines, $at, 0, array_merge(array(''), $new));
-            }
+            $found = kop_wiki_drafts_move_out($lines, $op, $errors, $removed);
+            if (!$found) continue;
+            kop_wiki_drafts_append_lines($lines, kop_wiki_drafts_find($lines, (string) $op['section']), $found);
         } elseif ($kind === 'add_section') {
             $s = kop_wiki_drafts_find($lines, (string) ($op['after_section'] ?? ''));
             $at = $s ? kop_wiki_drafts_body_end($lines, $s[0], $s[1]) : kop_wiki_drafts_body_end($lines, 0, kop_wiki_drafts_footer($lines));
@@ -444,14 +507,16 @@ function kop_wiki_drafts_apply($md, array $ops) {
         }
         $applied[] = $id;
     }
-    return array(implode("\n", $lines) . "\n", $applied, $errors);
+    return array(implode("\n", $lines) . "\n", $applied, $errors, $removed);
 }
 
 /**
  * Every line of $base is still in $draft, in order (the header may change only
  * its years). -> [problems, added line numbers in $draft (0-based)].
  */
-function kop_wiki_drafts_check($base, $draft, $header_changed) {
+function kop_wiki_drafts_check($base, $draft, $header_changed, array $removed = array()) {
+    // The lines a move took out of their section may go from their place (they come back among the added lines).
+    $gone = array_flip($removed);
     $o = kop_wiki_drafts_lines($base);
     $d = kop_wiki_drafts_lines($draft);
     $problems = array();
@@ -467,11 +532,11 @@ function kop_wiki_drafts_check($base, $draft, $header_changed) {
     for ($i = $from; $i < count($d); $i++) {
         // The editor's stand-in text for an empty section may go (kop_wiki_drafts_apply() replaces it), and so may
         // an earlier names line (the names op rewrites it with every name it had).
-        while ($j < count($o) && $d[$i] !== $o[$j] && (kop_wiki_drafts_is_placeholder($o[$j]) || preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $o[$j]))) $j++;
+        while ($j < count($o) && $d[$i] !== $o[$j] && (kop_wiki_drafts_is_placeholder($o[$j]) || preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $o[$j]) || isset($gone[$o[$j]]))) $j++;
         if ($j < count($o) && $d[$i] === $o[$j]) $j++;
         else $added[] = $i;
     }
-    while ($j < count($o) && kop_wiki_drafts_is_placeholder($o[$j])) $j++;
+    while ($j < count($o) && (kop_wiki_drafts_is_placeholder($o[$j]) || isset($gone[$o[$j]]))) $j++;
     if ($j < count($o)) $problems[] = 'line ' . ($j + 1 + $from) . ' of the entry would be lost or changed: ' . mb_substr($o[$j], 0, 80);
     return array($problems, $added);
 }
@@ -504,10 +569,10 @@ function kop_wiki_drafts_build($id, $current_md, $edits = null) {
         }
         $ops[] = $op;
     }
-    list($md, $applied, $errs) = kop_wiki_drafts_apply($tensed_md, $ops);
+    list($md, $applied, $errs, $removed) = kop_wiki_drafts_apply($tensed_md, $ops);
     $errors = array_merge($errors, $errs);
     $header = (bool) array_filter($ops, function ($o) use ($applied) { return ($o['op'] ?? '') === 'set_header_years' && in_array($o['id'], $applied, true); });
-    list($problems, $added) = kop_wiki_drafts_check($tensed_md, $md, $header);
+    list($problems, $added) = kop_wiki_drafts_check($tensed_md, $md, $header, $removed);
     if ($header && !in_array(0, $added, true)) array_unshift($added, 0);
     // The abuse section in date order; the added line numbers follow their lines.
     list($md, $order) = kop_wiki_drafts_timeline_order($md);

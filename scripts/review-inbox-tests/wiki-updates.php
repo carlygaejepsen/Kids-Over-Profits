@@ -28,7 +28,14 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
         $b = kop_wiki_drafts_build($id, file_get_contents("$dir/$id/entry.md"), array('names' => ''));
         $want = str_replace("\r\n", "\n", file_get_contents("$dir/$id/draft.md"));
         if ($b['md'] === $want && !$b['errors'] && !$b['stale']) $same[] = $id;
-        else $diff[] = $id . ($b['errors'] ? ' (' . $b['errors'][0] . ')' : '');
+        else {
+            // The first line that differs, so a mismatch can be found without rerunning both sides.
+            $g = explode("\n", $b['md']);
+            $w = explode("\n", $want);
+            for ($k = 0; $k < max(count($g), count($w)) && ($g[$k] ?? null) === ($w[$k] ?? null); $k++);
+            $diff[] = $id . ($b['errors'] ? ' (' . $b['errors'][0] . ')'
+                : ' (line ' . ($k + 1) . ': site ' . json_encode(mb_substr($g[$k] ?? '', 0, 60)) . ', script ' . json_encode(mb_substr($w[$k] ?? '', 0, 60)) . ')');
+        }
     }
     $check('wiki-updates: the site builds exactly the script\'s draft for every local draft', $same && !$diff, count($same) . ' same; differ: ' . implode(', ', $diff));
 
