@@ -10268,5 +10268,20 @@
         "formerLocations": []
       }
     }
+  },
+  {
+    "id": 13086,
+    "unique_name": "Boys Town RTC",
+    "version": 1,
+    "note": "Start year from boystown.org (opened December 12, 1917); wiki update 64, 2026-10-09.",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 1917,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "1917-present",
+        "notes": []
+      }
+    }
   }
 ]

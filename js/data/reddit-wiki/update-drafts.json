@@ -106,6 +106,14 @@
      "note": "The wiki editor's empty section: nothing is written under it, so it asks readers for information."
     },
     {
+     "id": "c0",
+     "op": "set_header_years",
+     "years": "1917-present",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "boystown.org: opened Dec 12, 1917 (the entry's 1921 is the move to Overlook Farm)."
+    },
+    {
      "id": "c1",
      "op": "append_to_section",
      "section": "History and Background Information",
@@ -124,6 +132,114 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "h1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Father Edward Flanagan, a priest from Ireland who arrived in the United States in 1904, opened the home on December 12, 1917, after borrowing $90 from Henry Monsky to rent a boarding house at 25th and Dodge Streets in downtown Omaha ([source](https://www.boystown.org/blog/100-years-of-boys-town-1917-1927)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From boystown.org, fetched 2026-10-09."
+    },
+    {
+     "id": "h2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "In 1919 the home moved to the vacant German-American Home in South Omaha to make room for more boys. In 1921 it moved to Overlook Farm, ten miles west of Omaha ([source](https://www.boystown.org/blog/100-years-of-boys-town-1917-1927)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From boystown.org, fetched 2026-10-09."
+    },
+    {
+     "id": "h3",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "The home broke ground on a five-story main building in 1922, and in 1923 Father Flanagan's Boys' Show began touring in a Pullman railroad car named \"The Overlook\" to raise money for the home. In 1926 the boys voted to rename Overlook Farm Boys Town ([source](https://www.boystown.org/blog/100-years-of-boys-town-1917-1927)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From boystown.org, fetched 2026-10-09."
+    },
+    {
+     "id": "h4",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Father Flanagan incorporated the Village of Boys Town in 1934. Residents elected their own mayor, and Father Flanagan was the only adult allowed to vote ([source](https://www.boystown.org/history/village-incorporation)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From boystown.org, fetched 2026-10-09."
+    },
+    {
+     "id": "h5",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "The film *Boys Town* premiered in Omaha on September 7, 1938. It was filmed at the village and won two Academy Awards ([source](https://www.boystown.org/history)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From boystown.org, fetched 2026-10-09. Asterisks for the film title: check house style."
+    },
+    {
+     "id": "h6",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "A 2023 investigation by Lee Rood reported that Boys Town spent about $67 million on fundraising in the previous year, nearly as much as on its youth programs in Iowa and Nebraska, while holding an endowment of more than $1 billion ([Pulitzer Center](https://pulitzercenter.org/stories/boys-town-spent-almost-much-fundraising-youth-programs-iowa-and-nebraska), 11/2/2023).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the owner's Drive folder Boys Town > Boys Town Links (summary of the Pulitzer Center story)."
+    },
+    {
+     "id": "a1",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In early 2003, James Duffy, a cousin of executive director Rev. Val Peter, filed a federal lawsuit alleging that a priest and a counselor abused him physically and sexually in the late 1970s. Peter said that if the allegations were true the people responsible should be imprisoned, and that if they were not he was very angry ([Poynter](https://www.poynter.org/reporting-editing/2003/ne-boys-town-york-church-school-accused-in-sexual-abuse-lawsuits/), 2/1/2003).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the owner's Drive folder Boys Town (archive.today copy of the AP story on Poynter)."
+    },
+    {
+     "id": "p1",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "text": "According to Boys Town's admissions brochure, youth live in Family Homes of six to eight boys or girls. A married couple called Family-Teachers is responsible for each home's daily care and teaching, with an Assistant Family-Teacher, so at least one staff member is in the home for every four youth. The brochure recommends a stay of 12 to 18 months ([source](https://www.boystown.org/admissions)",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the Admissions brochure in the owner's Drive folder Boys Town (boystown.org/admissions)."
+    },
+    {
+     "id": "p2",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "text": "Youth and their Family-Teachers hold a Family Meeting every day, and each home spends a summer vacation at Boys Town's camp on Lake Okoboji in Iowa ([source](https://www.boystown.org/admissions)",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the Admissions brochure in the owner's Drive folder Boys Town (boystown.org/admissions)."
+    },
+    {
+     "id": "p3",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "text": "The brochure describes the Village of Boys Town as more than 640 acres on the west edge of Omaha, with over 400 youth in 60 Family Homes. It has its own police department, fire and rescue department, post office, two churches and a hospital, and students attend year-round classes at Wegner Middle School (grades 4 through 8) and Boys Town High School ([source](https://www.boystown.org/admissions)",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the Admissions brochure in the owner's Drive folder Boys Town (boystown.org/admissions)."
+    },
+    {
+     "id": "a2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "On April 28, 2003, Boys Town's attorney asked a Douglas County court to dismiss a lawsuit, one of three alleging sexual abuse at Boys Town, because the plaintiff was suing as \"John Doe.\" The plaintiff's attorney, William Walker, had filed it on March 25 against Rev. James E. Kelly and Father Flanagan's Boys Town, alleging abuse by Kelly and a former counselor, the late Michael Wolf, starting in 1981. Both men left Boys Town two years later. Walker also represented James Duffy, who alleged abuse at Boys Town in 1979, and Lance Rivers, who alleged abuse from 1981 to 1983. Boys Town's attorney also argued that the statute of limitations had run out and asked for dismissal of Duffy's federal suit ([Arizona Daily Sun](https://azdailysun.com/boys-town-asks-for-another-dismissal-of-sex-abuse-lawsuit/article_aa41e9f9-7258-51d4-95bb-b822ad01dc71.html), 4/28/2003).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the owner's Drive folder Boys Town (archive.today copy of the AP story, 2021-12-19)."
+    },
+    {
+     "id": "a3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In August 2015, Lynn Shields, who had worked since 2008 as Boys Town Louisiana's Director of Development, sued Boys Town Louisiana and Father Flanagan's Boys Home in federal court in New Orleans. She alleged race discrimination, retaliation and violations of the Family and Medical Leave Act, and said she was fired in November 2014 ([source](https://drive.google.com/file/d/1x5v08_phBL-pupFGaZesyXglOKkXYnkV/view?usp=drivesdk)).",
+     "by": "sonnet",
+     "verdict": "ok",
+     "note": "From the owner's Drive folder Boys Town: complaint, Shields v. Boys Town Louisiana, E.D. La. 2:15-cv-03243, filed 8/4/2015. An employment case, not about youth; allegations only."
     }
    ],
    "tense": [],
