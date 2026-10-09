@@ -554,6 +554,40 @@ add_action('init', function () {
     delete_transient('kop_wiki_drafts_refresh_running');
 }, 30);
 
+/**
+ * Undo on every approved entry (Ready for Reddit and On Reddit): each goes back to To review with the text it had before
+ * approving, the reviewer's line edits kept. An entry edited since approving stays where it is (Undo would lose the edit).
+ * Runs once per KOP_WIKI_DRAFTS_REOPEN_VERSION. -> list of [id, program, what happened].
+ */
+function kop_wiki_drafts_reopen_all(PDO $pdo) {
+    $out = array();
+    foreach (kop_wiki_drafts_state() as $id => $state) {
+        if (!is_array($state) || !in_array($state['view'] ?? '', array('ready', 'posted'), true)) continue;
+        try {
+            kop_wiki_drafts_undo($pdo, $id);
+            $out[] = array($id, 'back on To review');
+        } catch (RuntimeException $e) {
+            $out[] = array($id, 'left: ' . $e->getMessage());
+        }
+    }
+    return $out;
+}
+
+define('KOP_WIKI_DRAFTS_REOPEN_VERSION', '1');   // 1: every approved entry back to To review to see its changes (owner, 2026-10-09)
+
+add_action('init', function () {
+    if (get_option('kop_wiki_drafts_reopen_version') === KOP_WIKI_DRAFTS_REOPEN_VERSION || get_transient('kop_wiki_drafts_reopen_running')) return;
+    set_transient('kop_wiki_drafts_reopen_running', 1, 10 * MINUTE_IN_SECONDS);
+    try {
+        $done = kop_wiki_drafts_reopen_all(kop_wiki_upd_pdo());
+        update_option('kop_wiki_drafts_reopen_version', KOP_WIKI_DRAFTS_REOPEN_VERSION, false);
+        update_option('kop_wiki_drafts_reopen_last', array('at' => gmdate('c'), 'entries' => $done), false);
+    } catch (Throwable $e) {
+        update_option('kop_wiki_drafts_reopen_last', array('at' => gmdate('c'), 'error' => $e->getMessage()), false);
+    }
+    delete_transient('kop_wiki_drafts_reopen_running');
+}, 31);
+
 /** The entry's Reddit address: its page, else the page of its title (js/data/reddit-wiki/page-urls.json). */
 function kop_wiki_drafts_reddit_url(array $entry) {
     if (!empty($entry['page'])) return 'https://www.reddit.com/r/troubledteens/wiki/' . trim($entry['page'], '/') . '/';

@@ -124,8 +124,11 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $check('wiki-updates: a draft fix reaches an approved entry, pasted ones go back to Ready for Reddit', $row($key)[$col] === $want
         && kop_wiki_drafts_state()[$key]['view'] === 'ready' && in_array($key, array_column($done, 0), true), json_encode($done));
     $check('wiki-updates: a second run changes nothing', !in_array($key, array_column(kop_wiki_drafts_refresh_approved($pdo), 0), true));
-    call_user_func($src['act'], (string) $key, 'undo', array());
-    $check('wiki-updates: and Undo still puts back the text from before approving', $row($key)[$col] === $before[$col]);
+    $reopened = kop_wiki_drafts_reopen_all($pdo);
+    kop_rinbox_wupd_rows(true);
+    $check('wiki-updates: reopening every approved entry undoes each, back on To review with the text from before approving',
+        $row($key)[$col] === $before[$col] && kop_rinbox_get_item('wiki-updates', (string) $key)['status'] === 'review'
+        && in_array(array($key, 'back on To review'), $reopened, true), json_encode($reopened));
     $pdo->prepare("UPDATE wiki_submissions SET original_markdown = ?, generated_markdown = ?, updated_at = ? WHERE id = ?")
         ->execute(array($before['original_markdown'], $before['generated_markdown'], $before['updated_at'], $key));
     kop_wiki_drafts_set_state($key, null);
