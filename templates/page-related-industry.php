@@ -38,6 +38,10 @@ if (file_exists($kop_ri_css)) {
 $kop_ri_slug  = (string) get_post_field('post_name', get_the_ID());
 $kop_ri_known = function_exists('kop_page_text_page') && kop_page_text_page($kop_ri_slug);
 $kop_ri_index = $kop_ri_slug === 'related-industries';
+// Psychiatric hospitals cover every hospital and ward, the many youth
+// programs on a hospital's campus included, so that page is not labelled
+// as outside the troubled teen industry.
+$kop_ri_tag = $kop_ri_slug === 'psychiatric-hospitals' ? 'Where it meets the troubled teen industry' : 'Not the troubled teen industry';
 
 get_header();
 ?>
@@ -45,7 +49,7 @@ get_header();
 <div class="kop-ri-page">
 
     <header class="kop-ri-header">
-        <p class="kop-ri-tag">Not the troubled teen industry</p>
+        <p class="kop-ri-tag"><?php echo esc_html($kop_ri_tag); ?></p>
         <h1 class="kop-ri-title"><?php the_title(); ?></h1>
         <?php if (has_excerpt()) : ?>
             <p class="kop-ri-summary"><?php echo esc_html(get_the_excerpt()); ?></p>

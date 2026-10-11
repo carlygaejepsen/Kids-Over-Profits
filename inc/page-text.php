@@ -18,6 +18,10 @@
  * In a "cards" section, a list item that starts with a link or a **bold
  * name** followed by a colon becomes an organization card.
  *
+ * Citations follow the site's articles: [^3] in the text prints a small
+ * superscript 3 linking to the third list item of the page's "sources"
+ * section ([^3][^4] prints "3, 4").
+ *
  * The body never carries HTML: every character is escaped and only the
  * syntax above becomes markup, so an edit cannot inject anything, and the
  * host firewall (which rejects form posts containing HTML) never sees any.
@@ -120,13 +124,31 @@ function kop_page_text_save_edits($edits) {
     update_option('kop_page_text_edits', $edits, false);
 }
 
+/**
+ * Saved edits a later repo version was written from, by md5 of the edit's
+ * body: slug => key => md5s. Such an edit no longer covers the repo text;
+ * an edit made after it (another body) still does.
+ */
+function kop_page_text_superseded() {
+    return array(
+        // The owner's 2026-10-11 wording ("not typically part of", "often connected"),
+        // carried into the rewrite that leaves room for RTCs on hospital campuses.
+        'psychiatric-hospitals' => array('outside' => array('f2851c1c5f32e98d9f298e60d43daece')),
+    );
+}
+
 /** The page's sections with saved edits applied; each carries 'edit' (or null). */
 function kop_page_text_sections($slug) {
     $edits = kop_page_text_edits();
     $mine  = isset($edits[$slug]) && is_array($edits[$slug]) ? $edits[$slug] : array();
+    $old   = kop_page_text_superseded();
     $out = array();
     foreach (kop_page_text_defaults($slug) as $s) {
         $edit = isset($mine[$s['key']]) && is_array($mine[$s['key']]) ? $mine[$s['key']] : null;
+        if ($edit && isset($old[$slug][$s['key']], $edit['body'])
+            && in_array(md5(kop_page_text_clean($edit['body'])), $old[$slug][$s['key']], true)) {
+            $edit = null;
+        }
         if ($edit) {
             $s['heading'] = isset($edit['heading']) ? (string) $edit['heading'] : $s['heading'];
             $s['body']    = isset($edit['body']) ? kop_page_text_clean($edit['body']) : $s['body'];
@@ -172,6 +194,16 @@ function kop_page_text_inline($text, $prefix) {
         return "\x01" . (count($tokens) - 1) . "\x02";
     };
     $text = str_replace(array("\x01", "\x02"), '', (string) $text);
+
+    // [^3] (or a run like [^3][^4]) cites source 3 of the page's "sources" section,
+    // printed like the site's articles: a small superscript number linking to it.
+    $text = preg_replace_callback('/(?:\[\^\d+\])+/', function ($m) use ($keep, $prefix) {
+        preg_match_all('/\d+/', $m[0], $n);
+        $links = array_map(function ($i) use ($prefix) {
+            return '<a href="#' . $prefix . '-src-' . (int) $i . '">' . (int) $i . '</a>';
+        }, $n[0]);
+        return $keep('<sup class="kop-cite">' . implode(', ', $links) . '</sup>');
+    }, $text);
 
     $text = preg_replace_callback('/\[([^\]\n]+)\]\(([^)\s]+)\)/u', function ($m) use ($keep, $prefix) {
         $inner = kop_page_text_emphasis(kop_page_text_esc($m[1]));
@@ -258,6 +290,13 @@ function kop_page_text_body_html($body, $style, $prefix) {
                 $html .= $card !== null ? $card : '<li class="' . $prefix . '-org"><p>' . kop_page_text_inline($item, $prefix) . '</p></li>';
             }
             $html .= "</ul>\n";
+        } elseif ($style === 'sources') {
+            // Numbered in order; [^N] in the text links to the Nth item.
+            $html .= '<ol class="' . $prefix . '-source-list">';
+            foreach ($b[1] as $i => $item) {
+                $html .= '<li id="' . $prefix . '-src-' . ($i + 1) . '">' . kop_page_text_inline($item, $prefix) . '</li>';
+            }
+            $html .= "</ol>\n";
         } else {
             $html .= '<ul>';
             foreach ($b[1] as $item) {
@@ -285,6 +324,7 @@ function kop_page_text_section_html($section, $prefix, $slug = '') {
             return '<div class="' . $prefix . '-updated" id="' . $id . '"' . $edit . '>' . $h2 . $body . "</div>\n";
         case 'statement':
         case 'support':
+        case 'sources':
             return '<section class="' . $prefix . '-' . $section['style'] . '" id="' . $id . '"' . $edit . $labelled . ">\n" . $h2 . $body . "</section>\n";
         default:
             return '<section id="' . $id . '"' . $edit . $labelled . ">\n" . $h2 . $body . "</section>\n";

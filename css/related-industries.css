@@ -179,6 +179,44 @@
     margin: 0;
 }
 
+/* ---- Citations, as in the site's articles --------------------------------
+   [^n] in the text: a small number linking to the Sources list. */
+
+.kop-ri-page sup.kop-cite {
+    font-size: 0.72em;
+    line-height: 0;
+    margin-left: 0.15em;
+}
+
+.kop-ri-page sup.kop-cite a {
+    color: var(--kop-teal-ink, #24757F);
+    text-decoration: none;
+}
+
+.kop-ri-page sup.kop-cite a:hover,
+.kop-ri-page sup.kop-cite a:focus-visible {
+    color: var(--kop-teal-ink, #24757F);
+    text-decoration: underline;
+}
+
+.kop-ri-sources {
+    font-size: 0.92rem;
+}
+
+.kop-ri-source-list {
+    padding-left: 1.6rem;
+}
+
+.kop-ri-source-list li {
+    margin-bottom: 0.4rem;
+    overflow-wrap: anywhere;
+    scroll-margin-top: 6rem;
+}
+
+.kop-ri-source-list li:target {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
 /* ---- Back to the index -------------------------------------------------- */
 
 .kop-ri-back {

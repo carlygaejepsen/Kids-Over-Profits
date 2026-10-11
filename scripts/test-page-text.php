@@ -197,11 +197,24 @@ foreach (array_merge(array('related-industries'), $topics) as $slug) {
     check($page && $page['prefix'] === 'kop-ri' && is_readable(dirname(__DIR__) . '/' . $page['file']), "$slug: registered, with its text file");
     $keys = array_column(kop_page_text_defaults($slug), 'key');
     if ($slug !== 'related-industries') {
-        check($keys === $topic_keys, "$slug: the ten sections in order" . ($keys === $topic_keys ? '' : ' (' . implode(', ', $keys) . ')'));
+        // The psychiatric hospitals page cites like the site's articles: numbered, with a Sources list.
+        $want = $slug === 'psychiatric-hospitals' ? array_merge($topic_keys, array('sources')) : $topic_keys;
+        check($keys === $want, "$slug: the " . count($want) . " sections in order" . ($keys === $want ? '' : ' (' . implode(', ', $keys) . ')'));
     }
     $GLOBALS['kop_test_slug'] = $slug;
     $html = render_page('page-related-industry.php');
-    check(strpos($html, '<p class="kop-ri-tag">Not the troubled teen industry</p>') !== false && strpos($html, 'id="kop-ri-outside"') !== false, "$slug: labelled as not the troubled teen industry");
+    $tag = $slug === 'psychiatric-hospitals' ? 'Where it meets the troubled teen industry' : 'Not the troubled teen industry';
+    check(strpos($html, '<p class="kop-ri-tag">' . $tag . '</p>') !== false && strpos($html, 'id="kop-ri-outside"') !== false, "$slug: labelled \"$tag\"");
+    if ($slug === 'psychiatric-hospitals') {
+        preg_match_all('#<a href="\#kop-ri-src-(\d+)">\1</a>#', $html, $cited);
+        $cited = array_unique(array_map('intval', $cited[1]));
+        $listed = preg_match_all('#<li id="kop-ri-src-\d+">#', $html);
+        check($cited && max($cited) === $listed && count($cited) === $listed, "$slug: every source is cited and every citation has a source ($listed)");
+        check(strpos($html, '<sup class="kop-cite"><a href="#kop-ri-src-') !== false && strpos($html, '[^') === false, "$slug: citations print as superscript numbers");
+        preg_match('#<section id="kop-ri-what".*?</section>#s', $html, $what);
+        check($what && strpos($what[0], 'href="https://') === false, "$slug: sources are cited by number, not linked in the prose");
+        check(strpos($html, 'campus') !== false && strpos($html, 'whether or not a hospital also meets our criteria') !== false, "$slug: covers every hospital, the ones youth programs sit on included");
+    }
     check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), "$slug: no format syntax left over");
     preg_match_all('/href="([^"]+)"/', $html, $m);
     $bad = array_filter($m[1], function ($u) { return !preg_match('#^(https://|tel:|\#kop-ri-)#', $u); });
@@ -227,6 +240,17 @@ foreach (array_merge(array('related-industries'), $topics) as $slug) {
 $GLOBALS['kop_test_slug'] = 'not-a-text-page';
 $html = render_page('page-related-industry.php');
 check(strpos($html, 'class="kop-ri-page"') !== false && strpos($html, '<section') === false, 'a page with no text file shows only its title and editor content');
+
+// The owner's saved 2026-10-11 wording of 'outside' was carried into the repo rewrite: it no longer covers the
+// repo text, while any other saved wording still does.
+$owner_old = 'Psychiatric hospitals and the psychiatric units of general hospitals are not typically part of the troubled teen industry, and Kids Over Profits does not track them as facilities. This page is about acute inpatient care for adults and young people: hospital stays, often after a crisis and often involuntary. Youth psychiatric residential treatment facilities (PRTFs) and residential treatment centers are part of the troubled teen industry. They are in [our directory](/tti-program-index/), not on this page.' . "\n" . '' . "\n" . 'We made this page because the two are often connected. The largest for-profit chains run both psychiatric hospitals and youth residential programs, and the same practices and the same pressure to fill beds are documented in both. They also share a history, told below and in our [history pages](/history/). We are not the experts on psychiatric hospitals. The organizations listed below are, and many of them are run by people who have been hospitalized themselves.';
+update_option('kop_page_text_edits', array('psychiatric-hospitals' => array('outside' => array('heading' => 'Not the troubled teen industry', 'body' => $owner_old, 'user' => 'admin', 'time' => 1791754830))));
+$out = array_column(kop_page_text_sections('psychiatric-hospitals'), null, 'key')['outside'];
+check($out['edit'] === null && strpos($out['body'], 'campus') !== false, 'psychiatric-hospitals: the superseded saved edit gives way to the repo text');
+update_option('kop_page_text_edits', array('psychiatric-hospitals' => array('outside' => array('heading' => 'H', 'body' => 'A newer edit.', 'user' => 'admin', 'time' => 1791800000))));
+$out = array_column(kop_page_text_sections('psychiatric-hospitals'), null, 'key')['outside'];
+check($out['edit'] !== null && $out['body'] === 'A newer edit.', 'psychiatric-hospitals: a later edit still shows');
+update_option('kop_page_text_edits', array());
 
 echo "Editor screen
 ";
