@@ -1,0 +1,359 @@
+/* Essential reporting (inc/featured-reporting.php): the cards on
+   /essential-reporting/, the strip on the news feed and home page, and the
+   flag with its note inside an article's card on facility and company pages
+   and in the news feed. Each block sets its own panel, so nothing sits on the
+   gradient; headings and links are coloured here because Kadence colours them
+   directly (CLAUDE.md, "Kadence colour traps"). */
+
+/* ---- Card ----------------------------------------------------------------- */
+
+.kop-feat-card {
+    display: grid;
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: 0.9rem;
+    margin: 0;
+    padding: 0.75rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 6px;
+}
+
+.kop-feat-card__thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: start;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--kop-sand, #F2EEDF);
+    text-decoration: none;
+}
+
+.kop-feat-card__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kop-feat-card__thumb--logo {
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+.kop-feat-card__thumb--logo img {
+    width: 62%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.kop-feat-card__thumb--none {
+    background: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-card__initial {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    color: var(--kop-white, #fff);
+}
+
+.kop-feat-card__body > * + * {
+    margin-top: 0.3rem;
+}
+
+.kop-feat-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.6rem;
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-card__outlet {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-card h2.kop-feat-card__title,
+.kop-feat-card h3.kop-feat-card__title,
+.kop-feat-card h4.kop-feat-card__title {
+    margin: 0;
+    font-size: 1.08rem;
+    line-height: 1.3;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-card .kop-feat-card__title a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+}
+
+.kop-feat-card .kop-feat-card__title a:hover,
+.kop-feat-card .kop-feat-card__title a:focus {
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: underline;
+}
+
+.kop-feat-card .kop-feat-card__title .kop-archived-link {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-card__byline {
+    margin: 0;
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-card__summary {
+    display: -webkit-box;
+    margin: 0;
+    overflow: hidden;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--kop-midnight-blue, #000435);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+
+.kop-feat-card__about {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-card__about a,
+.kop-feat-mark a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-feat-card__about a:hover,
+.kop-feat-card__about a:focus,
+.kop-feat-mark a:hover,
+.kop-feat-mark a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+/* ---- The note (cards, and inside an article's card elsewhere) -------------- */
+
+.kop-feat-note {
+    margin: 0.35rem 0 0;
+    padding: 0.5rem 0.75rem;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight-blue, #000435);
+    border-left: 3px solid var(--kop-orange, #EF9034);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.kop-feat-note p {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-note p + p {
+    margin-top: 0.5rem;
+}
+
+/* ---- The flag inside an article's card (news feed, facility/company pages) */
+
+.kop-feat-mark {
+    margin: 0.25rem 0 0.4rem;
+}
+
+.kop-feat-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    padding: 0.1rem 0.55rem;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-orange, #EF9034);
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--kop-orange-ink, #A3570D);
+}
+
+.kop-feat-flag .kop-icon {
+    width: 1em;
+    height: 1em;
+    color: var(--kop-orange-ink, #A3570D);
+}
+
+.kop-feat-mark .kop-feat-flag a {
+    color: var(--kop-orange-ink, #A3570D);
+    text-decoration: none;
+}
+
+.kop-feat-mark .kop-feat-flag a:hover,
+.kop-feat-mark .kop-feat-flag a:focus {
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: underline;
+}
+
+li.kop-fp-news-item.is-featured,
+article.news-card.is-featured {
+    border-color: var(--kop-orange, #EF9034);
+    box-shadow: inset 4px 0 0 var(--kop-orange, #EF9034);
+}
+
+/* ---- Strip (news feed, home page) ----------------------------------------- */
+
+.kop-feat-strip {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem 1.1rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-top: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 10px;
+}
+
+.kop-feat-strip__head h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-strip__head p {
+    margin: 0.15rem 0 0.85rem;
+    font-size: 0.92rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-strip__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 0.85rem;
+}
+
+/* On the home page: the width of the other sections, three across. */
+.kop-home .kop-feat-strip {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.kop-home .kop-feat-strip__grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* In the strip a card stacks: picture over the words. */
+.kop-feat-strip .kop-feat-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+}
+
+.kop-feat-strip .kop-feat-card__thumb {
+    aspect-ratio: 16 / 7;
+}
+
+.kop-feat-strip__more {
+    margin: 0.85rem 0 0;
+    font-weight: 600;
+}
+
+.kop-feat-strip .kop-feat-strip__more a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-feat-strip .kop-feat-strip__more a:hover,
+.kop-feat-strip .kop-feat-strip__more a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+/* ---- The page ------------------------------------------------------------- */
+
+.kop-feat-page__more {
+    max-width: 70ch;
+    margin: -0.75rem 0 1.25rem;
+    font-size: 0.95rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-page__years {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.9rem;
+    margin: 0 0 1.25rem;
+    padding: 0.6rem 0.8rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 6px;
+}
+
+.kop-feat-page .kop-feat-page__years a {
+    font-weight: 600;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-feat-page__years span {
+    font-weight: 400;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-feat-page__year + .kop-feat-page__year {
+    margin-top: 1.75rem;
+}
+
+.kop-feat-page__year > h2 {
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 2px solid var(--kop-sand, #F2EEDF);
+    font-size: 1.3rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-feat-page__list {
+    display: grid;
+    gap: 0.9rem;
+}
+
+.kop-feat-page__empty {
+    color: var(--kop-text-muted, #4A5568);
+}
+
+@media (max-width: 560px) {
+    .kop-feat-card {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 0.65rem;
+        padding: 0.6rem;
+    }
+
+    .kop-feat-card__thumb {
+        aspect-ratio: 1 / 1;
+    }
+
+    .kop-feat-card__initial {
+        font-size: 1.8rem;
+    }
+
+    .kop-feat-strip {
+        padding: 0.85rem 0.85rem 1rem;
+    }
+
+    .kop-feat-strip__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .kop-feat-strip .kop-feat-card {
+        grid-template-columns: 92px minmax(0, 1fr);
+        grid-template-rows: none;
+    }
+
+    .kop-feat-strip .kop-feat-card__thumb {
+        aspect-ratio: 1 / 1;
+    }
+}

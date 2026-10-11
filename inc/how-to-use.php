@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_HOW_TO_USE_REWRITE_VERSION')) {
-    define('KOP_HOW_TO_USE_REWRITE_VERSION', '2');
+    define('KOP_HOW_TO_USE_REWRITE_VERSION', '3');
 }
 
 if (!function_exists('kop_how_to_use_base')) {
@@ -217,6 +217,7 @@ if (!function_exists('kop_how_to_use_groups')) {
                 array('label' => 'In Loving Memory', 'slug' => 'in-loving-memory', 'note' => 'More than 200 young people who died in programs, reform homes and detention centers, with the program, the date, the cause of death and the reporting. Filter by state, decade or cause.'),
                 array('label' => 'Lawsuits', 'slug' => 'lawsuits', 'note' => 'Court cases against programs, their owners and staff: what was claimed, where it was filed and where it stands, filterable by status, court and claim.'),
                 array('label' => 'News feed', 'slug' => 'tti-news-feed', 'note' => 'Coverage of the industry as it comes out: arrests, closures, lawsuits and investigations. Long-running stories are collected article by article.'),
+                array('label' => 'Essential reporting', 'path' => '/essential-reporting/', 'note' => 'The reporting on the industry we send people to first: investigations that uncovered abuse, followed the money or changed what happened next, each with a note on why it matters.'),
                 array('label' => 'Document archive', 'slug' => 'document-archive', 'note' => 'More than 4,800 documents: Senate and GAO investigations, court filings, research, and the programs\' own handbooks, brochures and newsletters, filed under the program or company they concern. Free to read and download.'),
             )),
             array('title' => 'Get help or take action', 'intro' => 'If something happened to you or someone you know, or you have something to add to the record.', 'links' => array(

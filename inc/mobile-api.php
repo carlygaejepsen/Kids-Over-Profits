@@ -141,7 +141,7 @@ if (!function_exists('kop_mobile_facility_payload')) {
             $canonical = kop_facility_page_url((int) $out['id']);
             if ($canonical !== '') $out['url'] = $canonical;
         }
-        $out['news'] = array_map('kop_mobile_news_card', (array) ($page['news'] ?? array()));
+        $out['news'] = array_map('kop_mobile_news_card', kop_mobile_news_feat_first((array) ($page['news'] ?? array())));
 
         $insp =isset($page['inspections']) && is_array($page['inspections']) ? $page['inspections'] : null;
         if ($insp) {
@@ -184,7 +184,7 @@ if (!function_exists('kop_mobile_facility_rest')) {
         $id = kop_mobile_resolve_facility_id($ref);
         if ($id <= 0) return kop_mobile_not_found('No facility page for "' . $ref . '".');
         $index = kop_facility_pages_index();
-        $etag = kop_mobile_etag(array('facility', $id, $index['fingerprint'] ?? '', $index['ids'][$id]['updated'] ?? ''));
+        $etag = kop_mobile_etag(array('facility', $id, $index['fingerprint'] ?? '', $index['ids'][$id]['updated'] ?? '', kop_mobile_feat_rev()));
         if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
         $data = kop_mobile_facility($id);
         if ($data === null) return kop_mobile_not_found('No facility page for "' . $ref . '".');
@@ -240,7 +240,7 @@ if (!function_exists('kop_mobile_operator_payload')) {
         foreach ($keep as $k) {
             if (array_key_exists($k, $page)) $out[$k] = $page[$k];
         }
-        $out['news'] = array_map('kop_mobile_news_card', (array) ($page['news'] ?? array()));
+        $out['news'] = array_map('kop_mobile_news_card', kop_mobile_news_feat_first((array) ($page['news'] ?? array())));
         $history = isset($page['history']) && is_array($page['history']) ? $page['history'] : null;
         $out['history'] = $history ? array(
             'status'     => (string) ($history['status'] ?? ''),
@@ -275,7 +275,7 @@ if (!function_exists('kop_mobile_operator_rest')) {
         $id = kop_mobile_resolve_operator_id($by_name ? $name : $ref, $by_name);
         if ($id <= 0) return kop_mobile_not_found('No company page for "' . ($by_name ? $name : $ref) . '".');
         $index = kop_operator_pages_index();
-        $etag = kop_mobile_etag(array('operator', $id, $index['fingerprint'] ?? '', function_exists('kop_facility_pages_index') ? (kop_facility_pages_index()['fingerprint'] ?? '') : ''));
+        $etag = kop_mobile_etag(array('operator', $id, $index['fingerprint'] ?? '', function_exists('kop_facility_pages_index') ? (kop_facility_pages_index()['fingerprint'] ?? '') : '', kop_mobile_feat_rev()));
         if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
         $data = kop_mobile_operator($id);
         if ($data === null) return kop_mobile_not_found('No company page for "' . ($by_name ? $name : $ref) . '".');
@@ -447,7 +447,38 @@ if (!function_exists('kop_mobile_news_card')) {
             if (array_key_exists($k, $item)) $card[$k] = $item[$k];
         }
         if (array_key_exists('url', $item)) $card['archive_url'] = (string) ($item['archive'] ?? '');
+        $card['featured'] = kop_mobile_news_featured((int) ($item['id'] ?? 0));
         return $card;
+    }
+}
+
+if (!function_exists('kop_mobile_news_featured')) {
+    /**
+     * Picked as essential reporting (inc/featured-reporting.php): {note, byline,
+     * page_url}; null otherwise. byline = the article's author as printed ('' when
+     * it is only the outlet's name), read only for picked articles.
+     */
+    function kop_mobile_news_featured($news_id) {
+        if ($news_id <= 0 || !function_exists('kop_feat_get')) return null;
+        $f = kop_feat_get($news_id);
+        if (!$f) return null;
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare('SELECT author, publication_name FROM news_submissions WHERE id = %d', $news_id), ARRAY_A);
+        $byline = is_array($row) ? kop_feat_byline((string) $row['author'], (string) $row['publication_name']) : '';
+        return array('note' => (string) $f['note'], 'byline' => $byline, 'page_url' => kop_feat_url());
+    }
+}
+
+if (!function_exists('kop_mobile_news_feat_first')) {
+    /** The page's news with the picked articles first, as the website lists them. */
+    function kop_mobile_news_feat_first(array $news) {
+        return function_exists('kop_feat_first') ? kop_feat_first($news) : $news;
+    }
+}
+
+if (!function_exists('kop_mobile_feat_rev')) {
+    function kop_mobile_feat_rev() {
+        return function_exists('kop_feat_rev') ? kop_feat_rev() : '';
     }
 }
 
@@ -504,6 +535,7 @@ if (!function_exists('kop_mobile_news_item')) {
             'facilities'       => array_values($facilities[$id] ?? array()),
             'story_arc'        => ($arc_id > 0 && isset($arcs[$arc_id])) ? array('title' => (string) $arcs[$arc_id]['title'], 'slug' => (string) $arcs[$arc_id]['slug']) : null,
             'story_group_id'   => !empty($row['story_group_id']) ? (int) $row['story_group_id'] : null,
+            'featured'         => kop_mobile_news_featured($id),
         );
     }
 }
@@ -573,12 +605,15 @@ if (!function_exists('kop_mobile_news_arcs')) {
 if (!function_exists('kop_mobile_news_feed')) {
     /**
      * The news feed page the app lists. $args: page (1+), per_page (1..50),
-     * archive (YYYY-MM), story (arc slug), facility (facility id). Same rows
+     * archive (YYYY-MM), story (arc slug), facility (facility id), featured (1 =
+     * only the articles picked as essential reporting). Same rows
      * and order as templates/page-news-feed.php: approved or published,
      * Indian boarding school articles left to their own page, newest first.
      *
      * Returns {items, total, page, per_page, pages, months: [{month, count}],
-     * arcs: [active arcs with articles], story: the filtered arc or null}.
+     * arcs: [active arcs with articles], story: the filtered arc or null,
+     * featured: the newest picks (up to 3, newest pick first) on the unfiltered
+     * first page, else [], featured_total: how many are picked}.
      */
     function kop_mobile_news_feed(array $args = array()) {
         global $wpdb;
@@ -587,8 +622,10 @@ if (!function_exists('kop_mobile_news_feed')) {
         $archive = trim((string) ($args['archive'] ?? ''));
         $story = function_exists('sanitize_title') ? sanitize_title((string) ($args['story'] ?? '')) : strtolower(trim((string) ($args['story'] ?? '')));
         $facility = (int) ($args['facility'] ?? 0);
+        $only_featured = !empty($args['featured']) && (string) $args['featured'] !== '0';
+        $feat_map = function_exists('kop_feat_map') ? kop_feat_map() : array();
 
-        $empty = array('items' => array(), 'total' => 0, 'page' => $page, 'per_page' => $per_page, 'pages' => 0, 'months' => array(), 'arcs' => array(), 'story' => null);
+        $empty = array('items' => array(), 'total' => 0, 'page' => $page, 'per_page' => $per_page, 'pages' => 0, 'months' => array(), 'arcs' => array(), 'story' => null, 'featured' => array(), 'featured_total' => count($feat_map));
         if (!function_exists('kop_facility_pages_table_exists') || !kop_facility_pages_table_exists('news_submissions')) return $empty;
 
         $exclude = function_exists('kop_ischools_news_exclude_sql') ? kop_ischools_news_exclude_sql('n.id') : '';
@@ -608,6 +645,10 @@ if (!function_exists('kop_mobile_news_feed')) {
         if ($facility > 0) {
             if (!kop_facility_pages_table_exists('news_facility_links')) return $empty;
             $where .= $wpdb->prepare(' AND EXISTS (SELECT 1 FROM news_facility_links l WHERE l.news_id = n.id AND l.facility_id = %d)', $facility);
+        }
+        if ($only_featured) {
+            if (!$feat_map) return $empty;
+            $where .= ' AND n.id IN (' . implode(',', array_map('intval', array_keys($feat_map))) . ')';
         }
 
         $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM news_submissions n WHERE $where");
@@ -640,15 +681,32 @@ if (!function_exists('kop_mobile_news_feed')) {
             if ($a['status'] === 'active' && $a['article_count'] > 0) $active[] = $a;
         }
 
+        // The newest picks, as the website's news feed shows them above the list.
+        $featured = array();
+        if ($feat_map && $page === 1 && $archive === '' && !$current_arc && $facility <= 0 && !$only_featured && function_exists('kop_feat_items')) {
+            $pick_ids = array_map(function ($it) { return (int) $it['id']; }, kop_feat_items('picked', 3));
+            if ($pick_ids) {
+                $prows = $wpdb->get_results("SELECT $cols FROM news_submissions n WHERE n.id IN (" . implode(',', $pick_ids) . ')', ARRAY_A);
+                $by_id = array();
+                foreach ((array) $prows as $r) $by_id[(int) $r['id']] = $r;
+                $pfac = kop_mobile_news_facilities_for($pick_ids);
+                foreach ($pick_ids as $pid) {
+                    if (isset($by_id[$pid])) $featured[] = kop_mobile_news_item($by_id[$pid], $pfac, $arcs);
+                }
+            }
+        }
+
         return array(
-            'items'    => $items,
-            'total'    => $total,
-            'page'     => $page,
-            'per_page' => $per_page,
-            'pages'    => (int) ceil($total / $per_page),
-            'months'   => $months,
-            'arcs'     => $active,
-            'story'    => $current_arc,
+            'items'          => $items,
+            'total'          => $total,
+            'page'           => $page,
+            'per_page'       => $per_page,
+            'pages'          => (int) ceil($total / $per_page),
+            'months'         => $months,
+            'arcs'           => $active,
+            'story'          => $current_arc,
+            'featured'       => $featured,
+            'featured_total' => count($feat_map),
         );
     }
 }
@@ -662,13 +720,14 @@ if (!function_exists('kop_mobile_news_rest')) {
             'archive'  => $request->get_param('archive'),
             'story'    => $request->get_param('story'),
             'facility' => $request->get_param('facility'),
+            'featured' => $request->get_param('featured'),
         );
         $stamp = '';
         if (function_exists('kop_facility_pages_table_exists') && kop_facility_pages_table_exists('news_submissions')) {
             $row = $wpdb->get_row("SELECT COUNT(*) AS n, MAX(updated_at) AS u FROM news_submissions WHERE status IN ('approved','published')", ARRAY_A);
             $stamp = is_array($row) ? (int) $row['n'] . '|' . (string) $row['u'] : '';
         }
-        $etag = kop_mobile_etag(array('news', $stamp, wp_json_encode($args)));
+        $etag = kop_mobile_etag(array('news', $stamp, wp_json_encode($args), kop_mobile_feat_rev()));
         if (kop_mobile_etag_matches($request, $etag)) return kop_mobile_not_modified($etag);
         return kop_mobile_response(kop_mobile_news_feed($args), $etag, 300);
     }

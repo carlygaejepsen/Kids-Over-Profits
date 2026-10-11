@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_SITE_MAP_REWRITE_VERSION')) {
-    define('KOP_SITE_MAP_REWRITE_VERSION', '3');
+    define('KOP_SITE_MAP_REWRITE_VERSION', '4');
 }
 
 // ---------------------------------------------------------------------------
@@ -483,6 +483,9 @@ if (!function_exists('kop_site_map_build')) {
         }
         if (function_exists('kop_how_to_use_url')) {
             $sections['reference']['items'][] = kop_site_map_item('How to use this site', kop_how_to_use_url(), 'Where to start, and how to search');
+        }
+        if (function_exists('kop_feat_url')) {
+            $sections['sources']['items'][] = kop_site_map_item('Essential reporting', kop_feat_url(), 'The reporting on the industry we recommend most');
         }
 
         foreach ($pages as $slug => $p) {

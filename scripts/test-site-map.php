@@ -321,7 +321,7 @@ $htu_groups = array();
 foreach ($htu['groups'] as $g) $htu_groups[$g['title']] = $titles_in($g['items']);
 check('how to use: groups by what a reader came to do', array_keys($htu_groups) === array('Look up a program', 'Records of harm', 'Get help or take action', 'Understand the industry', 'Written for you'));
 check('how to use: unpublished pages dropped, routes kept', $htu_groups['Look up a program'] === array('Facility directory', 'Parent companies', 'Network map', 'Young adult programs')
-    && $htu_groups['Records of harm'] === array('Inspection reports', 'Lawsuits', 'News feed'));
+    && $htu_groups['Records of harm'] === array('Inspection reports', 'Lawsuits', 'News feed', 'Essential reporting'));
 check('how to use: every group says what it is for, every link what is there', !array_filter($htu['groups'], function ($g) { return $g['intro'] === '' || array_filter($g['items'], function ($i) { return strlen($i['note']) < 60; }); }));
 check('how to use: the in-danger line links report abuse', $htu['urgent']['report'] === 'https://kidsoverprofits.org/report-abuse/');
 $GLOBALS['kop_how_to_use'] = $htu;

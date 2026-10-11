@@ -108,8 +108,10 @@ $kop_fp_news_card = static function (array $n) {
     $outlet = $n['outlet'] !== '' ? $n['outlet'] : (string) preg_replace('/^www\./', '', (string) wp_parse_url($n['url'], PHP_URL_HOST));
     $initial = $outlet !== '' ? strtoupper(mb_substr(preg_replace('/^(?:The|A)\s+/i', '', $outlet), 0, 1)) : '';
     $tag = $has_url ? 'a' : 'span';
+    // Picked as essential reporting (inc/featured-reporting.php): flagged, with the note.
+    $feat = function_exists('kop_feat_flag_html') && !empty($n['id']) ? kop_feat_flag_html((int) $n['id']) : '';
     ?>
-    <li class="kop-fp-news-item"<?php echo function_exists('kop_ie_attr') && !empty($n['id']) ? kop_ie_attr('rec:news:' . (int) $n['id'], 'this article') : ''; ?>>
+    <li class="kop-fp-news-item<?php echo $feat !== '' ? ' is-featured' : ''; ?>"<?php echo function_exists('kop_ie_attr') && !empty($n['id']) ? kop_ie_attr('rec:news:' . (int) $n['id'], 'this article') : ''; ?>>
         <<?php echo $tag; ?> class="kop-fp-news-thumb kop-fp-news-thumb--<?php echo esc_attr($kind); ?>"<?php echo $has_url ? ' href="' . esc_url($n['url']) . '" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true"' : ' aria-hidden="true"'; ?>>
             <?php if (is_array($img)) : ?>
                 <img src="<?php echo esc_url($img['src']); ?>" alt="" loading="lazy" decoding="async"<?php echo $kind === 'photo' ? ' width="640" height="360"' : ' width="160" height="160"'; ?>>
@@ -124,13 +126,14 @@ $kop_fp_news_card = static function (array $n) {
                 <?php if ($n['type'] !== '') : ?><span class="kop-fp-news-type"><?php echo esc_html(ucfirst($n['type'])); ?></span><?php endif; ?>
                 <?php if (!empty($n['home'])) : ?><span class="kop-fp-at-home">About <?php echo esc_html($n['home']); ?></span><?php endif; ?>
             </p>
-            <h3 class="kop-fp-news-title">
+            <h3 class="kop-fp-news-title"<?php echo function_exists('kop_feat_attr') && !empty($n['id']) ? kop_feat_attr((int) $n['id']) : ''; ?>>
                 <?php if ($has_url) : ?>
                     <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a><?php if (!empty($n['archive'])) : ?> <a class="kop-archived-link" href="<?php echo esc_url($n['archive']); ?>" target="_blank" rel="noopener noreferrer">archived copy</a><?php endif; ?>
                 <?php else : ?>
                     <?php echo esc_html($n['title']); ?>
                 <?php endif; ?>
             </h3>
+            <?php echo $feat; ?>
             <?php if ($n['summary'] !== '') : ?><p class="kop-fp-news-summary"><?php echo esc_html($n['summary']); ?></p><?php endif; ?>
         </div>
     </li>
@@ -218,6 +221,7 @@ $kop_fp_incident_list = static function (array $items) use ($kop_fp_sources) {
 $kop_fp_news_list = static function (array $items) use ($kop_fp_news_card) {
     $kop_fp_n_aside = array_values(array_filter($items, static function ($n) { return !empty($n['aside']); }));
     $items = array_values(array_filter($items, static function ($n) { return empty($n['aside']); }));
+    if (function_exists('kop_feat_first')) $items = kop_feat_first($items);   // essential reporting first
     $kop_fp_n_first = array_slice($items, 0, 6);
     $kop_fp_n_rest = array_slice($items, 6);
     ?>

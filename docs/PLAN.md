@@ -1661,6 +1661,11 @@ other name's (it is now cut into "As <name>" sections like the website); the oth
    (`story_group_id` is already in each news item), paging through every
    inspection report (the app shows the newest 20 and links the rest), an
    offline snapshot of the index, and notifications for new articles.
+6. **Essential reporting in the app** (server side done 2026-10-11, `inc/featured-reporting.php`): every news
+   card carries `featured` ({note, byline, page_url}, null when not picked), facility and company payloads list
+   picks first, `/news` returns `featured` (the newest three picks, unfiltered first page only) and
+   `featured_total`, and `/news?featured=1` lists only the picks. The app does not draw any of it yet: a strip
+   above the news tab, the flag and note on a card, and a list screen for `?featured=1`.
 
 **Send to KOP in the app (2026-10-07).** A "Send" tab: links (article,
 lawsuit, bill, website; the extension's `classify.js` ported) and facility

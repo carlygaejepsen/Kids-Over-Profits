@@ -345,6 +345,13 @@ npx web-ext lint --source-dir browser-extension/send-to-kop   # 1 expected warni
 # given as the article splits into both (api/lib-news-archive.php == js/news-archive-links.js == the extension's archive.js); readers
 # print the title linked to the original and "(archived copy)" beside it. archive.today short links hide the address, so they stay alone
 php -d extension=pdo_sqlite scripts/test-news-archive.php [--list]   # rules, PHP == both JS copies, the one-time split on a copy of the mirror
+# Essential reporting (inc/featured-reporting.php): news articles the owner picks as especially good journalism, each with an
+# optional note on why. Table news_featured (records DB); picked with the pencil on any article's headline ('feat:<id>') or at
+# KOP Tools > Essential Reporting (search, notes, Recent changes with exact Undo; log in the kop_featured_log option). Shown on
+# /essential-reporting/ (a route, templates/featured-reporting.php), a strip on /news/ and the home page ([kop_featured_reporting]),
+# flagged with the note and listed first on facility and company pages, 'featured' in the app's news payloads. Read at render time,
+# never baked into cached page data. Byline = the article's author field, left out when it is only the outlet's name
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-featured-reporting.php [--db=...] [--out=tmp/featured-reporting]
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked

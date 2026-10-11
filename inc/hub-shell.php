@@ -211,6 +211,7 @@ function kop_hub_config($slug) {
                 array('label' => 'Research & Reports', 'slug' => 'researchreports'),
                 array('label' => 'Lawsuits', 'template' => 'page-lawsuits.php', 'path' => '/lawsuits/'),
                 array('label' => 'News feed', 'template' => 'page-news-feed.php', 'path' => '/tti-news-feed/'),
+                array('label' => 'Essential reporting', 'url' => function_exists('kop_feat_url') ? kop_feat_url() : ''),
             ),
         ),
 

@@ -307,10 +307,13 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                 // Celebrity or Viral tag (kop_news_is_aside()): collapsed, after the rest.
                 $kop_op_news_row = static function (array $n) {
                     $bits = array_filter(array($n['outlet'], $n['date_label'], $n['type']), 'strlen');
+                    // Picked as essential reporting (inc/featured-reporting.php): flagged, with the note.
+                    $feat = function_exists('kop_feat_flag_html') ? kop_feat_flag_html((int) $n['id']) : '';
                     ?>
-                    <li>
+                    <li<?php echo $feat !== '' ? ' class="is-featured"' : ''; ?>>
+                        <?php echo $feat; ?>
                         <?php if ($n['url'] !== '' && preg_match('#^https?://#i', $n['url'])) : ?>
-                            <a href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a><?php if (!empty($n['archive'])) : ?> <a class="kop-archived-link" href="<?php echo esc_url($n['archive']); ?>" target="_blank" rel="noopener noreferrer">archived copy</a><?php endif; ?>
+                            <a<?php echo function_exists('kop_feat_attr') ? kop_feat_attr((int) $n['id']) : ''; ?> href="<?php echo esc_url($n['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($n['title']); ?></a><?php if (!empty($n['archive'])) : ?> <a class="kop-archived-link" href="<?php echo esc_url($n['archive']); ?>" target="_blank" rel="noopener noreferrer">archived copy</a><?php endif; ?>
                         <?php else : ?>
                             <span><?php echo esc_html($n['title']); ?></span>
                         <?php endif; ?>
@@ -321,6 +324,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                     <?php
                 };
                 $kop_op_news_main = array_values(array_filter($page['news'], static function ($n) { return empty($n['aside']); }));
+                if (function_exists('kop_feat_first')) $kop_op_news_main = kop_feat_first($kop_op_news_main);   // essential reporting first
                 $kop_op_news_aside = array_values(array_filter($page['news'], static function ($n) { return !empty($n['aside']); }));
                 ?>
             <section class="kop-fp-section" id="news">

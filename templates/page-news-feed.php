@@ -253,6 +253,13 @@ try {
         </div>
     <?php endif; ?>
 
+    <?php
+    // Essential reporting (inc/featured-reporting.php): the newest picks, on the unfiltered first page only.
+    if (function_exists('kop_feat_strip_html') && !$current_arc && $story_slug === '' && !$archive_month && $current_page === 1) {
+        echo kop_feat_strip_html(array('limit' => 3, 'text_key' => 'feat:news'));
+    }
+    ?>
+
     <?php if (!empty($ongoing_arcs) && !empty($show_ongoing)): ?>
         <section class="ongoing-stories" data-kop-bug-feature="news-feed/ongoing-stories" data-kop-bug-label="Ongoing Stories">
             <h2 class="ongoing-stories-title"<?php echo function_exists('kop_text_attr') ? kop_text_attr('news:ongoing-title', 'News: ongoing stories heading') : ''; ?>><?php echo esc_html(function_exists('kop_text') ? kop_text('news:ongoing-title', 'Ongoing Stories', 'News: ongoing stories heading') : 'Ongoing Stories'); ?></h2>
@@ -635,7 +642,8 @@ try {
                     ? ($arc_index[(int) $item['story_arc_id']] ?? null) : null;
             ?>
                 <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
-                <article class="news-card"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $item['id'], 'this article') : ''; ?> data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
+                <?php $card_feat = function_exists('kop_feat_flag_html') ? kop_feat_flag_html((int) $item['id']) : ''; ?>
+                <article class="news-card<?php echo $card_feat !== '' ? ' is-featured' : ''; ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr('rec:news:' . (int) $item['id'], 'this article') : ''; ?> data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
                     <?php if ($organization_logo_url !== ''): ?>
                         <figure class="news-card-brand">
                             <img src="<?php echo esc_url($organization_logo_url, ['https']); ?>"
@@ -655,7 +663,7 @@ try {
                                 <?php echo esc_html($card_arc['title']); ?>
                             </a>
                         <?php endif; ?>
-                        <h2 class="news-card-title">
+                        <h2 class="news-card-title"<?php echo function_exists('kop_feat_attr') ? kop_feat_attr((int) $item['id']) : ''; ?>>
                             <a href="<?php echo esc_url($itemHref); ?>" target="_blank" rel="noopener noreferrer">
                                 <?php echo esc_html($displayTitle); ?>
                             </a><?php echo kop_news_archive_link_html($item['article_url'] ?? '', $item['archive_url'] ?? ''); ?>
@@ -677,6 +685,8 @@ try {
                             <?php echo esc_html($pubDate); ?>
                         </span>
                     </div>
+
+                    <?php echo $card_feat; ?>
 
                     <?php if (!empty($also_covered)): ?>
                         <div class="news-coverage">

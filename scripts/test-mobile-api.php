@@ -392,7 +392,7 @@ $problems = $walk($feed);
 $check('news feed has no private key, HTML or sentinel', !$problems, implode('; ', array_slice($problems, 0, 3)));
 $bad = $bad_urls($urls($feed));
 $check('news urls are absolute or site paths', !$bad, implode(' ', array_slice($bad, 0, 3)));
-$item_keys = array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'archive_url', 'type', 'summary', 'content_warnings', 'image', 'facilities', 'story_arc', 'story_group_id');
+$item_keys = array('id', 'title', 'outlet', 'date', 'date_label', 'url', 'archive_url', 'type', 'summary', 'content_warnings', 'image', 'facilities', 'story_arc', 'story_group_id', 'featured');
 $check('news item keys', $feed['items'] && array_keys($feed['items'][0]) === $item_keys, implode(',', array_keys($feed['items'][0] ?? array())));
 $dates = array_map(function ($i) { return $i['date']; }, $feed['items']);
 $sorted = $dates; rsort($sorted);
