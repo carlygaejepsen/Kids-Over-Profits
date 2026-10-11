@@ -604,7 +604,11 @@ function load_discovery_queries(): array {
             'when' => is_string($t['when'] ?? null) ? trim($t['when']) : null,
             // The topic's own phrase plus a weak word ("ban on", "legislation")
             // is not enough: foreign politics passes that ("conversion therapy").
-            'strongOnly' => !empty($t['strongKeywordOnly'])
+            'strongOnly' => !empty($t['strongKeywordOnly']),
+            // Words (lower-cased, matched at the start of a word) of which one
+            // must also appear for the topic phrase to count: "boot camp"
+            // alone matched a Korean reality show, "Divorce Re-Boot Camp".
+            'requireAny' => array_map('mb_strtolower', $strList($t['requireAny'] ?? null))
         ];
     }
 
@@ -975,7 +979,8 @@ function fetch_google_news_for_topic(array $topic, array $queries): array {
         'topicQuery' => $topic['label'],
         'topicBoost' => $topic['boost'],
         'topicMatch' => $topic['match'],
-        'topicStrongOnly' => $topic['strongOnly']
+        'topicStrongOnly' => $topic['strongOnly'],
+        'topicRequireAny' => $topic['requireAny']
     ]), $r['items']);
     return $r;
 }
@@ -1470,6 +1475,10 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         // No phrases (a hand-edit typo in the queries file) means no boost,
         // not an unconditional one.
         $phraseHit = $phrases ? $firstHit($phrases, mb_strtolower($text)) : null;
+        $requireAny = is_array($candidate['topicRequireAny'] ?? null) ? $candidate['topicRequireAny'] : [];
+        if ($phraseHit !== null && $requireAny && find_keyword($requireAny, mb_strtolower($text)) === null) {
+            $phraseHit = null;
+        }
         if ($phraseHit !== null && !$facilityNamed && $titleHit === null && $weakTitleHit === null && $descHit === null) {
             // The topic phrase alone ("troubled teen" in soap spoilers, a
             // teen's own arson case) with no abuse word and no program named.

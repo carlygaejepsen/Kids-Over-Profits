@@ -184,7 +184,24 @@
       "boost": 2,
       "match": [
         "boot camp"
-      ]
+      ],
+      "requireAny": [
+        "teen",
+        "youth",
+        "juvenile",
+        "kid",
+        "child",
+        "boy",
+        "girl",
+        "student",
+        "minor",
+        "young",
+        "adolescent",
+        "cadet",
+        "son",
+        "daughter"
+      ],
+      "_requireAnyComment": "One of these must also appear (word start: \"teen\" = teens, teenager): adult \"boot camps\" (a Korean marriage show, fitness, coding) came in on the phrase alone."
     },
     {
       "label": "youth-challenge-academy",
@@ -599,7 +616,8 @@
     "\\bboarding (a |the )?school bus",
     "\\b(assaults?|attacks?|stabs?|punch(es)?) (an? )?(staff|employee|worker|officer|guard|counselor)\\b",
     "\\b(staff member|employee|worker|officer|guard|counselor)s? (hospitali[sz]ed|suffers|(is |was )?injured|(attacked|assaulted|stabbed|killed) by)\\b",
-    "\\b(stabbing|murder|killing) of (an? )?[\\w' -]{0,30}(employee|worker|staff member)\\b"
+    "\\b(stabbing|murder|killing) of (an? )?[\\w' -]{0,30}(employee|worker|staff member)\\b",
+    "\\bdivorce re-?boot camp\\b"
   ],
   "_redditComment": "Every link posted to r/troubledteens (link posts and links inside text posts) is submitted without scoring: the subreddit is the filter. Only reddit-internal, social and video hosts and PDFs are skipped, because the AI stage has nothing to extract from them."
 }

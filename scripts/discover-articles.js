@@ -548,7 +548,11 @@ function loadDiscoveryQueries() {
             when: typeof t.when === 'string' ? t.when.trim() : null,
             // The topic's own phrase plus a weak word ("ban on", "legislation")
             // is not enough: foreign politics passes that ("conversion therapy").
-            strongOnly: !!t.strongKeywordOnly
+            strongOnly: !!t.strongKeywordOnly,
+            // Words (lower-cased, matched at the start of a word) of which one
+            // must also appear for the topic phrase to count: "boot camp"
+            // alone matched a Korean reality show, "Divorce Re-Boot Camp".
+            requireAny: strList(t.requireAny).map(s => s.toLowerCase())
         }));
 
     // Headline patterns (case-insensitive regex, written so PHP and JS read
@@ -898,7 +902,8 @@ async function fetchGoogleNewsForTopic(topic, queries) {
         topicQuery: topic.label,
         topicBoost: topic.boost,
         topicMatch: topic.match,
-        topicStrongOnly: topic.strongOnly
+        topicStrongOnly: topic.strongOnly,
+        topicRequireAny: topic.requireAny
     }));
     return r;
 }
@@ -1412,7 +1417,11 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         const textLower = text.toLowerCase();
         // No phrases (a hand-edit typo in the queries file) means no boost,
         // not an unconditional one.
-        const phraseHit = phrases.length ? phrases.find(p => textLower.includes(p)) : null;
+        let phraseHit = phrases.length ? phrases.find(p => textLower.includes(p)) : null;
+        const requireAny = Array.isArray(candidate.topicRequireAny) ? candidate.topicRequireAny : [];
+        if (phraseHit && requireAny.length && !findKeyword(requireAny, textLower)) {
+            phraseHit = null;
+        }
         if (phraseHit && !facilityNamed && !titleHit && !weakTitleHit && !descHit) {
             // The topic phrase alone ("troubled teen" in soap spoilers, a
             // teen's own arson case) with no abuse word and no program named.
