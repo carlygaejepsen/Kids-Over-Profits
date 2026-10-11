@@ -383,7 +383,8 @@
   "_ignoreAliasesComment": "Names that must never count as a facility match or be searched on their own. For facility records whose name is not a real place name (a record literally named \"Kansas\" turned every Kansas City crime story into a facility hit). Bare US state names are ignored automatically. Compared case-insensitively after stripping punctuation.",
   "ignoreAliases": [
     "Kansas",
-    "Behavioral Health"
+    "Behavioral Health",
+    "People"
   ],
   "_genericAliasWordsComment": "A facility alias of one or two words made only of these words (\"Youth Reach\", \"Turning Point\", \"Cornerstone\") is generic: such names turn up in ordinary prose, so the alias is not searched on its own and counts as a facility match only when the text also names the facility's city or state (a record with no state never matches on it). Longer names made of these words (\"New Hope Youth Center\") stay distinctive and match as usual. Descriptors and everyday words only; a place or nature word (Provo, Cedar, Summit, Discovery) keeps a name distinctive. Compared after lower-casing and stripping punctuation, so possessives contribute the token s.",
   "genericAliasWords": [

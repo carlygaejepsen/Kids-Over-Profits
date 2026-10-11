@@ -573,7 +573,16 @@ function parseLocation(loc) {
     if (!trimmed) return { city: '', state: '' };
 
     const parts = trimmed.split(',').map(p => p.trim()).filter(Boolean);
-    if (parts.length < 2) return { city: trimmed, state: '' };
+    if (parts.length < 2) {
+        // 700+ records send only their state ("KY"). Read as a city, it left
+        // the state empty: no state in the sweep query, no state check, and
+        // "OK" counted as a city named in any text containing "book".
+        if (/^[A-Z]{2}$/.test(trimmed) && STATE_NAMES[trimmed]) return { city: '', state: trimmed };
+        for (const [abbr, full] of Object.entries(STATE_NAMES)) {
+            if (trimmed.toLowerCase() === full.toLowerCase()) return { city: '', state: abbr };
+        }
+        return { city: trimmed, state: '' };
+    }
 
     const city = parts[0];
     const tail = parts[parts.length - 1];
@@ -1171,17 +1180,31 @@ function isHomepageUrl(url) {
  *                             and nothing confirms it: no state in the text,
  *                             or the record has no state, or it is an operator
  */
+// Is the facility's city named in the text? Whole words, like matchFacility():
+// "Bath" is not in "bathroom". Two letters is never a city.
+function textNamesCity(text, city) {
+    const c = normalizeName(city);
+    if (c.length < 3) return false;
+    return (' ' + normalizeName(text) + ' ').includes(` ${c} `);
+}
+
 function facilityMatchConflict(match, text, genericAliases) {
     const fac = match.facility;
-    const isGeneric = !!(genericAliases && genericAliases.has(normalizeName(match.matchedAlias)));
+    const norm = normalizeName(match.matchedAlias);
+    const isGeneric = !!(genericAliases && genericAliases.has(norm));
+    // A facility's one-word name ("Grafton", "Parkside", "Outwood") is a town,
+    // a surname or an ordinary word far more often than the program.
+    const isOneWord = fac.bucket !== 'operator' && !norm.includes(' ');
     const canValidate = !!fac.state && fac.bucket !== 'operator';
-    if (!isGeneric && !canValidate) return null;
+    if (!isGeneric && !isOneWord && !canValidate) return null;
     const signals = extractStateSignals(text);
     let conflict = null;
     if (canValidate && signals.size > 0 && !signals.has(fac.state)) {
         conflict = 'state-mismatch';
     } else if (isGeneric && !(canValidate && signals.has(fac.state))) {
         conflict = 'generic-alias-unconfirmed';
+    } else if (isOneWord && !(canValidate && signals.has(fac.state))) {
+        conflict = 'one-word-name-unconfirmed';
     }
     if (!conflict) return null;
     return {
@@ -1219,7 +1242,7 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         // Tag the facility only when the text really refers to it, so the
         // queue is not labelled with a namesake from another state.
         if (redditMatch &&
-            !(redditMatch.facility.city && text.toLowerCase().includes(redditMatch.facility.city.toLowerCase())) &&
+            !textNamesCity(text, redditMatch.facility.city) &&
             facilityMatchConflict(redditMatch, text, genericAliases)) {
             redditMatch = null;
         }
@@ -1285,23 +1308,31 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
             }
         }
 
-        score += 2;
-        reasons.push(`facility:${match.matchedAlias}`);
-
-        // City match boost
-        if (fac.city && text.toLowerCase().includes(fac.city.toLowerCase())) {
-            score += 2;
-            cityMatched = true;
-            reasons.push(`city:${fac.city}`);
-        }
+        cityMatched = textNamesCity(text, fac.city);
 
         // State-match validation. A generic alias needs POSITIVE state
         // confirmation, not just absence of a mismatch: without it, "Youth
         // Reach" matched "Skilled Youth reach China" and "Juvenile Detention
-        // Center" matches every county's.
+        // Center" matches every county's. An unconfirmed generic or one-word
+        // name only loses the facility tag: a topic story that says "people"
+        // stands on its own, a sweep hit is then rejected as
+        // facility-unmatched below.
         if (!cityMatched) {
             const bad = facilityMatchConflict(match, text, genericAliases);
-            if (bad) return { accept: false, reason: bad.conflict, meta: bad.meta };
+            if (bad && bad.conflict.endsWith('-unconfirmed')) {
+                match = null;
+            } else if (bad) {
+                return { accept: false, reason: bad.conflict, meta: bad.meta };
+            }
+        }
+
+        if (match) {
+            score += 2;
+            reasons.push(`facility:${match.matchedAlias}`);
+            if (cityMatched) {
+                score += 2;
+                reasons.push(`city:${fac.city}`);
+            }
         }
     }
 

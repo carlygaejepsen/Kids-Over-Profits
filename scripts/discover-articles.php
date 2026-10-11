@@ -650,7 +650,18 @@ function parse_location($loc): array {
     if ($trimmed === '') return ['city' => '', 'state' => ''];
 
     $parts = array_values(array_filter(array_map('trim', explode(',', $trimmed)), static fn($p) => $p !== ''));
-    if (count($parts) < 2) return ['city' => $trimmed, 'state' => ''];
+    if (count($parts) < 2) {
+        // 700+ records send only their state ("KY"). Read as a city, it left
+        // the state empty: no state in the sweep query, no state check, and
+        // "OK" counted as a city named in any text containing "book".
+        if (preg_match('/^[A-Z]{2}$/', $trimmed) && isset($STATE_NAMES[$trimmed])) {
+            return ['city' => '', 'state' => $trimmed];
+        }
+        foreach ($STATE_NAMES as $abbr => $full) {
+            if (strcasecmp($trimmed, $full) === 0) return ['city' => '', 'state' => $abbr];
+        }
+        return ['city' => $trimmed, 'state' => ''];
+    }
 
     $city = $parts[0];
     $tail = $parts[count($parts) - 1];
@@ -1210,6 +1221,16 @@ function is_homepage_url(string $url): bool {
 }
 
 /**
+ * Is the facility's city named in the text? Whole words, like match_facility():
+ * "Bath" is not in "bathroom". Two letters is never a city.
+ */
+function text_names_city(string $text, string $city): bool {
+    $c = normalize_name($city);
+    if (mb_strlen($c) < 3) return false;
+    return str_contains(' ' . normalize_name($text) . ' ', " {$c} ");
+}
+
+/**
  * Does the text really refer to the matched facility? Call it when the
  * facility's city is not named in the text. Returns null when the match
  * stands, else ['conflict' => reason, 'meta' => [...]]:
@@ -1218,18 +1239,26 @@ function is_homepage_url(string $url): bool {
  *                             made only of common words such as "Youth Reach")
  *                             and nothing confirms it: no state in the text,
  *                             or the record has no state, or it is an operator
+ *   one-word-name-unconfirmed a facility's one-word name ("Grafton", "Parkside",
+ *                             "Outwood") and no state named: one word is a town,
+ *                             a surname or an ordinary word far more often than
+ *                             the program
  */
 function facility_match_conflict(array $match, string $text, array $genericAliases): ?array {
     $fac = $match['facility'];
-    $isGeneric = isset($genericAliases[normalize_name($match['matchedAlias'])]);
+    $norm = normalize_name($match['matchedAlias']);
+    $isGeneric = isset($genericAliases[$norm]);
+    $isOneWord = $fac['bucket'] !== 'operator' && !str_contains($norm, ' ');
     $canValidate = $fac['state'] !== '' && $fac['bucket'] !== 'operator';
-    if (!$isGeneric && !$canValidate) return null;
+    if (!$isGeneric && !$isOneWord && !$canValidate) return null;
     $signals = extract_state_signals($text);
     $conflict = null;
     if ($canValidate && count($signals) > 0 && !isset($signals[$fac['state']])) {
         $conflict = 'state-mismatch';
     } elseif ($isGeneric && !($canValidate && isset($signals[$fac['state']]))) {
         $conflict = 'generic-alias-unconfirmed';
+    } elseif ($isOneWord && !($canValidate && isset($signals[$fac['state']]))) {
+        $conflict = 'one-word-name-unconfirmed';
     }
     if ($conflict === null) return null;
     return [
@@ -1266,7 +1295,7 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         // Tag the facility only when the text really refers to it, so the
         // queue is not labelled with a namesake from another state.
         if ($match !== null &&
-            !($match['facility']['city'] !== '' && str_contains(mb_strtolower($text), mb_strtolower($match['facility']['city']))) &&
+            !text_names_city($text, $match['facility']['city']) &&
             facility_match_conflict($match, $text, $genericAliases) !== null) {
             $match = null;
         }
@@ -1329,22 +1358,31 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
             }
         }
 
-        $score += 2;
-        $reasons[] = 'facility:' . $match['matchedAlias'];
-
-        if ($fac['city'] !== '' && str_contains(mb_strtolower($text), mb_strtolower($fac['city']))) {
-            $score += 2;
-            $cityMatched = true;
-            $reasons[] = 'city:' . $fac['city'];
-        }
+        $cityMatched = text_names_city($text, $fac['city']);
 
         // State-match validation. A generic alias needs POSITIVE state
         // confirmation, not just absence of a mismatch: without it, "Youth
         // Reach" matched "Skilled Youth reach China" and "Juvenile Detention
-        // Center" matches every county's.
+        // Center" matches every county's. An unconfirmed generic or one-word
+        // name only loses the facility tag: a topic story that says "people"
+        // stands on its own, a sweep hit is then rejected as
+        // facility-unmatched below.
         if (!$cityMatched) {
             $bad = facility_match_conflict($match, $text, $genericAliases);
-            if ($bad !== null) return ['accept' => false, 'reason' => $bad['conflict'], 'meta' => $bad['meta']];
+            if ($bad !== null && str_ends_with($bad['conflict'], '-unconfirmed')) {
+                $match = null;
+            } elseif ($bad !== null) {
+                return ['accept' => false, 'reason' => $bad['conflict'], 'meta' => $bad['meta']];
+            }
+        }
+
+        if ($match !== null) {
+            $score += 2;
+            $reasons[] = 'facility:' . $match['matchedAlias'];
+            if ($cityMatched) {
+                $score += 2;
+                $reasons[] = 'city:' . $fac['city'];
+            }
         }
     }
 
