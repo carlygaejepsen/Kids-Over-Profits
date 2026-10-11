@@ -204,6 +204,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # typed proposals in js/data/data-audit/proposals.json, reviewed at Review inbox > Data audit (inc/data-audit.php: every "from" checked, exact Undo)
 python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
+# Federal funding (docs/PLAN.md 3.15): Medicaid, foster care funds, ORR, TRICARE, PPP and Education money found for programs,
+# js/data/federal-funding/proposals.json -> Review inbox > Federal funding (inc/federal-funding.php) -> the record's federalFunding
+# field (kop_facility_federal_funding_list(), JS mirror in data-normalizer.js), listed on its facility page; Add/Undo exact by entry ref
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=federal-funding
 # The sources the audit read that KOP does not hold yet (every proposal's sources, incl. tmp/data-audit/proposals*.json) ->
 # tmp/data-audit/audit-links.json, copied to ~/kop-import/gdocs/; reviewed at Drive Docs (source "Data audit") as news/court/resource links
 python scripts/data-audit-links.py

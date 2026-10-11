@@ -1694,4 +1694,50 @@ unchanged by it. The `notes` list in the app's payload still carries the
 Woodbury wording and raw addresses; both the website and the app clean them
 when they print.
 
+### 3.15 Federal funding on facility records (2026-10-11)
+
+Research of 2026-10-11 found 133 programs that received federal money and
+operated since October 2021: Medicaid (Montana's and Maine's out-of-state
+rosters, Arizona's AHCCCS, and the 63 youth facilities named in the Senate
+Finance Committee's June 2024 report "Warehouses of Neglect", which covers
+placements paid through Medicaid and the Social Security Act's child welfare
+provisions), federal foster care funds, Office of Refugee Resettlement grants
+for unaccompanied children (shelters and secure units count as TTI), TRICARE,
+2020 PPP loans and Department of Education pandemic aid. The research agents
+read search results only (page fetches and the USAspending, CMS and SBA sites
+were blocked), so every entry carries its links; several 2026 ORR amounts come
+from HigherGov, an aggregator.
+
+Each program is a proposal in `js/data/federal-funding/proposals.json`: name,
+place, the records it may be (`candidates`, best first, matched to
+`facilities_v2` by name, other and past names in the same state; 93 to one
+record, 22 to pick between, 18 with none), and its funding entries in plain
+words. The record field is `federalFunding` (`kop_facility_federal_funding_list()`
+in `inc/facility-store.php`, mirrored in `js/data-form-modules/data-normalizer.js`;
+no form UI, it round-trips): `[{stream, detail, years, sources [{url, label}],
+ref, source}]`. Facility pages list it under "Federal funding", grouped by
+kind, after Lawsuits; the app gets `federal_funding`.
+
+Reviewed at Review inbox > **Federal funding** (`inc/federal-funding.php`,
+`inc/review-inbox/federal-funding.php`): Add puts the entries on the record in
+"Record" (the best match filled in), New record makes one (`kop_facdisc_create()`)
+for a program KOP lacks, Leave it off changes nothing; the wording and years
+can be edited on the card first. Undo takes off exactly the entries Add put on
+(each has a ref) and deletes a record it made while nobody has edited it.
+Decisions: option `kop_federal_funding_review`; wording edits:
+`kop_federal_funding_edits`. Test: `scripts/test-review-inbox.php
+--source=federal-funding`.
+
+Open:
+1. **Owner:** work through the queue. "Add every high-confidence match" adds
+   the 39 high-confidence single matches at once.
+2. Two records end in 2021 (Bernalillo Academy, Evoke Cascades: its only
+   entry is a 2020 PPP loan); 62 matched records have no years.
+3. Rosters not read in full yet: Montana Medicaid's out-of-state PRTF list
+   (Apr 2026), Maine's legislative answer (legislature.maine.gov/doc/11622),
+   Alaska's DOJ findings (Dec 2022) and Comagine inventory, Oregon ODHS
+   out-of-state reports, TRICARE manual addenda C7ADD_13/14, the SBA PPP FOIA
+   files, USAspending/TAGGS for CFDA 93.676. New finds go in as more
+   proposals with the same shape.
+
 ---

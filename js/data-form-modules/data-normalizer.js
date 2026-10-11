@@ -921,6 +921,43 @@
         return out;
     }
 
+    const V2_FEDERAL_FUNDING_STREAMS = ['medicaid', 'medicaid_child_welfare', 'child_welfare', 'orr', 'tricare', 'ppp', 'education', 'other'];
+
+    /** Mirrors kop_facility_federal_funding_list(). */
+    function v2FederalFundingList(value) {
+        if (!Array.isArray(value) && !isPlainObject(value)) return [];
+        const out = [];
+        (Array.isArray(value) ? value : Object.values(value)).forEach((entry) => {
+            if (!isPlainObject(entry)) return;
+            let raw = entry.sources;
+            if (raw === null || raw === undefined) raw = [];
+            else if (isPlainObject(raw)) raw = Object.values(raw);
+            else if (!Array.isArray(raw)) raw = [raw];
+            const sources = [];
+            const seen = new Set();
+            raw.forEach((s) => {
+                if (typeof s === 'string') s = { url: s };
+                if (!isPlainObject(s)) return;
+                const url = v2Str(s.url);
+                if (!/^https?:\/\/\S+$/i.test(url) || seen.has(url)) return;
+                seen.add(url);
+                sources.push({ url, label: v2Str(s.label) });
+            });
+            const detail = v2Str(entry.detail);
+            if (detail === '' && !sources.length) return;
+            const stream = v2Str(entry.stream);
+            out.push({
+                stream: V2_FEDERAL_FUNDING_STREAMS.includes(stream) ? stream : 'other',
+                detail,
+                years: v2Str(entry.years),
+                sources,
+                ref: v2Str(entry.ref),
+                source: v2Str(entry.source)
+            });
+        });
+        return out;
+    }
+
     function v2List(value) {
         if (value === null || value === undefined || value === '') return [];
         if (!Array.isArray(value) && !isPlainObject(value)) return [v2Str(value)];
@@ -1238,7 +1275,7 @@
             },
             staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },
             accreditations: { current: [], past: [] },
-            memberships: [], certifications: [], licensing: [], profileLinks: [], resourceLinks: [],
+            memberships: [], certifications: [], licensing: [], profileLinks: [], resourceLinks: [], federalFunding: [],
             resources: {}, treatmentTypes: {}, targetedDiagnoses: {}, targetedBehaviors: {}, ttiPractices: {},
             philosophy: {}, conditions: {}, criticalIncidents: {},
             notes: [], fieldNotes: {}, survivorTestimony: [],
@@ -1255,7 +1292,7 @@
     const V2_KNOWN_KEYS = new Set([
         'identification', 'locationDetails', 'addressParts', 'address', 'location',
         'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
-        'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'resources', 'treatmentTypes',
+        'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'federalFunding', 'resources', 'treatmentTypes',
         'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
         'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
         'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
@@ -1663,6 +1700,7 @@
         doc.licensing = v2List(f.licensing);
         doc.profileLinks = v2LinkList(f.profileLinks);
         doc.resourceLinks = v2ResourceLinkList(f.resourceLinks);
+        doc.federalFunding = v2FederalFundingList(f.federalFunding);
         doc.notes = v2List(f.notes);
         if (gender.note !== '') doc.notes = v2List(doc.notes.concat([gender.note]));
 
@@ -1769,6 +1807,7 @@
             licensing: doc.licensing || [],
             profileLinks: doc.profileLinks || [],
             resourceLinks: doc.resourceLinks || [],
+            federalFunding: doc.federalFunding || [],
             resources: doc.resources || {},
             treatmentTypes: doc.treatmentTypes || {},
             targetedDiagnoses: doc.targetedDiagnoses || {},

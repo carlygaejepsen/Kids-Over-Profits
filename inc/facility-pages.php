@@ -2082,6 +2082,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (kop_facility_pages_testimony($doc['survivorTestimony'] ?? null)) $s[] = 'survivorTestimony';
         if (kop_facility_pages_resources_held($doc['resources'] ?? null)) $s[] = 'resources';
         if (kop_facility_pages_resource_links($doc['resourceLinks'] ?? null)) $s[] = 'resourceLinks';
+        if (kop_facility_pages_federal_funding($doc['federalFunding'] ?? null)) $s[] = 'federalFunding';
 
         $loc = isset($doc['location']) && is_array($doc['location']) ? $doc['location'] : array();
         if (kop_facility_pages_has_value($loc['additionalLocations'] ?? null)) $s[] = 'location.additionalLocations';
@@ -2444,6 +2445,26 @@ if (!function_exists('kop_facility_pages_resource_links')) {
                 }
                 $out[] = array('kind' => $kind, 'label' => $kind_label, 'links' => $by[$kind], 'credits' => array_values($credits));
             }
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_federal_funding')) {
+    /**
+     * A record's federalFunding (inc/federal-funding.php), grouped by stream in
+     * the order of kop_facility_federal_funding_streams(): [{stream, label,
+     * entries [{detail, years, sources [{url, label}]}]}].
+     */
+    function kop_facility_pages_federal_funding($value) {
+        if (!is_array($value) || !function_exists('kop_facility_federal_funding_list')) return array();
+        $groups = array();
+        foreach (kop_facility_federal_funding_list($value) as $e) {
+            $groups[$e['stream']][] = array('detail' => $e['detail'], 'years' => $e['years'], 'sources' => $e['sources']);
+        }
+        $out = array();
+        foreach (kop_facility_federal_funding_streams() as $stream => $label) {
+            if (!empty($groups[$stream])) $out[] = array('stream' => $stream, 'label' => $label, 'entries' => $groups[$stream]);
         }
         return $out;
     }
@@ -3048,6 +3069,7 @@ if (!function_exists('kop_facility_page_data')) {
             'profile_links' => $profile_links,
             'resources'     => $resources,
             'resource_links' => $resource_links,
+            'federal_funding' => kop_facility_pages_federal_funding($doc['federalFunding'] ?? null),
             'news'          => $news,
             'lawsuits'      => $lawsuits,
             'memorials'     => $memorials,

@@ -334,6 +334,7 @@ $kop_fp_has_testimony = !empty($page['testimony']) || !empty($page['forum']);
 $kop_fp_has_videos = !empty($page['videos']);
 $kop_fp_has_news = !empty($page['news']);
 $kop_fp_has_lawsuits = !empty($page['lawsuits']);
+$kop_fp_has_funding = !empty($page['federal_funding']);
 $kop_fp_has_memorials = !empty($page['memorials']);
 $kop_fp_has_inspections = !empty($page['inspections']);
 $kop_fp_has_research = !empty($page['research']);
@@ -430,6 +431,7 @@ if ($kop_fp_eras) foreach ($kop_fp_eras['list'] as $kop_fp_era) $kop_fp_sections
 if ($kop_fp_has_memorials) $kop_fp_sections['memorials'] = 'Deaths on record';
 if ($kop_fp_has_violations) $kop_fp_sections['violations'] = 'Serious violations';
 if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
+if ($kop_fp_has_funding) $kop_fp_sections['funding'] = 'Federal funding';
 if ($kop_fp_has_incidents) $kop_fp_sections['incidents'] = 'Incidents';
 if ($kop_fp_has_news) $kop_fp_sections['news'] = 'News coverage';
 if ($kop_fp_has_videos && !isset($kop_fp_psec['videos'])) $kop_fp_sections['videos'] = 'Videos';
@@ -767,6 +769,27 @@ get_header();
                 <?php $kop_fp_lawsuit_list($page['lawsuits']); ?>
                 <?php endif; ?>
                 <p class="kop-fp-count"><a href="<?php echo esc_url($page['lawsuits_url']); ?>">Every case in the lawsuit directory</a></p>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_funding) : ?>
+            <section class="kop-fp-section" id="funding">
+                <h2><?php echo $kop_fp_icon('landmark'); ?>Federal funding</h2>
+                <p class="kop-fp-count">Federal money this program received, as government records, congressional reports and news coverage show it.</p>
+                <?php foreach ($page['federal_funding'] as $kop_fp_group) : ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($kop_fp_group['label']); ?></h3>
+                    <ul class="kop-fp-notes">
+                        <?php foreach ($kop_fp_group['entries'] as $kop_fp_fund) : ?>
+                            <li>
+                                <?php if ($kop_fp_fund['years'] !== '') : ?><strong><?php echo esc_html($kop_fp_fund['years']); ?>:</strong> <?php endif; ?>
+                                <?php echo esc_html($kop_fp_fund['detail']); ?>
+                                <?php $kop_fp_sources(array_map(static function ($s) {
+                                    return array('url' => $s['url'], 'cite' => $s['label'], 'source' => $s['label']);
+                                }, $kop_fp_fund['sources']), 'span'); ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endforeach; ?>
             </section>
             <?php endif; ?>
 

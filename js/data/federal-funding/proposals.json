@@ -1,0 +1,4719 @@
+[
+ {
+  "key": "brooksville-youth-academy",
+  "name": "Brooksville Youth Academy",
+  "city": "",
+  "state": "",
+  "operator": "",
+  "confidence": "low",
+  "match": "check",
+  "operating": "Listed by Montana Medicaid 2025-2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11145,
+    "how": "exact name"
+   },
+   {
+    "id": 100014,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state facilities it pays for, in September 2025 and April 2026.",
+    "years": "2025-2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "north-star-behavioral-health-debarr-palmer-rtc-hospital-ak",
+  "name": "North Star Behavioral Health (DeBarr, Palmer RTC, hospital)",
+  "city": "Anchorage / Palmer",
+  "state": "AK",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Operating 2022 (licensing visit Aug 2022, SFC) | Operating 2023",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13911,
+    "how": "close name"
+   },
+   {
+    "id": 13912,
+    "how": "close name"
+   },
+   {
+    "id": 13891,
+    "how": "close name"
+   },
+   {
+    "id": 13892,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 23, 54, 84), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "A 2023 Mother Jones and Reveal investigation found Universal Health Services admitted foster children from 38 states to its facilities, where Medicaid typically pays, with North Star as its main case.",
+    "years": "2023",
+    "sources": [
+     {
+      "url": "https://www.motherjones.com/criminal-justice/2023/10/universal-health-services-reveal-podcast-foster-kids-uhs",
+      "label": "motherjones.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "alabama-clinical-schools-al",
+  "name": "Alabama Clinical Schools",
+  "city": "Birmingham",
+  "state": "AL",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13624,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 90, 108), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report cites an inspection by West Virginia's health and human services department, which placed children there (p. 108).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "brighter-path-courtland-formerly-sequel-tsi-courtland-al",
+  "name": "Brighter Path Courtland (formerly Sequel TSI Courtland)",
+  "city": "Courtland",
+  "state": "AL",
+  "operator": "Vivant (divested)",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "June 2024 vote to revoke business license tabled",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13639,
+    "how": "exact name"
+   },
+   {
+    "id": 100075,
+    "how": "exact name"
+   },
+   {
+    "id": 9647,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "A 2020 letter from Alabama disability and civil rights advocates to the agencies funding Sequel's Alabama programs named the state Medicaid agency among them.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://www.waff.com/2024/06/11/vote-revoke-business-license-brighter-path-courtland-tabled",
+      "label": "waff.com"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "child_welfare",
+    "detail": "Alabama's Department of Human Resources, the state foster care agency, placed children in Sequel's Alabama programs; a foster child is among those who sued over this one.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.waff.com/2024/06/11/vote-revoke-business-license-brighter-path-courtland-tabled",
+      "label": "waff.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "brighter-path-owens-cross-roads-formerly-sequel-tsi-al",
+  "name": "Brighter Path Owens Cross Roads (formerly Sequel TSI)",
+  "city": "Owens Cross Roads",
+  "state": "AL",
+  "operator": "Vivant (divested)",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Juveniles removed May 2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13678,
+    "how": "picked by hand"
+   },
+   {
+    "id": 100385,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "A 2020 letter from Alabama disability and civil rights advocates to the agencies funding Sequel's Alabama programs named the state Medicaid agency among them.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://www.waff.com/2024/05/23/juveniles-being-removed-brighter-path-amid-fight-business-license-fire-safety-concerns/",
+      "label": "waff.com"
+     },
+     {
+      "url": "https://www.splcenter.org/sites/default/files/letter_to_state_re_sequel_adapcrsplc_0.pdf",
+      "label": "splcenter.org"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "child_welfare",
+    "detail": "Alabama's Department of Human Resources, the state foster care agency, paid more than $68 million to Sequel's Alabama programs from 2016 on.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.waff.com/2024/05/23/juveniles-being-removed-brighter-path-amid-fight-business-license-fire-safety-concerns/",
+      "label": "waff.com"
+     },
+     {
+      "url": "https://www.splcenter.org/sites/default/files/letter_to_state_re_sequel_adapcrsplc_0.pdf",
+      "label": "splcenter.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "brighter-path-tuskegee-formerly-sequel-tsi-tuskegee-al",
+  "name": "Brighter Path Tuskegee (formerly Sequel TSI Tuskegee)",
+  "city": "Tuskegee",
+  "state": "AL",
+  "operator": "Vivant (divested 2023)",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Operating 2022; Vivant divested its Alabama sites, which continue under new management",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13641,
+    "how": "exact name"
+   },
+   {
+    "id": 9657,
+    "how": "other/past name"
+   },
+   {
+    "id": 100078,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 120-121), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "hill-crest-behavioral-health-services-al",
+  "name": "Hill Crest Behavioral Health Services",
+  "city": "Birmingham",
+  "state": "AL",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13661,
+    "how": "picked by hand"
+   },
+   {
+    "id": 100045,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 65, 100, 120), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "laurel-oaks-behavioral-health-center-al",
+  "name": "Laurel Oaks Behavioral Health Center",
+  "city": "Dothan",
+  "state": "AL",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13670,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 42), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its website describes its residential treatment center, for ages 12 to 18, as TRICARE certified.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.laureloaksbhc.com/programs-services/treatment-programs/residential-treatment-center/",
+      "label": "laureloaksbhc.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "little-creek-behavioral-health-ar",
+  "name": "Little Creek Behavioral Health",
+  "city": "Conway",
+  "state": "AR",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating 2021 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11512,
+    "how": "exact name"
+   },
+   {
+    "id": 11464,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 22, 103), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "millcreek-of-arkansas-millcreek-behavioral-health-ar",
+  "name": "Millcreek of Arkansas (Millcreek Behavioral Health)",
+  "city": "Fordyce",
+  "state": "AR",
+  "operator": "Acadia",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Licensing documents 2022 (SFC) | Operating 2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11516,
+    "how": "other/past name"
+   },
+   {
+    "id": 11465,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 59, 89), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report cites federal deficiency reports from 2018 and 2021, and says Alaska stopped sending children there in 2019 over sustained noncompliance with federal Medicaid rules (p. 59).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "orr",
+    "detail": "The Senate Finance Committee's 2024 report says it accepted nine children in the custody of the Office of Refugee Resettlement (p. 89).",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "Maine approved it in 2018 for children covered by MaineCare, the state's Medicaid program, and Maine children were placed there in 2024. Arkansas lists it as an approved psychiatric residential treatment facility for 2024-25.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://bangordailynews.com/2024/06/18/mainefocus/mainefocus-government/maine-kids-behavior-mental-health-treatment-abuse-investigation/",
+      "label": "Bangor Daily News"
+     },
+     {
+      "url": "https://humanservices.arkansas.gov/facilities/millcreek-of-arkansas-prtf/",
+      "label": "humanservices.arkansas.gov"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "piney-ridge-treatment-center-ar",
+  "name": "Piney Ridge Treatment Center",
+  "city": "Fayetteville",
+  "state": "AR",
+  "operator": "Acadia",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2024 (renovation described May 2024, SFC) | Operating 2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11526,
+    "how": "exact name"
+   },
+   {
+    "id": 100111,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 4, 12, 31), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says a contractor made a Medicaid compliance visit there in 2018 (p. 12).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "Maine approved it in 2018 for children covered by MaineCare, the state's Medicaid program, and Montana's Medicaid program lists it among the out-of-state facilities it pays for.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://bangordailynews.com/2024/06/18/mainefocus/mainefocus-government/maine-kids-behavior-mental-health-treatment-abuse-investigation/",
+      "label": "Bangor Daily News"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "pinnacle-pointe-behavioral-healthcare-system-ar",
+  "name": "Pinnacle Pointe Behavioral Healthcare System",
+  "city": "Little Rock",
+  "state": "AR",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11469,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website calls it a TRICARE-certified long-term facility for ages 6 to 18.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://pinnaclepointehospital.com/programs-and-services/military-families/",
+      "label": "pinnaclepointehospital.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "youth-home-inc-ar",
+  "name": "Youth Home Inc.",
+  "city": "Little Rock",
+  "state": "AR",
+  "operator": "Nonprofit",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11560,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says it is a TRICARE-approved provider for both TRICARE regions, as a psychiatric residential treatment facility for ages 12 to 17.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://youthhome.org/tricare-approved-residential/",
+      "label": "youthhome.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "casa-grande-academy-az",
+  "name": "Casa Grande Academy",
+  "city": "Casa Grande",
+  "state": "AZ",
+  "operator": "Vivant",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating (one of Vivant's four current facilities, SFC 2024)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12162,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 90, 99, 103), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "mingus-mountain-youth-treatment-center-az",
+  "name": "Mingus Mountain Youth Treatment Center",
+  "city": "Prescott Valley",
+  "state": "AZ",
+  "operator": "Vivant",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating (one of Vivant's four current facilities, SFC 2024) | On Arizona approved RTC list 2025-26",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12163,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 103, 121), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "In a 2024 statement the facility said it scored over 95 percent on audits by managed care organizations of AHCCCS, Arizona's Medicaid program; ABC15 reported that Arizona tax dollars fund it.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://www.abc15.com/news/local-news/investigations/i-just-felt-trapped-allegations-of-abuse-at-arizona-facility-for-troubled-teens",
+      "label": "abc15.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "visionquest-orr-shelter-az",
+  "name": "VisionQuest (ORR shelter)",
+  "city": "Benson",
+  "state": "AZ",
+  "operator": "VisionQuest National",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Grassley letter Feb 2024",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "A 2020 Senate investigation found the Office of Refugee Resettlement paid VisionQuest $32.1 million for shelters that never opened, and a 2024 letter from Sen. Grassley says it received millions more in recent years.",
+    "years": "2020-2024",
+    "sources": [
+     {
+      "url": "https://www.grassley.senate.gov/imo/media/doc/grassley_to_visionquest_national_ltd_-_orr_contractors_and_grantees.pdf",
+      "label": "Sen. Grassley letter"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "evolve-treatment-centers-teen-residential-ca",
+  "name": "Evolve Treatment Centers (teen residential)",
+  "city": "Calabasas",
+  "state": "CA",
+  "operator": "Evolve",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says its teen residential homes are in network with TriWest, which runs TRICARE in the western region.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://evolvetreatment.com/our-locations/los-angeles-area/calabasas/",
+      "label": "evolvetreatment.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "muir-wood-teen-ca",
+  "name": "Muir Wood Teen",
+  "city": "Petaluma",
+  "state": "CA",
+  "operator": "",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10053,
+    "how": "close name"
+   },
+   {
+    "id": 10054,
+    "how": "close name"
+   },
+   {
+    "id": 10055,
+    "how": "close name"
+   },
+   {
+    "id": 10057,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says its teen residential treatment is covered by TRICARE West.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://muirwoodteen.com/tricare-teen-residential-treatment/",
+      "label": "muirwoodteen.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "cedar-springs-hospital-co",
+  "name": "Cedar Springs Hospital",
+  "city": "Colorado Springs",
+  "state": "CO",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 100006,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 91, 93), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-orr-shelters-co",
+  "name": "Devereux (ORR shelters)",
+  "city": "Westminster, CO; also TX",
+  "state": "CO",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Expansion reported (years not confirmed)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12621,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Devereux held a $40.2 million Office of Refugee Resettlement contract for shelters in several states around 2019 and 2020, including one in Westminster, Colorado; the Senate Finance Committee's 2024 report says it runs a shelter for unaccompanied children in Texas (p. 22).",
+    "years": "2019-2024",
+    "sources": [
+     {
+      "url": "https://www.westword.com/news/devereux-will-expand-migrant-children-facility-in-westminster-11931507/",
+      "label": "westword.com"
+     },
+     {
+      "url": "https://whyy.org/articles/under-investigation-for-sexual-abuse-devereux-still-has-a-contract-to-detain-migrant-children-in-pa",
+      "label": "whyy.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "catholic-charities-of-the-archdiocese-of-miami-shelter-fl",
+  "name": "Catholic Charities of the Archdiocese of Miami (shelter)",
+  "city": "Miami",
+  "state": "FL",
+  "operator": "Catholic Charities",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Operating until 2026",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Ran a shelter for unaccompanied children under an $11 million Office of Refugee Resettlement contract, which was not renewed in 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://digital-release.thehill.com/homenews/administration/5834685-hhs-ends-catholic-charities-contract/",
+      "label": "digital-release.thehill.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-titusville-fl",
+  "name": "Devereux Titusville",
+  "city": "Titusville",
+  "state": "FL",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11088,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 35, 39), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-viera-fl",
+  "name": "Devereux Viera",
+  "city": "Viera",
+  "state": "FL",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Operating 2022 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11161,
+    "how": "picked by hand"
+   },
+   {
+    "id": 12014,
+    "how": "picked by hand"
+   },
+   {
+    "id": 11160,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 47-48, 102), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "la-amistad-behavioral-health-fl",
+  "name": "La Amistad Behavioral Health",
+  "city": "Maitland",
+  "state": "FL",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11117,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services program for military families (Patriot Support) and appears on the TRICARE list of authorized residential treatment centers for 2013.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://lamistad.com/treatment-services/military-families-services/",
+      "label": "lamistad.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "palm-shores-behavioral-health-center-fl",
+  "name": "Palm Shores Behavioral Health Center",
+  "city": "Bradenton",
+  "state": "FL",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11121,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services residential program for military families (Patriot Support), for ages 11 to 17.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://palmshoresbhc.com/programs-services/military-families-services",
+      "label": "palmshoresbhc.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "sandypines-residential-treatment-center-fl",
+  "name": "SandyPines Residential Treatment Center",
+  "city": "Tequesta",
+  "state": "FL",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2023 (CMS Immediate Jeopardy, allowed to keep operating) | Operating 2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11122,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 67, 105-106), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report says the federal Centers for Medicare and Medicaid Services found it in immediate jeopardy in 2023 and let it keep operating (p. 106).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "Enrolled with MaineCare, Maine's Medicaid program, and serving Maine children, the Bangor Daily News reported in September 2024.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://bangordailynews.com/2024/09/05/mainefocus/mainefocus-health/maine-hasnt-inspected-out-of-state-youth-mental-health-programs-rampant-abuse-joam40zk0w/",
+      "label": "Bangor Daily News"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its website says it is a TRICARE-approved provider for military families' children.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://sandypineshospital.com/program-services/mental-health-services-for-military-kids/",
+      "label": "sandypineshospital.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "st-john-s-youth-academy-fl",
+  "name": "St. John's Youth Academy",
+  "city": "St. Augustine",
+  "state": "FL",
+  "operator": "Vivant",
+  "confidence": "high",
+  "match": "check",
+  "operating": "Closed 2022 after Florida DJJ removed all youth",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11098,
+    "how": "exact name"
+   },
+   {
+    "id": 11130,
+    "how": "other/past name"
+   },
+   {
+    "id": 9654,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 48-49), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "suncoast-behavioral-health-center-fl",
+  "name": "Suncoast Behavioral Health Center",
+  "city": "Bradenton",
+  "state": "FL",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11123,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 91, 123), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "blue-ridge-therapeutic-wilderness-second-nature-blue-ridge-ga",
+  "name": "Blue Ridge Therapeutic Wilderness (Second Nature Blue Ridge)",
+  "city": "Clayton",
+  "state": "GA",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12506,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 13, 2020, reporting 85 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://pppreport.org/company/second+nature+blue+ridge+l+l+c",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "coastal-harbor-treatment-center-ga",
+  "name": "Coastal Harbor Treatment Center",
+  "city": "Savannah",
+  "state": "GA",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Listed by Montana Medicaid through 2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12494,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state psychiatric residential treatment facilities it pays for, from 2024 to 2026.",
+    "years": "2024-2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Appears on the TRICARE list of authorized residential treatment centers for fiscal year 2014.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://manuals.health.mil/pages/DisplayManualPdfFile/2013-12-12/AsOf/TR08/C7ADD_14.pdf",
+      "label": "TRICARE Reimbursement Manual"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "devereux-georgia-ga",
+  "name": "Devereux Georgia",
+  "city": "Kennesaw",
+  "state": "GA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12484,
+    "how": "picked by hand"
+   },
+   {
+    "id": 12521,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 35-36, 40), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "laurel-heights-hospital-ga",
+  "name": "Laurel Heights Hospital",
+  "city": "Atlanta",
+  "state": "GA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12495,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 58, 113), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "lighthouse-care-center-of-augusta-ga",
+  "name": "Lighthouse Care Center of Augusta",
+  "city": "Augusta",
+  "state": "GA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12496,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 33-34), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "skyland-trail-adolescent-residential-ga",
+  "name": "Skyland Trail adolescent residential",
+  "city": "Atlanta",
+  "state": "GA",
+  "operator": "Nonprofit",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12556,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its adolescent residential program, for ages 14 to 17, is in network with Humana Military, which runs TRICARE in the eastern region.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.skylandtrail.org/news/adolescent-residential-program-in-network-with-tricare-east/",
+      "label": "skylandtrail.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "youth-villages-inner-harbour-campus-ga",
+  "name": "Youth Villages Inner Harbour Campus",
+  "city": "Douglasville",
+  "state": "GA",
+  "operator": "Youth Villages",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12561,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Youth Villages says its residential program here, for ages 6 to 17, is an approved TRICARE provider.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://youthvillages.org/services/residential-services/inner-harbour-campus/",
+      "label": "youthvillages.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "woodward-academy-ia",
+  "name": "Woodward Academy",
+  "city": "Woodward",
+  "state": "IA",
+  "operator": "Vivant",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating (one of Vivant's four current facilities, SFC 2024)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13380,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 78, 103), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "pavilion-behavioral-health-system-il",
+  "name": "Pavilion Behavioral Health System",
+  "city": "Champaign",
+  "state": "IL",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13526,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 20, 64, 119), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "midwest-center-for-youth-families-in",
+  "name": "Midwest Center for Youth & Families",
+  "city": "Kouts",
+  "state": "IN",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13335,
+    "how": "exact name"
+   },
+   {
+    "id": 13290,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website calls its residential treatment center TRICARE certified.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://midwest-center.com/admissions/tricare/",
+      "label": "midwest-center.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "resource-treatment-center-in",
+  "name": "Resource Treatment Center",
+  "city": "Indianapolis",
+  "state": "IN",
+  "operator": "Acadia",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2022 (Indiana DCS referral hold Mar-Apr 2022, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 100336,
+    "how": "exact name"
+   },
+   {
+    "id": 13347,
+    "how": "close name"
+   },
+   {
+    "id": 13348,
+    "how": "close name"
+   },
+   {
+    "id": 13349,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 66, 103-105), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report cites a 2021 federal deficiency report on it from the Centers for Medicare and Medicaid Services (p. 66).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "acadiana-treatment-center-la",
+  "name": "Acadiana Treatment Center",
+  "city": "Lafayette",
+  "state": "LA",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13748,
+    "how": "exact name"
+   },
+   {
+    "id": 13747,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 56), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-cathy-house-and-devon-house-group-homes-ma",
+  "name": "Devereux Cathy House and Devon House group homes",
+  "city": "",
+  "state": "MA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11987,
+    "how": "picked by hand"
+   },
+   {
+    "id": 11988,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 22), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-rutland-ma",
+  "name": "Devereux Rutland",
+  "city": "Rutland",
+  "state": "MA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11986,
+    "how": "picked by hand"
+   },
+   {
+    "id": 11995,
+    "how": "picked by hand"
+   },
+   {
+    "id": 11997,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 107, 115), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "havenwyck-hospital-mi",
+  "name": "Havenwyck Hospital",
+  "city": "Auburn Hills",
+  "state": "MI",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating 2022 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13091,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 102), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "agape-boarding-school-via-agape-baptist-church-mo",
+  "name": "Agape Boarding School (via Agape Baptist Church)",
+  "city": "Stockton",
+  "state": "MO",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Closed Jan 2023",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11361,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Agape Baptist Church, which ran the school, received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 27, 2020.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://pppreport.org/company/agape+baptist+church+inc",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "crittenton-children-s-center-mo",
+  "name": "Crittenton Children's Center",
+  "city": "Kansas City",
+  "state": "MO",
+  "operator": "Saint Luke's Health System",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Saint Luke's Health System says its residential program is certified by TRICARE; it appears on the TRICARE list of authorized residential treatment centers for 2013.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.saintlukeskc.org/node/54785",
+      "label": "saintlukeskc.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "heartland-behavioral-health-services-mo",
+  "name": "Heartland Behavioral Health Services",
+  "city": "Nevada",
+  "state": "MO",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11358,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 81, 96), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Runs a residential trauma program for military dependents and appears on the TRICARE list of authorized residential treatment centers for 2013.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://heartlandbehavioral.com/treatments-programs/residential-treatment/military-dependent-trauma-focused-therapy/",
+      "label": "heartlandbehavioral.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "brentwood-behavioral-healthcare-ms",
+  "name": "Brentwood Behavioral Healthcare",
+  "city": "Flowood",
+  "state": "MS",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 76, 120), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "millcreek-of-pontotoc-ms",
+  "name": "Millcreek of Pontotoc",
+  "city": "Pontotoc",
+  "state": "MS",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Operating 2021-22 (SFC documents)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 91-93, 107), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "turning-winds-mt",
+  "name": "Turning Winds",
+  "city": "Troy",
+  "state": "MT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12735,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says TRICARE East has approved it.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.turningwinds.com/tricare-approved-residential-treatment-for-youth/",
+      "label": "turningwinds.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "brynn-marr-hospital-nc",
+  "name": "Brynn Marr Hospital",
+  "city": "Jacksonville",
+  "state": "NC",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed | Operating 2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11711,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 60, 62, 113), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "North Carolina Health News reported in 2024 that it receives taxpayer-funded Medicare and Medicaid payments.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://www.northcarolinahealthnews.org/2024/06/27/universal-health-services-owner-nc-psych-hospitals-under-scrutiny-from-us-senate/",
+      "label": "northcarolinahealthnews.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "holly-hill-hospital-nc",
+  "name": "Holly Hill Hospital",
+  "city": "Raleigh",
+  "state": "NC",
+  "operator": "UHS",
+  "confidence": "low",
+  "match": "no record",
+  "operating": "Operating 2024",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "North Carolina Health News reported in 2024 that Universal Health Services' North Carolina psychiatric hospitals, this one among them, receive Medicare and Medicaid payments.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://www.northcarolinahealthnews.org/2024/06/27/universal-health-services-owner-nc-psych-hospitals-under-scrutiny-from-us-senate/",
+      "label": "northcarolinahealthnews.org"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "old-vineyard-behavioral-health-nc",
+  "name": "Old Vineyard Behavioral Health",
+  "city": "Winston-Salem",
+  "state": "NC",
+  "operator": "UHS",
+  "confidence": "low",
+  "match": "no record",
+  "operating": "Operating 2024",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "North Carolina Health News reported in 2024 that Universal Health Services' North Carolina psychiatric hospitals, this one among them, receive Medicare and Medicaid payments.",
+    "years": "2024",
+    "sources": [
+     {
+      "url": "https://www.northcarolinahealthnews.org/2024/06/27/universal-health-services-owner-nc-psych-hospitals-under-scrutiny-from-us-senate/",
+      "label": "northcarolinahealthnews.org"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "bernalillo-academy-nm",
+  "name": "Bernalillo Academy",
+  "city": "Bernalillo",
+  "state": "NM",
+  "operator": "Sequel",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Closed Dec 2021",
+  "flags": [
+   "KOP record ends 2021: confirm it ran after Oct 2021"
+  ],
+  "candidates": [
+   {
+    "id": 12743,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "child_welfare",
+    "detail": "Housed children in the custody of New Mexico's Children, Youth and Families Department, the state foster care agency, until it closed in December 2021.",
+    "years": "2021",
+    "sources": [
+     {
+      "url": "https://www.apmreports.org/story/2021/12/03/sequel-bernalillo-academy-abuse-allegations",
+      "label": "apmreports.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "rite-of-passage-orr-shelter-nv",
+  "name": "Rite of Passage (ORR shelter)",
+  "city": "",
+  "state": "NV",
+  "operator": "Rite of Passage",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "2026 award",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12464,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Holds an Office of Refugee Resettlement grant (90ZU0692) for a residential shelter for unaccompanied children, raised from $11.8 million to $23.5 million in April 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.highergov.com/grant/90ZU0692/",
+      "label": "HigherGov (grant record)"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "willow-springs-center-nv",
+  "name": "Willow Springs Center",
+  "city": "Reno",
+  "state": "NV",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed | Operating 2023",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12419,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 85, 113), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report cites a federal deficiency report on it from the Centers for Medicare and Medicaid Services (p. 113).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "Accepts Medicaid.",
+    "years": "2023",
+    "sources": [
+     {
+      "url": "https://thisisreno.com/2023/04/state-investigating-willow-springs-after-suicide/",
+      "label": "thisisreno.com"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services program for military families (Patriot Support), and treatment directories list it in network with TRICARE.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://willowspringscenter.com/treatment-and-services/military-families-support-services/",
+      "label": "willowspringscenter.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-red-hook-ny",
+  "name": "Devereux Red Hook",
+  "city": "Red Hook",
+  "state": "NY",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12022,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 5, 102, 110), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "mercyfirst-ny",
+  "name": "MercyFirst",
+  "city": "Syosset",
+  "state": "NY",
+  "operator": "MercyFirst",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "2026 award",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Received an Office of Refugee Resettlement grant of about $7.4 million in April 2026 for short-term residential care of unaccompanied children.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.highergov.com/grant/90ZU0687/",
+      "label": "HigherGov (grant record)"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "the-children-s-village-ny",
+  "name": "The Children's Village",
+  "city": "Dobbs Ferry",
+  "state": "NY",
+  "operator": "The Children's Village",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2026 (CNN Apr 2026 abuse report)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12047,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Houses unaccompanied children for the Office of Refugee Resettlement on its residential campus; a federal Inspector General audit covered $16.7 million of that funding.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://imprintnews.org/immigration/childrens-village-migrant-youth-abuse-allegations/273990",
+      "label": "imprintnews.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "belmont-pines-hospital-oh",
+  "name": "Belmont Pines Hospital",
+  "city": "Youngstown",
+  "state": "OH",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13234,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 53, 106, 117), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "foundations-for-living-oh",
+  "name": "Foundations for Living",
+  "city": "Mansfield",
+  "state": "OH",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13245,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 60, 64, 109), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "cedar-ridge-treatment-center-cedar-ridge-behavioral-hospital-ok",
+  "name": "Cedar Ridge Treatment Center / Cedar Ridge Behavioral Hospital",
+  "city": "Oklahoma City",
+  "state": "OK",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13542,
+    "how": "exact name"
+   },
+   {
+    "id": 13552,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 4, 18, 105), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report says a 2015 federal Inspector General audit found it gave Medicaid-covered children fewer treatment hours than required, and the facility paid the difference back (p. 18); in 2019 Oklahoma's Medicaid agency moved to end its contract over understaffing, and the facility kept it (p. 105).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services program for military families (Patriot Support), for ages 6 to 18.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://cedarridgebhs.com/programs-services/military-families-support-services-at-cedar-ridge/",
+      "label": "cedarridgebhs.com"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "evoke-at-cascades-or",
+  "name": "Evoke at Cascades",
+  "city": "Bend",
+  "state": "OR",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [
+   "KOP record ends 2021: confirm it ran after Oct 2021"
+  ],
+  "candidates": [
+   {
+    "id": 12355,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 13, 2020, reporting 51 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/oregon/bend",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "abraxas-academy-pa",
+  "name": "Abraxas Academy",
+  "city": "Morgantown",
+  "state": "PA",
+  "operator": "Abraxas",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2025-2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11574,
+    "how": "exact name"
+   },
+   {
+    "id": 11576,
+    "how": "close name"
+   },
+   {
+    "id": 11578,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Holds about $9 million from the Office of Refugee Resettlement, awarded in August 2025, to hold unaccompanied children in secure care in its juvenile detention unit.",
+    "years": "2025-2026",
+    "sources": [
+     {
+      "url": "https://www.inquirer.com/news/nation-world/immigration-trump-prison-children-pennsylvania-20260108.html",
+      "label": "inquirer.com"
+     },
+     {
+      "url": "https://summerlee.house.gov/sites/evo-subsites/summerlee.house.gov/files/evo-media-document/2026-07-31-sl-letter-to-hhs-and-orr-abraxas.pdf",
+      "label": "summerlee.house.gov"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "children-s-home-of-reading-pa",
+  "name": "Children's Home of Reading",
+  "city": "Reading",
+  "state": "PA",
+  "operator": "Nonprofit",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Listed by Montana Medicaid 2025-2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11606,
+    "how": "picked by hand"
+   },
+   {
+    "id": 11608,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state facilities it pays for, in September 2025 and April 2026.",
+    "years": "2025-2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "cove-prep-pa",
+  "name": "Cove Prep",
+  "city": "",
+  "state": "PA",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 22, 56), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-brandywine-pa",
+  "name": "Devereux Brandywine",
+  "city": "Glenmoore",
+  "state": "PA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11566,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 34, 41, 47), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-brumer-villa-pa",
+  "name": "Devereux Brumer Villa",
+  "city": "",
+  "state": "PA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Operating 2021 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 102), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "devereux-mapleton-pa",
+  "name": "Devereux Mapleton",
+  "city": "Malvern",
+  "state": "PA",
+  "operator": "Devereux",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11570,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 34), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Devereux told the committee 95 percent of its residential treatment revenue came from Medicaid (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "foundations-behavioral-health-pa",
+  "name": "Foundations Behavioral Health",
+  "city": "Doylestown",
+  "state": "PA",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2022 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11616,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 84, 97, 126), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report says it did not report serious occurrences to the state Medicaid agency (p. 97).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "kidspeace-pa",
+  "name": "KidsPeace",
+  "city": "Orefield",
+  "state": "PA",
+  "operator": "KidsPeace",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "2026 award",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11622,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Holds an Office of Refugee Resettlement grant for unaccompanied children (90ZU0671), $8.44 million awarded in April 2026; the Washington Free Beacon reported more than $81 million in federal health and human services grants since 2017.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.highergov.com/grant/90ZU0671/",
+      "label": "HigherGov (grant record)"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "KidsPeace's 2020 brochure calls its residential houses at Orchard Hills TRICARE certified.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.kidspeace.org/tricare/",
+      "label": "kidspeace.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "first-hospital-panamericano-pr",
+  "name": "First Hospital Panamericano",
+  "city": "Cidra",
+  "state": "PR",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 95, 122), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "palmetto-pines-behavioral-health-sc",
+  "name": "Palmetto Pines Behavioral Health",
+  "city": "Summerville",
+  "state": "SC",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13997,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 54, 60, 118), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "palmetto-summerville-behavioral-health-sc",
+  "name": "Palmetto Summerville Behavioral Health",
+  "city": "Summerville",
+  "state": "SC",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13970,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 42, 50, 104), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "three-rivers-midlands-sc",
+  "name": "Three Rivers Midlands",
+  "city": "West Columbia",
+  "state": "SC",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13971,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says all of its residential programs, for ages 11 to 17, are TRICARE certified.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://threeriversmidlands.org/programs-services/residential-services/",
+      "label": "threeriversmidlands.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "brighter-transition-youth-treatment-center-sd",
+  "name": "Brighter Transition Youth Treatment Center",
+  "city": "Sioux Falls",
+  "state": "SD",
+  "operator": "Vivant",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating (one of Vivant's four current facilities, SFC 2024)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 14054,
+    "how": "exact name"
+   },
+   {
+    "id": 14058,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 103), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says half of Vivant's facilities rely on public dollars, Medicaid and CHIP, for more than 75 percent of their revenue (p. 23).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "compass-intervention-center-tn",
+  "name": "Compass Intervention Center",
+  "city": "Memphis",
+  "state": "TN",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11280,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 90-93, 109), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its website calls it the only TRICARE-certified residential treatment center in Memphis.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://compassinterventioncenter.net/programs-and-services/specialty-programs/military-families/",
+      "label": "compassinterventioncenter.net"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "hermitage-hall-tn",
+  "name": "Hermitage Hall",
+  "city": "Nashville",
+  "state": "TN",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11245,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 23, 46), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "mcdowell-center-for-children-tn",
+  "name": "McDowell Center for Children",
+  "city": "Dyersburg",
+  "state": "TN",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11246,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 36, 108, 122), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "natchez-trace-youth-academy-tn",
+  "name": "Natchez Trace Youth Academy",
+  "city": "Waverly",
+  "state": "TN",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11248,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 116), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "oak-plains-academy-tn",
+  "name": "Oak Plains Academy",
+  "city": "Ashland City",
+  "state": "TN",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "check",
+  "operating": "Operating Dec 2022 (two overdose deaths, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11279,
+    "how": "other/past name"
+   },
+   {
+    "id": 100023,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 112), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its website calls it a TRICARE-certified psychiatric residential treatment facility, for ages 7 to 17.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://oakplainsacademy.com/programs-services/children-and-adolescents/residential-programs/military-affiliated-children/",
+      "label": "oakplainsacademy.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "village-behavioral-health-tn",
+  "name": "Village Behavioral Health",
+  "city": "Louisville",
+  "state": "TN",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 11240,
+    "how": "close name"
+   },
+   {
+    "id": 11260,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 82, 101), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "bcfs-health-and-human-services-shelters-tx",
+  "name": "BCFS Health and Human Services (shelters)",
+  "city": "Los Fresnos / San Antonio",
+  "state": "TX",
+  "operator": "BCFS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "2021 award",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10653,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Received an Office of Refugee Resettlement replacement award of up to $77.5 million in November 2021 for 560 shelter beds for unaccompanied children.",
+    "years": "2021",
+    "sources": [
+     {
+      "url": "https://www.federalregister.gov/documents/2021/11/30/2021-25968/announcement-of-intent-to-issue-two-replacement-awards-to-provide-residential-services-shelter",
+      "label": "Federal Register"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "compass-connections-shelters-tx",
+  "name": "Compass Connections (shelters)",
+  "city": "San Antonio / Cameron Co.",
+  "state": "TX",
+  "operator": "Compass Connections",
+  "confidence": "high",
+  "match": "no record",
+  "operating": "Operating 2026 (Senate Finance letter Jun 2026)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Holds Office of Refugee Resettlement grants for shelters for unaccompanied children, among them $231.6 million from April 2023 to March 2026 (90ZU0528); a June 2026 Senate Finance Committee letter puts its total over three years above $1.6 billion.",
+    "years": "2023-2026",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/imo/media/doc/060326_letter_to_compass_connections_re__alexandria_la_facility.pdf",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "fort-bliss-emergency-intake-site-rapid-deployment-inc-tx",
+  "name": "Fort Bliss emergency intake site (Rapid Deployment Inc.)",
+  "city": "El Paso",
+  "state": "TX",
+  "operator": "Rapid Deployment Inc.",
+  "confidence": "high",
+  "match": "no record",
+  "operating": "Operating 2021-2022",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Ran the emergency intake site for unaccompanied children at Fort Bliss under a federal contract worth more than $1.5 billion by December 2021.",
+    "years": "2021-2022",
+    "sources": [
+     {
+      "url": "https://www.govexec.com/oversight/2022/10/migrant-children-fort-bliss-shelter-faced-distress-long-release-waits/378246/",
+      "label": "govexec.com"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "heartlight-ministries-tx",
+  "name": "Heartlight Ministries",
+  "city": "Hallsville",
+  "state": "TX",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10772,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan approved April 9, 2020, reporting 68 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/texas/harrison-county",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "laurel-ridge-treatment-center-tx",
+  "name": "Laurel Ridge Treatment Center",
+  "city": "San Antonio",
+  "state": "TX",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10815,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services program for military dependents (Patriot Support) and appears on the TRICARE list of authorized residential treatment centers from about 2004. It lost its Medicare and Medicaid status on April 30, 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://sacrd.org/directory/program/5872",
+      "label": "sacrd.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "meridell-achievement-center-tx",
+  "name": "Meridell Achievement Center",
+  "city": "Liberty Hill",
+  "state": "TX",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10617,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services residential program for military families (Patriot Support), for ages 10 to 17, and appears on the TRICARE list of authorized residential treatment centers from about 2004.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://meridell.com/programs-services/military-families-support-services/",
+      "label": "meridell.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "pecos-influx-care-facility-family-endeavors-tx",
+  "name": "Pecos influx care facility (Family Endeavors)",
+  "city": "Pecos",
+  "state": "TX",
+  "operator": "Family Endeavors",
+  "confidence": "high",
+  "match": "no record",
+  "operating": "Operating 2022",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Ran an influx care facility of up to 2,000 beds for unaccompanied children in Pecos under a no-bid federal contract worth up to $575 million, extended in March 2022.",
+    "years": "2021-2022",
+    "sources": [
+     {
+      "url": "https://sanantonioreport.org/endeavors-migrant-detention-pecos/",
+      "label": "sanantonioreport.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "san-marcos-treatment-center-tx",
+  "name": "San Marcos Treatment Center",
+  "city": "San Marcos",
+  "state": "TX",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10618,
+    "how": "exact name"
+   },
+   {
+    "id": 100007,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 92), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Accepts TRICARE and runs a Universal Health Services program for military dependents (Patriot Support).",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://sanmarcostc.com/treatment-services/our-treatment-approach/military/",
+      "label": "sanmarcostc.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "southwest-key-programs-shelters-tx",
+  "name": "Southwest Key Programs (shelters)",
+  "city": "TX, AZ, CA",
+  "state": "TX",
+  "operator": "Southwest Key",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2021-2024 (DOJ suit Jul 2024)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 100288,
+    "how": "exact name"
+   },
+   {
+    "id": 10911,
+    "how": "close name"
+   },
+   {
+    "id": 10912,
+    "how": "close name"
+   },
+   {
+    "id": 10913,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "The largest Office of Refugee Resettlement grantee, with more than $3 billion from 2015 to 2023, including a replacement award of up to about $178 million in November 2021. The Justice Department sued it in July 2024 over sexual abuse of children in its shelters.",
+    "years": "2021-2024",
+    "sources": [
+     {
+      "url": "https://www.justice.gov/opa/pr/justice-department-sues-southwest-key-sexual-abuse-and-harassment-children-shelters",
+      "label": "U.S. Department of Justice"
+     },
+     {
+      "url": "https://www.aila.org/library/hhs-86-fr-67954-11-30-21-2",
+      "label": "Federal Register notice (AILA copy)"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "the-refuge-for-dmst-tx",
+  "name": "The Refuge for DMST",
+  "city": "Bastrop",
+  "state": "TX",
+  "operator": "Nonprofit",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Closed Mar 2022",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10962,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "child_welfare",
+    "detail": "Housed girls in Texas foster care, placed by the Department of Family and Protective Services, until the state shut it down in March 2022.",
+    "years": "2022",
+    "sources": [
+     {
+      "url": "https://www.click2houston.com/news/texas/2022/03/11/state-licensed-shelter-where-sex-trafficking-victims-were-reportedly-abused-ordered-to-close/",
+      "label": "click2houston.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "upbring-shelter-tx",
+  "name": "Upbring (shelter)",
+  "city": "Brownsville",
+  "state": "TX",
+  "operator": "Lutheran Social Services of the South",
+  "confidence": "high",
+  "match": "no record",
+  "operating": "2021 award",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Received an Office of Refugee Resettlement replacement award of up to $20.9 million in November 2021 for a shelter for unaccompanied children.",
+    "years": "2021",
+    "sources": [
+     {
+      "url": "https://www.aila.org/library/hhs-86-fr-67956-11-30-21",
+      "label": "Federal Register notice (AILA copy)"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "urban-strategies-shelter-tx",
+  "name": "Urban Strategies (shelter)",
+  "city": "San Benito",
+  "state": "TX",
+  "operator": "Urban Strategies",
+  "confidence": "high",
+  "match": "no record",
+  "operating": "Operating 2021-2022",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Received an Office of Refugee Resettlement award of up to $18.9 million for a 100-bed shelter for unaccompanied children, December 2021 to September 2022.",
+    "years": "2021-2022",
+    "sources": [
+     {
+      "url": "https://www.federalregister.gov/documents/2021/11/30/2021-25971/announcement-of-intent-to-issue-replacement-award-to-provide-residential-services-shelter",
+      "label": "Federal Register"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "benchmark-behavioral-health-ut",
+  "name": "Benchmark Behavioral Health",
+  "city": "Woods Cross",
+  "state": "UT",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Listed by Montana Medicaid 2024-2025",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10395,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state psychiatric residential treatment facilities it pays for, in 2024 and September 2025.",
+    "years": "2024-2025",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "cinnamon-hills-youth-crisis-center-ut",
+  "name": "Cinnamon Hills Youth Crisis Center",
+  "city": "St. George",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10417,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $1 million to $2 million, approved May 3, 2020, reporting 160 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/st-george",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "copper-hills-youth-center-ut",
+  "name": "Copper Hills Youth Center",
+  "city": "West Jordan",
+  "state": "UT",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed | Listed by Montana Medicaid through Apr 2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10370,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 33, 65), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report cites Alaska's review of it under federal Medicaid rules (p. 65).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state psychiatric residential treatment facilities it pays for, in 2024, September 2025 and April 2026.",
+    "years": "2024-2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Runs a Universal Health Services program for military dependents (Patriot Support).",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://copperhillsyouthcenter.com/programs-services/other-services/military-families-support-services/",
+      "label": "copperhillsyouthcenter.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "diamond-ranch-academy-ut",
+  "name": "Diamond Ranch Academy",
+  "city": "Hurricane",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "check",
+  "operating": "Closed Aug 14, 2023",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10425,
+    "how": "exact name"
+   },
+   {
+    "id": 10496,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $1 million to $2 million, approved April 4, 2020, reporting 188 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/84737",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "discovery-academy-ut",
+  "name": "Discovery Academy",
+  "city": "Springville",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10333,
+    "how": "exact name"
+   },
+   {
+    "id": 10539,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $913,900, approved April 7, 2020, reporting 148 jobs; $837,922 of it was forgiven.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/springville",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "discovery-ranch-ut",
+  "name": "Discovery Ranch",
+  "city": "Mapleton",
+  "state": "UT",
+  "operator": "Discovery",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10335,
+    "how": "exact name"
+   },
+   {
+    "id": 10334,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says it is in network with TriWest, which runs TRICARE in the western region.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.discoveryranch.net/admissions/financial/military-families/",
+      "label": "discoveryranch.net"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 7, 2020, reporting 167 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/springville",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "discovery-ranch-south-ut",
+  "name": "Discovery Ranch South",
+  "city": "Cedar City",
+  "state": "UT",
+  "operator": "Discovery",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Listed by Montana Medicaid 2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10334,
+    "how": "exact name"
+   },
+   {
+    "id": 10335,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state psychiatric residential treatment facilities it pays for, in April 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 7, 2020, reporting 151 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/springville",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "eagle-ranch-academy-ut",
+  "name": "Eagle Ranch Academy",
+  "city": "St. George",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10430,
+    "how": "exact name"
+   },
+   {
+    "id": 10431,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 5, 2020, reporting 52 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/st-george",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "falcon-ridge-ranch-ut",
+  "name": "Falcon Ridge Ranch",
+  "city": "Virgin",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Listed by Montana Medicaid 2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 9607,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "Listed by Montana's Medicaid program among the out-of-state psychiatric residential treatment facilities it pays for, in April 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://dphhs.mt.gov/assets/BHDD/CMB/providermanuals/OutofStatePsychaitricfacilitiesenrolledwithMTMedicaid_042926.pdf",
+      "label": "Montana DPHHS (Medicaid out-of-state list)"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "heritage-schools-ut",
+  "name": "Heritage Schools",
+  "city": "Provo",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "check",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10447,
+    "how": "close name"
+   },
+   {
+    "id": 100167,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $2 million to $5 million, approved April 2020, reporting 339 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/provo",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "kids-behavioral-health-of-utah-ut",
+  "name": "Kids Behavioral Health of Utah",
+  "city": "",
+  "state": "UT",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "no record",
+  "operating": "Operating 2023 (Joint Commission report Jan 2023, SFC)",
+  "flags": [],
+  "candidates": [],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 92-93, 108), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "lava-heights-academy-ut",
+  "name": "Lava Heights Academy",
+  "city": "Toquerville",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Funded 2022",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 9611,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "education",
+    "detail": "Allotted $172,900 in federal pandemic aid for private schools (American Rescue Plan EANS), in a Utah State Board of Education table of August 18, 2022.",
+    "years": "2022",
+    "sources": [
+     {
+      "url": "https://schools.utah.gov/coronavirus/_corona_virus_/_arp-eans/ARPEANSSchoolsDistributionTable.pdf",
+      "label": "Utah State Board of Education"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "liahona-academy-ut",
+  "name": "Liahona Academy",
+  "city": "St. George",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "check",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10462,
+    "how": "close name"
+   },
+   {
+    "id": 10463,
+    "how": "close name"
+   },
+   {
+    "id": 100366,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 8, 2020, reporting 123 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/st-george",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "magellan-academy-ut",
+  "name": "Magellan Academy",
+  "city": "Spanish Fork",
+  "state": "UT",
+  "operator": "",
+  "confidence": "low",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10473,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $150,000 to $350,000, approved April 15, 2020, reporting 43 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/spanish-fork",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "maple-lake-academy-ut",
+  "name": "Maple Lake Academy",
+  "city": "Spanish Fork",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "check",
+  "operating": "Reported 2021-22 enrollment (ProPublica)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10475,
+    "how": "close name"
+   },
+   {
+    "id": 100362,
+    "how": "close name"
+   },
+   {
+    "id": 10476,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $150,000 to $350,000, reporting 101 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/spanish-fork",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "oasis-ascent-ut",
+  "name": "OASIS Ascent",
+  "city": "Provo",
+  "state": "UT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10337,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Its website says it is in network with TriWest, which runs TRICARE in the western region.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://oasisascent.com/cost-of-mental-health-treatment/tricare/",
+      "label": "oasisascent.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "oxbow-academy-ut",
+  "name": "Oxbow Academy",
+  "city": "",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Reported 2021-22 enrollment (ProPublica)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10336,
+    "how": "exact name"
+   },
+   {
+    "id": 10499,
+    "how": "close name"
+   },
+   {
+    "id": 10500,
+    "how": "close name"
+   },
+   {
+    "id": 10501,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 7, 2020, reporting 125 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/springville",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "provo-canyon-school-ut",
+  "name": "Provo Canyon School",
+  "city": "Provo / Springville",
+  "state": "UT",
+  "operator": "UHS",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Licenses revoked July 2026 (services to end Aug 2026)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10371,
+    "how": "exact name"
+   },
+   {
+    "id": 10557,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 33, 46, 88), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29). The report describes a child Oregon placed there (p. 88).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "medicaid",
+    "detail": "KFF Health News reported in 2022 that it was eligible for Montana Medicaid and housed Montana children.",
+    "years": "2022",
+    "sources": [
+     {
+      "url": "https://kffhealthnews.org/medicaid/montana-troubled-teen-industry-medicaid-children-out-of-state-abuse-allegations/",
+      "label": "KFF Health News"
+     },
+     {
+      "url": "https://kutv.com/news/local/utah-revokes-provo-canyon-schools-provo-campus-license-orders-facility-to-close",
+      "label": "kutv.com"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "A treatment directory lists TRICARE among the insurance it accepts.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://copecompass.com/find-help/provo-canyon-school/",
+      "label": "copecompass.com"
+     }
+    ],
+    "confidence": "low"
+   }
+  ]
+ },
+ {
+  "key": "redcliff-ascent-ut",
+  "name": "RedCliff Ascent",
+  "city": "Springville",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10338,
+    "how": "exact name"
+   },
+   {
+    "id": 10511,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Paycheck Protection Program records show two loans, of $740,700 and $822,300, both forgiven.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://newbizbot.ai/ppp-loans/utah/springville",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "second-nature-utah-ut",
+  "name": "Second Nature (Utah)",
+  "city": "Duchesne",
+  "state": "UT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10377,
+    "how": "close name"
+   },
+   {
+    "id": 10438,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $1 million to $2 million, approved April 11, 2020, reporting 107 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://pppreport.org/company/second+nature+therapeutic+program+l+l+c",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "telos-residential-treatment-ut",
+  "name": "Telos Residential Treatment",
+  "city": "Orem",
+  "state": "UT",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10540,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $350,000 to $1 million, approved April 12, 2020, reporting 135 jobs.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/orem",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "three-points-center-ut",
+  "name": "Three Points Center",
+  "city": "Hurricane",
+  "state": "UT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Funded 2022",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10545,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "education",
+    "detail": "Allotted $271,149 in federal pandemic aid for private schools (American Rescue Plan EANS) under the name Three Points Academy, in a Utah State Board of Education table of 2022.",
+    "years": "2022",
+    "sources": [
+     {
+      "url": "https://schools.utah.gov/coronavirus/_corona_virus_/_arp-eans/ARPEANSSchoolsDistributionTable.pdf",
+      "label": "Utah State Board of Education"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "triumph-youth-services-ut",
+  "name": "Triumph Youth Services",
+  "city": "Brigham City",
+  "state": "UT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10550,
+    "how": "close name"
+   },
+   {
+    "id": 10600,
+    "how": "close name"
+   },
+   {
+    "id": 100406,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $150,000 to $350,000.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://ppp.directory/utah/provo",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "turn-about-ranch-ut",
+  "name": "Turn-About Ranch",
+  "city": "Escalante",
+  "state": "UT",
+  "operator": "",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10344,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $223,200, approved April 27, 2020 and forgiven in December 2020.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://projects.propublica.org/coronavirus/bailouts/",
+      "label": "ProPublica PPP tracker"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "youthcare-ut",
+  "name": "YouthCare",
+  "city": "Draper",
+  "state": "UT",
+  "operator": "Acadia",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating 2021 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 10345,
+    "how": "picked by hand"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 22, 103), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "barry-robinson-center-va",
+  "name": "Barry Robinson Center",
+  "city": "Norfolk",
+  "state": "VA",
+  "operator": "Nonprofit",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12917,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "A TRICARE-approved residential treatment center since 2012 that serves only military-connected children, the Association of the U.S. Army wrote in July 2023.",
+    "years": "2023",
+    "sources": [
+     {
+      "url": "https://www.ausa.org/sites/default/files/BRC%20Quick%20Brief%207.24.2023.pdf",
+      "label": "ausa.org"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "cumberland-hospital-for-children-and-adolescents-va",
+  "name": "Cumberland Hospital for Children and Adolescents",
+  "city": "New Kent",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed | Operating 2022-2024",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12800,
+    "how": "exact name"
+   },
+   {
+    "id": 14160,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 36, 44, 95), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "hallmark-youthcare-va",
+  "name": "Hallmark Youthcare",
+  "city": "Richmond (Goochland Co.)",
+  "state": "VA",
+  "operator": "Hallmark Youthcare",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "License revoked Aug 19, 2026",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12860,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid",
+    "detail": "A psychiatric residential treatment facility, a level of care paid for through Medicaid. Virginia revoked its license on August 19, 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.wtvr.com/news/local-news/spanberger-revokes-hallmark-youthcare-license-aug-19-2026",
+      "label": "wtvr.com"
+     },
+     {
+      "url": "https://www.dlcv.org/hallmark-youthcare-lawsuit",
+      "label": "dlcv.org"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "child_welfare",
+    "detail": "Housed children in Virginia foster care; all of them were moved out before Virginia revoked its license on August 19, 2026.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.wtvr.com/news/local-news/spanberger-revokes-hallmark-youthcare-license-aug-19-2026",
+      "label": "wtvr.com"
+     },
+     {
+      "url": "https://www.dlcv.org/hallmark-youthcare-lawsuit",
+      "label": "dlcv.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "harbor-point-behavioral-health-center-va",
+  "name": "Harbor Point Behavioral Health Center",
+  "city": "Portsmouth",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12801,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 50, 52, 115), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Universal Health Services' KidLink network lists it as a TRICARE-certified secure residential treatment center.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://kidlinknetwork.com/our-virginia-locations/",
+      "label": "UHS KidLink network"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "newport-news-behavioral-health-center-va",
+  "name": "Newport News Behavioral Health Center",
+  "city": "Newport News",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12804,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 23, 112, 116), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its admissions page calls it a TRICARE-certified psychiatric residential treatment facility.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://newportnewsbhc.com/admissions/",
+      "label": "newportnewsbhc.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "north-spring-behavioral-healthcare-va",
+  "name": "North Spring Behavioral Healthcare",
+  "city": "Leesburg",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12896,
+    "how": "close name"
+   },
+   {
+    "id": 12805,
+    "how": "close name"
+   },
+   {
+    "id": 12806,
+    "how": "close name"
+   },
+   {
+    "id": 12807,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 46, 59), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Universal Health Services' KidLink network lists it as TRICARE certified.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://kidlinknetwork.com/our-virginia-locations/",
+      "label": "UHS KidLink network"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "northern-virginia-juvenile-detention-center-va",
+  "name": "Northern Virginia Juvenile Detention Center",
+  "city": "Alexandria",
+  "state": "VA",
+  "operator": "Commission",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "2023 award",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12897,
+    "how": "exact name"
+   },
+   {
+    "id": 12921,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Received about $1.3 million in three federal health and human services awards in 2023 for secure beds for unaccompanied children.",
+    "years": "2023",
+    "sources": [
+     {
+      "url": "https://www.govconinabox.com/explore/contractors/profile/JJ2SNCZ35AJ3",
+      "label": "govconinabox.com"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "poplar-springs-hospital-va",
+  "name": "Poplar Springs Hospital",
+  "city": "Petersburg",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Current website (2025-26)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12809,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "tricare",
+    "detail": "Universal Health Services' KidLink network lists it as TRICARE certified, and it appears on the TRICARE list of authorized residential treatment centers from about 2004.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://kidlinknetwork.com/our-virginia-locations/",
+      "label": "UHS KidLink network"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "shenandoah-valley-juvenile-center-va",
+  "name": "Shenandoah Valley Juvenile Center",
+  "city": "Staunton",
+  "state": "VA",
+  "operator": "SVJC Commission",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Used by ORR FY2022-2023",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12912,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Held unaccompanied children for the Office of Refugee Resettlement in secure care, in a 58-bed juvenile detention center, until about 2023.",
+    "years": "2022-2023",
+    "sources": [
+     {
+      "url": "https://www.elfinanciero.com.mx/mundo/2025/03/21/trump-abrira-un-centro-para-detener-a-ninos-migrantes-en-eu-esto-sabemos-de-su-plan/",
+      "label": "elfinanciero.com.mx"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "the-hughes-center-va",
+  "name": "The Hughes Center",
+  "city": "Danville",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Operating 2022 (length-of-stay data, SFC)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12810,
+    "how": "exact name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 102), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "the-pines-residential-treatment-center-va",
+  "name": "The Pines Residential Treatment Center",
+  "city": "Portsmouth",
+  "state": "VA",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12808,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 85), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "youth-for-tomorrow-new-life-center-va",
+  "name": "Youth For Tomorrow (New Life Center)",
+  "city": "Bristow",
+  "state": "VA",
+  "operator": "Youth For Tomorrow",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "Operating 2026 (named in ACLU-VA suit June 2026)",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 12825,
+    "how": "other/past name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "orr",
+    "detail": "Holds an Office of Refugee Resettlement grant (90ZU0670) of $15.08 million, awarded in April 2026, for shelter and transitional foster care of unaccompanied children on its residential campus.",
+    "years": "2026",
+    "sources": [
+     {
+      "url": "https://www.highergov.com/grant/90ZU0670/",
+      "label": "HigherGov (grant record)"
+     },
+     {
+      "url": "https://www.acluva.org/cases/jane-p-et-al-v-salazar-et-al/",
+      "label": "acluva.org"
+     }
+    ],
+    "confidence": "high"
+   },
+   {
+    "stream": "tricare",
+    "detail": "Its website says it recently certified its programs with TRICARE.",
+    "years": "",
+    "sources": [
+     {
+      "url": "https://www.youthfortomorrow.org/residential/tricare/",
+      "label": "youthfortomorrow.org"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "river-park-hospital-wv",
+  "name": "River Park Hospital",
+  "city": "Huntington",
+  "state": "WV",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "matched",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 100377,
+    "how": "exact name"
+   },
+   {
+    "id": 14014,
+    "how": "close name"
+   },
+   {
+    "id": 14015,
+    "how": "close name"
+   },
+   {
+    "id": 14016,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 54, 64, 92), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ },
+ {
+  "key": "trinity-teen-solutions-wy",
+  "name": "Trinity Teen Solutions",
+  "city": "Powell",
+  "state": "WY",
+  "operator": "",
+  "confidence": "high",
+  "match": "matched",
+  "operating": "",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13436,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "ppp",
+    "detail": "Received a Paycheck Protection Program loan of $150,000 to $350,000 in 2020.",
+    "years": "2020",
+    "sources": [
+     {
+      "url": "https://pppreport.org/location/WY/POWELL",
+      "label": "PPP loan record"
+     }
+    ],
+    "confidence": "high"
+   }
+  ]
+ },
+ {
+  "key": "wyoming-behavioral-institute-wy",
+  "name": "Wyoming Behavioral Institute",
+  "city": "Casper",
+  "state": "WY",
+  "operator": "UHS",
+  "confidence": "medium",
+  "match": "check",
+  "operating": "Named in 2022-24 Senate investigation; current status not confirmed",
+  "flags": [],
+  "candidates": [
+   {
+    "id": 13438,
+    "how": "close name"
+   },
+   {
+    "id": 13412,
+    "how": "close name"
+   }
+  ],
+  "entries": [
+   {
+    "stream": "medicaid_child_welfare",
+    "detail": "Named in the U.S. Senate Finance Committee's June 2024 staff report \"Warehouses of Neglect\" (pp. 41, 43), which covers youth residential treatment placements \"funded through the Medicaid program and the Social Security Act's child welfare provisions\" (p. 3). The report says Medicaid was 39 percent of Universal Health Services' behavioral health revenue in 2023 (pp. 28-29).",
+    "years": "2022-2024",
+    "sources": [
+     {
+      "url": "https://www.finance.senate.gov/chairmans-news/wyden-investigation-exposes-systemic-taxpayer-funded-child-abuse-and-neglect-in-youth-residential-treatment-facilities",
+      "label": "U.S. Senate Finance Committee"
+     }
+    ],
+    "confidence": "medium"
+   }
+  ]
+ }
+]

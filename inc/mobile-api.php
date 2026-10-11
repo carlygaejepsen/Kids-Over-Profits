@@ -121,7 +121,7 @@ if (!function_exists('kop_mobile_facility_payload')) {
             'place', 'city', 'state_code', 'state_name', 'country', 'hub_name', 'hub_url',
             'operator', 'siblings', 'program_homes', 'home_of', 'addresses', 'former_locations', 'operated',
             'summary', 'facts', 'fact_sources', 'practices', 'incidents', 'staff', 'notes', 'field_notes',
-            'testimony', 'forum', 'videos', 'profile_links', 'resources', 'resource_links',
+            'testimony', 'forum', 'videos', 'profile_links', 'resources', 'resource_links', 'federal_funding',
             'lawsuits', 'memorials', 'eras', 'wiki', 'updated_at', 'updated_label',
             'news_url', 'lawsuits_url', 'memorial_url', 'wiki_url', 'submit_url',
         );

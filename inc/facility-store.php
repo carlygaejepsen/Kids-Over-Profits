@@ -181,6 +181,63 @@ if (!function_exists('kop_facility_resource_link_list')) {
     }
 }
 
+if (!function_exists('kop_facility_federal_funding_streams')) {
+    /** federalFunding streams, in the order the facility page lists them. */
+    function kop_facility_federal_funding_streams() {
+        return array(
+            'medicaid'               => 'Medicaid',
+            'medicaid_child_welfare' => 'Medicaid and federal child welfare funds',
+            'child_welfare'          => 'Federal foster care funds (Title IV-E)',
+            'orr'                    => 'Office of Refugee Resettlement (unaccompanied migrant children)',
+            'tricare'                => 'TRICARE (health insurance for military families)',
+            'ppp'                    => 'Paycheck Protection Program loan',
+            'education'              => 'U.S. Department of Education',
+            'other'                  => 'Other federal money',
+        );
+    }
+}
+
+if (!function_exists('kop_facility_federal_funding_list')) {
+    /**
+     * federalFunding: federal money the facility received, [{stream, detail,
+     * years, sources [{url, label}], ref, source}]. stream is a key of
+     * kop_facility_federal_funding_streams() (unknown: 'other'); ref names the
+     * entry for an exact Undo (inc/federal-funding.php); source is who found it.
+     * An entry with no detail and no source is dropped. Mirrored by
+     * v2FederalFundingList() in js/data-form-modules/data-normalizer.js.
+     */
+    function kop_facility_federal_funding_list($value) {
+        if (!is_array($value)) return array();
+        $streams = kop_facility_federal_funding_streams();
+        $out = array();
+        foreach ($value as $entry) {
+            if (!is_array($entry)) continue;
+            $sources = array();
+            $seen = array();
+            foreach ((array) ($entry['sources'] ?? array()) as $s) {
+                if (is_string($s)) $s = array('url' => $s);
+                if (!is_array($s)) continue;
+                $url = kop_facility_str($s['url'] ?? '');
+                if (!preg_match('#^https?://\S+$#i', $url) || isset($seen[$url])) continue;
+                $seen[$url] = true;
+                $sources[] = array('url' => $url, 'label' => kop_facility_str($s['label'] ?? ''));
+            }
+            $detail = kop_facility_str($entry['detail'] ?? '');
+            if ($detail === '' && !$sources) continue;
+            $stream = kop_facility_str($entry['stream'] ?? '');
+            $out[] = array(
+                'stream'  => isset($streams[$stream]) ? $stream : 'other',
+                'detail'  => $detail,
+                'years'   => kop_facility_str($entry['years'] ?? ''),
+                'sources' => $sources,
+                'ref'     => kop_facility_str($entry['ref'] ?? ''),
+                'source'  => kop_facility_str($entry['source'] ?? ''),
+            );
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('kop_facility_testimony_redact')) {
     /**
      * Drop unpublished survivor testimony from any payload, at any depth, so
@@ -688,6 +745,7 @@ if (!function_exists('kop_facility_blank_document')) {
             'licensing'     => array(),
             'profileLinks'  => array(),
             'resourceLinks' => array(),
+            'federalFunding' => array(),
             'resources'     => array(),
             'treatmentTypes' => array(),
             'targetedDiagnoses' => array(),
@@ -1018,6 +1076,7 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['licensing']      = kop_facility_list($f['licensing'] ?? array());
         $doc['profileLinks']   = kop_facility_link_list($f['profileLinks'] ?? array());
         $doc['resourceLinks']  = kop_facility_resource_link_list($f['resourceLinks'] ?? array());
+        $doc['federalFunding'] = kop_facility_federal_funding_list($f['federalFunding'] ?? array());
         $doc['notes']          = kop_facility_list($f['notes'] ?? array());
         if ($gender_note !== '') $doc['notes'] = kop_facility_list(array_merge($doc['notes'], array($gender_note)));
 
@@ -1066,7 +1125,7 @@ if (!function_exists('kop_facility_normalize')) {
         $known = array(
             'identification', 'locationDetails', 'addressParts', 'address', 'location',
             'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
-            'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'resources', 'treatmentTypes',
+            'certifications', 'licensing', 'profileLinks', 'resourceLinks', 'federalFunding', 'resources', 'treatmentTypes',
             'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
             'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
             'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
@@ -1681,6 +1740,7 @@ if (!function_exists('kop_facility_to_legacy')) {
             'licensing'      => $doc['licensing'],
             'profileLinks'   => $doc['profileLinks'],
             'resourceLinks'  => $doc['resourceLinks'] ?? array(),
+            'federalFunding' => $doc['federalFunding'] ?? array(),
             'resources'      => $doc['resources'],
             'treatmentTypes' => $doc['treatmentTypes'],
             'targetedDiagnoses' => $doc['targetedDiagnoses'] ?? array(),
