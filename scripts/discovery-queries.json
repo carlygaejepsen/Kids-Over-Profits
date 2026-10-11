@@ -116,7 +116,9 @@
       "boost": 2,
       "match": [
         "conversion therapy"
-      ]
+      ],
+      "strongKeywordOnly": true,
+      "_strongComment": "Needs a strong word in the headline (survivor, abuse, lawsuit...): \"ban on\" / \"legislation\" let UK, NZ and Scottish party politics through, all declined."
     },
     {
       "label": "residential-treatment-youth",
@@ -591,6 +593,13 @@
     "horizon",
     "horizons",
     "haven"
+  ],
+  "_rejectHeadlinesComment": "Google News headlines matching any of these (case-insensitive regular expressions; plain syntax that PHP and JS read alike) are rejected, unless the text names a program in the records (the owner approves \"students at Mingus Mountain Academy attack staff\", declines the same at a county detention center). From stories the owner declined: a youth attacking staff, an outsider killing a staff member, \"boarding (a) school bus\". Staff charged with harming young people must never match.",
+  "rejectHeadlines": [
+    "\\bboarding (a |the )?school bus",
+    "\\b(assaults?|attacks?|stabs?|punch(es)?) (an? )?(staff|employee|worker|officer|guard|counselor)\\b",
+    "\\b(staff member|employee|worker|officer|guard|counselor)s? (hospitali[sz]ed|suffers|(is |was )?injured|(attacked|assaulted|stabbed|killed) by)\\b",
+    "\\b(stabbing|murder|killing) of (an? )?[\\w' -]{0,30}(employee|worker|staff member)\\b"
   ],
   "_redditComment": "Every link posted to r/troubledteens (link posts and links inside text posts) is submitted without scoring: the subreddit is the filter. Only reddit-internal, social and video hosts and PDFs are skipped, because the AI stage has nothing to extract from them."
 }

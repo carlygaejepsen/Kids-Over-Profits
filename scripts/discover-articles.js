@@ -545,8 +545,22 @@ function loadDiscoveryQueries() {
             // Phrases (lower-cased) that must appear in the headline/blurb for
             // the boost to apply. Google News relevance matching is loose.
             match: strList(t.match).map(s => s.toLowerCase()),
-            when: typeof t.when === 'string' ? t.when.trim() : null
+            when: typeof t.when === 'string' ? t.when.trim() : null,
+            // The topic's own phrase plus a weak word ("ban on", "legislation")
+            // is not enough: foreign politics passes that ("conversion therapy").
+            strongOnly: !!t.strongKeywordOnly
         }));
+
+    // Headline patterns (case-insensitive regex, written so PHP and JS read
+    // them alike) that reject a Google News item outright.
+    const rejectHeadlines = [];
+    for (const re of strList(raw.rejectHeadlines)) {
+        try {
+            rejectHeadlines.push({ source: re, re: new RegExp(re, 'iu') });
+        } catch {
+            warn(`  ! rejectHeadlines: bad pattern skipped: ${re}`);
+        }
+    }
 
     return {
         facilityKeywords: facilityKeywords.length ? facilityKeywords : DEFAULT_FACILITY_KEYWORDS,
@@ -559,7 +573,8 @@ function loadDiscoveryQueries() {
         topicQueries,
         genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean)),
         ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean)),
-        genericAliasWords: new Set(strList(raw.genericAliasWords).map(normalizeName).filter(Boolean))
+        genericAliasWords: new Set(strList(raw.genericAliasWords).map(normalizeName).filter(Boolean)),
+        rejectHeadlines
     };
 }
 
@@ -882,7 +897,8 @@ async function fetchGoogleNewsForTopic(topic, queries) {
         origin: 'google-news-topic',
         topicQuery: topic.label,
         topicBoost: topic.boost,
-        topicMatch: topic.match
+        topicMatch: topic.match,
+        topicStrongOnly: topic.strongOnly
     }));
     return r;
 }
@@ -1286,6 +1302,9 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     // Facility match
     let match = matchFacility(text, facilityIndex);
     let cityMatched = false;
+    // A program's name in the text keeps a topic story even when the tag is
+    // dropped below ("Newport Academy Lays Off 68 Workers" has no abuse word).
+    const facilityNamed = !!match;
 
     if (match) {
         const fac = match.facility;
@@ -1336,6 +1355,19 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         }
     }
 
+    // Headlines the owner keeps declining when no program of ours is named:
+    // staff as the victim of a youth's attack at a county detention center,
+    // "boarding (a) school bus" (rejectHeadlines in the queries file). The
+    // same story at a program in the records ("students at Mingus Mountain
+    // Academy attack staff") is wanted.
+    if (!match) {
+        for (const rh of opts.rejectHeadlines || []) {
+            if (rh.re.test(candidate.title)) {
+                return { accept: false, reason: 'headline-excluded', meta: { pattern: rh.source, title: candidate.title } };
+            }
+        }
+    }
+
     // Abuse keyword scoring (title weighted higher than description; strong
     // keywords outrank weak ones)
     const titleLower = candidate.title.toLowerCase();
@@ -1381,7 +1413,21 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         // No phrases (a hand-edit typo in the queries file) means no boost,
         // not an unconditional one.
         const phraseHit = phrases.length ? phrases.find(p => textLower.includes(p)) : null;
-        if (phraseHit) {
+        if (phraseHit && !facilityNamed && !titleHit && !weakTitleHit && !descHit) {
+            // The topic phrase alone ("troubled teen" in soap spoilers, a
+            // teen's own arson case) with no abuse word and no program named.
+            return {
+                accept: false,
+                reason: 'topic-no-keyword',
+                meta: { topic: candidate.topicQuery, score, reasons, host: candHost }
+            };
+        } else if (phraseHit && !facilityNamed && !titleHit && candidate.topicStrongOnly) {
+            return {
+                accept: false,
+                reason: 'topic-weak-keyword',
+                meta: { topic: candidate.topicQuery, score, reasons, host: candHost }
+            };
+        } else if (phraseHit) {
             score += candidate.topicBoost;
             reasons.push(`topic:${candidate.topicQuery}`);
         } else if (!match) {
@@ -1666,7 +1712,8 @@ async function main() {
             // Same story already submitted on an earlier night under another URL.
             if (hk && state.seenHeadlines[hk]) { previouslySubmitted++; continue; }
 
-            const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases);
+            const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases,
+                { rejectHeadlines: queries.rejectHeadlines });
             if (result.accept) {
                 if (hk) dedupeHeadlines.add(hk);
                 queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });

@@ -601,8 +601,23 @@ function load_discovery_queries(): array {
             // Phrases (lower-cased) that must appear in the headline/blurb for
             // the boost to apply. Google News relevance matching is loose.
             'match' => array_map('mb_strtolower', $strList($t['match'] ?? null)),
-            'when' => is_string($t['when'] ?? null) ? trim($t['when']) : null
+            'when' => is_string($t['when'] ?? null) ? trim($t['when']) : null,
+            // The topic's own phrase plus a weak word ("ban on", "legislation")
+            // is not enough: foreign politics passes that ("conversion therapy").
+            'strongOnly' => !empty($t['strongKeywordOnly'])
         ];
+    }
+
+    // Headline patterns (case-insensitive regex, written so PHP and JS read
+    // them alike) that reject a Google News item outright.
+    $rejectHeadlines = [];
+    foreach ($strList($raw['rejectHeadlines'] ?? null) as $re) {
+        $pcre = '~' . str_replace('~', '\\~', $re) . '~iu';
+        if (@preg_match($pcre, '') === false) {
+            kop_warn("  ! rejectHeadlines: bad pattern skipped: {$re}");
+            continue;
+        }
+        $rejectHeadlines[] = ['source' => $re, 'pcre' => $pcre];
     }
 
     $generic = [];
@@ -635,7 +650,8 @@ function load_discovery_queries(): array {
         'topicQueries' => $topicQueries,
         'genericQueryNames' => $generic,
         'ignoreAliases' => $ignoreAliases,
-        'genericAliasWords' => $genericAliasWords
+        'genericAliasWords' => $genericAliasWords,
+        'rejectHeadlines' => $rejectHeadlines
     ];
 }
 
@@ -958,7 +974,8 @@ function fetch_google_news_for_topic(array $topic, array $queries): array {
         'origin' => 'google-news-topic',
         'topicQuery' => $topic['label'],
         'topicBoost' => $topic['boost'],
-        'topicMatch' => $topic['match']
+        'topicMatch' => $topic['match'],
+        'topicStrongOnly' => $topic['strongOnly']
     ]), $r['items']);
     return $r;
 }
@@ -1337,6 +1354,9 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
 
     $match = match_facility($text, $facilityIndex);
     $cityMatched = false;
+    // A program's name in the text keeps a topic story even when the tag is
+    // dropped below ("Newport Academy Lays Off 68 Workers" has no abuse word).
+    $facilityNamed = $match !== null;
 
     if ($match !== null) {
         $fac = $match['facility'];
@@ -1386,6 +1406,19 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         }
     }
 
+    // Headlines the owner keeps declining when no program of ours is named:
+    // staff as the victim of a youth's attack at a county detention center,
+    // "boarding (a) school bus" (rejectHeadlines in the queries file). The
+    // same story at a program in the records ("students at Mingus Mountain
+    // Academy attack staff") is wanted.
+    if ($match === null) {
+        foreach ($opts['rejectHeadlines'] ?? [] as $rh) {
+            if (preg_match($rh['pcre'], $candidate['title'])) {
+                return ['accept' => false, 'reason' => 'headline-excluded', 'meta' => ['pattern' => $rh['source'], 'title' => $candidate['title']]];
+            }
+        }
+    }
+
     // Abuse keyword scoring (title weighted higher than description; strong
     // keywords outrank weak ones)
     $firstHit = static function (array $list, string $hay): ?string {
@@ -1398,6 +1431,7 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
     $descLower = mb_strtolower($candidate['description']);
     $titleHit = find_keyword($ABUSE_KEYWORDS, $titleLower);
     $weakTitleHit = $titleHit !== null ? null : find_keyword($WEAK_ABUSE_KEYWORDS, $titleLower);
+    $descHit = null;
     if ($titleHit !== null) {
         $score += 3;
         $reasons[] = 'title-kw:' . $titleHit;
@@ -1436,7 +1470,21 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         // No phrases (a hand-edit typo in the queries file) means no boost,
         // not an unconditional one.
         $phraseHit = $phrases ? $firstHit($phrases, mb_strtolower($text)) : null;
-        if ($phraseHit !== null) {
+        if ($phraseHit !== null && !$facilityNamed && $titleHit === null && $weakTitleHit === null && $descHit === null) {
+            // The topic phrase alone ("troubled teen" in soap spoilers, a
+            // teen's own arson case) with no abuse word and no program named.
+            return [
+                'accept' => false,
+                'reason' => 'topic-no-keyword',
+                'meta' => ['topic' => $candidate['topicQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
+            ];
+        } elseif ($phraseHit !== null && !$facilityNamed && $titleHit === null && !empty($candidate['topicStrongOnly'])) {
+            return [
+                'accept' => false,
+                'reason' => 'topic-weak-keyword',
+                'meta' => ['topic' => $candidate['topicQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
+            ];
+        } elseif ($phraseHit !== null) {
             $score += (int)$candidate['topicBoost'];
             $reasons[] = 'topic:' . ($candidate['topicQuery'] ?? '');
         } elseif ($match === null) {
@@ -1689,7 +1737,7 @@ function main(): void {
     // -- Filter one tier's raw items into a submit queue --
     $filterBatch = function (array $candidates, string $label) use (
         &$state, &$seen, &$dedupeSeen, &$dedupeHeadlines, &$totals,
-        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases
+        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $queries
     ): array {
         $totals['candidates'] += count($candidates);
         $state['stats']['discovered'] += count($candidates);
@@ -1714,7 +1762,8 @@ function main(): void {
             // Same story already submitted on an earlier night under another URL.
             if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
 
-            $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases);
+            $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases,
+                ['rejectHeadlines' => $queries['rejectHeadlines']]);
             if ($result['accept']) {
                 if ($hk !== '') $dedupeHeadlines[$hk] = true;
                 $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
