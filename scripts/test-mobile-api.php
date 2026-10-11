@@ -262,7 +262,7 @@ if ($fixture) {
 }
 
 $required = array('api_version', 'id', 'slug', 'url', 'name', 'status', 'place', 'operator', 'siblings', 'addresses', 'operated', 'summary',
-    'incidents', 'staff', 'news', 'lawsuits', 'memorials', 'inspections', 'documents', 'updated_at', 'formerly', 'aka', 'profile_links', 'resource_links');
+    'incidents', 'staff', 'news', 'lawsuits', 'memorials', 'inspections', 'documents', 'updated_at', 'formerly', 'aka', 'profile_links', 'resource_links', 'network');
 foreach ($sample_ids as $fid) {
     $t = microtime(true);
     $payload = kop_mobile_facility($fid);
@@ -278,6 +278,21 @@ foreach ($sample_ids as $fid) {
     $json = json_encode($payload);
     $check("facility $fid encodes to JSON under 500 KB", $json !== false && strlen($json) < 500 * 1024, (int) (strlen((string) $json) / 1024) . ' KB');
     $check("facility $fid documents is {folder_id, url}", array_keys($payload['documents']) === array('folder_id', 'url'));
+    // The app's Connections section: the facility's names on the network map, one link per map name.
+    $net = $payload['network'] ?? null;
+    $check("facility $fid has a network key", array_key_exists('network', $payload));
+    if (is_array($net)) {
+        $nodes = array_column($net['links'], 'node');
+        $shape = array_filter($net['links'], function ($l) {
+            return array_keys($l) !== array('node', 'name', 'kind', 'group', 'role', 'relation', 'url') || $l['node'] === '' || $l['name'] === '' || $l['group'] === '';
+        });
+        $check("facility $fid network links are {node, name, kind, group, role, relation, url}", !$shape, json_encode(array_slice(array_values($shape), 0, 1)));
+        $check("facility $fid network names each map name once", count($nodes) === count(array_unique($nodes)));
+        $check("facility $fid network map_url opens its node", strpos($net['map_url'], '#open=' . rawurlencode($net['node'])) !== false, $net['map_url']);
+        $check("facility $fid network never links itself", !in_array($net['node'], $nodes, true));
+        if ($list) echo "    network: " . count($net['links']) . " links, groups " . implode(', ', array_unique(array_column($net['links'], 'group'))) . "
+";
+    }
     if ($payload['documents']['folder_id'] > 0) {
         // kop/v1/facility/<slug>/documents: the library the app lists in place of the website's block.
         $lib = kop_mobile_doc_library($payload['documents']['folder_id']);

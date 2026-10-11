@@ -1667,6 +1667,18 @@ other name's (it is now cut into "As <name>" sections like the website); the oth
    `featured_total`, and `/news?featured=1` lists only the picks. The app does not draw any of it yet: a strip
    above the news tab, the flag and note on a card, and a list screen for `?featured=1`.
 
+**Home screen and network map in the app (2026-10-11).** The first tab is Home: search on top, then
+tiles into the map, companies, states, news, Send and About (About left the tab bar for the Map tab),
+the three newest articles, the programs and companies this reader opened last (on the phone only,
+AsyncStorage, with Clear) and the Resources box. The Map tab is the website's `/network-map/` in a web
+view, the site's header, footer, donate and floating buttons hidden by CSS the app injects
+(`src/lib/mapPage.ts`; a renamed theme class there shows them again); links to facility and company
+pages open the app's screens, and any site link to `/network-map/#open=` opens the tab on that name. A
+facility page's Connections section draws the facility with its map names in two columns (16 at most,
+the rest counted) and lists the website's Network groups; the payload's `network` key
+(`kop_mobile_facility_network()`, checked by `scripts/test-mobile-api.php`). Owner: try the Map tab on a
+phone (pinch, the drawer, a facility link back into the app).
+
 **Send to KOP in the app (2026-10-07).** A "Send" tab: links (article,
 lawsuit, bill, website; the extension's `classify.js` ported) and facility
 information (a missing facility, or a correction from the facility page's

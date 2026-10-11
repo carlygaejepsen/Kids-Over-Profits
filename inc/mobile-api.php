@@ -164,7 +164,76 @@ if (!function_exists('kop_mobile_facility_payload')) {
             'folder_id' => (int) ($docs['folder_id'] ?? 0),
             'url'       => (!empty($docs['folder_id']) && !empty($page['url'])) ? $page['url'] . '#documents' : '',
         );
+        $out['network'] = !empty($page['id']) ? kop_mobile_facility_network((int) $page['id']) : null;
         return $out;
+    }
+}
+
+if (!function_exists('kop_mobile_facility_network')) {
+    /**
+     * The facility's names on the network map, for the app's Connections section (drawn around the
+     * facility, opened on the Map tab): array('node', 'name', 'map_url', 'links' => array(array('node',
+     * 'name', 'kind', 'group', 'role', 'relation', 'url'))), one link per map name, or null when the map
+     * does not draw it. 'group' is the website's Network list heading (kop_facility_pages_network());
+     * people are 'People', who the website shows as staff cards instead.
+     */
+    function kop_mobile_facility_network($facility_id) {
+        if (!function_exists('kop_network_map_facility_connections')) return null;
+        $all = kop_network_map_facility_connections();
+        $entry = $all[(int) $facility_id] ?? null;
+        if (!$entry || empty($entry['links'])) return null;
+        $map = function_exists('kop_network_map_page_url') ? kop_network_map_page_url() : home_url('/network-map/');
+
+        $links = array();
+        foreach ($entry['links'] as $link) {
+            $relation = (string) ($link['relation'] ?? '');
+            $kind = (string) ($link['kind'] ?? '');
+            if ($relation === 'became' || $relation === 'formerly') {
+                $group = 'Names';
+            } elseif ($relation !== '') {
+                $group = 'Acquisitions';
+            } elseif ($kind === 'person') {
+                $group = 'People';
+            } else {
+                $group = function_exists('kop_network_map_label') ? kop_network_map_label($link['category'], 'category') : ucfirst((string) $link['category']);
+            }
+            $role = (string) ($link['role'] ?? '');
+            if ($relation === 'became') $role = 'Later known as';
+            elseif ($relation === 'formerly') $role = 'Earlier name';
+            elseif ($relation === 'acquired') $role = 'Acquired by this program' . ($role !== '' ? ' (' . $role . ')' : '');
+            elseif ($relation === 'acquired by') $role = 'Acquired this program' . ($role !== '' ? ' (' . $role . ')' : '');
+
+            $key = (string) $link['node'];
+            if (isset($links[$key])) {
+                if ($role !== '' && stripos($links[$key]['role'], $role) === false) {
+                    $links[$key]['role'] = $links[$key]['role'] === '' ? $role : $links[$key]['role'] . '; ' . $role;
+                }
+                continue;
+            }
+            $url = '';
+            if (!empty($link['facilityId']) && (int) $link['facilityId'] !== (int) $facility_id && function_exists('kop_facility_page_url')) {
+                $url = (string) kop_facility_page_url((int) $link['facilityId']);
+            } elseif ($kind === 'parent' && function_exists('kop_operator_page_url_for_name')) {
+                $url = (string) kop_operator_page_url_for_name((string) $link['name']);
+            }
+            $links[$key] = array(
+                'node'     => $key,
+                'name'     => (string) $link['name'],
+                'kind'     => $kind,
+                'group'    => $group,
+                'role'     => $role,
+                'relation' => $relation,
+                'url'      => $url,
+            );
+        }
+        $links = array_values($links);
+        usort($links, static function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+        return array(
+            'node'    => (string) $entry['node'],
+            'name'    => (string) $entry['name'],
+            'map_url' => $map . '#open=' . rawurlencode((string) $entry['node']),
+            'links'   => $links,
+        );
     }
 }
 
