@@ -86,6 +86,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [-
 # Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious
 # findings, lawsuits, incidents, news and staff of its years, another name's record included (both pages print every name).
 # No usable rename year = the page stays whole. A new dated list on the page goes in kop_facility_eras_kinds()
+# Every page names all the names the map's rename lines join to it, cut or not (kop_facility_eras_map_names(): "Formerly" /
+# "Later called", linked to the other name's page); names with no record of their own are searchable (kop_v2_alias_index()) and
+# match inspection rows and folders (kop_facility_pages_doc_name_keys(), only a name no other record reaches)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-eras.php [--list]   # every renamed program, rendered to the temp dir
 # Facility pages show approved serious findings (inspection_highlights), staff with their other industry roles
 # (other records' staff lists + network map), incidents as a timeline, and news cards with pictures:

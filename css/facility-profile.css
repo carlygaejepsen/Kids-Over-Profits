@@ -1850,7 +1850,8 @@ p.kop-op-draft {
     font-style: normal;
 }
 
-.kop-fp-home-of a {
+.kop-fp-home-of a,
+.kop-fp-formerly a {
     color: var(--kop-navy-blue, #000080);
     font-weight: 600;
 }

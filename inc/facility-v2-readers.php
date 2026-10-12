@@ -649,7 +649,10 @@ if (!function_exists('kop_v2_alias_index')) {
      * record carries the old name, this is what it is called now). One pass
      * over facilities_v2 and kop_operators, kept in a transient keyed by both
      * tables' row count and last update, so an edited name is searchable on
-     * the next request.
+     * the next request. A facility also takes the names the network map's
+     * rename lines join to it that have no record of their own (earlier ones
+     * 'past', later ones 'current'; inc/facility-eras.php), so the key also
+     * follows the map's build and Map Renames' decisions.
      */
     function kop_v2_alias_index() {
         global $wpdb;
@@ -658,7 +661,9 @@ if (!function_exists('kop_v2_alias_index')) {
         $ops_table = $wpdb->prefix . 'kop_operators';
         $fp_f = $wpdb->get_row("SELECT COUNT(*), MAX(id), MAX(updated_at) FROM facilities_v2", ARRAY_N);
         $fp_o = $wpdb->get_row("SELECT COUNT(*), MAX(id), MAX(updated_at) FROM {$ops_table}", ARRAY_N);
-        $cache_key = 'kop_v2_alias_idx_' . md5(implode('|', (array)$fp_f) . '#' . implode('|', (array)$fp_o));
+        $fp_map = (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '')
+            . (function_exists('kop_network_renames_decisions') ? md5(serialize(kop_network_renames_decisions())) : '');
+        $cache_key = 'kop_v2_alias_idx_' . md5(implode('|', (array)$fp_f) . '#' . implode('|', (array)$fp_o) . '#' . $fp_map);
         $cached = get_transient($cache_key);
         if (is_array($cached) && isset($cached['facilities'], $cached['operators'])) {
             return $index = $cached;
@@ -687,13 +692,31 @@ if (!function_exists('kop_v2_alias_index')) {
               WHERE json_data LIKE '%pastNames%' OR json_data LIKE '%otherNames%' OR json_data LIKE '%currentName%'",
             ARRAY_A
         );
+        $map_names = array();
+        if (function_exists('kop_facility_eras_map') && function_exists('kop_facility_eras_map_names')) {
+            foreach (array_keys(kop_facility_eras_map()['facility']) as $fid) {
+                foreach (kop_facility_eras_map_names($fid) as $m) {
+                    if (!$m['facility_id']) $map_names[(int)$fid][$m['relation'] === 'earlier' ? 'past' : 'current'][] = $m['name'];
+                }
+            }
+            if ($map_names) {
+                $ids = implode(',', array_map('intval', array_keys($map_names)));
+                $rows = array_merge((array)$rows, (array)$wpdb->get_results("SELECT id, name, json_data FROM facilities_v2 WHERE id IN ({$ids})", ARRAY_A));
+            }
+        }
+        $done = array();
         foreach ((array)$rows as $r) {
+            if (isset($done[(int)$r['id']])) continue;
+            $done[(int)$r['id']] = true;
             $doc = kop_v2_decode($r['json_data']);
             if (!$doc) continue;
             $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
+            $from_map = $map_names[(int)$r['id']] ?? array();
             foreach ($collect((int)$r['id'], $r['name'], array(
-                'past'  => kop_v2_search_name_list($ident['pastNames'] ?? null),
+                'past'  => array_merge(kop_v2_search_name_list($ident['pastNames'] ?? null), $from_map['past'] ?? array()),
                 'other' => kop_v2_search_name_list($ident['otherNames'] ?? null),
+                // Later names the map knows and the record does not ("Now known as").
+                'current' => $from_map['current'] ?? array(),
             ), $ident['currentName'] ?? null) as $hit) {
                 $index['facilities'][] = $hit;
             }

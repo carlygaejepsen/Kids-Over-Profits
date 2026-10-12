@@ -873,12 +873,19 @@ if (!function_exists('kop_facility_pages_key_matches')) {
 }
 
 if (!function_exists('kop_facility_pages_doc_name_keys')) {
-    /** Name keys of the facility's current, other and past names. */
+    /**
+     * Name keys of the facility's current, other and past names, and of the
+     * names with no record of their own that the network map's rename lines
+     * join to this record alone (kop_facility_eras_map_own_names()).
+     */
     function kop_facility_pages_doc_name_keys(array $doc, $unique_name = '') {
         $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
         $names = array($ident['name'] ?? '', $ident['currentName'] ?? '', $unique_name);
         foreach (array('otherNames', 'pastNames') as $k) {
             foreach (kop_facility_pages_text_items($ident[$k] ?? null) as $n) $names[] = $n;
+        }
+        if (function_exists('kop_facility_eras_map_own_names') && (int) ($doc['facility_id'] ?? 0) > 0) {
+            foreach (kop_facility_eras_map_own_names()[(int) $doc['facility_id']] ?? array() as $n) $names[] = $n;
         }
         $keys = array();
         foreach ($names as $n) {
@@ -2818,6 +2825,23 @@ if (!function_exists('kop_facility_page_data')) {
         }
         $formerly = array_values(array_unique($formerly));
         $aka = array_values(array_unique($aka));
+        // The names the network map's rename lines join to this one, whether or not the page is cut by name
+        // (inc/facility-eras.php): earlier ones join "Formerly", later ones are "Later called", each linked to its own page.
+        $later = array();
+        $name_urls = array();
+        if (function_exists('kop_facility_eras_map_names')) {
+            $have = array();
+            foreach (array_merge(array($name, $current_name), $formerly, $aka) as $n) $have[kop_facility_pages_name_key($n)] = true;
+            foreach (kop_facility_eras_map_names($facility_id) as $m) {
+                $url = $m['facility_id'] ? kop_facility_page_url($m['facility_id']) : '';
+                if ($url !== '') $name_urls[$m['name']] = $url;
+                $k = kop_facility_pages_name_key($m['name']);
+                if ($k === '' || isset($have[$k])) continue;
+                $have[$k] = true;
+                if ($m['relation'] === 'earlier') $formerly[] = $m['name'];
+                else $later[] = $m['name'];
+            }
+        }
 
         // ---- Facts rail -------------------------------------------------------
         $facts = array();
@@ -3032,6 +3056,8 @@ if (!function_exists('kop_facility_page_data')) {
             'current_name'  => $current_name,
             'formerly'      => $formerly,
             'formerly_years' => $formerly_years,
+            'later'         => $later,
+            'name_urls'     => $name_urls,
             'aka'           => $aka,
             'status'        => $status,
             'status_class'  => sanitize_html_class(strtolower($status)),

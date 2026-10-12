@@ -345,6 +345,67 @@ if (!function_exists('kop_facility_eras_chain')) {
     }
 }
 
+if (!function_exists('kop_facility_eras_map_names')) {
+    /**
+     * Every other name the map's rename lines join to a record, whether or
+     * not its page can be cut: [{node, name, relation 'earlier'|'later',
+     * facility_id (0 = no record of its own)}], nearest first. Lines skipped
+     * at Map Renames are left out, swapped ones read the owner's way. For the
+     * page's "Formerly" / "Later called" lines, search and the name keys
+     * inspection rows are matched by.
+     */
+    function kop_facility_eras_map_names($facility_id) {
+        $facility_id = (int) $facility_id;
+        $map = kop_facility_eras_map();
+        $mine = $map['facility'][$facility_id] ?? array();
+        if (!$mine) return array();
+        $out = array();
+        $seen = array();
+        foreach ($mine as $id) $seen[(string) $id] = true;
+        foreach (array('earlier' => 'prev', 'later' => 'next') as $relation => $dir) {
+            $queue = $mine;
+            while ($queue) {
+                $id = (string) array_shift($queue);
+                foreach ($map[$dir][$id] ?? array() as $other) {
+                    $other = (string) $other;
+                    if (isset($seen[$other])) continue;
+                    $seen[$other] = true;
+                    $queue[] = $other;
+                    $fid = (int) ($map['nodes'][$other]['facilityId'] ?? 0);
+                    if ($fid === $facility_id) continue;
+                    $name = trim((string) ($map['nodes'][$other]['name'] ?? ''));
+                    if ($name !== '') $out[] = array('node' => $other, 'name' => $name, 'relation' => $relation, 'facility_id' => $fid);
+                }
+            }
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_eras_map_own_names')) {
+    /**
+     * Facility id => names with no record of their own that the map's rename
+     * lines join to that record and to no other ("Rivendell of Utah" for
+     * Copper Hills). A name two records reach (both became "Life-Line Inc")
+     * is left out: inspection rows filed under it cannot be told apart.
+     */
+    function kop_facility_eras_map_own_names() {
+        static $memo = null;
+        if ($memo !== null) return $memo;
+        $reach = array();
+        foreach (array_keys(kop_facility_eras_map()['facility']) as $fid) {
+            foreach (kop_facility_eras_map_names($fid) as $m) {
+                if (!$m['facility_id']) $reach[$m['node']][(int) $fid] = $m['name'];
+            }
+        }
+        $memo = array();
+        foreach ($reach as $by) {
+            if (count($by) === 1) $memo[(int) key($by)][] = current($by);
+        }
+        return $memo;
+    }
+}
+
 if (!function_exists('kop_facility_eras_years_label')) {
     function kop_facility_eras_years_label($start, $end) {
         $start = (int) $start;

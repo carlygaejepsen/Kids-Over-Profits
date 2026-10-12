@@ -40,7 +40,7 @@ if (!function_exists('kop_irl_version')) {
 
     /** Bump when kop_irl_report_counts() or kop_irl_report_year() changes: every report is counted again. */
     function kop_irl_version() {
-        return 4;
+        return 5;
     }
 
     // -----------------------------------------------------------------------

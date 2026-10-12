@@ -624,7 +624,7 @@ function kop_wiki_upd_aliases(array $entry, array $page) {
     $names = kop_wiki_upd_entry_names($entry);
     $names[] = (string) ($page['name'] ?? '');
     $names[] = (string) ($page['current_name'] ?? '');
-    foreach (array('formerly', 'aka') as $f) {
+    foreach (array('formerly', 'later', 'aka') as $f) {
         foreach ((array) ($page[$f] ?? array()) as $n) $names[] = is_array($n) ? (string) ($n['name'] ?? '') : (string) $n;
     }
     $out = array();
@@ -738,7 +738,7 @@ function kop_wiki_upd_gaps(array $entry, array $page, PDO $pdo = null) {
         if (is_array($section) && !empty($section['name'])) $sections[kop_wiki_upd_key($section['name'])] = $section;
     }
     $named = array();
-    foreach ($era ? array() : array('formerly' => 'Formerly called', 'aka' => 'Also known as') as $field => $lead) {
+    foreach ($era ? array() : array('formerly' => 'Formerly called', 'later' => 'Later called', 'aka' => 'Also known as') as $field => $lead) {
         foreach ((array) ($page[$field] ?? array()) as $n) {
             $n = is_array($n) ? (string) ($n['name'] ?? '') : (string) $n;
             if ($n === '' || isset($named[kop_wiki_upd_key($n)]) || kop_wiki_upd_mentions($words, $n) || mb_strlen($n) < 4) continue;

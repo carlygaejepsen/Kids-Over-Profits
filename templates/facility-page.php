@@ -482,13 +482,23 @@ get_header();
             <?php endif; ?>
         </p>
         <h1 class="entry-title kop-fp-title"<?php echo $kop_fp_edit('names', 'names'); ?>><?php echo esc_html($page['name']); ?></h1>
+        <?php
+        // A name with its own page links there (a renamed program's other record).
+        $kop_fp_name = static function ($n) use ($page) {
+            $url = $page['name_urls'][$n] ?? '';
+            return $url !== '' ? '<a href="' . esc_url($url) . '">' . esc_html($n) . '</a>' : esc_html($n);
+        };
+        ?>
         <?php if ($page['current_name'] !== '') : ?>
-            <p class="kop-fp-formerly">Now known as <?php echo esc_html($page['current_name']); ?></p>
+            <p class="kop-fp-formerly">Now known as <?php echo $kop_fp_name($page['current_name']); ?></p>
         <?php endif; ?>
         <?php if ($page['formerly']) : ?>
-            <p class="kop-fp-formerly">Formerly <?php echo esc_html(implode(', ', array_map(static function ($n) use ($page) {
-                return isset($page['formerly_years'][$n]) ? $n . ' (' . $page['formerly_years'][$n] . ')' : $n;
-            }, $page['formerly']))); ?><?php $kop_fp_sources($page['fact_sources']['formerly'] ?? array(), 'span'); ?></p>
+            <p class="kop-fp-formerly">Formerly <?php echo implode(', ', array_map(static function ($n) use ($page, $kop_fp_name) {
+                return $kop_fp_name($n) . (isset($page['formerly_years'][$n]) ? ' (' . esc_html($page['formerly_years'][$n]) . ')' : '');
+            }, $page['formerly'])); ?><?php $kop_fp_sources($page['fact_sources']['formerly'] ?? array(), 'span'); ?></p>
+        <?php endif; ?>
+        <?php if (!empty($page['later'])) : ?>
+            <p class="kop-fp-formerly">Later called <?php echo implode(', ', array_map($kop_fp_name, $page['later'])); ?></p>
         <?php endif; ?>
         <?php if ($page['aka']) : ?>
             <p class="kop-fp-formerly">Also known as <?php echo esc_html(implode(', ', $page['aka'])); ?></p>
