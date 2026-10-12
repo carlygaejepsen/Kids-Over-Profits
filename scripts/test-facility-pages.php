@@ -526,6 +526,24 @@ $career = kop_facility_pages_person_career('Nobody Atall', 'Admissions Director 
 $check('past jobs split into place, role and years',
     count($career) === 2 && $career[0]['place'] === 'Sunrise Academy' && $career[0]['role'] === 'Admissions Director' && $career[0]['years'] === '2007'
     && $career[1]['place'] === 'Cinnamon Hills Youth Crisis Center', wp_json_encode($career));
+$career = kop_facility_pages_person_career('Nobody Atall', 'Director of Admissions - Provo Canyon School (2008-2009) [joined 2008-07; joined 2008-10-13]', 0);
+$check('a note holding ";" does not split a past job', count($career) === 1 && $career[0]['place'] === 'Provo Canyon School' && $career[0]['url'] !== '', wp_json_encode($career));
+$fold = kop_facility_pages_career_fold(array(
+    array('role' => 'Therapist', 'place' => 'Provo Canyon', 'years' => '2001', 'url' => ''),
+    array('role' => '', 'place' => 'Silverado Boys Ranch', 'years' => '', 'url' => '/facility/silverado/'),
+    array('role' => 'Director', 'place' => 'Provo Canyon School', 'years' => '', 'url' => '/facility/pcs/'),
+    array('role' => '', 'place' => 'Silverado Academy', 'years' => '', 'url' => '/facility/silverado/'),
+    array('role' => '', 'place' => 'Blue Fire Wilderness', 'years' => '', 'url' => ''),
+    array('role' => '', 'place' => 'BlueFire Wilderness Therapy', 'years' => '', 'url' => '/facility/bluefire/'),
+    array('role' => '', 'place' => 'Cross Creek', 'years' => '', 'url' => ''),
+    array('role' => '', 'place' => 'Cross Creek Manor', 'years' => '', 'url' => '/facility/ccm/'),
+    array('role' => '', 'place' => 'Cross Creek Center', 'years' => '', 'url' => '/facility/ccc/'),
+    array('role' => '', 'place' => 'Heart Cry Recovery', 'years' => '', 'url' => ''),
+    array('role' => '', 'place' => 'HeartCry Recovery', 'years' => '', 'url' => ''),
+));
+$check('a career lists each place once: same page, unlinked short form, spacing; ambiguous names stay',
+    array_column($fold, 'place') === array('Provo Canyon School', 'Silverado Boys Ranch', 'BlueFire Wilderness Therapy', 'Cross Creek', 'Cross Creek Manor', 'Cross Creek Center', 'Heart Cry Recovery')
+    && $fold[0]['role'] === 'Therapist' && $fold[0]['years'] === '2001' && $fold[0]['url'] === '/facility/pcs/', wp_json_encode($fold));
 $check('nicknames fold into one person', kop_facility_pages_person_key('Steve Roach') === kop_facility_pages_person_key('Steven Roach')
     && kop_facility_pages_person_key('Clint Dorny') === kop_facility_pages_person_key('Clinton Dorny')
     && kop_facility_pages_person_key('Jack Williams') !== kop_facility_pages_person_key('John Williams'));

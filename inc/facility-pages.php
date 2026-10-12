@@ -1670,7 +1670,11 @@ if (!function_exists('kop_facility_pages_map_people')) {
 }
 
 if (!function_exists('kop_facility_pages_facility_url_by_name')) {
-    /** The facility page for a program named in free text, or ''. One lookup table per request. */
+    /**
+     * The facility page for a program named in free text (its name, or a
+     * past or other name), else the company page by that name, or ''. One
+     * lookup table per request.
+     */
     function kop_facility_pages_facility_url_by_name($name) {
         static $exact = null, $loose = null;
         if ($exact === null) {
@@ -1681,11 +1685,20 @@ if (!function_exists('kop_facility_pages_facility_url_by_name')) {
                 $k = kop_facility_pages_name_key($n);
                 if ($k !== '' && !isset($loose[$k])) $loose[$k] = (int) $id;
             }
+            // Past and other names ("Stone Mountain School" for Talisman), after every record's own name.
+            $ids = kop_facility_pages_index()['ids'] ?? array();
+            foreach ((function_exists('kop_v2_alias_index') ? kop_v2_alias_index()['facilities'] ?? array() : array()) as $a) {
+                $id = function_exists('kop_facility_merge_resolve') ? (int) kop_facility_merge_resolve((int) $a[0]) : (int) $a[0];
+                if (!isset($ids[$id])) continue;
+                $k = kop_facility_pages_name_key((string) $a[1]);
+                if ($k !== '' && !isset($loose[$k])) $loose[$k] = $id;
+            }
         }
         $name = trim((string) $name);
         if ($name === '') return '';
         $id = $exact[strtolower($name)] ?? ($loose[kop_facility_pages_name_key($name)] ?? 0);
-        return $id ? kop_facility_page_url($id) : '';
+        if ($id) return kop_facility_page_url($id);
+        return function_exists('kop_operator_page_url_for_name') ? (string) kop_operator_page_url_for_name($name) : '';
     }
 }
 
@@ -1717,8 +1730,10 @@ if (!function_exists('kop_facility_pages_person_career')) {
             $out[$pk] = array('role' => trim((string) $role), 'place' => $place, 'years' => trim((string) $years), 'url' => $url);
         };
 
-        foreach (preg_split('/\s*;\s*/', trim((string) $past_jobs), -1, PREG_SPLIT_NO_EMPTY) as $job) {
-            $job = trim(preg_replace('/\s*\[[^\]]*\]\s*/', ' ', $job));
+        // Notes go first: "[joined 2008-07; joined 2008-10-13]" holds the separator too.
+        $past_jobs = preg_replace('/\s*\[[^\]]*\]\s*/', ' ', (string) $past_jobs);
+        foreach (preg_split('/\s*;\s*/', trim($past_jobs), -1, PREG_SPLIT_NO_EMPTY) as $job) {
+            $job = trim($job);
             $job = preg_replace('/^(?:later|then|now|previously|formerly)\s+/i', '', $job);
             $role = '';
             $place = $job;
@@ -1757,6 +1772,82 @@ if (!function_exists('kop_facility_pages_person_career')) {
                 $url = (string) kop_operator_page_url_for_name($place);
             }
             $add($place, $role, '', $url);
+        }
+        return kop_facility_pages_career_fold(array_values($out));
+    }
+}
+
+if (!function_exists('kop_facility_pages_career_fold')) {
+    /**
+     * One line per place in a career: entries linking the same page are one
+     * place (a renamed program, "Silverado Boys Ranch" and "Silverado
+     * Academy"), and an unlinked name that is a shorter or longer form of
+     * exactly one linked place ("Provo Canyon", "Auldern" for Auldern
+     * Academy) or the same words spaced differently ("Heart Cry"/"HeartCry")
+     * joins it. The first entry keeps its place in the list; a linked
+     * record's name wins over free text; empty role and years are filled.
+     */
+    function kop_facility_pages_career_fold(array $jobs) {
+        $words = static function ($place) {
+            $k = preg_replace('/^the\s+/', '', kop_facility_pages_name_key($place));
+            $k = trim(preg_replace('/\s+(inc|llc|corp|corporation|company|co|ltd)$/', '', $k));
+            return $k === '' ? array() : explode(' ', $k);
+        };
+        // $a's words start $b's, spaces aside ("Blue Fire" starts "BlueFire Wilderness"), ending where a word of $b ends.
+        $is_prefix = static function (array $a, array $b) {
+            $short = implode('', $a);
+            if ($short === '') return false;
+            $joined = '';
+            foreach ($b as $w) {
+                $joined .= $w;
+                if ($joined === $short) return true;
+                if (strlen($joined) >= strlen($short)) return false;
+            }
+            return false;
+        };
+        $merge = static function (array $into, array $from) {
+            if ($into['url'] === '' && $from['url'] !== '') {
+                $into['url'] = $from['url'];
+                $into['place'] = $from['place'];
+            }
+            if ($into['role'] === '' && $from['role'] !== '') $into['role'] = $from['role'];
+            if ($into['years'] === '' && $from['years'] !== '') $into['years'] = $from['years'];
+            return $into;
+        };
+        $out = array();
+        foreach ($jobs as $job) {
+            if ($job['url'] === '') { $out[] = $job; continue; }
+            $done = false;
+            foreach ($out as $i => $have) {
+                if ($have['url'] === $job['url']) { $out[$i] = $merge($have, $job); $done = true; break; }
+            }
+            if (!$done) $out[] = $job;
+        }
+        // Unlinked names against the linked places (and each other).
+        $linked = array();
+        foreach ($out as $i => $job) if ($job['url'] !== '') $linked[$i] = $words($job['place']);
+        foreach ($out as $i => $job) {
+            if (!isset($out[$i]) || $job['url'] !== '') continue;
+            $w = $words($job['place']);
+            if (!$w) continue;
+            $hits = array();
+            foreach ($linked as $j => $lw) {
+                if ($is_prefix($w, $lw) || $is_prefix($lw, $w)) $hits[$out[$j]['url']] = $j;
+            }
+            $target = count($hits) === 1 ? reset($hits) : null;
+            if ($target === null && !$hits) {
+                foreach ($out as $j => $other) {
+                    if ($j === $i || $other['url'] !== '') continue;
+                    if (implode('', $words($other['place'])) === implode('', $w)) { $target = $j; break; }
+                }
+            }
+            if ($target === null) continue;
+            // The earlier of the two keeps its place in the list.
+            $keep = min($i, $target);
+            $drop = max($i, $target);
+            $out[$keep] = $merge($out[$keep], $out[$drop]);
+            unset($out[$drop]);
+            if (isset($linked[$target])) { unset($linked[$target]); $linked[$keep] = $words($out[$keep]['place']); }
         }
         return array_values($out);
     }
