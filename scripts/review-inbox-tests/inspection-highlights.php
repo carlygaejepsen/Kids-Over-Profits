@@ -36,11 +36,14 @@ function kop_rinbox_test_inspection_highlights(array $src, array $item, callable
     };
     $before = $row();
     $check('inspection-highlights: the waiting item is pending', $before['status'] === 'pending');
-    // Facilities of the companies watched closely (UHS, Newport, Acadia by default) lead; then recent severe findings, as on the old screen.
+    // Facilities of the companies watched closely (UHS, Newport, Acadia and eight more by default) lead; then recent severe findings, as on the old screen.
     $watched = kop_rinbox_ih_watched_sites();
     $names = kop_rinbox_ih_watched_names();
-    $check('inspection-highlights: UHS, Newport and Acadia are watched by default', count($names) === 3
-        && preg_grep('/^Universal Health Services/', $names) && preg_grep('/^Newport/', $names) && preg_grep('/^Acadia/i', $names), implode(' | ', $names));
+    $check('inspection-highlights: the eleven default companies are watched', count($names) === 11
+        && preg_grep('/^Ascent Companies/', $names) && preg_grep('/^Altior/', $names) && in_array('Teen Challenge', $names, true)
+        && preg_grep('/^Universal Health Services/', $names) && preg_grep('/^Newport/', $names) && preg_grep('/^Acadia/i', $names)
+        && preg_grep('/^Sequel/', $names) && preg_grep('/^Devereux/', $names) && preg_grep('/^Embark/', $names)
+        && preg_grep('/^Family Help/', $names) && preg_grep('/^Psychiatric Solutions/', $names), implode(' | ', $names));
     $check('inspection-highlights: the watched companies have licensed sites', count($watched) > 0, count($watched) . ' sites');
     $in = $watched ? '(h.facility_id IN (' . implode(',', array_keys($watched)) . ')) DESC, ' : '';
     $first = $pdo->query("SELECT h.id FROM inspection_highlights h JOIN inspection_facilities f ON f.id = h.facility_id WHERE h.status = 'pending'
@@ -50,7 +53,9 @@ function kop_rinbox_test_inspection_highlights(array $src, array $item, callable
     if ($wid) {
         $check('inspection-highlights: a watched facility\'s card says whose it is', strpos($item['subtitle'], 'Watched: ') !== false, $item['title'] . ' / ' . $item['subtitle']);
     }
-    $check('inspection-highlights: the card links the state source', preg_match('#^https?://#', $item['url']) === 1, $item['url']);
+    // Several states' reports have no stored link (TX, NC, GA ...): those cards open the scraped report instead.
+    $check('inspection-highlights: the card links the state source, or opens the report', preg_match('#^https?://#', $item['url']) === 1
+        || ($item['url'] === '' && !empty($item['preview']['url'])), $item['url']);
 
     $other = array_values(array_diff(array_keys(kop_ih_categories()), array($before['category'])))[0];
     call_user_func($src['save'], $item['key'], array('category' => $other, 'review_note' => 'checked in test'));

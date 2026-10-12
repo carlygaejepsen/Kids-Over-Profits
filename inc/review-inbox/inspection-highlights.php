@@ -253,7 +253,9 @@ function kop_rinbox_ih_save($key, array $fields) {
  * closely" tool, stored as [operator id => name] in kop_ih_watched_operators.
  */
 function kop_rinbox_ih_watched_default() {
-    return array('Universal Health Services', 'Newport Healthcare', 'Acadia Healthcare');
+    return array('Universal Health Services', 'Newport Healthcare', 'Acadia Healthcare', 'Sequel TSI', 'Devereux Advanced Behavioral Health',
+        'Embark Behavioral Health', 'Family Help & Wellness', 'Psychiatric Solutions', 'Ascent Companies', 'Altior Healthcare',
+        'Teen Challenge');
 }
 
 /** [operator id => name] of the watched companies. */
