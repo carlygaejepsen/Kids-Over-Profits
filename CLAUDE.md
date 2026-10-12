@@ -409,11 +409,11 @@ php -d extension=mbstring scripts/test-url-labels.php    # labels, PHP == JS (ne
 python scripts/check-bare-text.py               # one page per child template, live site
 # ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")
 python -u scripts/check-contrast.py [--local]   # WCAG AA, text and icons; --local serves the working tree css/js on the live pages
+python scripts/test-colour-contrast.py          # static: inks, fills, no accent text or white-on-accent in any stylesheet
 # ...and nothing runs out of its box at phone/tablet width: a grid column is minmax(0, 1fr), never a bare 1fr (it grows to a
 # long link or a select's longest option), a fixed-width input gets width:100% under 768px, a form's "input { width:100% }"
 # never reaches checkboxes. The admin review page is checked by scripts/test-review-inbox-ui.py (1280/768/390)
 python -u scripts/check-mobile-overflow.py [--local] [--widths 390,768] [paths]   # WIDE / SPILL / TEXT out of its box, live site
-python scripts/test-colour-contrast.py          # static: inks, fills, no accent text or white-on-accent in any stylesheet
 # Woodbury Reports pages about each program (inc/woodbury-mentions.php): scan every issue in the
 # media library (reads tmp/prod.sqlite), cut the pages into C:/tmp/kop-woodbury/pending/, copy that
 # folder to ~/kop-import/woodbury/ on the server, review and file at KOP Tools > Woodbury Reports
