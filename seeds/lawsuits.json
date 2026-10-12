@@ -2182,6 +2182,552 @@
         "https://fox4kc.com/news/education/former-students-sue-kansas-city-girls-academy-for-alleged-mistreatment/",
         "https://hoodline.com/2026/07/strip-search-shock-claims-rock-kansas-city-girls-academy/"
       ]
+    },
+    {
+      "case_name": "A.C. (mother of Connor Bennett) v. Vivant Behavioral Healthcare, LLC et al. (Brighter Path Tuskegee wrongful death)",
+      "case_number": "",
+      "court": "Circuit Court of Macon County, Alabama",
+      "jurisdiction": "State",
+      "filing_date": "2022-08-31",
+      "status": "unknown",
+      "plaintiffs": [
+        "A.C., mother of Connor Bennett (15), on behalf of his estate"
+      ],
+      "defendants": [
+        "Vivant Behavioral Healthcare, LLC",
+        "Brighter Path Tuskegee (formerly Sequel TSI of Tuskegee)",
+        "The facility's executive director (not named in coverage)",
+        "Unnamed individuals"
+      ],
+      "facilities_mentioned": [
+        "Brighter Path Tuskegee / Sequel TSI of Tuskegee (Tuskegee, AL)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Alabama Department of Human Resources",
+        "Children's of Alabama"
+      ],
+      "claims": [
+        "Wrongful death",
+        "Negligence / failure to supervise and protect"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "Connor Bennett's mother sued in Macon County over his death in April 2022. The complaint says Connor, 15, was placed at the Tuskegee facility by the Alabama Department of Human Resources in about October 2021 and was sexually, physically and verbally abused by other residents and staff for about six months. It says he reported sexual abuse repeatedly and staff 'chose to do absolutely nothing,' and that he ran away several times without staff noticing. According to the coverage, he injured himself at the facility on April 5, 2022 and died at Children's of Alabama six days later. The suit seeks unspecified damages from Vivant Behavioral Healthcare, which operates the renamed Brighter Path Tuskegee, and unnamed individuals.",
+      "source_urls": [
+        "https://www.nbcnews.com/news/us-news/mom-sues-alabama-youth-facilty-sequel-tsi-son-died-suicide-escape-livi-rcna45729",
+        "https://www.montgomeryadvertiser.com/story/news/2022/09/01/alabama-mental-health-facility-brighter-path-tuskegee-sued-wrongful-death/65464872007/",
+        "https://www.yahoo.com/news/different-name-same-accusations-wrongful-020124584.html",
+        "https://1819news.com/news/item/mother-suing-you-facility-after-sons-suicide-he-didnt-deserve-this"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Alabama",
+        "death"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 100078,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 13641,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "D.S., B.S. and A.S. v. Sequel Pomegranate Health Systems, LLC",
+      "case_number": "2:18-cv-00416",
+      "court": "U.S. District Court, Southern District of Ohio (Columbus)",
+      "jurisdiction": "Federal",
+      "filing_date": "2018-04-30",
+      "status": "dismissed",
+      "plaintiffs": [
+        "D.S. (minor at the time)",
+        "B.S. (father)",
+        "A.S. (mother)"
+      ],
+      "defendants": [
+        "Sequel Pomegranate Health Systems, LLC"
+      ],
+      "facilities_mentioned": [
+        "Sequel Pomegranate Health Systems (Columbus, OH)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Franklin County Children Services",
+        "Franklin County Court of Common Pleas, Juvenile Division",
+        "Columbus Police Department"
+      ],
+      "claims": [
+        "42 U.S.C. 1983: substantive due process (14th Amendment)",
+        "42 U.S.C. 1983: 14th Amendment",
+        "42 U.S.C. 1983: 8th Amendment (deliberate indifference)",
+        "Negligent supervision",
+        "Battery (respondeat superior)",
+        "Assault (respondeat superior)",
+        "Intentional infliction of emotional distress",
+        "Loss of services / consortium",
+        "Negligence"
+      ],
+      "outcome": "Dismissed with prejudice by stipulation of the parties on Nov. 15, 2018 (case terminated Nov. 16, 2018), after a mediation notice; terms not disclosed.",
+      "settlement_amount": "",
+      "summary": "D.S. and his parents sued Pomegranate, a psychiatric residential facility in Columbus, Ohio, where Franklin County Children Services had placed him in November 2017. The complaint says that on December 2, 2017, a few days after he arrived, D.S. was held down and raped by three other residents while the single staff member on the unit was busy with a personal phone. It says Columbus police had received more than 248 emergency calls from Pomegranate since March 22, 2017, and that the facility was understaffed and did not separate violent residents. The complaint says Children Services substantiated abuse and neglect charges against Pomegranate. The parties stipulated to dismissal with prejudice in November 2018.",
+      "source_urls": [
+        "https://www.courtlistener.com/docket/6379570/ds-v-sequel-pomegranate-health-systems-llc/"
+      ],
+      "document_urls": [
+        "https://storage.courtlistener.com/recap/gov.uscourts.ohsd.213130/gov.uscourts.ohsd.213130.1.0.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.ohsd.213130/gov.uscourts.ohsd.213130.1.1.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.ohsd.213130/gov.uscourts.ohsd.213130.1.2.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.ohsd.213130/gov.uscourts.ohsd.213130.14.0.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.ohsd.213130/gov.uscourts.ohsd.213130.21.0.pdf"
+      ],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Ohio",
+        "sexual abuse"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 13226,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "M.C. v. Brighter Path Tuskegee et al.",
+      "case_number": "",
+      "court": "Circuit Court of Macon County, Alabama",
+      "jurisdiction": "State",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "M.C. (17-year-old), through his father"
+      ],
+      "defendants": [
+        "Brighter Path Tuskegee (formerly Sequel TSI of Tuskegee)"
+      ],
+      "facilities_mentioned": [
+        "Brighter Path Tuskegee (Tuskegee, AL)"
+      ],
+      "staff_mentioned": [
+        "Theresa Mitchell (executive director, named in coverage)"
+      ],
+      "organizations_mentioned": [],
+      "claims": [
+        "Negligence",
+        "Physical and emotional abuse",
+        "Failure to provide medical care",
+        "Failure to supervise"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "In August 2024 a lawsuit was filed for M.C., a 17-year-old resident of Brighter Path Tuskegee. The complaint alleges he was physically and emotionally abused by staff and other residents, that staff instigated fights and gambled with residents while he was beaten, and that he was denied proper medical care; his father says he saw injuries during visits. It also alleges neglect, lack of supervision and unsanitary conditions. The coverage gives no specific incident dates.",
+      "source_urls": [
+        "https://www.al.com/news/2024/08/alabama-youth-home-staff-instigated-fights-gambled-with-residents-as-teen-was-brutalized-lawsuit-claims.html",
+        "https://1819news.com/news/item/tuskegee-youth-facility-dubbed-house-of-horrors-in-latest-lawsuit"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Alabama"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 13641,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 100078,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Former resident (15) v. Brighter Path Tuskegee et al. (2023)",
+      "case_number": "",
+      "court": "Circuit Court of Macon County, Alabama",
+      "jurisdiction": "State",
+      "filing_date": "2023-08-31",
+      "status": "unknown",
+      "plaintiffs": [
+        "A 15-year-old former resident (not identified in coverage)"
+      ],
+      "defendants": [
+        "Brighter Path Tuskegee (formerly Sequel TSI of Tuskegee)",
+        "The facility's parent corporations",
+        "The facility's director",
+        "Unidentified additional defendants"
+      ],
+      "facilities_mentioned": [
+        "Brighter Path Tuskegee (Tuskegee, AL)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Alabama Department of Youth Services",
+        "Alabama Department of Human Resources",
+        "Alabama Disabilities Advocacy Program"
+      ],
+      "claims": [
+        "Negligence"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "A suit filed August 31, 2023 in Macon County says a 15-year-old placed at Brighter Path Tuskegee from January 18 to March 24 (2023) 'constantly feared for his safety' and was frequently assaulted by other residents even with staff present. It alleges staff 'frequently instigated fights among the residents,' that he received no schooling, lived in unsanitary conditions and was bitten by bedbugs. According to the coverage, his guardian ad litem found he was not made to keep up hygiene or attend classes and asked for an emergency hearing to have him removed. The suit seeks compensatory and punitive damages.",
+      "source_urls": [
+        "https://www.al.com/news/2023/08/brutalized-teen-at-tuskegee-youth-facility-lived-in-constant-fear-and-filth-lawsuit-states.html",
+        "https://www.yahoo.com/news/staff-instigated-fights-among-teens-173111029.html",
+        "https://1819news.com/news/item/tuskegee-youth-care-facility-hit-with-another-lawsuit-over-abuse-claims-he-and-other-residents-were-treated-worse-than-animals",
+        "https://1819news.com/news/item/dhr-commissioner-nancy-buckner-state-education-superintendent-eric-mackey-named-in-lawsuits-against-youth-residential-facilities"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Alabama"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 13641,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 100078,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "A.B., A.H., A.S., C.C., E.G., E.M., F.T., G.C., H.G., M.C., M.E., N.M. and T.F. v. Mingus Mountain Academy et al.",
+      "case_number": "CV2025-001537",
+      "court": "Superior Court of Arizona, Maricopa County",
+      "jurisdiction": "State",
+      "filing_date": "2025-01-13",
+      "status": "in_progress",
+      "plaintiffs": [
+        "A.B.",
+        "A.H.",
+        "A.S.",
+        "C.C.",
+        "E.G.",
+        "E.M.",
+        "F.T.",
+        "G.C.",
+        "H.G.",
+        "M.C.",
+        "M.E.",
+        "N.M.",
+        "T.F."
+      ],
+      "defendants": [
+        "Mingus Mountain Academy",
+        "Mingus Mountain Estate Residential Center, Inc.",
+        "Vivant Behavioral Healthcare, LLC",
+        "Sequel Youth and Family Services, LLC",
+        "Sequel Care of Arizona, LLC",
+        "Sequel Youth Services of Arizona, LLC",
+        "John \"Jay\" Ripley and Jane Doe Ripley",
+        "Adam Hardin and Jane Doe Hardin",
+        "John and Jane Does I-X",
+        "ABC Companies I-X",
+        "XYZ Partnerships I-X"
+      ],
+      "facilities_mentioned": [
+        "Mingus Mountain Academy (Prescott Valley, AZ)"
+      ],
+      "staff_mentioned": [
+        "John \"Jay\" Ripley (Sequel co-founder, owner and founder of Vivant, per the complaint)",
+        "Adam Hardin (manager/staff member of Mingus Mountain Academy, per the complaint)"
+      ],
+      "organizations_mentioned": [
+        "Arizona Department of Health Services"
+      ],
+      "claims": [
+        "Negligence",
+        "Respondeat superior",
+        "False imprisonment",
+        "Assault",
+        "Battery",
+        "Intentional infliction of emotional distress",
+        "Negligent infliction of emotional distress",
+        "Negligent hiring, training, supervision and retention",
+        "Punitive damages"
+      ],
+      "outcome": "Pending as of the latest coverage (mid-2025); the facility said it would 'vigorously defend' the suit.",
+      "settlement_amount": "",
+      "summary": "Thirteen former residents sued Mingus Mountain Academy, an all-girls program in Prescott Valley, and the companies that owned and ran it, in Maricopa County on January 13, 2025. The complaint alleges that from 2011 to the present, staff falsely imprisoned, sexually abused, sexually assaulted and raped minor residents. It names Vivant Behavioral Healthcare, three Sequel entities, Sequel co-founder Jay Ripley and a manager, Adam Hardin, and calls Mingus Mountain Estate Residential Center a Vivant subsidiary. The facility said an internal review found no evidence for the allegations.",
+      "source_urls": [
+        "https://www.kjzz.org/kjzz-news/2025-02-11/treatment-center-plans-to-vigorously-defend-lawsuit-alleging-residents-were-sexually-assaulted",
+        "https://www.abc15.com/news/local-news/investigations/lawsuit-alleges-horrific-sexual-abuse-at-arizona-facility-for-troubled-teens",
+        "https://ktvz.com/cnn-regional/2025/02/10/lawsuit-alleges-horrific-sexual-abuse-at-arizona-facility-for-troubled-teens/",
+        "https://www.dcourier.com/news/mingus-mountain-named-in-lawsuit-alleging-sexual-abuse-by-staff-members/article_fbd969b4-eeef-11ef-83d4-938e6c3e23b4.html"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Arizona",
+        "sexual abuse",
+        "false imprisonment"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 12163,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Anna Claire Bates and Jane Doe v. Sequel Youth and Family Services, LLC; Sequel TSI Holdings, LLC; Brighter Path Alabama, LLC (formerly Sequel TSI of Alabama); Sequel TSI of Auldern, LLC; and John Ripley",
+      "case_number": "2:23-cv-01063",
+      "court": "U.S. District Court, Northern District of Alabama (Southern Division)",
+      "jurisdiction": "Federal",
+      "filing_date": "2023-08-14",
+      "status": "in_progress",
+      "plaintiffs": [
+        "Anna Claire Bates (former Auldern Academy student, now an adult)",
+        "Jane Doe (former Sequel Montgomery resident)",
+        "A proposed nationwide class and Auldern and Sequel Montgomery subclasses"
+      ],
+      "defendants": [
+        "Sequel Youth and Family Services, LLC",
+        "Sequel TSI Holdings, LLC",
+        "Sequel TSI of Alabama, LLC (now d/b/a Brighter Path Alabama, LLC)",
+        "Sequel TSI of Auldern, LLC",
+        "John Ripley (added in the second amended complaint)"
+      ],
+      "facilities_mentioned": [
+        "Auldern Academy (Siler City, NC)",
+        "Sequel Montgomery (Montgomery, AL)"
+      ],
+      "staff_mentioned": [
+        "John (Jay) Ripley, Sequel co-founder",
+        "Adam Shapiro, Sequel co-founder (named in the opinion's background, not a defendant)"
+      ],
+      "organizations_mentioned": [],
+      "claims": [
+        "TVPRA 18 U.S.C. 1595 civil action for forced labor (1589)",
+        "Benefiting from forced labor",
+        "Human trafficking (1590)",
+        "Benefiting from trafficking",
+        "Attempted forced labor (1594(a))",
+        "Conspiracy to force labor (1594(b))",
+        "Negligence and/or wantonness (Jane Doe)",
+        "Premises liability (Jane Doe)"
+      ],
+      "outcome": "Partial motion to dismiss denied July 3, 2024 (all counts survive). Ripley's motion to dismiss the second amended complaint denied Oct. 14, 2025; his motion to certify an interlocutory appeal and stay denied Jan. 12, 2026. No settlement or class ruling seen on the docket.",
+      "settlement_amount": "",
+      "summary": "Two former residents brought a proposed class action under the federal anti-trafficking law, saying Sequel made children in its programs work without pay as cleaners and groundskeepers, under threat of punishment, to save on staff. Bates says that at Auldern Academy in North Carolina (2016-2017) students did campus labor and were punished with 'Refocus' (hauling rocks, restricted food, sleeping on the floor) and 'Non-com' isolation. Jane Doe says that at Sequel Montgomery (Dec. 2014-fall 2015) children who refused work were restrained, kept longer or locked in a closet-sized seclusion room, and that she was sexually abused by a male employee and later by a social worker. In July 2024 the court refused to dismiss any claim, finding the complaint plausibly alleged a company-wide scheme, and in 2025 it kept co-founder John Ripley in the case.",
+      "source_urls": [
+        "https://www.courtlistener.com/docket/68697773/bates-v-sequel-youth-and-family-services-llc/",
+        "https://www.govinfo.gov/content/pkg/USCOURTS-alnd-2_23-cv-01063/pdf/USCOURTS-alnd-2_23-cv-01063-0.pdf"
+      ],
+      "document_urls": [
+        "https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.1.0.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.25.0.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.63.0.pdf",
+        "https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.74.0.pdf"
+      ],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "class action",
+        "forced labor",
+        "Federal",
+        "Alabama",
+        "North Carolina"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 9637,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 100077,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Estate of Van Johnson v. Sequel TSI Holdings, LLC, Sequel TSI of Alabama, LLC, et al.",
+      "case_number": "",
+      "court": "Circuit Court of Limestone County, Alabama",
+      "jurisdiction": "State",
+      "filing_date": "2019-08-07",
+      "status": "unknown",
+      "plaintiffs": [
+        "The estate and family of Van Johnson (the lead says his son)"
+      ],
+      "defendants": [
+        "Sequel TSI Holdings, LLC",
+        "Sequel TSI of Alabama, LLC (Three Springs / Sequel TSI Madison)",
+        "The two youths charged in the killing"
+      ],
+      "facilities_mentioned": [
+        "Sequel TSI Madison / Three Springs (Madison, AL)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [],
+      "claims": [
+        "Wrongful death",
+        "Negligent and/or wanton hiring, training and supervision of employees"
+      ],
+      "outcome": "No reported outcome found. Sequel closed the Madison facility in August 2019.",
+      "settlement_amount": "",
+      "summary": "The family of Van Johnson, a 61-year-old construction worker killed behind a Madison Publix in August 2017, sued Sequel and the two youths charged with his killing. Police said the two had left the Sequel TSI (Three Springs) facility on Browns Ferry Road the night before. The complaint says the facility was understaffed and poorly trained and failed to recognize the two as threats despite their 'history of violence, aggression, lack of empathy,' and that several youths had escaped in the years before. The family's lawyer said they wanted the facility closed or its security strengthened.",
+      "source_urls": [
+        "https://www.waff.com/2019/08/09/family-murder-victim-sues-madison-juvenile-facility/",
+        "https://www.al.com/news/2019/08/slain-mans-family-sues-accused-killers-juvenile-center-from-which-they-escaped.html",
+        "https://www.decaturdaily.com/news/limestone_county/youth-detention-center-sued-in-death-claim-for-allowing-teens/article_51b299b4-1345-5f7a-89b2-0520ba5dc67f.html"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Alabama",
+        "death"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 100076,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "John Doe, father of Jane Doe, a minor, v. Sequel Schools, LLC d/b/a Northern Illinois Academy, et al.",
+      "case_number": "19L-000502",
+      "court": "Circuit Court of Kane County, Illinois",
+      "jurisdiction": "State",
+      "filing_date": "2019-10-15",
+      "status": "unknown",
+      "plaintiffs": [
+        "John Doe, father of Jane Doe (13)"
+      ],
+      "defendants": [
+        "Sequel Schools, LLC d/b/a Northern Illinois Academy",
+        "An 18-year-old fellow resident"
+      ],
+      "facilities_mentioned": [
+        "Northern Illinois Academy (Aurora, IL)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Aurora Public Library",
+        "Kane County Sheriff's Office"
+      ],
+      "claims": [
+        "Negligence / failure to supervise and separate residents"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "The father of a 13-year-old Northern Illinois Academy resident sued the academy's operator, Sequel Schools, and an 18-year-old fellow resident. The complaint says that on an outing to the Aurora Public Library on April 15, 2019, the older resident lured the girl into the men's restroom and raped her. It alleges the academy knew of his history of sexual aggression and failed to supervise or separate the two. He was criminally charged by Kane County authorities.",
+      "source_urls": [
+        "https://corboydemetrio.com/newsroom-news-lawsuit-rape-school-field-trip",
+        "https://www.cbsnews.com/chicago/news/northern-illinois-academy-sexual-assault-cody-pomrenke/"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Illinois",
+        "sexual abuse"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 13447,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Kristina Martinez, as guardian ad litem for a 5-year-old, v. Sequel (Bernalillo Academy), the New Mexico Children, Youth and Families Department et al.",
+      "case_number": "",
+      "court": "First Judicial District Court, Santa Fe County, New Mexico",
+      "jurisdiction": "State",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "Kristina Martinez, guardian ad litem for a 5-year-old boy"
+      ],
+      "defendants": [
+        "Bernalillo Academy / Sequel of New Mexico (Sequel Youth and Family Services subsidiary)",
+        "New Mexico Children, Youth and Families Department",
+        "Brian Blalock (former CYFD cabinet secretary)"
+      ],
+      "facilities_mentioned": [
+        "Bernalillo Academy (Albuquerque, NM)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Disability Rights New Mexico"
+      ],
+      "claims": [
+        "Negligence",
+        "Failure to protect a child in state custody (claims against CYFD and its former secretary)"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "In October 2024 the guardian ad litem for a 5-year-old filed suit in Santa Fe over his time at the former Bernalillo Academy, a home for children with disabilities that a Sequel subsidiary ran until December 2021. The complaint alleges staff punched and beat the boy and a peer sexually abused him, and that the academy put enrollment revenue ahead of children's safety. It also alleges the state children's agency and its former secretary knew of ongoing abuse and did not protect the children. The suit cites a Disability Rights New Mexico report that staff told children to fight each other, and says Bernalillo was Sequel's 14th program to close in three years amid abuse allegations.",
+      "source_urls": [
+        "https://www.santafenewmexican.com/news/local_news/alarming-conditions-at-former-home-for-children-with-disabilities-suit-alleges/article_2b559b12-8b0f-11ef-bead-97b50a89aaef.html"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "New Mexico"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 12743,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Mother of a former resident v. Sequel Schools, LLC, Kingston Academy and a staff member",
+      "case_number": "",
+      "court": "Circuit Court of Roane County, Tennessee",
+      "jurisdiction": "State",
+      "filing_date": "2020-02-18",
+      "status": "unknown",
+      "plaintiffs": [
+        "Mother of a former resident (anonymous, Putnam County)"
+      ],
+      "defendants": [
+        "Sequel Schools, LLC",
+        "Kingston Academy",
+        "A staff member (named in the complaint)"
+      ],
+      "facilities_mentioned": [
+        "Kingston Academy (Kingston, TN)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Tennessee Department of Children's Services",
+        "Roane County Sheriff's Office"
+      ],
+      "claims": [
+        "Negligence / failure to supervise",
+        "Negligent retention or supervision of staff"
+      ],
+      "outcome": "No reported outcome found.",
+      "settlement_amount": "",
+      "summary": "A mother sued Sequel Schools and Kingston Academy in Roane County in February 2020, seeking $4.5 million. The suit alleges her son was raped repeatedly by a staff member and by another student in a bathroom and that the facility failed to supervise, knowingly letting an unsafe adult supervise children. It says her son has PTSD. Sequel said it could not comment on pending litigation.",
+      "source_urls": [
+        "https://www.wvlt.tv/content/news/4M-lawsuit-says-child-was-raped-at-Kingston-Academy-568008361.html",
+        "https://digital-release.wate.com/news/top-stories/mother-suing-closed-kingston-youth-facility-alleges-son-was-raped-by-student-staff-member/amp/"
+      ],
+      "document_urls": [],
+      "tags": [
+        "Sequel Youth & Family Services",
+        "Tennessee",
+        "sexual abuse"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11242,
+          "link_type": "primary"
+        }
+      ]
     }
   ],
   "updates": [
