@@ -108,6 +108,8 @@ require_once get_stylesheet_directory() . '/inc/extension-news-processor.php';
 
 // The same intake for the mobile app, public: links and facility information to the review queues
 require_once get_stylesheet_directory() . '/inc/mobile-submit.php';
+// The app's admin mode: KOP Tools in a web view, signed in with a long cookie (kop/v1/app/*, /app-login/)
+require_once get_stylesheet_directory() . '/inc/mobile-admin.php';
 // /send/: send a link to KOP from any browser (form + bookmarklet), posts to the mobile submit route.
 require_once get_stylesheet_directory() . '/inc/send-page.php';
 
