@@ -59,6 +59,21 @@ function kop_rinbox_test_map_renames(array $src, array $item, callable $check) {
     call_user_func($src['act'], $key, 'undo', array());
     $check('map-renames: undo "not a rename"', !isset(kop_network_renames_decisions()[$key]));
 
+    // One click turns it round: from To review (saved, no year), then on Saved (year kept), and the year can be set there.
+    $card = kop_rinbox_get_item('map-renames', $key);
+    $check('map-renames: To review has a one-click "Swap order"', (bool) array_filter($card['actions'], function ($a) { return $a['id'] === 'swap' && empty($a['params']); }));
+    $before = !empty(kop_network_renames_candidates()[$key]['swapped']);
+    $res = call_user_func($src['act'], $key, 'swap', array());
+    $d = kop_network_renames_decisions()[$key] ?? array();
+    $check('map-renames: "Swap order" saves it the other way round from the card', ($d['decision'] ?? '') === 'saved' && !empty($d['swapped']) === !$before && (int) $d['year'] === 0, $res['message']);
+    $res = call_user_func($src['act'], $key, 'year', array('year' => '2004'));
+    $d = kop_network_renames_decisions()[$key] ?? array();
+    $check('map-renames: "Set the year" on Saved keeps the order', (int) $d['year'] === 2004 && !empty($d['swapped']) === !$before, $res['message']);
+    call_user_func($src['act'], $key, 'swap', array());
+    $d = kop_network_renames_decisions()[$key] ?? array();
+    $check('map-renames: "Swap order" on Saved turns it back, year kept', !empty($d['swapped']) === $before && (int) $d['year'] === 2004);
+    call_user_func($src['act'], $key, 'undo', array());
+
     call_user_func($src['act'], $key, 'save', array('year' => '2004', 'swapped' => '0'));
     $now = kop_rinbox_get_item('map-renames', $key)['compare']['rows'];
     $row = array_values(array_filter($now, function ($r) { return $r['label'] === 'On the map now'; }))[0] ?? array('values' => array());

@@ -6,6 +6,9 @@
  * if the line points the wrong way, swap it), "Not a rename" and Undo all store the decision
  * through kop_network_renames_decide(); the map shows it at once.
  *
+ * "Swap order" saves it the other way round in one click (a saved one keeps
+ * its year); "Set the year" changes a saved rename's year.
+ *
  * Keys: "earlier>later", the line as the board drew it. The year and the
  * direction are set on Save (its params start from the research or the
  * names' own years). Tools: save every rename whose year the research quotes
@@ -22,7 +25,7 @@ kop_rinbox_register('map-renames', function () {
     return array(
         'label'    => 'Map renames',
         'group'    => 'Suggestions to check',
-        'help'     => 'Programs that changed their name. Each name belongs to its own years, so give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline. The year can be left blank and added later. If the arrow points the wrong way, choose "the other way round". Undo on the Saved and Not a rename tabs.',
+        'help'     => 'Programs that changed their name. Each name belongs to its own years, so give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline. The year can be left blank and added later. If the arrow points the wrong way, click "Swap order". Undo on the Saved and Not a rename tabs.',
         'views'    => array('review' => 'To review', 'saved' => 'Saved', 'skipped' => 'Not a rename'),
         'tool_url' => admin_url('admin.php?page=kop-network-renames'),
         'count'    => function () {
@@ -198,7 +201,7 @@ function kop_rinbox_mren_item(array $r) {
     if ($view === 'review') {
         $actions = array(
             array('id' => 'save', 'label' => 'Save the rename', 'style' => 'approve',
-                'help' => 'On the network map timeline, the first name (picked below) ends in the year you give and the other starts then; the change is live at once. With the year left blank the rename and its order are still saved, and the year can be added later at KOP Tools > Map Renames.',
+                'help' => 'On the network map timeline, the first name (picked below) ends in the year you give and the other starts then; the change is live at once. With the year left blank the rename and its order are still saved, and the year can be added later with "Set the year" on the Saved tab.',
                 'params' => array(
                 array('name' => 'year', 'label' => 'Year of the rename (blank if not known)', 'type' => 'number', 'value' => $a['suggest'] ? (string) $a['suggest'] : '', 'optional' => true),
                 array('name' => 'swapped', 'label' => 'Which name came first', 'type' => 'select', 'value' => $swapped ? '1' : '0', 'options' => array(
@@ -206,15 +209,26 @@ function kop_rinbox_mren_item(array $r) {
                     '1' => 'The other way round: ' . $r['later']['name'] . ' first, then ' . $r['earlier']['name'],
                 )),
             )),
+            array('id' => 'swap', 'label' => 'Swap order', 'style' => 'neutral',
+                'help' => 'One click: saves the rename the other way round (' . $second['name'] . ' first, then ' . $first['name'] . '), without a year; give the year on the Saved tab.'),
             array('id' => 'skip', 'label' => 'Reject: not a rename', 'style' => 'reject',
                 'help' => 'The map stays as it is; the pair moves to "Not a rename".'),
         );
         $label = 'To review';
     } else {
-        $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
+        $actions = array();
+        if ($view === 'saved') {
+            $actions[] = array('id' => 'swap', 'label' => 'Swap order', 'style' => 'neutral',
+                'help' => 'One click: turns the saved rename round (' . $second['name'] . ' first, then ' . $first['name'] . '), its year kept.');
+            $actions[] = array('id' => 'year', 'label' => 'Set the year', 'style' => 'neutral',
+                'help' => 'Changes the year of the saved rename (blank = not known); the order stays.',
+                'params' => array(array('name' => 'year', 'label' => 'Year of the rename (blank if not known)', 'type' => 'number',
+                    'value' => !empty($d['year']) ? (string) (int) $d['year'] : ($a['suggest'] ? (string) $a['suggest'] : ''), 'optional' => true)));
+        }
+        $actions[] = array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
             'help' => $view === 'saved'
                 ? 'Takes the saved rename off the map; the rename waits for review again.'
-                : 'Nothing on the site changes; the rename waits for review again.'));
+                : 'Nothing on the site changes; the rename waits for review again.');
         $label = $view === 'saved'
             ? (!empty($d['year']) ? 'Saved: renamed in ' . (int) $d['year'] : 'Saved without a year') . (!empty($d['swapped']) ? ', the other way round' : '')
             : 'Not a rename';
@@ -228,7 +242,7 @@ function kop_rinbox_mren_item(array $r) {
             : (!empty($d['by']) ? 'by ' . $d['by'] : ''),
         'text'         => $view === 'saved'
             ? (!empty($d['year']) ? 'On the map the earlier name ends in ' . (int) $d['year'] . ' and the later one starts then.'
-                : 'The rename is saved without its year, which can be added at KOP Tools > Map Renames.')
+                : 'The rename is saved without its year; add it with "Set the year".')
             : ($view === 'skipped' ? 'Marked not a rename. The map is unchanged.'
                 : 'Each name belongs to its own years. Give the year of the rename: the earlier name then ends that year and the later one starts it on the map\'s timeline.'),
         'compare'      => kop_rinbox_mren_compare($first, $second),
@@ -249,6 +263,18 @@ function kop_rinbox_mren_act($key, $action, array $params) {
         case 'save':
             $item += array('decision' => 'save', 'year' => (int) ($params['year'] ?? 0), 'swapped' => !empty($params['swapped']) && $params['swapped'] !== '0');
             break;
+        case 'swap':
+            // The other way round from how the card shows it: a saved rename keeps its year.
+            $d = kop_network_renames_decisions()[$key] ?? array();
+            $c = kop_network_renames_candidates()[$key] ?? null;
+            $shown = $d ? !empty($d['swapped']) : ($c && !empty($c['swapped']));
+            $item += array('decision' => 'save', 'year' => ($d['decision'] ?? '') === 'saved' ? (int) ($d['year'] ?? 0) : 0, 'swapped' => !$shown);
+            break;
+        case 'year':
+            $d = kop_network_renames_decisions()[$key] ?? array();
+            if (($d['decision'] ?? '') !== 'saved') throw new RuntimeException('Only a saved rename takes a year here.');
+            $item += array('decision' => 'save', 'year' => (int) ($params['year'] ?? 0), 'swapped' => !empty($d['swapped']));
+            break;
         case 'skip':
             $item['decision'] = 'skip';
             break;
@@ -262,10 +288,16 @@ function kop_rinbox_mren_act($key, $action, array $params) {
     $r = $out[$key] ?? null;
     if (!$r) throw new RuntimeException('That rename is no longer on the map.');
     if (!empty($r['error'])) throw new RuntimeException($r['error']);
+    if ($action === 'swap') {
+        return array('message' => 'Turned round and saved' . (!empty($r['year']) ? ', renamed in ' . $r['year'] : ' without a year (give it on the Saved tab)') . '. It is on the map now; Undo is on the Saved tab.');
+    }
+    if ($action === 'year') {
+        return array('message' => !empty($r['year']) ? 'Saved: renamed in ' . $r['year'] . '. The map shows it now.' : 'The year is cleared; the rename stays saved.');
+    }
     if ($action === 'save') {
         return array('message' => (!empty($r['year'])
                 ? 'Saved. On the map the earlier name now ends in ' . $r['year'] . ' and the later one starts then'
-                : 'Saved without a year; add it at KOP Tools > Map Renames when it is known')
+                : 'Saved without a year; add it with "Set the year" on the Saved tab when it is known')
             . (!empty($r['swapped']) ? ', with the line turned round' : '') . '. Undo is on the Saved tab.');
     }
     if ($action === 'skip') return array('message' => 'Marked not a rename. The map is unchanged.');
