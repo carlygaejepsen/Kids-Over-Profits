@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_OPERATOR_HISTORY_SEED_VERSION')) {
-    define('KOP_OPERATOR_HISTORY_SEED_VERSION', '7');
+    define('KOP_OPERATOR_HISTORY_SEED_VERSION', '8');
 }
 
 // ---------------------------------------------------------------------------
