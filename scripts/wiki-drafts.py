@@ -156,7 +156,7 @@ def templated(md, ops, name='', moves=()):
     ops = [dict(op, text=plain_citations(re.sub(r'(?<=[)\w]), left(?= of )', '', op['text']), staff=is_staff_section(op.get('section', ''))))
            if isinstance(op.get('text'), str) and not op.get('final') else op for op in ops]
     media = next((s for s in secs if s[2] in MEDIA_SECTIONS), None)
-    abuse = next((s for s in secs if s[2].startswith('abuse') or 'lawsuit' in s[2] or s[2] == 'deaths'), None)
+    abuse = next((s for s in secs if 'abuse' in s[2] or 'lawsuit' in s[2] or s[2] == 'deaths'), None)
     after = abuse or next((s for name in MEDIA_AFTER for s in secs if s[2] == name), None)
     sep = next((l.strip() for l in lines[:footer_start(lines)] if SEPARATOR.match(l)), '---')
     out, made = [], None

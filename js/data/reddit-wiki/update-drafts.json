@@ -667,20 +667,600 @@
     "name": "Sequel TSI",
     "status": ""
    },
-   "ops": [],
+   "ops": [
+    {
+     "id": "n1m",
+     "op": "add_section",
+     "after_section": "Controversy, Abuse, and Deaths",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [Youth were abused here: Investigating Sequel's patterns of abuse of foster children](https://www.apmreports.org/story/2020/09/28/for-profit-sequel-facilities-children-abused) (APM Reports, 9/28/2020)\n- [How Sequel wins California business](https://www.apmreports.org/story/2020/09/28/how-sequel-wins-california-business) (APM Reports, 9/28/2020)\n- [Washington becomes the latest state to ditch Sequel](https://www.apmreports.org/story/2020/12/09/washington-becomes-the-latest-state-to-ditch-sequel) (APM Reports, 12/9/2020)\n- [Embattled Sequel closes three more facilities](https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities) (APM Reports, 2/10/2021)\n- [Sequel confronts more abuse allegations amid concerns about its finances](https://www.apmreports.org/story/2021/05/21/sequel-confronts-more-abuse-allegations-amid-concerns-about-its-finances) (APM Reports, 5/21/2021)\n- [Under scrutiny, company that claimed to help troubled youth closes many operations and sells others](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers) (APM Reports, 4/26/2022)\n- [The bad place](https://revealnews.org/podcast/the-bad-place/) (Reveal, 11/21/2020)\n- [\"It Was a Torture Chamber\": The Facility That Killed a Black 16-Year-Old Had a Long History of Abuse](https://www.motherjones.com/criminal-justice/2020/07/cornelius-fredericks-i-cant-breathe-sequel-lakeside-michigan/) (Mother Jones, 7/1/2020)\n- [The Kids Are Not Alright](https://pestakeholder.org/wp-content/uploads/2022/02/PESP_Youth_BH_Report_2022.pdf) (Private Equity Stakeholder Project, 2/2022)\n- [Warehouses of Neglect](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf) (U.S. Senate Finance Committee, 6/2024)",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Company-wide coverage; the script moves news lines to In the Media. News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "y1",
+     "op": "set_header_years",
+     "years": "1999-2022",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Founded 1999 (merger proxy); its last programs were closed or sold in 2021-2022 (APM Reports, 2022)."
+    },
+    {
+     "id": "h-grow",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Sequel grew by buying other companies' programs. It bought Camelot System of Care in 2011 ([source](https://www.llcp.com/levine-leichtman-capital-partners-and-sequel-youth-and-family-services-anno/)), Alliance Family Services in Idaho and Nevada for $7.0 million and Forest Ridge Youth Services for $1.9 million in 2014, the Florida contracts of Youth Services International for about $1.2 million and four Utah programs, Red Rock Canyon School , [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) , [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) and Mount Pleasant Academy , for $23.5 million in 2016, and Sequel Pomegranate Health Systems in Columbus, Ohio, for $54.5 million later that year. In 2017 Sequel said it ran 44 programs in 19 states with more than 2,500 beds, serving about 9,000 people a year ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Acquisitions and size, 2017 merger proxy."
+    },
+    {
+     "id": "h-money",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Outside investors paid for the growth. Patriot Capital gave growth financing until 2008 ([source](https://www.patriot-capital.com/portfolio-companies/sequel-youth-and-family-services/)), Levine Leichtman Capital Partners was a minority investor from 2009 to 2013 ([source](https://www.llcp.com/levine-leichtman-capital-partners-invests-in-sequel-youth-and-family-servic/)), and Alaris Royalty paid $66 million in 2013 for preferred units that paid it $9.9 million a year ([source](https://www.alarisequitypartners.com/news/article/60-alaris-closes-previously-announced-usd-66-million-contribution-and-confirms-dividend-increase-on-august-dividend-payable)); when Sequel bought them back in 2017, Alaris reported a 23 percent annual return ([source](https://www.alarisroyalty.com/news/article/198-alaris-royalty-corp-provides-update-on-sequel-redemption)). In 2017 Sequel agreed to become a public company by merging with Global Partner Acquisition Corp.; the deal fell through, and Altamont Capital Partners took a majority stake that September ([source](https://altamontcapital.com/news/altamont-capital-partners-invests-in-sequel-youth-family-services/)). Altamont added at least $121.5 million in debt to the company in 2017, 2018 and 2021 ([source](https://pestakeholder.org/wp-content/uploads/2022/02/PESP_Youth_BH_Report_2022.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Owners, LLCP/Alaris press releases, PESP."
+    },
+    {
+     "id": "h-public",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Sequel's revenue grew from about $8 million in 1999 to $208 million in 2016 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)), almost all of it public money from state child welfare and juvenile justice agencies and Medicaid ([source](https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821)). At a 2015 University of Baltimore talk, Ripley said, \"You can make money in this business if you control staffing\" ([source](https://revealnews.org/podcast/the-bad-place/)). Many of its programs were licensed to nonprofits that paid Sequel to run them, and APM Reports found many of those boards filled with people tied to Ripley and former YSI executives ([source](https://www.apmreports.org/story/2020/09/28/how-sequel-wins-california-business)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Revenue, staffing quote, nonprofit license-holders."
+    },
+    {
+     "id": "h-end",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "From 2019 Sequel shut 14 of its 36 residential centers ([source](https://pestakeholder.org/wp-content/uploads/2022/02/PESP_Youth_BH_Report_2022.pdf)). In May 2021 one of its lenders expected to recover about $78 million of the $199 million it had lent ([source](https://www.apmreports.org/story/2021/05/21/sequel-confronts-more-abuse-allegations-amid-concerns-about-its-finances)). In a 2022 federal filing, Sequel's lawyers said Sequel TSI of Alabama belonged to a chain of companies ending in Vivant Behavioral Holdings, owned by Ripley Holdings, LLC, Ripley's daughter Christine Aron and four other people, and that Sequel TSI of Alabama had become Brighter Path Alabama, LLC on about March 1, 2022 ([source](https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf)). The U.S. Senate Finance Committee found in 2024 that Vivant kept Sequel's leaders and staff ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Closures, lenders, Vivant ownership."
+    },
+    {
+     "id": "p-cox",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Cindy Cox** was a co-founder of Sequel Youth and Family Services ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Merger proxy names her."
+    },
+    {
+     "id": "p-stupak",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**John Stupak** was the chief executive of Sequel Youth and Family Services from 2013 to 2019, then the chairman of its board ([source](https://www.prnewswire.com/news-releases/chris-roussos-named-ceo-of-sequel-youth-and-family-services-300876446.html)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Proxy + 2019 release."
+    },
+    {
+     "id": "p-roussos",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Chris Roussos** was the chief executive of Sequel Youth and Family Services from 2019 to 2020 ([source](https://www.prnewswire.com/news-releases/chris-roussos-named-ceo-of-sequel-youth-and-family-services-300876446.html)). Two months before Cornelius Frederick died, Oregon State Senator Sara Gelser wrote to him that someone would be seriously hurt or killed, according to the lawsuit over the death ([source](https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "PR Newswire 2019; Goshay complaint."
+    },
+    {
+     "id": "p-irby",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Ed Irby** was the president and chief operating officer of Sequel Youth and Family Services from 2011, after Sequel bought Camelot ([source](https://www.llcp.com/levine-leichtman-capital-partners-and-sequel-youth-and-family-services-anno/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "LLCP 2011."
+    },
+    {
+     "id": "p-aron",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Christine Aron** was the vice president of business development of Sequel Youth and Family Services and is a member of the company that owns [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) ([source](https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Removal notice names her as a member of Vivant Behavioral Holdings."
+    },
+    {
+     "id": "p-kenny",
+     "op": "append_to_section",
+     "section": "Founders and Notable Employees",
+     "text": "**Tom Kenny** was a senior vice president of Sequel Youth and Family Services and is the chief executive of [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) ([source](https://www.vivantbh.com/tom-kenny/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Vivant's own leadership page."
+    },
+    {
+     "id": "a1",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In February 2013, 14-year-old Joseph Winters died on his first day at Rose Rock Academy in Oklahoma; reporting at the time described a restraint, and the state found no violations, which his family disputed ([source](https://kfor.com/news/teen-boy-with-autism-dies-at-treatment-facility/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a2",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In June 2017, Sequel paid the United States and Nevada $2,580,520.50 after telling the Justice Department that the four Utah programs it had bought paid referral fees for students on Nevada Medicaid; Sequel then sought the money from the programs' sellers and accused them of fraud, a claim it withdrew in 2019; in 2020 an arbitrator rejected every claim Sequel made and wrote of the fraud claims, \"This reeks of bad faith\" ([source](https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a3",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In August 2017, two youths who ran away from Sequel TSI of Madison were charged with killing 61-year-old Van Johnson near the facility ([source](https://www.al.com/news/2019/08/in-wake-of-killing-and-escapes-madison-revokes-three-springs-business-license.html)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a4",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In October 2018, Washington and Nebraska removed their children from [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) after a report on abusive restraints ([source](https://www.nwpb.org/2018/10/18/report-describes-abusive-restraint-practices-for-washington-foster-youth-sent-out-of-state/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a5",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In February 2019, Tennessee removed 18 children from Kingston Academy, which then closed ([source](https://www.wbir.com/article/news/dcs-18-children-removed-from-kingston-academy-in-roane-county/51-7b3f94d6-c337-40da-b8b8-8fd6d84602e2)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a6",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In May 2019, Utah moved against Red Rock Canyon School's license ([source](https://features.apmreports.org/documents/?document=7216606-Utah-Report-Red-Rock-Canyon-School)); Sequel closed it that summer ([source](https://www.stgeorgeutah.com/news/local/as-red-rock-canyon-school-gears-for-closure-parent-company-shutters-sister-institution/article_def202e9-b52b-57e6-89b9-6a17e5299fa5.html)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a7",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In July 2019, Florida removed every youth from Union Juvenile Residential Facility after a battery on a 13-year-old that staff did not report for over a week ([source](https://mycbs4.com/news/local/child-battery-investigation-closes-union-juvenile-residential-facility-officials-say)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a8",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "On August 14, 2019, the city of Madison, Alabama revoked Sequel TSI of Madison's business license after escapes and the killing of Van Johnson, and it closed ([source](https://www.al.com/news/2019/08/in-wake-of-killing-and-escapes-madison-revokes-three-springs-business-license.html)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a9",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In January 2020, federal Medicare and Medicaid officials ended Northern Illinois Academy's certification, citing an \"immediate threat to patient health and safety\" ([source](https://www.cms.gov/files/document/illinois-northern-illinois-academy-01242020.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a10",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "On April 29, 2020, staff at Lakeside Academy in Kalamazoo, Michigan held 16-year-old Cornelius Frederick down for about 12 minutes after he threw a sandwich; he died on May 1 ([source](https://www.nbcnews.com/news/us-news/brief-life-cornelius-frederick-warning-signs-missed-teen-s-fatal-n1234660)). Three staff members were charged ([source](https://www.nytimes.com/2020/06/24/us/cornelius-frederick-lawsuit-lakeside-academy.html)), two pleaded no contest to involuntary manslaughter in 2023 and were sentenced to probation ([source](https://imprintnews.org/news-briefs/lakeside-staffers-plead-no-contest-to-charges-from-cornelius-fredericks-death/240921)), and his estate's lawsuit against Lakeside and five Sequel companies was settled ([source](https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a11",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In June 2020, Michigan ended its contracts with Lakeside Academy and moved to revoke its license ([source](https://www.freep.com/story/news/local/michigan/2020/06/19/lakeside-academy-kalamazoo-cornelius-frederick/3221236001/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a12",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In July 2020, the Alabama Disabilities Advocacy Program reported \"unsafe, squalid living conditions\" at Sequel TSI of Courtland, with statements from 41 boys ([source](https://www.splcenter.org/sites/default/files/sequel_attachments_a_b_and_c_r_0.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a13",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In 2020, Arizona halted admissions to [Mingus Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/mingus) after 136 restraints and 110 incidents of self-harm in one month ([source](https://imprintnews.org/child-welfare-2/california-ends-out-of-state-placements/50095)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a14",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In 2020, Disability Rights Ohio documented abuse, dangerous restraints and neglect at Sequel Pomegranate Health Systems ([source](https://www.disabilityrightsohio.org/assets/documents/sequel-pomegranate-report-branded-final-edits.pdf)); as Torii Behavioral Health it closed in 2021 ([source](https://www.10tv.com/article/news/investigations/10-investigates/closure-embattled-teen-psychiatric-facility-sequel-pomegranate-relief-history-there/530-a77320d2-72e0-4724-8270-137918a62bfc)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a15",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In December 2020, Washington became the fourth state, after Oregon, Minnesota and Maryland, to stop sending children to Sequel ([source](https://www.apmreports.org/story/2020/12/09/washington-becomes-the-latest-state-to-ditch-sequel)), and California said it would bring all its children home ([source](https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a16",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In May 2021, Illinois removed all 51 children from Northern Illinois Academy, which closed ([source](https://www.apmreports.org/story/2021/05/21/sequel-confronts-more-abuse-allegations-amid-concerns-about-its-finances)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a17",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In December 2021, Sequel agreed to close [Bernalillo Academy](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) in New Mexico after a state investigation found staff had abused children with autism ([source](https://www.apmreports.org/story/2021/12/03/sequel-bernalillo-academy-abuse-allegations)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a18",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In April 2022, 15-year-old Connor Bennett died after injuring himself at the Tuskegee program, then known as Sequel TSI of Tuskegee ([source](https://www.nbcnews.com/news/us-news/mom-sues-alabama-youth-facilty-sequel-tsi-son-died-suicide-escape-livi-rcna45729)); in court Sequel's lawyers said Sequel had had no ownership or control of that facility since October 1, 2021 ([source](https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a19",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In July 2022, a federal judge asked Texas to plan the removal of its foster children from facilities run by Vivant and Sequel ([source](https://www.texastribune.org/2022/07/26/texas-foster-care-child-abuse-investigation/)), and Senators Ron Wyden and Patty Murray opened an investigation that included Vivant ([source](https://www.nbcnews.com/news/us-news/senators-investigate-child-abuse-facilities-rcna39291)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a20",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In August 2023, former residents filed a class action alleging Sequel made the children in its care work without pay, in violation of federal trafficking law ([source](https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.1.0.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a21",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In June 2024, the U.S. Senate Finance Committee's report Warehouses of Neglect said Ripley \"has established, sold, and reacquired many RTFs, making it difficult to keep track of him or hold him accountable\" ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a22",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In January 2025, 13 former residents of Mingus Mountain Academy sued it, Vivant, Sequel companies and Ripley, alleging sexual abuse from 2011 to the present ([source](https://ktvz.com/cnn-regional/2025/02/10/lawsuit-alleges-horrific-sexual-abuse-at-arizona-facility-for-troubled-teens/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a23",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In June 2025, a former student sued Red Rock Canyon School and Sequel, alleging that a staff member sexually abused students in the Sequel years ([source](https://kutv.com/news/local/lawsuit-claims-staff-at-former-st-george-youth-center-abused-impregnated-teenage-girls)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "m1",
+     "op": "move_to_section",
+     "section": "In the Media",
+     "from_section": "Related Media",
+     "empty_text": "",
+     "text": "- [A profitable 'death trap': Sequel youth facilities raked in millions while accused of abusing children](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319) (NBC, 12/16/2020)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "News articles the entry listed under Related Media, moved to In the Media (Related Media is for websites about the program). Delete a line here to leave it where it is."
+    }
+   ],
    "tense": [],
    "fixes": [
     {
+     "id": "r-alachua",
+     "old": "| [** Alachua Academy**](https://www.reddit.com/r/troubledteens/wiki/index/alachua) | - | - | - |",
+     "new": "| [** Alachua Academy**](https://www.reddit.com/r/troubledteens/wiki/index/alachua) (Sequel from 2016; now run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) ([source](https://www.djj.state.fl.us/programs-facilities/residential-facilities))) | 2009 | Gainesville, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-bernalillo",
+     "old": "| [** Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) | - | - | - |",
+     "new": "| [** Bernalillo Academy**](https://www.reddit.com/r/troubledteens/wiki/index/bernalillo) (Sequel from 2011; closed in December 2021 after a New Mexico investigation found staff abused children ([source](https://www.apmreports.org/story/2021/12/03/sequel-bernalillo-academy-abuse-allegations))) | 2009 | Albuquerque, NM | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-capital",
+     "old": "| [** Capital Academy**](https://www.reddit.com/r/troubledteens/wiki/index/capital) | - | - | - |",
+     "new": "| [** Capital Academy**](https://www.reddit.com/r/troubledteens/wiki/index/capital) (Sequel from 2011; taken over by Willow Grove LLC ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers))) | 2001 | Camden, NJ | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-casagrande",
+     "old": "| [** Casa Grande Academy**](https://www.reddit.com/r/troubledteens/wiki/index/casagrande) | - | - | - |",
+     "new": "| [** Casa Grande Academy**](https://www.reddit.com/r/troubledteens/wiki/index/casagrande) (run by [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) since 2021 ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf))) | - | Casa Grande, AZ | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-charlesbritt",
+     "old": "| [** Charles Britt Academy**](https://www.reddit.com/r/troubledteens/wiki/index/charlesbritt) | - | - | - |",
+     "new": "| [** Charles Britt Academy**](https://www.reddit.com/r/troubledteens/wiki/index/charlesbritt) (Sequel from 2016; Florida closed it in June 2022 ([source](https://www.tampabay.com/news/crime/2022/06/24/state-closes-st-pete-treatment-facility-for-boys-amid-child-abuse-allegations/))) | 2013 | St. Petersburg, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-columbusyouth",
+     "old": "| [** Columbus Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/columbusyouth) | - | - | - |",
+     "new": "| [** Columbus Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/columbusyouth) | - | Tampa, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-duval",
+     "old": "| [** Duval Academy**](https://www.reddit.com/r/troubledteens/wiki/index/duval) | - | - | - |",
+     "new": "| [** Duval Academy**](https://www.reddit.com/r/troubledteens/wiki/index/duval) (Sequel from 2016; now run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) ([source](https://www.djj.state.fl.us/programs-facilities/residential-facilities))) | 2013 | Jacksonville, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-forestridge",
+     "old": "| [** Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) | - | - | - |",
+     "new": "| [** Forest Ridge Youth Services**](https://www.reddit.com/r/troubledteens/wiki/index/forestridge) (Sequel from December 2014 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm))) | 1983 | Wallingford, IA | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-lakesidekansas",
+     "old": "| [** Lakeside Academy - Kansas**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidekansas) | - | - | - |",
+     "new": "| [** Lakeside Academy - Kansas**](https://www.reddit.com/r/troubledteens/wiki/index/lakesidekansas) (Sequel from 2011 to 2022; then Successful Dreams ([source](https://www.kcur.org/news/2022-04-04/a-major-treatment-facility-for-kansas-foster-kids-almost-closed-a-new-tenant-wants-to-save-it))) | 2008 | Goddard, KS | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-marionyouth",
+     "old": "| [** Marion Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/marionyouth) | - | - | - |",
+     "new": "| [** Marion Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/marionyouth) (Sequel took over from Youth Services International in 2016 ([source](https://www.djj.state.fl.us/news/press-releases/2016/florida-department-of-juvenile-justice-ends-all-contracts-with-youth-services-international))) | - | Ocala, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-mingus",
+     "old": "| [** Mingus Mountain Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mingus) | 1985 | Prescott Valley, AZ | N/A |",
+     "new": "| [** Mingus Mountain Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mingus) (managed by Sequel from 2004; run by [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) since 2021 ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf))) | 1985 | Prescott Valley, AZ | N/A |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-norris",
+     "old": "| [** Norris Academy**](https://www.reddit.com/r/troubledteens/wiki/index/norris) | - | - | - |",
+     "new": "| [** Norris Academy**](https://www.reddit.com/r/troubledteens/wiki/index/norris) (Sequel from 2011; now a [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) program ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers))) | 2008 | Norris, TN | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-palmbeach",
+     "old": "| [** Palm Beach Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/palmbeach) | - | - | - |",
+     "new": "| [** Palm Beach Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/palmbeach) (Sequel from April 2016; now run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) ([source](https://www.djj.state.fl.us/programs-facilities/residential-facilities))) | 2006 | West Palm Beach, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-pompano",
+     "old": "| [** Pompano Youth Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/pompano) | - | - | - |",
+     "new": "| [** Pompano Youth Treatment Center**](https://www.reddit.com/r/troubledteens/wiki/index/pompano) (Sequel from 2016; closed in 2021 after Florida inspectors found it fell short of state standards ([source](https://features.apmreports.org/documents/?document=21747035-sequel-pompano-youth-treatment-center-ytc_final-fy2122))) | 2014 | Pompano Beach, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequelpom",
+     "old": "| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |",
+     "new": "| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) (bought by Sequel in 2016; renamed Torii Behavioral Health and closed in 2021 ([source](https://www.10tv.com/article/news/investigations/10-investigates/closure-embattled-teen-psychiatric-facility-sequel-pomegranate-relief-history-there/530-a77320d2-72e0-4724-8270-137918a62bfc))) | 2007 | Columbus, OH | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequeltrans",
+     "old": "| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |",
+     "new": "| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) (run by [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) as Brighter Transition ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf))) | 2013 | Sioux Falls, SD | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequelcourtland",
+     "old": "| [** Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) | - | - | - |",
+     "new": "| [** Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) (Brighter Path Courtland under Vivant from 2022; the town revoked its business license in April 2025 ([source](https://whnt.com/news/northwest-alabama/courtland-town-council-votes-to-revoke-mental-health-centers-business-license/))) | 1990 | Courtland, AL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequelmont",
+     "old": "| [** Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) | - | - | - |",
+     "new": "| [** Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) (Brighter Path Montgomery under Vivant from 2022 ([source](https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf))) | 2013 | Montgomery, AL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-owenscross",
+     "old": "| [** Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) | - | - | - |",
+     "new": "| [** Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) (closed by Sequel on April 30, 2022, later reopened as Pathway of Madison County ([source](https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/))) | 1996 | Owens Cross Roads, AL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequeltuskegee",
+     "old": "| [** Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) | - | - | - |",
+     "new": "| [** Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) (Brighter Path Tuskegee under Vivant from 2022 ([source](https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf))) | 1998 | Tuskegee, AL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-stjohnsyouth",
+     "old": "| [** St. John’s Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/stjohnsyouth) | - | - | - |",
+     "new": "| [** St. John’s Youth Academy**](https://www.reddit.com/r/troubledteens/wiki/index/stjohnsyouth) (Sequel from 2015; Florida ended the contract and removed all youth in October 2022 after a riot ([source](https://www.news4jax.com/news/local/2022/10/26/is-st-johns-youth-academy-shut-down/))) | 2009 | St. Augustine, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-woodwardaca",
+     "old": "| [** Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) | 1995 | Woodward, IA | N/A |",
+     "new": "| [** Woodward Academy**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) (Sequel from 2000; run by [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) since 2021 ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf))) | 1995 | Woodward, IA | N/A |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-woodwardcomm",
+     "old": "| [** Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) | - | - | - |",
+     "new": "| [** Woodward Community Based Services**](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm) (a Sequel program from 2006 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm))) | 2006 | Iowa | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-auldern",
+     "old": "| [** Auldern Academy**](https://www.reddit.com/r/troubledteens/wiki/index/auldern) | - | - | - |",
+     "new": "| [** Auldern Academy**](https://www.reddit.com/r/troubledteens/wiki/index/auldern) (Sequel from 2009; closed in 2021 ([source](https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities))) | 2001 | Siler City, NC | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-clarinda",
+     "old": "| [** Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) | - | - | - |",
+     "new": "| [** Clarinda Academy**](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) (Sequel from 1999; closed in 2021 ([source](https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities))) | 1992 | Clarinda, IA | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-lakesideacademy",
+     "old": "| [** Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) | - | - | - |",
+     "new": "| [** Lakeside Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lakesideacademy) (Sequel from 2007; Michigan ended its contracts in June 2020 after the death of Cornelius Frederick ([source](https://www.freep.com/story/news/local/michigan/2020/06/19/lakeside-academy-kalamazoo-cornelius-frederick/3221236001/))) | 1907 | Kalamazoo, MI | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-mountpleasant",
+     "old": "| [** Mount Pleasant Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountpleasant) | - | - | - |",
+     "new": "| [** Mount Pleasant Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountpleasant) (Sequel from 2016; closed in July 2019 ([source](https://www.stgeorgeutah.com/news/local/as-red-rock-canyon-school-gears-for-closure-parent-company-shutters-sister-institution/article_def202e9-b52b-57e6-89b9-6a17e5299fa5.html))) | 2011 | Mount Pleasant, UT | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-mountainhome",
+     "old": "| [** Mountain Home Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountainhome) | - | - | - |",
+     "new": "| [** Mountain Home Academy**](https://www.reddit.com/r/troubledteens/wiki/index/mountainhome) (Sequel from 2009 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm))) | 2001 | Mountain Home, ID | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-normative",
+     "old": "| [** Normative Services Academy Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/normative) | - | - | - |",
+     "new": "| [** Normative Services Academy Inc.**](https://www.reddit.com/r/troubledteens/wiki/index/normative) (Sequel from 2003; closed in March 2021 ([source](https://sheridanmedia.com/news/38332/normative-services-academy-in-sheridan-set-to-close-in-march/))) | 1991 | Sheridan, WY | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-northernil",
+     "old": "| [** Northern Illinois Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northernil) | - | - | - |",
+     "new": "| [** Northern Illinois Academy**](https://www.reddit.com/r/troubledteens/wiki/index/northernil) (Sequel from 2011; Illinois removed all 51 children in May 2021 and it closed ([source](https://www.apmreports.org/story/2021/05/21/sequel-confronts-more-abuse-allegations-amid-concerns-about-its-finances))) | 2003 | Aurora, IL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-redrockcanyon",
+     "old": "| [** Red Rock Canyon School**](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) | - | - | - |",
+     "new": "| [** Red Rock Canyon School**](https://www.reddit.com/r/troubledteens/wiki/index/redrockcanyon) (Sequel from 2016; closed in 2019 ([source](https://www.stgeorgeutah.com/news/local/as-red-rock-canyon-school-gears-for-closure-parent-company-shutters-sister-institution/article_def202e9-b52b-57e6-89b9-6a17e5299fa5.html))) | 1999 | St. George, UT | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-sequelmadison",
+     "old": "| [** Sequel TSI of Madison**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmadison) | - | - | - |",
+     "new": "| [** Sequel TSI of Madison**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmadison) (Sequel from 2009; closed in August 2019 after the city revoked its business license ([source](https://www.al.com/news/2019/08/in-wake-of-killing-and-escapes-madison-revokes-three-springs-business-license.html))) | 1996 | Madison, AL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-starralbion",
+     "old": "| [** Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) | - | - | - |",
+     "new": "| [** Starr Albion Prep**](https://www.reddit.com/r/troubledteens/wiki/index/starralbion) (Sequel from 2014; Starr Commonwealth ended the partnership in July 2020 ([source](https://www.battlecreekenquirer.com/story/news/2020/07/09/starr-commonwealth-cuts-ties-sequel-youth-family-services-ends-residential-programs/5383756002/))) | 1913 | Albion, MI | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12)."
+    },
+    {
+     "id": "r-torii",
+     "old": "| [** Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) | - | - | - |",
+     "new": "| [** Torii Behavioral Health**](https://www.reddit.com/r/troubledteens/wiki/index/torii) (Sequel Pomegranate under a new name; closed in 2021 ([source](https://www.10tv.com/article/news/investigations/10-investigates/closure-embattled-teen-psychiatric-facility-sequel-pomegranate-relief-history-there/530-a77320d2-72e0-4724-8270-137918a62bfc))) | 2007 | Columbus, OH | - |\n| ** Kingston Academy** (Sequel from 2011; closed in 2019 after Tennessee removed 18 children ([source](https://www.wbir.com/article/news/dcs-18-children-removed-from-kingston-academy-in-roane-county/51-7b3f94d6-c337-40da-b8b8-8fd6d84602e2))) | 2002 | Kingston, TN | - |\n| ** Rose Rock Academy** (Sequel from 2011; closed in May 2016 ([source](https://kfor.com/news/without-them-we-have-nothing-mother-upset-child-treatment-center-is-closing/))) | - | Oklahoma City, OK | - |\n| ** Riverside Academy** (Sequel from 2011 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm))) | 2007 | Wichita, KS | - |\n| ** Union Juvenile Residential Facility** (Sequel from 2009; Florida removed every youth in July 2019 ([source](https://mycbs4.com/news/local/child-battery-investigation-closes-union-juvenile-residential-facility-officials-say))) | 2006 | Raiford, FL | - |",
+     "note": "Years, place and what became of the program (Sequel research, 2026-10-12). Kingston, Rose Rock, Riverside and Union Juvenile were Sequel programs missing from both tables."
+    },
+    {
      "id": "o1",
      "old": "| [** Falcon Ridge Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) | 2003 | Virgin, UT | [HEAL](http://www.heal-online.org/falcon.htm) |",
-     "new": "| [** Falcon Ridge Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) (run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) since October 2021, [source](https://web.archive.org/web/20211022150240/https://falconridgeranch.com/)) | 2003 | Virgin, UT | [HEAL](http://www.heal-online.org/falcon.htm) |",
+     "new": "| [** Falcon Ridge Ranch**](https://www.reddit.com/r/troubledteens/wiki/index/falconridge) (Sequel from 2016; run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) since October 2021, [source](https://web.archive.org/web/20211022150240/https://falconridgeranch.com/)) | 2003 | Virgin, UT | [HEAL](http://www.heal-online.org/falcon.htm) |",
      "note": "Owner (2026-10-12): Falcon Ridge Ranch is now owned by Rite of Passage, not Sequel (site footer changed to \"A Rite of Passage Program\" in October 2021; Utah license to Care Youth Corporation dba Rite of Passage from 2022-01-31)."
     },
     {
      "id": "o2",
      "old": "| [** Lava Heights Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) | 2012 | Toquerville, UT | N/A |",
-     "new": "| [** Lava Heights Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) (run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) since October 2021, [source](https://web.archive.org/web/20211020025015/https://lavaheightsacademy.com/)) | 2012 | Toquerville, UT | N/A |",
+     "new": "| [** Lava Heights Academy**](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) (Sequel from 2016; run by [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) since October 2021, [source](https://web.archive.org/web/20211020025015/https://lavaheightsacademy.com/)) | 2012 | Toquerville, UT | N/A |",
      "note": "Owner (2026-10-12): Lava Heights Academy is now owned by Rite of Passage, not Sequel (site footer changed to \"A Rite of Passage Program\" in October 2021; Utah license to Care Youth Corporation dba Rite of Passage from 2022-01-31)."
+    },
+    {
+     "id": "h1",
+     "old": "## ** Open Sequel Programs**",
+     "new": "## ** Sequel Programs in 2021**",
+     "note": "Sequel runs no programs now; this table lists the programs it ran in 2021 and what became of each."
+    },
+    {
+     "id": "h2",
+     "old": "*Below is a list of active residential Sequel Youth & Family Services programs.*",
+     "new": "*Below is a list of the residential programs Sequel Youth & Family Services ran in 2021, and what became of each.*",
+     "note": "As h1."
+    },
+    {
+     "id": "h3",
+     "old": "*Below is a list of inactive residential Sequel Youth & Family Services programs.*",
+     "new": "*Below is a list of residential Sequel Youth & Family Services programs that closed while Sequel ran them.*",
+     "note": "Closed table caption."
+    },
+    {
+     "id": "x1",
+     "old": "Sequel Youth and Family Services is a private for-profit company that runs a nationwide system of residential treatment, private pay residential, therapeutic group homes, community-based programs, and alternative education services in the United States. Sequel Youth and Family Services was formed out of Youth Services International (YSI), a for-profit juvenile corrections company. Adam Shapiro and John \"Jay\" Ripley, who both worked for YSI and currently serve as co-chairmen on company's board, co-founded Sequel Youth and Family Services on April 19, 1992. Sequel was initially founded to operate [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , a residential facility in Clarinda, Iowa. Sequel has expanded over the years by acquiring youth facilities, including some former YSI facilities.",
+     "new": "Sequel Youth and Family Services was a private for-profit company that ran a nationwide system of residential treatment, private pay residential, therapeutic group homes, community-based programs, and alternative education services in the United States. Sequel Youth and Family Services was formed out of Youth Services International (YSI), a for-profit juvenile corrections company. Adam Shapiro, John \"Jay\" Ripley and Cindy Cox, Ripley and Shapiro having both worked for YSI, founded Sequel Youth and Family Services in 1999, when the board of the nonprofit that owned [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , a residential facility in Clarinda, Iowa that YSI had opened in 1992, asked them to take it over ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). Sequel expanded over the years by acquiring youth facilities, including some former YSI facilities.",
+     "note": "Sequel was founded in 1999, not on April 19, 1992 (that is Clarinda Academy's opening under YSI): 2017 merger proxy. Cindy Cox was the third founder. Past tense: Sequel no longer runs programs."
+    },
+    {
+     "id": "x2",
+     "old": "In September of 2009, Sequel Youth and Family Services acquired [Three Springs Inc. (TSI)](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) , an operator of adolescent behavior modification facilities based in Huntsville, Alabama.",
+     "new": "At the end of 2009, Sequel Youth and Family Services acquired [Three Springs Inc. (TSI)](https://www.reddit.com/r/troubledteens/wiki/active-programs/threesprings) , an operator of adolescent behavior modification facilities based in Huntsville, Alabama ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). The Three Springs programs were held by companies named Sequel TSI, and Sequel's holding company became Sequel TSI Holdings, LLC ([source](https://opencorporates.com/companies/us_ia/329882)).",
+     "note": "The Three Springs deal was announced on December 30, 2009 (not September); Sequel TSI names. Link fixed to the Three Springs company page."
+    },
+    {
+     "id": "x3",
+     "old": "In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://opencorporates.com/companies/us_al/908-474) to \"buy a majority of the business of Sequel Youth & Family Services.\" Since 2017, a California-based private equity firm had owned a majority stake in Sequel Youth and Family Services. It appears Ripley is purchasing some of those properties but its not clear which ones. 10 WBNS did find business licenses for the recently-created Vivant Behavioral Health filed last month with the secretary of state’s offices in at least three states – Alabama, Arizona and Kansas. A spokesman for the Ohio Department of Mental Health and Addiction Services said that they had no record of recent applications seeking licensure/certification from Vivant Behavioral Health.",
+     "new": "In September 2021, Jay Ripley formed [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) to \"buy a majority of the business of Sequel Youth & Family Services.\" Since 2017, a California-based private equity firm, Altamont Capital Partners, had owned a majority stake in Sequel Youth and Family Services ([source](https://altamontcapital.com/news/altamont-capital-partners-invests-in-sequel-youth-family-services/)). Vivant bought 13 of Sequel's facilities ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf)), and Sequel's other programs were closed or went to [Rite of Passage](https://www.reddit.com/r/troubledteens/wiki/active-programs/riteofpassage) , Willow Grove LLC and a Kansas nonprofit ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)). 10 WBNS found business licenses for the newly created Vivant Behavioral Health filed with the secretary of state's offices in at least three states: Alabama, Arizona and Kansas. A spokesman for the Ohio Department of Mental Health and Addiction Services said that they had no record of applications seeking licensure/certification from Vivant Behavioral Health.",
+     "note": "Names Altamont; replaces \"It appears Ripley is purchasing some of those properties but its not clear which ones\" with what Vivant bought; \"filed last month\" dated; Vivant links to its wiki page."
+    },
+    {
+     "id": "x4",
+     "old": "** Adam Shapiro** is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he worked as a lawyer and the Executive Director of [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , which was at that point owned by Youth Services International (YSI).",
+     "new": "** Adam Shapiro** was a co-founder and co-chairman of Sequel Youth and Family Services; he stepped back from day-to-day operations in 2011 ([source](https://www.llcp.com/levine-leichtman-capital-partners-and-sequel-youth-and-family-services-anno/)). Before this, he worked as a lawyer and was the Executive Director of [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) , which was at that point owned by Youth Services International (YSI).",
+     "note": "Past tense; his 2011 step back."
+    },
+    {
+     "id": "x5",
+     "old": "** John \"Jay\" Ripley** is the Co-Founder and Co-Chairman of Sequel Youth and Family Services. Prior to this, he was the Co-Founder of Youth Services International (YSI), beginning in 1995. He also was the President/CEO of Precision Auto Care Inc. from 1995 until 1998.",
+     "new": "** John \"Jay\" Ripley** was a co-founder and the chairman of Sequel Youth and Family Services, and its chief executive from 2011 to 2013 ([source](https://www.llcp.com/levine-leichtman-capital-partners-and-sequel-youth-and-family-services-anno/)). Before this, he was a founding stockholder of Youth Services International (YSI) and its president, chief operating officer and chief financial officer from 1990 to 1995, and the president and CEO of Precision Auto Care Inc. from 1995 until 1998 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). In 2021 he founded [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
+     "note": "He was at YSI from 1990 (not \"beginning in 1995\"); past tense; CEO years; Vivant."
     }
    ],
    "conflicts": []
@@ -2271,6 +2851,33 @@
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in).",
      "kop_record": true
+    },
+    {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Falcon Ridge Ranch was one of the four CARE schools, with Red Rock Canyon School, [Lava Heights Academy](https://www.reddit.com/r/troubledteens/wiki/index/lavaheights) and Mount Pleasant Academy, whose operating assets [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) bought on August 16, 2016 for $23.5 million plus assumed liabilities and an earn-out payment tied to the schools' earnings in the following year ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). Sequel's 2017 merger filing listed Falcon Ridge Ranch as a staff-secure residential program with 48 licensed beds for girls aged 12 to 18 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). An undated Oregon Department of Human Services list of out-of-state placements, from about 2018 or 2019, gave the daily rate at each of the Utah CARE schools as $330 ([source](https://kidsoverprofits.org/wp-content/uploads/Out-of-State-Oregon-Youth-Placements.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f072, f113, f148 (KOP copy of the Oregon list)"
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "Abuse and Neglect Allegations",
+     "text": "In March 2021, the Falcon Ridge Ranch staff member accused of slapping residents and showing them a photo of her husband was arrested and charged with multiple counts of sexual battery and dealing harmful material to a minor; the allegations named four girls under 18, who also said she touched them inappropriately ([source](https://www.sltrib.com/news/2021/03/12/staff-member-troubled/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f232, f462; Salt Lake Tribune 3/11/2021 re-read"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "Abuse and Neglect Allegations",
+     "text": "On March 2, 2020, in the arbitration between Sequel and the sellers of the four CARE schools, the arbitrator found that but for Sequel's misconduct the schools' earnings would have passed the threshold in the purchase agreement, entitling the sellers to an earn-out payment of at least $3,118,445; the final award followed on May 1, 2020. Sequel had demanded arbitration on October 4, 2017, seeking $2,674,122.29 in indemnity ([source](https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f295, f297; petition pp. 4-6 re-read (s1 already has the settlement, the breach ruling and the $1.3M fees)"
     },
     {
      "id": "m1",
@@ -7473,6 +8080,190 @@
      "old": "All students at ARA are miserable. When I was there, the only thing that got us all through the program was each other. The staff were terrible to us so we ONLY had each other. ARA was a horrible and awful experience for me. After being transported out of ARA, I was put in a treatment program in Puerto Rico called Surfhouse, where I am doing great and have created a better relationships my family and friends and my life is headed in the right direction. Don't make a mistake and send your child to ARA. Your family and your son deserve much better. Best wishes to all of you on your journey.\" - [Noah (Google Reviews)](https://www.google.com/maps/contrib/103059374455611280891/place/ChIJyQP5Kl7zyoARWR4rbgsDEFA/@37.261901,-113.283752,17z/data=!4m6!1m5!8m4!1e1!2s103059374455611280891!3m1!1e1?hl=en-US)",
      "new": "All students at ARA are miserable. When I was there, the only thing that got us all through the program was each other. The staff were terrible to us so we ONLY had each other. ARA was a horrible and awful experience for me. After being transported out of ARA, I was put in a treatment program in Puerto Rico called Surfhouse, where I am doing great and have created better relationships with my family and friends and my life is headed in the right direction. Don't make a mistake and send your child to ARA. Your family and your son deserve much better. Best wishes to all of you on your journey.\" - [Noah (Google Reviews)](https://www.google.com/maps/contrib/103059374455611280891/place/ChIJyQP5Kl7zyoARWR4rbgsDEFA/@37.261901,-113.283752,17z/data=!4m6!1m5!8m4!1e1!2s103059374455611280891!3m1!1e1?hl=en-US)",
      "note": "copy-edit: spelling, grammar, American spelling (owner, 2026-10-09)"
+    }
+   ],
+   "conflicts": []
+  },
+  "492": {
+   "program": "Clarinda Academy",
+   "place": "Clarinda, IA",
+   "years": "1992-2021",
+   "column": "original_markdown",
+   "base_sha1": "8775f8414423c5e831224d858fb00d78c5668ca6",
+   "record": {
+    "id": 13378,
+    "name": "Clarinda Academy",
+    "status": "Closed"
+   },
+   "ops": [
+    {
+     "id": "f4",
+     "op": "add_section",
+     "after_section": "Program Structure",
+     "heading": "## **Rules and Punishments**",
+     "separator": "---",
+     "filler": true,
+     "text": "Information about the rules, consequences, or disciplinary practices at Clarinda Academy has not been added yet. If you have reliable source material to share, please contact [r/troubledteens modmail](https://www.reddit.com/message/compose?to=/r/troubledteens).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "The wiki editor's empty section: the page has none, so it asks readers for information."
+    },
+    {
+     "id": "c3m",
+     "op": "add_section",
+     "after_section": "Abuse Allegations and Lawsuits",
+     "heading": "## **In the Media**",
+     "separator": "---",
+     "text": "- [W. James Hindman and Youth Services International: A Profile in Juvenile Rehabilitation and Entrepreneurship](https://www.baltimoresun.com/news/bs-xpm-1995-04-16-1995106090-story.html) (Baltimore Sun, 4/16/1995)\n- [Washington Foster Youth Allegedly Abused at Iowa Facility](https://www.desmoinesregister.com/story/news/crime-and-courts/2018/10/22/washington-foster-kids-iowa-allegedly-abused-clarinda-academy-disability-rights-seattle-times/1733318002/) (Des Moines Register, 10/22/2018)\n- [Clarinda Academy Responds to State and Advocacy Organization Abuse Allegations](https://valleynewstoday.com/essex_independent/clarinda-academy-responds-to-abuse-allegations/article_db7898a8-0219-11e9-90dc-a70dd6f95585.html) (Valley News Today, 12/17/2018)\n- [Clarinda Academy, home for troubled kids, faces allegations of abuse (Part 1)](https://www.nbcnews.com/nightly-news/video/clarinda-academy-home-for-troubled-kids-faces-allegations-of-abuse-part-1-58814021764) (NBC News, 5/3/2019)\n- [Clarinda Academy Residential Facility Faces Allegations of Mistreatment](https://www.nbcnews.com/nightly-news/video/clarinda-academy-home-for-troubled-kids-faces-allegations-of-abuse-part-1-58813509835) (NBC News, 5/3/2019)\n- [Sequel Youth and Family Services Closes Two Utah Treatment Facilities Amid Regulatory Scrutiny and Misconduct Investigations](https://www.sltrib.com/news/2019/07/15/embattled-company-close/) (The Salt Lake Tribune, 7/15/2019)\n- [Firm accused of abusing troubled teens in Iowa, elsewhere under fire again](https://www.desmoinesregister.com/story/news/2019/07/18/firm-accused-abusing-troubled-teens-iowa-elsewhere-under-fire-again/1749599001/) (The Des Moines Register, 7/18/2019)\n- [Death of 16-Year-Old at Lakeside Academy Leads to Legal Action](https://www.refinery29.com/en-us/2020/06/9884578/cornelius-fredericks-black-teen-lakeside-death-charges) (Refinery29, 6/25/2020)\n- [Lawsuit and Investigation Detail History of Abuse and Death at Lakeside Academy](https://www.motherjones.com/criminal-justice/2020/07/cornelius-fredericks-i-cant-breathe-sequel-lakeside-michigan/) (Mother Jones, 7/1/2020)\n- [Clarinda Academy Residential Facility for Youth Announces Closure](https://www.wowt.com/2021/02/06/clarinda-academy-closing/) (WOWT, 2/5/2021)\n- [After years of abuse allegations, Iowa youth home to close](https://www.nbcnews.com/news/us-news/after-years-abuse-allegations-iowa-youth-home-close-n1256890) (NBC News, 2/5/2021)\n- [Federal Watchdogs Find Abuse at For-Profit Youth Residential Programs in 18 States](https://imprintnews.org/top-stories/federal-watchdogs-find-widespread-abuse-at-youth-residential-programs/60071) (The Imprint, 11/2/2021)\n- [Sequel to close New Mexico youth facility amid more abuse allegations | APM Reports](https://www.apmreports.org/story/2021/12/03/sequel-bernalillo-academy-abuse-allegations) (APM Reports, 12/3/2021)\n- [Clarinda board renews Clarinda Academy agreement](https://www.kmaland.com/news/clarinda-board-renews-clarinda-academy-agreement/article_0ec4739e-0c5b-11ee-8712-eb25f930aa21.html) (KMAland, 6/16/2023)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)\n- [WA Sent Abused Kids To Jail-Like Iowa Group Home With “Abusive” Practices](https://www.invw.org/2018/10/17/washington-sent-abused-neglected-kids-to-jail-like-iowa-group-home-with-abusive-practices/) (INVW, 10/17/2018)\n- [Report Describes 'Abusive Restraint Practices' For Washington Foster Youth Sent Out Of State](https://www.nwpb.org/2018/10/18/report-describes-abusive-restraint-practices-for-washington-foster-youth-sent-out-of-state/) (NWPB, 10/18/2018)\n- [Washington Foster Kids Detail Abuse At Sequel Group Homes](https://www.invw.org/2020/12/02/washington-foster-kids-detail-abuse-at-sequel-group-homes/) (INVW, 12/2/2020)\n- [Embattled Sequel closes three more facilities](https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities) (APM Reports, 2/10/2021)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
+    },
+    {
+     "id": "c1",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Paul Cade** worked at Clarinda Academy.",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "c2",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mark Moses** was a youth counselor at Clarinda Academy. Moses was also the training manager and education director of [Woodward Academy](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) and a training manager at [Forest Ridge Youth Services](https://www.reddit.com/r/troubledteens/wiki/index/forestridge).",
+     "by": "script",
+     "verdict": "ok",
+     "note": "Written by script from the gap.",
+     "kop_record": true
+    },
+    {
+     "id": "k1",
+     "op": "append_to_section",
+     "section": "Related Media",
+     "text": "[Clarinda Academy on Kids Over Profits](https://kidsoverprofits.org/facility/clarinda-academy-ia/)",
+     "by": "script",
+     "verdict": "ok",
+     "note": "KOP's facility page for the record, as the last Related Media item.",
+     "kop_page": true
+    },
+    {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Sequel's founders, John F. \"Jay\" Ripley, Adam Shapiro and Cindy Cox, took over the management of Clarinda Academy in June 1999 at the request of the board of the Clarinda Youth Corporation, a nonprofit ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). In Sequel's January 2017 merger filing, Clarinda Academy was licensed for 267 boys and girls ages 12 to 18 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f001, f086; conflicts-resolved q9 (SEC proxy checked)"
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In 2012, a Clarinda resident's collarbone was broken in an unapproved restraint. An investigation found that staff had joined a \"cover up\" of the incident, and two employees were fired ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f211, f607 (NBC 2019 checked)"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In 2015, staff at Clarinda repeatedly picked up a 17-year-old Washington foster youth and dropped him during restraints, bruising his forehead, legs, back and arms. His caseworker was not told until nearly two months later ([source](https://www.invw.org/2020/12/02/washington-foster-kids-detail-abuse-at-sequel-group-homes/)) ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f209, f605 (InvestigateWest 2020 and NBC 2019 checked; 'loss of consciousness' left out, not in either article)"
+    },
+    {
+     "id": "q4",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In October 2018, after the Disability Rights Washington report, Washington's Department of Children, Youth and Families halted new placements at Clarinda Academy for 90 days and removed its foster youth. The state had paid Sequel $816,072 since July 2017 ([source](https://www.nwpb.org/2018/10/18/report-describes-abusive-restraint-practices-for-washington-foster-youth-sent-out-of-state/)). Nebraska's Department of Health and Human Services also pulled its children from Clarinda after the report ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f255 (NWPB 10/18/2018 and NBC 2019 checked; the $274/day rate is in neither, left out)"
+    },
+    {
+     "id": "q5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In November 2018, it was reported that the resident whom Aranda had abused had sued Sequel, alleging that Clarinda Academy was negligent in hiring Aranda despite a prior conviction. Sequel said the conviction was for felony petty theft in California, which would be a misdemeanor in Iowa ([source](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/11/28/profit-academy-tr-academy-troubled-youth-hired-felon-who-raped-student-lawsuit-alleges/2138992002/)) ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f311 (NBC 2019 checked; DMR 11/28/2018 headline)"
+    },
+    {
+     "id": "q6",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In February 2019, Iowa's Department of Human Services interviewed five Clarinda youth. All of them said they felt unsafe, described a recent rise in youth-on-youth assaults, and said staff were \"ill-equipped to manage the assaults\" ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f212 (NBC 2019 checked)"
+    },
+    {
+     "id": "q7",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In March 2019, days after NBC News asked about restraints at Clarinda, Sequel announced it would adopt the Ukeru restraint-reduction program, starting with a pilot at Clarinda ([source](https://www.nbcnews.com/news/us-news/they-told-me-it-was-going-be-good-place-allegations-n987176)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f213 (NBC 2019 checked)"
+    },
+    {
+     "id": "q8",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Steve Gilbert** was a youth counselor and then the Admissions Director of Clarinda Academy under [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/active-programs/ysi), where he started in 1992. He was Sequel's vice president of marketing and business development from 1999 and its executive vice president of marketing from 2008 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "conflicts-resolved q9 (SEC proxy bio checked)"
+    },
+    {
+     "id": "q9",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mandy Moses** was a senior counselor, a team leader, an admissions representative and then the Group Living Director at Clarinda Academy, where she started. She was the Executive Director of [Woodward Academy](https://www.reddit.com/r/troubledteens/wiki/index/woodwardaca) from 2001 to 2007, Sequel's executive vice president of operations from 2007 and its chief program officer from 2014 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "SEC proxy bio checked (conflicts-resolved q9 names her)"
+    }
+   ],
+   "tense": [
+    {
+     "id": "t1.1",
+     "old": "Clarinda Academy's behavioral expectations were established through four \"core norms\" that residents are required to follow. The four core norms were:",
+     "new": "Clarinda Academy's behavioral expectations were established through four \"core norms\" that residents were required to follow. The four core norms were:"
+    },
+    {
+     "id": "t1.2",
+     "old": "In addition to the four core norms, Clarinda Academy had hundreds, if not thousands, of other \"norms\" that included walking in single-file lines, tucking in shirts, and never speaking to residents of the opposite gender. In order to enforce the norms, Clarinda Academy used what were called the \"Seven Levels of Intervention\". Everyone on campus, even other residents, were encouraged to participate in these interventions when they perceive that norms were not being followed. The Seven Levels of Intervention were:",
+     "new": "In addition to the four core norms, Clarinda Academy had hundreds, if not thousands, of other \"norms\" that included walking in single-file lines, tucking in shirts, and never speaking to residents of the opposite gender. In order to enforce the norms, Clarinda Academy used what were called the \"Seven Levels of Intervention\". Everyone on campus, even other residents, were encouraged to participate in these interventions when they perceived that norms were not being followed. The Seven Levels of Intervention were:"
+    },
+    {
+     "id": "t1.3",
+     "old": "1.** Helpful Nonverbal:** This included nonverbal gestures such as shaking ones head to indicate that the behavior is not acceptable.",
+     "new": "1.** Helpful Nonverbal:** This included nonverbal gestures such as shaking ones head to indicate that the behavior was not acceptable."
+    },
+    {
+     "id": "t1.4",
+     "old": "2.** Concerned Nonverbal:** This included more assertive and obvious nonverbal gestures of disapproval indicating that the behavior needs to change.",
+     "new": "2.** Concerned Nonverbal:** This included more assertive and obvious nonverbal gestures of disapproval indicating that the behavior needed to change."
+    },
+    {
+     "id": "t1.5",
+     "old": "3.** Helpful Verbal:** This involved the problem behavior being addressed in a verbal manner, along with an expectation of what positive change is being requested.",
+     "new": "3.** Helpful Verbal:** This involved the problem behavior being addressed in a verbal manner, along with an expectation of what positive change was being requested."
+    }
+   ],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "Clarinda Academy was a [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) behavior modification program that was established in 1992. When it first opened, it was marketed as a Residential Foster Care Facility for at-risk or adjudicated boys between the ages of 12 and 18. However, the program later expanded to offer residential treatment to boys and girls (12-18) who struggled with perceived issues such as \"low empathy, impulsivity, poor moral reasoning, anti-social behaviors, non-compliance, victim mindset, legal troubles, anger management problems, and aggressiveness towards others.\" The program had a maximum capacity of 180 teens, and the average length of stay was reportedly between 6 and 12 months. Clarinda Academy was the first program opened by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .",
+     "new": "Clarinda Academy was a [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) behavior modification program that was established in 1992. When it first opened, it was marketed as a Residential Foster Care Facility for at-risk or adjudicated boys between the ages of 12 and 18. However, the program later expanded to offer residential treatment to boys and girls (12-18) who struggled with perceived issues such as \"low empathy, impulsivity, poor moral reasoning, anti-social behaviors, non-compliance, victim mindset, legal troubles, anger management problems, and aggressiveness towards others.\" The program had a maximum capacity of 180 teens, and the average length of stay was reportedly between 6 and 12 months. Clarinda Academy was opened in February 1992 by [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) as its first academy ([source](https://web.archive.org/web/19970209104916/http://www.youthservices.com/ca.htm)), and in 1999 it became the first program run by [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=27)).",
+     "note": "Sequel audit (owner, 2026-10-12): YSI opened Clarinda in 1992; Sequel took it over in 1999 as its first program, it did not open it."
     }
    ],
    "conflicts": []
@@ -13802,6 +14593,33 @@
      "kop_record": true
     },
     {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Lava Heights Academy was one of the four CARE schools, with [Falcon Ridge Ranch](https://www.reddit.com/r/troubledteens/wiki/index/falconridge), Red Rock Canyon School and Mount Pleasant Academy, whose operating assets [Sequel Youth & Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) bought on August 16, 2016 for $23.5 million plus assumed liabilities and an earn-out payment tied to the schools' earnings in the following year ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). Sequel's 2017 merger filing listed Lava Heights Academy as a staff-secure residential program with 48 licensed beds for boys and girls aged 12 to 18 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). An undated Oregon Department of Human Services list of out-of-state placements, from about 2018 or 2019, gave the daily rate at each of the Utah CARE schools as $330 ([source](https://kidsoverprofits.org/wp-content/uploads/Out-of-State-Oregon-Youth-Placements.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f072, f115, f148 (KOP copy of the Oregon list)"
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "In December 2022, a 22-year-old Lava Heights Academy staff member who had started work there that September was charged in Utah's Fifth District Court with rape, forcible sexual abuse and sexual exploitation of a minor over the abuse of two girls, aged 14 and 15, whom he had been assigned to supervise. Charging documents say he admitted the conduct the girls described ([source](https://www.fox13now.com/news/crime/staff-member-at-southern-utah-youth-treatment-center-charged-with-rape-sexual-abuse-of-students), [source](https://www.ksl.com/article/50530931/southern-utah-man-accused-of-abusing-girls-at-residential-treatment-program)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f233, f452; Fox 13 re-read, KSL (12/3/2022) for the date"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "Abuse Allegations",
+     "text": "On March 2, 2020, in the arbitration between Sequel and the sellers of the four CARE schools, the arbitrator found that but for Sequel's misconduct the schools' earnings would have passed the threshold in the purchase agreement, entitling the sellers to an earn-out payment of at least $3,118,445; the final award followed on May 1, 2020. Sequel had demanded arbitration on October 4, 2017, seeking $2,674,122.29 in indemnity ([source](https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f295, f297; petition pp. 4-6 re-read (s1 already has the settlement, the breach ruling and the $1.3M fees)"
+    },
+    {
      "id": "m1",
      "op": "move_to_section",
      "section": "In the Media",
@@ -15185,7 +16003,7 @@
      "after_section": "Abuse Allegations and News",
      "heading": "## **In the Media**",
      "separator": "---",
-     "text": "- [COVID-19 Outbreak Affects Dozens of Residents and Staff at Mingus Mountain Academy](https://www.azcentral.com/story/news/local/arizona/2020/05/07/mingus-mountain-academy-arizona-has-42-teens-covid-19/5172243002/) (The Arizona Republic, 5/7/2020)\n- [COVID-19 Outbreak Reported at Mingus Mountain Academy](https://www.dcourier.com/archives/84-students-20-staff-test-positive-at-mingus-mountain-academy/article_678ddd5d-7226-5608-9844-8c4de0f63e95.html) (Daily Courier, 5/14/2020)\n- [Mingus Mountain Academy Reports Staff Injuries and Student Custody After Incident](https://www.12news.com/video/news/local/arizona/2-staff-members-injured-5-students-in-custody-after-attack/75-3b406a73-148e-4686-9206-c80704bd7e46) (12News, 7/23/2020)\n- [Five Students Detained Following Disturbance and Assaults at Mingus Mountain Academy](https://theprescotttimes.com/juvenile-students-at-mingus-mountain-academy-attack-staff-resulting-in-injuries-and-5-in-custody/article_8aea4c61-da4d-5996-89f4-c536e0187034.html) (The Prescott Times, 7/23/2020)\n- [Prescott Valley police: Runaway teen still missing after 5 months](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/) (Arizona Republic, 3/31/2022)\n- [Arizona lawmaker calls for investigation after ABC15 reports into facility for troubled teens](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens) (ABC 15 Arizona, 4/30/2025)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)\n- [Federal Watchdogs Find Abuse at For-Profit Youth Residential Programs in 18 States](https://imprintnews.org/top-stories/federal-watchdogs-find-widespread-abuse-at-youth-residential-programs/60071) (The Imprint, 11/2/2021)\n- [Sequel Youth Facilities Face Abuse Allegations Amid Profit Claims](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319) (NBC News, 12/16/2020)",
+     "text": "- [COVID-19 Outbreak Affects Dozens of Residents and Staff at Mingus Mountain Academy](https://www.azcentral.com/story/news/local/arizona/2020/05/07/mingus-mountain-academy-arizona-has-42-teens-covid-19/5172243002/) (The Arizona Republic, 5/7/2020)\n- [COVID-19 Outbreak Reported at Mingus Mountain Academy](https://www.dcourier.com/archives/84-students-20-staff-test-positive-at-mingus-mountain-academy/article_678ddd5d-7226-5608-9844-8c4de0f63e95.html) (Daily Courier, 5/14/2020)\n- [Mingus Mountain Academy Reports Staff Injuries and Student Custody After Incident](https://www.12news.com/video/news/local/arizona/2-staff-members-injured-5-students-in-custody-after-attack/75-3b406a73-148e-4686-9206-c80704bd7e46) (12News, 7/23/2020)\n- [Five Students Detained Following Disturbance and Assaults at Mingus Mountain Academy](https://theprescotttimes.com/juvenile-students-at-mingus-mountain-academy-attack-staff-resulting-in-injuries-and-5-in-custody/article_8aea4c61-da4d-5996-89f4-c536e0187034.html) (The Prescott Times, 7/23/2020)\n- [Prescott Valley police: Runaway teen still missing after 5 months](https://www.azcentral.com/story/news/local/arizona/2022/03/31/prescott-valley-police-runaway-teen-still-missing-aunum-conyers/7229993001/) (Arizona Republic, 3/31/2022)\n- [Arizona lawmaker calls for investigation after ABC15 reports into facility for troubled teens](https://www.abc15.com/news/local-news/investigations/arizona-lawmaker-calls-for-investigation-after-abc15-reports-into-facility-for-troubled-teens) (ABC 15 Arizona, 4/30/2025)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)\n- [Federal Watchdogs Find Abuse at For-Profit Youth Residential Programs in 18 States](https://imprintnews.org/top-stories/federal-watchdogs-find-widespread-abuse-at-youth-residential-programs/60071) (The Imprint, 11/2/2021)\n- [Sequel Youth Facilities Face Abuse Allegations Amid Profit Claims](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319) (NBC News, 12/16/2020)\n- ['I just felt trapped' | Allegations of abuse at Arizona facility for troubled teens](https://www.abc15.com/news/local-news/investigations/i-just-felt-trapped-allegations-of-abuse-at-arizona-facility-for-troubled-teens) (ABC15, 1/14/2025)",
      "by": "script",
      "verdict": "ok",
      "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
@@ -15258,6 +16076,78 @@
      "kop_record": true
     },
     {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Sequel ran Mingus through its subsidiary Sequel Youth Services of Arizona, LLC. The management agreement gave it an option and a right of first refusal to buy the nonprofit's property and, as restated in 2014, ran to July 31, 2023. Sequel's 2017 merger filing listed Mingus Mountain Academy as a staff-secure residential program with 142 licensed beds for girls aged 12 to 18 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). An undated Oregon Department of Human Services list of out-of-state placements, from about 2018 or 2019, gave its daily rate as $380.10 ([source](https://kidsoverprofits.org/wp-content/uploads/Out-of-State-Oregon-Youth-Placements.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f076, f089, conflicts-resolved q1 (2014 restated agreement), f148 (KOP copy of the Oregon list)"
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "By 2025 Arizona licensed Mingus Mountain Estate Residential Center for two small behavioral health residential facilities for children: a 9-bed home at 100 Dewey Road in Dewey and an 8-bed home at 3801 North Robert Road in Prescott Valley ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000NXWgcEAH), [source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6NAAV&inspectionId=a1Ics00000G5UzfEAF)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f174; ADHS print views (tmp/sequel/src 22 and 27)"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael Forakis** has been a director of Mingus Mountain Estate Residential Center, Inc., the nonprofit that holds Mingus Mountain's licenses, since 2005, and its president since 2018 ([source](https://kidsoverprofits.org/wp-content/uploads/Mingus-Annual-Report-2024.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f170; KOP copy of the 2024 ACC annual report"
+    },
+    {
+     "id": "q4",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Michael Goldenberg** has been the chairman of the board of Mingus Mountain Estate Residential Center, Inc. since 2018, and a director since 2011 ([source](https://kidsoverprofits.org/wp-content/uploads/Mingus-Annual-Report-2024.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f170; KOP copy of the 2024 ACC annual report"
+    },
+    {
+     "id": "q5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In 2020, the Arizona Department of Health Services halted admissions at Mingus Mountain Academy, citing \"significant health and safety risks\"; investigators counted 136 restraints and 110 documented incidents of self-harm in July 2020 alone ([source](https://imprintnews.org/child-welfare-2/california-ends-out-of-state-placements/50095)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f251 (secondary; The Imprint refuses fetching, not re-read)"
+    },
+    {
+     "id": "q6",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In 2024, Arizona health inspectors cited Mingus's two homes four times: on March 19, at the Dewey home, for not reporting residents' injuries after residents took a facility van on March 13, crashed it through fences and ran away ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000G5UzWEAV)); on July 8, at the Dewey home, for not posting residents' rights ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000G5UzYEAV)); on October 29, at the Prescott Valley home, after staff twice gave a razor to a resident with a history of self-harm, who self-harmed on October 17 and 26 ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6NAAV&inspectionId=a1Ics00000G5UzfEAF)); and on December 10, at the Dewey home, for not allowing complete entry and inspection during a complaint investigation ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000G5UzbEAF)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f241, f242, f243, f244; checked against the ADHS print views in tmp/sequel/src"
+    },
+    {
+     "id": "q7",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "In 2025, Arizona inspectors cited the Dewey home on May 12 because no sampled resident's treatment plan carried the signature of the resident's representative ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000Le8u1EAB)), and on June 17 after a client care technician gave two residents alcohol ([source](https://azcarecheck.azdhs.gov/s/inspection-print-view?facilityId=001cs00000WoC6MAAV&inspectionId=a1Ics00000NXWgcEAH)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f246, f247; checked against the ADHS print views"
+    },
+    {
+     "id": "q8",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and News",
+     "text": "On January 13, 2025, 13 former residents filed A.B. et al. v. Mingus Mountain Academy et al. in Maricopa County Superior Court (CV2025-001537). The complaint alleges sexual abuse, rape and false imprisonment by staff from 2011 on, and names [Vivant Behavioral Healthcare](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh), Sequel companies, Sequel co-founder Jay Ripley and a manager as defendants. One plaintiff alleges a staff member sexually assaulted her about 80 times during her year there beginning in 2017 ([source](https://ktvz.com/cnn-regional/2025/02/10/lawsuit-alleges-horrific-sexual-abuse-at-arizona-facility-for-troubled-teens/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f292 (case number, court, filing date and defendants from the complaint, owner's Drive copy; the 80 times from the KTVZ/ABC15 article). s2 already has the 13 plaintiffs, the years and the denial"
+    },
+    {
      "id": "m1",
      "op": "move_to_section",
      "section": "In the Media",
@@ -15306,6 +16196,18 @@
      "old": "**2018: (PARENT)**\"I had high hopes for mingus mountain academy. Unfortunately it was literally the worse experience ever! I feel horrible my daughter was placed there. It took us 3 weeks to get her transferred to deveroux the difference between the two places is literally night and day!! Mingus was awful the workers there were so cold not sincere no kind of emotions no sympathy for what these girls are going through. I would never recommend mingus to anyone!! Please see if there is another option besides mingus. I had my daughter transferred to deveroux and it has been such a blessing they have been so great to my daughter she has been through so much hasn't been happy in a long time and she actually voiced she was happy there!! She has made so much progress in such a little time do to her surroundings. I'm saddened mingus wouldn't give my daughter the guidance and comfort she needed to be comfortable. I pray they get better staff or train them better.\" - [Genesis (Google Reviews)](https://www.google.com/maps/contrib/113463953420600006653/place/ChIJMx9-S-MjLYcRYZOIM1pii8M/@34.6461584,-112.1996876,12.48z/data=!4m6!1m5!8m4!1e1!2s113463953420600006653!3m1!1e1?hl=en-US)",
      "new": "**2018: (PARENT)**\"I had high hopes for mingus mountain academy. Unfortunately it was literally the worst experience ever! I feel horrible my daughter was placed there. It took us 3 weeks to get her transferred to Devereux the difference between the two places is literally night and day!! Mingus was awful the workers there were so cold not sincere no kind of emotions no sympathy for what these girls are going through. I would never recommend mingus to anyone!! Please see if there is another option besides mingus. I had my daughter transferred to Devereux and it has been such a blessing they have been so great to my daughter she has been through so much hasn't been happy in a long time and she actually voiced she was happy there!! She has made so much progress in such a little time due to her surroundings. I'm saddened mingus wouldn't give my daughter the guidance and comfort she needed to be comfortable. I pray they get better staff or train them better.\" - [Genesis (Google Reviews)](https://www.google.com/maps/contrib/113463953420600006653/place/ChIJMx9-S-MjLYcRYZOIM1pii8M/@34.6461584,-112.1996876,12.48z/data=!4m6!1m5!8m4!1e1!2s113463953420600006653!3m1!1e1?hl=en-US)",
      "note": "copy-edit: spelling, grammar, American spelling (owner, 2026-10-09)"
+    },
+    {
+     "id": "sq1",
+     "old": "Mingus Mountain Academy is a [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) behavior-modification program that opened in January of 1985. It is marketed as a Residential Treatment Center for \"emotionally and behaviorally at-risk\" adolescent girls, aged 12-18. The program claims to be able to help treat teens who are struggling with Impulsive and irresponsible behaviors, Lacking motivation, no goals, and living for the moment, Denies or justifies negative behavior, Anger management and problems with aggression, Demonstrates a low degree of empathy, Lacks self-discipline, Poor coping skills, Substance abuse, thrill-seeking, and sexually promiscuous behaviors, Suicide ideations and self-abusive behaviors, Gang affiliations, Poor decision-making skills, Family problems-emotional damage by divorce, abuse, stepfamily situations, School problems, and Running away. Mingus Mountain Academy does not accept fire setters, pregnant girls, extremely physically violent youth, insulin dependent diabetics, and students with active psychotic features. The program has a maximum enrollment of 141 girls, and the average length of stay is unknown. Many girls who attend the academy have come from Juvenile Hall or past placements.",
+     "new": "Mingus Mountain Academy is a behavior-modification program that opened in January of 1985. [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) ran it under a management agreement with Mingus Mountain Estate Residential Center, Inc. from January 2004 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)) until 2021, when Sequel sold it to Vivant Behavioral Healthcare ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=7)), which now calls it Mingus Mountain Youth Treatment Center ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=104)). It is marketed as a Residential Treatment Center for \"emotionally and behaviorally at-risk\" adolescent girls, aged 12-18. The program claims to be able to help treat teens who are struggling with Impulsive and irresponsible behaviors, Lacking motivation, no goals, and living for the moment, Denies or justifies negative behavior, Anger management and problems with aggression, Demonstrates a low degree of empathy, Lacks self-discipline, Poor coping skills, Substance abuse, thrill-seeking, and sexually promiscuous behaviors, Suicide ideations and self-abusive behaviors, Gang affiliations, Poor decision-making skills, Family problems-emotional damage by divorce, abuse, stepfamily situations, School problems, and Running away. Mingus Mountain Academy does not accept fire setters, pregnant girls, extremely physically violent youth, insulin dependent diabetics, and students with active psychotic features. The program has a maximum enrollment of 141 girls, and the average length of stay is unknown. Many girls who attend the academy have come from Juvenile Hall or past placements.",
+     "note": "Sequel audit (owner, 2026-10-12): Sequel no longer runs it: Sequel managed it from 2004 and sold it to Vivant in 2021; Vivant's name for it added."
+    },
+    {
+     "id": "sq2",
+     "old": "** Fred Schaffner** is the Arizona divisional controller for [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .",
+     "new": "** Fred Schaffner** was the Arizona divisional controller for [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) .",
+     "note": "Sequel audit (owner, 2026-10-12): Sequel no longer runs the program, so its Arizona controller is past tense."
     }
    ],
    "conflicts": []
@@ -15425,7 +16327,7 @@
      "after_section": "Abuse Allegations and Lawsuits",
      "heading": "## **In the Media**",
      "separator": "---",
-     "text": "- [fake shell of a company that John Ripley (Founder) used to buy out Sequel](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers) (APM Reports, 4/26/2022)",
+     "text": "- [Under scrutiny, company that claimed to help troubled youth closes many operations and sells others](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers) (APM Reports, 4/26/2022)\n- [Institution in Idaho for Oregon foster children off limits](https://www.ktvb.com/article/news/regional/institution-in-idaho-for-oregon-foster-children-off-limits/277-b200c760-31bd-453a-a2f8-175b9a58c091) (KTVB, 1/24/2020)",
      "by": "script",
      "verdict": "ok",
      "note": "From KOP's record (added 2026-10-08: every fact on the record goes in). News articles go under In the Media, the wiki editor's section for them."
@@ -15511,6 +16413,69 @@
      "kop_page": true
     },
     {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Mountain Home Academy opened in 2001 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). By 2007 it was run by [Three Springs, Inc.](https://www.reddit.com/r/troubledteens/wiki/active-programs/threesprings) as Three Springs of Mountain Home, \"operated exclusively for the State of Idaho.\" It held up to 60 boys ages 10 to 18 \"who have displayed inappropriate sexual behavior or committed a sexual offense,\" sent there by the Idaho Department of Juvenile Corrections, Health and Welfare or Children and Family Services after being adjudicated by a court ([source](https://web.archive.org/web/20070815132439/http://www.threesprings.com/contract_programs/programs/mountain-home.html), [source](https://kidsoverprofits.org/wp-content/uploads/three-springs-mountain-home-2007.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f096; Three Springs page archived August 2007 (read)"
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "[Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) took the program over in 2009, when it bought Three Springs, Inc. ([source](https://www.llcp.com/levine-leichtman-capital-partners-invests-in-sequel-youth-and-family-servic/)) ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)), and ran it through its subsidiary Sequel TSI of Idaho, LLC ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f059, f096, f351; conflicts-resolved q12"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "By 2016, Sequel described Mountain Home Academy as a sixty-bed residential treatment center for adjudicated and non-adjudicated boys ages 10 to 18 \"with sexually maladaptive behavior problems,\" including a six-bed dorm for boys with neurodevelopmental disorders ([source](https://web.archive.org/web/20160517120050/http://www.sequelyouthservices.com:80/html/staffsecure-mountainhome.html), [source](https://kidsoverprofits.org/wp-content/uploads/sequel-mountain-home-academy-2016.pdf)). The facility housed a significant number of children from Oregon ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f351 source (Sequel page archived May 2016, read); APM 2022 checked"
+    },
+    {
+     "id": "q4",
+     "op": "append_to_section",
+     "section": "Program Structure",
+     "text": "Mountain Home Academy used a \"Normative Culture System\" with Guided Group Interaction (GGI): \"In this system, conformity is achieved largely via commonly accepted group norms collectively endorsed and enforced by all program participants.\" A level system based on weekly ratings added to it. Students had eight hours a week of group therapy for sexual behavior, along with individual and family therapy ([source](https://web.archive.org/web/20160517120050/http://www.sequelyouthservices.com:80/html/staffsecure-mountainhome.html), [source](https://kidsoverprofits.org/wp-content/uploads/sequel-mountain-home-academy-2016.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel page archived May 2016 (read)"
+    },
+    {
+     "id": "q5",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "In January 2017, a Washington foster youth was placed at Mountain Home Academy, where he stayed until June 2018. He told InvestigateWest that staff restrained him \"one or more times a day\" for 15 minutes to half an hour, sometimes as punishment for being too loud or annoying other children, and would slam him into the floor. He said he told a Washington caseworker about the restraints at least six times ([source](https://www.invw.org/2020/12/02/washington-foster-kids-detail-abuse-at-sequel-group-homes/)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f588, f593 (InvestigateWest 12/2/2020 checked)"
+    },
+    {
+     "id": "q6",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "On January 17, 2020, Idaho's Department of Health and Welfare reported that failures in staff oversight and training at Sequel TSI of Idaho had led to \"over 100 incidents of aberrant sexual behavior by five children over at least three months, and possibly as far back as seven months\" ([source](https://features.apmreports.org/documents/?document=21747036-sequel-mountain-home-academy-id-licensing-poc-update-1-17-2020)) ([source](https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f262, f542 (APM 2022 quotes the same finding)"
+    },
+    {
+     "id": "q7",
+     "op": "append_to_section",
+     "section": "Abuse Allegations and Lawsuits",
+     "text": "On January 24, 2020, a Lane County, Oregon judge blocked the state from sending a foster child to Mountain Home Academy ([source](https://www.ktvb.com/article/news/regional/institution-in-idaho-for-oregon-foster-children-off-limits/277-b200c760-31bd-453a-a2f8-175b9a58c091)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f261"
+    },
+    {
      "id": "m1",
      "op": "move_to_section",
      "section": "In the Media",
@@ -15523,7 +16488,14 @@
     }
    ],
    "tense": [],
-   "fixes": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "# **Mountain Home Academy**(-)",
+     "new": "# **Mountain Home Academy**(2001-2021) Mountain Home, ID",
+     "note": "Sequel audit (owner, 2026-10-12): Fills the empty years and town: founded 2001 (SEC proxy filing, Jan 2017: https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm), closure announced June 2021 (APM Reports 2022-04-26: https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers). Headings on the other entries carry no citations, so the sources are here."
+    }
+   ],
    "conflicts": []
   },
   "612": {
@@ -25693,7 +26665,7 @@
      "after_section": "Abuse Allegations",
      "heading": "## **In the Media**",
      "separator": "---",
-     "text": "- [Clarinda Academy students restrained and injured as punishment, records show](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/12/22/clarinda-academy-iowa-students-restrained-injured-punishment-investigation-woodward-academy/2387163002/) (Des Moines Register, 12/22/2018)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)\n- [Sequel Youth Facilities Face Abuse Allegations Amid Profit Claims](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319) (NBC News, 12/16/2020)\n- [Washington Foster Youth Allegedly Abused at Iowa Facility](https://www.desmoinesregister.com/story/news/crime-and-courts/2018/10/22/washington-foster-kids-iowa-allegedly-abused-clarinda-academy-disability-rights-seattle-times/1733318002/) (Des Moines Register, 10/22/2018)",
+     "text": "- [Clarinda Academy students restrained and injured as punishment, records show](https://www.desmoinesregister.com/story/news/investigations/readers-watchdog/2018/12/22/clarinda-academy-iowa-students-restrained-injured-punishment-investigation-woodward-academy/2387163002/) (Des Moines Register, 12/22/2018)\n- [‘State-sponsored Abandonment’ No More: California Stops Paying for Adoptees Sent to Out-of-State Treatment Centers](https://imprintnews.org/top-stories/state-sponsored-abandonment-no-more-california-stops-paying-for-adoptees-sent-to-out-of-state-treatment-centers/262649) (The Imprint, 7/22/2025)\n- [Sequel Youth Facilities Face Abuse Allegations Amid Profit Claims](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319) (NBC News, 12/16/2020)\n- [Washington Foster Youth Allegedly Abused at Iowa Facility](https://www.desmoinesregister.com/story/news/crime-and-courts/2018/10/22/washington-foster-kids-iowa-allegedly-abused-clarinda-academy-disability-rights-seattle-times/1733318002/) (Des Moines Register, 10/22/2018)\n- [Report Describes 'Abusive Restraint Practices' For Washington Foster Youth Sent Out Of State](https://www.nwpb.org/2018/10/18/report-describes-abusive-restraint-practices-for-washington-foster-youth-sent-out-of-state/) (NWPB, 10/18/2018)",
      "by": "script",
      "verdict": "ok",
      "note": "Written by script from the gap. News articles go under In the Media, the wiki editor's section for them."
@@ -25717,6 +26689,51 @@
      "verdict": "ok",
      "note": "KOP's facility page for the record, as the last Related Media item.",
      "kop_page": true
+    },
+    {
+     "id": "q2",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Under [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/active-programs/ysi), Woodward Academy had a residential capacity of 72 and ran three programs for boys: an academy program for repeat offenders ages 13 to 18, a sexual offender program for ages 12 to 18, and a military-style boot camp for first-time offenders ages 15 to 17 with an average stay of 90 days ([source](https://web.archive.org/web/19981202142807/http://www.ysii.com/wa.htm), [source](https://kidsoverprofits.org/wp-content/uploads/ysi-woodward-academy-1998.pdf)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f387 source (YSI website, archived December 1998, read)"
+    },
+    {
+     "id": "q1",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Woodward Academy was one of three nonprofit programs whose management [Sequel](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) took over in its first five years, along with Normative Services in Wyoming and [Mingus Mountain Academy](https://www.reddit.com/r/troubledteens/wiki/index/mingus) in Arizona ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f003 (SEC proxy checked); the 2000 start is already in fix sq1"
+    },
+    {
+     "id": "q3",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "Under Sequel, Woodward also ran [Woodward Community Based Services](https://www.reddit.com/r/troubledteens/wiki/index/woodwardcomm), started in 2006, which had three offices and 370 young people on its roster in September 2016 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f078 (SEC proxy table checked)"
+    },
+    {
+     "id": "q4",
+     "op": "append_to_section",
+     "section": "History and Background Information",
+     "text": "In its June 2024 staff report \"Warehouses of Neglect,\" the Senate Finance Committee, which investigated [Vivant](https://www.reddit.com/r/troubledteens/wiki/active-programs/vivantbh) among four companies, described Woodward Academy's \"Positive Behavior System,\" under which students spend their weekly points at a store on campus ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=79)), and found that the average length of stay there was 121.7 days ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=104)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f166, f151 (report read, pp. 79 and 104)"
+    },
+    {
+     "id": "q5",
+     "op": "append_to_section",
+     "section": "Founders and Notable Staff",
+     "text": "**Mandy Moses** (also Mandy Loving Moses) was the Executive Director of Woodward Academy, under YSI ([source](https://web.archive.org/web/19981202142807/http://www.ysii.com/wa.htm), [source](https://kidsoverprofits.org/wp-content/uploads/ysi-woodward-academy-1998.pdf)) and again under Sequel from 2001 to 2007 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)). She had started at [Clarinda Academy](https://www.reddit.com/r/troubledteens/wiki/index/clarinda) in 1992, and was Sequel's executive vice president of operations from 2007 and its chief program officer from 2014 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "f424 confirmed by the archived YSI page and the SEC proxy bio"
     },
     {
      "id": "m1",
@@ -25785,6 +26802,12 @@
      "old": "**2018: (FAMILY MEMBER)**\"Was not a good expierence for a family member of mine, They are too intense to the point were its inhumane, I would never recommend sending someone there. He was asking one of the staff (mr smith) alot of questions and he took that as a type of minipulation and they brought him to a room and put him in a unlawful restraint, However this was just one of the many things that have occured at that program, One staff there (mr miller) told him to kill himself when he got out while he was in a restraint, If you looking for somewhere to teach your kids right from wrong i would not recommend sending them to woodward academy, They had a role in making him attempt to commit suicide, Not a good place period. i was so angry at the program to the point were i had to write this to warn other parents about the negitivity the staff induce upon the children\" - [Ben (Google Reviews)](https://goo.gl/maps/fPVrd2kfZqUxZr9SA)",
      "new": "**2018: (FAMILY MEMBER)**\"Was not a good experience for a family member of mine, They are too intense to the point where it's inhumane, I would never recommend sending someone there. He was asking one of the staff (mr smith) a lot of questions and he took that as a type of manipulation and they brought him to a room and put him in a unlawful restraint, However this was just one of the many things that have occurred at that program, One staff there (mr miller) told him to kill himself when he got out while he was in a restraint, If you're looking for somewhere to teach your kids right from wrong I would not recommend sending them to Woodward Academy, They had a role in making him attempt to commit suicide, Not a good place period. I was so angry at the program to the point where I had to write this to warn other parents about the negativity the staff induce upon the children\" - [Ben (Google Reviews)](https://goo.gl/maps/fPVrd2kfZqUxZr9SA)",
      "note": "copy-edit: spelling, grammar, American spelling (owner, 2026-10-09)"
+    },
+    {
+     "id": "sq1",
+     "old": "Woodward Academy is a [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) behavior modification program that opened on July 10, 1995. At the time of its opening, the program was marketed as an all-male residential treatment facility for boys aged 12-18, and only had four students and 13 staff members. For the first 5 years of its operation, Woodward Academy partnered with [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) and Correctional Services Corporation.",
+     "new": "Woodward Academy is a behavior modification program that opened on July 10, 1995. It was run by [Sequel Youth and Family Services](https://www.reddit.com/r/troubledteens/wiki/index/sequelyouth) from 2000 until 2021, when Sequel sold it to [Vivant Behavioral Health](https://www.reddit.com/r/troubledteens/wiki/index/vivantbh), a company founded by Sequel co-founder Jay Ripley, which runs it today ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=104)). At the time of its opening, the program was marketed as an all-male residential treatment facility for boys aged 12-18, and only had four students and 13 staff members. For the first 5 years of its operation, Woodward Academy partnered with [Youth Services International (YSI)](https://www.reddit.com/r/troubledteens/wiki/index/ysi) and Correctional Services Corporation.",
+     "note": "Sequel audit (owner, 2026-10-12): Sequel sold Woodward Academy to Vivant in 2021; Vivant runs it now."
     }
    ],
    "conflicts": []
