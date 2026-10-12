@@ -85,7 +85,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [-
 # A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky
 # Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious
 # findings, lawsuits, incidents, news and staff of its years, another name's record included (both pages print every name).
-# No usable rename year = the page stays whole. A new dated list on the page goes in kop_facility_eras_kinds()
+# No year needed: a name's own record keeps its items under that name whatever their dates; items of a record that also lists a
+# no-record name go by date (every rename has a year), else by the one name their words give. A new dated list goes in kop_facility_eras_kinds()
 # Every page names all the names the map's rename lines join to it, cut or not (kop_facility_eras_map_names(): "Formerly" /
 # "Later called", linked to the other name's page); names with no record of their own are searchable (kop_v2_alias_index()) and
 # match inspection rows and folders (kop_facility_pages_doc_name_keys(), only a name no other record reaches)

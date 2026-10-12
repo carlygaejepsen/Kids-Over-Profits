@@ -12,12 +12,12 @@
  *
  * The names come from the map's "rebrand" lines; the years from Map Renames
  * (inc/network-renames.php: a saved rename year, a swapped line) over Map
- * Years and graph.json. A rename with no usable year (both names carrying the
- * same years, overlapping years, none at all) leaves the page whole, as does
- * a name that became two or two that became one. A rename saved at Map
- * Renames without its year is still a rename: its names get their sections,
- * and since nothing can be sorted by date each record's items stand under
- * that record's name (so it shows where each name has its own record).
+ * Years and graph.json. No year is needed: what a name's own record holds
+ * stands under that name whatever its date (the records already file things
+ * under the right name). Items of a record that also lists a name with no
+ * record of its own go by date when every rename has a year, else to the one
+ * name their words give, else to the page's ordinary sections. A name that
+ * became two, or two that became one, leaves the page whole.
  *
  * A renamed program merged into one record (KOP Tools > Merge Duplicates >
  * Renamed) carries its names itself: each earlier name's years, status,
@@ -317,8 +317,6 @@ if (!function_exists('kop_facility_eras_chain')) {
                     $cut = $clear ? (int) ($years[0] && $years[0] > (int) $was[0] ? $years[0] : $was[1]) : 0;
                 }
                 if ($cut && $cut < $last_cut) $cut = 0;
-                // Only a rename the owner saved stands without a year.
-                if (!$cut && empty($map['confirmed'][$before . '>' . $id])) return array();
                 if ($cut) {
                     $last_cut = $cut;
                     $chain[$i - 1]['end'] = $chain[$i - 1]['end'] ?: $cut;
@@ -502,6 +500,94 @@ if (!function_exists('kop_facility_eras_place')) {
     }
 }
 
+if (!function_exists('kop_facility_eras_branch_chain')) {
+    /**
+     * For the page only: the names of a program whose names split or join
+     * (one became two, two became one), earliest first by the rename lines
+     * (then by their first year), shaped like kop_facility_eras_chain() with
+     * no years and no cuts, so items are placed by their record and their
+     * words, never by date. array() when there is no such set of names.
+     */
+    function kop_facility_eras_branch_chain($facility_id) {
+        $map = kop_facility_eras_map();
+        $mine = $map['facility'][(int) $facility_id] ?? array();
+        if (!$mine) return array();
+        $seen = array();
+        $queue = $mine;
+        while ($queue) {
+            $id = (string) array_shift($queue);
+            if (isset($seen[$id])) continue;
+            $seen[$id] = true;
+            foreach (array_merge($map['next'][$id] ?? array(), $map['prev'][$id] ?? array()) as $other) $queue[] = (string) $other;
+        }
+        if (count($seen) < 2) return array();
+        $indeg = array();
+        foreach (array_keys($seen) as $id) $indeg[(string) $id] = count(array_unique($map['prev'][(string) $id] ?? array()));
+        $first = static function ($id) use ($map) { return (int) ($map['years'][$id][0] ?? 0) ?: 9999; };
+        $ready = array_keys(array_filter($indeg, static function ($n) { return $n === 0; }));
+        $order = array();
+        while ($ready) {
+            usort($ready, static function ($a, $b) use ($first, $map) {
+                return ($first((string) $a) <=> $first((string) $b)) ?: strcmp((string) $map['nodes'][(string) $a]['name'], (string) $map['nodes'][(string) $b]['name']);
+            });
+            $id = (string) array_shift($ready);
+            $order[] = $id;
+            foreach (array_unique($map['next'][$id] ?? array()) as $next) {
+                $next = (string) $next;
+                if (--$indeg[$next] === 0) $ready[] = $next;
+            }
+        }
+        if (count($order) !== count($seen)) return array();
+        $chain = array();
+        foreach ($order as $i => $id) {
+            $chain[] = array(
+                'node' => $id, 'name' => trim((string) $map['nodes'][$id]['name']), 'start' => null, 'end' => null,
+                'cut' => $i ? 0 : null, 'facility_id' => (int) ($map['nodes'][$id]['facilityId'] ?? 0), 'operators' => $map['operators'][$id],
+            );
+        }
+        return $chain;
+    }
+}
+
+if (!function_exists('kop_facility_eras_named')) {
+    /**
+     * The index in $chain of the one name an item's words give, or -1 when
+     * they give none or several. A name inside a longer one it also gives
+     * ("Discovery Ranch" in "Discovery Ranch for Girls") does not count.
+     */
+    function kop_facility_eras_named(array $chain, $text) {
+        if ($text === '') return -1;
+        $hits = array();
+        foreach ($chain as $i => $era) {
+            $n = strtolower(trim((string) $era['name']));
+            if (strlen($n) >= 6 && strpos($text, $n) !== false) $hits[$i] = $n;
+        }
+        foreach ($hits as $i => $n) {
+            foreach ($hits as $j => $m) {
+                if ($i !== $j && strlen($m) > strlen($n) && strpos($m, $n) !== false) unset($hits[$i]);
+            }
+        }
+        return count($hits) === 1 ? (int) key($hits) : -1;
+    }
+}
+
+if (!function_exists('kop_facility_eras_record_names')) {
+    /** Name keys a record lists for itself: its name, past, other and current names. */
+    function kop_facility_eras_record_names($facility_id) {
+        global $wpdb;
+        $row = $wpdb->get_row($wpdb->prepare('SELECT name, json_data FROM facilities_v2 WHERE id = %d', (int) $facility_id), ARRAY_A);
+        if (!$row) return array();
+        $doc = json_decode((string) $row['json_data'], true);
+        $ident = is_array($doc['identification'] ?? null) ? $doc['identification'] : array();
+        $names = array_merge(array($row['name'], $ident['currentName'] ?? ''), (array) ($ident['pastNames'] ?? array()), (array) ($ident['otherNames'] ?? array()));
+        $keys = array();
+        foreach ($names as $n) {
+            if (is_string($n) && trim($n) !== '') $keys[kop_facility_eras_company_key($n)] = true;
+        }
+        return $keys;
+    }
+}
+
 if (!function_exists('kop_facility_eras_build')) {
     /**
      * The page's name sections, or null when the page stays whole.
@@ -517,18 +603,20 @@ if (!function_exists('kop_facility_eras_build')) {
     function kop_facility_eras_build($facility_id, array $own, array $doc = null) {
         $facility_id = (int) $facility_id;
         $chain = kop_facility_eras_chain($facility_id, $doc);
+        // Names that split or join cannot be put in one line by date, but each record still holds its own.
+        if (count($chain) < 2) $chain = kop_facility_eras_branch_chain($facility_id);
         if (count($chain) < 2) return null;
         // Which name each item was filed under, for a merged renamed program.
         $claims = ($doc !== null && kop_facility_eras_doc_chain($doc)) ? kop_facility_eras_doc_claims($doc, $chain) : array();
 
-        // Each record's lists, and the one name a record's undated items belong to.
+        // Each record's lists, and the one name a record's items belong to.
         $records = array($facility_id => $own);
         $names_of = array();
-        $every_name_has_a_record = true;
+        $no_record = array();
         foreach ($chain as $i => $era) {
             $fid = $era['facility_id'];
             if ($fid <= 0) {
-                $every_name_has_a_record = false;
+                $no_record[kop_facility_eras_company_key($era['name'])] = $i;
                 continue;
             }
             $names_of[$fid][] = $i;
@@ -564,7 +652,11 @@ if (!function_exists('kop_facility_eras_build')) {
         $rest = array_fill_keys($kinds, array());
         $seen = array();
         foreach ($records as $fid => $lists) {
-            $home = ($every_name_has_a_record && count($names_of[$fid] ?? array()) === 1) ? $names_of[$fid][0] : -1;
+            // What a record holds is filed under its name: a record with one of the names has its items
+            // there, whatever their dates, unless it also lists a name with no record of its own (its
+            // items may be from either).
+            $home = count($names_of[$fid] ?? array()) === 1 ? $names_of[$fid][0] : -1;
+            if ($home >= 0 && $no_record && array_intersect_key($no_record, kop_facility_eras_record_names($fid))) $home = -1;
             foreach ($kinds as $kind) {
                 if ($kind === 'staff') {
                     // Staff lists carry no dates: a record's people stand under its one name.
@@ -584,8 +676,11 @@ if (!function_exists('kop_facility_eras_build')) {
                     $key = kop_facility_eras_item_key($kind, $item);
                     if (isset($seen[$key])) continue;
                     $year = $dated ? kop_facility_eras_item_year($kind, $item) : 0;
-                    // Filed under one name before a merge: it stays with that name.
-                    $at = $claims[$key] ?? kop_facility_eras_place($chain, $year, kop_facility_eras_item_text($kind, $item), $home);
+                    $text = kop_facility_eras_item_text($kind, $item);
+                    // Filed under one name (before a merge, or on that name's own record): it stays there.
+                    // Then its date, when every rename has a year; then the one name its words give.
+                    $at = $claims[$key] ?? ($home >= 0 ? $home : kop_facility_eras_place($chain, $year, $text, -1));
+                    if ($at < 0) $at = kop_facility_eras_named($chain, $text);
                     // Another record's undated item with no name to stand under is not this page's.
                     if ($at < 0 && $fid !== $facility_id) continue;
                     $seen[$key] = true;
@@ -621,6 +716,18 @@ if (!function_exists('kop_facility_eras_build')) {
         }
         // Nothing dated at all: the "Formerly" line already says what there is to say.
         if ($filled === 0) return null;
+        // With no years to show, a name with nothing under it is only a heading: the "Formerly" and
+        // "Later called" lines name it. Left with this record's own name alone, the page stays whole.
+        if (!$dated) {
+            $others = false;
+            foreach ($list as $i => $entry) {
+                $has = count($entry['notes']);
+                foreach ($kinds as $kind) $has += $count($kind, $entry[$kind]);
+                if (!$has) unset($list[$i]);
+                elseif ((int) $chain[$i]['facility_id'] !== $facility_id) $others = true;
+            }
+            if (!$others && count($list) < 2) return null;
+        }
         foreach ($kinds as $kind) {
             if (isset($sorts[$kind])) usort($rest[$kind], $sorts[$kind]);
             $totals[$kind] += $kind === 'staff'

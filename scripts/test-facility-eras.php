@@ -56,6 +56,8 @@ $check('...and not when they give both', kop_facility_eras_place($chain, 2014, '
 $check('the last name takes everything from its year on', kop_facility_eras_place($chain, 2024, '', -1) === 2);
 $check('an undated item stands under its record\'s one name', kop_facility_eras_place($chain, 0, '', 1) === 1);
 $check('an undated item with no such name stands under none', kop_facility_eras_place($chain, 0, '', -1) === -1);
+$check('an item whose words give one name goes to it', kop_facility_eras_named($chain, 'copper canyon academy settles suit') === 0);
+$check('...and to none when they give two', kop_facility_eras_named($chain, 'copper canyon academy, now sedona sky academy') === -1);
 $check('years read "1998 to 2014", "from 2014", "until 2014"',
     kop_facility_eras_years_label(1998, 2014) === '1998 to 2014' && kop_facility_eras_years_label(2014, null) === 'from 2014' && kop_facility_eras_years_label(null, 2014) === 'until 2014');
 $check('item years: news date, lawsuit year, undated incident',
@@ -96,6 +98,7 @@ $ids = array_keys($map['facility']);
 sort($ids);
 foreach ($ids as $fid) {
     $chain = kop_facility_eras_chain($fid);
+    if (count($chain) < 2) $chain = kop_facility_eras_branch_chain($fid);
     $name = (string) $wpdb->get_var($wpdb->prepare('SELECT name FROM facilities_v2 WHERE id = %d', $fid));
     if ($name === '') continue;
     if (count($chain) < 2) {
@@ -149,6 +152,8 @@ foreach ($ids as $fid) {
             foreach ($entry[$kind] as $item) {
                 $y = kop_facility_eras_item_year($kind, $item);
                 if (!$y) continue;
+                // Filed on that name's own record: it stays there whatever its date.
+                if ((int) ($item['_fid'] ?? 0) === (int) $chain[$i]['facility_id']) continue;
                 $from = (int) ($chain[$i]['cut'] ?? 0);
                 $to = isset($chain[$i + 1]) ? (int) $chain[$i + 1]['cut'] : 9999;
                 if (($i > 0 && $y < $from) || $y > $to) $bad[] = "$fid $name: $kind dated $y under {$entry['name']}";
@@ -242,7 +247,7 @@ $check('a program with no rename keeps its page whole', $data && $data['eras'] =
 // A skipped line and a line with the same years on both names leave the page whole.
 echo "\n" . count($cut) . ' pages cut, ' . count($whole) . " left whole. Rendered to $out_dir\n";
 if ($list) {
-    echo "\n-- Cut --\n" . implode("\n", $cut) . "\n\n-- Left whole (no rename year, or a split or join) --\n  " . implode("\n  ", $whole) . "\n";
+    echo "\n-- Cut --\n" . implode("\n", $cut) . "\n\n-- Left whole (a split or join, or nothing to put under a name) --\n  " . implode("\n  ", $whole) . "\n";
 }
 
 echo "\n" . ($failures ? "$failures FAILED" : 'All passed') . "\n";
