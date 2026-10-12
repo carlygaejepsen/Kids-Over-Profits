@@ -22,6 +22,12 @@
  *   operator_link  a company's link to the program: current, past or removed
  *                  ({prefix}kop_operator_facilities; a past link makes the
  *                  company's page show the program as Transferred)
+ *   operator_field one field of a company record (json_data.operator.<path>,
+ *                  the fields kop_daudit_operator_paths() lists; 'from' is
+ *                  the whole value as researched, 'to' the whole new value)
+ *   links_move     articles and lawsuits filed under the wrong record move to
+ *                  the right one (news_facility_links, lawsuit_facility_links:
+ *                  'from_facility', 'to_facility', 'news_ids', 'lawsuit_ids')
  *   person_merge   two person ids are one person (KOP Tools > Merge People)
  *   memorial       one column of an In Loving Memory entry (memorial_victims:
  *                  date, precision, age, program, cause, place, source)
@@ -327,6 +333,108 @@ function kop_daudit_memorial_put(PDO $pdo, $id, $column, $value) {
         ->execute(array($value, gmdate('Y-m-d H:i:s'), (int) $id));
 }
 
+/* ---- Company records --------------------------------------------------- */
+
+/** The company fields a proposal may set (the pencil's fields, kop_ie_operator_fields(), less the history and the name). */
+function kop_daudit_operator_paths() {
+    return array(
+        'headquarters' => 'Headquarters', 'headquartersCity' => 'Headquarters city', 'headquartersState' => 'Headquarters state',
+        'founded' => 'Founded', 'operatingPeriod' => 'Operating', 'status' => 'Status', 'currentName' => 'Now known as',
+        'keyStaff.ceo' => 'Chief executive', 'keyStaff.founders' => 'Founders', 'keyStaff.keyExecutives' => 'Executives',
+        'owners' => 'Owners', 'investors' => 'Investors', 'parentCompanies' => 'Parent companies',
+        'otherNames' => 'Other names', 'websites' => 'Websites', 'notes' => 'Notes',
+    );
+}
+
+/** A company value as text or a list of strings or of {name, role, pastJobs} rows. */
+function kop_daudit_operator_value_ok($path, $to) {
+    if (!isset(kop_daudit_operator_paths()[$path])) return false;
+    if ($to === null || is_string($to)) return $to === null || mb_strlen($to) < 400;
+    if (!is_array($to) || array_values($to) !== $to) return false;
+    foreach ($to as $x) {
+        if (is_string($x)) continue;
+        if (!is_array($x) || !is_string($x['name'] ?? null) || trim($x['name']) === '') return false;
+    }
+    return true;
+}
+
+/** Two company values are the same (empty = empty, keys in any order). */
+function kop_daudit_operator_same($a, $b) {
+    $canon = function ($v) use (&$canon) {
+        if ($v === null || $v === '' || $v === array()) return null;
+        if (is_string($v)) return trim($v);
+        if (is_array($v)) {
+            if (array_values($v) !== $v) ksort($v);
+            return array_map($canon, $v);
+        }
+        return $v;
+    };
+    return wp_json_encode($canon($a)) === wp_json_encode($canon($b));
+}
+
+/** The company's stored JSON, or null when it is gone. */
+function kop_daudit_operator_json(array $opts, $id) {
+    $st = $opts['pdo']->prepare("SELECT json_data FROM `{$opts['prefix']}kop_operators` WHERE id = ?");
+    $st->execute(array((int) $id));
+    $raw = $st->fetchColumn();
+    if ($raw === false) return null;
+    $json = json_decode((string) $raw, true);
+    return is_array($json) && is_array($json['operator'] ?? null) ? $json : null;
+}
+
+function kop_daudit_operator_save(array $opts, $id, array $json) {
+    $opts['pdo']->prepare("UPDATE `{$opts['prefix']}kop_operators` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?")
+        ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $id));
+}
+
+/** The company pages read the index and their own cached page: both start over. */
+function kop_daudit_operator_flush($id) {
+    if (function_exists('kop_operator_pages_flush_index')) kop_operator_pages_flush_index();
+    if (function_exists('kop_ie_purge_url') && function_exists('kop_operator_page_url')) kop_ie_purge_url((string) kop_operator_page_url((int) $id));
+}
+
+/* ---- Articles and lawsuits filed under the wrong record ---------------- */
+
+/** table => id column, for the link tables links_move may change. */
+function kop_daudit_link_tables() {
+    return array('news' => array('news_facility_links', 'news_id'), 'lawsuit' => array('lawsuit_facility_links', 'lawsuit_id'));
+}
+
+/** Each of the op's ids as [kind, id]. */
+function kop_daudit_move_ids(array $op) {
+    $out = array();
+    foreach ((array) ($op['news_ids'] ?? array()) as $id) $out[] = array('news', (int) $id);
+    foreach ((array) ($op['lawsuit_ids'] ?? array()) as $id) $out[] = array('lawsuit', (int) $id);
+    return $out;
+}
+
+/** The whole link row of item $id to facility $fid, or null. */
+function kop_daudit_item_link(PDO $pdo, $kind, $id, $fid) {
+    list($t, $col) = kop_daudit_link_tables()[$kind];
+    $st = $pdo->prepare("SELECT * FROM `{$t}` WHERE `{$col}` = ? AND facility_id = ?");
+    $st->execute(array((int) $id, (int) $fid));
+    $r = $st->fetch(PDO::FETCH_ASSOC);
+    return $r ?: null;
+}
+
+function kop_daudit_item_link_put(PDO $pdo, $kind, array $row) {
+    list($t) = kop_daudit_link_tables()[$kind];
+    $cols = array_keys($row);
+    $pdo->prepare("INSERT INTO `{$t}` (`" . implode('`, `', $cols) . "`) VALUES (" . implode(', ', array_fill(0, count($cols), '?')) . ')')
+        ->execute(array_values($row));
+}
+
+function kop_daudit_item_link_drop(PDO $pdo, $kind, $id, $fid) {
+    list($t, $col) = kop_daudit_link_tables()[$kind];
+    $pdo->prepare("DELETE FROM `{$t}` WHERE `{$col}` = ? AND facility_id = ?")->execute(array((int) $id, (int) $fid));
+}
+
+/** The facility pages count links, so a move also marks both records changed (kop_facility_pages_fingerprint()). */
+function kop_daudit_touch_records(PDO $pdo, array $ids) {
+    $ids = array_values(array_filter(array_map('intval', $ids)));
+    if ($ids) $pdo->prepare('UPDATE facilities_v2 SET updated_at = CURRENT_TIMESTAMP WHERE id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')->execute($ids);
+}
+
 /* ---- Words for the cards ---------------------------------------------- */
 
 function kop_daudit_field_label($path) {
@@ -340,7 +448,14 @@ function kop_daudit_field_label($path) {
 
 function kop_daudit_show($v) {
     if ($v === null || $v === '' || $v === array()) return 'none';
-    if (is_array($v)) return implode('; ', array_map('strval', $v));
+    if (is_array($v)) {
+        // A company's people are {name, role, pastJobs} rows: "Name (role)".
+        return implode('; ', array_map(function ($x) {
+            if (!is_array($x)) return (string) $x;
+            $role = trim((string) ($x['role'] ?? ''));
+            return trim((string) ($x['name'] ?? '')) . ($role !== '' ? ' (' . $role . ')' : '');
+        }, $v));
+    }
     return (string) $v;
 }
 
@@ -362,6 +477,16 @@ function kop_daudit_op_words(array $op, array $names = array()) {
             if (($op['to'] ?? '') === 'remove') return 'Unlink ' . $co . ' from this program (it never ran it)';
             if (($op['to'] ?? '') === 'past') return $co . ' becomes a past company of this program (its page shows it as Transferred)';
             return $co . ' becomes the program\'s current company';
+        case 'operator_field':
+            $co = $names['op:' . $op['operator_id']] ?? ('company #' . $op['operator_id']);
+            return $co . ', ' . (kop_daudit_operator_paths()[$op['path']] ?? $op['path']) . ': '
+                . kop_daudit_show($op['from'] ?? null) . ' -> ' . kop_daudit_show($op['to'] ?? null);
+        case 'links_move':
+            $n = count((array) ($op['news_ids'] ?? array()));
+            $l = count((array) ($op['lawsuit_ids'] ?? array()));
+            return 'Move ' . implode(' and ', array_filter(array($n ? $n . ' article' . ($n === 1 ? '' : 's') : '', $l ? $l . ' lawsuit' . ($l === 1 ? '' : 's') : '')))
+                . ' from record #' . (int) $op['from_facility'] . ' to record #' . (int) $op['to_facility']
+                . (!empty($op['label']) ? ' (' . $op['label'] . ')' : '');
         case 'person_merge':
             return 'Merge ' . ($names['person:' . $op['drop']] ?? '#' . $op['drop']) . ' (#' . $op['drop'] . ') into '
                 . ($names['person:' . $op['keep']] ?? '#' . $op['keep']) . ' (#' . $op['keep'] . ')';
@@ -428,6 +553,32 @@ function kop_daudit_check(array $p, array $opts) {
             if ($now !== ($op['from'] ?? null) && !($now === null && $op['to'] === 'remove') && $now !== $op['to']) {
                 $why[] = 'The company link is now "' . ($now ?? 'none') . '", not "' . ($op['from'] ?? 'none') . '".';
             }
+        } elseif ($op['type'] === 'operator_field') {
+            $path = (string) ($op['path'] ?? '');
+            if (!kop_daudit_operator_value_ok($path, $op['to'] ?? null)) {
+                $why[] = 'The new company ' . $path . ' is not a value the record can hold.';
+                continue;
+            }
+            $json = kop_daudit_operator_json($opts, $op['operator_id']);
+            if (!$json) {
+                $why[] = 'Company #' . (int) $op['operator_id'] . ' is gone.';
+                continue;
+            }
+            $now = kop_daudit_get($json['operator'], $path);
+            if (!kop_daudit_operator_same($now, $op['from'] ?? null) && !kop_daudit_operator_same($now, $op['to'] ?? null)) {
+                $why[] = 'The company\'s ' . (kop_daudit_operator_paths()[$path] ?? $path) . ' is now "' . kop_daudit_show($now)
+                    . '", not "' . kop_daudit_show($op['from'] ?? null) . '".';
+            }
+        } elseif ($op['type'] === 'links_move') {
+            foreach (array('from_facility', 'to_facility') as $k) {
+                if (!kop_facility_load((int) ($op[$k] ?? 0), $opts)) $why[] = 'Record #' . (int) ($op[$k] ?? 0) . ' is gone (merged or deleted).';
+            }
+            $lost = array();
+            foreach (kop_daudit_move_ids($op) as $x) {
+                if (!kop_daudit_item_link($opts['pdo'], $x[0], $x[1], $op['from_facility'])
+                    && !kop_daudit_item_link($opts['pdo'], $x[0], $x[1], $op['to_facility'])) $lost[] = $x[0] . ' #' . $x[1];
+            }
+            if ($lost) $why[] = 'These are not filed under record #' . (int) $op['from_facility'] . ' any more: ' . implode(', ', $lost) . '.';
         } elseif ($op['type'] === 'map_years') {
             if (!kop_daudit_valid_years($op['to'] ?? '')) $why[] = 'The map years "' . ($op['to'] ?? '') . '" are not in a form the map reads.';
         } elseif ($op['type'] === 'memorial') {
@@ -506,6 +657,30 @@ function kop_daudit_apply($key, $reviewer, $over_changes = false) {
             $after = $op['to'] === 'remove' ? null : array('relationship' => $op['to'], 'sort_order' => (int) ($before['sort_order'] ?? 0));
             kop_daudit_link_put($opts['pdo'], $table, $op['facility_id'], $op['operator_id'], $after);
             $done[] = array('type' => 'operator_link', 'facility_id' => (int) $op['facility_id'], 'operator_id' => (int) $op['operator_id'], 'before' => $before, 'after' => $after);
+        } elseif ($op['type'] === 'links_move') {
+            $moved = array();
+            foreach (kop_daudit_move_ids($op) as $x) {
+                $row = kop_daudit_item_link($opts['pdo'], $x[0], $x[1], $op['from_facility']);
+                if (!$row) continue;
+                // Already under the right record too: the wrong link only goes.
+                $had = (bool) kop_daudit_item_link($opts['pdo'], $x[0], $x[1], $op['to_facility']);
+                kop_daudit_item_link_drop($opts['pdo'], $x[0], $x[1], $op['from_facility']);
+                if (!$had) kop_daudit_item_link_put($opts['pdo'], $x[0], array('facility_id' => (int) $op['to_facility']) + $row);
+                $moved[] = array('kind' => $x[0], 'row' => $row, 'added' => !$had);
+            }
+            kop_daudit_touch_records($opts['pdo'], array($op['from_facility'], $op['to_facility']));
+            $done[] = array('type' => 'links_move', 'from' => (int) $op['from_facility'], 'to' => (int) $op['to_facility'], 'moved' => $moved);
+        } elseif ($op['type'] === 'operator_field') {
+            $oid = (int) $op['operator_id'];
+            kop_v2_with_write_lock($opts['pdo'], function () use ($op, $oid, $opts, &$done) {
+                $json = kop_daudit_operator_json($opts, $oid);
+                $before = kop_daudit_get($json['operator'], (string) $op['path']);
+                if (kop_daudit_operator_same($before, $op['to'] ?? null)) return;
+                kop_daudit_set($json['operator'], (string) $op['path'], $op['to'] ?? null);
+                kop_daudit_operator_save($opts, $oid, $json);
+                $done[] = array('type' => 'operator_field', 'operator_id' => $oid, 'path' => (string) $op['path'], 'before' => $before, 'value' => $op['to'] ?? null);
+            });
+            kop_daudit_operator_flush($oid);
         } elseif ($op['type'] === 'map_years') {
             $done[] = array('type' => 'map_years', 'node' => (string) $op['node'], 'before' => $map[$op['node']] ?? null, 'value' => (string) $op['to']);
             $map[(string) $op['node']] = (string) $op['to'];
@@ -556,6 +731,26 @@ function kop_daudit_undo($key) {
                 } else {
                     $kept[] = 'a company link (edited since)';
                 }
+            } elseif ($x['type'] === 'links_move') {
+                $tables = kop_daudit_link_tables();
+                foreach ($x['moved'] as $m) {
+                    $col = $tables[$m['kind']][1];
+                    $id = (int) $m['row'][$col];
+                    if ($m['added']) kop_daudit_item_link_drop($opts['pdo'], $m['kind'], $id, $x['to']);
+                    if (!kop_daudit_item_link($opts['pdo'], $m['kind'], $id, $x['from'])) kop_daudit_item_link_put($opts['pdo'], $m['kind'], $m['row']);
+                }
+                kop_daudit_touch_records($opts['pdo'], array($x['from'], $x['to']));
+            } elseif ($x['type'] === 'operator_field') {
+                kop_v2_with_write_lock($opts['pdo'], function () use ($x, $opts, &$kept) {
+                    $json = kop_daudit_operator_json($opts, $x['operator_id']);
+                    if (!$json || !kop_daudit_operator_same(kop_daudit_get($json['operator'], $x['path']), $x['value'])) {
+                        $kept[] = 'the company\'s ' . (kop_daudit_operator_paths()[$x['path']] ?? $x['path']) . ' (edited since)';
+                        return;
+                    }
+                    kop_daudit_set($json['operator'], $x['path'], $x['before']);
+                    kop_daudit_operator_save($opts, $x['operator_id'], $json);
+                });
+                kop_daudit_operator_flush($x['operator_id']);
             } elseif ($x['type'] === 'map_years') {
                 if (($map[$x['node']] ?? null) === $x['value']) {
                     if ($x['before'] === null) unset($map[$x['node']]);

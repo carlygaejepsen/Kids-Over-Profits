@@ -126,7 +126,7 @@ function kop_rinbox_daudit_names(array $p) {
         global $wpdb;
         foreach ($p['ops'] as $op) {
             if ($op['type'] === 'map_years' && isset($nodes[$op['node']])) $names['node:' . $op['node']] = $nodes[$op['node']];
-            if ($op['type'] === 'operator_link') {
+            if ($op['type'] === 'operator_link' || $op['type'] === 'operator_field') {
                 $st = $pdo->prepare("SELECT name FROM `{$wpdb->prefix}kop_operators` WHERE id = ?");
                 $st->execute(array((int) $op['operator_id']));
                 $names['op:' . $op['operator_id']] = (string) $st->fetchColumn();
@@ -152,7 +152,8 @@ function kop_rinbox_daudit_item($key, array $p) {
         'rename_end_year' => 'Renamed program', 'end_before_items' => 'Closing year', 'status_years' => 'Status',
         'closure_ordered' => 'Closure', 'operator_profile' => 'Operator', 'operator_inherited' => 'Operator after a sale',
         'person_spelling' => 'Same person?', 'person_common' => 'One person or several?', 'memorial' => 'Memorial',
-        'transferred' => 'Transferred to a new company',
+        'transferred' => 'Transferred to a new company', 'sequel_history' => 'Sequel program history',
+        'company_record' => 'Company record',
     );
     $names = kop_rinbox_daudit_names($p);
     $details = array();

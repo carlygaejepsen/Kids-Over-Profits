@@ -8052,5 +8052,906 @@
     "text": "Sequel Youth & Family Services owned Lava Heights Academy from August 2016 until October 2021, when Rite of Passage took it over; Utah licensed it to Care Youth Corporation, doing business as Rite of Passage, from January 31, 2022."
    }
   ]
+ },
+ {
+  "key": "sequel-company-basics",
+  "kind": "company_record",
+  "title": "Sequel TSI (company record): headquarters and years",
+  "place": "Huntsville, AL",
+  "facility_id": null,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Sequel was founded in 1999 to run Clarinda Academy and was headquartered at 1131 Eagletree Lane, Huntsville, Alabama. It closed or sold its last programs in 2021-2022 (most to Vivant Behavioral Healthcare), so its operating years are 1999-2022. The record spells the city \"Hunstville\" and has no operating years.",
+  "kop_now": "Headquarters \"Hunstville, AL\"; operating years empty.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A)",
+    "date": "2017-01-25",
+    "quote": "Sequel was founded by John F. (\"Jay\") Ripley (current Chairman), Adam Shapiro and Cindy Cox in 1999"
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), company address",
+    "date": "2017-01-25",
+    "quote": "1131 Eagletree Lane, Huntsville, Alabama"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "APM Reports, \"Under scrutiny, company that claimed to help troubled youth closes many operations and sells others\"",
+    "date": "2022-04-26",
+    "quote": "Sequel had shut down close to half of its treatment centers and sold most of the rest to Vivant Behavioral Healthcare"
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "headquarters",
+    "from": "Hunstville, AL",
+    "to": "Huntsville, AL"
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "headquartersCity",
+    "from": "",
+    "to": "Huntsville"
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "headquartersState",
+    "from": "",
+    "to": "AL"
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "operatingPeriod",
+    "from": "",
+    "to": "1999-2022"
+   }
+  ]
+ },
+ {
+  "key": "sequel-company-people",
+  "kind": "company_record",
+  "title": "Sequel TSI (company record): founders and executives",
+  "place": "Huntsville, AL",
+  "facility_id": null,
+  "verdict": "kop_incomplete",
+  "confidence": "high",
+  "finding": "The 2017 merger proxy names three founders: Jay Ripley, Adam Shapiro and Cindy Cox. Ripley was chairman and chief executive (CEO again from March 2011 when Shapiro stepped back); John Stupak was CEO from 2013 to June 2019, then chairman; Chris Roussos was CEO from June 27, 2019 into 2020. The record lists only Stupak as CEO, Shapiro as an executive, and Jerry Rhodes with his role written into his name.",
+  "kop_now": "Chief executive \"John Stupak\"; founders Jay Ripley; executives Adam Shapiro, \"Jerry Rhodes (Altamont ... Board of Directors)\".",
+  "notes": "Roles come from the proxy, Sequel and LLCP press releases and court filings. Sybil Potts' and Mike McFarland's years come from KOP's Sequel staff sheet. \"Jay Carroll\", named as CEO on aggregator sites, is left out: no primary source names him.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), information about Sequel",
+    "date": "2017-01-25",
+    "quote": "Sequel was founded by John F. (\"Jay\") Ripley (current Chairman), Adam Shapiro and Cindy Cox in 1999"
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), management",
+    "date": "2017-01-25",
+    "quote": "John Stupak has served as Sequel's Chief Executive Officer since 2013."
+   },
+   {
+    "url": "https://www.llcp.com/levine-leichtman-capital-partners-and-sequel-youth-and-family-services-anno/",
+    "title": "LLCP and Sequel announce the acquisition of Camelot System of Care",
+    "date": "2011-03-04",
+    "quote": "He will take on the additional role of Chief Executive Officer as Adam Shapiro, Founder and Co-Chairman, takes a step back from day-to-day operations."
+   },
+   {
+    "url": "https://www.prnewswire.com/news-releases/chris-roussos-named-ceo-of-sequel-youth-and-family-services-300876446.html",
+    "title": "PR Newswire, \"Chris Roussos Named CEO of Sequel Youth and Family Services\"",
+    "date": "2019-06-27",
+    "quote": "John Stupak, Sequel's previous CEO, is now serving as Chairman of the Company's Board of Directors."
+   },
+   {
+    "url": "https://pestakeholder.org/wp-content/uploads/2022/02/PESP_Youth_BH_Report_2022.pdf",
+    "title": "Private Equity Stakeholder Project, \"The Kids Are Not Alright\"",
+    "date": "2022-02",
+    "quote": "Altamont operating partner Jerry Rhodes, formerly CEO of CRC Health, sat on Sequel's board."
+   },
+   {
+    "url": "https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821",
+    "title": "Goshay v. Lakeside for Children, W.D. Mich. 1:21-cv-848",
+    "date": "2021-09-30",
+    "quote": "Samantha Lee, former Sequel Chief Compliance and Ethics Officer"
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "keyStaff.ceo",
+    "from": "John Stupak",
+    "to": "Jay Ripley (to 2013); John Stupak (2013-2019); Chris Roussos (2019-2020)"
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "keyStaff.founders",
+    "from": [
+     {
+      "name": "Jay Ripley",
+      "role": "",
+      "pastJobs": ""
+     }
+    ],
+    "to": [
+     {
+      "name": "Jay Ripley",
+      "role": "co-founder; chairman, and chief executive from 2011 to 2013",
+      "pastJobs": ""
+     },
+     {
+      "name": "Adam Shapiro",
+      "role": "co-founder and co-chairman",
+      "pastJobs": ""
+     },
+     {
+      "name": "Cindy Cox",
+      "role": "co-founder; assistant director at Clarinda Academy",
+      "pastJobs": ""
+     }
+    ]
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "keyStaff.keyExecutives",
+    "from": [
+     {
+      "name": "Adam Shapiro",
+      "role": "",
+      "pastJobs": ""
+     },
+     {
+      "name": "Jerry Rhodes (Altamont Capital Partners Operating Partner, Member of Sequel's Board of Directors)",
+      "role": "",
+      "pastJobs": ""
+     }
+    ],
+    "to": [
+     {
+      "name": "John Stupak",
+      "role": "chief executive from 2013 to June 2019, then chairman; earlier executive vice president and chief administrative officer",
+      "pastJobs": ""
+     },
+     {
+      "name": "Chris Roussos",
+      "role": "chief executive from June 2019 to 2020",
+      "pastJobs": ""
+     },
+     {
+      "name": "Ed Irby",
+      "role": "president and chief operating officer from 2011 (from Camelot)",
+      "pastJobs": ""
+     },
+     {
+      "name": "Sybil Potts",
+      "role": "executive vice president and chief financial officer, 2007-2020",
+      "pastJobs": ""
+     },
+     {
+      "name": "Samantha Lee",
+      "role": "chief compliance and ethics officer",
+      "pastJobs": ""
+     },
+     {
+      "name": "Mike McFarland",
+      "role": "vice president of operations, 2009-2020",
+      "pastJobs": ""
+     },
+     {
+      "name": "Christine Aron",
+      "role": "vice president of business development from 2016",
+      "pastJobs": ""
+     },
+     {
+      "name": "Jerry Rhodes",
+      "role": "board member; operating partner of Altamont Capital Partners",
+      "pastJobs": ""
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "key": "sequel-company-money",
+  "kind": "company_record",
+  "title": "Sequel TSI (company record): owners and investors",
+  "place": "Huntsville, AL",
+  "facility_id": null,
+  "verdict": "kop_incomplete",
+  "confidence": "high",
+  "finding": "Patriot Capital gave growth financing and exited in early 2008. Levine Leichtman Capital Partners was a minority investor (equity and subordinated debt from December 2009, which paid for Three Springs; exit July 1, 2013). Alaris Royalty bought preferred units in July 2013 (US$66 million, more in 2014), redeemed in September 2017. Altamont Capital Partners took a majority stake on September 1, 2017. The record has no owner and calls LLCP and Alaris investors without saying what they held.",
+  "kop_now": "Owners empty; investors \"Patriot Capital (prior to 2008)\", \"Levine Leichtman Capital Partners (2010)\", \"Alaris Royalty (2013)\", \"Altamont Capital Partners (2017)\".",
+  "sources": [
+   {
+    "url": "https://www.patriot-capital.com/portfolio-companies/sequel-youth-and-family-services/",
+    "title": "Patriot Capital, portfolio: Sequel",
+    "date": "",
+    "quote": "Successfully exited Q1 2008 via recapitalization ... Investment Type Growth Financing"
+   },
+   {
+    "url": "https://www.llcp.com/levine-leichtman-capital-partners-invests-in-sequel-youth-and-family-servic/",
+    "title": "LLCP, \"Levine Leichtman Capital Partners Invests in Sequel Youth and Family Services\"",
+    "date": "2010-02-23",
+    "quote": "Equity and subordinated debt capital was provided by Levine Leichtman Capital Partners"
+   },
+   {
+    "url": "https://bengurbryan.com/bengur-bryan-advises-sequel-youth-and-family-services-altamont/",
+    "title": "Bengur Bryan on the 2013 and 2017 Sequel deals",
+    "date": "",
+    "quote": "A private placement of senior debt and preferred equity to repurchase equity from a minority private equity partner"
+   },
+   {
+    "url": "https://www.alarisequitypartners.com/news/article/60-alaris-closes-previously-announced-usd-66-million-contribution-and-confirms-dividend-increase-on-august-dividend-payable",
+    "title": "Alaris Royalty, USD$66 million contribution to Sequel closed",
+    "date": "2013-07-02",
+    "quote": "Alaris will receive a pre-tax annual preferred distribution of USD$9,900,000"
+   },
+   {
+    "url": "https://altamontcapital.com/news/altamont-capital-partners-invests-in-sequel-youth-family-services/",
+    "title": "Altamont Capital Partners invests in Sequel Youth & Family Services",
+    "date": "2017-09-01",
+    "quote": "Altamont Capital Partners (Altamont) today announced a majority equity investment into Sequel Youth & Family Services"
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "owners",
+    "from": [],
+    "to": [
+     "Altamont Capital Partners (majority owner from September 2017)"
+    ]
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "investors",
+    "from": [
+     "Patriot Capital (prior to 2008)",
+     "Levine Leichtman Capital Partners (2010)",
+     "Alaris Royalty (2013)",
+     "Altamont Capital Partners (2017)"
+    ],
+    "to": [
+     "Patriot Capital (growth financing, exited 2008)",
+     "Levine Leichtman Capital Partners (minority investor, 2009-2013)",
+     "Alaris Royalty Corp. (preferred units, 2013-2017)",
+     "Altamont Capital Partners (majority owner from 2017)"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "sequel-company-names",
+  "kind": "company_record",
+  "title": "Sequel TSI (company record): other names and website",
+  "place": "Huntsville, AL",
+  "facility_id": null,
+  "verdict": "kop_incomplete",
+  "confidence": "high",
+  "finding": "Court filings and the merger proxy name the company Sequel Youth and Family Services, LLC and its holding company Sequel TSI Holdings, LLC (\"TSI\" for Three Springs, Inc., bought in 2009; earlier Sequel CBS Holdings, LLC), which said it did business as Sequel Youth and Family Services. The record's only website is an archived page of one program (Charles Britt Academy).",
+  "kop_now": "Other names \"Sequel Youth & Family Services\"; website: the archived charlesbrittacademy.com.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), merger agreement",
+    "date": "2017-01-25",
+    "quote": "(H) Sequel TSI Holdings, LLC; (I) SequelCare of Arizona, LLC; (J) SequelCare of Florida, LLC; (K) Sequel TSI of Florida, LLC"
+   },
+   {
+    "url": "https://storage.courtlistener.com/recap/gov.uscourts.alnd.186548/gov.uscourts.alnd.186548.1.0.pdf",
+    "title": "Bates v. Sequel Youth and Family Services, N.D. Ala. 2:23-cv-01063, complaint",
+    "date": "2023-08-14",
+    "quote": "Defendant TSI Holdings represented that it was doing business as Sequel Youth and Family Services."
+   },
+   {
+    "url": "https://opencorporates.com/companies/us_ia/329882",
+    "title": "OpenCorporates: Sequel TSI Holdings, LLC (Iowa)",
+    "date": "",
+    "quote": "SEQUEL CBS HOLDINGS, LLC"
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "otherNames",
+    "from": [
+     "Sequel Youth & Family Services"
+    ],
+    "to": [
+     "Sequel Youth & Family Services",
+     "Sequel Youth and Family Services, LLC",
+     "Sequel TSI Holdings, LLC",
+     "Sequel CBS Holdings, LLC"
+    ]
+   },
+   {
+    "type": "operator_field",
+    "operator_id": 20,
+    "path": "websites",
+    "from": [
+     "https://web.archive.org/web/20201027013152/http://charlesbrittacademy.com/"
+    ],
+    "to": [
+     "https://web.archive.org/web/2020/https://www.sequelyouthservices.com/",
+     "https://web.archive.org/web/20201027013152/http://charlesbrittacademy.com/"
+    ]
+   }
+  ]
+ },
+ {
+  "key": "sequel-lakeside-kalamazoo",
+  "kind": "sequel_history",
+  "title": "Lakeside Academy (Kalamazoo, MI)",
+  "place": "Kalamazoo, MI",
+  "facility_id": 100098,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Sequel's Lakeside Academy was in Kalamazoo, Michigan: Lakeside for Children entered an agreement with Sequel in July 2007 and the facility was renamed Lakeside Academy; Michigan ended its contracts on June 18, 2020 after the death of Cornelius Frederick, and it closed. KOP filed Sequel, the Kalamazoo articles and the Frederick lawsuit rows under another Lakeside Academy, a Youth Health Associates program in Clearfield, Utah (record #10459), and left the Kalamazoo record (#100098) with nothing. Other articles on #10459 belong to Sequel's other programs (Lakeside Academy of Kansas, Clarinda, Normative Services, Bernalillo, Torii/Pomegranate, Starr Albion Prep, Mingus).",
+  "kop_now": "Sequel linked to #10459 (Clearfield, UT) as current; #100098 (Kalamazoo) has no company, no articles and no end year; #10459 says Closed 2020 from the Kalamazoo news.",
+  "notes": "By hand afterwards: on #10459 take out the two notes about the Kalamazoo closure and the Vivant provider-report resource links; its own status is not known.",
+  "sources": [
+   {
+    "url": "https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821",
+    "title": "Goshay v. Lakeside for Children, W.D. Mich. 1:21-cv-848",
+    "date": "2021-09-30",
+    "quote": "In July 2007 Lakeside for Children entered an agreement with Sequel and the facility was renamed Lakeside Academy."
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Lakeside Academy ... Kalamazoo, MI ... 124 ... 1907 2007"
+   },
+   {
+    "url": "https://www.freep.com/story/news/local/michigan/2020/06/19/lakeside-academy-kalamazoo-cornelius-frederick/3221236001/",
+    "title": "Detroit Free Press",
+    "date": "2020-06-19",
+    "quote": "Michigan ended its contracts with Lakeside Academy on June 18, 2020 and began revoking its license"
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_link",
+    "facility_id": 100098,
+    "operator_id": 20,
+    "from": null,
+    "to": "current"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 10459,
+    "operator_id": 20,
+    "from": "current",
+    "to": "remove"
+   },
+   {
+    "type": "field",
+    "facility_id": 100098,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2020
+   },
+   {
+    "type": "list_add",
+    "facility_id": 100098,
+    "path": "identification.pastOperators",
+    "value": "Sequel Youth and Family Services (2007-2020)"
+   },
+   {
+    "type": "note",
+    "facility_id": 100098,
+    "text": "Lakeside for Children entered an agreement with Sequel Youth and Family Services in July 2007 and the facility was renamed Lakeside Academy; Michigan ended its contracts on June 18, 2020 after the death of Cornelius Frederick, and the academy closed."
+   },
+   {
+    "type": "field",
+    "facility_id": 10459,
+    "path": "operatingPeriod.status",
+    "from": "Closed",
+    "to": "Unknown"
+   },
+   {
+    "type": "field",
+    "facility_id": 10459,
+    "path": "operatingPeriod.endYear",
+    "from": 2020,
+    "to": null
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 100098,
+    "label": "Lakeside Academy, Kalamazoo",
+    "news_ids": [
+     597,
+     598,
+     599,
+     600,
+     601,
+     602,
+     603,
+     604,
+     605,
+     606,
+     608,
+     609,
+     610,
+     611,
+     612,
+     613,
+     614,
+     994,
+     1079
+    ],
+    "lawsuit_ids": [
+     75,
+     76,
+     77
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 12592,
+    "label": "Lakeside Academy of Kansas",
+    "news_ids": [
+     607
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 12163,
+    "label": "Mingus Mountain Academy",
+    "news_ids": [
+     628
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 13378,
+    "label": "Clarinda Academy",
+    "news_ids": [
+     641
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 13410,
+    "label": "Normative Services Academy",
+    "news_ids": [
+     718
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 12743,
+    "label": "Bernalillo Academy",
+    "news_ids": [
+     726,
+     947
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 13226,
+    "label": "Sequel Pomegranate (Torii)",
+    "news_ids": [
+     945
+    ]
+   },
+   {
+    "type": "links_move",
+    "from_facility": 10459,
+    "to_facility": 13090,
+    "label": "Starr Albion Prep",
+    "news_ids": [
+     987,
+     988
+    ]
+   },
+   {
+    "type": "manual",
+    "text": "On record #10459 (Clearfield, UT) take out the notes \"Closed per news report\" and \"Announced closing (2020-06-20)\" and the Vivant provider-report links: they are about Kalamazoo."
+   }
+  ]
+ },
+ {
+  "key": "sequel-mingus-vivant",
+  "kind": "transferred",
+  "title": "Mingus Mountain Academy",
+  "place": "Prescott Valley, AZ",
+  "facility_id": 12163,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Sequel began managing Mingus Mountain Academy for its nonprofit owner on January 12, 2004 and ran it until 2021; since then it has been a Vivant Behavioral Healthcare program (named as such in the 2024 Senate report and the 2025 lawsuit). KOP still has Sequel as its current company.",
+  "kop_now": "Current operator \"Sequel TSI\"; Sequel linked as current; Vivant not linked.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A)",
+    "date": "2017-01-25",
+    "quote": "On January 12, 2004, a subsidiary of Sequel, Sequel Youth Services of Arizona, LLC (\"Sequel Arizona\"), entered into a Management Services Agreement"
+   },
+   {
+    "url": "https://www.finance.senate.gov/imo/media/doc/rtf_report_warehouses_of_neglect.pdf",
+    "title": "U.S. Senate Finance Committee, \"Warehouses of Neglect\"",
+    "date": "2024-06",
+    "quote": "Vivant ... Mingus Mountain"
+   },
+   {
+    "url": "https://ktvz.com/cnn-regional/2025/02/10/lawsuit-alleges-horrific-sexual-abuse-at-arizona-facility-for-troubled-teens/",
+    "title": "CNN via KTVZ, lawsuit over Mingus Mountain Academy",
+    "date": "2025-02-10",
+    "quote": "A.B. et al. v. Mingus Mountain Academy et al. names Vivant, Sequel entities and Ripley"
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12163,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Vivant Behavioral Healthcare"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12163,
+    "path": "identification.pastOperators",
+    "value": "Sequel Youth and Family Services (2004-2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 12163,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 12163,
+    "operator_id": 26,
+    "from": null,
+    "to": "current"
+   }
+  ]
+ },
+ {
+  "key": "sequel-woodward-vivant",
+  "kind": "transferred",
+  "title": "Woodward Academy",
+  "place": "Woodward, IA",
+  "facility_id": 13380,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Woodward Academy joined Sequel in 2000 (merger proxy) and went to Vivant Behavioral Healthcare in 2021; the 2024 Senate report lists it among Vivant's facilities. KOP still has Sequel as its current company.",
+  "kop_now": "Current operator \"Sequel TSI\"; Sequel linked as current; Vivant not linked.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Woodward Academy ... Woodward, IA ... 265 ... 1995 2000"
+   },
+   {
+    "url": "https://www.finance.senate.gov/imo/media/doc/rtf_report_warehouses_of_neglect.pdf",
+    "title": "U.S. Senate Finance Committee, \"Warehouses of Neglect\"",
+    "date": "2024-06",
+    "quote": "Vivant ... Woodward Academy"
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13380,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Vivant Behavioral Healthcare"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13380,
+    "path": "identification.pastOperators",
+    "value": "Sequel Youth and Family Services (2000-2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 13380,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 13380,
+    "operator_id": 26,
+    "from": null,
+    "to": "current"
+   }
+  ]
+ },
+ {
+  "key": "sequel-lakeside-kansas",
+  "kind": "transferred",
+  "title": "Lakeside Academy of Kansas",
+  "place": "Goddard, KS",
+  "facility_id": 12592,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Sequel ran Lakeside Academy of Kansas from 2011 until early 2022, when it told the Kansas Department for Children and Families it would stop; the property owner said Successful Dreams would take it over on May 1, 2022. KOP has it closing in 2020 (the year the other Lakeside, in Kalamazoo, closed).",
+  "kop_now": "Closed, 2008-2020; current operator \"Sequel TSI\"; Sequel linked as current.",
+  "notes": "Whether Successful Dreams still runs it is not known; check before approving the Open status.",
+  "sources": [
+   {
+    "url": "https://www.kcur.org/news/2022-04-04/a-major-treatment-facility-for-kansas-foster-kids-almost-closed-a-new-tenant-wants-to-save-it",
+    "title": "KCUR, \"A major treatment facility for Kansas foster kids almost closed. A new tenant wants to save it\"",
+    "date": "2022-04-04",
+    "quote": "recently told the Department for Children and Families it would no longer operate the facility"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "APM Reports",
+    "date": "2022-04-26",
+    "quote": "A Kansas nonprofit will take over a Sequel center there"
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Lakeside Academy of Kansas Staff-secure residential Goddard, KS 45 Male, ages 13 and over 2008 2011"
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 12592,
+    "path": "operatingPeriod.status",
+    "from": "Closed",
+    "to": "Open"
+   },
+   {
+    "type": "field",
+    "facility_id": 12592,
+    "path": "operatingPeriod.endYear",
+    "from": 2020,
+    "to": null
+   },
+   {
+    "type": "field",
+    "facility_id": 12592,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Successful Dreams"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 12592,
+    "path": "identification.pastOperators",
+    "value": "Sequel Youth and Family Services (2011-2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 12592,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 12592,
+    "text": "Sequel told the Kansas Department for Children and Families in early 2022 that it would stop running the academy; Successful Dreams was to take it over on May 1, 2022."
+   }
+  ]
+ },
+ {
+  "key": "sequel-northern-illinois-years",
+  "kind": "status_years",
+  "title": "Northern Illinois Academy",
+  "place": "Aurora, IL",
+  "facility_id": 13447,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Northern Illinois Academy was founded in 2003 and joined Sequel in 2011 (merger proxy). Illinois removed all 51 children on May 14, 2021 and it closed. KOP gives 2021 as its opening year and no closing year.",
+  "kop_now": "Closed; opening year 2021; no closing year.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Northern Illinois Academy ... Aurora, IL ... 65 ... 2003 2011"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2021/05/21/sequel-confronts-more-abuse-allegations-amid-concerns-about-its-finances",
+    "title": "APM Reports",
+    "date": "2021-05-21",
+    "quote": "The Northern Illinois Academy closure in May 2021 was the 13th Sequel facility closure since 2019"
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 13447,
+    "path": "operatingPeriod.startYear",
+    "from": 2021,
+    "to": 2003
+   },
+   {
+    "type": "field",
+    "facility_id": 13447,
+    "path": "operatingPeriod.endYear",
+    "from": null,
+    "to": 2021
+   }
+  ]
+ },
+ {
+  "key": "sequel-red-rock-years",
+  "kind": "status_years",
+  "title": "Red Rock Canyon School",
+  "place": "St. George, UT",
+  "facility_id": 10368,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Red Rock Canyon School was founded in 1999 and joined Sequel in 2016 (merger proxy); a federal suit against it was filed in 2005. KOP gives 2016, the year Sequel bought it, as its opening year.",
+  "kop_now": "Closed, 2016-2019.",
+  "notes": "KOP's Sequel research sheet says the Habibians founded it in 2006; the proxy and the 2005 Robertson case put it earlier.",
+  "sources": [
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Red Rock Canyon School ... 140 ... 1999 2016"
+   },
+   {
+    "url": "https://www.govinfo.gov/app/details/USCOURTS-utd-2_05-cv-00758",
+    "title": "Robertson et al. v. Red Rock Canyon School LLC, D. Utah 2:05-cv-758",
+    "date": "2005",
+    "quote": "Robertson et al. v. Red Rock Canyon School LLC et al."
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 10368,
+    "path": "operatingPeriod.startYear",
+    "from": 2016,
+    "to": 1999
+   }
+  ]
+ },
+ {
+  "key": "sequel-owens-cross-roads-link",
+  "kind": "transferred",
+  "title": "Three Springs New Beginnings (Owens Cross Roads)",
+  "place": "Owens Cross Roads, AL",
+  "facility_id": 9644,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "The Owens Cross Roads girls' program was Sequel TSI Owens Cross Roads from 2009 and is now Pathway of Madison County; the record already says so, but Sequel is still linked as its current company.",
+  "kop_now": "Current operator \"Pathway of Madison County\"; past operators include \"Sequel TSI (2009-2022)\"; Sequel linked as current.",
+  "sources": [
+   {
+    "url": "https://whnt.com/news/huntsville/owens-cross-roads-city-council-revoking-pathways-inc-business-license/",
+    "title": "WHNT",
+    "date": "2025-01-07",
+    "quote": "The Owens Cross Roads City Council voted to revoke the business license of Pathway of Madison Co."
+   }
+  ],
+  "ops": [
+   {
+    "type": "operator_link",
+    "facility_id": 9644,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   }
+  ]
+ },
+ {
+  "key": "sequel-union-link",
+  "kind": "transferred",
+  "title": "Union Juvenile Residential Facility",
+  "place": "Raiford, FL",
+  "facility_id": 9660,
+  "verdict": "kop_wrong",
+  "confidence": "medium",
+  "finding": "Sequel ran Union Juvenile Residential Facility from 2009 until July 2019, when Florida's Department of Juvenile Justice removed all 22 youth after a battery on a 13-year-old the facility did not report for over a week. KOP still has Sequel as its current company.",
+  "kop_now": "Open, from 2009; current operator \"Sequel TSI\"; Sequel and Three Springs both linked as current.",
+  "notes": "KOP's Sequel research sheet says Wayne Halfway House runs it now as Redwood Youth Academy; not set here.",
+  "sources": [
+   {
+    "url": "https://mycbs4.com/news/local/child-battery-investigation-closes-union-juvenile-residential-facility-officials-say",
+    "title": "CBS4",
+    "date": "2019-07",
+    "quote": "Child battery investigation closes Union Juvenile Residential Facility, officials say"
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Union Juvenile Residential Facility ... 24 ... 2006 2009"
+   }
+  ],
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9660,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": null
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9660,
+    "path": "identification.pastOperators",
+    "value": "Sequel Youth and Family Services (2009-2019)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9660,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9660,
+    "operator_id": 24,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 9660,
+    "text": "Florida's Department of Juvenile Justice removed all 22 youth in July 2019 after a battery on a 13-year-old that Sequel's staff did not report for over a week."
+   }
+  ]
+ },
+ {
+  "key": "sequel-renamed-pairs",
+  "kind": "sequel_history",
+  "title": "Sequel programs that have two records under two names",
+  "place": "AL, SD, NC",
+  "facility_id": 100075,
+  "verdict": "kop_duplicate",
+  "confidence": "medium",
+  "finding": "Several Sequel programs have one record under the Sequel name and another under the name Vivant gave them in 2022 (Sequel TSI of Alabama became Brighter Path Alabama, LLC on about March 1, 2022). Each pair should be merged as a rename at KOP Tools > Merge Duplicates > Renamed programs, so the page reads \"As Sequel TSI ...\" then \"As Brighter Path ...\".",
+  "kop_now": "Sequel TSI Courtland #100075 and Brighter Path Courtland #13639; Sequel TSI Montgomery #100077 and Brighter Path Montgomery #13640; Sequel TSI of Tuskegee #100078 and Brighter Path Tuskegee #13641; Brighter Transition Youth Treatment Center #14054 and Brighter Transition Youth Treatment Center/Falls Academy #14058 (both \"formerly Sequel Transition Academy\"); \"North Carolina boarding school (girls)\" #100272, made by the news scan from an APM story about Sequel, which is Auldern Academy #9637.",
+  "sources": [
+   {
+    "url": "https://storage.courtlistener.com/recap/gov.uscourts.almd.77768/gov.uscourts.almd.77768.1.0.pdf",
+    "title": "J.P. v. Sequel TSI of Alabama, M.D. Ala. 3:22-cv-190, notice of removal",
+    "date": "2022-04-20",
+    "quote": "Sequel TSI of Alabama, LLC changed its name to Brighter Path Alabama, LLC on or about March 1, 2022."
+   },
+   {
+    "url": "https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm",
+    "title": "Global Partner Acquisition Corp., merger proxy for Sequel (PREM14A), program table",
+    "date": "2017-01-25",
+    "quote": "Auldern Academy ... private pay ... Female, grades 8-12"
+   }
+  ],
+  "ops": [
+   {
+    "type": "manual",
+    "text": "Merge as renames: #100075 into #13639, #100077 into #13640, #100078 into #13641 (rename year 2022). Merge duplicates: #14054 with #14058. Merge #100272 into Auldern Academy #9637 after checking the APM story."
+   }
+  ]
  }
 ]

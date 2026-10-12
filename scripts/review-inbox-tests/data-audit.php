@@ -24,7 +24,7 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
     };
 
     // Every proposal: known op types, fields it may change, values the record can hold, ids that exist.
-    $types = array('field', 'list_add', 'list_remove', 'note', 'map_years', 'operator_link', 'person_merge', 'memorial', 'manual');
+    $types = array('field', 'list_add', 'list_remove', 'note', 'map_years', 'operator_link', 'operator_field', 'links_move', 'person_merge', 'memorial', 'manual');
     $bad = array();
     $stale = array();
     foreach ($props as $key => $p) {
@@ -35,6 +35,8 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
             if ($t === 'map_years' && !kop_daudit_valid_years($op['to'] ?? '')) $bad[] = $key . ': map years ' . json_encode($op['to']);
             if ($t === 'memorial' && !kop_daudit_memorial_ok((string) $op['column'], $op['to'] ?? null)) $bad[] = $key . ': memorial ' . $op['column'] . ' = ' . json_encode($op['to']);
             if ($t === 'operator_link' && !in_array($op['to'] ?? '', array('current', 'past', 'remove'), true)) $bad[] = $key . ': link ' . json_encode($op['to']);
+            if ($t === 'links_move' && (!(int) ($op['from_facility'] ?? 0) || !(int) ($op['to_facility'] ?? 0) || !kop_daudit_move_ids($op))) $bad[] = $key . ': links_move without records or ids';
+            if ($t === 'operator_field' && !kop_daudit_operator_value_ok((string) $op['path'], $op['to'] ?? null)) $bad[] = $key . ': company ' . $op['path'] . ' = ' . json_encode($op['to']);
         }
         $by_fid = array();
         foreach ($p['ops'] as $op) {
@@ -46,6 +48,18 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
             if (kop_daudit_doc_check($doc, $ops)) $stale[] = $key;
         }
     }
+    // Company fields and moved links are checked against the mirror the way Approve checks them.
+    $why_new = array();
+    foreach ($props as $key => $p) {
+        $mine = array_values(array_filter($p['ops'], function ($op) { return in_array($op['type'], array('operator_field', 'links_move'), true); }));
+        if (!$mine) continue;
+        try {
+            foreach (kop_daudit_check(array('ops' => $mine), array('pdo' => $pdo, 'prefix' => 'wpdl_')) as $w) $why_new[] = $key . ': ' . $w;
+        } catch (Throwable $e) {
+            $why_new[] = $key . ': ' . $e->getMessage();
+        }
+    }
+    $check('data-audit: company fields and moved articles still fit the records', !$why_new, implode(' | ', array_slice($why_new, 0, 6)));
     $check('data-audit: every proposal is well formed', !$bad, count($props) . ' proposals' . ($bad ? '; ' . implode(' | ', array_slice($bad, 0, 6)) : ''));
     $check('data-audit: nearly every proposal still fits its record (the rest are refused on Approve)', count($stale) <= max(3, (int) (count($props) / 20)),
         count($stale) . ' changed since: ' . implode(', ', array_slice($stale, 0, 8)));
@@ -99,6 +113,43 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         kop_daudit_link_put($pdo, $t, $row['facility_id'], $row['operator_id'], $before);
         $check('data-audit: a company link becomes past, is removed, and comes back', $mid['relationship'] === 'past' && $gone === null
             && kop_daudit_link_row($pdo, $t, $row['facility_id'], $row['operator_id']) == $before);
+    }
+
+    // Company records: the fields a correction may set, and a change that goes and comes back.
+    $check('data-audit: company values are checked', kop_daudit_operator_value_ok('headquarters', 'Huntsville, AL')
+        && kop_daudit_operator_value_ok('keyStaff.founders', array(array('name' => 'A Person', 'role' => 'co-founder', 'pastJobs' => '')))
+        && !kop_daudit_operator_value_ok('keyStaff.founders', array(array('role' => 'no name')))
+        && !kop_daudit_operator_value_ok('history', array('x')) && !kop_daudit_operator_value_ok('name', 'Other'));
+    $check('data-audit: company values compare by content', kop_daudit_operator_same(array('name' => 'X', 'role' => ''), array('role' => '', 'name' => 'X'))
+        && kop_daudit_operator_same('', null) && kop_daudit_operator_same(array(), null) && !kop_daudit_operator_same(array('a'), array('b')));
+    kop_rinbox_test_copy_tables(array('wpdl_kop_operators'));
+    $oid = (int) $pdo->query('SELECT id FROM wpdl_kop_operators ORDER BY id LIMIT 1')->fetchColumn();
+    if ($oid) {
+        $oopts = array('pdo' => $pdo, 'prefix' => 'wpdl_');
+        $was = kop_daudit_operator_json($oopts, $oid);
+        $json = $was;
+        kop_daudit_set($json['operator'], 'keyStaff.ceo', 'Test Person');
+        kop_daudit_operator_save($oopts, $oid, $json);
+        $mid = kop_daudit_get(kop_daudit_operator_json($oopts, $oid)['operator'], 'keyStaff.ceo');
+        $p = array('ops' => array(array('type' => 'operator_field', 'operator_id' => $oid, 'path' => 'keyStaff.ceo', 'from' => 'Someone Else', 'to' => 'Another')));
+        $why = kop_daudit_check($p, $oopts);
+        kop_daudit_operator_save($oopts, $oid, $was);
+        $check('data-audit: a company field goes and comes back, and a changed one is refused',
+            $mid === 'Test Person' && kop_daudit_operator_json($oopts, $oid) == $was && count($why) === 1, implode(' ', $why));
+    }
+
+    // Articles filed under the wrong record move, and come back.
+    kop_rinbox_test_copy_tables(array('news_facility_links', 'facilities_v2'));
+    $nl = $pdo->query('SELECT news_id, facility_id FROM news_facility_links ORDER BY news_id LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+    $to = (int) $pdo->query('SELECT id FROM facilities_v2 WHERE id <> ' . (int) $nl['facility_id'] . ' ORDER BY id LIMIT 1')->fetchColumn();
+    if ($nl && $to) {
+        $row = kop_daudit_item_link($pdo, 'news', $nl['news_id'], $nl['facility_id']);
+        kop_daudit_item_link_drop($pdo, 'news', $nl['news_id'], $nl['facility_id']);
+        kop_daudit_item_link_put($pdo, 'news', array('facility_id' => $to) + $row);
+        $moved = kop_daudit_item_link($pdo, 'news', $nl['news_id'], $to) && !kop_daudit_item_link($pdo, 'news', $nl['news_id'], $nl['facility_id']);
+        kop_daudit_item_link_drop($pdo, 'news', $nl['news_id'], $to);
+        kop_daudit_item_link_put($pdo, 'news', $row);
+        $check('data-audit: an article moves to another record and comes back whole', $moved && kop_daudit_item_link($pdo, 'news', $nl['news_id'], $nl['facility_id']) == $row);
     }
 
     // The owner's rule: Transferred on the page of the company a program left, Open elsewhere.
