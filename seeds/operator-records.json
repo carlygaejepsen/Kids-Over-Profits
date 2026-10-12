@@ -363,5 +363,369 @@
         "relationship": "current"
       }
     ]
+  },
+  {
+    "name": "G4S Youth Services",
+    "note": "Company record created 2026-10-12 from news reports, a county sheriff's release, Brown County (TX) commissioners coverage and KOP's own data. The G4S name's own era, up to the April 2017 sale; the later era is the TrueCore record (wpdl_kop_operators 23). Facilities: KOP records that a source ties to G4S Youth Services by name; TrueCore-era programs with no G4S-era source are listed as doubtful.",
+    "operator": {
+      "currentName": "TrueCore Behavioral Solutions",
+      "otherNames": [
+        "G4S Youth Services, LLC",
+        "G4S Youth Services, Inc."
+      ],
+      "status": "Acquired",
+      "founded": "",
+      "operatingPeriod": "2002 to 2017",
+      "headquarters": "",
+      "headquartersCity": "",
+      "headquartersState": "FL",
+      "location": "",
+      "parentCompanies": [
+        "G4S"
+      ],
+      "notes": [
+        "2002: Securicor New Century of Richmond, Va. ran three Florida juvenile facilities, including Avon Park Youth Academy (Polk County) and Sago Palm Academy (western Palm Beach County), having taken over operations from Correctional Services Corp.; a rival bidder cited a 2000 Florida DJJ report that guards at Sago Palm abused teen inmates and shackled one to a bed for 14 hours (Source: https://lasvegassun.com/news/2002/aug/09/summit-views-woes-remain/)",
+        "2002: Securicor had a contract for a 104-bed Florida DJJ juvenile facility and was the preferred provider for a moderate-risk residential program in Avon Park (Source: https://lasvegassun.com/news/2002/jul/29/state-will-soon-select-firm-to-run-troubled-youth-/)",
+        "July 2004: G4S was formed when Group 4 Falck's security business (Group 4 Falck had bought Wackenhut in 2002) merged with Securicor (Source: https://en.wikipedia.org/wiki/G4S)",
+        "G4S Youth Services said it had provided residential and outpatient treatment programs to more than 12,000 Florida youth since 2002 (Source: https://www.tampabay28.com/news/local-news/i-team-investigates/four-youth-detention-workers-suspended-after-waiting-more-than-an-hour-to-report-escape)",
+        "March 2008: Florida DJJ sent G4S Youth Services a takeover notice for Hastings Youth Academy (serious incidents, inappropriate staff-youth relationships), lifted July 2008; the DJJ inspector general found staff used unnecessary force in a February 2008 incident in which a boy's arm was broken (Source: https://historiccity.com/2009/staugustine/news/lawsuit-abuse-at-hastings-youth-academy-2085)",
+        "2007 to July 2016: ran the Arkansas Juvenile Assessment and Treatment Center near Alexander; lost the $34.1 million contract to Rite of Passage; president Jim Hill and COO Brian Neupaver left in May 2016 for Youth Opportunity Investments, and G4S sued them and YOI in Florida (Source: https://www.arkansasonline.com/news/2016/sep/15/2-youth-jail-execs-jumped-ship-20160915/)",
+        "March 2013: Brown County, Texas approved leasing part of its juvenile justice building in Brownwood to G4S Youth Services, whose North American corporate offices were in Florida (Source: https://www.brownwoodnews.com/2013/03/11/county-approves-lease-for-brown-county-juvenile-justice-building/)",
+        "August 2013: riot at Avon Park Youth Academy; 21 G4S staff on shift for 144 youths, 64 sent to Polk County Jail; G4S then ran 16 state facilities, 13 in Florida, 2 in Tennessee and 1 in Arkansas (Source: https://treatmentmagazine.com/huge-riot-breaks-out-at-florida-youth-center/)",
+        "July 2015: a Polk County grand jury said Highlands Youth Academy, run by G4S under a $40 million five-year DJJ contract, should be closed (Source: https://www.fox13news.com/news/report-g4s-run-youth-facility-should-be-closed-in-wake-of-riots)",
+        "January-February 2016: escape from Falkenburg Academy (Tampa Residential Facility), operated for the state by G4S; first 911 call more than 13 hours later; four staff suspended (Source: https://www.tampabay28.com/news/local-news/i-team-investigates/four-youth-detention-workers-suspended-after-waiting-more-than-an-hour-to-report-escape)",
+        "May 2016: six youths escaped from the G4S-operated Okeechobee Youth Development Center (Source: https://www.wptv.com/news/region-okeechobee-county/six-juveniles-caught-after-escaping-from-okeechobee-youth-development-center)",
+        "June 2017: DJJ froze admissions at Hastings Youth Academy after a third escape in three months, citing critical deficiencies in youth supervision by G4S Youth Services (Source: https://actionnewsjax.com/news/local/state-imposes-admissions-freeze-at-hastings-youth-academy-following-escapes/531333968)",
+        "June 2017: escape at Jacksonville Youth Academy, run by G4S Youth Services; president and CEO Martin Favis (Source: https://www.wokv.com/news/local/president-youth-services-contractor-upset-about-escape-jacksonville-youth-academy/xpF49hV9UVziZK8oIjAPjO)",
+        "April 2017: G4S completed the sale of its U.S. youth services to BHSB Holdings for $56.5 million (Source: https://blog.polksheriff.org/news-investigations/2017/08/18/three-former-department-of-juvenile-justice-g4s-highlands-youth-academy-staff-members-arrested-for-multiple-felonies)",
+        "August 2017: three former G4S Highlands Youth Academy administrators arrested; the sheriff said G4S staff routinely covered up fights, uses of force, contraband and escapes (Source: https://blog.polksheriff.org/news-investigations/2017/08/18/three-former-department-of-juvenile-justice-g4s-highlands-youth-academy-staff-members-arrested-for-multiple-felonies)",
+        "Tennessee: ran Stones River Academy (G4S Academy for Young Men) in Donelson, Nashville until the April 1, 2017 sale (Source: https://digital-release.wkrn.com/news/2-juveniles-captured-after-escaping-donelson-youth-facility); and G4S-The Academy for Young Women, 279 Stewarts Ferry Pike, Nashville, for DCS (Source: https://www.kidcentraltn.com/program/g4s-the-academy-for-young-women.html)",
+        "2018: the Brown County lease was held by TrueCore, formerly known as G4S Youth Services (Source: https://www.brownwoodnews.com/2018/08/20/commissioners-vote-not-to-renew-juvenile-detention-building-lease/); TrueCore left Texas in June 2020, assigning The Oaks to Rite of Passage (Source: https://www.brownwoodnews.com/2020/06/15/commissioners-approve-transfer-of-truecore-lease/)",
+        "October 2019: a qui tam complaint against TrueCore also named G4S US, G4S Youth Services, LLC and G4S Secure Solutions as defendants (Source: https://kidsoverprofits.org/wp-content/uploads/Brockenbrough-v.-TrueCore-Behavioral-Solutions-LLC-et-al-COMPLAINT-against-BHSB-Holdings-Inc.pdf)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 11104,
+        "unique_name": "Highlands Youth Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11107,
+        "unique_name": "Lake Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11114,
+        "unique_name": "Tampa Residential Facility",
+        "relationship": "past"
+      },
+      {
+        "id": 11108,
+        "unique_name": "Les Peters Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11106,
+        "unique_name": "Jacksonville Youth Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11201,
+        "unique_name": "Okeechobee Youth Development Center",
+        "relationship": "past"
+      },
+      {
+        "id": 11157,
+        "unique_name": "Cypress Creek Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 11093,
+        "unique_name": "Columbus Youth Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11476,
+        "unique_name": "Arkansas Juvenile Assessment and Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 11334,
+        "unique_name": "Stones River Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11338,
+        "unique_name": "The Academy for Young Men",
+        "relationship": "past"
+      },
+      {
+        "id": 11339,
+        "unique_name": "The Academy for Young Women",
+        "relationship": "past"
+      },
+      {
+        "id": 10959,
+        "unique_name": "The Oaks Treatment Center",
+        "relationship": "past"
+      }
+    ]
+  },
+  {
+    "name": "Ramsay Youth Services",
+    "note": "Company record created 2026-10-12 from SEC filings of Ramsay Health Care / Ramsay Youth Services (1994-2003) and Psychiatric Solutions' 10-K for 2003. Facilities: KOP records for facilities Ramsay's 10-Ks list as owned, leased or run under state contract, matched by name and town.",
+    "operator": {
+      "currentName": "",
+      "otherNames": [
+        "Ramsay Youth Services, Inc.",
+        "Ramsay Health Care, Inc.",
+        "Healthcare Services of America, Inc."
+      ],
+      "status": "Acquired",
+      "founded": "1983 (as Healthcare Services of America, Inc., Delaware)",
+      "operatingPeriod": "1983 to 2003",
+      "headquarters": "One Alhambra Plaza, Suite 750, Coral Gables, Florida",
+      "headquartersCity": "Coral Gables",
+      "headquartersState": "FL",
+      "location": "Coral Gables, FL",
+      "parentCompanies": [
+        "Psychiatric Solutions, Inc."
+      ],
+      "notes": [
+        "1983: incorporated in Delaware as Healthcare Services of America, Inc., based in Birmingham, Alabama; 1987: the Paul Ramsay Group bought a controlling interest; 1988: renamed Ramsay Health Care, Inc. and moved to New Orleans (International Directory of Company Histories, via FundingUniverse: https://www.fundinguniverse.com/company-histories/ramsay-youth-services-inc-history/)",
+        "June 30, 1994: owned or operated 15 inpatient psychiatric hospitals with 1,264 beds in eleven states, incl. Havenwyck (Auburn Hills, MI), Brynn Marr (Jacksonville, NC), Hill Crest (Birmingham, AL), Heartland (Nevada, MO), Benchmark Regional (Woods Cross, UT) (Ramsay Health Care, Form 10-K for 1994: https://www.sec.gov/Archives/edgar/data/773136/0000950134-94-001156.txt)",
+        "April 24, 1995: spun off its managed care subsidiary Ramsay Managed Care, Inc. to shareholders (Form 10-K for 1995: https://www.sec.gov/Archives/edgar/data/773136/0000899243-95-000645.txt)",
+        "1998: changed strategy to at-risk youth; sold hospitals in Conway SC, Houma LA, Mesa AZ, DeSoto TX and Morgantown WV; opened the Dothan, Alabama facility in April 1998; headquarters moved to Coral Gables, Florida; now Ramsay Youth Services, Inc. (formerly Ramsay Health Care, Inc.) (Form 10-KT for the period ended December 31, 1998: https://www.sec.gov/Archives/edgar/data/773136/0000950144-99-003436.txt)",
+        "December 31, 2002: 11 residential facilities, 9 therapeutic community living facilities, 2 non-residential sites and 8 government management contracts (six Florida juvenile justice facilities, McIntosh Youth Development Campus in Darien GA, Bayamon Detention Center PR); chairman Paul J. Ramsay owned about 60% (Form 10-K for 2002: https://www.sec.gov/Archives/edgar/data/773136/000095014403004066/g81502e10vk.txt)",
+        "June 2003: Palm Beach County State Attorney called for a grand jury investigation of sexual misconduct by workers at the Florida Institute for Girls, which Ramsay Youth Services ran for the state; at least 15 workers disciplined, two criminally charged (St. Petersburg Times, 2003: https://www.tampabay.com/archive/2003/06/19/grand-jury-may-look-into-sex-abuse-at-girls-prison)",
+        "June 30, 2003: acquired by Psychiatric Solutions, Inc. for about $81.3 million ($5.00 a share in cash plus repaid debt): 11 inpatient facilities with 1,292 beds and 10 government management contracts in Florida, Georgia and Puerto Rico (Psychiatric Solutions, Form 10-K for 2003: https://www.sec.gov/Archives/edgar/data/829608/000095014404003028/g87995e10vk.htm; merger proxy: https://www.sec.gov/Archives/edgar/data/773136/000095014403007140/g82427ddefm14a.htm)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 13670,
+        "unique_name": "Laurel Oaks Behavioral Health Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13661,
+        "unique_name": "Hill Crest RTC",
+        "relationship": "past"
+      },
+      {
+        "id": 100045,
+        "unique_name": "Hill Crest Behavioral Health (AL)",
+        "relationship": "past"
+      },
+      {
+        "id": 13091,
+        "unique_name": "Havenwyck Hospital Residential Impulse Disorder Program",
+        "relationship": "past"
+      },
+      {
+        "id": 11358,
+        "unique_name": "Heartland Behavioral Health Services RTF",
+        "relationship": "past"
+      },
+      {
+        "id": 11711,
+        "unique_name": "Brynn Marr Hospital",
+        "relationship": "past"
+      },
+      {
+        "id": 10395,
+        "unique_name": "Benchmark Behavioral Health Systems",
+        "relationship": "past"
+      },
+      {
+        "id": 11116,
+        "unique_name": "Gulf Coast Treatment Center",
+        "relationship": "past"
+      },
+      {
+        "id": 13660,
+        "unique_name": "Higdon Hill Group Home",
+        "relationship": "past"
+      },
+      {
+        "id": 11120,
+        "unique_name": "Okaloosa Youth Academy",
+        "relationship": "past"
+      },
+      {
+        "id": 11118,
+        "unique_name": "Milton Girls Residential Facility",
+        "relationship": "past"
+      },
+      {
+        "id": 9663,
+        "unique_name": "McIntosh Youth Development Center",
+        "relationship": "past"
+      }
+    ]
+  },
+  {
+    "name": "Charter Behavioral Health Systems",
+    "note": "Company record created 2026-10-12 from SEC filings (Charter Medical 10-K 1994 and 1995, Magellan 10-K/A 2000, Universal Health Services 10-K 2000), Justice Department releases and 1987-2000 news coverage. Covers Charter Medical Corporation (1969-1995, then renamed Magellan) and the hospital chain run as Charter Behavioral Health Systems, LLC (1997-2000). Facilities: KOP records UHS's 2000 10-K names as bought from Charter, plus Linden Oaks from the 1994 10-K hospital table.",
+    "operator": {
+      "currentName": "",
+      "otherNames": [
+        "Charter Medical Corporation",
+        "Charter Medical Corp.",
+        "Charter Behavioral Health Systems, LLC",
+        "Charter Behavioral Health System",
+        "Charter Hospitals"
+      ],
+      "status": "Defunct",
+      "founded": "1969 (Charter Medical Corporation incorporated)",
+      "operatingPeriod": "1969 to 2000",
+      "headquarters": "Alpharetta, Georgia (1999-2000); earlier Macon, Georgia and 3414 Peachtree Road N.E., Atlanta, Georgia",
+      "headquartersCity": "Alpharetta",
+      "headquartersState": "GA",
+      "location": "Alpharetta, GA",
+      "parentCompanies": [
+        "Magellan Health Services",
+        "Crescent Operating, Inc."
+      ],
+      "notes": [
+        "Incorporated in 1969; renamed Magellan Health Services, Inc. on December 21, 1995; at September 30, 1995 it operated 98 acute care psychiatric hospitals and four residential treatment centers, with programs for children, adolescents and adults (Charter Medical / Magellan Health Services, Form 10-K for fiscal 1995: https://www.sec.gov/Archives/edgar/data/19411/0000019411-95-000025.txt)",
+        "1987: based in Macon, Georgia; ran 58 hospitals with children's psychiatric programs, up from 11 in 1980, the most of any chain (Christian Science Monitor, May 14, 1987: https://www.csmonitor.com/layout/set/amphtml/1987/0514/achild2.html)",
+        "December 1985: acquired Charter Provo Canyon School, Provo, Utah (212 beds), licensed as an intensive residential treatment center, as was Charter Academy of Mobile, Alabama (from September 1987); at September 30, 1994 it operated 98 acute care psychiatric hospitals, three residential treatment centers and 150 outpatient centers, headquartered at 3414 Peachtree Road N.E., Atlanta (Charter Medical Corporation, Form 10-K for fiscal 1994: https://www.sec.gov/Archives/edgar/data/19411/0000019411-94-000008.txt)",
+        "Provo Canyon School was run through the wholly owned subsidiary Charter Provo School, Inc.; former residents sued Charter Medical and the school in the 1990s alleging abuse, false imprisonment and medical negligence (Taylor v. Charter Medical Corporation, 162 F.3d 827 (5th Cir. 1998): https://www.courtlistener.com/opinion/759763/david-taylor-plaintiff-appellant-cross-appellee-v-charter-medical/)",
+        "June 1992: prepackaged Chapter 11 plan filed in Delaware for the parent holding company, cutting long-term debt by about $700 million; effective July 21, 1992 (Bond Buyer, June 3, 1992: https://www.bondbuyer.com/news/charter-medicals-chapter-11-filing-raises-companys-bond-prices-slightly; Form 10-K for fiscal 1994: https://www.sec.gov/Archives/edgar/data/19411/0000019411-94-000008.txt)",
+        "June 1997: Magellan sold substantially all of its domestic psychiatric hospitals to Crescent Real Estate; Magellan and Crescent Operating, Inc. formed Charter Behavioral Health Systems, LLC to run them, 50% each; September 10, 1999: Magellan redeemed 80% of its common interest and all of its preferred interest (Magellan Health Services, Form 10-K/A for fiscal 2000: https://www.sec.gov/Archives/edgar/data/0000019411/000091205701008505/a2040420z10-ka.htm)",
+        "August 1998: Charter Behavioral Health Systems, Inc. and Charter Hospital Orlando-South agreed to pay $4.7 million under the False Claims Act over alleged unnecessary psychiatric admissions of elderly Medicare patients, with a five-year corporate integrity agreement (U.S. Justice Department, August 19, 1998: https://www.justice.gov/archive/opa/pr/1998/August/378civ.html)",
+        "March 4, 1998: Tristan Sovern, 16, died of asphyxiation while restrained at Charter's Greensboro, North Carolina hospital; the employee charged was acquitted (CBS News, April 21, 1999: https://www.cbsnews.com/news/change-may-be-coming/; Atlanta Journal-Constitution, June 27, 1999: https://fbaum.unc.edu/lobby/006_Coverage_Parity/News_Stories/Atlanta_Journal_Constitution_062799.htm)",
+        "June 1999: CBS 60 Minutes II 'Unsafe Haven' reported 91 hospitals treating about 120,000 inpatients a year, 35,000 of them children and adolescents, and an HHS Inspector General investigation (CBS News: https://www.cbsnews.com/news/unsafe-haven-faq)",
+        "1999: unannounced JCAHO inspections at 18 Charter hospitals found deficiencies at all; Charter closed two that failed, including Charlotte, and temporarily closed a child and adolescent unit in New Hampshire; settled a Maryland Medicaid billing dispute for $2.8 million; 87 hospitals in 32 states, headquartered in Alpharetta (Atlanta Journal-Constitution, June 27, 1999: https://fbaum.unc.edu/lobby/006_Coverage_Parity/News_Stories/Atlanta_Journal_Constitution_062799.htm)",
+        "February 2000: filed for Chapter 11 in Wilmington, Delaware, with under $50 million in assets and over $100 million in debts, while the Justice Department and HHS investigated it for Medicaid billing fraud and patient abuse (California Healthline, February 17, 2000: https://californiahealthline.org/morning-breakout/behavioral-health-charter-files-for-bankruptcy/)",
+        "August 18, 2000: agreed to pay the United States $7 million, plus up to $8 million more in bankruptcy claims, over alleged false billing of Medicare and other federal programs, while liquidating (U.S. Justice Department: https://www.justice.gov/archive/opa/pr/2000/August/487civ.htm)",
+        "August 2000: Universal Health Services bought 11 Charter facilities out of bankruptcy: Fairmount (Philadelphia), Rockford (Wilmington, DE), Anchor, Talbott, Laurel Heights and Peachford (Atlanta), Ridge (Lexington, KY), Carolina Center (Greenville, SC), Lakeside (Memphis), Parkwood (Olive Branch, MS) and Provo Canyon (Provo, UT) (Universal Health Services, Form 10-K for 2000: https://www.sec.gov/Archives/edgar/data/352915/000103605001000510/0001036050-01-000510.txt)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 10371,
+        "unique_name": "Provo Canyon School",
+        "relationship": "past"
+      },
+      {
+        "id": 11615,
+        "unique_name": "Fairmount Behavioral Health System Adolescent Inpatient Program",
+        "relationship": "past"
+      },
+      {
+        "id": 11303,
+        "unique_name": "Lakeside Behavioral Health System",
+        "relationship": "past"
+      },
+      {
+        "id": 12495,
+        "unique_name": "Laurel Heights Hospital Residential Treatment",
+        "relationship": "past"
+      },
+      {
+        "id": 13925,
+        "unique_name": "Parkwood Behavioral Health System Adolescent Residential Program",
+        "relationship": "past"
+      },
+      {
+        "id": 100402,
+        "unique_name": "Linden Oaks",
+        "relationship": "past"
+      }
+    ]
+  },
+  {
+    "name": "J Bar J Youth Services",
+    "note": "Company record created 2026-10-12 from J Bar J's own site, The Bulletin (2018), OPB (2021), ProPublica Nonprofit Explorer, Woodbury Reports (October 2008) and the r/troubledteens wiki. Facilities: its four KOP records (Boys Ranch, Grandma's House, J5 current; Academy at Sisters past, closed 2025).",
+    "operator": {
+      "currentName": "",
+      "otherNames": [
+        "J Bar J Youth Services, Inc.",
+        "J Bar J Youth Services Inc"
+      ],
+      "status": "Active",
+      "founded": "1968",
+      "operatingPeriod": "1968 to present",
+      "headquarters": "62895 Hamby Road, Bend, OR 97701",
+      "headquartersCity": "Bend",
+      "headquartersState": "OR",
+      "location": "Bend, OR",
+      "parentCompanies": [],
+      "notes": [
+        "July 1968: J Bar J Boys Ranch opened on a county-owned ranch in Bend, founded by Lyle and Mary Jarvis and Bill Jones of the Deschutes County juvenile division; the name comes from Jarvis and Jones (Source: https://bendbulletin.com/?p=684689)",
+        "November 1972: tax-exempt nonprofit, EIN 93-0677650 (Source: https://projects.propublica.org/nonprofits/organizations/930677650)",
+        "1989-1997: Craig Christiansen was executive director, then founded New Leaf Academy of Oregon (Source: https://www.reddit.com/r/troubledteens/wiki/index/newleaforegon)",
+        "1989: Cascade Youth and Family Center, for runaway and homeless youth, established (Source: https://jbarj.org/about-us/)",
+        "1994: became an affiliate of Big Brothers Big Sisters (Source: https://bendbulletin.com/?p=684689)",
+        "1995: started the Academy, a school for girls in Sisters (Source: https://bendbulletin.com/?p=684689); the r/troubledteens wiki dates the Academy at Sisters to 1994 (Source: https://www.reddit.com/r/troubledteens/wiki/index/academysister)",
+        "2008: Woodbury Reports names Stephanie Alvstad executive director of J Bar J Youth Services, operator of the Academy at Sisters (Source: https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=30)",
+        "2017: Grandma's House, a shelter for pregnant and parenting girls founded in 1992, joined J Bar J (Source: https://jbarj.org/about-us/)",
+        "2018: the Boys Ranch is a subcontractor to the Oregon Youth Authority for boys aged 13 to 18 (Source: https://bendbulletin.com/2018/02/23/police-looking-for-youths-who-walked-off-boys-ranch)",
+        "2021: the ranch could hold up to 28 youth, usually for 6 to 18 months (Source: https://www.opb.org/article/2021/07/09/some-youth-avoid-detention-and-rehabilitate-at-central-oregon-ranch)",
+        "2021-08-02: a $2.3 million lawsuit against J Bar J alleged a no-intervention policy at the Academy at Sisters let a student be beaten in January 2019 (Source: https://www.reddit.com/r/troubledteens/wiki/index/academysister)",
+        "2025: Academy at Sisters listed as closed (Source: https://www.reddit.com/r/troubledteens/wiki/active-programs/active-programs-oregon)",
+        "J5 Short Term Stabilization Program: staff-secure, 30 to 90 days, adjudicated boys 13-19, at 63360 NW Britta Street in the Deschutes County juvenile detention complex (Source: https://jbarj.org/j-bar-j-boys-ranch/j5/)",
+        "Fiscal 2025: revenue $15,195,874; CEO/President Stephanie Alvstad (Source: https://projects.propublica.org/nonprofits/organizations/930677650)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 12362,
+        "unique_name": "J. Bar J. – Boys Ranch",
+        "relationship": "current"
+      },
+      {
+        "id": 12363,
+        "unique_name": "J. Bar J. – Grandma’s House",
+        "relationship": "current"
+      },
+      {
+        "id": 12364,
+        "unique_name": "J. Bar J. – J5",
+        "relationship": "current"
+      },
+      {
+        "id": 12329,
+        "unique_name": "Academy at Sisters",
+        "relationship": "past"
+      }
+    ]
+  },
+  {
+    "name": "Youth Opportunity Investments",
+    "note": "2026-10-12: YOI ran Mansfield Juvenile Treatment Center (AR) only from July 2019 to June 2020; the link was current.",
+    "operator": {
+      "notes": [
+        "July 1, 2019: took over the Mansfield, Harrisburg and Lewisville juvenile treatment centers for the Arkansas Division of Youth Services (Arkansas DHS, Transformation Update: YOI Operating Four Centers: https://humanservices.arkansas.gov/news/transformation-update-yoi-operating-four-centers-enhanced-contract-monitoring-begins)",
+        "April 2020: told Arkansas it would stop running its juvenile treatment centers after June 30, 2020; Rite of Passage took over Dermott, Mansfield and Harrisburg on July 1, 2020 (Arkansas DHS, DHS Amends Contract with Rite of Passage to Manage Juvenile Treatment Centers: https://humanservices.arkansas.gov/news/dhs-amends-contract-with-rite-of-passage-to-manage-juvenile-treatment-centers/)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 11470,
+        "unique_name": "Mansfield Juvenile Treatment Center",
+        "relationship": "past",
+        "update": true
+      }
+    ]
+  },
+  {
+    "name": "Rite of Passage, Inc.",
+    "note": "2026-10-12: Rite of Passage has run Mansfield Juvenile Treatment Center (AR) since July 1, 2020.",
+    "operator": {
+      "notes": [
+        "April 2020: Youth Opportunity Investments told Arkansas it would stop running its juvenile treatment centers after June 30, 2020; Rite of Passage took over Dermott, Mansfield and Harrisburg on July 1, 2020 (Arkansas DHS, DHS Amends Contract with Rite of Passage to Manage Juvenile Treatment Centers: https://humanservices.arkansas.gov/news/dhs-amends-contract-with-rite-of-passage-to-manage-juvenile-treatment-centers/)"
+      ]
+    },
+    "facilities": [
+      {
+        "id": 11470,
+        "unique_name": "Mansfield Juvenile Treatment Center",
+        "relationship": "current"
+      }
+    ]
   }
 ]
