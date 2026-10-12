@@ -7898,5 +7898,159 @@
     "text": "Find a source naming Jeff Johnson (#34) at Boulder Creek Academy, Allynwood Academy and Auldern Academy (likely the 2014 StrugglingTeens Squaw Valley Academy item); take him off any of the three it does not name, and give his remaining roles their years (Mount Bachelor 1988-2000, Trails Carolina 2012-2013)."
    }
   ]
+ },
+ {
+  "key": "operator_inherited-9607",
+  "kind": "operator_inherited",
+  "title": "Falcon Ridge Ranch",
+  "place": "Virgin, UT",
+  "facility_id": 9607,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Sequel Youth & Family Services bought Falcon Ridge Ranch in August 2016 and ran it until October 2021, when Rite of Passage took it over. The program's own site said \"Part of the Sequel Network\" on 2021-09-27 and \"A Rite of Passage Program\" on 2021-10-22; Utah licensed it to Care Youth Corporation, doing business as Rite of Passage, from January 31, 2022 (license F22-94203).",
+  "kop_now": "Status Open, current operator Sequel TSI; past operators Centers for Adolescent Recovery and Education (CARE); company links: Rite of Passage (current), ROP (current), Sequel (current).",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20210927030443/https://falconridgeranch.com/",
+    "title": "Falcon Ridge Ranch homepage, Wayback capture (2021-09-27); KOP copy: https://kidsoverprofits.org/wp-content/uploads/Falcon-Ridge-Ranch-homepage-Part-of-the-Sequel-Network-Wayback-2021-09-27.pdf",
+    "date": "2021-09-27",
+    "quote": "Part of the Sequel Network"
+   },
+   {
+    "url": "https://web.archive.org/web/20211022150240/https://falconridgeranch.com/",
+    "title": "Falcon Ridge Ranch homepage, Wayback capture (2021-10-22); KOP copy: https://kidsoverprofits.org/wp-content/uploads/Falcon-Ridge-Ranch-homepage-A-Rite-of-Passage-Program-Wayback-2021-10-22.pdf",
+    "date": "2021-10-22",
+    "quote": "A Rite of Passage Program"
+   },
+   {
+    "url": "https://ccl.utah.gov/ccl/facility/94203",
+    "title": "Utah Office of Licensing, facility F22-94203",
+    "date": "2026-10-12",
+    "quote": "Care Youth Corporation ... dba Rite Of Passage Inc/Falcon Ridge Ranch; License type: Residential Treatment; initial regulation date 2022-01-31"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Under scrutiny, company that claimed to help troubled youth closes many operations and sells others (APM Reports)",
+    "date": "2022-04-26",
+    "quote": "Websites for three former Sequel facilities in Utah and Tennessee indicate that they are now run by Rite of Passage"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf",
+    "title": "Falcon Ridge Ranch Inc. et al. v. Sequel Youth Services, amended petition (Fifth District Court, Washington County, Utah, case 200500204)",
+    "date": "2020-05-11",
+    "quote": "The sellers sold Falcon Ridge Ranch, Red Rock Canyon School, Lava Heights Academy and Mount Pleasant Academy to Sequel Youth & Family Services in August 2016."
+   },
+   {
+    "url": "https://falconridgeranch.com/about-falcon-ridge-ranch/",
+    "title": "Falcon Ridge Ranch, About (live)",
+    "date": "2026-10-12",
+    "quote": "Falcon Ridge is a Rite of Passage program."
+   }
+  ],
+  "notes": "Owner, 2026-10-12: the program is owned by Rite of Passage now, not Sequel. The Wayback captures are saved in the program's media folder. The record is also linked to two Rite of Passage company rows (Rite of Passage and ROP), both current; they are left as they are.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9607,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9607,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2016-2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9607,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 9607,
+    "text": "Sequel Youth & Family Services owned Falcon Ridge Ranch from August 2016 until October 2021, when Rite of Passage took it over; Utah licensed it to Care Youth Corporation, doing business as Rite of Passage, from January 31, 2022."
+   }
+  ]
+ },
+ {
+  "key": "operator_inherited-9611",
+  "kind": "operator_inherited",
+  "title": "Lava Heights Academy",
+  "place": "Toquerville, UT",
+  "facility_id": 9611,
+  "verdict": "kop_wrong",
+  "confidence": "high",
+  "finding": "Sequel Youth & Family Services bought Lava Heights Academy in August 2016 and ran it until October 2021, when Rite of Passage took it over. The program's own site said \"Part of the Sequel Network\" on 2021-09-28 and \"A Rite of Passage Program\" on 2021-10-20; Utah licensed it to Care Youth Corporation, doing business as Rite of Passage, from January 31, 2022 (license F22-94202).",
+  "kop_now": "Status Open, current operator Sequel TSI; past operators none; company links: Rite of Passage (current), ROP (current), Sequel (current).",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20210928185101/https://lavaheightsacademy.com/",
+    "title": "Lava Heights Academy homepage, Wayback capture (2021-09-28); KOP copy: https://kidsoverprofits.org/wp-content/uploads/Lava-Heights-Academy-homepage-Part-of-the-Sequel-Network-Wayback-2021-09-28.pdf",
+    "date": "2021-09-28",
+    "quote": "Part of the Sequel Network"
+   },
+   {
+    "url": "https://web.archive.org/web/20211020025015/https://lavaheightsacademy.com/",
+    "title": "Lava Heights Academy homepage, Wayback capture (2021-10-20); KOP copy: https://kidsoverprofits.org/wp-content/uploads/Lava-Heights-Academy-homepage-A-Rite-of-Passage-program-Wayback-2021-10-20.pdf",
+    "date": "2021-10-20",
+    "quote": "A Rite of Passage Program"
+   },
+   {
+    "url": "https://ccl.utah.gov/ccl/facility/94202",
+    "title": "Utah Office of Licensing, facility F22-94202",
+    "date": "2026-10-12",
+    "quote": "Care Youth Corporation ... dba Rite Of Passage Inc/Lava Heights Academy; License type: Residential Treatment; initial regulation date 2022-01-31"
+   },
+   {
+    "url": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers",
+    "title": "Under scrutiny, company that claimed to help troubled youth closes many operations and sells others (APM Reports)",
+    "date": "2022-04-26",
+    "quote": "Websites for three former Sequel facilities in Utah and Tennessee indicate that they are now run by Rite of Passage"
+   },
+   {
+    "url": "https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf",
+    "title": "Falcon Ridge Ranch Inc. et al. v. Sequel Youth Services, amended petition (Fifth District Court, Washington County, Utah, case 200500204)",
+    "date": "2020-05-11",
+    "quote": "The sellers sold Falcon Ridge Ranch, Red Rock Canyon School, Lava Heights Academy and Mount Pleasant Academy to Sequel Youth & Family Services in August 2016."
+   },
+   {
+    "url": "https://lavaheightsacademy.com/",
+    "title": "Lava Heights Academy, About (live)",
+    "date": "2026-10-12",
+    "quote": "Lava Heights Academy, \"A Rite of Passage Program\""
+   }
+  ],
+  "notes": "Owner, 2026-10-12: the program is owned by Rite of Passage now, not Sequel. The Wayback captures are saved in the program's media folder. The record is also linked to two Rite of Passage company rows (Rite of Passage and ROP), both current; they are left as they are.",
+  "ops": [
+   {
+    "type": "field",
+    "facility_id": 9611,
+    "path": "identification.currentOperator",
+    "from": "Sequel TSI",
+    "to": "Rite of Passage, Inc."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9611,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2016-2021)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 9611,
+    "operator_id": 20,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "note",
+    "facility_id": 9611,
+    "text": "Sequel Youth & Family Services owned Lava Heights Academy from August 2016 until October 2021, when Rite of Passage took it over; Utah licensed it to Care Youth Corporation, doing business as Rite of Passage, from January 31, 2022."
+   }
+  ]
  }
 ]

@@ -3495,6 +3495,34 @@
       "relationship": "endorsed (as Governor of Texas)",
       "category": "referral",
       "source": "Owner: retain George W. Bush as one node while preserving the governor role on the endorsement."
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Falcon Ridge Ranch",
+      "relationship": "operated 2016-2021",
+      "category": "corporate",
+      "source": "Amended petition, Falcon Ridge Ranch Inc. v. Sequel (Utah 5th Dist. 200500204): sold to Sequel August 2016; program sites \"Part of the Sequel Network\" until late September 2021 (Wayback, saved in the program folders). Owner, 2026-10-12."
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Falcon Ridge Ranch",
+      "relationship": "acquired (2021)",
+      "category": "corporate",
+      "source": "Program sites \"A Rite of Passage Program\" from October 2021 (Wayback, saved in the program folders); Utah licence to Care Youth Corporation dba Rite of Passage from 2022-01-31 (ccl.utah.gov/ccl/facility/94203, 94202). Owner, 2026-10-12."
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Lava Heights Academy",
+      "relationship": "operated 2016-2021",
+      "category": "corporate",
+      "source": "Amended petition, Falcon Ridge Ranch Inc. v. Sequel (Utah 5th Dist. 200500204): sold to Sequel August 2016; program sites \"Part of the Sequel Network\" until late September 2021 (Wayback, saved in the program folders). Owner, 2026-10-12."
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Lava Heights Academy",
+      "relationship": "acquired (2021)",
+      "category": "corporate",
+      "source": "Program sites \"A Rite of Passage Program\" from October 2021 (Wayback, saved in the program folders); Utah licence to Care Youth Corporation dba Rite of Passage from 2022-01-31 (ccl.utah.gov/ccl/facility/94203, 94202). Owner, 2026-10-12."
     }
   ],
   "edges": [

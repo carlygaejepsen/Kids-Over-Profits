@@ -434,7 +434,10 @@ def placeholder(heading, name):
 
 
 def entry_name(gaps):
-    """The entry's program name as the page should print it, without what the Reddit conversion left on it ("**()")."""
+    """The entry's program name as the page should print it, without what the Reddit conversion left on it ("**()").
+    '' for a company's page (gaps entry "operator": true): the program template's empty sections are not for it."""
+    if gaps.get('entry', {}).get('operator'):
+        return ''
     name = (gaps.get('entry', {}).get('program_name') or gaps.get('record', {}).get('name') or '')
     return re.sub(r'\s+', ' ', re.sub(r'\(\s*\)|\*+', '', name)).strip()
 
