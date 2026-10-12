@@ -709,10 +709,10 @@
      "id": "h-public",
      "op": "append_to_section",
      "section": "History and Background Information",
-     "text": "Sequel's revenue grew from about $8 million in 1999 to $208 million in 2016 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)), almost all of it public money from state child welfare and juvenile justice agencies and Medicaid ([source](https://dockets.justia.com/docket/michigan/miwdce/1:2021cv00848/102821)). At a 2015 University of Baltimore talk, Ripley said, \"You can make money in this business if you control staffing\" ([source](https://revealnews.org/podcast/the-bad-place/)). Many of its programs were licensed to nonprofits that paid Sequel to run them, and APM Reports found many of those boards filled with people tied to Ripley and former YSI executives ([source](https://www.apmreports.org/story/2020/09/28/how-sequel-wins-california-business)).",
+     "text": "Sequel's revenue grew from about $8 million in 1999 to $208 million in 2016 ([source](https://www.sec.gov/Archives/edgar/data/1643953/000121390017000665/prem14a0117_globalpartner.htm)), almost all of it public money. At a 2015 University of Baltimore lecture Ripley said, \"We focused on public pay because we figured kids are always going to have issues and they're always going to get in trouble, and again, the government has to figure out a way to take care of them,\" and, \"You can make money in this business if you control staffing\" ([source](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319)). The U.S. Senate Finance Committee quoted him in 2024 to conclude that understaffing is \"a cornerstone of the RTF business model\" ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=105)). Counselors started at about $12 an hour ([source](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319)). Sequel's head nurse at Lakeside Academy testified that the company's motto was \"heads in beds,\" and another employee testified that Sequel prioritized \"cash over kids\" ([source](https://storage.courtlistener.com/recap/gov.uscourts.miwd.102821/gov.uscourts.miwd.102821.1.0.pdf)). The National Disability Rights Network found that Altamont's dividend payouts, at least $94 million in 2017 and 2018, were funded by debt placed on Sequel facilities, which \"creates an incentive for individual locations to cut overhead costs for staff and sacrifice services quality\" ([source](https://www.ndrn.org/wp-content/uploads/2021/10/NDRN_Desperation_without_Dignity_Final.pdf#page=59)). Many of its programs were licensed to nonprofits that paid Sequel to run them, and APM Reports found many of those boards filled with people tied to Ripley and former YSI executives ([source](https://www.apmreports.org/story/2020/09/28/how-sequel-wins-california-business)).",
      "by": "opus",
      "verdict": "ok",
-     "note": "Revenue, staffing quote, nonprofit license-holders."
+     "note": "Revenue, Ripley's own words, staffing, sworn testimony, NDRN on the debt (verified quotes, tmp/sequel/quotes.json)."
     },
     {
      "id": "h-end",
@@ -961,7 +961,7 @@
      "id": "a21",
      "op": "append_to_section",
      "section": "Controversy, Abuse, and Deaths",
-     "text": "In June 2024, the U.S. Senate Finance Committee's report Warehouses of Neglect said Ripley \"has established, sold, and reacquired many RTFs, making it difficult to keep track of him or hold him accountable\" ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf)).",
+     "text": "In June 2024, the U.S. Senate Finance Committee's report Warehouses of Neglect listed among its key findings that \"Exploiting corporate structures can enable RTF operators to evade oversight,\" pointing to Sequel's sale of 13 facilities in 2021 to Vivant, a new company founded by Ripley, \"meaning Ripley ultimately repurchased several RTFs his company had sold to private equity four years earlier\" ([source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=7), [source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=27)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Sequel research (tmp/sequel/facts.json)."
@@ -980,6 +980,24 @@
      "op": "append_to_section",
      "section": "Controversy, Abuse, and Deaths",
      "text": "In June 2025, a former student sued Red Rock Canyon School and Sequel, alleging that a staff member sexually abused students in the Sequel years ([source](https://kutv.com/news/local/lawsuit-claims-staff-at-former-st-george-youth-center-abused-impregnated-teenage-girls)).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a8b",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In September 2019, a former employee of Sequel TSI of Courtland told an Alabama child welfare director that children there were \"consistently choked, body slammed, tortured, emotionally abused, football tackled, held up to the wall by their neck,\" and were \"made to sit in their urine or feces\"; local police, the employee said, called Courtland a \"death trap.\" About two weeks later the state sent the governor two new Sequel contracts worth nearly $13 million, and she signed them ([source](https://www.nbcnews.com/news/us-news/profitable-death-trap-sequel-youth-facilities-raked-millions-while-accused-n1251319).",
+     "by": "opus",
+     "verdict": "ok",
+     "note": "Sequel research (tmp/sequel/facts.json)."
+    },
+    {
+     "id": "a9b",
+     "op": "append_to_section",
+     "section": "Controversy, Abuse, and Deaths",
+     "text": "In January 2020, Oregon State Senator Sara Gelser met Sequel's chief executive at Lakeside Academy and told him: \"Somebody's going to die. Somebody's going to be seriously hurt, they're going to die in one of these restraints\" ([source](https://revealnews.org/podcast/the-bad-place/)).",
      "by": "opus",
      "verdict": "ok",
      "note": "Sequel research (tmp/sequel/facts.json)."
