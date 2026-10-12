@@ -1,10 +1,10 @@
 {
  "meta": {
-  "sourceHash": "eb3d221bc5b1",
+  "sourceHash": "6c769881b11a",
   "facilitySource": "facilities_v2",
   "counts": {
-   "nodes": 1726,
-   "edges": 3052,
+   "nodes": 1730,
+   "edges": 3057,
    "facilityMatches": 696,
    "withYears": 422,
    "withDeaths": 32,
@@ -20,16 +20,16 @@
    "kind_association": 14,
    "kind_government": 16,
    "kind_church": 7,
-   "kind_other": 10,
-   "edge_corporate": 902,
+   "kind_other": 14,
+   "edge_corporate": 907,
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 12,
-   "edge_board": 36,
+   "edge_board": 37,
    "edge_leadership": 738,
    "edge_clinical": 363,
    "edge_admissions": 112,
-   "edge_staff": 611,
+   "edge_staff": 610,
    "edge_membership": 20,
    "edge_other": 6,
    "edge_unknown": 199
@@ -316,13 +316,14 @@
    ],
    "natsap": false,
    "importance": 87370,
-   "degree": 88,
+   "degree": 94,
    "degreeByCategory": {
-    "corporate": 46,
-    "leadership": 18,
+    "corporate": 51,
+    "leadership": 19,
     "clinical": 2,
     "admissions": 4,
-    "staff": 18
+    "staff": 17,
+    "board": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -474,8 +475,8 @@
    "importance": 97279,
    "degree": 47,
    "degreeByCategory": {
-    "corporate": 16,
-    "leadership": 6,
+    "corporate": 17,
+    "leadership": 5,
     "staff": 23,
     "admissions": 2
    },
@@ -28377,8 +28378,7 @@
    "importance": 0,
    "degree": 2,
    "degreeByCategory": {
-    "staff": 1,
-    "board": 1
+    "board": 2
    },
    "facilityId": null,
    "uniqueName": null,
@@ -37330,6 +37330,34 @@
    }
   },
   {
+   "id": "alaris-royalty-corp",
+   "name": "Alaris Royalty Corp.",
+   "aliases": [
+    "Alaris Royalty",
+    "Alaris Equity Partners"
+   ],
+   "kind": "other",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Rite of Passage"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 1,
+   "degreeByCategory": {
+    "corporate": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -732.78,
+    "y": -17.25
+   }
+  },
+  {
    "id": "alaska-baptist-family-services",
    "name": "Alaska Baptist Family Services",
    "aliases": [],
@@ -37384,6 +37412,31 @@
    ],
    "edCon": true,
    "personId": 1386
+  },
+  {
+   "id": "altamont-capital-partners",
+   "name": "Altamont Capital Partners",
+   "aliases": [],
+   "kind": "other",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Rite of Passage"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 1,
+   "degreeByCategory": {
+    "corporate": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -739.56,
+    "y": -17.25
+   }
   },
   {
    "id": "amikids-beaufort",
@@ -39459,7 +39512,7 @@
    "status": "",
    "chain": "",
    "regions": [
-    "Vivant"
+    "Rite of Passage"
    ],
    "natsap": false,
    "importance": 0,
@@ -39472,8 +39525,8 @@
    "dates": "",
    "isolated": false,
    "board": {
-    "x": -496.04,
-    "y": -545.03
+    "x": -742.96,
+    "y": -30.83
    },
    "addedFrom": [
     "Sequel/TSI/YSI/Vivant staff sheet"
@@ -42573,6 +42626,33 @@
    "personId": 2231
   },
   {
+   "id": "levine-leichtman-capital-partners",
+   "name": "Levine Leichtman Capital Partners",
+   "aliases": [
+    "LLCP"
+   ],
+   "kind": "other",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Rite of Passage"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 1,
+   "degreeByCategory": {
+    "corporate": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -736.17,
+    "y": -17.25
+   }
+  },
+  {
    "id": "life",
    "name": "LIFE",
    "aliases": [],
@@ -44341,6 +44421,31 @@
    "board": {
     "x": -977.83,
     "y": -532.53
+   }
+  },
+  {
+   "id": "patriot-capital",
+   "name": "Patriot Capital",
+   "aliases": [],
+   "kind": "other",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Rite of Passage"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 1,
+   "degreeByCategory": {
+    "corporate": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -729.38,
+    "y": -17.25
    }
   },
   {
@@ -69567,6 +69672,71 @@
    "crossesRegion": false
   },
   {
+   "id": "e1667",
+   "source": "altamont-capital-partners",
+   "target": "sequel-youth-and-family-services",
+   "category": "corporate",
+   "roles": [
+    "majority owner from 2017"
+   ],
+   "raw": "majority owner from 2017",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false
+  },
+  {
+   "id": "e1668",
+   "source": "levine-leichtman-capital-partners",
+   "target": "sequel-youth-and-family-services",
+   "category": "corporate",
+   "roles": [
+    "minority investor 2009-2013"
+   ],
+   "raw": "minority investor 2009-2013",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false
+  },
+  {
+   "id": "e1669",
+   "source": "alaris-royalty-corp",
+   "target": "sequel-youth-and-family-services",
+   "category": "corporate",
+   "roles": [
+    "preferred-unit investor 2013-2017"
+   ],
+   "raw": "preferred-unit investor 2013-2017",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false
+  },
+  {
+   "id": "e1670",
+   "source": "patriot-capital",
+   "target": "sequel-youth-and-family-services",
+   "category": "corporate",
+   "roles": [
+    "growth financing until 2008"
+   ],
+   "raw": "growth financing until 2008",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false
+  },
+  {
+   "id": "e1671",
+   "source": "vivant-behavioral-healthcare",
+   "target": "sequel-youth-and-family-services",
+   "category": "corporate",
+   "roles": [
+    "bought most of Sequel's remaining programs (2021)"
+   ],
+   "raw": "bought most of Sequel's remaining programs (2021)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true
+  },
+  {
    "id": "p0001",
    "source": "bobbie-jensen",
    "target": "falcon-ridge-ranch",
@@ -88489,12 +88659,12 @@
   {
    "id": "l0801",
    "source": "chris-roussos",
-   "target": "vivant-behavioral-healthcare",
+   "target": "sequel-youth-and-family-services",
    "category": "leadership",
    "roles": [
-    "CEO (2019–2020)"
+    "CEO (June 2019–2020)"
    ],
-   "raw": "Chris Roussos (CEO (2019–2020)) at Vivant Behavioral Healthcare (Sequel/TSI/YSI/Vivant staff sheet)",
+   "raw": "Chris Roussos (CEO (June 2019–2020)) at Sequel Youth and Family Services (Sequel/TSI/YSI/Vivant staff sheet)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
@@ -88756,11 +88926,11 @@
    "id": "l0820",
    "source": "john-stupak",
    "target": "sequel-youth-and-family-services",
-   "category": "staff",
+   "category": "board",
    "roles": [
-    "CEO, Exec VP & Chief Admin Officer 2007-2021"
+    "CEO 2013-2019, then Chairman; earlier Exec VP & Chief Admin Officer"
    ],
-   "raw": "John Stupak (CEO, Exec VP & Chief Admin Officer 2007-2021) at Sequel Youth and Family Services (Sequel/TSI/YSI/Vivant staff sheet)",
+   "raw": "John Stupak (CEO 2013-2019, then Chairman; earlier Exec VP & Chief Admin Officer) at Sequel Youth and Family Services (Sequel/TSI/YSI/Vivant staff sheet)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,

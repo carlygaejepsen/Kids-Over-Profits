@@ -3479,6 +3479,41 @@
       "near": "Accelerated Christian Education",
       "status": "open",
       "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "name": "Altamont Capital Partners",
+      "kind": "other",
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "https://altamontcapital.com/news/altamont-capital-partners-invests-in-sequel-youth-family-services/ (majority equity investment, September 1, 2017)"
+    },
+    {
+      "name": "Levine Leichtman Capital Partners",
+      "kind": "other",
+      "aliases": [
+        "LLCP"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "https://www.llcp.com/levine-leichtman-capital-partners-invests-in-sequel-youth-and-family-servic/ (equity and subordinated debt, December 2009; exit July 2013)"
+    },
+    {
+      "name": "Alaris Royalty Corp.",
+      "kind": "other",
+      "aliases": [
+        "Alaris Royalty",
+        "Alaris Equity Partners"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "https://www.alarisequitypartners.com/news/article/60-alaris-closes-previously-announced-usd-66-million-contribution-and-confirms-dividend-increase-on-august-dividend-payable (USD$66 million for preferred units, July 2013; redeemed September 2017)"
+    },
+    {
+      "name": "Patriot Capital",
+      "kind": "other",
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "https://www.patriot-capital.com/portfolio-companies/sequel-youth-and-family-services/ (growth financing, exited Q1 2008)"
     }
   ],
   "lines": [
@@ -6013,6 +6048,41 @@
       "relationship": "rebrand",
       "category": "corporate",
       "source": "KOP facility records (pastNames / currentName) and Map Renames, 2026-10-09 rebrand list"
+    },
+    {
+      "from": "Altamont Capital Partners",
+      "to": "Sequel Youth and Family Services",
+      "relationship": "majority owner from 2017",
+      "category": "corporate",
+      "source": "https://altamontcapital.com/news/altamont-capital-partners-invests-in-sequel-youth-family-services/ (majority equity investment, September 1, 2017)"
+    },
+    {
+      "from": "Levine Leichtman Capital Partners",
+      "to": "Sequel Youth and Family Services",
+      "relationship": "minority investor 2009-2013",
+      "category": "corporate",
+      "source": "https://www.llcp.com/levine-leichtman-capital-partners-invests-in-sequel-youth-and-family-servic/ (equity and subordinated debt, December 2009; exit July 2013)"
+    },
+    {
+      "from": "Alaris Royalty Corp.",
+      "to": "Sequel Youth and Family Services",
+      "relationship": "preferred-unit investor 2013-2017",
+      "category": "corporate",
+      "source": "https://www.alarisequitypartners.com/news/article/60-alaris-closes-previously-announced-usd-66-million-contribution-and-confirms-dividend-increase-on-august-dividend-payable (USD$66 million for preferred units, July 2013; redeemed September 2017)"
+    },
+    {
+      "from": "Patriot Capital",
+      "to": "Sequel Youth and Family Services",
+      "relationship": "growth financing until 2008",
+      "category": "corporate",
+      "source": "https://www.patriot-capital.com/portfolio-companies/sequel-youth-and-family-services/ (growth financing, exited Q1 2008)"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Sequel Youth and Family Services",
+      "relationship": "bought most of Sequel's remaining programs (2021)",
+      "category": "corporate",
+      "source": "https://www.apmreports.org/story/2022/04/26/sequel-closes-sells-youth-treatment-centers; Senate Finance Committee, Warehouses of Neglect (2024): Vivant bought 13 facilities from Sequel"
     }
   ],  "views": {
     "historical": {
