@@ -28,14 +28,19 @@ const KOP_EXT_SOURCE_CPT = 'kop_source';
  * Some CGI/LiteSpeed setups drop the Authorization header before PHP sees it,
  * which leaves application passwords with nothing to check. The extension
  * sends the same credentials in X-KOP-Authorization as well; copy them into
- * PHP_AUTH_* for its own routes only, before WordPress authenticates.
+ * PHP_AUTH_* for its own routes (and the app's kop/v1/app/) only, before
+ * WordPress authenticates.
  */
 function kop_ext_restore_basic_auth() {
     if (!empty($_SERVER['PHP_AUTH_USER']) || empty($_SERVER['HTTP_X_KOP_AUTHORIZATION'])) {
         return;
     }
     $uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
-    if (strpos($uri, '/kop/v1/extension/') === false && strpos(rawurldecode($uri), '/kop/v1/extension/') === false) {
+    $ours = false;
+    foreach (array('/kop/v1/extension/', '/kop/v1/app/') as $prefix) {
+        $ours = $ours || strpos($uri, $prefix) !== false || strpos(rawurldecode($uri), $prefix) !== false;
+    }
+    if (!$ours) {
         return;
     }
     $header = (string) $_SERVER['HTTP_X_KOP_AUTHORIZATION'];

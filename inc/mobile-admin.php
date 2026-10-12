@@ -26,28 +26,8 @@ if (!defined('ABSPATH')) {
 const KOP_APP_COOKIE_DAYS = 365;
 const KOP_APP_TOKEN_TTL   = 120;
 
-/**
- * Some hosts drop the Authorization header before PHP sees it; the app sends the same Basic
- * credentials in X-KOP-Authorization too (as kop_ext_restore_basic_auth() reads for the extension).
- */
-add_filter('determine_current_user', function ($user_id) {
-    if (!empty($_SERVER['PHP_AUTH_USER']) || empty($_SERVER['HTTP_X_KOP_AUTHORIZATION'])) {
-        return $user_id;
-    }
-    $uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
-    if (strpos($uri, '/kop/v1/app/') === false && strpos(rawurldecode($uri), '/kop/v1/app/') === false) {
-        return $user_id;
-    }
-    $header = (string) $_SERVER['HTTP_X_KOP_AUTHORIZATION'];
-    if (stripos($header, 'basic ') !== 0) {
-        return $user_id;
-    }
-    $decoded = base64_decode(substr($header, 6), true);
-    if ($decoded !== false && strpos($decoded, ':') !== false) {
-        list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':', $decoded, 2);
-    }
-    return $user_id;
-}, 5);
+// X-KOP-Authorization (for hosts that drop Authorization) is read for these routes by
+// kop_ext_restore_basic_auth() in inc/source-submissions.php.
 
 function kop_app_token_key($token) {
     return 'kop_app_login_' . hash('sha256', (string) $token);
