@@ -203,7 +203,7 @@ foreach (array_merge(array('related-industries'), $topics) as $slug) {
     }
     $GLOBALS['kop_test_slug'] = $slug;
     $html = render_page('page-related-industry.php');
-    $tag = $slug === 'psychiatric-hospitals' ? 'Where it meets the troubled teen industry' : 'Not the troubled teen industry';
+    $tag = 'Connected to the troubled teen industry';
     check(strpos($html, '<p class="kop-ri-tag">' . $tag . '</p>') !== false && strpos($html, 'id="kop-ri-outside"') !== false, "$slug: labelled \"$tag\"");
     if ($slug === 'psychiatric-hospitals') {
         preg_match_all('#<a href="\#kop-ri-src-(\d+)">\1</a>#', $html, $cited);
@@ -213,7 +213,7 @@ foreach (array_merge(array('related-industries'), $topics) as $slug) {
         check(strpos($html, '<sup class="kop-cite"><a href="#kop-ri-src-') !== false && strpos($html, '[^') === false, "$slug: citations print as superscript numbers");
         preg_match('#<section id="kop-ri-what".*?</section>#s', $html, $what);
         check($what && strpos($what[0], 'href="https://') === false, "$slug: sources are cited by number, not linked in the prose");
-        check(strpos($html, 'campus') !== false && strpos($html, 'whether or not a hospital also meets our criteria') !== false, "$slug: covers every hospital, the ones youth programs sit on included");
+        check(strpos($html, 'campus') !== false && strpos($html, 'whether or not a hospital is also part of the troubled teen industry') !== false, "$slug: covers every hospital, the ones youth programs sit on included");
     }
     check(strpos($html, '**') === false && !preg_match('/\]\(/', $html), "$slug: no format syntax left over");
     preg_match_all('/href="([^"]+)"/', $html, $m);

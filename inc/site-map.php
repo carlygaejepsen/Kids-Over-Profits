@@ -222,7 +222,7 @@ if (!function_exists('kop_site_map_section_titles')) {
             'reading'     => array('More articles', ''),
             'profiles'    => array('Written program profiles', 'Programs with a profile written by our researchers.'),
             'posts'       => array('Posts by category', ''),
-            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs: institutional abuse of Indigenous children in government and church schools, and industries some of the same companies run, such as foster care, nursing homes and psychiatric hospitals. Each page says where it meets the troubled teen industry and where it does not.'),
+            'outside'     => array('Outside the troubled teen industry', 'Not troubled teen industry programs: institutional abuse of Indigenous children in government and church schools, and industries some of the same companies run, such as foster care, nursing homes and psychiatric hospitals. Each page says how it is connected to the troubled teen industry and how it differs.'),
             'take-part'   => array('Take part', 'Send us what you know, volunteer or support the work.'),
             'about'       => array('About and legal', ''),
             'other'       => array('More pages', ''),

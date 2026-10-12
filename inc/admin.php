@@ -480,7 +480,7 @@ function kop_tool_page_specs() {
         // Programs for people 18 and older, kept apart from the TTI facilities
         // (inc/young-adult-programs.php). Published by the owner.
         array('template' => 'page-young-adult-programs.php', 'title' => 'Young Adult Programs', 'slug' => 'young-adult-programs', 'status' => 'publish'),
-        // Industries outside the TTI that meet it (foster care, adult disability group
+        // Industries outside the TTI connected to it (foster care, adult disability group
         // homes, nursing homes, psychiatric hospitals) and their index. One shared
         // template; text in js/data/pages/<slug>.json. Drafts until the owner publishes.
         array('template' => 'page-related-industry.php', 'title' => 'Related Industries', 'slug' => 'related-industries', 'status' => 'draft', 'shared' => true),

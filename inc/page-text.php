@@ -52,7 +52,7 @@ function kop_page_text_pages() {
             'css'    => 'css/faq.css',
         ),
     );
-    // Industries outside the TTI that meet it, all on templates/page-related-industry.php.
+    // Industries outside the TTI connected to it, all on templates/page-related-industry.php.
     $related = array(
         'related-industries'     => 'Related Industries',
         'foster-care'            => 'Foster Care',
