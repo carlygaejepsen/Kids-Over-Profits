@@ -80,6 +80,28 @@ function kop_rinbox_test_wiki_links(array $src, array $item, callable $check) {
     }
     $check('wiki-links: Undo after a finder link puts back what the entry had', $row($key) == $before);
 
+    // A record KOP does not have yet: created from the card (a transporter here) and linked.
+    $create = array_values(array_filter($card['actions'], function ($a) { return $a['id'] === 'create'; }))[0] ?? null;
+    $check('wiki-links: a card can create any kind of record, transporters included', $create && isset(array_column($create['params'], 'options', 'name')['kind']['transporter']));
+    $table = kop_wiki_upd_other_table($pdo, 'transporter');
+    if ($pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite') {
+        // kop_ensure_master_table() asks MySQL (SHOW TABLES), as every create in inc/woodbury-create.php does.
+        kop_rinbox_test_skip('wiki-links: create a transporter and link it', 'the master-table creates need MySQL');
+    } elseif ($create && $table !== '') {
+        $new = 'Test Transport Co ' . substr(md5((string) microtime(true)), 0, 6);
+        $res = call_user_func($src['act'], (string) $key, 'create', array('kind' => 'transporter', 'name' => $new, 'city' => 'Orem', 'state' => 'UT'));
+        $t = $pdo->prepare("SELECT id, json_data FROM `{$table}` WHERE unique_name = ?");
+        $t->execute(array($new));
+        $made = $t->fetch(PDO::FETCH_ASSOC);
+        $got = kop_rinbox_get_item('wiki-links', (string) $key);
+        $check('wiki-links: Create makes the transporter, citing the wiki entry, and links the entry to it',
+            $made && strpos((string) $made['json_data'], 'r/troubledteens wiki entry') !== false
+            && $row($key)['facility_unique_name'] === 'transporter:' . $made['id'] && $got['status_label'] === 'Linked: ' . $new, $res['message']);
+        call_user_func($src['act'], (string) $key, 'undo', array());
+        $check('wiki-links: Undo takes the link off a created record', $row($key) == $before);
+        if ($made) $pdo->prepare("DELETE FROM `{$table}` WHERE id = ?")->execute(array($made['id']));
+    }
+
     // Every editor shows the linked record's name, never the stored value (api/lib-wiki-link-label.php).
     require_once dirname(__DIR__, 2) . '/api/lib-wiki-link-label.php';
     $f = $pdo->query("SELECT unique_name, name FROM facilities_v2 WHERE name <> '' AND unique_name <> name ORDER BY id LIMIT 1")->fetch(PDO::FETCH_ASSOC);

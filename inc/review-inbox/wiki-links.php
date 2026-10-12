@@ -176,6 +176,7 @@ function kop_rinbox_wlinks_item(array $e) {
         $actions[] = array('id' => 'link_other', 'label' => $actions ? 'Link to another record' : 'Link to a record', 'style' => $actions ? 'neutral' : 'approve',
             'help' => 'Ties the wiki entry ' . $name . ' to the record picked in the finder: a program, a company, an educational consultant (the firm or one of its people), a mental health provider or a transporter.',
             'params' => array(array('name' => 'facility', 'label' => 'Program, company, consultant, provider or transporter', 'type' => 'record', 'value' => '')));
+        if (function_exists('kop_wbc_create')) $actions[] = kop_rinbox_wlinks_create_action($e, $name);
         $actions[] = array('id' => 'skip', 'label' => 'Set aside', 'style' => 'reject',
             'help' => 'Leaves ' . $name . ' unlinked (a topic page, or a program KOP has no record of); it moves to Set aside.');
     }
@@ -193,6 +194,65 @@ function kop_rinbox_wlinks_item(array $e) {
         'links'        => $links,
         'actions'      => $actions,
     );
+}
+
+/**
+ * "Create the record and link it": a new program, company, consultant,
+ * provider or transporter (inc/woodbury-create.php, the same creates as
+ * Woodbury Reports), started from the entry's name and place.
+ */
+function kop_rinbox_wlinks_create_action(array $e, $name) {
+    $p = kop_wbc_prefill(array('header' => $name, 'facility_name' => '', 'matched_name' => '', 'place' => trim((string) $e['city_state'], " -")));
+    $states = array('' => '(none, or outside the US)');
+    foreach (kop_wb_state_names() as $code => $state_name) $states[$code] = $code . ' ' . $state_name;
+    $types = array('' => 'Not sure');
+    foreach (function_exists('kop_facdisc_types') ? kop_facdisc_types() : array() as $t) $types[$t] = $t;
+    $kind = $e['kind'] === 'operator' ? 'company' : ($e['kind'] === 'program' ? 'facility' : '');
+    return array('id' => 'create', 'label' => 'Create the record and link it', 'style' => 'neutral',
+        'help' => 'When KOP has no record of what ' . $name . ' is about: makes a new record of the kind and name below (a program, company, educational consultant, mental health provider or transporter), citing the wiki entry, and links the entry to it. Undo on the Linked here tab takes the link off; the record stays.',
+        'confirm' => 'Create a new record with this name and link the wiki entry to it?', 'params' => array(
+        array('name' => 'kind', 'label' => 'Kind', 'type' => 'select', 'options' => kop_wbc_kinds(), 'value' => $kind),
+        array('name' => 'name', 'label' => 'Name', 'type' => 'text', 'value' => $p['name']),
+        array('name' => 'who', 'label' => 'A consultant is a', 'type' => 'select', 'options' => array('firm' => 'Firm', 'person' => 'Person'), 'value' => 'firm', 'optional' => true),
+        array('name' => 'city', 'label' => 'City', 'type' => 'text', 'value' => $p['city'], 'optional' => true),
+        array('name' => 'state', 'label' => 'State', 'type' => 'select', 'options' => $states, 'value' => $p['state'], 'optional' => true),
+        array('name' => 'country', 'label' => 'Country, outside the US', 'type' => 'text', 'value' => $p['country'], 'optional' => true),
+        array('name' => 'type', 'label' => 'Program type', 'type' => 'select', 'options' => $types, 'value' => '', 'optional' => true),
+        array('name' => 'ptype', 'label' => 'Provider type', 'type' => 'text', 'value' => '', 'optional' => true, 'placeholder' => 'psychiatric hospital, outpatient...'),
+        array('name' => 'force', 'label' => 'It is a different place from any close match', 'type' => 'checkbox', 'value' => '', 'optional' => true),
+    ));
+}
+
+/** Create the record from the card's form and return what the link stores: [value, label]. */
+function kop_rinbox_wlinks_create(PDO $pdo, array $e, array $params) {
+    global $wpdb;
+    if (!function_exists('kop_wbc_create')) throw new RuntimeException('Record creation is not available.');
+    $f = array();
+    foreach (array('kind', 'name', 'city', 'state', 'country', 'type', 'who') as $k) {
+        $f[$k] = sanitize_text_field((string) ($params[$k] ?? ''));
+    }
+    if ($f['kind'] === 'provider') $f['type'] = sanitize_text_field((string) ($params['ptype'] ?? ''));
+    $f['force'] = !empty($params['force']) && $params['force'] !== '0' ? '1' : '';
+    // The record's notes cite the wiki entry (kop_wbc_source_note()).
+    $source = array('cite' => 'the r/troubledteens wiki entry "' . trim((string) $e['program_name']) . '"',
+        'url' => $e['page'] !== '' ? 'https://www.reddit.com/r/troubledteens/wiki/' . $e['page'] . '/' : '');
+    $lock = 'kop_wlinks_create_' . (int) $e['id'];
+    if (!(int) $wpdb->get_var($wpdb->prepare('SELECT GET_LOCK(%s, 0)', $lock))) {
+        throw new RuntimeException('Another request is creating this one. Try again in a minute.');
+    }
+    try {
+        $target = kop_wbc_create($source, $f);
+    } finally {
+        $wpdb->query($wpdb->prepare('SELECT RELEASE_LOCK(%s)', $lock));
+    }
+    // The new record joins the candidates of every other entry.
+    delete_transient('kop_rinbox_wiki_links_v3');
+    $token = $target['kind'] === 'facility' ? (string) (int) $target['id'] : $target['kind'] . ':' . (int) $target['id'];
+    $pick = kop_wiki_upd_pick($pdo, $token);
+    if (!$pick) {
+        throw new RuntimeException('Created the ' . strtolower(kop_wbc_kinds()[$target['kind']]) . ' record "' . $target['name'] . '" (#' . (int) $target['id'] . '), but could not link it. Link it with "Link to a record".');
+    }
+    return $pick;
 }
 
 function kop_rinbox_wlinks_act($key, $action, array $params) {
@@ -217,6 +277,11 @@ function kop_rinbox_wlinks_act($key, $action, array $params) {
         $pick = kop_wiki_upd_pick($pdo, (string) ($params['facility'] ?? ''));
         if (!$pick) throw new RuntimeException('Pick a record in the finder first.');
         list($target, $label) = $pick;
+    } elseif ($action === 'create') {
+        list($target, $label) = kop_rinbox_wlinks_create($pdo, $e, $params);
+        kop_wiki_upd_link($pdo, $e['id'], $target, $by, 'link', $label);
+        kop_rinbox_wlinks_rows(true);
+        return array('message' => 'Created the record "' . $label . '" and linked ' . $name . ' to it. Undo on the Linked here tab takes the link off; the record stays.');
     } elseif (preg_match('/^link_(\d+)$/', $action, $m) && isset($e['cands'][(int) $m[1]])) {
         $target = (string) $e['cands'][(int) $m[1]]['unique_name'];
         $label = (string) $e['cands'][(int) $m[1]]['name'];
