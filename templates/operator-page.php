@@ -125,7 +125,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
             <p class="kop-fp-rail-text">Corrections, documents and first-hand accounts go into the review queue and are checked before they are published.</p>
             <p class="kop-fp-rail-actions">
                 <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="<?php echo esc_attr($page['name']); ?>">Submit info</button>
-                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>">Full submission form</a>
+                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>" rel="nofollow">Full submission form</a>
             </p>
         </aside>
 
@@ -464,7 +464,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
             <span>Record updated <?php echo esc_html($page['updated_label']); ?>.</span>
         <?php endif; ?>
         <span>Generated from the Kids Over Profits facility database.</span>
-        <a href="<?php echo esc_url($page['submit_url']); ?>">Suggest a correction</a>
+        <a href="<?php echo esc_url($page['submit_url']); ?>" rel="nofollow">Suggest a correction</a>
     </footer>
 
 </article>

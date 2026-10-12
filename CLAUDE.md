@@ -467,6 +467,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-fornits.php   # e
 # Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,
 # linked as "Archived copy" on the state report pages (server CLI + nightly cron; no apply = dry run)
 php api/sync-inspection-archive.php apply --limit=2000 --minutes=25
+# robots.txt (inc/robots.php): every Disallow line goes inside Yoast's "User-agent: *" group (lines outside a group are ignored);
+# a path to keep crawlers out of goes in kop_robots_disallow_paths(). WP-Cron runs from the server's crontab (wp-cron.php every
+# 5 min, ~/logs/wp-cron.log); visitors start it only if that run has not been seen for 20 min (inc/server-cron.php)
+php scripts/test-robots.php
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 # Program websites scanned for instructions to AI (llms.txt/ai.txt, the copy Exceed's plugin hides in every page: sources

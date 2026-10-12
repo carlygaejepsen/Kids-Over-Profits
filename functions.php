@@ -15,6 +15,9 @@ if (!defined('ABSPATH')) {
  * This improves maintainability and organization.
  */
 
+// Scheduled jobs run by the server's cron, not by visitors (sets DISABLE_WP_CRON early)
+require_once get_stylesheet_directory() . '/inc/server-cron.php';
+
 // Core Utilities & Helper Functions
 require_once get_stylesheet_directory() . '/inc/utilities.php';
 
@@ -243,6 +246,9 @@ require_once get_stylesheet_directory() . '/inc/article-pieces.php';
 
 // Keeps crawlers out of the staging copy of the site
 require_once get_stylesheet_directory() . '/inc/staging-links.php';
+
+// robots.txt: every Disallow line inside the "User-agent: *" group, the data form kept out
+require_once get_stylesheet_directory() . '/inc/robots.php';
 
 // Featured and in-article photos placed from seeds/page-images.json
 require_once get_stylesheet_directory() . '/inc/page-images.php';

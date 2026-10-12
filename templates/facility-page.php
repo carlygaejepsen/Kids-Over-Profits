@@ -570,7 +570,7 @@ get_header();
             <p class="kop-fp-rail-text">Corrections, documents and first-hand accounts go into the review queue and are checked before they are published.</p>
             <p class="kop-fp-rail-actions">
                 <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="<?php echo esc_attr($page['name']); ?>">Submit info</button>
-                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>">Full submission form</a>
+                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>" rel="nofollow">Full submission form</a>
             </p>
         </aside>
 
@@ -1261,7 +1261,7 @@ get_header();
             <span>Profile updated <time datetime="<?php echo esc_attr(get_the_modified_date('c', $kop_fp_profile)); ?>"><?php echo esc_html(get_the_modified_date('', $kop_fp_profile)); ?></time>.</span>
         <?php endif; ?>
         <span>Generated from the Kids Over Profits facility database.</span>
-        <a href="<?php echo esc_url($page['submit_url']); ?>">Suggest a correction</a>
+        <a href="<?php echo esc_url($page['submit_url']); ?>" rel="nofollow">Suggest a correction</a>
         <?php if ($kop_fp_profile) edit_post_link('Edit this profile', '<span class="kop-fp-edit">', '</span>', $kop_fp_profile->ID); ?>
     </footer>
     <?php if ($kop_fp_profile) wp_reset_postdata(); ?>
