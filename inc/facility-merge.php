@@ -1111,8 +1111,10 @@ if (!function_exists('kop_fmerge_do_merge')) {
     /**
      * Merge from the screen: the database work, the log, the redirect. Returns
      * the message. $rename (the dropped record is the kept one's earlier name):
-     * {year, earlier: {start, end}, later: {start, end}}; without it, two
-     * records that are a renamed program are refused.
+     * {year, earlier: {start, end}, later: {start, end}, reversed}; without it,
+     * two records that are a renamed program are refused. 'reversed': the
+     * reviewer turned the order round on purpose, so the order the names or
+     * the map give is not enforced (the map's line is saved the new way).
      */
     function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login, array $rename = null) {
         if (function_exists('kop_v2_writes_active') && !kop_v2_writes_active($pdo, $prefix)) {
@@ -1126,7 +1128,7 @@ if (!function_exists('kop_fmerge_do_merge')) {
             throw new RuntimeException('These are one program under two names (' . $is_rename[2] . '). Merge them as a rename, '
                 . 'so each name keeps its own years and facts: the Renamed programs tab, or "Merge as a rename" above.');
         }
-        if ($rename !== null && $is_rename && (int) $is_rename[0] === (int) $keep) {
+        if ($rename !== null && empty($rename['reversed']) && $is_rename && (int) $is_rename[0] === (int) $keep) {
             throw new RuntimeException('Keep the later name\'s record: "' . ($d['doc']['identification']['name'] ?? '') . '" is the later name. Swap them.');
         }
         $old_slug = '';
@@ -1395,6 +1397,7 @@ if (!function_exists('kop_fmerge_ajax')) {
                     'year'    => $year,
                     'earlier' => array('start' => (int) ($_POST['earlier_start'] ?? 0) ?: null, 'end' => $year),
                     'later'   => array('start' => (int) ($_POST['later_start'] ?? 0) ?: $year, 'end' => (int) ($_POST['later_end'] ?? 0) ?: null),
+                    'reversed' => !empty($_POST['reversed']),
                 )) . ' Undo is on the Merged tab.';
             } elseif ($op === 'rename_plan') {
                 $a = kop_fmerge_row($pdo, (int) ($_POST['a'] ?? 0));
@@ -1747,7 +1750,7 @@ if (!function_exists('kop_fmerge_page')) {
                     var y = Number(year.input.value) || 0;
                     if (!y) { status.className = 'kop-fm__status is-bad'; status.textContent = 'Give the year "' + e.name + '" became "' + l.name + '".'; return; }
                     send({ op: 'rename', earlier: e.id, later: l.id, year: y, earlier_start: Number(eStart.input.value) || 0,
-                        later_start: y, later_end: Number(lEnd.input.value) || 0 }, c);
+                        later_start: y, later_end: Number(lEnd.input.value) || 0, reversed: flip ? 1 : 0 }, c);
                 });
                 actions.appendChild(go);
                 var sw = el('button', 'button', 'The other way round');

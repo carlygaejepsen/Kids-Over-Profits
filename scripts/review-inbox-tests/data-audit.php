@@ -206,8 +206,8 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         $card = kop_rinbox_get_item('data-audit', (string) $key);
         $ids = array_column($card['actions'], 'id');
         if (!in_array('rename_merge', $ids, true)) continue;
-        $check('data-audit: a card holding only a rename offers the merge and "not one program", no Approve',
-            $ids === array('rename_merge', 'reject'), $key . ': ' . implode(',', $ids));
+        $check('data-audit: a card holding only a rename offers the merge both ways and "not one program", no Approve',
+            $ids === array('rename_merge', 'rename_merge_reversed', 'reject'), $key . ': ' . implode(',', $ids));
         break;
     }
 
@@ -289,5 +289,31 @@ function kop_rinbox_daudit_test_rename(callable $check) {
     $check('data-audit: the merged card offers its Undo, not the merge', in_array('rename_unmerge', $ids, true) && !in_array('rename_merge', $ids, true), implode(',', $ids));
     call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_unmerge', array('pair' => $pair));
     $check('data-audit: undo of the rename merge gives the records back exactly', $snap() === $before
+        && empty(kop_daudit_decisions()[$key]['merges']));
+
+    // The other way round: the record listed as later folds into the one listed as earlier.
+    $item = kop_rinbox_get_item('data-audit', $key);
+    $flip = null;
+    foreach ($item['actions'] as $a) if ($a['id'] === 'rename_merge_reversed') $flip = $a;
+    $check('data-audit: the card offers "Merge the other way round" for the same pair', $flip && $flip['params'][0]['value'] === $pair);
+    if (!$flip) return;
+    try {
+        $res = call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_merge_reversed', array('pair' => $pair, 'year' => (string) $year));
+    } catch (Throwable $ex) {
+        $check('data-audit: merge the other way round', false, $ex->getMessage());
+        return;
+    }
+    $gone = !$pdo->query('SELECT COUNT(*) FROM facilities_v2 WHERE id = ' . $l)->fetchColumn();
+    $kept = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . $e)->fetchColumn(), true);
+    $past = array_map('strtolower', (array) ($kept['identification']['pastNames'] ?? array()));
+    $check('data-audit: the other way round keeps the record listed as earlier', $gone && $kept, $res['message']);
+    $got = kop_rinbox_get_item('data-audit', $key);
+    $ids = array_column($got['actions'], 'id');
+    $lines = array_values(array_filter($got['details'], function ($d) { return $d['label'] === 'Renamed'; }));
+    $check('data-audit: the card reads the merge the way it was made, with its Undo', in_array('rename_unmerge', $ids, true)
+        && !in_array('rename_merge_reversed', $ids, true) && $lines && strpos($lines[0]['value'], 'Merged as a rename from this card') !== false,
+        ($lines[0]['value'] ?? '') . ' / ' . implode(',', $ids));
+    call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_unmerge', array('pair' => $pair));
+    $check('data-audit: undo of the reversed merge gives the records back exactly', $snap() === $before
         && empty(kop_daudit_decisions()[$key]['merges']));
 }

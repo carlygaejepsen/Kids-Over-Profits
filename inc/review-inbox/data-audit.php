@@ -228,6 +228,8 @@ function kop_rinbox_daudit_act($key, $action, array $params) {
             return array('message' => kop_daudit_undo($key));
         case 'rename_merge':
             return array('message' => kop_daudit_rename_merge($key, (string) ($params['pair'] ?? ''), (int) ($params['year'] ?? 0), kop_rinbox_reviewer()));
+        case 'rename_merge_reversed':
+            return array('message' => kop_daudit_rename_merge($key, (string) ($params['pair'] ?? ''), (int) ($params['year'] ?? 0), kop_rinbox_reviewer(), true));
         case 'rename_unmerge':
             return array('message' => kop_daudit_rename_unmerge($key, (string) ($params['pair'] ?? '')));
     }
@@ -289,6 +291,7 @@ function kop_rinbox_daudit_renames($key, array $p) {
 /** "Merge as a rename" while both names are records of their own; its Undo once merged from the card. */
 function kop_rinbox_daudit_rename_actions(array $renames) {
     $merge = array();
+    $flipped = array();
     $undo = array();
     $year = '';
     foreach ($renames as $pair => $r) {
@@ -296,6 +299,8 @@ function kop_rinbox_daudit_rename_actions(array $renames) {
         if ($s['state'] === 'separate') {
             $merge[$pair] = 'Keep ' . $s['later']['name'] . ' (#' . $s['later']['id'] . '); ' . $s['earlier']['name'] . ' (#' . $s['earlier']['id']
                 . ') becomes its earlier name' . ($s['year'] ? ', renamed ' . $s['year'] : '');
+            $flipped[$pair] = 'Keep ' . $s['earlier']['name'] . ' (#' . $s['earlier']['id'] . '); ' . $s['later']['name'] . ' (#' . $s['later']['id']
+                . ') becomes its earlier name';
             if ($year === '' && $s['year']) $year = (string) $s['year'];
         } elseif ($s['state'] === 'merged') {
             $undo[$pair] = 'Undo: ' . ($s['later']['name'] ?? ('#' . $s['later_id'])) . ' and record #' . $s['earlier_id'] . ' apart again';
@@ -310,6 +315,14 @@ function kop_rinbox_daudit_rename_actions(array $renames) {
                 array('name' => 'pair', 'label' => 'Records', 'type' => 'select', 'value' => (string) array_key_first($merge), 'options' => $merge),
                 array('name' => 'year', 'label' => 'Year of the rename' . (count($merge) > 1 ? ' (blank = as listed)' : ''), 'type' => 'number',
                     'value' => count($merge) > 1 ? '' : $year),
+            ));
+        // The order was guessed from the records' years and can be backwards.
+        $actions[] = array('id' => 'rename_merge_reversed', 'label' => 'Merge the other way round', 'style' => 'approve',
+            'help' => 'The same merge with the names the other way round: the name listed as later is the earlier one. Its record folds into the other and becomes its past name, with its own years and everything filed under it. Undo is on this card.',
+            'confirm' => 'Merge these two records as one program, the other way round, renamed in the year given? You can undo it from this card.',
+            'params' => array(
+                array('name' => 'pair', 'label' => 'Records', 'type' => 'select', 'value' => (string) array_key_first($flipped), 'options' => $flipped),
+                array('name' => 'year', 'label' => 'Year of the rename', 'type' => 'number', 'value' => ''),
             ));
     }
     if ($undo) {

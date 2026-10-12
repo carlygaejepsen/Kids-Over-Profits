@@ -582,6 +582,13 @@ if (!function_exists('kop_network_renames_page')) {
                         actions.appendChild(add);
                         if (r.error) actions.appendChild(el('span', 'kop-ren__error', r.error));
                     }
+                    // Saved the wrong way round: flip it in one click, year kept.
+                    var flip = el('button', 'button', 'Swap order');
+                    flip.type = 'button';
+                    flip.addEventListener('click', function () {
+                        save([{ key: r.key, decision: 'save', year: r.year || 0, swapped: !swapped }]);
+                    });
+                    actions.appendChild(flip);
                 } else if (r.decision === 'skipped') {
                     actions.appendChild(el('span', 'kop-ren__done', 'Marked not a rename. The map is unchanged.'));
                 }
