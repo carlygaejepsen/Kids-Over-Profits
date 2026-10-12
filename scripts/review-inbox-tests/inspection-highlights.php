@@ -7,6 +7,9 @@
  * the findings came from (report text left empty).
  */
 
+// Which licensed sites belong to the companies watched closely (the Inspection Rankings rollup).
+require_once dirname(__DIR__, 2) . '/inc/inspection-rollup.php';
+
 (function () {
     $pdo = $GLOBALS['pdo'];
     $pdo->exec('CREATE TABLE IF NOT EXISTS inspection_reports (id INTEGER PRIMARY KEY, facility_id INTEGER, report_id TEXT, report_date TEXT, report_url TEXT,
@@ -33,9 +36,20 @@ function kop_rinbox_test_inspection_highlights(array $src, array $item, callable
     };
     $before = $row();
     $check('inspection-highlights: the waiting item is pending', $before['status'] === 'pending');
+    // Facilities of the companies watched closely (UHS, Newport, Acadia by default) lead; then recent severe findings, as on the old screen.
+    $watched = kop_rinbox_ih_watched_sites();
+    $names = kop_rinbox_ih_watched_names();
+    $check('inspection-highlights: UHS, Newport and Acadia are watched by default', count($names) === 3
+        && preg_grep('/^Universal Health Services/', $names) && preg_grep('/^Newport/', $names) && preg_grep('/^Acadia/i', $names), implode(' | ', $names));
+    $check('inspection-highlights: the watched companies have licensed sites', count($watched) > 0, count($watched) . ' sites');
+    $in = $watched ? '(h.facility_id IN (' . implode(',', array_keys($watched)) . ')) DESC, ' : '';
     $first = $pdo->query("SELECT h.id FROM inspection_highlights h JOIN inspection_facilities f ON f.id = h.facility_id WHERE h.status = 'pending'
-        ORDER BY (h.score >= " . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC LIMIT 1')->fetchColumn();
-    $check('inspection-highlights: recent severe findings lead, as on the old screen', (int) $first === $id);
+        ORDER BY $in(h.score >= " . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC LIMIT 1')->fetchColumn();
+    $check('inspection-highlights: watched companies first, then recent severe findings', (int) $first === $id);
+    $wid = (int) $pdo->query("SELECT COUNT(*) FROM inspection_highlights WHERE status = 'pending'" . ($watched ? ' AND facility_id IN (' . implode(',', array_keys($watched)) . ')' : ' AND 0'))->fetchColumn();
+    if ($wid) {
+        $check('inspection-highlights: a watched facility\'s card says whose it is', strpos($item['subtitle'], 'Watched: ') !== false, $item['title'] . ' / ' . $item['subtitle']);
+    }
     $check('inspection-highlights: the card links the state source', preg_match('#^https?://#', $item['url']) === 1, $item['url']);
 
     $other = array_values(array_diff(array_keys(kop_ih_categories()), array($before['category'])))[0];
@@ -90,6 +104,28 @@ function kop_rinbox_test_inspection_highlights(array $src, array $item, callable
     $sorted = $scores;
     rsort($sorted);
     $check('inspection-highlights: Worst first sorts by score', $scores === $sorted);
+    $only = $list(array('watch' => 'watched'));
+    $check('inspection-highlights: "Watched companies only" keeps their findings', $only['total'] === $wid
+        && !array_filter($only['items'], function ($it) { return strpos($it['subtitle'], 'Watched: ') === false; }), $only['total'] . ' of ' . $wid);
+    $lead = array_slice($all['items'], 0, min($wid, count($all['items'])));
+    $check('inspection-highlights: the default order puts every watched finding before the rest',
+        !array_filter($lead, function ($it) { return strpos($it['subtitle'], 'Watched: ') === false; }));
+    $recent = $list(array('sort' => 'recent'));
+    $check('inspection-highlights: "Most recent severe first" is the old order', $recent['total'] === $all['total']);
+
+    // The tool replaces the list; an unknown name is reported, all-unknown changes nothing.
+    $res = call_user_func($src['tool'], 'watch', array('companies' => 'UHS, Sequel TSI, Nobody Behavioral Nowhere'));
+    $now = kop_rinbox_ih_watched_names();
+    $check('inspection-highlights: the tool takes a short form and a full name, and names the unknown one',
+        count($now) === 2 && preg_grep('/^Universal Health Services/', $now) && in_array('Sequel TSI', $now, true) && strpos($res['message'], 'Nobody Behavioral Nowhere') !== false, $res['message']);
+    try {
+        call_user_func($src['tool'], 'watch', array('companies' => 'Nobody Behavioral Nowhere'));
+        $check('inspection-highlights: a list of only unknown names is refused', false);
+    } catch (RuntimeException $e) {
+        $check('inspection-highlights: a list of only unknown names is refused', kop_rinbox_ih_watched_names() === $now, $e->getMessage());
+    }
+    unset($GLOBALS['kop_test_options']['kop_ih_watched_operators']);
+    delete_transient('kop_ih_watched_sites');
     $picked = $list(array(), '#' . $id);
     $check('inspection-highlights: finding numbers in the search pick those findings', $picked['total'] === 1 && $picked['items'][0]['key'] === (string) $id);
     $counts = call_user_func($src['view_counts'], array());

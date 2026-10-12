@@ -16,7 +16,8 @@ kop_rinbox_register('inspection-highlights', function () {
     return array(
         'label'    => 'Serious violations',
         'group'    => 'Found in state inspection reports',
-        'help'     => 'Serious violations read out of state inspection reports. Open the state source or the full report before approving: the reader cannot tell who did what to whom. Approved serious violations scoring ' . (int) kop_ih_severe_score() . ' or more show on the home page and the inspection reports hub.',
+        'help'     => 'Serious violations read out of state inspection reports. Open the state source or the full report before approving: the reader cannot tell who did what to whom. Approved serious violations scoring ' . (int) kop_ih_severe_score() . ' or more show on the home page and the inspection reports hub. Facilities of the companies watched closely ('
+            . implode(', ', kop_rinbox_ih_watched_names()) . ') come first.',
         'views'    => array('pending' => 'To review', 'approved' => 'Approved', 'rejected' => 'Rejected'),
         'view_counts' => function (array $q = array()) {
             $out = array('pending' => 0, 'approved' => 0, 'rejected' => 0);
@@ -30,8 +31,15 @@ kop_rinbox_register('inspection-highlights', function () {
             array('name' => 'state', 'label' => 'State', 'options' => array('' => 'All states') + array_combine(kop_ih_supported_states(), kop_ih_supported_states())),
             array('name' => 'category', 'label' => 'Category', 'options' => array('' => 'All categories') + kop_rinbox_ih_category_options()),
             array('name' => 'min', 'label' => 'Score at least', 'options' => array('' => 'Any score', '50' => '50', '70' => '70', '90' => '90')),
-            array('name' => 'sort', 'label' => 'Order', 'options' => array('' => 'Most recent severe first', 'worst' => 'Worst first')),
+            array('name' => 'watch', 'label' => 'Company', 'options' => array('' => 'All companies', 'watched' => 'Watched companies only')),
+            array('name' => 'sort', 'label' => 'Order', 'options' => array('' => 'Watched companies first', 'recent' => 'Most recent severe first', 'worst' => 'Worst first')),
         ),
+        'tools'    => array(array(
+            'id' => 'watch', 'label' => 'Companies watched closely', 'style' => 'neutral',
+            'help' => 'Their facilities\' serious violations come first in this queue. Give parent company names as on their company pages, separated by commas.',
+            'params' => array(array('name' => 'companies', 'label' => 'Companies', 'type' => 'text', 'value' => implode(', ', kop_rinbox_ih_watched_names()))),
+        )),
+        'tool'     => 'kop_rinbox_ih_watch_tool',
         'tool_url' => get_stylesheet_directory_uri() . '/api/review-inspection-highlights.php',
         'count'    => function () {
             return (int) kop_rinbox_pdo()->query("SELECT COUNT(*) FROM inspection_highlights WHERE status = 'pending'")->fetchColumn();
@@ -74,6 +82,9 @@ function kop_rinbox_ih_list(array $q) {
         $where .= ' AND h.score >= ?';
         $params[] = (int) $f['min'];
     }
+    $watched = array_keys(kop_rinbox_ih_watched_sites());
+    $in_watched = $watched ? 'h.facility_id IN (' . implode(',', array_map('intval', $watched)) . ')' : '0';
+    if (($f['watch'] ?? '') === 'watched') $where .= ' AND ' . $in_watched;
     if ($q['search'] !== '' && preg_match('/^[#\d,\s]+$/', $q['search']) && preg_match('/\d/', $q['search'])) {
         // A hand-picked list of finding numbers, as the old screen's ?ids=12,40.
         $ids = array_values(array_filter(array_map('intval', preg_split('/[#,\s]+/', $q['search']))));
@@ -92,9 +103,12 @@ function kop_rinbox_ih_list(array $q) {
     $st->execute($params);
     $total = (int) $st->fetchColumn();
     // Recent severe findings lead, as on the old screen: they are what the site shows.
-    $order = ($f['sort'] ?? '') === 'worst'
+    // By default the companies watched closely go before everyone else.
+    $sort = (string) ($f['sort'] ?? '');
+    $order = $sort === 'worst'
         ? 'h.score DESC, h.finding_date DESC, h.id DESC'
         : '(h.score >= ' . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC';
+    if ($sort === '' && $watched) $order = "($in_watched) DESC, " . $order;
     return array('items' => array_map('kop_rinbox_ih_item', kop_rinbox_ih_rows($where, $params, $order, $q['limit'], $q['offset'])), 'total' => $total);
 }
 
@@ -112,6 +126,8 @@ function kop_rinbox_ih_item(array $r) {
     if ($when !== '') $sub[] = $when;
     if ($r['state_label']) $sub[] = $r['state_label'];
     if ($severe) $sub[] = $r['status'] === 'approved' ? 'Severe: shown on the site' : 'Severe: shown on the site once approved';
+    $watched = kop_rinbox_ih_watched_sites()[(int) $r['facility_id']] ?? array();
+    if ($watched) $sub[] = 'Watched: ' . implode(', ', $watched);
     $also = array();
     foreach (array_filter(array_map('trim', explode(',', (string) $r['categories']))) as $k) {
         if ($k !== $r['category'] && isset($cats[$k])) $also[] = $cats[$k];
@@ -227,4 +243,124 @@ function kop_rinbox_ih_save($key, array $fields) {
     $vals[] = (int) $key;
     $pdo->prepare('UPDATE inspection_highlights SET ' . implode(', ', $set) . ' WHERE id = ?')->execute($vals);
     return array('message' => 'Saved.' . ($r['status'] === 'pending' && isset($cat) ? ' A later scan of this report may set the category again while it is pending.' : ''));
+}
+
+/* ---- Companies watched closely --------------------------------------------- */
+
+/**
+ * The big chains KOP already follows closely: their facilities' findings lead
+ * the queue (owner, 2026-10-12). Changed with the queue's "Companies watched
+ * closely" tool, stored as [operator id => name] in kop_ih_watched_operators.
+ */
+function kop_rinbox_ih_watched_default() {
+    return array('Universal Health Services', 'Newport Healthcare', 'Acadia Healthcare');
+}
+
+/** [operator id => name] of the watched companies. */
+function kop_rinbox_ih_watched() {
+    static $default = null;
+    $stored = get_option('kop_ih_watched_operators', null);
+    if (is_array($stored)) return $stored;
+    if ($default === null) {
+        try {
+            $default = kop_rinbox_ih_find_companies(kop_rinbox_ih_watched_default())['found'];
+        } catch (Throwable $e) {
+            $default = array();
+        }
+    }
+    return $default;
+}
+
+function kop_rinbox_ih_watched_names() {
+    return array_values(array_unique(array_values(kop_rinbox_ih_watched())));
+}
+
+/** Lowercase words of a company name, punctuation dropped. */
+function kop_rinbox_ih_company_key($name) {
+    return trim(preg_replace('/\s+/', ' ', preg_replace('/[^a-z0-9 ]+/', ' ', strtolower((string) $name))));
+}
+
+/**
+ * Company names typed by a person -> parent company records: the whole name,
+ * the name without its bracketed short form, or the short form itself ("UHS");
+ * failing that, the records whose name starts with (then holds) what was typed.
+ * Returns {found: [id => name], missing: [typed names]}.
+ */
+function kop_rinbox_ih_find_companies(array $names) {
+    global $wpdb;
+    $prefix = isset($wpdb->prefix) ? $wpdb->prefix : 'wpdl_';
+    $rows = kop_rinbox_pdo()->query("SELECT id, name FROM {$prefix}kop_operators")->fetchAll(PDO::FETCH_ASSOC);
+    $found = array();
+    $missing = array();
+    foreach ($names as $typed) {
+        $want = kop_rinbox_ih_company_key($typed);
+        if ($want === '') continue;
+        $tiers = array(array(), array(), array());
+        foreach ($rows as $r) {
+            $full = kop_rinbox_ih_company_key($r['name']);
+            $bare = kop_rinbox_ih_company_key(preg_replace('/\([^)]*\)/', '', $r['name']));
+            $short = preg_match('/\(([^)]+)\)/', $r['name'], $m) ? kop_rinbox_ih_company_key($m[1]) : '';
+            if ($want === $full || $want === $bare || $want === $short) $tiers[0][(int) $r['id']] = trim($r['name']);
+            elseif (strpos($full, $want) === 0) $tiers[1][(int) $r['id']] = trim($r['name']);
+            elseif (strpos(' ' . $full . ' ', ' ' . $want . ' ') !== false) $tiers[2][(int) $r['id']] = trim($r['name']);
+        }
+        $hit = $tiers[0] ?: ($tiers[1] ?: $tiers[2]);
+        if ($hit) $found += $hit;
+        else $missing[] = trim($typed);
+    }
+    return array('found' => $found, 'missing' => $missing);
+}
+
+/**
+ * inspection_facilities id => [watched company names]: the licensed sites the
+ * Inspection Rankings rollup (inc/inspection-rollup.php) gives each watched
+ * company's facility records. Reads the newest rollup on file (which sites
+ * belong to whom does not move with each decision), builds one when none is.
+ */
+function kop_rinbox_ih_watched_sites() {
+    static $memos = array();
+    $ops = kop_rinbox_ih_watched();
+    $memo = &$memos[md5(json_encode($ops))];
+    if ($memo !== null) return $memo;
+    if (!$ops || !function_exists('kop_irl_get')) return $memo = array();
+    $files = glob(kop_irl_cache_dir() . '/rollup-*.json') ?: array();
+    usort($files, function ($a, $b) { return filemtime($b) <=> filemtime($a); });
+    $file = $files[0] ?? '';
+    $cache_key = md5(json_encode($ops) . '|' . basename($file));
+    $cached = get_transient('kop_ih_watched_sites');
+    if ($file !== '' && is_array($cached) && ($cached['key'] ?? '') === $cache_key) return $memo = $cached['sites'];
+
+    $rollup = $file !== '' ? json_decode((string) file_get_contents($file), true) : null;
+    if (!is_array($rollup) || ($rollup['version'] ?? 0) !== kop_irl_version()) {
+        global $wpdb;
+        try {
+            $rollup = kop_irl_get(kop_rinbox_pdo(), isset($wpdb->prefix) ? $wpdb->prefix : 'wpdl_');
+        } catch (Throwable $e) {
+            return $memo = array();
+        }
+        $cache_key = md5(json_encode($ops) . '|rollup-' . ($rollup['fingerprint'] ?? '') . '.json');
+    }
+    $sites = array();
+    foreach ($ops as $oid => $name) {
+        foreach ($rollup['operators'][$oid]['recs'] ?? array() as $fid) {
+            foreach ($rollup['records'][$fid]['sites'] ?? array() as $sid) {
+                if (!in_array($name, $sites[$sid] ?? array(), true)) $sites[(int) $sid][] = $name;
+            }
+        }
+    }
+    set_transient('kop_ih_watched_sites', array('key' => $cache_key, 'sites' => $sites), DAY_IN_SECONDS);
+    return $memo = $sites;
+}
+
+/** The "Companies watched closely" tool: replace the list. */
+function kop_rinbox_ih_watch_tool($id, array $params) {
+    if ($id !== 'watch') throw new RuntimeException('Unknown tool.');
+    $typed = array_filter(array_map('trim', preg_split('/[,\n;]+/', (string) ($params['companies'] ?? ''))), 'strlen');
+    $res = kop_rinbox_ih_find_companies($typed);
+    if ($typed && !$res['found']) throw new RuntimeException('No parent company record has ' . (count($typed) === 1 ? 'that name' : 'those names') . '; nothing changed.');
+    update_option('kop_ih_watched_operators', $res['found'], false);
+    delete_transient('kop_ih_watched_sites');
+    $sites = count(kop_rinbox_ih_watched_sites());
+    return array('message' => ($res['found'] ? 'Watching ' . implode(', ', array_unique($res['found'])) . ' (' . $sites . ' licensed site' . ($sites === 1 ? '' : 's') . ' with serious violations or reports on file).' : 'No companies watched now.')
+        . ($res['missing'] ? ' No company record named: ' . implode(', ', $res['missing']) . '.' : '') . ' Reload the queue to see the new order.');
 }
