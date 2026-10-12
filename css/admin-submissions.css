@@ -7,8 +7,15 @@
     color-scheme: light;
 }
 
+/* A plain working screen: square corners, grey hairlines, colour only where it
+   means something (approve, reject, the open tab). review-inbox.css reads the same tokens. */
 .admin-submissions-page {
-    background: var(--kop-bg-primary);
+    --rv-radius: 3px;
+    --rv-line: #D5D9E0;
+    --rv-line-strong: #A9B1BD;
+    --rv-subtle: #F5F6F8;
+    --rv-count: #E4E7EB;
+    background: #ECEEF1;
     color: var(--kop-text-primary);
     min-height: 100vh;
     padding: 48px 20px 64px;
@@ -25,22 +32,22 @@
     margin: 0 auto;
     max-width: min(1900px, 96vw);
     background: var(--kop-bg-secondary);
-    border-radius: 24px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    box-shadow: 0 1px 2px rgba(0, 4, 53, 0.06);
+    border: 1px solid var(--rv-line);
     overflow: hidden;
 }
 
 .admin-header {
-    padding: 36px 40px 30px;
-    border-bottom: 1px solid var(--kop-border-secondary);
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--rv-line);
 }
 
 .admin-header h1 {
     margin: 0;
-    font-size: 32px;
+    font-size: 26px;
     color: var(--kop-midnight-blue);
-    letter-spacing: 0.04em;
+    letter-spacing: normal;
 }
 
 .admin-stats {
@@ -51,53 +58,35 @@
 }
 
 .stat-card {
-    border-radius: 16px;
-    padding: 20px 18px;
-    color: #fff;
-    min-height: 96px;
+    border-radius: var(--rv-radius);
+    padding: 14px 16px;
+    color: var(--kop-midnight-blue);
+    background: var(--kop-white);
+    border: 1px solid var(--rv-line);
+    min-height: 72px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.stat-card:nth-child(1) {
-    background: linear-gradient(135deg, var(--kop-midnight-blue), var(--kop-navy-blue));
-}
-
-.stat-card:nth-child(2) {
-    background: linear-gradient(135deg, var(--kop-teal), var(--kop-mint-green));
-    color: var(--kop-midnight-blue); /* white fails on these light ends */
-}
-
-.stat-card:nth-child(3) {
-    background: linear-gradient(135deg, var(--kop-orange), var(--kop-coral-pink));
-    color: var(--kop-midnight-blue); /* white fails on these light ends */
-}
-
-.stat-card:nth-child(4) {
-    background: linear-gradient(135deg, var(--kop-chartreuse), #d5f368);
-    color: var(--kop-midnight-blue);
 }
 
 .stat-label {
     font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.85;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--kop-text-muted);
     margin-bottom: 6px;
 }
 
 .stat-value {
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 700;
     line-height: 1;
 }
 
 .admin-controls {
-    padding: 24px 40px;
-    background: var(--kop-soft-pastel-yellow);
-    border-bottom: 1px solid var(--kop-border-secondary);
+    padding: 18px 32px;
+    background: var(--rv-subtle);
+    border-bottom: 1px solid var(--rv-line);
 }
 
 .filter-controls {
@@ -115,9 +104,9 @@
 
 .filter-controls select,
 .filter-controls input[type="text"] {
-    padding: 10px 14px;
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-primary);
+    padding: 7px 10px;
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
     font-size: 14px;
     color: var(--kop-midnight-blue);
@@ -138,14 +127,14 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 16px;
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-primary);
+    padding: 6px 12px;
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
     color: var(--kop-midnight-blue);
     font: inherit;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
@@ -153,7 +142,7 @@
 
 
 .submission-tab:hover {
-    border-color: var(--kop-teal);
+    border-color: var(--rv-line-strong);
 }
 
 .submission-tab:focus-visible {
@@ -172,21 +161,23 @@
 
 .type-tabs .submission-tab {
     font-size: 15px;
-    padding: 10px 18px;
+    padding: 7px 14px;
 }
 
 .tab-count {
-    min-width: 22px;
-    padding: 1px 7px;
-    border-radius: 11px;
-    background: var(--kop-orange);
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: var(--rv-radius);
+    background: var(--rv-count);
     color: var(--kop-midnight-blue);
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     text-align: center;
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
-.tab-count:focus, .tab-count:active, .tab-count:hover { background: var(--kop-orange); color: var(--kop-midnight-blue); }
+.tab-count:focus, .tab-count:active, .tab-count:hover { background: var(--rv-count); color: var(--kop-midnight-blue); }
+.submission-tab.is-active .tab-count { background: var(--kop-white); color: var(--kop-midnight-blue); }
 
 
 .tab-count:empty,
@@ -195,51 +186,51 @@
 }
 
 .btn-secondary {
-    border-radius: 14px;
-    padding: 10px 22px;
+    border-radius: var(--rv-radius);
+    padding: 8px 16px;
     border: none;
     background: var(--kop-teal-fill, #24757F);
     color: var(--kop-white);
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: normal;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
 .btn-secondary:focus, .btn-secondary:active { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
 
 
 .btn-secondary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(51, 167, 181, 0.35);
+    
+    box-shadow: none;
 }
 
 .submissions-list-container {
-    padding: 28px 40px 40px;
+    padding: 20px 32px 32px;
     background: var(--kop-bg-secondary);
 }
 
 .submissions-list {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 12px;
 }
 
 .submission-card {
-    padding: 22px;
-    border-radius: 18px;
+    padding: 16px 18px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white);
-    border: 1px solid var(--kop-border-secondary);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--rv-line);
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .submission-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.15);
+    
+    box-shadow: none;
 }
 
 .submission-header {
@@ -251,41 +242,41 @@
 
 .submission-header h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 17px;
     color: var(--kop-midnight-blue);
 }
 
 .status-badge {
-    padding: 6px 14px;
-    border-radius: 40px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    background: var(--kop-soft-pastel-yellow);
-    color: var(--kop-midnight-blue);
-    border: 1px solid var(--kop-border-secondary);
-}
-
-.status-submitted {
-    background: rgba(255, 245, 203, 0.8);
+    padding: 2px 8px;
+    border-radius: var(--rv-radius);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: normal;
+    text-transform: none;
+    background: var(--kop-white);
+    color: var(--kop-text-muted);
+    border: 1px solid var(--rv-line-strong);
+    white-space: nowrap;
 }
 
 .status-approved {
-    background: rgba(182, 227, 212, 0.8);
+    color: var(--kop-teal-ink);
+    border-color: var(--kop-teal-ink);
 }
 
 .status-published {
-    background: rgba(174, 224, 237, 0.8);
+    color: var(--kop-navy);
+    border-color: var(--kop-navy);
 }
 
 .status-rejected {
-    background: rgba(254, 128, 136, 0.3);
+    color: var(--kop-coral-pink-ink);
+    border-color: var(--kop-coral-pink-ink);
 }
 
 /* Industry PR index: internal only, never public */
 .status-promotional {
-    background: var(--kop-sand);
+    background: var(--rv-subtle);
     border-style: dashed;
 }
 
@@ -305,7 +296,7 @@
 .submission-footer {
     font-size: 12px;
     color: var(--kop-text-secondary);
-    border-top: 1px solid var(--kop-border-secondary);
+    border-top: 1px solid var(--rv-line);
     padding-top: 12px;
     display: flex;
     justify-content: space-between;
@@ -345,12 +336,12 @@
     align-items: center;
     gap: 6px;
     border: 1px solid transparent;
-    border-radius: 999px;
-    padding: 8px 16px;
+    border-radius: var(--rv-radius);
+    padding: 6px 12px;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-quick .kop-icon {
@@ -359,11 +350,11 @@
 }
 
 .btn-quick-approve {
-    background: var(--kop-chartreuse);
-    color: var(--kop-midnight-blue);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white);
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
-.btn-quick-approve:focus, .btn-quick-approve:active, .btn-quick-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.btn-quick-approve:focus, .btn-quick-approve:active, .btn-quick-approve:hover { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
 
 
 .btn-quick-reject {
@@ -429,8 +420,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .card-move-status.error { color: #c0392b; }
 
 .btn-quick:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(0, 4, 53, 0.18);
+    
+    box-shadow: none;
 }
 
 .btn-quick:disabled {
@@ -441,8 +432,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .card-action-status {
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 .card-action-status.loading {
@@ -460,8 +451,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .btn-view {
     border: none;
-    border-radius: 999px;
-    padding: 8px 20px;
+    border-radius: var(--rv-radius);
+    padding: 6px 14px;
     cursor: pointer;
     font-weight: 600;
     color: #fff;
@@ -489,9 +480,9 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .submission-modal-content {
     width: 100%;
     background: var(--kop-white);
-    border-radius: 20px;
+    border-radius: var(--rv-radius);
     overflow: hidden;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+    box-shadow: none;
 }
 
 .modal-header {
@@ -499,7 +490,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     justify-content: space-between;
     align-items: flex-start;
     padding: 28px 32px 16px;
-    border-bottom: 1px solid var(--kop-border-secondary);
+    border-bottom: 1px solid var(--rv-line);
 }
 
 .modal-header h2 {
@@ -529,7 +520,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     display: flex;
     flex-direction: column;
     gap: 22px;
-    background: var(--kop-bg-primary);
+    background: var(--rv-subtle);
     max-height: 80vh;
     overflow-y: auto;
 }
@@ -540,14 +531,14 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .reviewer-section,
 .form-data-preview details,
 #existingReviewSection {
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
 }
 
 .submission-info {
     padding: 16px 20px;
-    background: var(--kop-soft-pastel-yellow);
+    background: var(--rv-subtle);
 }
 
 .info-row {
@@ -571,10 +562,10 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .notes-content,
 .existing-notes {
-    background: var(--kop-bg-primary);
+    background: var(--rv-subtle);
     padding: 14px;
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-primary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     min-height: 70px;
     color: var(--kop-midnight-blue);
     white-space: pre-wrap;
@@ -582,8 +573,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 /* Side-by-Side Markdown Editor */
 .markdown-editor-section {
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
     padding: 20px;
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
@@ -615,7 +606,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .btn-save-edits {
     border: none;
-    border-radius: 10px;
+    border-radius: var(--rv-radius);
     padding: 8px 16px;
     font-size: 13px;
     font-weight: 600;
@@ -663,8 +654,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .markdown-panel {
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     overflow: hidden;
 }
 
@@ -681,8 +672,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     align-items: center;
     justify-content: space-between;
     padding: 10px 14px;
-    background: var(--kop-soft-pastel-yellow);
-    border-bottom: 1px solid var(--kop-border-secondary);
+    background: var(--rv-subtle);
+    border-bottom: 1px solid var(--rv-line);
 }
 
 .panel-label {
@@ -694,20 +685,20 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .panel-badge {
     font-size: 11px;
     padding: 3px 8px;
-    border-radius: 999px;
+    border-radius: var(--rv-radius);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 .readonly-badge {
-    background: var(--kop-border-secondary);
+    background: var(--rv-line);
     color: var(--kop-text-secondary);
 }
 
 .editable-badge {
-    background: var(--kop-chartreuse);
-    color: var(--kop-midnight-blue);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white);
 }
 
 .markdown-content-wrapper {
@@ -721,7 +712,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     width: 40px;
     padding: 10px 0;
     background: #f0f0f0;
-    border-right: 1px solid var(--kop-border-secondary);
+    border-right: 1px solid var(--rv-line);
     overflow-y: hidden;
     flex-shrink: 0;
 }
@@ -769,7 +760,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     background: var(--kop-mint-green);
     color: var(--kop-midnight-blue);
     font-size: 13px;
@@ -787,8 +778,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     font-size: 13px;
     line-height: 1.55;
-    border: 1px solid var(--kop-border-secondary);
-    border-radius: 10px;
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
     overflow: auto;
     max-height: 62vh;
     background: var(--kop-white);
@@ -842,8 +833,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .reviewer-identity input {
     width: 100%;
     font-family: inherit;
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-primary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     padding: 12px 14px;
     font-size: 14px;
     background: var(--kop-white);
@@ -859,13 +850,13 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 #modalMarkdown {
     min-height: 260px;
-    border: 1px solid var(--kop-border-secondary);
+    border: 1px solid var(--rv-line);
 }
 
 .original-markdown-preview textarea {
     min-height: 220px;
-    border: 1px solid var(--kop-border-secondary);
-    background: var(--kop-soft-pastel-yellow);
+    border: 1px solid var(--rv-line);
+    background: var(--rv-subtle);
     font-family: 'Source Code Pro', 'Consolas', monospace;
     color: var(--kop-midnight-blue);
     resize: vertical;
@@ -878,7 +869,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .form-data-preview details {
     padding: 16px;
-    background: var(--kop-bg-primary);
+    background: var(--rv-subtle);
 }
 
 .form-data-preview summary {
@@ -891,8 +882,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     margin-top: 12px;
     padding: 12px;
     background: var(--kop-white);
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     overflow-x: auto;
     font-size: 13px;
 }
@@ -913,13 +904,13 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 #existingReviewSection h4 {
     margin: 0 0 10px;
     font-size: 13px;
-    letter-spacing: 0.08em;
+    letter-spacing: normal;
     color: var(--kop-navy-blue);
 }
 
 .modal-footer {
     padding: 24px 30px 30px;
-    border-top: 1px solid var(--kop-border-secondary);
+    border-top: 1px solid var(--rv-line);
     background: var(--kop-bg-secondary);
 }
 
@@ -931,20 +922,20 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .action-buttons button {
     border: none;
-    border-radius: 12px;
+    border-radius: var(--rv-radius);
     padding: 12px 24px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: normal;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: background 0.15s ease, border-color 0.15s ease;
 }
 
 .btn-approve {
-    background: var(--kop-chartreuse);
-    color: var(--kop-midnight-blue);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white);
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
-.btn-approve:focus, .btn-approve:active, .btn-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.btn-approve:focus, .btn-approve:active, .btn-approve:hover { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
 
 
 .btn-reject {
@@ -980,7 +971,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 
 .action-buttons button:hover:not(:disabled) {
-    transform: translateY(-2px);
+    
 }
 
 .action-status {
@@ -1003,7 +994,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 }
 
 .error-message {
-    border-radius: 12px;
+    border-radius: var(--rv-radius);
     padding: 42px 26px;
     background: rgba(254, 128, 136, 0.15);
     border: 1px solid rgba(254, 128, 136, 0.6);
@@ -1015,7 +1006,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .bulk-actions {
     margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px dashed var(--kop-border-secondary);
+    border-top: 1px dashed var(--rv-line);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -1049,7 +1040,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     align-items: center;
     gap: 6px;
     border: none;
-    border-radius: 14px;
+    border-radius: var(--rv-radius);
     padding: 12px 20px;
     font-size: 14px;
     font-weight: 700;
@@ -1063,11 +1054,11 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 }
 
 .btn-bulk-approve {
-    background: var(--kop-chartreuse);
-    color: var(--kop-midnight-blue);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white);
 }
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
-.btn-bulk-approve:focus, .btn-bulk-approve:active, .btn-bulk-approve:hover { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
+.btn-bulk-approve:focus, .btn-bulk-approve:active, .btn-bulk-approve:hover { background: var(--kop-teal-fill, #24757F); color: var(--kop-white); }
 
 
 .btn-bulk-reject {
@@ -1087,8 +1078,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 
 .btn-bulk:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 4, 53, 0.15);
+    
+    box-shadow: none;
 }
 
 .btn-bulk:disabled {
@@ -1104,21 +1095,22 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 }
 
 .btn-reject-all {
-    border: none;
-    border-radius: 14px;
-    padding: 12px 24px;
+    
+    border-radius: var(--rv-radius);
+    padding: 8px 16px;
     font-size: 14px;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.25s ease;
-    background: linear-gradient(135deg, var(--kop-coral-pink), #e05060);
-    color: var(--kop-white);
-    box-shadow: 0 4px 12px rgba(254, 128, 136, 0.3);
+    background: var(--kop-white);
+    color: var(--kop-coral-pink-ink);
+    border: 1px solid var(--kop-coral-pink-ink);
+    box-shadow: none;
 }
 
 .btn-reject-all:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(254, 128, 136, 0.4);
+    
+    box-shadow: none;
 }
 
 .btn-reject-all:disabled {
@@ -1133,11 +1125,11 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 }
 
 .duplicate-warning-box {
-    background: linear-gradient(135deg, #FFF5F5, #FED7E2);
-    border: 2px solid var(--kop-coral-pink);
-    border-radius: 16px;
+    background: #FDF3F3;
+    border: 1px solid var(--kop-coral-pink-ink);
+    border-radius: var(--rv-radius);
     padding: 24px;
-    box-shadow: 0 4px 12px rgba(254, 128, 136, 0.15);
+    box-shadow: none;
 }
 
 .duplicate-warning-box h3 {
@@ -1164,14 +1156,14 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .duplicate-submission-card {
     background: var(--kop-white);
     border: 1px solid var(--kop-coral-pink);
-    border-radius: 12px;
+    border-radius: var(--rv-radius);
     padding: 16px;
     transition: all 0.2s ease;
 }
 
 .duplicate-submission-card:hover {
-    box-shadow: 0 4px 12px rgba(254, 128, 136, 0.2);
-    transform: translateY(-2px);
+    box-shadow: none;
+    
 }
 
 .duplicate-submission-header {
@@ -1190,11 +1182,11 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .duplicate-submission-status {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 12px;
+    border-radius: var(--rv-radius);
     font-size: 11px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    text-transform: none;
+    letter-spacing: normal;
 }
 
 .duplicate-submission-status.status-submitted {
@@ -1253,10 +1245,10 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     background: var(--kop-coral-pink-fill, #D9020F);
     color: var(--kop-white);
     padding: 4px 8px;
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     font-size: 11px;
     font-weight: 700;
-    text-transform: uppercase;
+    text-transform: none;
     margin-left: 8px;
     vertical-align: middle;
 }
@@ -1309,8 +1301,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     margin-top: 20px;
     padding: 16px 18px;
     border: 1px solid var(--kop-teal, #33A7B5);
-    border-radius: 8px;
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
 }
 
 .url-safety-section h3 {
@@ -1344,7 +1336,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     grid-template-columns: 24px 1fr;
     gap: 8px;
     padding: 8px 10px;
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     background: #fff;
     border-left: 4px solid #d4d4d8;
     word-break: break-all;
@@ -1402,9 +1394,9 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
    the inner shadow/radius so it blends rather than nests. */
 .submission-card.expanded .submission-modal-content {
     box-shadow: none;
-    border-radius: 12px;
-    border: 1px solid var(--kop-border-secondary);
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
+    background: var(--rv-subtle);
 }
 
 .submission-card.expanded .btn-view {
@@ -1454,7 +1446,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .facility-link-badge {
     display: inline-block;
     padding: 2px 10px;
-    border-radius: 12px;
+    border-radius: var(--rv-radius);
     font-size: 0.8rem;
     font-weight: 600;
 }
@@ -1463,7 +1455,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 /* States Kadence would otherwise colour (a:focus midnight, button:focus navy fill). */
 .badge-unlinked:focus, .badge-unlinked:active, .badge-unlinked:hover { background: #e8e8e8; color: #555; }
 
-.badge-suggested  { background: var(--kop-soft-yellow, #FFF5CB); color: #7a6000; border: 1px solid #e6c200; }
+.badge-suggested  { background: var(--rv-subtle); color: #7a6000; border: 1px solid #e6c200; }
 .badge-confirmed  { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
 
 .facility-link-name {
@@ -1517,7 +1509,7 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 
 .facility-link-candidates {
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 12px;
     background: #fafafa;
     margin-bottom: 10px;
@@ -1617,8 +1609,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
 .structured-editor-section {
     margin: 18px 0;
     padding: 16px;
-    border: 1px solid var(--kop-border-secondary);
-    border-radius: 10px;
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
     background: var(--kop-bg-secondary);
 }
 
@@ -1676,8 +1668,8 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
     width: 100%;
     box-sizing: border-box;
     padding: 7px 10px;
-    border: 1px solid var(--kop-border-primary);
-    border-radius: 6px;
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
     background: var(--kop-white);
     color: var(--kop-text-primary);
     font-size: 0.88rem;
@@ -1720,8 +1712,8 @@ textarea.kop-edit-input {
 /* "Not a news article?": move the link onto a facility record. */
 .refile-section {
     padding: 22px;
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
     color: var(--kop-midnight-blue);
 }
@@ -1740,13 +1732,13 @@ button.btn-refile-mention:focus,
 button.btn-refile-mention:active {
     margin: 2px 4px 2px 0;
     padding: 2px 10px;
-    border: 1px solid var(--kop-navy);
-    border-radius: 999px;
+    border: 1px solid var(--rv-line-strong);
+    border-radius: var(--rv-radius);
     background: var(--kop-white);
-    color: var(--kop-navy);
+    color: var(--kop-midnight-blue);
     font-size: 0.9em;
 }
-button.btn-refile-mention:hover, button.btn-refile-mention:focus { background: var(--kop-sand); color: var(--kop-midnight-blue); }
+button.btn-refile-mention:hover, button.btn-refile-mention:focus { background: var(--rv-subtle); color: var(--kop-midnight-blue); }
 button.btn-refile, button.btn-refile:hover, button.btn-refile:focus, button.btn-refile:active {
     background: var(--kop-navy);
     color: var(--kop-white);
@@ -1765,8 +1757,8 @@ button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:foc
 .add-new-panel {
     margin: 12px 0 0;
     padding: 18px;
-    border-radius: 14px;
-    border: 1px solid var(--kop-border-secondary);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
     background: var(--kop-white);
     color: var(--kop-text-primary);
 }
@@ -1780,9 +1772,9 @@ button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:foc
 .kop-edit-tools {
     margin: 0 0 14px;
     padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--kop-border-primary);
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    border: 1px solid var(--rv-line);
+    background: var(--rv-subtle);
     color: var(--kop-text-primary);
 }
 .kop-edit-tools-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
@@ -1814,7 +1806,7 @@ button.btn-refile-undo, button.btn-refile-undo:hover, button.btn-refile-undo:foc
     margin: 6px 0 0;
     padding: 6px 10px;
     border-left: 4px solid var(--kop-teal-ink, #1D6F79);
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
     color: var(--kop-midnight, #000435);
     font-size: 13px;
 }

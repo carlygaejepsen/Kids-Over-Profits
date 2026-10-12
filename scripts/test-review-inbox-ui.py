@@ -86,6 +86,20 @@ def closure_item(status="pending", stage="closed", name="Sunrise Ranch", message
     }
 
 
+def nom_item(status="nominated"):
+    acts = ([{"id": "feature", "label": "Approve: feature it", "style": "approve",
+              "params": [{"name": "note", "label": "Note shown with it (optional)", "type": "textarea", "optional": True,
+                          "value": "The Missoulian found 58 complaints in 12 years and no sanctions."}],
+              "help": "Puts this article on the Essential reporting page with the note in the box."},
+             {"id": "pass", "label": "Reject: pass over", "style": "reject", "help": "Nothing on the site changes."}]
+            if status == "nominated" else [{"id": "undo", "label": "Undo", "style": "undo"}])
+    return {"key": "682", "title": "12 years, 58 complaints, no sanctions at Montana residential programs",
+            "subtitle": "Missoulian · Lucy Tompkins and Seaborn Larson · 2019", "url": "https://missoulian.com/a",
+            "text": "Over a 12-year period, private residential programs for youth in Montana accumulated 58 complaints.",
+            "status": status, "status_label": "Nominated" if status == "nominated" else "Featured", "fields": [], "moves": [], "tags": [],
+            "details": [{"label": "Why it was nominated", "value": "Missoulian series, 2019."}], "links": [], "actions": acts}
+
+
 NEWS = {
     "key": "546", "title": "Teen dies at ranch", "status": "submitted", "status_label": "submitted", "url": "https://example.com/a",
     "fields": [{"name": "article_title", "label": "Title", "type": "text", "value": "Teen dies at ranch"},
@@ -109,6 +123,8 @@ SOURCES = {"sources": [
     {"key": "drive", "label": "Drive Docs", "group": "Imports to review", "views": {"pending": "Waiting", "applied": "Added"}, "count": 2,
      "native": False, "tool_url": "", "help": "", "can_save": True, "can_ai": True,
      "filters": [{"name": "kind", "label": "Kind", "options": {"news": "News article", "court": "Court record"}}]},
+    {"key": "nom", "label": "Nominated", "group": "Essential reporting", "views": {"nominated": "Nominated", "featured": "Featured", "passed": "Passed over"},
+     "count": 1, "native": False, "tool_url": "", "help": "Stored articles put forward as especially good journalism.", "can_save": False, "can_ai": False},
 ], "tags": ["follow up", "needs source", "Neglect"], "admins": [{"id": 1, "name": "Dani"}, {"id": 2, "name": "Pat"}],
     "me": 1, "held": {"mine": 1, "snoozed": 0}}
 
@@ -182,6 +198,10 @@ def main():
                 out = {"options": [{"value": "c45", "label": "Aspen Education Group · Company (operator)"}]}
             elif path == "items" and "keys=" in url and "source=closure" in url:
                 out = {"items": [dict(closure_item(), hold={"assigned_to": 2, "hidden": True})], "total": 1}
+            elif path == "items" and "source=nom" in url:
+                out = {"items": [nom_item()], "total": 1, "view_counts": {"nominated": 1, "featured": 0, "passed": 0}}
+            elif path == "act" and body["source"] == "nom":
+                out = {"message": "Featured: it is on the Essential reporting page.", "item": nom_item("featured")}
             elif path == "items" and "source=drive" in url:
                 out = {"items": [drive_item("a1", True), drive_item("a2", False), drive_card()], "total": 3, "view_counts": {"pending": 2, "applied": 7}}
             elif path == "items":
@@ -455,6 +475,22 @@ def main():
             check(len(sent) == 1 and sent[0]["action"] == "add_picked" and sent[0]["params"]["picked"] == ["k1"] and str(sent[0]["params"]["facility"]) == "9",
                   f"@{width} Add ticked sends only the ticked links", json.dumps(sent))
             check(group.locator(".rinbox-check").count() == 1, f"@{width} the card then shows what is left")
+
+            # Nominated for Essential reporting: the note is edited in the action's own box and sent with Feature.
+            pg.locator(".rinbox-tab", has_text="Nominated").click()
+            pg.wait_for_selector(".rinbox-card[data-key='682'] textarea")
+            box = pg.locator(".rinbox-card[data-key='682'] textarea").first
+            check("58 complaints" in box.input_value(), f"@{width} a nomination's draft note is in its box")
+            box.fill("Edited note.")
+            if width == 1280:
+                pg.screenshot(path=str(shots / f"nominated-{width}.png"), full_page=True)
+            pg.locator(".rinbox-card[data-key='682'] button", has_text="Approve: feature it").click()
+            pg.wait_for_function("() => /Featured: it is on/.test(document.querySelector('.rinbox-panel').textContent)")
+            sent = [c[1] for c in calls if c[0] == "act" and c[1]["source"] == "nom"]
+            check(len(sent) == 1 and sent[0]["action"] == "feature" and sent[0]["params"] == {"note": "Edited note."},
+                  f"@{width} Feature sends the note as edited", json.dumps(sent))
+            wide = pg.evaluate("() => document.documentElement.scrollWidth")
+            check(wide <= width, f"@{width} the nomination card fits the screen", f"{wide}px")
 
             # Your inbox: assigned to you, recently done with Undo.
             pg.locator(".rinbox-tab", has_text="Assigned to you").click()

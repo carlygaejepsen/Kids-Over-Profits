@@ -38,11 +38,11 @@
 
 .rinbox-panel {
     margin-top: 16px;
-    padding: 20px;
+    padding: 16px 18px;
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
-    border: 1px solid var(--kop-border-primary, #B6E3D4);
-    border-radius: 12px;
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
 }
 
 .rinbox-panel h2,
@@ -94,16 +94,16 @@
 
 .rinbox-card {
     padding: 14px 16px;
-    border: 1px solid var(--kop-border-primary, #B6E3D4);
-    border-left: 4px solid var(--kop-teal, #33A7B5);
-    border-radius: 10px;
+    border: 1px solid var(--rv-line);
+    border-left: 3px solid var(--kop-teal-ink, #24757F);
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
 }
 
 .rinbox-card.rinbox-gone {
     border-left-color: var(--kop-text-muted, #4A5568);
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
 }
 
 .rinbox-title {
@@ -159,7 +159,7 @@
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 6px 8px;
     font: inherit;
     font-size: 14px;
@@ -187,8 +187,9 @@
     align-items: center;
     gap: 2px;
     padding: 2px 4px 2px 10px;
-    border-radius: 12px;
-    background: var(--kop-mint-green, #B6E3D4);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
+    border: 1px solid var(--rv-line);
     color: var(--kop-midnight-blue, #000435);
     font-size: 13px;
 }
@@ -214,8 +215,8 @@ button.rinbox-tag-x:active {
 .rinbox-editor {
     margin: 10px 0;
     padding: 12px;
-    border-radius: 8px;
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
 }
 
@@ -269,13 +270,30 @@ button.rinbox-tag-x:active {
     width: 90px;
 }
 
+/* A note or other long value gets its own line, as wide as the card allows. */
+.rinbox-action-group:has(textarea) {
+    display: contents;
+}
+
+.rinbox-param:has(textarea) {
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.rinbox-param textarea {
+    width: 100%;
+    max-width: 720px;
+    box-sizing: border-box;
+}
+
 button.rinbox-btn {
     border: 0;
-    border-radius: 10px;
-    padding: 8px 16px;
+    border-radius: var(--rv-radius);
+    padding: 6px 12px;
     font: inherit;
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
 }
 
@@ -283,24 +301,26 @@ button.rinbox-btn-approve,
 button.rinbox-btn-approve:hover,
 button.rinbox-btn-approve:focus,
 button.rinbox-btn-approve:active {
-    background: var(--kop-chartreuse, #B2E102);
-    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white, #fff);
 }
 
 button.rinbox-btn-reject,
 button.rinbox-btn-reject:hover,
 button.rinbox-btn-reject:focus,
 button.rinbox-btn-reject:active {
-    background: var(--kop-coral-pink-fill, #D9020F);
-    color: var(--kop-white, #fff);
+    background: var(--kop-white, #fff);
+    color: var(--kop-coral-pink-ink, #D9020F);
+    box-shadow: inset 0 0 0 1px var(--kop-coral-pink-ink, #D9020F);
 }
 
 button.rinbox-btn-neutral,
 button.rinbox-btn-neutral:hover,
 button.rinbox-btn-neutral:focus,
 button.rinbox-btn-neutral:active {
-    background: var(--kop-teal-fill, #24757F);
-    color: var(--kop-white, #fff);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    box-shadow: inset 0 0 0 1px var(--rv-line-strong, #A9B1BD);
 }
 
 button.rinbox-btn-undo,
@@ -309,7 +329,7 @@ button.rinbox-btn-undo:focus,
 button.rinbox-btn-undo:active {
     background: var(--kop-white, #fff);
     color: var(--kop-navy, #000080);
-    box-shadow: inset 0 0 0 2px var(--kop-navy, #000080);
+    box-shadow: inset 0 0 0 1px var(--rv-line-strong, #A9B1BD);
 }
 
 button.rinbox-btn:focus-visible,
@@ -360,8 +380,8 @@ button.rinbox-tag-x:focus-visible {
     align-items: center;
     margin: 10px 0 4px;
     padding: 10px 12px;
-    border-radius: 8px;
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
 }
 
@@ -395,7 +415,7 @@ button.rinbox-tag-x:focus-visible {
     max-height: 520px;
     overflow-y: auto;
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
 }
 
@@ -485,7 +505,7 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 6px 8px;
     font: inherit;
     font-size: 14px;
@@ -550,7 +570,7 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 2px 6px;
     font: inherit;
     font-size: 13px;
@@ -576,7 +596,7 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 6px 8px;
     font: inherit;
     font-size: 14px;
@@ -587,7 +607,7 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 6px 8px;
     font: inherit;
     font-size: 14px;
@@ -623,7 +643,7 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     padding: 6px 8px;
     font: inherit;
     font-size: 14px;
@@ -655,8 +675,8 @@ button.rinbox-tag-x:focus-visible {
 
 .rinbox-tools {
     padding: 10px 12px;
-    border-radius: 8px;
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
 }
 
@@ -718,7 +738,7 @@ button.rinbox-tag-x:focus-visible {
 
 .rinbox-compare th,
 .rinbox-compare td {
-    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border: 1px solid var(--rv-line);
     padding: 6px 8px;
     text-align: left;
     vertical-align: top;
@@ -727,11 +747,11 @@ button.rinbox-tag-x:focus-visible {
 }
 
 .rinbox-compare thead th {
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
 }
 
 .rinbox-compare tr.rinbox-differs td {
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    background: var(--rv-subtle);
 }
 
 .rinbox-preview-toggle {
@@ -742,7 +762,7 @@ button.rinbox-tag-x:focus-visible {
     width: 100%;
     height: 70vh;
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
 }
 
@@ -795,13 +815,13 @@ a.rinbox-btn-go:focus,
 a.rinbox-btn-go:active {
     display: inline-block;
     padding: 9px 18px;
-    border-radius: 10px;
+    border-radius: var(--rv-radius);
     font-size: 15px;
     font-weight: 700;
     text-decoration: none;
     background: var(--kop-white, #fff);
-    color: var(--kop-navy, #000080);
-    box-shadow: inset 0 0 0 2px var(--kop-navy, #000080);
+    color: var(--kop-midnight-blue, #000435);
+    box-shadow: inset 0 0 0 1px var(--rv-line-strong, #A9B1BD);
 }
 
 a.rinbox-btn-go:hover,
@@ -862,18 +882,18 @@ details.rinbox-fold > summary {
 }
 
 .rinbox-does li.rinbox-does-approve {
-    border-left-color: var(--kop-chartreuse, #B2E102);
+    border-left-color: var(--kop-teal-ink, #24757F);
 }
 
 .rinbox-does li.rinbox-does-reject {
-    border-left-color: var(--kop-coral-pink, #FE8088);
+    border-left-color: var(--kop-coral-pink-ink, #D9020F);
 }
 
 .rinbox-queue-badge {
     display: inline-block;
     padding: 1px 8px;
-    border-radius: 10px;
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
     font-size: 12px;
     font-weight: 600;
@@ -892,11 +912,11 @@ button.rinbox-pv-btn,
 button.rinbox-pv-btn:hover,
 button.rinbox-pv-btn:focus,
 button.rinbox-pv-btn:active {
-    border: 1px solid var(--kop-navy, #000080);
-    border-radius: 6px;
+    border: 1px solid var(--rv-line-strong, #A9B1BD);
+    border-radius: var(--rv-radius);
     padding: 1px 8px;
     background: var(--kop-white, #fff);
-    color: var(--kop-navy, #000080);
+    color: var(--kop-midnight-blue, #000435);
     font: inherit;
     font-size: 12px;
     font-weight: 600;
@@ -905,7 +925,7 @@ button.rinbox-pv-btn:active {
 }
 
 button.rinbox-pv-btn:hover {
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
 }
 
 button.rinbox-pv-btn:focus-visible {
@@ -916,7 +936,7 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-pv {
     margin: 10px 0;
     border: 1px solid var(--kop-text-muted, #4A5568);
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     overflow: hidden;
@@ -928,7 +948,7 @@ button.rinbox-pv-btn:focus-visible {
     gap: 8px 12px;
     align-items: center;
     padding: 8px 10px;
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
     font-size: 13px;
 }
 
@@ -976,7 +996,7 @@ button.rinbox-pv-btn:focus-visible {
     max-width: 100%;
     max-height: 260px;
     margin: 0 0 10px;
-    border-radius: 6px;
+    border-radius: var(--rv-radius);
 }
 
 .rinbox-pv-reader p {
@@ -995,7 +1015,7 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-later summary {
     cursor: pointer;
     padding: 6px 10px;
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     font-weight: 700;
     color: var(--kop-navy, #000080);
 }
@@ -1012,8 +1032,8 @@ button.rinbox-pv-btn:focus-visible {
     align-items: center;
     margin-top: 6px;
     padding: 8px 10px;
-    border-radius: 8px;
-    background: var(--kop-sand, #F2EEDF);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
 }
 
 .rinbox-later-form input[type="text"] {
@@ -1024,8 +1044,8 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-hold {
     margin: 8px 0;
     padding: 6px 10px;
-    border-radius: 8px;
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: var(--rv-radius);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
     font-size: 13px;
 }
@@ -1034,7 +1054,7 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-recs {
     margin: 8px 0;
     padding: 6px 10px;
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     border-left: 4px solid var(--kop-teal-ink, #24757F);
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
@@ -1075,14 +1095,14 @@ button.rinbox-pv-btn:focus-visible {
     align-items: center;
     padding: 10px 12px;
     margin-bottom: 6px;
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     font-size: 14px;
 }
 
 .rinbox-done-row.is-undone {
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
 }
 
 .rinbox-done-when,
@@ -1104,20 +1124,22 @@ button.rinbox-pv-btn:focus-visible {
 
 .rinbox-done-what {
     padding: 1px 8px;
-    border-radius: 10px;
+    border-radius: var(--rv-radius);
     font-size: 12px;
     font-weight: 700;
-    background: var(--kop-sand, #F2EEDF);
+    background: var(--rv-subtle);
     color: var(--kop-midnight-blue, #000435);
 }
 
 .rinbox-done-approve {
-    background: var(--kop-chartreuse, #B2E102);
+    background: var(--kop-teal-fill, #24757F);
+    color: var(--kop-white, #fff);
 }
 
 .rinbox-done-reject {
-    background: var(--kop-coral-pink-fill, #D9020F);
-    color: var(--kop-white, #fff);
+    background: var(--kop-white, #fff);
+    color: var(--kop-coral-pink-ink, #D9020F);
+    box-shadow: inset 0 0 0 1px var(--kop-coral-pink-ink, #D9020F);
 }
 
 .rinbox-done-row button.rinbox-btn {
@@ -1133,8 +1155,8 @@ button.rinbox-pv-btn:focus-visible {
 .rinbox-ask-form {
     margin-top: 10px;
     padding: 12px 14px;
-    border: 2px solid var(--kop-teal, #33A7B5);
-    border-radius: 10px;
+    border: 1px solid var(--rv-line-strong, #A9B1BD);
+    border-radius: var(--rv-radius);
     background: #fff;
     color: var(--kop-midnight-blue, #000435);
 }
@@ -1154,7 +1176,7 @@ button.rinbox-pv-btn:focus-visible {
     margin: 8px 0;
     padding: 8px 10px;
     border: 1px solid var(--kop-coral-pink-ink, #B4232F);
-    border-radius: 8px;
+    border-radius: var(--rv-radius);
     background: var(--kop-white, #fff);
     color: var(--kop-midnight-blue, #000435);
     font-size: 14px;

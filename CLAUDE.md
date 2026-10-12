@@ -363,6 +363,10 @@ php -d extension=pdo_sqlite scripts/test-news-archive.php [--list]   # rules, PH
 # flagged with the note and listed first on facility and company pages, 'featured' in the app's news payloads. Read at render time,
 # never baked into cached page data. Byline = the article's author field, left out when it is only the outlet's name
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-featured-reporting.php [--db=...] [--out=tmp/featured-reporting]
+# Nominations wait at Submissions Review > Nominated (inc/featured-nominations.php, table news_featured_nominations): each has a draft
+# note and a reason; Feature picks it with the note as edited in its box (Undo = kop_feat_undo of that pick), Pass over changes nothing.
+# New ones go in js/data/featured/nominations.json with a higher 'version' (adds missing ones only, never changes a decided one)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=featured-nominations
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked
