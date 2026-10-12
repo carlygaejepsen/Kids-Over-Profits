@@ -382,10 +382,23 @@ if (!function_exists('kop_v2_get_facilities_projects')) {
 
         // Every facility once, projected to the legacy nested shape.
         $facilities = array();
+        // Renamed records' names, to list each under the name it had while a
+        // company ran it (kop_facility_eras_name_under()).
+        $eras = function_exists('kop_facility_eras_name_under');
+        $era_map = $eras ? kop_facility_eras_map() : array('facility' => array());
+        $era_docs = array();
         $has_pages = function_exists('kop_facility_page_url');
         foreach ((array)$wpdb->get_results("SELECT id, json_data FROM facilities_v2", ARRAY_A) as $row) {
             $doc = kop_v2_decode($row['json_data']);
             if ($doc === null) continue;
+            if ($eras && (isset($era_map['facility'][(int)$row['id']]) || !empty($doc['legacy']['mergedFacilities']))) {
+                $era_docs[(int)$row['id']] = array(
+                    'facility_id'     => (int)$row['id'],
+                    'identification'  => $doc['identification'],
+                    'operatingPeriod' => $doc['operatingPeriod'] ?? array(),
+                    'legacy'          => array('mergedFacilities' => $doc['legacy']['mergedFacilities'] ?? array()),
+                );
+            }
             $facilities[(int)$row['id']] = kop_facility_to_legacy($doc);
             if ($has_pages) {
                 // Link to the generated facility page for the directory cards.
@@ -394,15 +407,38 @@ if (!function_exists('kop_v2_get_facilities_projects')) {
             }
         }
 
-        $by_operator = array();
-        foreach ((array)$wpdb->get_results("SELECT operator_id, facility_id FROM {$wpdb->prefix}kop_operator_facilities ORDER BY operator_id, sort_order, facility_id", ARRAY_A) as $r) {
-            if (isset($facilities[(int)$r['facility_id']])) {
-                $by_operator[(int)$r['operator_id']][] = $facilities[(int)$r['facility_id']];
+        $operator_rows = (array)$wpdb->get_results("SELECT id, unique_name, name, json_data, document_folder_id, updated_at FROM {$wpdb->prefix}kop_operators ORDER BY id", ARRAY_A);
+        $operator_names = array();
+        if ($era_docs) {
+            foreach ($operator_rows as $op) {
+                $stored = json_decode($op['json_data'], true);
+                $o = (is_array($stored) && isset($stored['operator']) && is_array($stored['operator'])) ? $stored['operator'] : array();
+                $names = array((string)$op['name'], (string)$op['unique_name'], (string)($o['name'] ?? ''));
+                foreach (array('otherNames', 'pastNames') as $field) {
+                    foreach ((array)($o[$field] ?? array()) as $n) if (is_string($n)) $names[] = $n;
+                }
+                $operator_names[(int)$op['id']] = $names;
             }
         }
 
+        $by_operator = array();
+        foreach ((array)$wpdb->get_results("SELECT operator_id, facility_id, relationship FROM {$wpdb->prefix}kop_operator_facilities ORDER BY operator_id, sort_order, facility_id", ARRAY_A) as $r) {
+            $fid = (int)$r['facility_id'];
+            if (!isset($facilities[$fid])) continue;
+            $copy = $facilities[$fid];
+            if (isset($era_docs[$fid], $operator_names[(int)$r['operator_id']])) {
+                $then = kop_facility_eras_name_under($fid, $era_docs[$fid], $operator_names[(int)$r['operator_id']], (string)$r['relationship']);
+                if ($then !== null) {
+                    // The card heads with the name then and says what it is called now.
+                    $copy['nameUnderOperator'] = $then['name'];
+                    if ($then['years'] !== '') $copy['nameUnderOperatorYears'] = $then['years'];
+                }
+            }
+            $by_operator[(int)$r['operator_id']][] = $copy;
+        }
+
         $wrapper_keys = array('name', 'category', 'timestamp', 'currentFacilityIndex', '__facility_ref');
-        foreach ((array)$wpdb->get_results("SELECT id, unique_name, name, json_data, document_folder_id, updated_at FROM {$wpdb->prefix}kop_operators ORDER BY id", ARRAY_A) as $op) {
+        foreach ($operator_rows as $op) {
             $stored = json_decode($op['json_data'], true);
             $blocks = (is_array($stored) && isset($stored['legacy_blocks']) && is_array($stored['legacy_blocks'])) ? $stored['legacy_blocks'] : array();
             $data = array();

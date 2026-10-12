@@ -306,6 +306,9 @@ php scripts/test-facility-finder.php              # search by name/past name/id 
 # opened (?view=detail&key[]=), file cached in uploads/kop-cache/directory/<fingerprint>/ (inc/directory-feed.php). A field the
 # closed lists read goes in kop_directory_feed_slim_facility()
 python scripts/test-directory-feed.py [--refresh] [--cpu 4]   # split feed draws the same page as the whole feed, timings
+# On the parent company tab a renamed program is headed by the name it had under that company ("Now known as" the record's name):
+# kop_facility_eras_name_under() (inc/facility-eras.php) from its names' companies, stamped as nameUnderOperator per company link in the feed
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-name-under-operator.php [--list]   # every company link on tmp/prod.sqlite, the feed
 # Alternate names always show up in every search box and autocomplete: a facility's or company's pastNames, otherNames
 # and currentName match, and the row says which, worded by kop_alias_label() ("Formerly X" / "Also known as X" / "Now
 # known as X"). kop_v2_search() (header dropdown, search widget, search.php, facility-suggest, research tags) ranks from

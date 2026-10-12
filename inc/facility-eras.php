@@ -569,3 +569,107 @@ if (!function_exists('kop_facility_eras_build')) {
         return array('list' => array_values($list), 'rest' => $rest, 'totals' => $totals);
     }
 }
+
+if (!function_exists('kop_facility_eras_company_key')) {
+    /** A company name for comparing: "Psychiatric Solutions, Inc." == "Psychiatric Solutions Inc", "(UHS)" dropped. */
+    function kop_facility_eras_company_key($name) {
+        $s = strtolower(trim((string) $name));
+        $s = preg_replace('/\s*\([^)]*\)/u', ' ', $s);
+        $s = preg_replace('/\s*&\s*/', ' and ', $s);
+        $s = preg_replace('/[^\w\s]/u', ' ', $s);
+        $s = trim(preg_replace('/\s+/', ' ', $s));
+        $s = preg_replace('/^the\s+/u', '', $s);
+        $s = preg_replace('/\s+(?:l\s*l\s*c|llc|inc|incorporated|ltd|limited|co|corp|corporation)$/u', '', $s);
+        return trim($s);
+    }
+}
+
+if (!function_exists('kop_facility_eras_name_under')) {
+    /**
+     * The name a record had while the company ran it, for listing it under
+     * that company: '' when that is the record's own name or not known.
+     *
+     * Read from the record's names (kop_facility_eras_chain()) and the
+     * companies each name lists: the latest of the record's own names that
+     * lists the company. A name that is another record's is never taken (that
+     * record is listed itself). A current link keeps the record's name when
+     * the later names list no company at all, since nothing says the company
+     * let it go. A past link with no dated name for the company takes the
+     * one past name of the record that carries the company's name ("The
+     * Brown Schools at Laurel Ridge" under The Brown Schools), without years.
+     *
+     * @param int      $facility_id
+     * @param array    $doc           the record's v2 document (may be array())
+     * @param string[] $company_names the company's name and its other names
+     * @param string   $relationship  the kop_operator_facilities link: 'current' or 'past'
+     * @return array{name:string,years:string}|null
+     */
+    function kop_facility_eras_name_under($facility_id, array $doc, array $company_names, $relationship = 'current') {
+        $facility_id = (int) $facility_id;
+        $keys = array();
+        foreach ($company_names as $n) {
+            $k = kop_facility_eras_company_key($n);
+            if ($k !== '') $keys[$k] = true;
+        }
+        if (!$keys || $facility_id <= 0) return null;
+        $dated = kop_facility_eras_name_under_dated($facility_id, $doc, $keys, $relationship);
+        if ($dated !== null || $relationship !== 'past') return $dated;
+
+        $hits = array();
+        foreach ((array) ($doc['identification']['pastNames'] ?? array()) as $n) {
+            if (!is_string($n) || trim($n) === '') continue;
+            $nk = ' ' . kop_facility_eras_company_key($n) . ' ';
+            foreach (array_keys($keys) as $k) {
+                if (strlen($k) >= 6 && strpos($nk, ' ' . $k . ' ') !== false) {
+                    $hits[strtolower(trim($n))] = trim($n);
+                    break;
+                }
+            }
+        }
+        return count($hits) === 1 ? array('name' => reset($hits), 'years' => '') : null;
+    }
+}
+
+if (!function_exists('kop_facility_eras_name_under_dated')) {
+    /** kop_facility_eras_name_under() from the record's dated names; $keys = company keys => true. */
+    function kop_facility_eras_name_under_dated($facility_id, array $doc, array $keys, $relationship) {
+        $chain = kop_facility_eras_chain($facility_id, $doc ?: null);
+        if (count($chain) < 2) return null;
+
+        // The record's own names: its own era entries, or a map name with no
+        // record that the record lists among its past names.
+        $listed = array();
+        foreach (array('pastNames', 'otherNames') as $field) {
+            foreach ((array) ($doc['identification'][$field] ?? array()) as $n) {
+                if (is_string($n) && trim($n) !== '') $listed[kop_facility_eras_company_key($n)] = true;
+            }
+        }
+        $own = array();
+        foreach ($chain as $era) {
+            $fid = (int) $era['facility_id'];
+            if ($fid === $facility_id || ($fid === 0 && isset($listed[kop_facility_eras_company_key($era['name'])]))) $own[] = $era;
+        }
+        if (count($own) < 2) return null;
+
+        $at = -1;
+        foreach ($own as $i => $era) {
+            foreach ((array) $era['operators'] as $op) {
+                if (isset($keys[kop_facility_eras_company_key($op)])) {
+                    $at = $i;
+                    break;
+                }
+            }
+        }
+        $last = count($own) - 1;
+        if ($at < 0 || $at === $last) return null;
+        if ($relationship !== 'past') {
+            $later_lists = false;
+            for ($i = $at + 1; $i <= $last; $i++) if (!empty($own[$i]['operators'])) $later_lists = true;
+            if (!$later_lists) return null;
+        }
+        $name = trim((string) $own[$at]['name']);
+        $record = trim((string) ($doc['identification']['name'] ?? ''));
+        if ($name === '' || ($record !== '' && kop_facility_eras_company_key($name) === kop_facility_eras_company_key($record))) return null;
+        return array('name' => $name, 'years' => kop_facility_eras_years_label($own[$at]['start'], $own[$at]['end']));
+    }
+}

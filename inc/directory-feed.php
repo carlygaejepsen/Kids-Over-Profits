@@ -42,7 +42,9 @@ function kop_directory_feed_fingerprint() {
         $parts[] = $table . ':' . (is_array($row) ? implode('|', array_map('strval', $row)) : '-');
     }
     $parts[] = 'v2:' . ((function_exists('kop_v2_active') && kop_v2_active('program_index')) ? '1' : '0');
-    $parts[] = 'v:1';
+    // Saved rename years decide which name a record has under each company.
+    $parts[] = 'renames:' . md5(serialize(function_exists('get_option') ? get_option('kop_network_rename_review', array()) : array()));
+    $parts[] = 'v:2';
     return $key = substr(md5(implode(';', $parts)), 0, 16);
 }
 
@@ -93,7 +95,7 @@ function kop_directory_feed_slim_facility($facility) {
         'postalCode', 'postal_code', 'zip', 'zipcode', 'country',
         'yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text',
         'founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year',
-        'isPrivatelyOwned',
+        'isPrivatelyOwned', 'nameUnderOperator', 'nameUnderOperatorYears',
     ));
     if (isset($facility['identification']) && is_array($facility['identification'])) {
         $ident = kop_directory_feed_pick($facility['identification'], array(

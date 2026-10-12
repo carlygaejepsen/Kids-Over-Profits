@@ -441,6 +441,11 @@ function displayFacilities(facilitiesData, containerId) {
         'program_name', 'facility_name'
     ]) || '';
 
+    // Under a company, a renamed program goes by the name it had while that
+    // company ran it (nameUnderOperator, inc/facility-eras.php); its card says
+    // what it is called now.
+    const getFacilityCardName = facility => cleanText(facility && facility.nameUnderOperator) || getFacilityDisplayName(facility);
+
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
 
@@ -970,9 +975,11 @@ function displayFacilities(facilitiesData, containerId) {
         const aliasPastOperators = collectUniqueTexts(names.previousOwnerList)
             .filter(op => normalizeTextKey(op) !== normalizeTextKey(operatorName))
             .slice(0, 3);
+        const nameThen = cleanText(facility && facility.nameUnderOperator);
+        if (nameThen) searchParts.push(nameThen);
         const aliases = [];
-        collectUniqueTexts(names.normalizedFormerNames, names.aliasNames).forEach(alias => {
-            if (normalizeTextKey(alias) === normalizeTextKey(name)) return;
+        collectUniqueTexts(names.normalizedFormerNames, names.aliasNames, nameThen ? [name] : []).forEach(alias => {
+            if (normalizeTextKey(alias) === normalizeTextKey(nameThen || name)) return;
             aliases.push({ alias, target: operatorName, facility: name, pastOperators: aliasPastOperators });
         });
 
@@ -1086,7 +1093,7 @@ function displayFacilities(facilitiesData, containerId) {
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
-            return compareDisplayText(getFacilityDisplayName(a), getFacilityDisplayName(b));
+            return compareDisplayText(getFacilityCardName(a), getFacilityCardName(b));
         });
 
         // Build operator header with Name - add class for long names or long words
@@ -1571,8 +1578,9 @@ function displayFacilities(facilitiesData, containerId) {
             const hasStatus = !isValueEmpty(operatingPeriod.status);
 
             // Build facility header with Name - Enhanced lookup
-            const facilityHeaderRaw = getFacilityDisplayName(facility);
+            const facilityHeaderRaw = getFacilityCardName(facility);
             const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
+            const facilityNowName = facilityHeaderRaw !== getFacilityDisplayName(facility) ? getFacilityDisplayName(facility) : '';
 
             // Data for display above the "cut"
             const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
@@ -1600,8 +1608,15 @@ function displayFacilities(facilitiesData, containerId) {
 
             let subtextParts = [];
 
-            if (normalizedFormerNames.length > 0) {
-                subtextParts.push(`Formerly: ${escapeHtml(normalizedFormerNames.join(', '))}`);
+            if (facilityNowName) {
+                const thenYears = cleanText(facility.nameUnderOperatorYears);
+                subtextParts.push(`Now known as: ${escapeHtml(facilityNowName)}`);
+                if (thenYears) subtextParts.push(`Under this name: ${escapeHtml(thenYears)}`);
+            }
+
+            const formerNamesShown = normalizedFormerNames.filter(n => normalizeTextKey(n) !== normalizeTextKey(facilityHeaderRaw));
+            if (formerNamesShown.length > 0) {
+                subtextParts.push(`Formerly: ${escapeHtml(formerNamesShown.join(', '))}`);
             }
 
             if (aliasNames.length > 0) {
