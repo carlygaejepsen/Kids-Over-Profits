@@ -129,6 +129,35 @@ function kop_rinbox_test_inspection_links(array $src, array $item, callable $che
     $check('inspection-links: an entry linked to a program by hand', $n === 1 && in_array($rid, kop_inspection_links_for($pid), true));
     kop_inspection_links_save(array('unlink' => array($pid . '-' . $rid)));
 
+    // seeds/inspection-links.json: every pair names a record and a licensing row that exist, in the
+    // record's state; applied once, a "Not this one" pair skipped, a removed link never comes back.
+    $sets = kop_inspection_links_seed_sets();
+    $pdo = $GLOBALS['pdo'];
+    $wrong = array();
+    $want = array();
+    foreach ($sets as $set) {
+        foreach ($set['links'] as $f => $rec) {
+            $st = $pdo->query('SELECT state, name FROM facilities_v2 WHERE id = ' . (int) $f)->fetch(PDO::FETCH_ASSOC);
+            foreach (array_keys($rec['rows']) as $r) {
+                $row = $pdo->query('SELECT state, facility_name FROM inspection_facilities WHERE id = ' . (int) $r)->fetch(PDO::FETCH_ASSOC);
+                if (!$st || !$row || strtoupper($st['state']) !== strtoupper($row['state']) || $st['name'] !== $rec['name']) $wrong[] = $f . '-' . $r;
+                $want[] = array((int) $f, (int) $r);
+            }
+        }
+    }
+    $check('inspection-links: the seed names real records and rows in one state', $sets && !$wrong, count($want) . ' pairs' . ($wrong ? '; wrong: ' . implode(', ', $wrong) : ''));
+    $GLOBALS['kop_test_options']['kop_inspection_links_seed'] = 0;
+    list($rf, $rr) = $want[0];
+    kop_inspection_links_save(array('decide' => array($rf . '-' . $rr => 'reject')));
+    $added = kop_inspection_links_apply_seed();
+    $missing = array_filter(array_slice($want, 1), function ($w) { return !in_array($w[1], kop_inspection_links_for($w[0]), true); });
+    $check('inspection-links: the seed links every pair but the one marked "Not this one"', !$missing && !in_array($rr, kop_inspection_links_for($rf), true)
+        && (int) get_option('kop_inspection_links_seed') === KOP_INSPECTION_LINKS_SEED_VERSION, $added . ' added');
+    list($uf, $ur) = $want[1];
+    kop_inspection_links_save(array('unlink' => array($uf . '-' . $ur)));
+    $check('inspection-links: the seed runs once (a removed link stays removed)', kop_inspection_links_apply_seed() === 0 && !in_array($ur, kop_inspection_links_for($uf), true));
+    unset($GLOBALS['kop_test_options']['kop_inspection_links_seed']);
+
     if ($saved === null) unset($GLOBALS['kop_test_options'][KOP_INSPECTION_LINKS_OPTION]);
     else $GLOBALS['kop_test_options'][KOP_INSPECTION_LINKS_OPTION] = $saved;
 }

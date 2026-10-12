@@ -313,6 +313,54 @@ function kop_inspection_links_save($post) {
     return $changed;
 }
 
+/*
+ * Links checked by hand outside the screen ship in seeds/inspection-links.json:
+ * each set is applied once, when its version is above the one stored in
+ * kop_inspection_links_seed. Links are only added; a pair someone marked
+ * "Not this one" is left alone, and Remove on the Linked tab takes one off
+ * for good (the set is never applied again).
+ */
+function kop_inspection_links_seed_sets($file = null) {
+    $file = $file ?: get_stylesheet_directory() . '/seeds/inspection-links.json';
+    $data = is_file($file) ? json_decode((string) file_get_contents($file), true) : null;
+    return is_array($data['sets'] ?? null) ? $data['sets'] : array();
+}
+
+/** Applies the seed's sets not applied yet; returns the number of links added. */
+function kop_inspection_links_apply_seed($file = null) {
+    $done = (int) get_option('kop_inspection_links_seed', 0);
+    $sets = kop_inspection_links_seed_sets($file);
+    $top = $done;
+    $decide = array();
+    $stored = kop_inspection_links_get();
+    foreach ($sets as $set) {
+        $v = (int) ($set['version'] ?? 0);
+        if ($v <= $done) continue;
+        $top = max($top, $v);
+        foreach ((array) ($set['links'] ?? array()) as $fid => $rec) {
+            foreach (array_keys((array) ($rec['rows'] ?? array())) as $rid) {
+                $fid = (int) $fid;
+                $rid = (int) $rid;
+                if ($fid <= 0 || $rid <= 0) continue;
+                if (in_array($rid, array_map('intval', (array) ($stored['rejected'][$fid] ?? array())), true)) continue;
+                if (in_array($rid, array_map('intval', (array) ($stored['links'][$fid] ?? array())), true)) continue;
+                $decide[$fid . '-' . $rid] = 'link';
+            }
+        }
+    }
+    // Marked first, so two requests at once do not both apply it (a second add would change nothing anyway).
+    // Autoloaded: the init check reads it on every request.
+    update_option('kop_inspection_links_seed', max($top, defined('KOP_INSPECTION_LINKS_SEED_VERSION') ? KOP_INSPECTION_LINKS_SEED_VERSION : 0));
+    return $decide ? kop_inspection_links_save(array('decide' => $decide)) : 0;
+}
+
+// The seed file's highest set version: bump with each new set so the next request applies it.
+const KOP_INSPECTION_LINKS_SEED_VERSION = 1;
+
+add_action('init', function () {
+    if ((int) get_option('kop_inspection_links_seed', 0) < KOP_INSPECTION_LINKS_SEED_VERSION) kop_inspection_links_apply_seed();
+}, 30);
+
 function kop_render_inspection_links_page() {
     if (!current_user_can('manage_options')) wp_die('Not allowed.');
     global $wpdb;

@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "about": "Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links), applied by kop_inspection_links_apply_seed() once per version: links are added, never removed, and a pair marked 'Not this one' is skipped. Each pair was checked by address or by the company's licensing name in the record's town. Remove any on Review inbox > Inspection links > Linked.",
+  "sets": [
+    {
+      "version": 1,
+      "why": "Companies watched closely (2026-10-12): their records licensed under campus or corporate names",
+      "links": {
+        "11117": { "name": "La Amistad Behavioral Health Services Teen Residential Treatment", "rows": { "12556": "LA AMISTAD RESIDENTIAL TREATMENT CENTER, 1650 Park Ave N, Maitland FL" } },
+        "11123": { "name": "Suncoast Behavioral Health Center RTP", "rows": { "4418": "SUNCOAST BEHAVIORAL HEALTH CENTER, 4480 51st St W, Bradenton FL", "12570": "SUNCOAST BEHAVIORAL HEALTH CENTER, 4480 51st St W, Bradenton FL" } },
+        "13091": { "name": "Havenwyck Hospital Residential Impulse Disorder Program", "rows": { "10774": "Havenwyck Impulse Disorder Program, 1700 University Dr, Auburn Hills MI" } },
+        "13542": { "name": "Cedar Ridge Behavioral Hospital", "rows": { "11001": "Cedar Ridge Residential Treatment Facility, 6501 NE 50th, Oklahoma City OK" } },
+        "12800": { "name": "Cumberland Hospital for Children and Adolescents", "rows": { "12289": "Cumberland RTC 7A, 8 and 9, 9407 Cumberland Rd, New Kent VA" } },
+        "14160": { "name": "Cumberland Hospital", "rows": { "12289": "Cumberland RTC 7A, 8 and 9, 9407 Cumberland Rd, New Kent VA" } },
+        "12802": { "name": "Kempsville Center for Behavioral Health Adolescent Residential Treatment Program", "rows": { "12297": "The Kempsville Center for B.H., 860 Kempsville Rd, Norfolk VA", "12444": "Kempsville Center, 860 Kempsville Rd, Norfolk VA" } },
+        "12803": { "name": "Liberty Point Behavioral Healthcare Secure Residential Treatment", "rows": { "12298": "Liberty Point Academy, 1110 Montgomery Ave, Staunton VA" } },
+        "12804": { "name": "Newport News Behavioral Health Center RTF", "rows": { "12299": "Newport News Behavioral Health, 17579 Warwick Blvd, Newport News VA" } },
+        "12805": { "name": "North Spring Behavioral Healthcare Horizons Program", "rows": { "12301": "North Spring Behavioral Health, 42005 Victory Ln, Leesburg VA", "12446": "North Spring Behavioral Healthcare, INC., 42005 Victory Ln, Leesburg VA" } },
+        "12806": { "name": "North Spring Behavioral Healthcare Sunrise Program", "rows": { "12301": "North Spring Behavioral Health, 42005 Victory Ln, Leesburg VA", "12446": "North Spring Behavioral Healthcare, INC., 42005 Victory Ln, Leesburg VA" } },
+        "12807": { "name": "North Spring Behavioral Healthcare Trailblazers Program", "rows": { "12301": "North Spring Behavioral Health, 42005 Victory Ln, Leesburg VA", "12446": "North Spring Behavioral Healthcare, INC., 42005 Victory Ln, Leesburg VA" } },
+        "12809": { "name": "Poplar Springs Hospital RTC", "rows": { "12302": "Poplar Springs Hospital, 350 Poplar Dr, Petersburg VA", "12447": "Poplar Springs- West Campus, 350 Poplar Dr, Petersburg VA" } },
+        "14014": { "name": "River Park Hospital – The Barboursville School", "rows": { "12243": "Barboursville School, 1535 Martha Rd, Barboursville WV" } },
+        "13412": { "name": "Wyoming Behavioral Institute Pathways Residential Trauma-Informed Care", "rows": { "12000": "Wyoming Behavioral Institute", "12018": "Wyoming Behavioral Health, 2521 E 15th St, Casper WY" } },
+        "12987": { "name": "Newport Academy – St. Cloud", "rows": { "999": "Newport Academy, 1726 7th Ave S, Saint Cloud MN" } },
+        "12928": { "name": "Newport Academy – Port Townsend", "rows": { "901": "Newport Academy, Port Townsend WA", "912": "Newport Academy, Port Townsend WA" } },
+        "11465": { "name": "Millcreek Behavioral Health Psychiatric Residential Treatment Facility", "rows": { "939": "Millcreek Behavioral Health / Habilitation Center, Inc. (AR)" } },
+        "11561": { "name": "Southwood Psychiatric Hospital Residential Treatment Program", "rows": { "11429": "Southwood Children's Behavioral Healthcare, 2575 Boyce Plaza Rd, Pittsburgh PA", "11430": "Southwood Children's Behavioral Healthcare, 2575 Boyce Plaza Rd, Pittsburgh PA" } },
+        "10606": { "name": "Cedar Crest Hospital & RTC", "rows": { "214": "HMIH CEDAR CREST, LLC, 3500 S IH 35, Belton TX" } },
+        "12163": { "name": "Mingus Mountain Academy", "rows": { "491": "MINGUS MOUNTAIN ESTATE RESIDENTIAL CENTER, INC, 3801 N Robert Rd, Prescott Valley AZ" } },
+        "10459": { "name": "Lakeside Academy", "rows": { "6542": "Youth Health Associates Inc dba Lakeside Academy, 5887 S Weber Dr, Ogden UT", "10094": "Youth Health Associates LLC dba Lakeside Academy, 5887 S Weber Dr, Ogden UT" } },
+        "12156": { "name": "Devereux Advanced Behavioral Health Arizona", "rows": { "515": "DEVEREUX ARIZONA - CASA AMISTAD, Tucson", "519": "DEVEREUX ARIZONA - CASA ENSUENO, Tucson", "524": "DEVEREUX ARIZONA - CASA VALOR, Tucson", "540": "DEVEREUX ARIZONA - CASA SOL, Tucson", "555": "DEVEREUX ARIZONA - BROADWAY CAMPUS, Tucson" } },
+        "11083": { "name": "Devereux Advanced Behavioral Health Florida", "rows": { "4392": "DEVEREUX FOUNDATION, THE, Titusville", "4393": "DEVEREUX FOUNDATION, THE, 6147 Christian Way, Orlando", "4394": "DEVEREUX FOUNDATION, THE, Viera", "12509": "DEVEREUX FOUNDATION, THE, Melbourne", "12550": "DEVEREUX FLORIDA, Viera" } },
+        "11088": { "name": "Devereux Florida Specialized Therapeutic Group Home", "rows": { "4392": "DEVEREUX FOUNDATION, THE, 1850 S Deleon Ave, Titusville FL" } },
+        "11087": { "name": "Devereux Florida RTC", "rows": { "4393": "DEVEREUX FOUNDATION, THE, 6147 Christian Way, Orlando FL" } },
+        "11084": { "name": "Devereux Florida Child and Adolescent Psychiatric Specialty Hospital", "rows": { "4393": "DEVEREUX FOUNDATION, THE, 6147 Christian Way, Orlando FL" } },
+        "11563": { "name": "Devereux Advanced Behavioral Health Pennsylvania", "rows": { "11049": "Abh Pennsylvania Children's Services: Brumer", "11050": "Abh Pennsylvania Children's Services: Daman", "11051": "Abh Pennsylvania Children's Services: Donovan Left", "11052": "Abh Pennsylvania Children's Services: Donovan Right", "11053": "Abh Pennsylvania Children's Services: Glenloch Left", "11054": "Abh Pennsylvania Children's Services: Glenloch Right", "11055": "Abh Pennsylvania Children's Services: Goldsmith Left", "11056": "Abh Pennsylvania Children's Services: Goldsmith Right", "11057": "Abh Pennsylvania Children's Services: Greenway Left", "11058": "Abh Pennsylvania Children's Services: Greenway Right", "11059": "Abh Pennsylvania Children's Services: Jackson A", "11060": "Abh Pennsylvania Children's Services: Jackson B", "11061": "Abh Pennsylvania Children's Services: Villas Lower", "11062": "Abh Pennsylvania Children's Services: Villas Upper" } },
+        "12484": { "name": "Devereux Advanced Behavioral Health Georgia", "rows": { "8888": "DEVEREUX GEORGIA TREATMENT NETWORK, Marietta", "8922": "THE DEVEREUX FOUNDATION D/B/A DEVEREUX ADVANCED BEHAVIORAL HEALTH GEORGIA - GIGI'S HOUSE, Hampton" } },
+        "10610": { "name": "Devereux Advanced Behavioral Health Texas", "rows": { "232": "ABH Texas Inc. DBA Devereux Texas Treatment Network, 1150 Devereux Dr, League City TX" } },
+        "10611": { "name": "Devereux Texas Autism Intensive Residential Program for Adolescents", "rows": { "232": "ABH Texas Inc. DBA Devereux Texas Treatment Network, 1150 Devereux Dr, League City TX" } },
+        "12684": { "name": "Chrysalis Therapeutic Boarding School", "rows": { "12454": "Innerchange Chrysalis LLC., 77 Trails End Rd, Eureka MT" } },
+        "10353": { "name": "New Haven RTC", "rows": { "6465": "New Haven dba Anthony House", "6466": "New Haven dba Nightingale House", "6467": "New Haven dba Parks House", "6468": "New Haven dba Roosevelt House", "6469": "New Haven dba Sacajawea House", "6470": "New Haven dba Teresa House" } },
+        "9685": { "name": "BlueFire Wilderness Therapy", "rows": { "11938": "Blue Fire Wilderness Therapy, 1526 Hwy 26, Gooding ID" } },
+        "11230": { "name": "The Vines PRTF", "rows": { "12522": "THE VINES, 3130 SW 27th Ave, Ocala FL", "12568": "VINES HOSPITAL, THE, 3130 SW 27th Ave, Ocala FL" } },
+        "10339": { "name": "ThreePeaks Ascent", "rows": { "6509": "Three Peaks Ascent, 21185 N Pine Valley Rd, Beryl UT" } }
+      }
+    }
+  ]
+}
