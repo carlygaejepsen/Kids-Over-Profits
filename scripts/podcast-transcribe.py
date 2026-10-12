@@ -112,7 +112,11 @@ def low_priority():
     """Below-normal CPU priority so the PC stays usable while Whisper runs for days."""
     if os.name == 'nt':
         try:
-            ctypes.windll.kernel32.SetPriorityClass(ctypes.windll.kernel32.GetCurrentProcess(), 0x4000)
+            from ctypes import wintypes
+            k32 = ctypes.windll.kernel32
+            k32.GetCurrentProcess.restype = wintypes.HANDLE  # the default int truncates the 64-bit pseudo-handle
+            k32.SetPriorityClass.argtypes = (wintypes.HANDLE, wintypes.DWORD)
+            k32.SetPriorityClass(k32.GetCurrentProcess(), 0x4000)  # BELOW_NORMAL_PRIORITY_CLASS
         except Exception:
             pass
 
