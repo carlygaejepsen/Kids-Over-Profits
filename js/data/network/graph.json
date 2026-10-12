@@ -6,7 +6,7 @@
    "nodes": 1730,
    "edges": 3073,
    "facilityMatches": 696,
-   "withYears": 425,
+   "withYears": 426,
    "withDeaths": 32,
    "rebranded": 248,
    "profileEdges": 553,
@@ -11912,15 +11912,19 @@
     "unknown": 1,
     "leadership": 1
    },
-   "facilityId": 14149,
-   "uniqueName": "Paradise Cove",
+   "facilityId": 100000,
+   "uniqueName": "A Better Way Youth Academy (Samoa)",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -230.4,
     "y": -682.88
    },
-   "years": "1994-2000"
+   "years": "1994-2000",
+   "otherNames": [
+    "Robert Louis Stevenson Youth Academy",
+    "Mole Ole Ava"
+   ]
   },
   {
    "id": "paul-johnson",
@@ -21567,10 +21571,7 @@
     "x": -230.4,
     "y": -664.5
    },
-   "otherNames": [
-    "Robert Louis Stevenson Youth Academy",
-    "Mole Ole Ava"
-   ]
+   "years": "from 2000"
   },
   {
    "id": "aaron-shaw",
@@ -43999,7 +44000,7 @@
     "x": -736.17,
     "y": -24.04
    },
-   "years": "from 2021"
+   "years": "2003-2021"
   },
   {
    "id": "northstar-academy",
