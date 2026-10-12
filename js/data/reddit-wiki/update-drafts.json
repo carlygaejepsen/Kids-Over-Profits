@@ -1,5 +1,138 @@
 {
  "entries": {
+  "10": {
+   "program": "Active Programs in Alabama",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "414c001a84c40de2e7c6e9a85a97520a2ecb68a7",
+   "record": {
+    "id": null,
+    "name": "",
+    "status": ""
+   },
+   "ops": [],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "| [** Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) | - | - | - |",
+     "new": "| [** Sequel TSI of Courtland**](https://www.reddit.com/r/troubledteens/wiki/index/sequelcourtland) (Brighter Path Courtland since 2022, [source](https://www.waaytv.com/news/its-a-house-of-horror-lawyer-speaks-on-unbearable-living-conditions-inside-brighter-path-courtland/article_628d2376-1a1b-11ef-a809-27aa4ca95e5c.html)) | - | Courtland, AL | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Renamed Brighter Path Courtland in 2022; still operating."
+    },
+    {
+     "id": "sq2",
+     "old": "| [** Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) | - | - | - |",
+     "new": "| [** Sequel TSI of Montgomery**](https://www.reddit.com/r/troubledteens/wiki/index/sequelmont) (Brighter Path Montgomery since 2022, [source](https://eji.org/news/alabama-continues-sending-children-to-facilities-where-abusive-conditions-reported/)) | - | Montgomery, AL | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Renamed Brighter Path Montgomery in 2022; still operating."
+    },
+    {
+     "id": "sq3",
+     "old": "| [** Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) | - | - | - |",
+     "new": "| [** Sequel TSI of Tuskegee**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltuskegee) (Brighter Path Tuskegee since 2022, [source](https://eji.org/news/alabama-continues-sending-children-to-facilities-where-abusive-conditions-reported/)) | 1998 | Tuskegee, AL | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Renamed Brighter Path Tuskegee in 2022; opened 1998 per NBC News ([source] link could also be https://www.nbcnews.com/news/us-news/mom-sues-alabama-youth-facilty-sequel-tsi-son-died-suicide-escape-livi-rcna45729)."
+    },
+    {
+     "id": "sq4",
+     "old": "| [** Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) | - | - | - |",
+     "new": "| [** Sequel TSI of Owens Cross Roads**](https://www.reddit.com/r/troubledteens/wiki/index/owenscross) (closed in 2022 and reopened on the same campus as Brighter Path, now Pathway of Madison County, [source](https://www.waff.com/2022/05/03/long-troubled-sequel-tsi-youth-services-center-shut-down-reopen/), [source](https://www.waff.com/2024/09/05/troubled-youth-attorney-weighs-pathway-madison-county-riot/)) | - | Owens Cross Roads, AL | - |",
+     "note": "Sequel audit (owner, 2026-10-12): The Sequel TSI name ended in 2022; the program runs on as Pathway of Madison County."
+    }
+   ],
+   "conflicts": []
+  },
+  "19": {
+   "program": "Active Programs in Georgia",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "2e7db34f9044e9f97037f7097b1583f51c644393",
+   "record": {
+    "id": null,
+    "name": "",
+    "status": ""
+   },
+   "ops": [],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "| [** Three Springs**](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) | - | - | - |",
+     "new": "| [** Three Springs**](https://www.reddit.com/r/troubledteens/wiki/index/threesprings) | 1993-2006 ([source](https://kidsoverprofits.org/three-springs-inc/)) | - | Blue Ridge, Augusta, Jesup and Darien, GA |",
+     "note": "Sequel audit (owner, 2026-10-12): Years from Woodbury June 1993 (two new Georgia programs) and KOP's Three Springs article (Georgia programs shut down in 2006); locations are the four Georgia programs KOP holds (Blue Ridge, Augusta, Wayne County Girls Program in Jesup, McIntosh YDC in Darien)."
+    }
+   ],
+   "conflicts": []
+  },
+  "29": {
+   "program": "Active Programs in Maryland",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "5d273aca639252691d24fec9b54d283f6ce78ce5",
+   "record": {
+    "id": null,
+    "name": "",
+    "status": ""
+   },
+   "ops": [],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "| [** Three Springs New Dominion Maryland**](https://www.reddit.com/r/troubledteens/wiki/index/3springsnewdominion) | - | - | - |",
+     "new": "| [** Three Springs New Dominion Maryland**](https://www.reddit.com/r/troubledteens/wiki/index/3springsnewdominion) | 1981-2008 ([source](https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1008.pdf#page=29)) | Old Town, MD | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Fills years and location: Woodbury Reports, October 2008, p. 29 says it had been in operation 27 years when it closed in September 2008; Old Town, MD is its address."
+    }
+   ],
+   "conflicts": []
+  },
+  "45": {
+   "program": "Active Programs in Ohio",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "8caf449acd6047b5f31027688dd94bde1c3a715b",
+   "record": {
+    "id": null,
+    "name": "",
+    "status": ""
+   },
+   "ops": [],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) | - | - | - |",
+     "new": "| [** Sequel Pomegranate Health Systems**](https://www.reddit.com/r/troubledteens/wiki/index/sequelpom) (renamed Torii Behavioral Health; closed in 2021, [source](https://www.10tv.com/article/news/investigations/10-investigates/sequel-pomegranate-tells-state-it-will-close/530-5ec3694d-29af-46c5-92c7-d06e4310e85a)) | - | - | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Closed in October 2021 under the name Torii Behavioral Health; the page already lists Torii under closed programs."
+    }
+   ],
+   "conflicts": []
+  },
+  "51": {
+   "program": "Active Programs in South Dakota",
+   "place": "",
+   "years": "",
+   "column": "original_markdown",
+   "base_sha1": "b4a5b0541e5eb631e1af779d50d3036c4b82eb06",
+   "record": {
+    "id": null,
+    "name": "",
+    "status": ""
+   },
+   "ops": [],
+   "tense": [],
+   "fixes": [
+    {
+     "id": "sq1",
+     "old": "| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) | - | - | - |",
+     "new": "| [** Sequel Transition Academy**](https://www.reddit.com/r/troubledteens/wiki/index/sequeltrans) (now Brighter Transition Youth Treatment Center, run by Vivant Behavioral Healthcare, [source](https://www.finance.senate.gov/imo/media/doc/sfc_report_warehouses_of_neglect.pdf#page=104)) | 2013 | Sioux Falls, SD ([source](https://dss.sd.gov/docs/childprotection/facilitylicensing/BRIGHTER_TRANSITION_YOUTH_TREATMENT_CENTER/BTYTC_2024.pdf)) | - |",
+     "note": "Sequel audit (owner, 2026-10-12): Still open, but renamed and run by Vivant; fills the year opened and location."
+    }
+   ],
+   "conflicts": []
+  },
   "64": {
    "program": "Boys Town",
    "place": "Boys Town, NE",
