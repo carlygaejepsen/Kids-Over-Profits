@@ -8,6 +8,11 @@
  * keeps KOP as it is; Undo on the Approved tab puts back exactly what
  * Approve changed.
  *
+ * A rename that explains why the years disagree (the proposal's 'renames',
+ * or a renamed pair Merge Duplicates finds for its record) is on the card in
+ * words; while both names are records of their own, "Merge as a rename" merges
+ * them right there (kop_daudit_rename_merge()), with its own Undo on the card.
+ *
  * Keys: the proposal's key (the flag id, or transferred-<facility id>).
  * Tool: approve every high-confidence proposal that needs nothing by hand.
  */
@@ -153,7 +158,7 @@ function kop_rinbox_daudit_item($key, array $p) {
         'closure_ordered' => 'Closure', 'operator_profile' => 'Operator', 'operator_inherited' => 'Operator after a sale',
         'person_spelling' => 'Same person?', 'person_common' => 'One person or several?', 'memorial' => 'Memorial',
         'transferred' => 'Transferred to a new company', 'sequel_history' => 'Sequel program history',
-        'company_record' => 'Company record',
+        'company_record' => 'Company record', 'rename_years' => 'Renamed: years disagree',
     );
     $names = kop_rinbox_daudit_names($p);
     $details = array();
@@ -163,6 +168,9 @@ function kop_rinbox_daudit_item($key, array $p) {
         $words = kop_daudit_op_words($op, $names);
         if ($words !== '') $details[] = array('label' => 'Change ' . (++$n), 'value' => $words);
     }
+    $renames = kop_rinbox_daudit_renames((string) $key, $p);
+    foreach ($renames as $r) $details[] = array('label' => 'Renamed', 'value' => kop_daudit_rename_words($r['state'])
+        . ($r['why'] !== '' ? ' (' . $r['why'] . ')' : ''));
     if (!empty($p['notes'])) $details[] = array('label' => 'Note', 'value' => (string) $p['notes']);
     $details[] = array('label' => 'Confidence', 'value' => (string) ($p['confidence'] ?? 'low'));
     if ($view === 'applied' || $view === 'rejected') {
@@ -170,11 +178,18 @@ function kop_rinbox_daudit_item($key, array $p) {
     }
     $details = array_merge($details, kop_rinbox_quote_details((array) ($p['sources'] ?? array())));
     $title = (string) ($p['title'] ?? $key);
-    if ($view === 'applied' || $view === 'rejected') {
+    if ($view === 'applied' && !empty($d['by_merge'])) {
+        // Approved by merging the rename: its Undo is the merge's own (below).
+        $actions = array();
+    } elseif ($view === 'applied' || $view === 'rejected') {
         $actions = array(array('id' => 'undo', 'label' => 'Undo', 'style' => 'undo',
             'help' => $view === 'applied'
                 ? 'Puts back what KOP had before for ' . $title . ' (anything edited since stays); the card waits for review again.'
                 : 'Nothing on the site changes; the card waits for review again.'));
+    } elseif (!$p['ops']) {
+        // A rename alone (the flag script's rename_years cards): merging it is the approval.
+        $actions = array(array('id' => 'reject', 'label' => 'Not one program: keep both records', 'style' => 'reject',
+            'help' => 'Nothing on the site changes; the card moves to Rejected.'));
     } else {
         $manual = kop_rinbox_daudit_has_manual($p);
         $actions = array(
@@ -184,6 +199,8 @@ function kop_rinbox_daudit_item($key, array $p) {
                 'help' => 'Nothing on the site changes; the card moves to Rejected.'),
         );
     }
+    $actions = $p['ops'] ? array_merge($actions, kop_rinbox_daudit_rename_actions($renames))
+        : array_merge(kop_rinbox_daudit_rename_actions($renames), $actions);
     $labels = array('high' => 'High confidence', 'review' => 'To review', 'applied' => 'Approved', 'rejected' => 'Rejected');
     return array(
         'key'          => $key,
@@ -209,6 +226,10 @@ function kop_rinbox_daudit_act($key, $action, array $params) {
             return array('message' => kop_daudit_reject($key, kop_rinbox_reviewer()));
         case 'undo':
             return array('message' => kop_daudit_undo($key));
+        case 'rename_merge':
+            return array('message' => kop_daudit_rename_merge($key, (string) ($params['pair'] ?? ''), (int) ($params['year'] ?? 0), kop_rinbox_reviewer()));
+        case 'rename_unmerge':
+            return array('message' => kop_daudit_rename_unmerge($key, (string) ($params['pair'] ?? '')));
     }
     throw new RuntimeException('Unknown action.');
 }
@@ -246,4 +267,55 @@ function kop_rinbox_daudit_conflicts() {
             'facility_id' => (int) ($p['facility_id'] ?? 0), 'editable' => false);
     }
     return $out;
+}
+
+/** The card's renames: pair => {pair, why, found, state (kop_daudit_rename_state())}; none when the store is not loaded. */
+function kop_rinbox_daudit_renames($key, array $p) {
+    $pairs = kop_daudit_renames($p);
+    if (!$pairs) return array();
+    try {
+        $pdo = kop_daudit_opts()['pdo'];
+    } catch (Throwable $e) {
+        return array();
+    }
+    $out = array();
+    foreach ($pairs as $pair => $r) {
+        $out[$pair] = array('pair' => $pair, 'why' => $r['found'] ? (string) $r['why'] : '', 'found' => $r['found'],
+            'state' => kop_daudit_rename_state($key, $r, $pdo));
+    }
+    return $out;
+}
+
+/** "Merge as a rename" while both names are records of their own; its Undo once merged from the card. */
+function kop_rinbox_daudit_rename_actions(array $renames) {
+    $merge = array();
+    $undo = array();
+    $year = '';
+    foreach ($renames as $pair => $r) {
+        $s = $r['state'];
+        if ($s['state'] === 'separate') {
+            $merge[$pair] = 'Keep ' . $s['later']['name'] . ' (#' . $s['later']['id'] . '); ' . $s['earlier']['name'] . ' (#' . $s['earlier']['id']
+                . ') becomes its earlier name' . ($s['year'] ? ', renamed ' . $s['year'] : '');
+            if ($year === '' && $s['year']) $year = (string) $s['year'];
+        } elseif ($s['state'] === 'merged') {
+            $undo[$pair] = 'Undo: ' . ($s['later']['name'] ?? ('#' . $s['later_id'])) . ' and record #' . $s['earlier_id'] . ' apart again';
+        }
+    }
+    $actions = array();
+    if ($merge) {
+        $actions[] = array('id' => 'rename_merge', 'label' => 'Merge as a rename', 'style' => 'approve',
+            'help' => 'One program under two names: the earlier name\'s record folds into the later one\'s and becomes its past name, keeping its own years, status, company and everything filed under it; the page is cut into one section per name and the old page forwards. The map\'s rename line gets the year. Approve the changes above first if they touch the earlier name\'s record. Undo is on this card.',
+            'confirm' => 'Merge these two records as one program renamed in the year given? You can undo it from this card.',
+            'params' => array(
+                array('name' => 'pair', 'label' => 'Records', 'type' => 'select', 'value' => (string) array_key_first($merge), 'options' => $merge),
+                array('name' => 'year', 'label' => 'Year of the rename' . (count($merge) > 1 ? ' (blank = as listed)' : ''), 'type' => 'number',
+                    'value' => count($merge) > 1 ? '' : $year),
+            ));
+    }
+    if ($undo) {
+        $actions[] = array('id' => 'rename_unmerge', 'label' => 'Undo the rename merge', 'style' => 'undo',
+            'help' => 'Splits the two records again, each with everything it had before the merge.',
+            'params' => array(array('name' => 'pair', 'label' => 'Merge', 'type' => 'select', 'value' => (string) array_key_first($undo), 'options' => $undo)));
+    }
+    return $actions;
 }

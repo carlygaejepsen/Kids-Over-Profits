@@ -33,10 +33,14 @@
  *                  date, precision, age, program, cause, place, source)
  *   manual         what an admin does by hand; approving marks it done
  *
+ * 'renames' (beside the ops) says a rename explains why the years disagree:
+ * the earlier and later name's records and the year; while both are records
+ * of their own the card offers "Merge as a rename" (see Renames below).
+ *
  * Approve checks every 'from' first and changes nothing when one no longer
  * holds; Undo puts back exactly what Approve changed and leaves anything
  * edited since. Decisions: option kop_data_audit_review, key => {decision,
- * by, at, done}; map years: option kop_data_audit_map_years.
+ * by, at, done, merges}; map years: option kop_data_audit_map_years.
  *
  * @package KidsOverProfits
  */
@@ -695,7 +699,8 @@ function kop_daudit_apply($key, $reviewer, $over_changes = false) {
         }
     }
     update_option('kop_data_audit_map_years', $map, false);
-    $decisions[$key] = array('decision' => 'applied', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => $done);
+    $decisions[$key] = kop_daudit_keep_merges($decisions[$key] ?? array(),
+        array('decision' => 'applied', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => $done));
     kop_daudit_save_decisions($decisions);
     return 'Approved: ' . (string) ($p['title'] ?? $key) . ' is corrected on the site now. Undo is on the Approved tab.';
 }
@@ -771,6 +776,7 @@ function kop_daudit_undo($key) {
         update_option('kop_data_audit_map_years', $map, false);
     }
     unset($decisions[$key]);
+    if (!empty($d['merges'])) $decisions[$key] = array('merges' => $d['merges']);
     kop_daudit_save_decisions($decisions);
     return 'Undone' . ($kept ? '; left as edited since: ' . implode(', ', $kept) : '') . '. It is waiting for review again.';
 }
@@ -779,7 +785,212 @@ function kop_daudit_reject($key, $reviewer) {
     if (!isset(kop_daudit_proposals()[$key])) throw new RuntimeException('That proposal is not in the list any more.');
     $decisions = kop_daudit_decisions();
     if (($decisions[$key]['decision'] ?? '') === 'applied') throw new RuntimeException('Approved already: undo it first.');
-    $decisions[$key] = array('decision' => 'rejected', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => array());
+    $decisions[$key] = kop_daudit_keep_merges($decisions[$key] ?? array(),
+        array('decision' => 'rejected', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => array()));
     kop_daudit_save_decisions($decisions);
     return 'Rejected. KOP keeps what it had.';
+}
+
+/* ---- Renames ------------------------------------------------------------ */
+
+/*
+ * A rename is often why a record's years disagree with the sources: the later
+ * name's record carries the opening year of the earlier name, or the earlier
+ * name's record never ends. A proposal names it in 'renames':
+ *   [{earlier: <record id>, later: <record id>, year: <rename year>, why: ""}]
+ * Proposals without one get the rename pairs Merge Duplicates finds for their
+ * record (pastNames, the map's rename lines). The card says which name had
+ * which years, and while both names are records of their own it offers "Merge
+ * as a rename" right there (kop_fmerge_do_merge() with the year; exact Undo
+ * through the merge log). Merges made from a card: decisions[key]['merges']
+ * ['earlier>later'] = {log, year, by, at}, kept through Approve, Reject and
+ * their Undo.
+ */
+
+/** The proposal's rename pairs, 'earlier>later' => {earlier, later, year, why, found}: researched ones, then found ones. */
+function kop_daudit_renames(array $p) {
+    $out = array();
+    foreach ((array) ($p['renames'] ?? array()) as $r) {
+        $e = (int) ($r['earlier'] ?? 0);
+        $l = (int) ($r['later'] ?? 0);
+        if ($e <= 0 || $l <= 0 || $e === $l) continue;
+        $out[$e . '>' . $l] = array('earlier' => $e, 'later' => $l, 'year' => (int) ($r['year'] ?? 0),
+            'why' => (string) ($r['why'] ?? ''), 'found' => false);
+    }
+    $fid = (int) ($p['facility_id'] ?? 0);
+    if ($fid > 0) {
+        foreach (kop_daudit_found_renames() as $r) {
+            $e = (int) ($r['earlier']['id'] ?? 0);
+            $l = (int) ($r['later']['id'] ?? 0);
+            if ($e !== $fid && $l !== $fid) continue;
+            if (isset($out[$e . '>' . $l]) || isset($out[$l . '>' . $e])) continue;
+            $out[$e . '>' . $l] = array('earlier' => $e, 'later' => $l, 'year' => (int) ($r['year'] ?? 0),
+                'why' => (string) ($r['why'] ?? ''), 'found' => true);
+        }
+    }
+    return $out;
+}
+
+/** Merge Duplicates' renamed pairs (kop_fmerge_screen_data(), cached an hour there). */
+function kop_daudit_found_renames() {
+    static $memo = null;
+    if ($memo !== null) return $memo;
+    $memo = array();
+    if (!function_exists('kop_fmerge_screen_data')) return $memo;
+    try {
+        $memo = (array) (kop_fmerge_screen_data()['renames'] ?? array());
+    } catch (Throwable $e) {
+        $memo = array();
+    }
+    return $memo;
+}
+
+/** One record's name and years, or null when it is not on file. */
+function kop_daudit_rename_side(PDO $pdo, $id) {
+    $st = $pdo->prepare('SELECT json_data FROM facilities_v2 WHERE id = ?');
+    $st->execute(array((int) $id));
+    $js = $st->fetchColumn();
+    if ($js === false) return null;
+    $doc = json_decode((string) $js, true) ?: array();
+    $op = (array) ($doc['operatingPeriod'] ?? array());
+    $yr = function ($v) { return (is_numeric($v) && (int) $v > 0) ? (int) $v : 0; };
+    return array('id' => (int) $id, 'name' => (string) ($doc['identification']['name'] ?? ('Record #' . $id)),
+        'start' => $yr($op['startYear'] ?? null), 'end' => $yr($op['endYear'] ?? null));
+}
+
+/**
+ * Where a rename pair stands: {state: separate | merged (from this card, with
+ * its log id) | merged_elsewhere | gone, earlier, later (sides, null when
+ * gone), year, after (each name's years once merged, while separate)}.
+ */
+function kop_daudit_rename_state($key, array $r, PDO $pdo) {
+    $resolve = function ($id) { return function_exists('kop_facility_merge_resolve') ? kop_facility_merge_resolve($id) : (int) $id; };
+    $e = kop_daudit_rename_side($pdo, $r['earlier']);
+    // A chain (Three Springs -> Sequel TSI -> Brighter Path) merges in any order: a later name merged on is followed.
+    $l = kop_daudit_rename_side($pdo, $resolve($r['later']));
+    $out = array('earlier' => $e, 'later' => $l, 'earlier_id' => (int) $r['earlier'], 'later_id' => (int) $r['later'],
+        'year' => (int) $r['year'], 'log' => '', 'state' => 'separate');
+    if ($e && $l) {
+        // No year researched or found: the earlier name's end, else the later one's start when it is after the earlier's.
+        if (!$out['year']) $out['year'] = $e['end'] ?: (($l['start'] && $l['start'] > $e['start']) ? $l['start'] : 0);
+        $out['after'] = kop_daudit_rename_years($e, $l, $out['year']);
+        return $out;
+    }
+    $mine = kop_daudit_decisions()[$key]['merges'][$r['earlier'] . '>' . $r['later']] ?? null;
+    if ($mine) {
+        $out['state'] = 'merged';
+        $out['log'] = (string) $mine['log'];
+        $out['year'] = (int) $mine['year'];
+    } else {
+        $out['state'] = ($l && $resolve($r['earlier']) === $l['id']) ? 'merged_elsewhere' : 'gone';
+    }
+    return $out;
+}
+
+/** Each name's years after a rename merge in $year, as kop_fmerge_execute() is given them. */
+function kop_daudit_rename_years(array $e, array $l, $year) {
+    $year = (int) $year;
+    return array(
+        'earlier' => array('start' => ($e['start'] && (!$year || $e['start'] <= $year)) ? $e['start'] : null, 'end' => $year ?: null),
+        'later'   => array('start' => ($l['start'] && $l['start'] >= $year) ? $l['start'] : ($year ?: null), 'end' => $l['end'] ?: null),
+    );
+}
+
+function kop_daudit_years_text(array $y) {
+    $s = (int) ($y['start'] ?? 0);
+    $e = (int) ($y['end'] ?? 0);
+    if ($s && $e) return $s === $e ? (string) $s : $s . ' to ' . $e;
+    if ($s) return 'from ' . $s;
+    if ($e) return 'until ' . $e;
+    return 'no years';
+}
+
+/** The card's line about one rename (a state from kop_daudit_rename_state()). */
+function kop_daudit_rename_words(array $s) {
+    $e = $s['earlier'];
+    $l = $s['later'];
+    $en = $e ? $e['name'] . ' (#' . $e['id'] . ')' : 'record #' . $s['earlier_id'];
+    $ln = $l ? $l['name'] . ' (#' . $l['id'] . ')' : 'record #' . $s['later_id'];
+    $when = $s['year'] ? 'in ' . $s['year'] : '(year not known)';
+    switch ($s['state']) {
+        case 'merged':
+            return $en . ' became ' . $ln . ' ' . $when . '. Merged as a rename from this card: each name keeps its own years.';
+        case 'merged_elsewhere':
+            return $en . ' became ' . $ln . ' ' . $when . '. Already merged into one program.';
+        case 'gone':
+            return 'Renamed ' . $when . ', but one of the two records is no longer on file (merged or deleted): ' . $en . ', ' . $ln . '.';
+    }
+    $line = $en . ' became ' . $ln . ' ' . $when . '. That is why the years on record disagree: '
+        . $e['name'] . ' has ' . kop_daudit_years_text($e) . ', ' . $l['name'] . ' has ' . kop_daudit_years_text($l) . '.';
+    if ($s['year']) {
+        $line .= ' Merged as a rename, ' . $e['name'] . ' keeps ' . kop_daudit_years_text($s['after']['earlier']) . ' and '
+            . $l['name'] . ' runs ' . kop_daudit_years_text($s['after']['later']) . '.';
+    }
+    return $line;
+}
+
+/** A replaced decision keeps the card's rename merges. */
+function kop_daudit_keep_merges(array $old, array $new) {
+    if (!empty($old['merges'])) $new['merges'] = $old['merges'];
+    return $new;
+}
+
+/**
+ * Merge the pair $pair ('earlier>later') of proposal $key as a rename in
+ * $year (0 = the researched or found year). Returns the message.
+ */
+function kop_daudit_rename_merge($key, $pair, $year, $reviewer) {
+    $p = kop_daudit_proposals()[$key] ?? null;
+    if (!$p) throw new RuntimeException('That proposal is not in the list any more.');
+    $r = kop_daudit_renames($p)[(string) $pair] ?? null;
+    if (!$r) throw new RuntimeException('That rename is not on this card.');
+    if (!function_exists('kop_fmerge_do_merge')) throw new RuntimeException('Merge Duplicates is not loaded.');
+    if (function_exists('get_stylesheet_directory')) require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';
+    $opts = kop_daudit_opts();
+    $pdo = $opts['pdo'];
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $s = kop_daudit_rename_state($key, $r, $pdo);
+    if ($s['state'] !== 'separate') throw new RuntimeException(kop_daudit_rename_words($s));
+    $year = (int) $year ?: (int) $s['year'];
+    if (!$year) throw new RuntimeException('Give the year of the rename.');
+    $y = kop_daudit_rename_years($s['earlier'], $s['later'], $year);
+    try {
+        $msg = kop_fmerge_do_merge($pdo, $opts['prefix'], $s['later']['id'], $s['earlier']['id'], (string) $reviewer,
+            array('year' => $year, 'earlier' => $y['earlier'], 'later' => $y['later']));
+    } finally {
+        if (function_exists('kop_fmerge_flush')) kop_fmerge_flush();
+    }
+    $log = kop_fmerge_log();
+    $decisions = kop_daudit_decisions();
+    $decisions[$key]['merges'][(string) $pair] = array('log' => (string) ($log[0]['id'] ?? ''), 'year' => $year,
+        'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'));
+    if (!$p['ops'] && empty($decisions[$key]['decision'])) {
+        // A card holding only the rename: the merge approves it.
+        $decisions[$key] += array('decision' => 'applied', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => array(), 'by_merge' => true);
+    }
+    kop_daudit_save_decisions($decisions);
+    return $msg . ' Undo is on this card and on Merge Duplicates\' Merged tab.';
+}
+
+/** Undo a rename merge made from proposal $key's card. Returns the message. */
+function kop_daudit_rename_unmerge($key, $pair) {
+    $decisions = kop_daudit_decisions();
+    $m = $decisions[$key]['merges'][(string) $pair] ?? null;
+    if (!$m || empty($m['log'])) throw new RuntimeException('This card made no merge to undo.');
+    if (function_exists('get_stylesheet_directory')) require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';
+    $opts = kop_daudit_opts();
+    $opts['pdo']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    try {
+        $msg = kop_fmerge_do_undo($opts['pdo'], $opts['prefix'], (string) $m['log']);
+    } finally {
+        if (function_exists('kop_fmerge_flush')) kop_fmerge_flush();
+    }
+    unset($decisions[$key]['merges'][(string) $pair]);
+    if (empty($decisions[$key]['merges'])) {
+        unset($decisions[$key]['merges']);
+        if (!empty($decisions[$key]['by_merge'])) unset($decisions[$key]);
+    }
+    if (empty($decisions[$key])) unset($decisions[$key]);
+    kop_daudit_save_decisions($decisions);
+    return $msg;
 }

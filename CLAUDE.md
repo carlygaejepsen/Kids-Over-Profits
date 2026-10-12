@@ -204,6 +204,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # Data audit (docs/PLAN.md 3.13): flag data outside sources should check (renamed programs ending with their earlier name, status vs
 # years, operators after a sale, one person under two spellings, memorials) -> tmp/data-audit/; research agents per tmp/data-audit/INSTRUCTIONS.md;
 # typed proposals in js/data/data-audit/proposals.json, reviewed at Review inbox > Data audit (inc/data-audit.php: every "from" checked, exact Undo)
+# A rename is often why years disagree: a proposal's 'renames' [{earlier, later, year}] (or a renamed pair Merge Duplicates finds for its
+# record) is printed on the card ("X became Y in 2016: that is why...") with "Merge as a rename" right there while both are records; Undo on
+# the card (kop_daudit_rename_merge()). The flag script's rename_years kind finds such pairs; every flag on one name carries 'renames'
 python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
 # Federal funding (docs/PLAN.md 3.15): Medicaid, foster care funds, ORR, TRICARE, PPP and Education money found for programs,

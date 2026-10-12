@@ -25,8 +25,22 @@ Kinds (patterns found by the 2026-10-06 spot check of the wiki pilot):
   person_common     one person id on many programs under a common name
                     (Jeff Johnson)
   memorial          every published memorial entry: date and cause
+  rename_years      a renamed program kept as two records whose years
+                    disagree because of the rename (the later name holds the
+                    earlier one's opening year, the earlier one never ends);
+                    the inbox card merges them as a rename right there
 
-    python scripts/data-audit.py [--kind rename_end_year ...] [--list]
+A flag on a record that is one name of a renamed pair carries 'renames':
+[{earlier, later, year, why}] (record ids, the rename year as guessed from
+the years). Research corrects the year and copies it into the proposal; the
+review inbox says the rename is why the years disagree and offers "Merge as
+a rename" while both names are records of their own.
+
+    python scripts/data-audit.py [--kind rename_end_year ...] [--list] [--propose-renames]
+
+--propose-renames adds every rename_years flag to js/data/data-audit/proposals.json
+as a card of its own (no changes, only the rename: the records are the
+evidence), keyed rename_years-<earlier>-<later>; cards already there are kept.
 """
 import argparse
 import json
@@ -145,6 +159,66 @@ def check_rename_end_year(recs, graph):
                             f'{len(same)} names on one record all end in {year}; the later name probably ran past it',
                             {'map_nodes': labels, 'record_years': [recs.get(fid, {}).get('start'), recs.get(fid, {}).get('end')]},
                             nodes=[n['id'] for n in same]))
+    return out
+
+
+def find_renames(recs, graph):
+    """(earlier id, later id) => why: a record listing another's name as a past name (or naming it as its current
+    name), and the map's rename lines between two records' names. Only pairs that are still two records."""
+    by_name = defaultdict(list)
+    for r in recs.values():
+        by_name[name_key(r['name'])].append(r)
+    out = {}
+
+    def add(e, l, why):
+        if e['id'] != l['id'] and (l['id'], e['id']) not in out and (not e['state'] or not l['state'] or e['state'] == l['state']):
+            out.setdefault((e['id'], l['id']), why)
+    for l in recs.values():
+        for past in as_list(l['ident'].get('pastNames')):
+            for e in by_name.get(name_key(past), []):
+                add(e, l, f"{l['name']} lists {e['name']} as a past name")
+    for e in recs.values():
+        for cur in as_list(e['ident'].get('currentName')):
+            for l in by_name.get(name_key(cur), []):
+                add(e, l, f"{e['name']} says it is now {l['name']}")
+    fid = {n['id']: n.get('facilityId') for n in graph['nodes']}
+    for ed in graph.get('edges', []):
+        if 'rebrand' not in (ed.get('roles') or []):
+            continue
+        a, b = recs.get(fid.get(ed['source'])), recs.get(fid.get(ed['target']))
+        if a and b:
+            add(a, b, f"the network map draws {a['name']} renamed {b['name']}")
+    return out
+
+
+def rename_year(e, l):
+    """The rename year the records suggest: the earlier name's end, else the later one's start when it is later."""
+    if e['end']:
+        return e['end']
+    if l['start'] and (not e['start'] or l['start'] > e['start']):
+        return l['start']
+    return None
+
+
+def check_rename_years(recs, renames):
+    out = []
+    for (eid, lid), why in sorted(renames.items()):
+        e, l = recs[eid], recs[lid]
+        off = []
+        if not l['start'] or (e['start'] and l['start'] <= e['start']):
+            off.append(f"{l['name']} opens {l['start'] or '(no year)'}, the earlier name's opening year or none")
+        if not e['end']:
+            off.append(f"{e['name']} has no end year")
+        elif l['start'] and l['start'] < e['end']:
+            off.append(f"{l['name']} starts {l['start']}, before {e['name']} ends {e['end']}")
+        if e['status'] in ('Open', 'Suspended') and l['status'] != 'Closed':
+            off.append(f"{e['name']} is still {e['status']}")
+        if not off:
+            continue
+        out.append(flag('rename_years', l, f"renamed program kept as two records, years disagree: {'; '.join(off)}",
+                        {'earlier': [e['name'], eid, e['status'], e['start'], e['end']],
+                         'later': [l['name'], lid, l['status'], l['start'], l['end']]},
+                        renames=[{'earlier': eid, 'later': lid, 'year': rename_year(e, l), 'why': why}]))
     return out
 
 
@@ -330,16 +404,61 @@ def check_memorial(con):
     return out
 
 
+def years_text(r):
+    if r['start'] and r['end']:
+        return '%d to %d' % (r['start'], r['end'])
+    if r['start']:
+        return 'from %d' % r['start']
+    if r['end']:
+        return 'until %d' % r['end']
+    return 'no years'
+
+
+def propose_renames(recs, flags):
+    """rename_years flags -> cards in proposals.json: no ops, the rename alone, merged from the card."""
+    path = os.path.join(ROOT, 'js', 'data', 'data-audit', 'proposals.json')
+    props = json.load(open(path, encoding='utf-8'))
+    have = {p['key'] for p in props}
+    paired = {(r['earlier'], r['later']) for p in props for r in p.get('renames', [])}
+    added = 0
+    for f in flags:
+        r = f['renames'][0]
+        key = 'rename_years-%d-%d' % (r['earlier'], r['later'])
+        if key in have or (r['earlier'], r['later']) in paired:
+            continue
+        e, l = recs[r['earlier']], recs[r['later']]
+        y = r['year']
+        props.append({
+            'key': key, 'kind': 'rename_years', 'title': l['name'], 'place': f.get('place', ''), 'facility_id': l['id'],
+            'verdict': 'unsure', 'confidence': 'medium' if y else 'low',
+            'finding': '%s and %s are one program under two names (%s), kept as two records, so their years disagree: %s.'
+                       % (e['name'], l['name'], r['why'], f['why'].split(': ', 1)[-1])
+                       + (' The records suggest the name changed in %d; check it before merging.' % y if y
+                          else ' The records do not say when the name changed: give the year when merging.'),
+            'kop_now': '%s (#%d): %s, %s. %s (#%d): %s, %s.' % (e['name'], e['id'], e['status'] or 'no status', years_text(e),
+                                                              l['name'], l['id'], l['status'] or 'no status', years_text(l)),
+            'sources': [], 'ops': [],
+            'renames': [{'earlier': r['earlier'], 'later': r['later'], 'year': y, 'why': r['why']} if y else
+                        {'earlier': r['earlier'], 'later': r['later'], 'why': r['why']}],
+        })
+        added += 1
+    with open(path, 'w', encoding='utf-8', newline='\n') as fh:
+        fh.write(json.dumps(props, indent=1, ensure_ascii=False) + '\n')
+    print('proposals.json: %d rename cards added (%d proposals)' % (added, len(props)))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--kind', nargs='*')
     ap.add_argument('--list', action='store_true')
+    ap.add_argument('--propose-renames', action='store_true')
     args = ap.parse_args()
     if not os.path.exists(DB) or os.path.getsize(DB) == 0:
         sys.exit('tmp/prod.sqlite is missing or empty: run python scripts/sync-prod-sqlite.py')
     con = sqlite3.connect('file:%s?mode=ro' % DB.replace('\\', '/'), uri=True)
     graph = json.load(open(GRAPH, encoding='utf-8'))
     recs = load_records(con)
+    renames = find_renames(recs, graph)
     checks = {
         'rename_end_year': lambda: check_rename_end_year(recs, graph),
         'end_before_items': lambda: check_end_before_items(con, recs),
@@ -349,6 +468,7 @@ def main():
         'operator_inherited': lambda: check_operator_inherited(recs, graph),
         'person_spelling': lambda: check_people(con, recs),
         'memorial': lambda: check_memorial(con),
+        'rename_years': lambda: check_rename_years(recs, renames),
     }
     flags = []
     for kind, fn in checks.items():
@@ -358,6 +478,15 @@ def main():
     con.close()
     if args.kind:
         flags = [f for f in flags if f['kind'] in args.kind]
+    # Any flag on one name of a renamed pair: the rename may be why its years look wrong.
+    pairs_of = defaultdict(list)
+    for (eid, lid), why in renames.items():
+        pair = {'earlier': eid, 'later': lid, 'year': rename_year(recs[eid], recs[lid]), 'why': why}
+        pairs_of[eid].append(pair)
+        pairs_of[lid].append(pair)
+    for f in flags:
+        if 'renames' not in f and pairs_of.get(f.get('facility_id')):
+            f['renames'] = pairs_of[f['facility_id']]
     # stable ids, so results written by research agents survive a rerun
     seen = defaultdict(int)
     for f in flags:
@@ -381,6 +510,8 @@ def main():
     with open(os.path.join(OUT, 'report.md'), 'w', encoding='utf-8') as fh:
         fh.write('\n'.join(lines) + '\n')
     print('\n'.join(lines[:12]))
+    if args.propose_renames:
+        propose_renames(recs, [f for f in flags if f['kind'] == 'rename_years'])
     if args.list:
         for f in flags:
             print(json.dumps(f, ensure_ascii=False)[:400])

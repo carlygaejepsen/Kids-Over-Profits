@@ -2199,10 +2199,14 @@
     "type": "note",
     "facility_id": 100084,
     "text": "Florida ended its Youth Services International contracts in 2016; the Daytona Beach site now runs as Daytona Juvenile Residential Facility under Rite of Passage, Inc."
-   },
+   }
+  ],
+  "renames": [
    {
-    "type": "manual",
-    "text": "Timberline Academy (100084) and Daytona Juvenile Residential Facility (9606) look like one program on one site; merge them as a rename at KOP Tools > Merge Duplicates > Renamed programs (keep 9606, the current name)."
+    "earlier": 100084,
+    "later": 9606,
+    "year": 2016,
+    "why": "Florida ended its YSI contracts in 2016; the site became Daytona Juvenile Residential Facility under Rite of Passage"
    }
   ]
  },
@@ -3711,6 +3715,14 @@
     "type": "manual",
     "text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 as a rename at KOP Tools > Merge Duplicates (Merge as a rename), or find what became of it and set status Closed (2009) or Open."
    }
+  ],
+  "renames": [
+   {
+    "earlier": 9653,
+    "later": 11097,
+    "year": 2009,
+    "why": "Sequel bought Three Springs in 2009"
+   }
   ]
  },
  {
@@ -3761,6 +3773,20 @@
     "type": "manual",
     "text": "Brighter Path Tuskegee (13641) and Sequel TSI of Tuskegee (100078) are this program's later names: merge 9657 and 100078 into 13641 as renames at KOP Tools > Merge Duplicates > Renamed programs, and confirm it still runs (latest source 2021-22) before setting status Open; the current operator \"Alabama Department of Human Resources\" is a placing agency, not the operator."
    }
+  ],
+  "renames": [
+   {
+    "earlier": 9657,
+    "later": 100078,
+    "year": 2009,
+    "why": "Sequel bought Three Springs in 2009"
+   },
+   {
+    "earlier": 100078,
+    "later": 13641,
+    "year": 2022,
+    "why": "Vivant renamed Sequel TSI of Alabama Brighter Path in 2022"
+   }
   ]
  },
  {
@@ -3788,10 +3814,13 @@
    }
   ],
   "notes": "The April 2014 sale is from the research notes on Youth Care of Utah, not a quoted source; the sources listed are about Aspen and Youth Care.",
-  "ops": [
+  "ops": [],
+  "renames": [
    {
-    "type": "manual",
-    "text": "Island View RTC is the earlier name of Elevations RTC (record 10356, Family Help & Wellness, which lists Island View RTC as its past name): Aspen sold it in April 2014 and it was renamed. Merge 10348 into 10356 as a rename (renamed 2014) at KOP Tools > Merge Duplicates > Renamed programs, so each name keeps its own years and facts."
+    "earlier": 10348,
+    "later": 10356,
+    "year": 2014,
+    "why": "Aspen sold Island View in April 2014 and it was renamed Elevations RTC"
    }
   ]
  },
@@ -4136,10 +4165,13 @@
    }
   ],
   "notes": "Wikipedia only (lead).",
-  "ops": [
+  "ops": [],
+  "renames": [
    {
-    "type": "manual",
-    "text": "Copper Canyon Academy is the earlier name of Sedona Sky Academy (record 12161, which lists it as a past name). Merge 12155 into 12161 as a rename (renamed 2014) at KOP Tools > Merge Duplicates > Renamed programs, so each name keeps its own years and facts."
+    "earlier": 12155,
+    "later": 12161,
+    "year": 2014,
+    "why": "Copper Canyon Academy became Sedona Sky Academy in 2014"
    }
   ]
  },
@@ -8873,6 +8905,23 @@
    {
     "type": "manual",
     "text": "Merge as renames: #100075 into #13639, #100077 into #13640, #100078 into #13641 (rename year 2022). Merge duplicates: #14054 with #14058. Merge #100272 into Auldern Academy #9637 after checking the APM story."
+   }
+  ],
+  "renames": [
+   {
+    "earlier": 100075,
+    "later": 13639,
+    "year": 2022
+   },
+   {
+    "earlier": 100077,
+    "later": 13640,
+    "year": 2022
+   },
+   {
+    "earlier": 100078,
+    "later": 13641,
+    "year": 2022
    }
   ]
  },
@@ -15027,6 +15076,1129 @@
    {
     "type": "manual",
     "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9686, 9651 are one program; keep 9686. one program at 2850 Industrial Way, Mountain Home, ID; 9686 has the current name, map node and wiki entry"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9628-11222",
+  "kind": "rename_years",
+  "title": "Substance Abuse – Family Education",
+  "place": "Orlando, FL",
+  "facility_id": 11222,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Straight – Orlando and Substance Abuse – Family Education are one program under two names (Substance Abuse – Family Education lists Straight – Orlando as a past name), kept as two records, so their years disagree: Substance Abuse – Family Education opens (no year), the earlier name's opening year or none. The records suggest the name changed in 1992; check it before merging.",
+  "kop_now": "Straight – Orlando (#9628): Closed, 1985 to 1992. Substance Abuse – Family Education (#11222): Closed, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9628,
+    "later": 11222,
+    "year": 1992,
+    "why": "Substance Abuse – Family Education lists Straight – Orlando as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9637-11903",
+  "kind": "rename_years",
+  "title": "Sequel TSI of North Carolina",
+  "place": "Pittsboro, NC",
+  "facility_id": 11903,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Auldern Academy and Sequel TSI of North Carolina are one program under two names (the network map draws Auldern Academy renamed Sequel TSI of North Carolina), kept as two records, so their years disagree: Sequel TSI of North Carolina starts 2009, before Auldern Academy ends 2021. The records suggest the name changed in 2021; check it before merging.",
+  "kop_now": "Auldern Academy (#9637): Closed, 2001 to 2021. Sequel TSI of North Carolina (#11903): Closed, 2009 to 2010.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9637,
+    "later": 11903,
+    "year": 2021,
+    "why": "the network map draws Auldern Academy renamed Sequel TSI of North Carolina"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9637-11939",
+  "kind": "rename_years",
+  "title": "Three Points Center",
+  "place": "Siler City, NC",
+  "facility_id": 11939,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Auldern Academy and Three Points Center are one program under two names (Three Points Center lists Auldern Academy as a past name), kept as two records, so their years disagree: Three Points Center opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2021; check it before merging.",
+  "kop_now": "Auldern Academy (#9637): Closed, 2001 to 2021. Three Points Center (#11939): Closed, until 2025.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9637,
+    "later": 11939,
+    "year": 2021,
+    "why": "Three Points Center lists Auldern Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9640-13678",
+  "kind": "rename_years",
+  "title": "Pathway of Madison County",
+  "place": "Owens Cross Rds, AL",
+  "facility_id": 13678,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "New Beginnings Residential School and Pathway of Madison County are one program under two names (Pathway of Madison County lists New Beginnings Residential School as a past name), kept as two records, so their years disagree: Pathway of Madison County opens (no year), the earlier name's opening year or none; New Beginnings Residential School has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "New Beginnings Residential School (#9640): Closed, no years. Pathway of Madison County (#13678): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9640,
+    "later": 13678,
+    "why": "Pathway of Madison County lists New Beginnings Residential School as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9644-13678",
+  "kind": "rename_years",
+  "title": "Pathway of Madison County",
+  "place": "Owens Cross Rds, AL",
+  "facility_id": 13678,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Three Springs New Beginnings and Pathway of Madison County are one program under two names (Three Springs New Beginnings says it is now Pathway of Madison County), kept as two records, so their years disagree: Pathway of Madison County opens (no year), the earlier name's opening year or none; Three Springs New Beginnings has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Three Springs New Beginnings (#9644): Transferred, from 1996. Pathway of Madison County (#13678): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9644,
+    "later": 13678,
+    "why": "Three Springs New Beginnings says it is now Pathway of Madison County"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9647-13639",
+  "kind": "rename_years",
+  "title": "Brighter Path Courtland",
+  "place": "Courtland, AL",
+  "facility_id": 13639,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Three Springs of Courtland and Brighter Path Courtland are one program under two names (Three Springs of Courtland says it is now Brighter Path Courtland), kept as two records, so their years disagree: Brighter Path Courtland opens (no year), the earlier name's opening year or none; Three Springs of Courtland has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Three Springs of Courtland (#9647): Transferred, from 1990. Brighter Path Courtland (#13639): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9647,
+    "later": 13639,
+    "why": "Three Springs of Courtland says it is now Brighter Path Courtland"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9654-11098",
+  "kind": "rename_years",
+  "title": "St. John's Youth Academy",
+  "place": "St. Augustine, FL",
+  "facility_id": 11098,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Three Springs of St. Johns and St. John's Youth Academy are one program under two names (the network map draws Three Springs of St. Johns renamed St. John's Youth Academy), kept as two records, so their years disagree: St. John's Youth Academy opens (no year), the earlier name's opening year or none; Three Springs of St. Johns has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Three Springs of St. Johns (#9654): Unknown, no years. St. John's Youth Academy (#11098): Closed, until 2022.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9654,
+    "later": 11098,
+    "why": "the network map draws Three Springs of St. Johns renamed St. John's Youth Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9654-11130",
+  "kind": "rename_years",
+  "title": "St. Augustine Youth Academy",
+  "place": "St. Augustine, FL",
+  "facility_id": 11130,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Three Springs of St. Johns and St. Augustine Youth Academy are one program under two names (Three Springs of St. Johns says it is now St. Augustine Youth Academy), kept as two records, so their years disagree: St. Augustine Youth Academy opens (no year), the earlier name's opening year or none; Three Springs of St. Johns has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Three Springs of St. Johns (#9654): Unknown, no years. St. Augustine Youth Academy (#11130): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9654,
+    "later": 11130,
+    "why": "Three Springs of St. Johns says it is now St. Augustine Youth Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9657-13641",
+  "kind": "rename_years",
+  "title": "Brighter Path Tuskegee",
+  "place": "Tuskegee, AL",
+  "facility_id": 13641,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Three Springs School of Tuskegee and Brighter Path Tuskegee are one program under two names (Three Springs School of Tuskegee says it is now Brighter Path Tuskegee), kept as two records, so their years disagree: Brighter Path Tuskegee opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2009; check it before merging.",
+  "kop_now": "Three Springs School of Tuskegee (#9657): Transferred, 2001 to 2009. Brighter Path Tuskegee (#13641): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9657,
+    "later": 13641,
+    "year": 2009,
+    "why": "Three Springs School of Tuskegee says it is now Brighter Path Tuskegee"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9660-100071",
+  "kind": "rename_years",
+  "title": "Redwood Youth Academy",
+  "place": "Raiford, FL",
+  "facility_id": 100071,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Union Juvenile Residential Facility and Redwood Youth Academy are one program under two names (Union Juvenile Residential Facility says it is now Redwood Youth Academy), kept as two records, so their years disagree: Redwood Youth Academy opens (no year), the earlier name's opening year or none; Union Juvenile Residential Facility has no end year; Union Juvenile Residential Facility is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Union Juvenile Residential Facility (#9660): Open, from 2009. Redwood Youth Academy (#100071): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9660,
+    "later": 100071,
+    "why": "Union Juvenile Residential Facility says it is now Redwood Youth Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-9743-9928",
+  "kind": "rename_years",
+  "title": "Embark Behavioral Health RTC",
+  "place": "San Martin, CA",
+  "facility_id": 9928,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Embark at San Martin and Embark Behavioral Health RTC are one program under two names (Embark Behavioral Health RTC lists Embark at San Martin as a past name), kept as two records, so their years disagree: Embark Behavioral Health RTC opens (no year), the earlier name's opening year or none; Embark at San Martin has no end year; Embark at San Martin is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Embark at San Martin (#9743): Open, from 2022. Embark Behavioral Health RTC (#9928): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 9743,
+    "later": 9928,
+    "why": "Embark Behavioral Health RTC lists Embark at San Martin as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10333-10337",
+  "kind": "rename_years",
+  "title": "OASIS Ascent",
+  "place": "Millcreek, UT",
+  "facility_id": 10337,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Discovery Academy and OASIS Ascent are one program under two names (the network map draws Discovery Academy renamed OASIS Ascent), kept as two records, so their years disagree: OASIS Ascent starts 2021, before Discovery Academy ends 2022. The records suggest the name changed in 2022; check it before merging.",
+  "kop_now": "Discovery Academy (#10333): Closed, 1989 to 2022. OASIS Ascent (#10337): Open, from 2021.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10333,
+    "later": 10337,
+    "year": 2022,
+    "why": "the network map draws Discovery Academy renamed OASIS Ascent"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10334-10335",
+  "kind": "rename_years",
+  "title": "Discovery Ranch",
+  "place": "Mapleton, UT",
+  "facility_id": 10335,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Discovery Ranch South and Discovery Ranch are one program under two names (the network map draws Discovery Ranch South renamed Discovery Ranch), kept as two records, so their years disagree: Discovery Ranch opens 2005, the earlier name's opening year or none; Discovery Ranch South has no end year; Discovery Ranch South is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Discovery Ranch South (#10334): Open, from 2013. Discovery Ranch (#10335): Open, from 2005.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10334,
+    "later": 10335,
+    "why": "the network map draws Discovery Ranch South renamed Discovery Ranch"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10379-10557",
+  "kind": "rename_years",
+  "title": "UHS of Provo Canyon Springville Campus",
+  "place": "Springville, UT",
+  "facility_id": 10557,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Academy at Canyon Creek and UHS of Provo Canyon Springville Campus are one program under two names (the network map draws Academy at Canyon Creek renamed UHS of Provo Canyon Springville Campus), kept as two records, so their years disagree: UHS of Provo Canyon Springville Campus opens 2005, the earlier name's opening year or none; Academy at Canyon Creek has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Academy at Canyon Creek (#10379): Closed, from 2006. UHS of Provo Canyon Springville Campus (#10557): Closed, 2005 to 2026.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10379,
+    "later": 10557,
+    "why": "the network map draws Academy at Canyon Creek renamed UHS of Provo Canyon Springville Campus"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10425-10496",
+  "kind": "rename_years",
+  "title": "Olympus Academy",
+  "place": "Hurricane, UT",
+  "facility_id": 10496,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Diamond Ranch Academy and Olympus Academy are one program under two names (Olympus Academy lists Diamond Ranch Academy as a past name), kept as two records, so their years disagree: Olympus Academy starts 2013, before Diamond Ranch Academy ends 2023. The records suggest the name changed in 2023; check it before merging.",
+  "kop_now": "Diamond Ranch Academy (#10425): Closed, 1999 to 2023. Olympus Academy (#10496): Closed, from 2013.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10425,
+    "later": 10496,
+    "year": 2023,
+    "why": "Olympus Academy lists Diamond Ranch Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10451-10592",
+  "kind": "rename_years",
+  "title": "Youth Foundation Success Academy",
+  "place": "La Verkin, UT",
+  "facility_id": 10592,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Horizon Academy and Youth Foundation Success Academy are one program under two names (the network map draws Horizon Academy renamed Youth Foundation Success Academy), kept as two records, so their years disagree: Youth Foundation Success Academy starts 2011, before Horizon Academy ends 2013. The records suggest the name changed in 2013; check it before merging.",
+  "kop_now": "Horizon Academy (#10451): Closed, 2004 to 2013. Youth Foundation Success Academy (#10592): Closed, 2011 to 2014.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10451,
+    "later": 10592,
+    "year": 2013,
+    "why": "the network map draws Horizon Academy renamed Youth Foundation Success Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10496-10545",
+  "kind": "rename_years",
+  "title": "Three Points Center, LLC",
+  "place": "Hurricane, UT",
+  "facility_id": 10545,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Olympus Academy and Three Points Center, LLC are one program under two names (Three Points Center, LLC lists Olympus Academy as a past name), kept as two records, so their years disagree: Olympus Academy has no end year. The records suggest the name changed in 2014; check it before merging.",
+  "kop_now": "Olympus Academy (#10496): Closed, from 2013. Three Points Center, LLC (#10545): Closed, 2014 to 2025.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10496,
+    "later": 10545,
+    "year": 2014,
+    "why": "Three Points Center, LLC lists Olympus Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10563-10546",
+  "kind": "rename_years",
+  "title": "ThreePeaks Ascent RTC",
+  "place": "Beryl, UT",
+  "facility_id": 10546,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Vantage Point and ThreePeaks Ascent RTC are one program under two names (the network map draws Vantage Point renamed ThreePeaks Ascent RTC), kept as two records, so their years disagree: Vantage Point has no end year; Vantage Point is still Open. The records suggest the name changed in 2023; check it before merging.",
+  "kop_now": "Vantage Point (#10563): Open, no years. ThreePeaks Ascent RTC (#10546): Open, from 2023.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10563,
+    "later": 10546,
+    "year": 2023,
+    "why": "the network map draws Vantage Point renamed ThreePeaks Ascent RTC"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10572-10350",
+  "kind": "rename_years",
+  "title": "Outback Therapeutic Expeditions",
+  "place": "Lehi, UT",
+  "facility_id": 10350,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Walkabout Therapeutic Expeditions and Outback Therapeutic Expeditions are one program under two names (the network map draws Walkabout Therapeutic Expeditions renamed Outback Therapeutic Expeditions), kept as two records, so their years disagree: Walkabout Therapeutic Expeditions has no end year. The records suggest the name changed in 2001; check it before merging.",
+  "kop_now": "Walkabout Therapeutic Expeditions (#10572): Closed, no years. Outback Therapeutic Expeditions (#10350): Closed, 2001 to 2023.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10572,
+    "later": 10350,
+    "year": 2001,
+    "why": "the network map draws Walkabout Therapeutic Expeditions renamed Outback Therapeutic Expeditions"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-10615-10967",
+  "kind": "rename_years",
+  "title": "Thrive Girls Ranch and Home",
+  "place": "Round Rock, TX",
+  "facility_id": 10967,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "THRIVE Girls Academy and Thrive Girls Ranch and Home are one program under two names (Thrive Girls Ranch and Home lists THRIVE Girls Academy as a past name), kept as two records, so their years disagree: Thrive Girls Ranch and Home opens (no year), the earlier name's opening year or none; THRIVE Girls Academy has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "THRIVE Girls Academy (#10615): Unknown, no years. Thrive Girls Ranch and Home (#10967): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 10615,
+    "later": 10967,
+    "why": "Thrive Girls Ranch and Home lists THRIVE Girls Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11098-11130",
+  "kind": "rename_years",
+  "title": "St. Augustine Youth Academy",
+  "place": "St. Augustine, FL",
+  "facility_id": 11130,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "St. John's Youth Academy and St. Augustine Youth Academy are one program under two names (St. Augustine Youth Academy lists St. John's Youth Academy as a past name), kept as two records, so their years disagree: St. Augustine Youth Academy opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2022; check it before merging.",
+  "kop_now": "St. John's Youth Academy (#11098): Closed, until 2022. St. Augustine Youth Academy (#11130): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11098,
+    "later": 11130,
+    "year": 2022,
+    "why": "St. Augustine Youth Academy lists St. John's Youth Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11101-11102",
+  "kind": "rename_years",
+  "title": "Treasure Coast Boys Academy",
+  "place": "Vero Beach, FL",
+  "facility_id": 11102,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Anderson Academy and Treasure Coast Boys Academy are one program under two names (Treasure Coast Boys Academy lists Anderson Academy as a past name), kept as two records, so their years disagree: Treasure Coast Boys Academy opens (no year), the earlier name's opening year or none; Anderson Academy has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Anderson Academy (#11101): Unknown, no years. Treasure Coast Boys Academy (#11102): Closed, until 2025.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11101,
+    "later": 11102,
+    "why": "Treasure Coast Boys Academy lists Anderson Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11112-11135",
+  "kind": "rename_years",
+  "title": "AMIkids Polk Inc.",
+  "place": "Bartow, FL",
+  "facility_id": 11135,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Polk Halfway House and AMIkids Polk Inc. are one program under two names (AMIkids Polk Inc. lists Polk Halfway House as a past name), kept as two records, so their years disagree: Polk Halfway House has no end year. The records suggest the name changed in 1999; check it before merging.",
+  "kop_now": "Polk Halfway House (#11112): Unknown, no years. AMIkids Polk Inc. (#11135): Open, from 1999.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11112,
+    "later": 11135,
+    "year": 1999,
+    "why": "AMIkids Polk Inc. lists Polk Halfway House as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11240-11260",
+  "kind": "rename_years",
+  "title": "Acadia Village",
+  "place": "Louisville, TN",
+  "facility_id": 11260,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Village Behavioral Health Treatment Center and Acadia Village are one program under two names (the network map draws Village Behavioral Health Treatment Center renamed Acadia Village), kept as two records, so their years disagree: Acadia Village opens (no year), the earlier name's opening year or none; Village Behavioral Health Treatment Center has no end year; Village Behavioral Health Treatment Center is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Village Behavioral Health Treatment Center (#11240): Open, from 1986. Acadia Village (#11260): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11240,
+    "later": 11260,
+    "why": "the network map draws Village Behavioral Health Treatment Center renamed Acadia Village"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11572-100129",
+  "kind": "rename_years",
+  "title": "Embark Behavioral Health RTC",
+  "place": "White Haven, PA",
+  "facility_id": 100129,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Embark at The Poconos and Embark Behavioral Health RTC are one program under two names (Embark Behavioral Health RTC lists Embark at The Poconos as a past name), kept as two records, so their years disagree: Embark Behavioral Health RTC opens (no year), the earlier name's opening year or none; Embark at The Poconos has no end year; Embark at The Poconos is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Embark at The Poconos (#11572): Open, no years. Embark Behavioral Health RTC (#100129): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11572,
+    "later": 100129,
+    "why": "Embark Behavioral Health RTC lists Embark at The Poconos as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11638-11578",
+  "kind": "rename_years",
+  "title": "Abraxas Youth Center",
+  "place": "South Mountain, PA",
+  "facility_id": 11578,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "South Mountain Secure Treatment Unit and Abraxas Youth Center are one program under two names (Abraxas Youth Center lists South Mountain Secure Treatment Unit as a past name), kept as two records, so their years disagree: Abraxas Youth Center opens (no year), the earlier name's opening year or none; South Mountain Secure Treatment Unit has no end year; South Mountain Secure Treatment Unit is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "South Mountain Secure Treatment Unit (#11638): Open, no years. Abraxas Youth Center (#11578): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11638,
+    "later": 11578,
+    "why": "Abraxas Youth Center lists South Mountain Secure Treatment Unit as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11652-11653",
+  "kind": "rename_years",
+  "title": "Stone Mountain School",
+  "place": "Black Mountain, NC",
+  "facility_id": 11653,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "New Leaf Academy of North Carolina and Stone Mountain School are one program under two names (the network map draws New Leaf Academy of North Carolina renamed Stone Mountain School), kept as two records, so their years disagree: Stone Mountain School opens 1990, the earlier name's opening year or none; Stone Mountain School starts 1990, before New Leaf Academy of North Carolina ends 2010. The records suggest the name changed in 2010; check it before merging.",
+  "kop_now": "New Leaf Academy of North Carolina (#11652): Closed, 2005 to 2010. Stone Mountain School (#11653): Closed, 1990 to 2013.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11652,
+    "later": 11653,
+    "year": 2010,
+    "why": "the network map draws New Leaf Academy of North Carolina renamed Stone Mountain School"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-11653-11656",
+  "kind": "rename_years",
+  "title": "Asheville Academy for Girls",
+  "place": "Black Mountain, NC",
+  "facility_id": 11656,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Stone Mountain School and Asheville Academy for Girls are one program under two names (Asheville Academy for Girls lists Stone Mountain School as a past name), kept as two records, so their years disagree: Asheville Academy for Girls starts 2012, before Stone Mountain School ends 2013. The records suggest the name changed in 2013; check it before merging.",
+  "kop_now": "Stone Mountain School (#11653): Closed, 1990 to 2013. Asheville Academy for Girls (#11656): Closed, 2012 to 2025.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 11653,
+    "later": 11656,
+    "year": 2013,
+    "why": "Asheville Academy for Girls lists Stone Mountain School as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-12416-12435",
+  "kind": "rename_years",
+  "title": "Eagle Springs Teen Boys Center",
+  "place": "Sparks, NV",
+  "facility_id": 12435,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Reno Adolescent Boys Teen Challenge and Eagle Springs Teen Boys Center are one program under two names (Eagle Springs Teen Boys Center lists Reno Adolescent Boys Teen Challenge as a past name), kept as two records, so their years disagree: Eagle Springs Teen Boys Center opens (no year), the earlier name's opening year or none; Reno Adolescent Boys Teen Challenge has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Reno Adolescent Boys Teen Challenge (#12416): Unknown, no years. Eagle Springs Teen Boys Center (#12435): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 12416,
+    "later": 12435,
+    "why": "Eagle Springs Teen Boys Center lists Reno Adolescent Boys Teen Challenge as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-12491-12492",
+  "kind": "rename_years",
+  "title": "Pine Mountain Boys Academy",
+  "place": "Meansville, GA",
+  "facility_id": 12492,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Prayer Mountain Boys Academy and Pine Mountain Boys Academy are one program under two names (Pine Mountain Boys Academy lists Prayer Mountain Boys Academy as a past name), kept as two records, so their years disagree: Pine Mountain Boys Academy opens (no year), the earlier name's opening year or none; Prayer Mountain Boys Academy has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Prayer Mountain Boys Academy (#12491): Unknown, no years. Pine Mountain Boys Academy (#12492): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 12491,
+    "later": 12492,
+    "why": "Pine Mountain Boys Academy lists Prayer Mountain Boys Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-12685-100094",
+  "kind": "rename_years",
+  "title": "Embark Behavioral Health",
+  "place": "Marion, MT",
+  "facility_id": 100094,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Embark at Flathead Valley and Embark Behavioral Health are one program under two names (Embark Behavioral Health lists Embark at Flathead Valley as a past name), kept as two records, so their years disagree: Embark Behavioral Health opens (no year), the earlier name's opening year or none; Embark at Flathead Valley has no end year; Embark at Flathead Valley is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Embark at Flathead Valley (#12685): Open, no years. Embark Behavioral Health (#100094): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 12685,
+    "later": 100094,
+    "why": "Embark Behavioral Health lists Embark at Flathead Valley as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-12713-12685",
+  "kind": "rename_years",
+  "title": "Embark at Flathead Valley",
+  "place": "Marion, MT",
+  "facility_id": 12685,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Montana Academy and Embark at Flathead Valley are one program under two names (the network map draws Montana Academy renamed Embark at Flathead Valley), kept as two records, so their years disagree: Embark at Flathead Valley opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2021; check it before merging.",
+  "kop_now": "Montana Academy (#12713): Closed, 1997 to 2021. Embark at Flathead Valley (#12685): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 12713,
+    "later": 12685,
+    "year": 2021,
+    "why": "the network map draws Montana Academy renamed Embark at Flathead Valley"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-13744-13743",
+  "kind": "rename_years",
+  "title": "Evangelhouse Christian Academy",
+  "place": "St. Martinville, LA",
+  "facility_id": 13743,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Evangeline Christian Academy and Evangelhouse Christian Academy are one program under two names (Evangelhouse Christian Academy lists Evangeline Christian Academy as a past name), kept as two records, so their years disagree: Evangelhouse Christian Academy opens (no year), the earlier name's opening year or none; Evangeline Christian Academy has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Evangeline Christian Academy (#13744): Unknown, no years. Evangelhouse Christian Academy (#13743): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 13744,
+    "later": 13743,
+    "why": "Evangelhouse Christian Academy lists Evangeline Christian Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-13745-13743",
+  "kind": "rename_years",
+  "title": "Evangelhouse Christian Academy",
+  "place": "St. Martinville, LA",
+  "facility_id": 13743,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Teen Challenge of Acadiana and Evangelhouse Christian Academy are one program under two names (Evangelhouse Christian Academy lists Teen Challenge of Acadiana as a past name), kept as two records, so their years disagree: Evangelhouse Christian Academy opens (no year), the earlier name's opening year or none; Teen Challenge of Acadiana has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Teen Challenge of Acadiana (#13745): Unknown, no years. Evangelhouse Christian Academy (#13743): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 13745,
+    "later": 13743,
+    "why": "Evangelhouse Christian Academy lists Teen Challenge of Acadiana as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-13745-13744",
+  "kind": "rename_years",
+  "title": "Evangeline Christian Academy",
+  "place": "St. Martinville, LA",
+  "facility_id": 13744,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Teen Challenge of Acadiana and Evangeline Christian Academy are one program under two names (the network map draws Teen Challenge of Acadiana renamed Evangeline Christian Academy), kept as two records, so their years disagree: Evangeline Christian Academy opens (no year), the earlier name's opening year or none; Teen Challenge of Acadiana has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Teen Challenge of Acadiana (#13745): Unknown, no years. Evangeline Christian Academy (#13744): Unknown, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 13745,
+    "later": 13744,
+    "why": "the network map draws Teen Challenge of Acadiana renamed Evangeline Christian Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-14054-14058",
+  "kind": "rename_years",
+  "title": "Brighter Transition Youth Treatment Center/Falls Academy",
+  "place": "Sioux Falls, SD",
+  "facility_id": 14058,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Brighter Transition Youth Treatment Center and Brighter Transition Youth Treatment Center/Falls Academy are one program under two names (the network map draws Brighter Transition Youth Treatment Center renamed Brighter Transition Youth Treatment Center/Falls Academy), kept as two records, so their years disagree: Brighter Transition Youth Treatment Center/Falls Academy opens (no year), the earlier name's opening year or none; Brighter Transition Youth Treatment Center has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Brighter Transition Youth Treatment Center (#14054): Unknown, no years. Brighter Transition Youth Treatment Center/Falls Academy (#14058): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 14054,
+    "later": 14058,
+    "why": "the network map draws Brighter Transition Youth Treatment Center renamed Brighter Transition Youth Treatment Center/Falls Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-14116-12406",
+  "kind": "rename_years",
+  "title": "Scotts Valley School",
+  "place": "Myrtle Point, OR",
+  "facility_id": 12406,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "The Academy and Scotts Valley School are one program under two names (Scotts Valley School lists The Academy as a past name), kept as two records, so their years disagree: Scotts Valley School opens (no year), the earlier name's opening year or none; The Academy has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "The Academy (#14116): Closed, no years. Scotts Valley School (#12406): Closed, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 14116,
+    "later": 12406,
+    "why": "Scotts Valley School lists The Academy as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-14149-100000",
+  "kind": "rename_years",
+  "title": "A Better Way Youth Academy",
+  "place": "Vaitele",
+  "facility_id": 100000,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Paradise Cove and A Better Way Youth Academy are one program under two names (the network map draws Paradise Cove renamed A Better Way Youth Academy), kept as two records, so their years disagree: A Better Way Youth Academy opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2000; check it before merging.",
+  "kop_now": "Paradise Cove (#14149): Closed, 1994 to 2000. A Better Way Youth Academy (#100000): Closed, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 14149,
+    "later": 100000,
+    "year": 2000,
+    "why": "the network map draws Paradise Cove renamed A Better Way Youth Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-14160-12800",
+  "kind": "rename_years",
+  "title": "Cumberland Hospital for Children and Adolescents",
+  "place": "New Kent, VA",
+  "facility_id": 12800,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Cumberland Hospital and Cumberland Hospital for Children and Adolescents are one program under two names (Cumberland Hospital says it is now Cumberland Hospital for Children and Adolescents), kept as two records, so their years disagree: Cumberland Hospital for Children and Adolescents opens (no year), the earlier name's opening year or none; Cumberland Hospital has no end year; Cumberland Hospital is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Cumberland Hospital (#14160): Open, no years. Cumberland Hospital for Children and Adolescents (#12800): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 14160,
+    "later": 12800,
+    "why": "Cumberland Hospital says it is now Cumberland Hospital for Children and Adolescents"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100009-10644",
+  "kind": "rename_years",
+  "title": "Austin Oaks Hospital",
+  "place": "Austin, TX",
+  "facility_id": 10644,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "The Brown Schools at the Oaks and Austin Oaks Hospital are one program under two names (The Brown Schools at the Oaks says it is now Austin Oaks Hospital), kept as two records, so their years disagree: Austin Oaks Hospital opens (no year), the earlier name's opening year or none; The Brown Schools at the Oaks has no end year; The Brown Schools at the Oaks is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "The Brown Schools at the Oaks (#100009): Open, no years. Austin Oaks Hospital (#10644): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100009,
+    "later": 10644,
+    "why": "The Brown Schools at the Oaks says it is now Austin Oaks Hospital"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100013-10943",
+  "kind": "rename_years",
+  "title": "Texas NeuroRehab Center",
+  "place": "Austin, TX",
+  "facility_id": 10943,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "The Brown Schools Rehabilitation Center and Texas NeuroRehab Center are one program under two names (Texas NeuroRehab Center lists The Brown Schools Rehabilitation Center as a past name), kept as two records, so their years disagree: Texas NeuroRehab Center opens (no year), the earlier name's opening year or none; The Brown Schools Rehabilitation Center has no end year; The Brown Schools Rehabilitation Center is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "The Brown Schools Rehabilitation Center (#100013): Open, no years. Texas NeuroRehab Center (#10943): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100013,
+    "later": 10943,
+    "why": "Texas NeuroRehab Center lists The Brown Schools Rehabilitation Center as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100014-11145",
+  "kind": "rename_years",
+  "title": "Brooksville Youth Academy",
+  "place": "Brooksville, FL",
+  "facility_id": 11145,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Camp E-How-Kee and Brooksville Youth Academy are one program under two names (Brooksville Youth Academy lists Camp E-How-Kee as a past name), kept as two records, so their years disagree: Brooksville Youth Academy opens (no year), the earlier name's opening year or none; Camp E-How-Kee has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Camp E-How-Kee (#100014): Transferred, from 1968. Brooksville Youth Academy (#11145): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100014,
+    "later": 11145,
+    "why": "Brooksville Youth Academy lists Camp E-How-Kee as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100023-11279",
+  "kind": "rename_years",
+  "title": "Chad Youth Enhancement Center – Oak Plains Academy",
+  "place": "Ashland City, TN",
+  "facility_id": 11279,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Chad Youth Enhancement Center and Chad Youth Enhancement Center – Oak Plains Academy are one program under two names (the network map draws Chad Youth Enhancement Center renamed Chad Youth Enhancement Center – Oak Plains Academy), kept as two records, so their years disagree: Chad Youth Enhancement Center has no end year; Chad Youth Enhancement Center is still Open. The records suggest the name changed in 2008; check it before merging.",
+  "kop_now": "Chad Youth Enhancement Center (#100023): Open, no years. Chad Youth Enhancement Center – Oak Plains Academy (#11279): Open, from 2008.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100023,
+    "later": 11279,
+    "year": 2008,
+    "why": "the network map draws Chad Youth Enhancement Center renamed Chad Youth Enhancement Center – Oak Plains Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100035-11201",
+  "kind": "rename_years",
+  "title": "Okeechobee Youth Development Center",
+  "place": "Okeechobee, FL",
+  "facility_id": 11201,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Eckerd Youth Development Center and Okeechobee Youth Development Center are one program under two names (Okeechobee Youth Development Center lists Eckerd Youth Development Center as a past name), kept as two records, so their years disagree: Okeechobee Youth Development Center opens (no year), the earlier name's opening year or none; Eckerd Youth Development Center has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Eckerd Youth Development Center (#100035): Closed, from 1982. Okeechobee Youth Development Center (#11201): Closed, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100035,
+    "later": 11201,
+    "why": "Okeechobee Youth Development Center lists Eckerd Youth Development Center as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100070-13926",
+  "kind": "rename_years",
+  "title": "Bethel Girls Academy",
+  "place": "Petal, MS",
+  "facility_id": 13926,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Pine View Christian Academy and Bethel Girls Academy are one program under two names (the network map draws Pine View Christian Academy renamed Bethel Girls Academy), kept as two records, so their years disagree: Pine View Christian Academy has no end year. The records suggest the name changed in 1997; check it before merging.",
+  "kop_now": "Pine View Christian Academy (#100070): Unknown, no years. Bethel Girls Academy (#13926): Closed, 1997 to 2005.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100070,
+    "later": 13926,
+    "year": 1997,
+    "why": "the network map draws Pine View Christian Academy renamed Bethel Girls Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100075-9647",
+  "kind": "rename_years",
+  "title": "Three Springs of Courtland",
+  "place": "Courtland, AL",
+  "facility_id": 9647,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Sequel TSI Courtland and Three Springs of Courtland are one program under two names (the network map draws Sequel TSI Courtland renamed Three Springs of Courtland), kept as two records, so their years disagree: Sequel TSI Courtland has no end year. The records suggest the name changed in 1990; check it before merging.",
+  "kop_now": "Sequel TSI Courtland (#100075): Unknown, no years. Three Springs of Courtland (#9647): Transferred, from 1990.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100075,
+    "later": 9647,
+    "year": 1990,
+    "why": "the network map draws Sequel TSI Courtland renamed Three Springs of Courtland"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100085-13737",
+  "kind": "rename_years",
+  "title": "Victor Cullen Center",
+  "place": "Sabillasville, MD",
+  "facility_id": 13737,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Victor Cullen Academy and Victor Cullen Center are one program under two names (Victor Cullen Academy says it is now Victor Cullen Center), kept as two records, so their years disagree: Victor Cullen Center opens (no year), the earlier name's opening year or none; Victor Cullen Academy has no end year; Victor Cullen Academy is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Victor Cullen Academy (#100085): Open, from 1965. Victor Cullen Center (#13737): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100085,
+    "later": 13737,
+    "why": "Victor Cullen Academy says it is now Victor Cullen Center"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100108-12561",
+  "kind": "rename_years",
+  "title": "Youth Villages – Inner Harbour Campus",
+  "place": "Douglasville, GA",
+  "facility_id": 12561,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Anneewakee School and Youth Villages – Inner Harbour Campus are one program under two names (Youth Villages – Inner Harbour Campus lists Anneewakee School as a past name), kept as two records, so their years disagree: Youth Villages – Inner Harbour Campus opens (no year), the earlier name's opening year or none; Anneewakee School has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Anneewakee School (#100108): Closed, no years. Youth Villages – Inner Harbour Campus (#12561): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100108,
+    "later": 12561,
+    "why": "Youth Villages – Inner Harbour Campus lists Anneewakee School as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100123-9626",
+  "kind": "rename_years",
+  "title": "Straight – Cincinnati",
+  "place": "Milford, OH",
+  "facility_id": 9626,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Pathway Family Center and Straight – Cincinnati are one program under two names (the network map draws Pathway Family Center renamed Straight – Cincinnati), kept as two records, so their years disagree: Straight – Cincinnati opens 1982, the earlier name's opening year or none; Straight – Cincinnati starts 1982, before Pathway Family Center ends 2008. The records suggest the name changed in 2008; check it before merging.",
+  "kop_now": "Pathway Family Center (#100123): Closed, 2006 to 2008. Straight – Cincinnati (#9626): Closed, 1982 to 1987.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100123,
+    "later": 9626,
+    "year": 2008,
+    "why": "the network map draws Pathway Family Center renamed Straight – Cincinnati"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100124-12698",
+  "kind": "rename_years",
+  "title": "Clearview Girls Academy",
+  "place": "Heron, MT",
+  "facility_id": 12698,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Clearview Horizon and Clearview Girls Academy are one program under two names (the network map draws Clearview Horizon renamed Clearview Girls Academy), kept as two records, so their years disagree: Clearview Girls Academy opens 1996, the earlier name's opening year or none; Clearview Horizon has no end year; Clearview Horizon is still Open. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Clearview Horizon (#100124): Open, from 1996. Clearview Girls Academy (#12698): Open, from 1996.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100124,
+    "later": 12698,
+    "why": "the network map draws Clearview Horizon renamed Clearview Girls Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100138-14148",
+  "kind": "rename_years",
+  "title": "Pacific Coast Academy",
+  "place": "Apia",
+  "facility_id": 14148,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "New Hope Academy and Pacific Coast Academy are one program under two names (the network map draws New Hope Academy renamed Pacific Coast Academy), kept as two records, so their years disagree: Pacific Coast Academy opens (no year), the earlier name's opening year or none. The records suggest the name changed in 1999; check it before merging.",
+  "kop_now": "New Hope Academy (#100138): Closed, 1998 to 1999. Pacific Coast Academy (#14148): Closed, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100138,
+    "later": 14148,
+    "year": 1999,
+    "why": "the network map draws New Hope Academy renamed Pacific Coast Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100263-12714",
+  "kind": "rename_years",
+  "title": "Mountain Meadow Youth Ranch",
+  "place": "Trout Creek, MT",
+  "facility_id": 12714,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Galena Ridge Wilderness Program and Mountain Meadow Youth Ranch are one program under two names (Mountain Meadow Youth Ranch lists Galena Ridge Wilderness Program as a past name), kept as two records, so their years disagree: Mountain Meadow Youth Ranch opens (no year), the earlier name's opening year or none. The records suggest the name changed in 2018; check it before merging.",
+  "kop_now": "Galena Ridge Wilderness Program (#100263): Closed, until 2018. Mountain Meadow Youth Ranch (#12714): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100263,
+    "later": 12714,
+    "year": 2018,
+    "why": "Mountain Meadow Youth Ranch lists Galena Ridge Wilderness Program as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100273-12692",
+  "kind": "rename_years",
+  "title": "Big Sky Academy",
+  "place": "Clinton, MT",
+  "facility_id": 12692,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Cramer Creek School and Big Sky Academy are one program under two names (Big Sky Academy lists Cramer Creek School as a past name), kept as two records, so their years disagree: Big Sky Academy opens (no year), the earlier name's opening year or none; Cramer Creek School has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Cramer Creek School (#100273): Unknown, no years. Big Sky Academy (#12692): Closed, until 2010.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100273,
+    "later": 12692,
+    "why": "Big Sky Academy lists Cramer Creek School as a past name"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100413-10363",
+  "kind": "rename_years",
+  "title": "Havenwood Academy",
+  "place": "Cedar City, UT",
+  "facility_id": 10363,
+  "verdict": "unsure",
+  "confidence": "medium",
+  "finding": "Integrity House and Havenwood Academy are one program under two names (the network map draws Integrity House renamed Havenwood Academy), kept as two records, so their years disagree: Integrity House has no end year. The records suggest the name changed in 2014; check it before merging.",
+  "kop_now": "Integrity House (#100413): Unknown, no years. Havenwood Academy (#10363): Open, from 2014.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100413,
+    "later": 10363,
+    "year": 2014,
+    "why": "the network map draws Integrity House renamed Havenwood Academy"
+   }
+  ]
+ },
+ {
+  "key": "rename_years-100420-11643",
+  "kind": "rename_years",
+  "title": "The Clock Tower Schools",
+  "place": "Glen Mills, PA",
+  "facility_id": 11643,
+  "verdict": "unsure",
+  "confidence": "low",
+  "finding": "Glen Mills Schools and The Clock Tower Schools are one program under two names (The Clock Tower Schools lists Glen Mills Schools as a past name), kept as two records, so their years disagree: The Clock Tower Schools opens (no year), the earlier name's opening year or none; Glen Mills Schools has no end year. The records do not say when the name changed: give the year when merging.",
+  "kop_now": "Glen Mills Schools (#100420): Unknown, no years. The Clock Tower Schools (#11643): Open, no years.",
+  "sources": [],
+  "ops": [],
+  "renames": [
+   {
+    "earlier": 100420,
+    "later": 11643,
+    "why": "The Clock Tower Schools lists Glen Mills Schools as a past name"
    }
   ]
  }

@@ -187,6 +187,30 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         }
     }
 
+    // Renames: why the years disagree, and the merge right on the card.
+    $bad_r = array();
+    foreach ($props as $key => $p) {
+        foreach ((array) ($p['renames'] ?? array()) as $r) {
+            $y = (int) ($r['year'] ?? 0);
+            // No year: the records do not say, and the reviewer gives it when merging.
+            if ((int) ($r['earlier'] ?? 0) <= 0 || (int) ($r['later'] ?? 0) <= 0 || (int) $r['earlier'] === (int) $r['later']
+                || (isset($r['year']) && ($y < 1800 || $y > (int) gmdate('Y')))) {
+                $bad_r[] = $key . ': ' . json_encode($r);
+            }
+        }
+    }
+    $check('data-audit: every rename names two records (and a year, when it has one)', !$bad_r, implode(' | ', array_slice($bad_r, 0, 6)));
+    kop_rinbox_daudit_test_rename($check);
+    foreach ($props as $key => $p) {
+        if ($p['ops'] || empty($p['renames'])) continue;
+        $card = kop_rinbox_get_item('data-audit', (string) $key);
+        $ids = array_column($card['actions'], 'id');
+        if (!in_array('rename_merge', $ids, true)) continue;
+        $check('data-audit: a card holding only a rename offers the merge and "not one program", no Approve',
+            $ids === array('rename_merge', 'reject'), $key . ': ' . implode(',', $ids));
+        break;
+    }
+
     // The card.
     $own = kop_rinbox_test_own_actions($item);
     $check('data-audit: a waiting card offers approve and reject', in_array($item['status'], array('high', 'review'), true) && array_slice($own, 0, 2) === array('approve', 'reject'), implode(',', $own));
@@ -205,4 +229,65 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         call_user_func($src['act'], $item['key'], 'undo', array());
         $check('data-audit: undo a rejection', kop_rinbox_get_item('data-audit', $item['key'])['status'] === $item['status']);
     }
+}
+
+/**
+ * A card whose years disagree because of a rename (Timberline Academy became
+ * Daytona Juvenile Residential Facility in 2016): the card says so, offers
+ * "Merge as a rename", merges with each name keeping its years, and its Undo
+ * gives facilities_v2 back exactly.
+ */
+function kop_rinbox_daudit_test_rename(callable $check) {
+    $pdo = $GLOBALS['pdo'];
+    $key = '';
+    foreach (kop_daudit_proposals() as $k => $p) {
+        foreach (kop_rinbox_daudit_renames((string) $k, $p) as $r) {
+            if ($r['state']['state'] === 'separate' && !$r['found'] && $r['state']['year']) { $key = (string) $k; break 2; }
+        }
+    }
+    if ($key === '') {
+        kop_rinbox_test_skip('data-audit: rename merge', 'no researched rename with both records on file in the mirror');
+        return;
+    }
+    $item = kop_rinbox_get_item('data-audit', $key);
+    $lines = array_values(array_filter($item['details'], function ($d) { return $d['label'] === 'Renamed'; }));
+    $merge = null;
+    foreach ($item['actions'] as $a) if ($a['id'] === 'rename_merge') $merge = $a;
+    $check('data-audit: the card says a rename explains the years', $lines && strpos($lines[0]['value'], 'became') !== false
+        && strpos($lines[0]['value'], 'years on record disagree') !== false, $lines[0]['value'] ?? '');
+    $check('data-audit: the card offers "Merge as a rename" with the pair and the year', $merge
+        && array_column($merge['params'], 'name') === array('pair', 'year') && $merge['params'][1]['value'] !== '', $key);
+    if (!$merge) return;
+    if (!kop_rinbox_test_options_persist()) {
+        kop_rinbox_test_skip('data-audit: rename merge and undo', 'update_option does not store in this harness');
+        return;
+    }
+    $tables = array('lawsuit_facility_links', 'wpdl_kop_facility_identity', 'wpdl_kop_facility_locations', 'wpdl_fbv',
+        'wpdl_fbv_attachment_folder', 'wpdl_kop_media_folder_tags', 'wpdl_kop_folder_links', 'wpdl_kop_migration_state', 'wpdl_kop_people');
+    foreach (kop_fmerge_ref_tables('wpdl_') as $r) $tables[] = $r['t'];
+    foreach (kop_fmerge_json_tables('wpdl_') as $r) $tables[] = $r['t'];
+    kop_rinbox_test_copy_tables($tables);
+    $snap = function () use ($pdo) {
+        return md5(json_encode($pdo->query('SELECT id, json_data FROM facilities_v2 ORDER BY id')->fetchAll(PDO::FETCH_NUM)));
+    };
+    $before = $snap();
+    $pair = (string) $merge['params'][0]['value'];
+    list($e, $l) = array_map('intval', explode('>', $pair));
+    $year = (int) $merge['params'][1]['value'];
+    try {
+        $res = call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_merge', array('pair' => $pair, 'year' => (string) $year));
+    } catch (Throwable $ex) {
+        $check('data-audit: merge as a rename from the card', false, $ex->getMessage());
+        return;
+    }
+    $gone = !$pdo->query('SELECT COUNT(*) FROM facilities_v2 WHERE id = ' . $e)->fetchColumn();
+    $kept = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . $l)->fetchColumn(), true);
+    $check('data-audit: merge as a rename from the card folds the earlier name into the later one', $gone
+        && (int) ($kept['operatingPeriod']['startYear'] ?? 0) >= $year, $res['message']);
+    $got = kop_rinbox_get_item('data-audit', $key);
+    $ids = array_column($got['actions'], 'id');
+    $check('data-audit: the merged card offers its Undo, not the merge', in_array('rename_unmerge', $ids, true) && !in_array('rename_merge', $ids, true), implode(',', $ids));
+    call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_unmerge', array('pair' => $pair));
+    $check('data-audit: undo of the rename merge gives the records back exactly', $snap() === $before
+        && empty(kop_daudit_decisions()[$key]['merges']));
 }
