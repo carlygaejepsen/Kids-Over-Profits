@@ -47,6 +47,15 @@ function kop_rinbox_test_inspection_links(array $src, array $item, callable $che
     $res = call_user_func($src['list'], array('view' => 'suggested', 'search' => '', 'offset' => 0, 'limit' => 100, 'filters' => array('state' => $state)));
     $in = count(array_filter($pairs, function ($p) use ($state) { return $p['state'] === $state; }));
     $check('inspection-links: the State filter keeps only that state', $res['total'] === $in && $res['total'] < count($pairs), $state . ': ' . $res['total']);
+    // The companies watched closely (Serious violations queue) come first, and can be shown alone.
+    $watched = array_filter($pairs, function ($p) { return (bool) kop_rinbox_ilinks_watched($p); });
+    $check('inspection-links: the watched companies have suggested pairs', count($watched) > 0, count($watched) . ' pairs');
+    $all = call_user_func($src['list'], array('view' => 'suggested', 'search' => '', 'offset' => 0, 'limit' => count($watched), 'filters' => array()));
+    $check('inspection-links: watched companies\' pairs come first', $all['total'] === count($pairs)
+        && !array_filter($all['items'], function ($it) { return strpos($it['subtitle'], 'Watched: ') === false; }));
+    $only = call_user_func($src['list'], array('view' => 'suggested', 'search' => '', 'offset' => 0, 'limit' => 100, 'filters' => array('watch' => 'watched')));
+    $check('inspection-links: "Watched companies only" keeps their pairs', $only['total'] === count($watched), $only['total'] . ' of ' . count($watched)
+        . '; e.g. ' . ($only['items'][0]['title'] ?? '') . ' / ' . ($only['items'][0]['subtitle'] ?? ''));
     $counts = call_user_func($src['view_counts'], array());
     $check('inspection-links: every tab has a count', array_keys($counts) == array_keys($src['views']), json_encode($counts));
     if (!kop_rinbox_test_options_persist()) {

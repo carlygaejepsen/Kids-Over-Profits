@@ -354,6 +354,40 @@ function kop_rinbox_ih_watched_sites() {
     return $memo = $sites;
 }
 
+/**
+ * facility record id => [watched company names]: the records the watched
+ * companies' pages list (a duplicate company record folds into its canonical
+ * one). The Inspection links queue puts these first too, so the records whose
+ * licensed names differ get linked and their findings reach this queue.
+ */
+function kop_rinbox_ih_watched_records() {
+    static $memos = array();
+    $ops = kop_rinbox_ih_watched();
+    $memo = &$memos[md5(json_encode($ops))];
+    if ($memo !== null) return $memo;
+    $memo = array();
+    if (!$ops) return $memo;
+    global $wpdb;
+    $prefix = isset($wpdb->prefix) ? $wpdb->prefix : 'wpdl_';
+    $alias = array();
+    if (function_exists('kop_operator_pages_index')) {
+        $index = kop_operator_pages_index();
+        $alias = is_array($index['alias_of'] ?? null) ? $index['alias_of'] : array();
+    }
+    try {
+        foreach (kop_rinbox_pdo()->query("SELECT operator_id, facility_id FROM {$prefix}kop_operator_facilities") as $r) {
+            $oid = (int) $r['operator_id'];
+            if (isset($alias[$oid])) $oid = (int) $alias[$oid];
+            if (!isset($ops[$oid])) continue;
+            $fid = (int) $r['facility_id'];
+            if (!in_array($ops[$oid], $memo[$fid] ?? array(), true)) $memo[$fid][] = $ops[$oid];
+        }
+    } catch (Throwable $e) {
+        // No company tables: nothing is watched.
+    }
+    return $memo;
+}
+
 /** The "Companies watched closely" tool: replace the list. */
 function kop_rinbox_ih_watch_tool($id, array $params) {
     if ($id !== 'watch') throw new RuntimeException('Unknown tool.');

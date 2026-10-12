@@ -42,7 +42,10 @@ kop_rinbox_register('inspection-links', function () {
             return array('suggested' => count(kop_rinbox_ilinks_pairs()), 'linked' => count(kop_rinbox_ilinks_decided('links')),
                 'rejected' => count(kop_rinbox_ilinks_decided('rejected')));
         },
-        'filters'  => array(array('name' => 'state', 'label' => 'State', 'options' => kop_rinbox_ilinks_state_options())),
+        // The companies watched closely (the Serious violations queue's list) come first: linking their
+        // records' licensed names is what brings their findings to the front of that queue.
+        'filters'  => array(array('name' => 'state', 'label' => 'State', 'options' => kop_rinbox_ilinks_state_options()),
+            array('name' => 'watch', 'label' => 'Company', 'options' => array('' => 'All companies (watched first)', 'watched' => 'Watched companies only'))),
         'tools'    => array(array('id' => 'link_same_town', 'label' => 'Link every same-town pair', 'style' => 'approve',
             'help' => 'Links every suggested pair whose licensing entry is in the facility record\'s town (the ones the Inspection Links screen ticks in advance). Each can be removed on the Linked tab.',
             'confirm' => 'Link every suggested pair in the same town? Each can be removed on the Linked tab.',
@@ -196,9 +199,20 @@ function kop_rinbox_ilinks_list(array $q) {
             return mb_strpos($hay, $needle) !== false;
         });
     }
+    $watched = function ($p) { return (bool) kop_rinbox_ilinks_watched($p); };
+    if (($q['filters']['watch'] ?? '') === 'watched') $pairs = array_filter($pairs, $watched);
+    // Stable: within each group the order above holds.
+    uasort($pairs, function ($a, $b) use ($watched) { return $watched($b) <=> $watched($a); });
     $items = array();
     foreach (array_slice($pairs, (int) $q['offset'], (int) $q['limit']) as $p) $items[] = kop_rinbox_ilinks_item($p);
     return array('items' => $items, 'total' => count($pairs));
+}
+
+/** The watched companies (Serious violations queue) a pair's record or home belongs to. */
+function kop_rinbox_ilinks_watched(array $p) {
+    if (!function_exists('kop_rinbox_ih_watched_records')) return array();
+    $recs = kop_rinbox_ih_watched_records();
+    return array_values(array_unique(array_merge($recs[(int) $p['record']['id']] ?? array(), $recs[(int) ($p['home']['id'] ?? 0)] ?? array())));
 }
 
 function kop_rinbox_ilinks_get($key) {
@@ -269,7 +283,8 @@ function kop_rinbox_ilinks_item(array $p) {
     return array(
         'key'          => $p['key'],
         'title'        => $rec['name'] . '  /  ' . $row['facility_name'],
-        'subtitle'     => $state_name . ($linked ? ' · linked' : ($rejected ? ' · not this one' : ($p['same_town'] ? ' · same town' : ' · different or unknown town'))),
+        'subtitle'     => $state_name . ($linked ? ' · linked' : ($rejected ? ' · not this one' : ($p['same_town'] ? ' · same town' : ' · different or unknown town')))
+            . (($w = kop_rinbox_ilinks_watched($p)) ? ' · Watched: ' . implode(', ', $w) : ''),
         'text'         => $text,
         'compare'      => $compare,
         'selected'     => !$linked && !$rejected && $p['same_town'],
