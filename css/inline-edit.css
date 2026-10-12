@@ -59,10 +59,12 @@ button.kop-ie-pen:active {
 
 /* ---- Toolbar ---------------------------------------------------------- */
 
+/* Above the search button, which owns the bottom-left corner (css/global-search.css:
+   16px up, about 40px tall). */
 .kop-ie-bar {
     position: fixed;
     left: 12px;
-    bottom: 12px;
+    bottom: 68px;
     z-index: 99990;
     display: flex;
     flex-wrap: wrap;

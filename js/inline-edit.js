@@ -607,6 +607,9 @@
         refresh();
         window.addEventListener('resize', refresh);
         window.addEventListener('load', refresh);
+        // Sticky elements and boxes that scroll on their own move without a
+        // resize or a mutation; a capturing listener hears every scroll.
+        document.addEventListener('scroll', refresh, { capture: true, passive: true });
         document.addEventListener('click', function () { setTimeout(refresh, 50); }, true);
         if (window.ResizeObserver) new ResizeObserver(refresh).observe(document.body);
         new MutationObserver(function (records) {
