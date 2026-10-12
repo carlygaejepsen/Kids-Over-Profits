@@ -52,7 +52,9 @@ setTimeout(function () {
   var c = document.createElement('div');
   c.className = 'submission-card is-pending'; c.dataset.id = '546';
   c.innerHTML = '<div class="submission-header"><h3>Teen dies at ranch</h3><span class="status-badge">submitted</span></div>' +
-    '<div class="submission-meta"><span>Some Paper</span></div>' +
+    '<div class="submission-meta"><span>Some Paper</span><span>Reporter Name</span><span>expose</span></div>' +
+    '<p><a href="https://example.com/x">https://www.theguardian.com/education/2026/oct/12/boarding-schools-child-on-child-sexual-abuse-safeguarding-report</a></p>' +
+    '<p>Antidisestablishmentarianismwordwithoutanybreakpointsatall</p>' +
     '<div class="submission-footer"><button type="button" class="btn-view">View Details</button></div>';
   document.getElementById('submissionsList').appendChild(c);
 }, 50);
@@ -169,6 +171,24 @@ def drive_card():
     }
 
 
+# The page's width, and anything in the review screen that runs past its box: the container's
+# overflow:hidden would otherwise hide a card running off a phone (scrollWidth stays small).
+WIDTH_JS = """() => {
+  const c = document.querySelector('.admin-submissions-container').getBoundingClientRect();
+  const out = [];
+  for (const el of document.querySelectorAll('.admin-submissions-container *')) {
+    const r = el.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    const name = el.tagName.toLowerCase() + '.' + String(el.className).split(' ')[0];
+    if (r.right > c.right + 1) out.push(name + ' runs ' + Math.round(r.right - c.right) + 'px off the screen');
+    else if (/^(BUTTON|A|SPAN|LABEL|SUMMARY)$/.test(el.tagName) && el.clientWidth && el.scrollWidth > el.clientWidth + 1
+             && getComputedStyle(el).overflowX === 'visible' && getComputedStyle(el).display !== 'inline')
+      out.push(name + ' text runs out of it: ' + JSON.stringify(el.textContent.trim().slice(0, 30)));
+  }
+  return {page: document.documentElement.scrollWidth, out: out.slice(0, 6)};
+}"""
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--shots", default=str(ROOT / "tmp" / "review-inbox-ui"))
@@ -274,7 +294,7 @@ def main():
 
     with sync_playwright() as p:
         b = p.chromium.launch(channel="chrome")
-        for width in (1280, 390):
+        for width in (1280, 768, 390):
             calls.clear()
             pg = b.new_page(viewport={"width": width, "height": 900})
             errors = []
@@ -323,8 +343,9 @@ def main():
             pg.locator(".rinbox-native select[aria-label='Move to another queue']").select_option("lawsuit")
             pg.wait_for_selector(".rinbox-native button:has-text('Undo move')")
             check(True, f"@{width} move shows its Undo")
-            if width == 1280:
-                pg.screenshot(path=str(shots / f"native-{width}.png"), full_page=True)
+            wide = pg.evaluate(WIDTH_JS)
+            check(wide["page"] <= width and not wide["out"], f"@{width} the page's own card fits the screen", f"{wide}")
+            pg.screenshot(path=str(shots / f"native-{width}.png"), full_page=True)
 
             pg.locator(".rinbox-tab", has_text="Closure reports").click()
             pg.wait_for_selector(".rinbox-card")
@@ -415,8 +436,8 @@ def main():
             check(any(c[0] == "hold" and c[1]["assign"] == 2 and c[1]["days"] == 7 for c in calls), f"@{width} Later sends the snooze and the person",
                   json.dumps([c[1] for c in calls if c[0] == "hold"]))
 
-            wide = pg.evaluate("() => document.documentElement.scrollWidth")
-            check(wide <= width, f"@{width} nothing is wider than the screen", f"{wide}px")
+            wide = pg.evaluate(WIDTH_JS)
+            check(wide["page"] <= width and not wide["out"], f"@{width} nothing is wider than the screen", f"{wide}")
             pg.screenshot(path=str(shots / f"closure-{width}.png"), full_page=True)
 
             # A queue's own dropdowns, tab counts, sure matches ticked, optional values in bulk, names looked up as typed.
@@ -448,8 +469,8 @@ def main():
             check(group.locator(".rinbox-check-items a").count() == 3, f"@{width} a folded website row opens to its links")
             group.locator(".rinbox-check-bundle input[type=checkbox]").uncheck()
             check(group.locator(".rinbox-check-count").inner_text() == "1 of 4 links ticked", f"@{width} unticking a folded row unticks all its links")
-            wide = pg.evaluate("() => document.documentElement.scrollWidth")
-            check(wide <= width, f"@{width} the facility card fits the screen", f"{wide}px")
+            wide = pg.evaluate(WIDTH_JS)
+            check(wide["page"] <= width and not wide["out"], f"@{width} the facility card fits the screen", f"{wide}")
             row = group.locator(".rinbox-check").first
             row.locator(".rinbox-rename-toggle").click()
             row.locator(".rinbox-rename-name").fill("Ranch cited by the state")
@@ -489,8 +510,8 @@ def main():
             sent = [c[1] for c in calls if c[0] == "act" and c[1]["source"] == "nom"]
             check(len(sent) == 1 and sent[0]["action"] == "feature" and sent[0]["params"] == {"note": "Edited note."},
                   f"@{width} Feature sends the note as edited", json.dumps(sent))
-            wide = pg.evaluate("() => document.documentElement.scrollWidth")
-            check(wide <= width, f"@{width} the nomination card fits the screen", f"{wide}px")
+            wide = pg.evaluate(WIDTH_JS)
+            check(wide["page"] <= width and not wide["out"], f"@{width} the nomination card fits the screen", f"{wide}")
 
             # Your inbox: assigned to you, recently done with Undo.
             pg.locator(".rinbox-tab", has_text="Assigned to you").click()
@@ -503,8 +524,8 @@ def main():
             pg.wait_for_selector(".rinbox-done-row.is-undone")
             check(any(c[0] == "undo" and c[1] == {"id": 9} for c in calls), f"@{width} Undo from Recently done runs once")
             check("type=_done" in pg.url, f"@{width} Recently done is in the address", pg.url)
-            wide = pg.evaluate("() => document.documentElement.scrollWidth")
-            check(wide <= width, f"@{width} Recently done fits the screen", f"{wide}px")
+            wide = pg.evaluate(WIDTH_JS)
+            check(wide["page"] <= width and not wide["out"], f"@{width} Recently done fits the screen", f"{wide}")
             if width == 1280:
                 pg.screenshot(path=str(shots / f"done-{width}.png"), full_page=True)
 

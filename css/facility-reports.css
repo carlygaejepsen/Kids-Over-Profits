@@ -808,6 +808,36 @@ CONTROLS
 RESPONSIVE
 ===============================================================*/
 @media (max-width: 768px) {
+    /* The page panel and the wrapper inside it were both padded 2em: on a phone
+       that left the reports a column a third of the screen wide. */
+    .kop-state-reports-page .entry-content,
+    .state-reports-wrapper {
+        padding: 1em;
+        margin: 1em auto;
+    }
+
+    .kop-state-reports-page .entry-content .state-reports-wrapper {
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+    }
+
+    .controls {
+        padding: 10px;
+    }
+
+    .controls input[type="text"],
+    .controls select {
+        width: 100%;
+        max-width: 100%;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+
+    .controls .new-only-toggle {
+        margin-right: 0;
+    }
+
     .facility-report-container .facility-box {
         padding: 15px;
         margin-bottom: 15px;

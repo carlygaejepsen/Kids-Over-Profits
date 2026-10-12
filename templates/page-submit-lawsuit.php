@@ -204,7 +204,7 @@ if (!$tracker_url) { $tracker_url = home_url('/lawsuits'); }
 .kop-submit-form input:focus,
 .kop-submit-form select:focus,
 .kop-submit-form textarea:focus { outline: 2px solid var(--kop-teal); border-color: var(--kop-teal); }
-.kop-submitter-box { margin-top: 1.5rem; border: 1px solid #e0ddcf; border-radius: 8px; padding: 1rem 1.25rem 1.25rem; background: var(--kop-sand, #f2eedf); }
+.kop-submitter-box { min-width: 0; margin-top: 1.5rem; border: 1px solid #e0ddcf; border-radius: 8px; padding: 1rem 1.25rem 1.25rem; background: var(--kop-sand, #f2eedf); }
 .kop-submitter-box legend { font-weight: 700; color: var(--kop-midnight-blue); padding: 0 0.4rem; }
 .kop-hp { position: absolute; left: -9999px; height: 0; overflow: hidden; }
 .kop-submit-actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; }

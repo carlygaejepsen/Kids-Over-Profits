@@ -442,3 +442,16 @@
 .transporter-independent-badge.not-independent {
     background: var(--kop-teal-fill, #24757F);
 }
+
+/* Long website addresses and names break inside the card on a phone. */
+.transporter-card,
+.transporter-card-body {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+    .transporter-card-body {
+        padding: 14px;
+    }
+}

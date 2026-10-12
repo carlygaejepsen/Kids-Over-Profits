@@ -212,7 +212,9 @@
 
 .submissions-list {
     display: grid;
-    grid-template-columns: 1fr;
+    /* minmax(0, ...): a plain 1fr column grows to the card's widest unbreakable
+       piece (a long link, a select's longest option), pushing the card off a phone. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
 }
 
@@ -1272,9 +1274,6 @@ button.btn-quick-unmove, button.btn-quick-unmove:hover, button.btn-quick-unmove:
         align-items: stretch;
     }
 
-    .submissions-list {
-        grid-template-columns: 1fr;
-    }
 
     .action-buttons {
         flex-direction: column;

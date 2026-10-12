@@ -25,9 +25,18 @@
     margin-top: 6px;
 }
 
+/* width: a form's own "input { width: 100% }" (the submit pages) made the box the full row
+   and pushed the words out of the panel. */
 .kop-followup .kop-followup__check input {
     margin-top: 3px;
     flex: none;
+    width: auto;
+}
+
+.kop-followup .kop-followup__check span,
+.kop-followup .kop-followup__check {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .kop-followup .kop-followup__email {

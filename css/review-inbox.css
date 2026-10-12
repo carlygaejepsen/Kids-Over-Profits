@@ -1193,3 +1193,110 @@ button.rinbox-pv-btn:focus-visible {
     height: 16px;
     vertical-align: -3px;
 }
+
+/* ---- Phone and tablet ------------------------------------------------------
+   Every card shrinks to the screen and its pieces shrink with it: a box never
+   grows to fit a long link, a select's longest option or a button's label, and
+   button labels wrap inside the button instead of running out of it. */
+
+.admin-submissions-page .submission-card,
+.admin-submissions-page .rinbox-card,
+.admin-submissions-page .rinbox-panel {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.admin-submissions-page .submission-card :not(svg, svg *, input[type="checkbox"], input[type="radio"]),
+.admin-submissions-page .rinbox-card :not(svg, svg *, input[type="checkbox"], input[type="radio"]),
+.admin-submissions-page .rinbox-panel :not(svg, svg *, input[type="checkbox"], input[type="radio"]) {
+    min-width: 0;
+}
+
+.admin-submissions-page select,
+.admin-submissions-page input,
+.admin-submissions-page textarea,
+.admin-submissions-page img,
+.admin-submissions-page iframe,
+.admin-submissions-page table {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.admin-submissions-page button,
+.admin-submissions-page .button,
+.admin-submissions-page a.rinbox-btn-go {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+.admin-submissions-page .submission-tab,
+.admin-submissions-page .status-badge,
+.admin-submissions-page .tab-count {
+    white-space: normal;
+    overflow-wrap: normal;
+}
+
+.admin-submissions-page pre,
+.admin-submissions-page code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+    /* The theme's column is already the screen's width here: no break-out. */
+    .admin-submissions-page {
+        width: auto;
+        max-width: none;
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+
+    .admin-header,
+    .admin-controls,
+    .submissions-list-container,
+    .rinbox-panel {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .submission-card,
+    .rinbox-card {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .submission-header,
+    .submission-footer {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .rinbox-toolbar > *,
+    .rinbox-later-form > *,
+    .rinbox-native > select,
+    .rinbox-native > .rinbox-move {
+        flex: 1 1 auto;
+    }
+
+    .rinbox-search {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Approve / Reject and the rest take the full width, one tap target per row pair. */
+    .rinbox-decide > button,
+    .rinbox-decide > a,
+    .card-actions > button,
+    .submission-footer button {
+        flex: 1 1 140px;
+    }
+}

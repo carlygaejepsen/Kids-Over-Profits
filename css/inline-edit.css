@@ -77,6 +77,22 @@ button.kop-ie-pen:active {
     font-size: 13px;
 }
 
+/* On a phone the wrapped bar was three rows tall over the page's own buttons:
+   one row that scrolls sideways instead. */
+@media (max-width: 600px) {
+    .kop-ie-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        right: 12px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    .kop-ie-bar > * {
+        flex: none;
+        white-space: nowrap;
+    }
+}
+
 button.kop-ie-bar-btn,
 a.kop-ie-bar-btn {
     display: inline-flex;

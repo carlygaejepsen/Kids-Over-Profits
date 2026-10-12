@@ -210,7 +210,7 @@
 
 .kop-rep-dl-row {
     display: grid;
-    grid-template-columns: minmax(10rem, 15rem) 1fr;
+    grid-template-columns: minmax(10rem, 15rem) minmax(0, 1fr);
     gap: 0.2rem 1rem;
     padding: 0.55rem 0;
     border-top: 1px solid rgba(0, 4, 53, 0.12);
@@ -263,7 +263,7 @@
 
 @media (max-width: 640px) {
     .kop-rep-dl-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
@@ -582,4 +582,14 @@
         width: 100%;
         text-align: center;
     }
+}
+
+/* A long email address or web address breaks inside its card on a phone instead of running out of it. */
+.kop-rep-card,
+.kop-rep-deadlines,
+.kop-rep-dl-row dt,
+.kop-rep-dl-row dd,
+.kop-rep-contact li {
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
