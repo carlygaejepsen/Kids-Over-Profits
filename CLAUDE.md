@@ -156,6 +156,11 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-rename-merge.php 
 # api/manage-submissions.php), Later = snooze / hand to an admin ({prefix}kop_review_holds, off everyone else's list), Preview
 # (review-inbox/preview: framed where allowed, else a reading copy)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
+# Imports connect themselves when the name is exact (inc/auto-connect.php, hourly): a name found in the text that is exactly one record's
+# (same name key, more than generic words, no other record's) is connected with no click: Woodbury Reports pages, wiki links, Fornits
+# discussion links (records whose every name is 10+ letters), State Lists rows now on file. Close names, shared names, board/title-only
+# and Drive Docs (Add publishes) wait. Each shows in its queue's done tab by 'auto' and in Recently done with Undo; an undone one is never redone
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-auto-connect.php [--list]   # every pick is exact, wiki link + log + undo, on a scratch copy
 # Pending items already in our records leave the waiting list: news/lawsuits/bills (inc/review-inbox/_on-file.php: same link on a kept
 # record or in a facility's resourceLinks, same headline+outlet, case number, bill) go to the Submissions Review "Already on file" tab
 # Any other queue gives its source an 'on_file' => fn(): [key => {label, url}] (kop_rinbox_on_file_keys()): those leave the waiting view and

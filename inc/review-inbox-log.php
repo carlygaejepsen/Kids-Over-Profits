@@ -91,7 +91,7 @@ function kop_rinbox_log_insert(array $row) {
         'message'      => (string) ($row['message'] ?? ''),
         'undo_action'  => (string) ($row['undo_action'] ?? ''),
         'undo_params'  => !empty($row['undo_params']) ? wp_json_encode($row['undo_params']) : null,
-        'user_login'   => kop_rinbox_reviewer(),
+        'user_login'   => (string) ($row['user_login'] ?? kop_rinbox_reviewer()),
         'created_at'   => current_time('mysql', true),
     ));
     // An approve or reject closes what volunteers recommended on the item, with this outcome.
