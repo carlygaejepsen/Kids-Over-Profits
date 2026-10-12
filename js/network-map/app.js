@@ -591,9 +591,16 @@
             } else if (shell.classList.contains(PINNED)) {
                 pin(false);
             } else if (request) {
-                var asked = request.call(shell);
+                var asked;
+                try { asked = request.call(shell); } catch (e) { asked = null; }
                 /* Refused (an embedded frame, a browser policy): pin instead. */
                 if (asked && asked.catch) asked.catch(function () { pin(true); });
+                /* An app's web view can accept the request and then do nothing
+                 * (the mobile app's Map tab): if the map is not full screen a
+                 * moment later, pin it over the window. */
+                window.setTimeout(function () {
+                    if (!native() && !shell.classList.contains(PINNED)) pin(true);
+                }, 600);
             } else {
                 pin(true);
             }

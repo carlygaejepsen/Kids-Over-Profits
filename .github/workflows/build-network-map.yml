@@ -65,22 +65,29 @@ jobs:
       - name: Build
         run: node scripts/build-network-graph.js
 
+      # New names need a place on the board, or the map leaves them out; the
+      # layout pins everything already placed and settles only the new ones.
+      - name: Place new names
+        run: node scripts/build-network-layout.js
+
       - name: Test
-        run: node scripts/test-network-graph.js
+        run: |
+          node scripts/test-network-graph.js
+          node scripts/test-network-layout.js
 
       - name: Commit graph.json when it changed
         id: commit
         env:
           REASON: ${{ inputs.reason }}
         run: |
-          if git diff --quiet -- js/data/network/graph.json; then
+          if git diff --quiet -- js/data/network/graph.json js/data/network/layout.json; then
             echo "graph.json unchanged, nothing to deploy"
             echo "changed=0" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "kop-map-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add js/data/network/graph.json
+          git add js/data/network/graph.json js/data/network/layout.json
           git commit -m "data(network map): rebuild from the live records" -m "Reason: ${REASON:-not given}"
           for attempt in 1 2 3; do
             git pull --rebase origin main && git push origin HEAD:main && break

@@ -791,6 +791,38 @@ html.kop-network-pinned {
 	box-shadow: 0 6px 20px rgba(0, 4, 53, 0.16);
 }
 
+/* The panel's own Close, top right of it. Every state names colour and
+ * background, or Kadence's button:hover/:focus repaints it white on teal. */
+button.kop-network__key-close,
+button.kop-network__key-close:hover,
+button.kop-network__key-close:focus,
+button.kop-network__key-close:active {
+	float: right;
+	/* Above the intro, whose opacity puts it in a layer of its own. */
+	position: relative;
+	z-index: 1;
+	margin: -0.2rem -0.3rem 0.3rem 0.5rem;
+	padding: 0.2rem 0.65rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--kop-midnight-blue, #000435);
+	font: inherit;
+	font-size: 0.78rem;
+	font-weight: 600;
+	line-height: 1.4;
+	cursor: pointer;
+}
+
+button.kop-network__key-close:hover {
+	border-color: var(--kop-teal, #33A7B5);
+}
+
+button.kop-network__key-close:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 1px;
+}
+
 .kop-network__rail[hidden] {
 	display: none;
 }
@@ -1551,6 +1583,13 @@ button.kop-network__popup-person:hover, button.kop-network__popup-person:focus, 
 		width: calc(100% - 1rem);
 		max-width: calc(100% - 1rem);
 		max-height: 60%;
+		/* The full-width box lies over Reset view and Full screen even with
+		 * the panel closed; only the Key button and the open panel take taps. */
+		pointer-events: none;
+	}
+
+	.kop-network__key > * {
+		pointer-events: auto;
 	}
 
 	/* The toolbar wraps on a phone, so the button can be anywhere along its

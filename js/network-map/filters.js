@@ -496,6 +496,29 @@
             });
         }
 
+        /* The panel's own Close button, the way out a phone reader looks for. */
+        var keyClose = byId('kop-network-key-close');
+        if (keyClose) {
+            keyClose.addEventListener('click', function () {
+                railOpen = false;
+                markKeySeen();
+                syncRail();
+                if (railToggle) railToggle.focus();
+            });
+        }
+
+        /* On a phone the panel covers most of the stage, so the first touch
+         * on the map itself means the reader is done with it. A wider screen
+         * leaves it open beside the map while the reader uses both. */
+        var keyCanvas = byId('kop-network-canvas');
+        if (keyCanvas && keyCanvas.addEventListener) {
+            keyCanvas.addEventListener('pointerdown', function () {
+                if (!railOpen || !narrow || !narrow.matches) return;
+                railOpen = false;
+                syncRail();
+            });
+        }
+
         /* Escape folds the key away and hands focus back to its button. */
         if (rail && railToggle) {
             rail.addEventListener('keydown', function (event) {

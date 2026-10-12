@@ -63,6 +63,14 @@
     }
 
     function plainStep(points, from, dir) {
+        /* Left and right walk along the row first. Nearest-that-way alone
+         * let a name one row down and a little across win over the next
+         * name along the row, and a pair at the far ends of two rows of
+         * Aspen Ranch's view was reached by no arrow at all. */
+        if (dir[0] !== 0) {
+            var along = rowNeighbour(points, from, dir[0]);
+            if (along) return along;
+        }
         var best = nearestThatWay(points, from, dir);
         if (best || dir[0] === 0) return best;
         var order = readingOrder(points);
@@ -112,8 +120,8 @@
      * vertically are on one row, for the carry-on. */
     var ROW_TOLERANCE = 8;
 
-    /** The points in reading order: row by row, left to right. */
-    function readingOrder(points) {
+    /** The points in rows, top to bottom, each row left to right. */
+    function rowsOf(points) {
         var sorted = points.slice().sort(function (a, b) { return a.y - b.y || a.x - b.x; });
         var rows = [];
         sorted.forEach(function (p) {
@@ -121,12 +129,29 @@
             if (row && p.y - row.y <= ROW_TOLERANCE) row.points.push(p);
             else rows.push({ y: p.y, points: [p] });
         });
-        var out = [];
         rows.forEach(function (row) {
             row.points.sort(function (a, b) { return a.x - b.x; });
-            out = out.concat(row.points);
         });
+        return rows;
+    }
+
+    /** The points in reading order: row by row, left to right. */
+    function readingOrder(points) {
+        var out = [];
+        rowsOf(points).forEach(function (row) { out = out.concat(row.points); });
         return out;
+    }
+
+    /** The next name along `from`'s own row, `step` -1 or 1, or null at its end. */
+    function rowNeighbour(points, from, step) {
+        var rows = rowsOf(points);
+        for (var r = 0; r < rows.length; r++) {
+            var row = rows[r].points;
+            for (var i = 0; i < row.length; i++) {
+                if (row[i].id === from.id) return row[i + step] || null;
+            }
+        }
+        return null;
     }
 
     function nearestThatWay(points, from, dir) {

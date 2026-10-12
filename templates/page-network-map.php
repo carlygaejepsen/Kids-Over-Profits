@@ -378,6 +378,14 @@ $kop_net_directory = function_exists('kop_location_index_url')
 						</button>
 						<div class="kop-network__rail" id="kop-network-rail" role="region" aria-label="Key" hidden>
 							<?php
+							// A way to put it away inside the panel itself: on a phone (and in
+							// the app) the panel covers most of the map, and the small Key chip
+							// above it does not read as a close button.
+							?>
+							<button type="button" class="kop-network__key-close" id="kop-network-key-close">
+								Close
+							</button>
+							<?php
 							// Two lines before the swatches, because a reader who
 							// opens the Key is asking how the map works, not only
 							// what a colour means. Printed here rather than drawn

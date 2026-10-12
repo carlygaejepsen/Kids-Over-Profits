@@ -34,6 +34,10 @@ const DATA_DIR = path.join(ROOT, 'js', 'data', 'network');
  * something realistic to work with. */
 const WIDTH = 1000;
 const HEIGHT = 700;
+/* About one row of the board in pixels at full size (rows sit ~72-100 px
+ * apart): how far off the stage a name may sit and still be "the next row
+ * down" rather than a stage away. */
+const NEXT_ROW = 110;
 
 const failures = [];
 const notes = [];
@@ -970,14 +974,26 @@ function run() {
     resetOps();
     renderer.draw();
     const openingLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
-    const openingNames = focus.scene().nodes.map((n) => n.name);
-    check(openingLabels.length === openingNames.length,
-        'the opening view drew ' + openingLabels.length + ' labels for ' +
-        openingNames.length + ' organisations',
-        'opening view names all ' + openingLabels.length + ' of its organisations');
-    openingNames.forEach((name) => {
-        check(openingLabels.indexOf(name) !== -1, 'the opening view left ' + name + ' unnamed');
+    /* A board taller than the stage is shown at full size from the top,
+     * the rest a scroll away (the owner's call, 2026-09-23), so the promise
+     * is about the names on the stage. What is off it must be close: the
+     * next row down, not a stage away. */
+    const openingT = viewport.transform;
+    const openingAt = focus.scene().nodes.map((n) => {
+        const p = focus.positionOf(n);
+        return { name: n.name, x: p.x * openingT.k + openingT.x, y: p.y * openingT.k + openingT.y };
     });
+    const openingOn = openingAt.filter((p) => p.x >= 0 && p.x <= WIDTH && p.y >= 0 && p.y <= HEIGHT);
+    const openingFar = openingAt.filter((p) => p.x < -NEXT_ROW || p.x > WIDTH + NEXT_ROW ||
+        p.y < -NEXT_ROW || p.y > HEIGHT + NEXT_ROW);
+    openingOn.forEach((p) => {
+        check(openingLabels.indexOf(p.name) !== -1, 'the opening view left ' + p.name + ' unnamed');
+    });
+    check(openingFar.length === 0,
+        'the opening view put ' + openingFar.length + ' names more than a row off the stage: ' +
+        openingFar.slice(0, 3).map((p) => p.name).join(', '),
+        'opening view names all ' + openingOn.length + ' of the ' + openingAt.length +
+        ' organisations on the stage, the rest within a row of it');
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap in the opening view: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
@@ -1138,21 +1154,32 @@ function run() {
             clippedNames().length + ' names run off the edge of the canvas: ' +
             clippedNames().slice(0, 2).map((b) => b.t).join(', '));
     }
-    const smallHub = store.node('academy-at-ivy-ridge');
-    focus.clear();
-    flushFrames();
-    focus.select(smallHub);
-    flushFrames();
-    resetOps();
-    renderer.draw();
-    const smallScene = focus.scene();
-    const smallFits = smallScene.nodes.every((n) => {
+    /* A view the stage holds whole. Which one changes as the board grows
+     * (Academy at Ivy Ridge's outgrew it in October 2026), so the first of
+     * a few small ones that still fits. */
+    const viewFits = () => focus.scene().nodes.every((n) => {
         const p = focus.positionOf(n);
         const x = p.x * viewport.transform.k + viewport.transform.x;
         const y = p.y * viewport.transform.k + viewport.transform.y;
         return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
     });
-    check(smallFits, 'the ' + smallHub.name + ' view does not fit the stage, so the outermost column is untested');
+    let smallHub = null;
+    let smallFits = false;
+    for (const id of ['academy-at-ivy-ridge', 'spring-creek-lodge-academy', 'tranquility-bay', 'casa-by-the-sea', 'majestic-ranch-academy']) {
+        const candidate = store.node(id);
+        if (!candidate) continue;
+        focus.clear();
+        flushFrames();
+        focus.select(candidate);
+        flushFrames();
+        smallHub = candidate;
+        smallFits = viewFits();
+        if (smallFits) break;
+    }
+    resetOps();
+    renderer.draw();
+    const smallScene = focus.scene();
+    check(smallFits, 'none of the small views fits the stage, so the outermost column is untested');
     check(clippedNames().length === 0,
         clippedNames().length + ' names run off the edge of the canvas: ' +
         clippedNames().slice(0, 2).map((b) => b.t).join(', '),
@@ -1450,16 +1477,22 @@ function run() {
     const wwP = focus.positionOf(wwasps);
     const wwFar = Math.max(...wwOwn.map((n) =>
         Math.hypot(focus.positionOf(n).x - wwP.x, focus.positionOf(n).y - wwP.y)));
-    const wwOff = wwOwn.filter((n) => {
+    /* More connections than the stage holds at full size (28 by October
+     * 2026) leave the last of them in the next row down, a short scroll;
+     * none may be further off than that. */
+    const wwOffBy = (n) => {
         const p = focus.positionOf(n);
         const x = p.x * tf.k + tf.x;
         const y = p.y * tf.k + tf.y;
-        return x < 0 || x > renderer.width || y < 0 || y > renderer.height;
-    });
-    check(wwOwn.length > 10 && wwOff.length === 0 && wwFar <= WIDTH * 0.75,
-        wwOff.length + " of WWASPS's " + wwOwn.length + ' connections are off the stage, the furthest ' +
-        Math.round(wwFar) + 'px away: ' + wwOff.slice(0, 3).map((n) => n.name).join(', '),
-        'all ' + wwOwn.length + " of WWASPS's connections on the stage, the furthest " + Math.round(wwFar) + 'px away');
+        return Math.max(0 - x, x - renderer.width, 0 - y, y - renderer.height, 0);
+    };
+    const wwOff = wwOwn.filter((n) => wwOffBy(n) > 0);
+    const wwFarOff = wwOwn.filter((n) => wwOffBy(n) > NEXT_ROW);
+    check(wwOwn.length > 10 && wwFarOff.length === 0 && wwFar <= WIDTH * 0.75,
+        wwFarOff.length + " of WWASPS's " + wwOwn.length + ' connections are more than a row off the stage, the furthest ' +
+        Math.round(wwFar) + 'px away: ' + wwFarOff.slice(0, 3).map((n) => n.name).join(', '),
+        wwOwn.length - wwOff.length + " of WWASPS's " + wwOwn.length + ' connections on the stage, the rest within a row of it, the furthest ' +
+        Math.round(wwFar) + 'px away');
 
     /* A click is a yoyo: the clicked name swells and its connections are
      * reeled in from where they were, overshoot and settle. In motion
