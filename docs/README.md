@@ -21,6 +21,10 @@ says where to read about each part.
 
 ## Facility data
 
+- [Research guide](./RESEARCH-GUIDE.md): how to research a facility for its
+  profile (names, address, timeline, owners, program type, staff, lawsuits,
+  inspections, survivor accounts, libraries and archives).
+
 - [Data model migration](./DATA-MODEL-MIGRATION.md): the move to one row per
   facility (`facilities_v2`). The write switch has been on since 2026-09-18.
 - [Facility schema (v2)](./FACILITY-SCHEMA.md): the canonical facility
