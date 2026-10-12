@@ -1,0 +1,29 @@
+{
+  "_about": "Stories from the Field (Will White). Terms added to every episode's prompt after the episode's own names; corrections fix this show's transcripts on top of common.json. Add a fix here when 'podcast-transcribe.py suspects' finds a name heard wrong, then run 'fix'.",
+  "terms": [
+    "Will White",
+    "Summit Achievement",
+    "Open Sky",
+    "Evoke",
+    "Second Nature",
+    "Anasazi",
+    "RedCliff Ascent",
+    "Trails Carolina",
+    "BlueFire",
+    "SUWS",
+    "Aspen Achievement Academy",
+    "Catherine Freer",
+    "Michael Gass",
+    "Keith Russell",
+    "Anita Tucker"
+  ],
+  "corrections": {
+    "Stories from the Feel": "Stories from the Field",
+    "Red Cliff Ascent": "RedCliff Ascent",
+    "Blue Fire": "BlueFire",
+    "Open Skye": "Open Sky",
+    "Aspirro": "Aspiro",
+    "Kristen Bolt": "Kirsten Bolt",
+    "Kristen Vult": "Kirsten Bolt"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "_about": "Words every podcast prompt may carry (field names Whisper tends to mishear) and fixes applied to every show's transcripts. 'corrections' maps a misheard spelling (matched as whole words, any case) to the right one. Show files in this folder add their own.",
+  "terms": [
+    "NATSAP",
+    "OBH Council",
+    "Outdoor Behavioral Healthcare",
+    "wilderness therapy",
+    "therapeutic boarding school",
+    "residential treatment center",
+    "RTC",
+    "therapeutic consultant",
+    "educational consultant",
+    "IECA",
+    "transport",
+    "Breaking Code Silence",
+    "Stop Institutional Child Abuse Act",
+    "Joint Commission",
+    "CARF",
+    "Outward Bound",
+    "NOLS",
+    "bow drill",
+    "solo",
+    "field staff",
+    "field guide",
+    "Paris Hilton"
+  ],
+  "corrections": {
+    "Nat Sap": "NATSAP",
+    "Natsap": "NATSAP",
+    "NatSap": "NATSAP",
+    "Nat-Sap": "NATSAP",
+    "OBH counsel": "OBH Council",
+    "O.B.H.": "OBH",
+    "I.E.C.A.": "IECA",
+    "Breaking Code Silent": "Breaking Code Silence"
+  }
+}
