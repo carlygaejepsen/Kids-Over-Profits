@@ -58219,9 +58219,9 @@
    "target": "falcon-ridge-ranch",
    "category": "corporate",
    "roles": [
-    "acquired"
+    "acquired (2021)"
    ],
-   "raw": "acquired",
+   "raw": "acquired (2021)",
    "direction": "acquirer",
    "crossesChain": false,
    "crossesRegion": false
@@ -60059,9 +60059,9 @@
    "target": "lava-heights-academy",
    "category": "corporate",
    "roles": [
-    "acquired"
+    "acquired (2021)"
    ],
-   "raw": "acquired",
+   "raw": "acquired (2021)",
    "direction": "acquirer",
    "crossesChain": false,
    "crossesRegion": false
@@ -62282,9 +62282,9 @@
    "target": "falcon-ridge-ranch",
    "category": "corporate",
    "roles": [
-    "affiliated"
+    "operated 2016-2021"
    ],
-   "raw": "",
+   "raw": "operated 2016-2021",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false
@@ -62321,9 +62321,9 @@
    "target": "lava-heights-academy",
    "category": "corporate",
    "roles": [
-    "affiliated"
+    "operated 2016-2021"
    ],
-   "raw": "",
+   "raw": "operated 2016-2021",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false
