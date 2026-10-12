@@ -9,7 +9,8 @@ spellings Whisper still gets wrong; the raw text is kept, so 'fix' can re-apply 
 Everything goes to tmp/podcasts/<show>/ (never committed: the transcripts are the show's copyrighted work).
 Audio is downloaded one episode at a time and deleted once transcribed (--keep-audio keeps it).
 
-  py -3.13 scripts/podcast-transcribe.py feed      [--show sftf]       # fetch the feed -> episodes.json
+  py -3.13 scripts/podcast-transcribe.py feed      [--show sftf]       # fetch the feed -> episodes.json, the show's own
+                                                                        # transcripts -> official/ (their names prime those episodes)
   py -3.13 scripts/podcast-transcribe.py vocab     [--show sftf] [--print 221]   # build prompts -> vocab.json + vocab-report.md
   py -3.13 scripts/podcast-transcribe.py run       [--show sftf] [--model small] [--limit N] [--episodes 221 300] [--oldest-first]
   py -3.13 scripts/podcast-transcribe.py fix       [--show sftf]       # re-apply corrections to every transcript
@@ -45,6 +46,8 @@ SHOWS = {
         'feed': 'https://storiesfromthefield.libsyn.com/rss',
         'host': 'Will White',
         'about': 'wilderness therapy and outdoor behavioral health',
+        # the show's own transcripts (Squarespace blog; 114, 115 and 116 as of 2026-10): their names prime those episodes
+        'official': 'https://storiesfromthefield.com/blog-and-show-transcripts?format=json',
     },
 }
 
@@ -175,10 +178,47 @@ def cmd_feed(show, quiet=False):
         if seen[e['stem']] > 1:
             e['stem'] += '-' + slugify(e['date'] or e['guid'][-8:], 12)
     write_json(d / 'episodes.json', episodes)
+    got = fetch_official(show, episodes)
     if not quiet:
         hours = sum(e['duration'] for e in episodes) / 3600
-        print(f'{len(episodes)} episodes, {hours:.1f} hours -> {d / "episodes.json"}')
+        print(f'{len(episodes)} episodes, {hours:.1f} hours -> {d / "episodes.json"}; {got} official transcripts')
     return episodes
+
+
+def fetch_official(show, episodes):
+    """The show's own published transcripts -> official/<stem>.txt, matched to episodes by the number in the post title."""
+    import requests
+    url = SHOWS[show].get('official')
+    if not url:
+        return 0
+    out = show_dir(show) / 'official'
+    by_num = {e['number']: e for e in episodes if e['number'] is not None}
+    got = 0
+    while url:
+        try:
+            r = requests.get(url, headers={'User-Agent': UA}, timeout=60)
+            r.raise_for_status()
+            data = r.json()
+        except Exception as ex:  # the feed still works without them
+            print(f'  official transcripts not fetched: {ex}', file=sys.stderr)
+            break
+        for post in data.get('items', []):
+            m = re.search(r'episode\s*(\d+)', strip_html(post.get('title', '')), re.I)
+            e = by_num.get(int(m.group(1))) if m else None
+            text = strip_html(post.get('body') or '')
+            if e and len(text) > 2000:
+                out.mkdir(exist_ok=True)
+                head = f"{strip_html(post['title'])}\nhttps://storiesfromthefield.com{post.get('fullUrl', '')}\n\n"
+                (out / f"{e['stem']}.txt").write_text(head + text, encoding='utf-8')
+                got += 1
+        nxt = (data.get('pagination') or {}).get('nextPageUrl')
+        url = f"https://storiesfromthefield.com{nxt}&format=json" if nxt else None
+    return got
+
+
+def official_text(show, e):
+    p = show_dir(show) / 'official' / f"{e['stem']}.txt"
+    return p.read_text(encoding='utf-8') if p.exists() else ''
 
 
 def load_episodes(show):
@@ -318,6 +358,28 @@ def proper_nouns(text, lower_words):
     return out
 
 
+FILLER = set('so and but like cause well hey yeah oh um uh okay ok because that thats then now yes no just i'.split())
+
+
+def trim_spoken(p):
+    """A name as said: no filler around it ("So Jessica" -> "Jessica", "Mike Gass and Dr" -> "Mike Gass")."""
+    words = p.split()
+    while words and (words[0].lower().strip(".'’") in FILLER or re.search(r"['’]", words[0])):
+        words.pop(0)
+    while words and (words[-1].lower().strip(".'’") in FILLER | {'and', 'dr', 'of', 'the'} or re.search(r"['’]", words[-1])):
+        words.pop()
+    return ' '.join(words)
+
+
+def spoken_name_ok(p, lower_words):
+    """Said, not written: the first or last word must be a name word ("Mike Gass", "University of New Hampshire"),
+    never a phrase of ordinary words that was capitalised ("Staff Training and Pay", "Boot Camp")."""
+    words = p.split()
+    if not words or any(re.search(r"['’]", w) for w in words):
+        return False
+    return any(is_name_word(w.strip('.,-'), lower_words) for w in (words[0], words[-1]))
+
+
 def build_vocab(show, episodes):
     conf = SHOWS[show]
     terms, corrections = hand_lists(show)
@@ -325,16 +387,24 @@ def build_vocab(show, episodes):
     singles = {n: name_pattern(n) for n in names}
     lowered = {n.lower(): n for n in names}
 
-    corpus = '\n'.join(e['title'] + '\n' + e['description'] for e in episodes)
+    official = {e['guid']: official_text(show, e) for e in episodes}
+    fix_pat, fix_lut = correction_re(corrections)
+    corpus = '\n'.join(e['title'] + '\n' + e['description'] + '\n' + official[e['guid']] for e in episodes)
     lower_words = set(re.findall(r"(?<![\w'’])[a-z][a-z'’\-]+", corpus))
     per_episode, series = {}, Counter()
     for e in episodes:
         text = e['title'] + '\n' + e['description']
         low = text.lower()
+        said = official[e['guid']]
         hits = []
         for n, pat in singles.items():
             if n.lower() in low and pat.search(text) and (' ' in n or is_name_word(n, lower_words)):
                 hits.append(n)
+            # in speech only as written (capitalised) and never an everyday phrase ("Boot Camp", "Time Out")
+            elif said and n in said and spoken_name_ok(n, lower_words) and pat.search(said):
+                hits.append(n)
+        text += '\n' + said
+        low = text.lower()
         # longest first, then drop names inside a longer hit ("Aspen" inside "Aspen Achievement Academy")
         hits.sort(key=lambda n: (-len(n), n))
         kept = []
@@ -343,12 +413,21 @@ def build_vocab(show, episodes):
                 kept.append(n)
         kept.sort(key=lambda n: low.find(n.lower()))
         propers = []
-        for p in proper_nouns(text, lower_words):
+        for p in proper_nouns(e['title'] + '\n' + e['description'], lower_words):
             pl = p.lower()
             if pl == conf['title'].lower() or pl in conf['host'].lower():
                 continue
             if not any(pl in k.lower() for k in kept + propers):
                 propers.append(p)
+        # names in the show's own transcript: said twice or more, or more than one word, most said first
+        # (the show's typos fixed by the corrections first, so Whisper is never primed with "Kurt Hanh")
+        spoken = Counter()
+        for p in proper_nouns(said, lower_words):
+            p = apply_corrections(trim_spoken(p), fix_pat, fix_lut)
+            if p and spoken_name_ok(p, lower_words) and p.lower() not in (conf['title'].lower(), conf['host'].lower()):
+                spoken[p] += 1
+        heard = [p for p, c in spoken.most_common() if (c >= 2 or ' ' in p)
+                 and not any(p.lower() in k.lower() for k in kept + propers)]
         # the people KOP has at the programs this episode names, taken in turn from each program, up to 12
         lists = [staff.get(n.lower(), []) for n in kept]
         people, taken = [], {p.lower() for p in propers + kept}
@@ -357,7 +436,7 @@ def build_vocab(show, episodes):
                 if row < len(lst) and lst[row].lower() not in taken and len(people) < 12:
                     taken.add(lst[row].lower())
                     people.append(lst[row])
-        per_episode[e['guid']] = {'kop': kept, 'propers': propers, 'staff': people}
+        per_episode[e['guid']] = {'kop': kept, 'propers': propers, 'official': heard, 'staff': people}
         series.update(kept)
         series.update(p for p in propers if p.lower() in lowered or len(p.split()) > 1)
 
@@ -376,7 +455,7 @@ def make_prompt(conf, e, pe, terms, series_top, tokenizer):
     title = re.sub(r'^(?:episode\s*)?\d+\s*[:.\-]\s*', '', e['title'], flags=re.I)
     head = f"{conf['title']}, a podcast about {conf['about']} with {conf['host']}. {title}."
     names, seen = [], {conf['host'].lower()}
-    for n in pe['propers'] + pe['kop'] + pe['staff'] + terms + series_top:
+    for n in pe['propers'] + pe['kop'] + pe.get('official', []) + pe['staff'] + terms + series_top:
         key = n.lower()
         if key not in seen and key not in title.lower():
             seen.add(key)
@@ -422,7 +501,10 @@ def cmd_vocab(show, print_ep=None, quiet=False):
         v = vocab['episodes'][e['guid']]
         lines += [f"## {e['title']} ({e['date']})", '', f"- From KOP: {', '.join(v['kop']) or '-'}",
                   f"- Their people in KOP: {', '.join(v['staff']) or '-'}",
-                  f"- From the description: {', '.join(v['propers']) or '-'}", f"- Prompt: {v['prompt']}", '']
+                  f"- From the description: {', '.join(v['propers']) or '-'}"]
+        if v['official']:
+            lines.append(f"- From the show's own transcript: {', '.join(v['official'])}")
+        lines += [f"- Prompt: {v['prompt']}", '']
     (d / 'vocab-report.md').write_text('\n'.join(lines), encoding='utf-8')
     if print_ep is not None:
         for e in episodes:
@@ -432,6 +514,7 @@ def cmd_vocab(show, print_ep=None, quiet=False):
                 print('  KOP names:  ', ', '.join(v['kop']) or '-')
                 print('  their people:', ', '.join(v['staff']) or '-')
                 print('  description:', ', '.join(v['propers']) or '-')
+                print('  transcript: ', ', '.join(v['official']) or '-')
                 print('  prompt:     ', v['prompt'])
     if not quiet:
         print(f"{len(episodes)} prompts, {len(vocab['series'])} series names -> {d / 'vocab.json'}, {d / 'vocab-report.md'}")
@@ -549,6 +632,7 @@ def cmd_run(show, model_name, limit, only, oldest_first, keep_audio, min_free_gb
         try:
             if not audio.exists():
                 download(e['audio'], audio)
+            vocab = read_json(tdir.parent / 'vocab.json') or vocab  # picks up a 'vocab' rebuilt while this runs
             prompt = vocab['episodes'][e['guid']]['prompt']
             t0 = time.time()
             result = model.transcribe(str(audio), language='en', fp16=False, verbose=None,
