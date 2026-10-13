@@ -1021,9 +1021,11 @@ function kop_daudit_apply($key, $reviewer, $over_changes = false, $picked = null
                 $operator = array('name' => trim((string) $op['name']));
                 foreach ((array) ($op['fields'] ?? array()) as $path => $v) kop_daudit_set($operator, (string) $path, $v);
                 $json = json_encode(array('operator' => $operator), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-                $opts['pdo']->prepare("INSERT INTO `{$opts['prefix']}kop_operators` (unique_name, name, json_data) VALUES (?, ?, ?)")
-                    ->execute(array(trim((string) $op['name']), trim((string) $op['name']), $json));
-                $oid = (int) $opts['pdo']->lastInsertId();
+                // kop_operators.id has no AUTO_INCREMENT (ids kept from the legacy table): numbered like kop_v2_save_operator_project().
+                $max = (int) $opts['pdo']->query("SELECT COALESCE(MAX(id), 0) FROM `{$opts['prefix']}kop_operators`")->fetchColumn();
+                $oid = max(defined('KOP_V2_FIRST_NEW_OPERATOR_ID') ? (int) KOP_V2_FIRST_NEW_OPERATOR_ID : 500000, $max + 1);
+                $opts['pdo']->prepare("INSERT INTO `{$opts['prefix']}kop_operators` (id, unique_name, name, json_data) VALUES (?, ?, ?, ?)")
+                    ->execute(array($oid, trim((string) $op['name']), trim((string) $op['name']), $json));
                 $created = true;
             }
             $links = array();
