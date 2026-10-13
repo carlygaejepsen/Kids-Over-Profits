@@ -101,7 +101,8 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $ops = array_values(array_filter($d['ops'], function ($o) { return ($o['op'] ?? '') !== 'set_header_years'; }));
     $names = array_column($item['fields'], 'name');
     $check('wiki-updates: a card has one field per added line and Approve / Set aside', $names && array_diff(array_column($d['ops'], 'id'), $names) === array()
-        && array_column($item['actions'], 'id') === array('approve', 'skip'), implode(',', $names));
+        && array_column($item['actions'], 'id') === array('approve', 'skip'), 'card ' . $key . ' (' . ($item['status'] ?? '') . '); fields without a line: '
+        . implode(',', array_diff(array_column($d['ops'], 'id'), $names)) . '; actions ' . implode(',', array_column($item['actions'], 'id')));
     $check('wiki-updates: a card shows the whole entry and links it on Reddit', !empty($item['preview']['url']) && strpos($item['preview']['url'], 'kop_wiki_draft_view') !== false);
 
     $tensed = null;

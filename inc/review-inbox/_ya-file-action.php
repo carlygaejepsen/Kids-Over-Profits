@@ -34,7 +34,9 @@ function kop_rinbox_ya_file_skip_sources() {
     return array(
         'young-adult-programs', 'woodbury-facts', 'fornits', 'conflicts', 'data-audit',
         'people-merge', 'facility-merge', 'folder-links', 'map-renames', 'map-years', 'program-homes',
-        'highlight-summaries', 'bug-reports', 'glossary-feedback', 'featured-nominations', 'status-checks', 'publish-approved',
+        'highlight-summaries', 'bug-reports', 'glossary-feedback', 'featured-nominations', 'status_checks', 'publish-approved',
+        // KOP's own wiki text and which record a wiki entry is about: nothing in them to file on a program
+        'wiki-updates', 'wiki-links',
     );
 }
 
