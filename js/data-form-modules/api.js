@@ -284,6 +284,31 @@
         return true;
     }
 
+    // Categories that are never a location profile, whatever the project is
+    // called: a provider, referrer or transporter project named after a state
+    // ("Montana") is saved to its own table, not over the state's profile.
+    // Matches kop_save_master_category() in api/lib-save-category.php.
+    const NON_LOCATION_CATEGORIES = ['referrers', 'transporters', 'providers', 'wiki'];
+
+    function resolveSaveCategory(projectName, storedCategory, tabCategory, dataCategory) {
+        let category = storedCategory || tabCategory || 'companies';
+        // The Operators tab is an edit-only VIEW of company projects, not a
+        // real data category. Never persist 'operators' — it would route/
+        // categorize the project wrong and drop it from the companies list.
+        if (category === 'operator' || category === 'operators') category = 'companies';
+        // Provider sites carry category 'providers' in their data; that wins
+        // over a stored 'locations' left by a state-named project of the same name.
+        if (dataCategory === 'providers' && category === 'locations') {
+            category = 'providers';
+        }
+        if (NON_LOCATION_CATEGORIES.includes(category)) return category;
+        const normalizedName = String(projectName || '').toLowerCase().trim();
+        if (window.US_STATE_SET?.has(normalizedName) || window.COUNTRY_SET?.has(normalizedName)) {
+            return 'locations';
+        }
+        return category;
+    }
+
     async function saveProjectToCloud(projectName, action = 'save') {
         const { getAPIEndpoints, isSuggestionMode } = window.KOP_FormConfig;
         const { showUploadStatus, debugLog, deepClone, newProject, updateAllUI, refreshSavedProjectPanels } = window;
@@ -315,6 +340,10 @@
             try {
                 showUploadStatus(`Deleting "${projectName}"...`, 'info');
                 const payload = { projectName: projectName, action: 'delete' };
+                // Tells the server a state-named provider/referrer/transporter
+                // project is not the state's location profile.
+                const storedCategory = window.projects?.[projectName]?.category;
+                if (NON_LOCATION_CATEGORIES.includes(storedCategory)) payload.category = storedCategory;
 
                 const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
                     method: 'POST',
@@ -364,23 +393,13 @@
             showUploadStatus(`Saving "${projectName}" to cloud...`, 'info');
             if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
             
-            const normalizedName = projectName.toLowerCase().trim();
-            let category;
-            if (window.US_STATE_SET?.has(normalizedName) || window.COUNTRY_SET?.has(normalizedName)) {
-                category = 'locations';
-            } else {
-                category = window.projects?.[projectName]?.category;
-                if (!category) {
-                    const activeTab = document.querySelector('.category-tab.active');
-                    category = activeTab ? activeTab.dataset.category : 'companies';
-                }
-                // The Operators tab is an edit-only VIEW of company projects, not a
-                // real data category. Never persist 'operators' — it would route/
-                // categorize the project wrong and drop it from the companies list.
-                if (category === 'operators' || category === 'operator') {
-                    category = 'companies';
-                }
-            }
+            const activeTab = document.querySelector('.category-tab.active');
+            const category = resolveSaveCategory(
+                projectName,
+                window.projects?.[projectName]?.category,
+                activeTab ? activeTab.dataset.category : '',
+                window.formData?.category
+            );
 
             let canonicalProjectName = projectName;
             if (category === 'locations' && typeof window.normalizeLocationProjectName === 'function') {
@@ -496,6 +515,7 @@
     // Expose public API
     window.KOP_API = {
         normalizeProjectsPayload,
+        resolveSaveCategory,
         loadProjectsFromFallbackDatasets,
         loadAllProjectsFromCloud,
         persistProjectLocally,

@@ -981,12 +981,16 @@ In order:
    form; once one was moved, the move list hid the other for good. It is
    now offered with "Remove copy", which deletes it without a second
    entry. `node scripts/test-testimony-move.js` (19 checks, 5 fail on the
-   old code). Owner step: Admin runs item 11. Still open: the admin form's
-   save (`saveProjectToCloud` in `js/data-form-modules/api.js`, and the
-   state-name override in `api/save-master.php`) still files any project
-   named after a state as a location profile even on the providers tab;
-   a provider project typed as a bare state name would lose its saves the
-   same way. Approval already names them "<STATE> PROVIDERS".
+   old code). Owner step: Admin runs item 11. Done 2026-10-13: the admin
+   form's save no longer files a provider, referrer or transporter project
+   named after a state as that state's location profile.
+   `resolveSaveCategory()` (`js/data-form-modules/api.js`) and
+   `kop_save_master_category()` (`api/lib-save-category.php`, used by
+   `api/save-master.php`) keep those categories; a company save named after
+   a state or country is still the location profile. Delete sends the
+   stored category, so deleting such a project never touches the
+   location profile. `node scripts/test-save-category.js` (JS and PHP on
+   the same cases). Approval already names them "<STATE> PROVIDERS".
 4. **Per-file retry in the report backup** (Done 2026-09-30 in
    [5f98a09f](https://github.com/carlygaejepsen/Kids-Over-Profits-Tools/commit/5f98a09fae021b528ad327201d3679433ae7dc7d)).
    `migrate_pair` in `backup_reports.py` now asks to retry when OneDrive or

@@ -227,19 +227,14 @@ $STATE_ABBREVIATIONS = [
     'WI' => 'WISCONSIN', 'WY' => 'WYOMING'
 ];
 
-// SERVER-SIDE CATEGORY VALIDATION: Override category for state/country names
-// This ensures location projects ALWAYS go to locations_master, regardless of what frontend sends
-$category = $requestedCategory; // Start with requested category
-if ($projectName) {
-    $projectNameUpper = strtoupper(trim($projectName));
-    if (in_array($projectNameUpper, $US_STATE_NAMES) || in_array($projectNameUpper, $COUNTRY_NAMES)) {
-        $category = 'locations';
-        $projectName = $projectNameUpper;
-        // Log if frontend sent wrong category (helps debug issues)
-        if ($requestedCategory !== 'locations') {
-            error_log("Category override: '$projectName' is a state/country name - forcing category from '$requestedCategory' to 'locations'");
-        }
-    }
+// SERVER-SIDE CATEGORY VALIDATION: a company project named after a state or
+// country is that place's location profile, whatever the frontend sent. A
+// provider, referrer, transporter or wiki project keeps its own category.
+require_once __DIR__ . '/lib-save-category.php';
+list($category, $projectName) = kop_save_master_category($projectName, $requestedCategory, array_merge($US_STATE_NAMES, $COUNTRY_NAMES));
+if ($category === 'locations' && $requestedCategory !== 'locations') {
+    // Log if frontend sent wrong category (helps debug issues)
+    error_log("Category override: '$projectName' is a state/country name - forcing category from '$requestedCategory' to 'locations'");
 }
 
 // If the payload looks like an operator project, force it to companies unless
@@ -308,8 +303,14 @@ if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
             exit;
         }
         if ($action === 'delete') {
-            $is_location = in_array(strtoupper($projectName), array_merge($US_STATE_NAMES, $COUNTRY_NAMES), true);
-            $result = kop_v2_delete_form_project($pdo, $kop_v2_prefix, $projectName, $is_location);
+            $is_location = $category === 'locations';
+            if (in_array($category, kop_save_master_non_location_categories(), true)) {
+                // A provider/referrer/transporter project: never an operator or
+                // a location profile, even when it is named after a state.
+                $result = ['deleted' => false];
+            } else {
+                $result = kop_v2_delete_form_project($pdo, $kop_v2_prefix, $projectName, $is_location);
+            }
             $deleted = $result['deleted'];
             $message = $deleted ? "Project '$projectName' deleted" : '';
             if ($deleted && !empty($result['facilities_kept'])) {

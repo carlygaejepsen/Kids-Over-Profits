@@ -291,6 +291,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-placement.php
 # Survivor Testimony "Move to testimony" in the admin data form (js/data-form/testimony.js): every copy of a
 # moved note can be cleared ("Remove copy"), moved text leaves the fields the public pages list
 node scripts/test-testimony-move.js
+# A provider/referrer/transporter project named after a state ("Montana") saves to its own table, never over the state's
+# location profile: resolveSaveCategory() (js/data-form-modules/api.js) == kop_save_master_category() (api/lib-save-category.php)
+node scripts/test-save-category.js [--php=<php.exe>]
 # Person ids (inc/people.php, KOP Tools > People): everyone on a facility staff list (administrator, notableStaff) gets a
 # {prefix}kop_people id, stamped into the entry as personId by an hourly sync (same name key = same id); operators and network
 # map people are linked by name, each map node keeps its own id (two board people with one name stay two until merged);
