@@ -63,7 +63,9 @@ check(kop_journalist_name_key('Onz Chéry') === kop_journalist_name_key('Onz Che
 $pdo = new PDO('sqlite::memory:');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->exec("ATTACH DATABASE " . $pdo->quote($mirror) . " AS m");
-$pdo->exec("CREATE TABLE news_submissions AS SELECT id, author, status, publication_name, publication_date FROM m.news_submissions");
+$pdo->exec("CREATE TABLE news_submissions AS SELECT id, author, status, publication_name, publication_date, article_title, story_group_id FROM m.news_submissions");
+$pdo->exec("CREATE TABLE news_facility_links AS SELECT news_id, facility_id FROM m.news_facility_links");
+$pdo->exec("CREATE TABLE news_featured (news_id INTEGER PRIMARY KEY)");
 $pdo->exec("CREATE TABLE journalists (
     id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, name_key TEXT NOT NULL UNIQUE,
     aliases TEXT, outlet TEXT, email TEXT, phone TEXT, social TEXT, website TEXT, location TEXT,
@@ -122,6 +124,41 @@ check(strpos((string) $pdo->query("SELECT aliases FROM journalists WHERE id = $a
 check($count("SELECT COUNT(*) FROM journalist_articles WHERE journalist_id = $a") >= $bLinks, 'merge moves articles');
 $third = kop_journalist_sync_all($pdo);
 check($third['created'] === 0, 'alias matches after merge, nothing re-created');
+
+// --- The shortlist -----------------------------------------------------------
+$since = '2023-10-01';
+$short = kop_journalist_shortlist($pdo, $since, 500);
+$byName = [];
+foreach ($short as $s) {
+    $byName[$s['name']] = $s;
+}
+check(count($short) > 10, 'shortlist has names');
+$sorted = true;
+for ($i = 1; $i < count($short); $i++) {
+    if ($short[$i]['score'] > $short[$i - 1]['score']) $sorted = false;
+}
+check($sorted, 'shortlist sorted by score');
+// Holly Ramer's AP story about one New Hampshire trial ran in nine papers: one story.
+if (isset($byName['Holly Ramer'])) {
+    check($byName['Holly Ramer']['stories'] === 1 && $byName['Holly Ramer']['all'] >= 9, 'a wire story reprinted by many papers counts once');
+}
+$pdo->exec("UPDATE journalists SET status = 'ignored' WHERE id = $rb");
+check(!in_array($rb, array_column(kop_journalist_shortlist($pdo, $since, 500), 'id'), true), 'an ignored journalist leaves the shortlist');
+$pdo->exec("UPDATE journalists SET status = 'active' WHERE id = $rb");
+// An Essential reporting pick adds 3 to the score of everyone who wrote it.
+$pick = (int) $pdo->query("SELECT ja.news_id FROM journalist_articles ja JOIN news_submissions n ON n.id = ja.news_id
+    WHERE ja.journalist_id = $rb AND n.status IN ('approved','published') AND n.publication_date >= '$since' LIMIT 1")->fetchColumn();
+$before = array_column(kop_journalist_shortlist($pdo, $since, 500), 'score', 'id')[$rb] ?? 0;
+$pdo->exec("INSERT INTO news_featured (news_id) VALUES ($pick)");
+$after = array_column(kop_journalist_shortlist($pdo, $since, 500), 'score', 'id')[$rb] ?? 0;
+check($pick > 0 && $after === $before + 3, 'an Essential reporting pick adds 3');
+$pdo->exec("DELETE FROM news_featured");
+if ($list) {
+    echo "\nShortlist since $since:\n";
+    foreach (array_slice($short, 0, 25) as $i => $s) {
+        printf("%2d %-24s %3d  %s\n", $i + 1, $s['name'], $s['score'], $s['why']);
+    }
+}
 
 if ($list) {
     echo "\nJournalists (articles, outlets):\n";

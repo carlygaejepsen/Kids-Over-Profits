@@ -296,3 +296,125 @@ if (!function_exists('kop_journalist_name_key')) {
         }
     }
 }
+
+if (!function_exists('kop_journalist_shortlist')) {
+
+    /** Lower-case words of a headline, for telling one piece's reprints apart from a new piece. */
+    function kop_journalist_title_key(string $title): string {
+        $t = strtolower(preg_replace('/[^a-z0-9]+/i', ' ', $title));
+        return substr(trim(preg_replace('/\s+/', ' ', $t)), 0, 60);
+    }
+
+    /**
+     * The reporters to reach first: who has covered the industry most, most
+     * recently, and in most depth, ranked from our own news entries since
+     * $since (Y-m-d). Approved and published entries only.
+     *
+     *   stories   distinct stories (story_group_id; an ungrouped entry is its
+     *             own story), so one wire piece reprinted by nine papers is one
+     *   pieces    distinct headlines: follow-ups on one story count, reprints do not
+     *   months    distinct months they published in: steady coverage, not one burst
+     *   featured  their articles picked for Essential reporting (news_featured)
+     *   programs  distinct facility records their articles are linked to
+     *
+     * score = 2 x stories + (pieces - stories) + months + 3 x featured
+     *         + programs, at most 5. Each row carries 'why', the same in words.
+     * Ignored journalists are left out; do-not-contact ones stay, marked.
+     */
+    function kop_journalist_shortlist(PDO $pdo, string $since, int $limit = 15): array {
+        $rows = $pdo->query(
+            "SELECT j.id AS jid, n.id AS nid, n.article_title, n.publication_date, n.story_group_id, n.publication_name
+             FROM journalists j
+             JOIN journalist_articles ja ON ja.journalist_id = j.id
+             JOIN news_submissions n ON n.id = ja.news_id AND n.status IN ('approved','published')
+             WHERE j.status = 'active'"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $featured = array();
+        try {
+            foreach ($pdo->query("SELECT news_id FROM news_featured")->fetchAll(PDO::FETCH_COLUMN) as $id) {
+                $featured[(int) $id] = true;
+            }
+        } catch (Throwable $e) {
+            // No Essential reporting table yet: nobody gets the bonus.
+        }
+        $facilities = array();
+        try {
+            foreach ($pdo->query("SELECT news_id, facility_id FROM news_facility_links")->fetchAll(PDO::FETCH_ASSOC) as $l) {
+                $facilities[(int) $l['news_id']][(int) $l['facility_id']] = true;
+            }
+        } catch (Throwable $e) {
+            // Without the links the programs column stays at zero.
+        }
+
+        $by = array();
+        foreach ($rows as $r) {
+            $jid = (int) $r['jid'];
+            $nid = (int) $r['nid'];
+            $date = (string) $r['publication_date'];
+            if (!isset($by[$jid])) {
+                $by[$jid] = array('all' => array(), 'stories' => array(), 'pieces' => array(), 'months' => array(),
+                    'featured' => array(), 'programs' => array(), 'outlets' => array(), 'last' => '');
+            }
+            $b = &$by[$jid];
+            $b['all'][$nid] = true;
+            if ($date !== '' && $date > $b['last']) $b['last'] = $date;
+            if ($date === '' || $date < $since) {
+                unset($b);
+                continue;
+            }
+            $b['stories'][$r['story_group_id'] !== null && $r['story_group_id'] !== '' ? 'g' . $r['story_group_id'] : 'n' . $nid] = true;
+            $b['pieces'][kop_journalist_title_key((string) $r['article_title']) ?: 'n' . $nid] = true;
+            $b['months'][substr($date, 0, 7)] = true;
+            if (isset($featured[$nid])) $b['featured'][$nid] = true;
+            foreach ($facilities[$nid] ?? array() as $fid => $_) $b['programs'][$fid] = true;
+            $outlet = trim((string) $r['publication_name']);
+            if ($outlet !== '') $b['outlets'][$outlet] = ($b['outlets'][$outlet] ?? 0) + 1;
+            unset($b);
+        }
+
+        $people = array();
+        foreach ($pdo->query("SELECT id, name, outlet, email, outreach, beat FROM journalists WHERE status = 'active'")->fetchAll(PDO::FETCH_ASSOC) as $p) {
+            $people[(int) $p['id']] = $p;
+        }
+
+        $out = array();
+        foreach ($by as $jid => $b) {
+            $stories = count($b['stories']);
+            if ($stories === 0 || !isset($people[$jid])) continue;
+            $pieces   = max($stories, count($b['pieces']));
+            $months   = count($b['months']);
+            $feat     = count($b['featured']);
+            $programs = count($b['programs']);
+            $score    = 2 * $stories + ($pieces - $stories) + $months + 3 * $feat + min($programs, 5);
+            arsort($b['outlets']);
+            $why = array($stories === 1 ? '1 story' : $stories . ' stories');
+            if ($pieces > $stories) $why[] = ($pieces - $stories) . ' follow-up' . ($pieces - $stories === 1 ? '' : 's');
+            if ($months > 1) $why[] = 'in ' . $months . ' different months';
+            if ($feat) $why[] = $feat . ' in Essential reporting';
+            if ($programs) $why[] = $programs . ' program' . ($programs === 1 ? '' : 's') . ' named';
+            $p = $people[$jid];
+            $out[] = array(
+                'id'       => $jid,
+                'name'     => (string) $p['name'],
+                'outlet'   => trim((string) $p['outlet']) !== '' ? (string) $p['outlet'] : implode(', ', array_slice(array_keys($b['outlets']), 0, 3)),
+                'email'    => (string) $p['email'],
+                'outreach' => (string) $p['outreach'],
+                'beat'     => (string) $p['beat'],
+                'stories'  => $stories,
+                'pieces'   => $pieces,
+                'months'   => $months,
+                'featured' => $feat,
+                'programs' => $programs,
+                'all'      => count($b['all']),
+                'last'     => $b['last'],
+                'score'    => $score,
+                'why'      => implode(', ', $why),
+            );
+        }
+        usort($out, static function ($a, $b) {
+            return array($b['score'], $b['last'], $a['name']) <=> array($a['score'], $a['last'], $b['name']);
+        });
+        return array_slice($out, 0, $limit);
+    }
+}

@@ -221,6 +221,19 @@ $visible = array_filter($rows, static function ($r) use ($q, $filterOutreach, $s
 });
 $activeCount = count(array_filter($rows, static fn($r) => $r['status'] === 'active'));
 
+// The shortlist: who to reach first (kop_journalist_shortlist()), over the last
+// 1, 2, 3 or 5 years; 15 names, or 40 with ?short=more.
+$shortYears = in_array((int) ($_GET['years'] ?? 3), [1, 2, 3, 5], true) ? (int) ($_GET['years'] ?? 3) : 3;
+$shortMore = ($_GET['short'] ?? '') === 'more';
+$shortlist = [];
+if ($detailId === 0 && !$errors) {
+    try {
+        $shortlist = kop_journalist_shortlist($pdo, gmdate('Y-m-d', strtotime("-$shortYears years")), $shortMore ? 40 : 15);
+    } catch (Throwable $e) {
+        $errors[] = 'Could not build the shortlist: ' . $e->getMessage();
+    }
+}
+
 header('Content-Type: text/html; charset=utf-8');
 ?><!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><title>Journalists (internal)</title>
@@ -386,6 +399,39 @@ listed at the bottom. Use <strong>Ignore</strong> on anything that slipped throu
         <label style="display:inline;font-weight:400"><input type="checkbox" name="ignored" value="1" <?php checked($showIgnored); ?>> show ignored</label>
         <button type="submit" class="secondary" style="margin-top:0">Filter</button>
     </form>
+
+    <?php if ($shortlist): ?>
+    <h2>Shortlist: who to reach first</h2>
+    <p class="hint" style="max-width:860px">Ranked from our news entries over the last <?php echo $shortYears; ?> year<?php echo $shortYears === 1 ? '' : 's'; ?>:
+        stories they covered (a wire piece reprinted by many papers counts once), follow-ups, how many months they kept at it,
+        articles picked for Essential reporting and programs their articles name. Open a name to add contact details or mark
+        them contacted; use <strong>Ignore</strong> there for anyone who is not a reporter (an op-ed author, an advocate).</p>
+    <form method="get" class="toolbar">
+        <label style="display:inline;font-weight:400">Over the last
+            <select name="years">
+                <?php foreach ([1, 2, 3, 5] as $y): ?>
+                    <option value="<?php echo $y; ?>" <?php selected($shortYears, $y); ?>><?php echo $y; ?> year<?php echo $y === 1 ? '' : 's'; ?></option>
+                <?php endforeach; ?>
+            </select></label>
+        <?php if ($shortMore): ?><input type="hidden" name="short" value="more"><?php endif; ?>
+        <button type="submit" class="secondary" style="margin-top:0">Show</button>
+        <a href="<?php echo esc_url(add_query_arg(['years' => $shortYears, 'short' => $shortMore ? false : 'more'], $self)); ?>"><?php echo $shortMore ? 'Top 15 only' : 'Show 40'; ?></a>
+    </form>
+    <div class="scroll"><table><thead><tr><th>#</th><th>Name</th><th>Outlet(s)</th><th>Why</th><th>Latest</th><th>Email</th><th>Outreach</th></tr></thead><tbody>
+    <?php foreach ($shortlist as $i => $s): ?>
+        <tr>
+            <td><?php echo $i + 1; ?></td>
+            <td><a href="<?php echo esc_url(add_query_arg('id', (int) $s['id'], $self)); ?>"><?php echo esc_html($s['name']); ?></a>
+                <?php if ($s['beat'] !== ''): ?><br><span class="muted"><?php echo esc_html($s['beat']); ?></span><?php endif; ?></td>
+            <td><?php echo esc_html($s['outlet']); ?></td>
+            <td><?php echo esc_html(ucfirst($s['why'])); ?></td>
+            <td><?php echo esc_html($s['last']); ?></td>
+            <td><?php echo $s['email'] ? '<a href="mailto:' . esc_attr($s['email']) . '">' . esc_html($s['email']) . '</a>' : '<span class="muted">none yet</span>'; ?></td>
+            <td><span class="pill <?php echo esc_attr($s['outreach']); ?>"><?php echo esc_html($states[$s['outreach']] ?? $s['outreach']); ?></span></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody></table></div>
+    <?php endif; ?>
 
     <h2><?php echo count($visible); ?> shown of <?php echo $activeCount; ?> journalists</h2>
     <?php if (!$rows && !$errors): ?>
