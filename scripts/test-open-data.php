@@ -57,6 +57,25 @@ function kop_glossary_store_export_file($path) {
     $built = kop_glossary_build((string) file_get_contents(dirname(__DIR__) . '/js/data/glossary/glossary.md'));
     return $built['data'] && file_put_contents($path, json_encode($built['data'])) !== false;
 }
+// Marketing companies and trade organizations: their tables are made on the server, so a mirror
+// synced before they existed lacks them. Fill an attached in-memory copy from the seeds (never the mirror).
+require_once dirname(__DIR__) . '/inc/marketers.php';
+require_once dirname(__DIR__) . '/inc/tradeorgs.php';
+$seeded_tables = array();
+foreach (array('marketers_master' => 'marketers', 'tradeorgs_master' => 'tradeorgs') as $table => $seed) {
+    if (kop_open_data_table_exists_early($pdo, $table)) continue;
+    if (!$seeded_tables) $pdo->exec("ATTACH DATABASE ':memory:' AS kop_test_seeds");
+    $pdo->exec("CREATE TABLE kop_test_seeds.$table (id INTEGER PRIMARY KEY AUTOINCREMENT, unique_name TEXT NOT NULL UNIQUE, json_data TEXT)");
+    $insert = $pdo->prepare("INSERT INTO kop_test_seeds.$table (unique_name, json_data) VALUES (?, ?)");
+    foreach (json_decode(file_get_contents(dirname(__DIR__) . "/seeds/$seed.json"), true)['records'] as $record) {
+        $block = $seed === 'marketers' ? array('marketerCompany' => kop_marketer_normalize_company($record)) : array('tradeOrg' => kop_tradeorg_normalize($record));
+        $insert->execute(array($record['name'], json_encode(array('name' => $record['name'], 'data' => $block + array('category' => $seed)))));
+    }
+    $seeded_tables[] = $table;
+}
+function kop_open_data_table_exists_early(PDO $pdo, $table) {
+    try { $pdo->query("SELECT 1 FROM `$table` LIMIT 1"); return true; } catch (Exception $e) { return false; }
+}
 require_once dirname(__DIR__) . '/inc/open-data.php';
 
 $failures = 0;
@@ -81,7 +100,8 @@ $check('no dataset failed', empty($manifest['errors']), json_encode($manifest['e
 
 $expected = array('facilities', 'operators', 'operator-facilities', 'facility-addresses', 'referrers',
     'inspection-facilities', 'inspection-reports', 'severe-findings', 'lawsuits', 'lawsuit-facilities',
-    'legislation', 'news', 'news-facilities', 'network-nodes', 'network-edges', 'glossary', 'reporting-directory');
+    'legislation', 'news', 'news-facilities', 'network-nodes', 'network-edges', 'glossary', 'reporting-directory',
+    'marketers', 'trade-organizations');
 $missing = array_diff($expected, array_keys($manifest['datasets']));
 $check('every dataset is in the manifest', !$missing, implode(', ', $missing));
 foreach ($manifest['datasets'] as $key => $d) {
@@ -101,6 +121,14 @@ $severe = $pdo->prepare("SELECT COUNT(*) FROM ($severe_sql)");
 $severe->execute($severe_params);
 $check('severe findings: approved severe only, as the Severe Reports page', $rows('severe-findings') === (int) $severe->fetchColumn());
 $check('glossary counted by entries', $rows('glossary') > 100);
+$check('marketers: every record', $rows('marketers') === $count('SELECT COUNT(*) FROM marketers_master'));
+$check('trade organizations: every record', $rows('trade-organizations') === $count('SELECT COUNT(*) FROM tradeorgs_master'));
+$orgs = json_decode((string) @file_get_contents("$dir/trade-organizations.json"), true) ?: array();
+$natsap = array_values(array_filter($orgs, function ($o) { return $o['acronym'] === 'NATSAP'; }));
+$check('NATSAP lists its member programs by facility id', $natsap && count($natsap[0]['member_facility_ids']) > 0 && count($natsap[0]['former_member_facility_ids']) > 0,
+    $natsap ? count($natsap[0]['member_facility_ids']) . ' current, ' . count($natsap[0]['former_member_facility_ids']) . ' former' : 'missing');
+$notes = array_filter(array_merge($orgs, json_decode((string) @file_get_contents("$dir/marketers.json"), true) ?: array()), function ($r) { return isset($r['record']['fieldNotes']); });
+$check('marketer and trade organization records drop field notes', !$notes);
 $check('ZIP written', !empty($manifest['zip']) && file_exists("$dir/" . KOP_OPEN_DATA_ZIP));
 
 // ---------------------------------------------------------------------------

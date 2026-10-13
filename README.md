@@ -35,7 +35,7 @@ Kids Over Profits is open source. Advocates, researchers, journalists and surviv
 ### Data Forms
 - `page-admin-data.php` plus `templates/data-form-admin.php` handle direct admin editing.
 - `page-data.php` plus `templates/data-form-public.php` handle public suggestions.
-- Categories: parent companies, locations, referrers, transporters, and mental health providers (psychiatric wards, PHP/IOP, day schools, respite care and outpatient therapy outside the TTI that use its practices or refer to it; saved to `providers_master`, see `docs/data-forms/README.md`).
+- Categories: parent companies, locations, referrers, transporters, mental health providers (psychiatric wards, PHP/IOP, day schools, respite care and outpatient therapy outside the TTI that use its practices or refer to it; saved to `providers_master`), marketing companies (websites, "independent" directories, help lines, sold inquiries, reputation work; saved to `marketers_master`, listed on /marketing-companies/) and trade organizations (NATSAP, the OBH Council, IECA...; saved to `tradeorgs_master`, listed on /trade-organizations/ with the programs whose records name them). See `docs/data-forms/README.md`.
 - The frontend relies on `KOP_DATA_FORM_CONFIG` and the `js/data-form/` plus `js/data-form-modules/` stacks.
 
 ### TTI Program Index

@@ -47,6 +47,10 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `suggested_edits` stores public submissions awaiting review.
 - `locations_master` stores normalized location records.
 - `referrers_master` stores referrers and consultant data.
+- `{prefix}transporters_master` stores youth transport companies (`kop_transporters_table()` gives the live name).
+- `providers_master` stores mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient).
+- `marketers_master` stores marketing companies as `{marketerCompany}` (`api/lib-marketers.php`), seeded from `seeds/marketers.json`.
+- `tradeorgs_master` stores trade organizations as `{tradeOrg}` (`api/lib-tradeorgs.php`), seeded from `seeds/tradeorgs.json`.
 - `wiki_submissions` stores wiki editor submissions.
 - `news_submissions` stores news processor submissions.
 - `inspection_facilities` stores inspection-report facility records by state.
@@ -90,6 +94,8 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `page-tti-program-index.php` powers the public facility index and related search experience.
 - `page-location-index.php` powers the location directory.
 - `page-referrer-index.php` powers the consultant and referrer directory.
+- `templates/page-transporter-index.php` (/youth-transport-companies/) and `templates/page-provider-index.php` (/mental-health-providers/) list transporters and providers.
+- `templates/page-marketer-index.php` (/marketing-companies/, `inc/marketers.php`) and `templates/page-tradeorg-index.php` (/trade-organizations/, `inc/tradeorgs.php`) list marketing companies and trade organizations.
 
 ### State Inspection Reports
 - `page-state-reports.php` is the root page template for state report pages.

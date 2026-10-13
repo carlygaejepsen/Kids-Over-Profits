@@ -31,7 +31,8 @@ says where to read about each part.
   document. Every writer goes through `inc/facility-store.php`.
 - [Data Forms](./data-forms/README.md): the admin form (`mode=admin`) and
   the public suggestion form (`mode=suggestions`) for facilities, operators,
-  locations and referrers.
+  locations, referrers, transporters, mental health providers, marketing
+  companies and trade organizations.
 - [Admin Submissions](./admin-submissions/README.md): the review dashboard
   for wiki, news and data-form submissions.
 

@@ -251,6 +251,75 @@ function kop_open_data_datasets() {
         );
     }
 
+    if ($pdo && function_exists('kop_marketers_all') && kop_open_data_table_exists($pdo, 'marketers_master')) {
+        $sets['marketers'] = array(
+            'title'       => 'Marketing companies',
+            'group'       => 'Facilities and operators',
+            'description' => 'Companies that market programs to parents: websites, "independent" directories, help lines, sold inquiries, reputation work, as on the Marketing Companies page.',
+            'rows'        => static function () use ($pdo) {
+                $labels = kop_marketer_service_labels();
+                foreach (kop_marketers_all($pdo) as $row) {
+                    $c = $row['company'];
+                    unset($c['fieldNotes']);
+                    yield array(
+                        'id'                => $row['id'],
+                        'name'              => $c['name'],
+                        'other_names'       => $c['otherNames'],
+                        'city'              => $c['city'],
+                        'state'             => $c['state'],
+                        'country'           => $c['country'],
+                        'founded'           => $c['founded'],
+                        'status'            => $c['status'],
+                        'services'          => array_values(array_intersect_key($labels, array_filter($c['services']))),
+                        'websites'          => $c['websites'],
+                        'sites_run'         => $c['sitesRun'],
+                        'client_facilities' => $c['clientFacilities'],
+                        'client_companies'  => $c['clientCompanies'],
+                        'key_personnel'     => $c['keyPersonnel'],
+                        'record'            => $c,
+                    );
+                }
+            },
+            'json_only'   => array('record'),
+        );
+    }
+
+    if ($pdo && function_exists('kop_tradeorgs_all') && kop_open_data_table_exists($pdo, 'tradeorgs_master')) {
+        $sets['trade-organizations'] = array(
+            'title'       => 'Trade organizations',
+            'group'       => 'Facilities and operators',
+            'description' => 'Associations of programs, consultants and other industry businesses (NATSAP, the OBH Council, IECA...), with the programs whose records name them as current or former members, as on the Trade Organizations page.',
+            'rows'        => static function () use ($pdo) {
+                $labels = kop_tradeorg_activity_labels();
+                foreach (kop_tradeorgs_all($pdo) as $row) {
+                    $o = $row['org'];
+                    unset($o['fieldNotes']);
+                    $members = function_exists('kop_tradeorgs_members') ? kop_tradeorgs_members($o) : array('current' => array(), 'former' => array());
+                    $ids = static function ($list) { return array_map(static function ($m) { return (int) $m['id']; }, $list); };
+                    yield array(
+                        'id'                  => $row['id'],
+                        'name'                => $o['name'],
+                        'acronym'             => $o['acronym'],
+                        'other_names'         => $o['otherNames'],
+                        'kind'                => $o['orgType'],
+                        'city'                => $o['city'],
+                        'state'               => $o['state'],
+                        'country'             => $o['country'],
+                        'founded'             => $o['founded'],
+                        'status'              => $o['status'],
+                        'activities'          => array_values(array_intersect_key($labels, array_filter($o['activities']))),
+                        'websites'            => $o['websites'],
+                        'key_personnel'       => $o['keyPersonnel'],
+                        'member_facility_ids' => $ids($members['current']),
+                        'former_member_facility_ids' => $ids($members['former']),
+                        'record'              => $o,
+                    );
+                }
+            },
+            'json_only'   => array('record'),
+        );
+    }
+
     /* Inspections -------------------------------------------------------- */
 
     if ($pdo && kop_open_data_table_exists($pdo, 'inspection_facilities')) {
@@ -597,7 +666,7 @@ function kop_open_data_readme(array $manifest) {
         '',
         'Every dataset is here as CSV (opens in Excel or Google Sheets) and JSON.',
         'In the CSV files a list is written as "a; b; c"; nested records are JSON text.',
-        'The JSON files of facilities, operators and referrers also carry the full record.',
+        'The JSON files of facilities, operators, referrers, marketing companies and trade organizations also carry the full record.',
         '',
         'Datasets',
         '--------',

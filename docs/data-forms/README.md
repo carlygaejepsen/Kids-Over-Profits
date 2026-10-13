@@ -13,13 +13,13 @@ Page templates live in `templates/`. Each is a thin wrapper that includes the sh
 ### Admin Form
 - `templates/page-admin-data.php` (template "Admin Data Form")
 - markup in `templates/data-form-admin.php`, gated by `kop_require_page_capability('manage_options')`
-- tabs: parent companies, operators (edit only), locations, referrers, transporters, mental health providers
+- tabs: parent companies, operators (edit only), locations, referrers, transporters, mental health providers, marketers, trade organizations
 - saves directly to the master data workflow
 
 ### Public Suggestion Form
 - `templates/page-data.php` (template "Public Data Form")
 - markup in `templates/data-form-public.php`
-- tabs: parent companies, locations, referrers, transporters, mental health providers
+- tabs: parent companies, locations, referrers, transporters, mental health providers, marketers, trade organizations
 - submits suggestions for review rather than writing directly to the master dataset
 
 Related admin screen: `templates/page-admin-data-manager.php` (rename, move, reassign, delete master records; backed by `api/data-manager.php`).
@@ -131,7 +131,7 @@ The **Trade Organizations** tab (`data-category="tradeorgs"`) works like Markete
 - ability to move between complex records without losing work
 
 ### Structured Editing
-- parent company, facility, operator, location, referrer, transporter, and mental health provider data entry
+- parent company, facility, operator, location, referrer, transporter, mental health provider, marketing company and trade organization data entry
 - field notes and helper tooling
 - autocomplete-backed entity lookups
 - clone-facility workflow for quickly duplicating similar records

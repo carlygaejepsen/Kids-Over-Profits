@@ -36,6 +36,38 @@ Quick reference for all database tables and their columns.
 
 ---
 
+### {prefix}transporters_master
+**Columns:** `id`, `unique_name`, `json_data`, `created_at`, `updated_at`
+
+**Purpose:** Youth transport companies (the data forms' Transporters tab, /youth-transport-companies/)
+**Notes:** `wpdl_transporters_master` on the live site; always resolve the name with `kop_transporters_table()` (`inc/utilities.php`).
+
+---
+
+### providers_master
+**Columns:** `id`, `unique_name`, `json_data`, `created_at`, `updated_at`
+
+**Purpose:** Mental health providers outside the TTI that use its practices or refer to it (psychiatric wards, PHP/IOP, day schools, respite, outpatient); the data forms' Mental Health Providers tab, /mental-health-providers/
+**Notes:** Created on first save or approval. Never part of the facility tables.
+
+---
+
+### marketers_master
+**Columns:** `id`, `unique_name`, `json_data`, `created_at`, `updated_at`
+
+**Purpose:** Marketing companies that sell programs to parents (websites, "independent" directories, help lines, sold inquiries, reputation work, instructions for AI chatbots); /marketing-companies/
+**Notes:** `json_data` holds `{name, category, data: {marketerCompany, category}}`; every save path keeps only that (`kop_marketer_keep_data()`, `api/lib-marketers.php`). Seeded once per version from `seeds/marketers.json` (adds missing records, never changes one).
+
+---
+
+### tradeorgs_master
+**Columns:** `id`, `unique_name`, `json_data`, `created_at`, `updated_at`
+
+**Purpose:** Trade organizations (NATSAP, the OBH Council, IECA, ISPA, NATC...); /trade-organizations/ lists each with the programs whose facility records name it under memberships or accreditations
+**Notes:** `json_data` holds `{name, category, data: {tradeOrg, category}}` (`kop_tradeorg_keep_data()`, `api/lib-tradeorgs.php`). Seeded from `seeds/tradeorgs.json` like marketers.
+
+---
+
 ### locations_master
 **Columns:** `id`, `unique_name`, `json_data`, `created_at`, `updated_at`
 
