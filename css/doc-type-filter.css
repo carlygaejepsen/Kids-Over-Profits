@@ -22,6 +22,14 @@
     border-radius: 999px;
 }
 
+/* Small library tiles: a two-line type wraps as a tag, not a stretched pill. */
+.doc-layout-grid .kop-dt-chip {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    padding: 0.05rem 0.4rem;
+    border-radius: 6px;
+}
+
 .kop-dtf {
     display: flex;
     flex-wrap: wrap;
