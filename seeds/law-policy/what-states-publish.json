@@ -1,0 +1,10 @@
+{
+  "title": "What States Publish About Youth Residential Programs, and What They Don't",
+  "slug": "what-states-publish",
+  "post_type": "page",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "law-policy/what-states-publish.html",
+  "excerpt": "We checked every state and DC for online inspection reports on youth residential programs. 13 states and DC publish none; 652 of the open programs we track are in them. Where reports are online, they are often partial, and some states take them down.",
+  "template": "page-article.php"
+}

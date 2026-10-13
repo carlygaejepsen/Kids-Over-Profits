@@ -1156,6 +1156,9 @@ function kop_seed_posts() {
         // Manipulation Watch: what changed on program websites since the last scan
         // (scripts/seo-scan.py --out, scripts/seo-scan-compare.py), a draft for the owner (2026-10-13).
         'reputation/manipulation-watch-2026-10.json',
+        // Backgrounder for reporters: what each state publishes about its programs, from the
+        // state-by-state check in docs/state-inspection-reports/plans/research-log.md (2026-10-13).
+        'law-policy/what-states-publish.json',
     );
 }
 
@@ -2547,7 +2550,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '118';
+    $version = '119';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

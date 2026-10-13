@@ -68,6 +68,7 @@ function kop_hub_config($slug) {
             'reading'    => 'Background and case analyses',
             'reading_notes' => array(
                 'overview'            => 'What the troubled teen industry is, and why it needs oversight.',
+                'what-states-publish' => 'Which states put their inspection reports online, which publish nothing, and which take reports down.',
                 'sicaa'               => 'The Stop Institutional Child Abuse Act and the federal work group on youth residential programs it sets up.',
                 'challenges-in-maine' => 'LD 1745, the 2025 Maine law meant to keep youth treatment centers from closing.',
                 'doe-v-trails-motions' => 'The motions filed in the Doe v. Trails Carolina cases.',

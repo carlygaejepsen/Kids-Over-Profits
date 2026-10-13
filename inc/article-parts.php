@@ -66,6 +66,7 @@ function kop_article_parents() {
         // Law and policy: the statutes, the bills and the case analyses,
         // after Overview, five paragraphs on why the industry needs oversight.
         'overview'                                     => 'law-policy',
+        'what-states-publish'                          => 'law-policy',
         'sicaa'                                        => 'law-policy',
         'challenges-in-maine'                          => 'law-policy',
         'doe-v-trails-motions'                         => 'law-policy',
