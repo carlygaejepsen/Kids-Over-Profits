@@ -89,6 +89,7 @@ function kop_article_parents() {
         'silencing-critics-and-survivors' => 'reputation-management',
         'natsap-reputation-plans' => 'reputation-management',
         'new-names-same-programs' => 'reputation-management',
+        'manipulation-watch-2026-10' => 'reputation-management',
     ));
 }
 

@@ -24,6 +24,7 @@ usage:
   python scripts/seo-scan.py --domains a.com b.org
   python scripts/seo-scan.py --refresh            # rescan domains already in results.jsonl
   python scripts/seo-scan.py --no-sitemaps        # skip the sitemap pass (much faster)
+  python scripts/seo-scan.py --out tmp/seo-scan-2026-10-13   # a fresh run in its own folder
   python scripts/seo-scan.py --report             # rebuild the report from results.jsonl only
   python scripts/seo-scan.py --list               # print the domain list and where each came from
 """
@@ -610,7 +611,11 @@ def main():
     ap.add_argument('--workers', type=int, default=6)
     ap.add_argument('--report', action='store_true')
     ap.add_argument('--list', action='store_true')
+    ap.add_argument('--out', help='folder for this run instead of tmp/seo-scan (keeps an earlier run to compare against)')
     a = ap.parse_args()
+    if a.out:
+        global OUT
+        OUT = os.path.abspath(a.out)
     os.makedirs(OUT, exist_ok=True)
 
     if a.report:

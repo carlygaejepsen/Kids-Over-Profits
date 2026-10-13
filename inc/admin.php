@@ -1153,6 +1153,9 @@ function kop_seed_posts() {
         'reputation/free-help-paid-by-programs.json',
         'reputation/deceptive-marketing-then-and-now.json',
         'reputation/research-shows.json',
+        // Manipulation Watch: what changed on program websites since the last scan
+        // (scripts/seo-scan.py --out, scripts/seo-scan-compare.py), a draft for the owner (2026-10-13).
+        'reputation/manipulation-watch-2026-10.json',
     );
 }
 
