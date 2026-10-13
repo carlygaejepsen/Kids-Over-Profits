@@ -377,6 +377,15 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-featured-reportin
 # note and a reason; Feature picks it with the note as edited in its box (Undo = kop_feat_undo of that pick), Pass over changes nothing.
 # New ones go in js/data/featured/nominations.json with a higher 'version' (adds missing ones only, never changes a decided one)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=featured-nominations
+# Document types (inc/doc-types.php): what kind each media library document is (student handbook, enrollment document, inspection
+# report, news clipping, legal filing... kop_dt_types(); a new type is one entry there). {prefix}kop_doc_types, one row per document
+# and type. Hourly: the folder and title rules (kop_dt_rules(), nearest folder first, strong titles win; bump KOP_DOC_TYPES_RULES_VERSION
+# after changing them) type most documents with no review, one logged change; the AI reads the rest and its guess waits at Review inbox >
+# Document types ("Typed by rule" there spot-checks the rules). Readers: /documents/ and /documents/<type>/ (a route,
+# templates/document-types.php: grouped by program, filter by name/state/decade), a chip on every document tile, a type filter over
+# facility/company libraries (js/doc-type-filter.js), 'types' in the app's document payloads; set with the pencil on a tile or at KOP Tools >
+# Document Types (counts, tag many, Recent changes with Undo; log in the kop_doc_types_log option)
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-doc-types.php [--list] [--untyped]   # rules, run + undo, pencil, AI stand-in, inbox, pages
 # Marketing companies (Marketers tab, /marketing-companies/): record shape, seed, page, form markup == marketer-form.js
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-marketers.php [--out=tmp/marketers]
 # Trade organizations (/trade-organizations/): the same checks, plus membership matching on the mirror's facility records
@@ -581,6 +590,7 @@ to the program aggregate otherwise.
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
+- `{prefix}kop_doc_types` / `{prefix}kop_doc_type_suggestions` - What kind of document each attachment is (one row per type, with rule / ai / person / checked) and, for documents the rules could not type, the AI's guess and its review status (`inc/doc-types.php`)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
 - `{prefix}kop_glossary_nodes` / `_entries` / `_aliases` / `_tags` / `_log` - The TTI glossary: sections and groups, terms, other names, program tags, and each entry change for Undo (`inc/glossary-store.php`)
 - `{prefix}kop_glossary_feedback` - Reader notes from the glossary's "My facility used this too" / "Suggest a correction" buttons (`inc/glossary-feedback.php`; reviewed under KOP Tools > Glossary Feedback)

@@ -1700,6 +1700,18 @@ function kop_ie_doc_load(array $p) {
         unset($f);
         $fields = array_merge($fields, kop_dp_fields($post->ID, kop_ie_doc_home($p)));
     }
+    // What kind of document it is (inc/doc-types.php).
+    if (function_exists('kop_dt_pencil_fields')) {
+        foreach ($fields as &$f) {
+            if (empty($f['section'])) $f['section'] = 'Title and description';
+        }
+        unset($f);
+        $type_fields = kop_dt_pencil_fields($post->ID);
+        // After the title and description, before "Wrong page?".
+        $at = 0;
+        foreach ($fields as $i => $f) if ($f['section'] === 'Title and description') $at = $i + 1;
+        array_splice($fields, $at, 0, $type_fields);
+    }
     return array(
         'title'  => 'Document: ' . $post->post_title,
         'help'   => 'The title shows on every tile and list of this document across the site.',
@@ -1725,15 +1737,18 @@ function kop_ie_doc_save(array $p, array $v) {
     if (array_key_exists('alt', $v)) {
         update_post_meta($post->ID, '_wp_attachment_image_alt', wp_slash(trim(preg_replace('/\s+/', ' ', kop_ie_clean_text($v['alt'])))));
     }
+    // Its types (inc/doc-types.php), before a move or delete below.
+    $typed = function_exists('kop_dt_pencil_save') ? kop_dt_pencil_save($post->ID, $v) : '';
     do_action('litespeed_purge_all');
     // Then move, remove or delete it, when asked (inc/doc-placement.php).
     if (function_exists('kop_dp_apply')) {
         $placed = kop_dp_apply($post->ID, kop_ie_doc_home($p), $v);
         if ($placed) {
+            if ($typed !== '' && isset($placed['message'])) $placed['message'] = $typed . ' ' . $placed['message'];
             return $placed;
         }
     }
-    return array('message' => 'Saved.');
+    return array('message' => $typed !== '' ? 'Saved. ' . $typed : 'Saved.');
 }
 
 /* ---- Where to report abuse (inc/reporting-directory.php) ----------------------- */

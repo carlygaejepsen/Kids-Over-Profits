@@ -1,0 +1,264 @@
+/* /documents/ and /documents/<type>/ (templates/document-types.php), on the
+   site map's white panel (css/site-map.css). Kadence colours headings, links,
+   inputs and buttons directly, so each is set here in every state. */
+
+.kop-dt-page .kop-dt-admin-note,
+.kop-dt-page .kop-dt-summary {
+    color: var(--kop-text-muted, #4A5568);
+    margin: 0 0 1.25rem;
+}
+
+/* ---- Index: every type ---------------------------------------------------- */
+
+.kop-dt-group h2 {
+    margin: 1.75rem 0 0.75rem;
+    font-size: 1.25rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-dt-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-dt-type {
+    margin: 0;
+    padding: 0.9rem 1rem;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-top: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+}
+
+.kop-dt-type a {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: baseline;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-dt-type a:hover,
+.kop-dt-type a:focus {
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: underline;
+}
+
+.kop-dt-type__count {
+    flex: none;
+    font-weight: 600;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-dt-type p {
+    margin: 0.35rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+/* ---- One type ------------------------------------------------------------- */
+
+.kop-dt-others {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 1.25rem;
+}
+
+.kop-dt-others a {
+    padding: 0.2rem 0.65rem;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    text-decoration: none;
+    color: var(--kop-navy-blue, #000080);
+    background: var(--kop-white, #fff);
+}
+
+.kop-dt-others a:hover,
+.kop-dt-others a:focus {
+    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-dt-others a[aria-current="page"] {
+    color: var(--kop-white, #fff);
+    background: var(--kop-navy-blue, #000080);
+    border-color: var(--kop-navy-blue, #000080);
+}
+
+.kop-dt-filter {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    align-items: flex-end;
+    margin: 0 0 1rem;
+    padding: 0.75rem 0;
+    background: var(--kop-white, #fff);
+    border-bottom: 1px solid var(--kop-border-secondary, #AEE0ED);
+}
+
+.kop-dt-filter[hidden] {
+    display: none;
+}
+
+.kop-dt-filter__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-dt-filter__field:first-child {
+    flex: 1 1 16rem;
+}
+
+.kop-dt-filter input,
+.kop-dt-filter select {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.45rem 0.6rem;
+    font-size: 1rem;
+    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-text-muted, #4A5568);
+    border-radius: 4px;
+}
+
+.kop-dt-filter select option {
+    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-white, #fff);
+}
+
+.kop-dt-filter input:focus-visible,
+.kop-dt-filter select:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 1px;
+}
+
+.kop-dt-filter__count {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-dt-place {
+    margin: 0 0 1.75rem;
+}
+
+.kop-dt-place[hidden],
+.kop-dt-doc[hidden],
+.kop-dt-nomatch[hidden] {
+    display: none !important;
+}
+
+.kop-dt-place h2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.6rem;
+    align-items: baseline;
+    margin: 0 0 0.6rem;
+    font-size: 1.15rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-dt-place__state,
+.kop-dt-place__count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-dt-docs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr));
+    gap: 0.85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-dt-doc {
+    margin: 0;
+    min-width: 0;
+}
+
+.kop-dt-doc a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    height: 100%;
+    text-decoration: none;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-dt-doc a:hover .kop-dt-doc__title,
+.kop-dt-doc a:focus .kop-dt-doc__title {
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: underline;
+}
+
+.kop-dt-doc a:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+.kop-dt-doc__thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    background: var(--kop-sand, #F2EEDF);
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-radius: 4px;
+}
+
+.kop-dt-doc__thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.kop-dt-doc__ext {
+    position: absolute;
+    left: 0.4rem;
+    bottom: 0.4rem;
+    padding: 0 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--kop-white, #fff);
+    background: var(--kop-midnight-blue, #000435);
+    border-radius: 3px;
+}
+
+.kop-dt-doc__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.kop-dt-doc__year {
+    font-size: 0.8rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-dt-empty {
+    color: var(--kop-midnight-blue, #000435);
+}

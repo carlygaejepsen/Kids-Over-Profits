@@ -393,7 +393,8 @@ if (!function_exists('kop_mobile_operators_rest')) {
 
 if (!function_exists('kop_mobile_doc_file')) {
     /**
-     * One document tile as the app draws it: {id, title, url, ext, mime, size, thumb}.
+     * One document tile as the app draws it: {id, title, url, ext, mime, size, thumb, types}.
+     * types: [{slug, label}], what kind of document it is (inc/doc-types.php), [] when not typed yet.
      * The same file the website's tile links (kop_render_doc_file_li()); a record whose
      * file is gone everywhere is left out, as the website hides it from visitors.
      */
@@ -415,6 +416,9 @@ if (!function_exists('kop_mobile_doc_file')) {
             'mime'  => (string) $post->post_mime_type,
             'size'  => ($path && file_exists($path)) ? (int) filesize($path) : 0,
             'thumb' => (string) ($thumb ?: ''),
+            'types' => function_exists('kop_dt_types_for') ? array_map(function ($t) {
+                return array('slug' => $t, 'label' => kop_dt_label($t));
+            }, kop_dt_types_for((int) $post->ID)) : array(),
         );
     }
 }

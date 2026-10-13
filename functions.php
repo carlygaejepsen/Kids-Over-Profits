@@ -250,6 +250,9 @@ require_once get_stylesheet_directory() . '/inc/legal-documents.php';
 
 // The Document Archive: featured reports, collections, every program A to Z
 require_once get_stylesheet_directory() . '/inc/document-archive.php';
+// Document types (handbook, inspection report, legal filing...): /documents/<type>/, tile chips, KOP Tools > Document Types
+require_once get_stylesheet_directory() . '/inc/doc-types.php';
+require_once get_stylesheet_directory() . '/inc/doc-types-admin.php';
 
 // The pieces a long-form page is assembled from: era header, collapsible
 // section, sources, "Why this matters" - as functions and as shortcodes

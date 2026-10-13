@@ -317,6 +317,13 @@ function kop_tools_registry() {
         ),
         'Media & folders' => array(
             array(
+                'title'    => 'Document Types',
+                'desc'     => 'What kind each document is (handbook, inspection report, enrollment, news clipping, legal filing...): counts, tag many at once, run the rules, recent changes with Undo. Readers compare them at /documents/.',
+                'type'     => 'screen',
+                'screen'   => 'kop-document-types',
+                'requires' => 'kop_render_dt_admin',
+            ),
+            array(
                 'title' => 'Sort Media',
                 'desc'  => 'Re-file mis-filed documents: move or copy attachments between FileBird folders, including the theme\'s extra folder tags.',
                 'type'  => 'page',

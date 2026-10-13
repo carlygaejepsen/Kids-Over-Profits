@@ -964,7 +964,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
         return ob_get_clean();
     }
     ?>
-    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_ie_attr') ? kop_ie_attr($edit_ref, $display_title) : ''; ?>>
+    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>"<?php echo function_exists('kop_dt_tile_attr') ? kop_dt_tile_attr($attachment->ID) : ''; ?><?php echo function_exists('kop_ie_attr') ? kop_ie_attr($edit_ref, $display_title) : ''; ?>>
         <a href="<?php echo esc_url($file_url); ?>"
            class="doc-link nofancybox"
            target="_blank"
@@ -986,6 +986,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
             </div>
             <div class="doc-info">
                 <span class="doc-title"><?php echo esc_html($display_title); ?></span>
+                <?php echo function_exists('kop_dt_tile_chips') ? kop_dt_tile_chips($attachment->ID) : ''; ?>
                 <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
             </div>
         </a>
@@ -1000,6 +1001,10 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
 function kop_render_doc_file_list($attachments, $layout = 'grid') {
     if (empty($attachments)) {
         return '';
+    }
+    // One query for every tile's document types (inc/doc-types.php).
+    if (function_exists('kop_dt_types_of')) {
+        kop_dt_types_of(wp_list_pluck($attachments, 'ID'));
     }
     $items = '';
     foreach ($attachments as $attachment) {
@@ -1095,6 +1100,9 @@ function kop_filebird_folder_shortcode($atts) {
 
     if ($body === '') {
         $body = '<p class="no-documents">No documents found in this folder.</p>';
+    } elseif (function_exists('kop_dt_enqueue_filter')) {
+        // Filter the library by document type (js/doc-type-filter.js).
+        kop_dt_enqueue_filter();
     }
 
     ob_start();

@@ -1,0 +1,89 @@
+/* Document type chips on library tiles and the type filter above facility
+   and company libraries (js/doc-type-filter.js, inc/doc-types.php). Buttons
+   name colour and background in every state (Kadence's button:hover and
+   button:focus would otherwise win). */
+
+.kop-dt-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: 0.2rem 0;
+}
+
+.kop-dt-chip {
+    display: inline-block;
+    padding: 0 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--kop-teal-ink, #24757F);
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-teal-ink, #24757F);
+    border-radius: 999px;
+}
+
+.kop-dtf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 0.6rem;
+}
+
+button.kop-dtf__btn,
+button.kop-dtf__btn:hover,
+button.kop-dtf__btn:focus,
+button.kop-dtf__btn:active {
+    padding: 0.25rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.4;
+    border: 1px solid var(--kop-navy-blue, #000080);
+    border-radius: 999px;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+button.kop-dtf__btn,
+button.kop-dtf__btn:active {
+    color: var(--kop-navy-blue, #000080);
+    background: var(--kop-white, #fff);
+}
+
+button.kop-dtf__btn:hover,
+button.kop-dtf__btn:focus {
+    color: var(--kop-midnight-blue, #000435);
+    background: var(--kop-sand, #F2EEDF);
+}
+
+button.kop-dtf__btn[aria-pressed="true"],
+button.kop-dtf__btn[aria-pressed="true"]:hover,
+button.kop-dtf__btn[aria-pressed="true"]:focus,
+button.kop-dtf__btn[aria-pressed="true"]:active {
+    color: var(--kop-white, #fff);
+    background: var(--kop-navy-blue, #000080);
+}
+
+button.kop-dtf__btn:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+.kop-dtf__more {
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+}
+
+.kop-dtf__more[hidden],
+.kop-document-folder li.doc-item[hidden],
+.kop-document-folder details[hidden] {
+    display: none !important;
+}
+
+.kop-dtf__more a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-dtf__more a:hover,
+.kop-dtf__more a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
