@@ -419,6 +419,12 @@ button.rinbox-tag-x:focus-visible {
     background: var(--kop-white, #fff);
 }
 
+/* item.checklist_full: the whole list shows (Data audit steps), no box of its own to scroll. */
+.rinbox-check-wrap.is-full .rinbox-checklist {
+    max-height: none;
+    overflow-y: visible;
+}
+
 .rinbox-check {
     padding: 8px 10px;
     border-bottom: 1px solid var(--kop-sand, #F2EEDF);
@@ -452,6 +458,59 @@ button.rinbox-tag-x:focus-visible {
     font-size: 13px;
     color: var(--kop-text-muted, #4A5568);
     overflow-wrap: anywhere;
+}
+
+.rinbox-check-note {
+    white-space: pre-line;
+}
+
+/* Sources: each quote in full, how much was read, a link to the quote in the page. */
+.rinbox-sources-wrap {
+    margin: 10px 0;
+    padding: 8px 12px;
+    border: 1px solid var(--rv-line);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-sources-title {
+    margin: 0 0 4px;
+    font-size: 15px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.rinbox-sources {
+    margin: 0;
+    padding-left: 22px;
+}
+
+.rinbox-source {
+    margin: 6px 0;
+    overflow-wrap: anywhere;
+}
+
+.rinbox-source-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    align-items: center;
+    font-weight: 600;
+}
+
+.rinbox-source-meta {
+    font-size: 13px;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.rinbox-source-quote {
+    margin: 4px 0 0;
+    padding: 4px 10px;
+    border-left: 3px solid var(--kop-teal-ink, #24757F);
+    background: var(--rv-subtle);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 14px;
+    font-style: normal;
 }
 
 .rinbox-check-more {

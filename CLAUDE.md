@@ -217,9 +217,18 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # Data audit (docs/PLAN.md 3.13): flag data outside sources should check (renamed programs ending with their earlier name, status vs
 # years, operators after a sale, one person under two spellings, memorials) -> tmp/data-audit/; research agents per tmp/data-audit/INSTRUCTIONS.md;
 # typed proposals in js/data/data-audit/proposals.json, reviewed at Review inbox > Data audit (inc/data-audit.php: every "from" checked, exact Undo)
+# One card does everything: KOP now (each record side by side, live), the steps to tick (fields, past/other names, company links, a new company,
+# notes, staff roles, merges as a rename or as one program, map years, map lines taken off: kop_network_map_edge_drops(), memorial), each
+# marked ready / already so / moved since (unticked, shows the value now) with the quote it rests on; "To check" lines are never made; "Edit
+# details" saves the records' fields via kop_ie_facility_save() with its own Undo; each source shows its quote, how much was read and a link
+# to the quote (#:~:text=). A new op type goes in kop_daudit_check(), _op_done(), _apply(), _undo() and _op_words(); 'manual' only when no type fits
 # A rename is often why years disagree: a proposal's 'renames' [{earlier, later, year}] (or a renamed pair Merge Duplicates finds for its
 # record) is printed on the card ("X became Y in 2016: that is why...") with "Merge as a rename" right there while both are records; Undo on
 # the card (kop_daudit_rename_merge()). The flag script's rename_years kind finds such pairs; every flag on one name carries 'renames'
+# Company names in program names (kop_daudit_rename_brands(), data-audit.py company_named()): a record that is only the name of a company
+# running the other record and 2+ more programs, with no years outside it (bare "Embark Behavioral Health" in Marion = Embark at Flathead Valley)
+# is folded in as one program, not a rename; "Sequel TSI Courtland" dates its name by Sequel's years in the operator lines; a company filed as
+# a past name ("Three Springs Inc.") becomes a past-company step. KOP_DAUDIT_LIST=1 / KOP_DAUDIT_EXPORT=<file> on the test print / dump cards
 python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
 # Federal funding (docs/PLAN.md 3.15): Medicaid, foster care funds, ORR, TRICARE, PPP and Education money found for programs,

@@ -24,7 +24,8 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
     };
 
     // Every proposal: known op types, fields it may change, values the record can hold, ids that exist.
-    $types = array('field', 'list_add', 'list_remove', 'note', 'map_years', 'operator_link', 'operator_field', 'links_move', 'person_merge', 'memorial', 'manual');
+    $types = array('field', 'list_add', 'list_remove', 'note', 'note_remove', 'staff_role', 'merge', 'operator_create', 'map_edge_drop',
+        'map_years', 'operator_link', 'operator_field', 'links_move', 'person_merge', 'memorial', 'check', 'manual');
     $bad = array();
     $stale = array();
     foreach ($props as $key => $p) {
@@ -37,10 +38,14 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
             if ($t === 'operator_link' && !in_array($op['to'] ?? '', array('current', 'past', 'remove'), true)) $bad[] = $key . ': link ' . json_encode($op['to']);
             if ($t === 'links_move' && (!(int) ($op['from_facility'] ?? 0) || !(int) ($op['to_facility'] ?? 0) || !kop_daudit_move_ids($op))) $bad[] = $key . ': links_move without records or ids';
             if ($t === 'operator_field' && !kop_daudit_operator_value_ok((string) $op['path'], $op['to'] ?? null)) $bad[] = $key . ': company ' . $op['path'] . ' = ' . json_encode($op['to']);
+            if (($t === 'list_add' || $t === 'list_remove') && !in_array($op['path'] ?? '', kop_daudit_list_paths(), true)) $bad[] = $key . ': list ' . json_encode($op['path'] ?? null);
+            if ($t === 'merge' && (!(int) ($op['keep'] ?? 0) || !(int) ($op['drop'] ?? 0) || (int) $op['keep'] === (int) $op['drop'])) $bad[] = $key . ': merge without two records';
+            if (($t === 'check' || $t === 'manual') && trim((string) ($op['text'] ?? '')) === '') $bad[] = $key . ': ' . $t . ' with no text';
+            if ($t === 'operator_create' && trim((string) ($op['name'] ?? '')) === '') $bad[] = $key . ': new company with no name';
         }
         $by_fid = array();
         foreach ($p['ops'] as $op) {
-            if (in_array($op['type'], array('field', 'list_add', 'list_remove', 'note'), true)) $by_fid[(int) $op['facility_id']][] = $op;
+            if (in_array($op['type'], kop_daudit_record_types(), true)) $by_fid[(int) $op['facility_id']][] = $op;
         }
         foreach ($by_fid as $fid => $ops) {
             $doc = $doc_of($fid);
@@ -207,21 +212,52 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         $ids = array_column($card['actions'], 'id');
         if (!in_array('rename_merge', $ids, true)) continue;
         $check('data-audit: a card holding only a rename offers the merge both ways and "not one program", no Approve',
-            $ids === array('rename_merge', 'rename_merge_reversed', 'reject'), $key . ': ' . implode(',', $ids));
+            array_values(array_diff($ids, array('rename_fold'))) === array('rename_merge', 'rename_merge_reversed', 'reject')
+            || array_values(array_diff($ids, array('rename_fold'))) === array('rename_merge_reversed', 'rename_merge', 'reject'), $key . ': ' . implode(',', $ids));
         break;
+    }
+
+    // Steps on every card: where each stands now. A step that cannot be made at all is rare (records merged since).
+    $opts = array('pdo' => $pdo, 'prefix' => 'wpdl_');
+    $blocked = array();
+    $nsteps = 0;
+    foreach ($props as $key => $p) {
+        foreach (kop_daudit_step_states($p, $opts) as $i => $st) {
+            $nsteps++;
+            if ($st['state'] === 'blocked') $blocked[] = $key . '/' . $i . ': ' . $st['why'];
+        }
+    }
+    $check('data-audit: nearly every step can be made (blocked ones are records merged since)', count($blocked) <= max(5, (int) ($nsteps / 25)),
+        $nsteps . ' steps, ' . count($blocked) . ' blocked: ' . implode(' | ', array_slice($blocked, 0, 4)));
+
+    kop_rinbox_daudit_test_companies($check, $opts);
+    kop_rinbox_daudit_test_steps($check, $opts);
+
+    // KOP_DAUDIT_EXPORT=<file>: a few real cards as JSON, for a look in a browser (scripts/test-review-inbox-ui.py fixtures).
+    if (getenv('KOP_DAUDIT_EXPORT')) {
+        $cards = array();
+        foreach (array('operator_inherited-345', 'sequel_history-13678', 'rename_years-12685-100094', 'sequel_history-10459') as $k) {
+            if ($c = kop_rinbox_get_item('data-audit', $k)) $cards[] = $c;
+        }
+        file_put_contents(getenv('KOP_DAUDIT_EXPORT'), json_encode($cards, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     // The card.
     $own = kop_rinbox_test_own_actions($item);
-    $check('data-audit: a waiting card offers approve and reject', in_array($item['status'], array('high', 'review'), true) && array_slice($own, 0, 2) === array('approve', 'reject'), implode(',', $own));
     $p = $props[$item['key']];
-    $changes = array_filter($item['details'], function ($d) { return strpos($d['label'], 'Change ') === 0; });
-    $check('data-audit: every change is on the card in words', count($changes) === count($p['ops']));
-    $linked = array_filter($item['details'], function ($d) { return !empty($d['url']); });
+    $check('data-audit: a waiting card offers "Make the ticked changes" and reject', $item['status'] === 'waiting'
+        && (array_slice($own, 0, 2) === array('approve', 'reject') || in_array('rename_merge', $own, true)), implode(',', $own));
+    $steps = kop_daudit_steps($p);
+    $listed = count(array_filter($steps, function ($op) { return $op['type'] !== 'check'; }));
+    $checks = count(array_filter($item['details'], function ($d) { return $d['label'] === 'To check'; }));
+    $check('data-audit: every step is on the card, to tick or to check', count($item['checklist'] ?? array()) === $listed
+        && $checks === count($steps) - $listed, $listed . ' to tick, ' . $checks . ' to check');
     $want = count(array_filter((array) ($p['sources'] ?? array()), function ($s) { return !empty($s['url']); }));
-    $check('data-audit: every source is on the card, linked', count($linked) === $want, $want . ' sources');
+    $check('data-audit: every source is on the card with its quote', count($item['sources']) === $want, $want . ' sources');
+    $check('data-audit: the card has the fields of each record to edit, and KOP as it is now', !empty($item['fields']) && !empty($item['compare']['rows']),
+        count($item['fields']) . ' fields');
     $counts = call_user_func($src['view_counts'], array());
-    $check('data-audit: every tab has a count', array_keys($counts) == array_keys($src['views']) && $counts['high'] + $counts['review'] === call_user_func($src['count']), json_encode($counts));
+    $check('data-audit: every tab has a count', array_keys($counts) == array_keys($src['views']) && $counts['waiting'] === call_user_func($src['count']), json_encode($counts));
     if (kop_rinbox_test_options_persist()) {
         call_user_func($src['act'], $item['key'], 'reject', array());
         $got = kop_rinbox_get_item('data-audit', $item['key']);
@@ -316,4 +352,138 @@ function kop_rinbox_daudit_test_rename(callable $check) {
     call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_unmerge', array('pair' => $pair));
     $check('data-audit: undo of the reversed merge gives the records back exactly', $snap() === $before
         && empty(kop_daudit_decisions()[$key]['merges']));
+}
+
+/**
+ * Company names in program names: a record that is only the company's name
+ * (Embark Behavioral Health in Marion, Embark at Flathead Valley's company) is
+ * offered as one program, not a rename; one run under its own name (Pathway
+ * Family Center) or sharing its company's name (Three Points Center) is a
+ * name of its own; a company filed as a past name moves to past companies.
+ */
+function kop_rinbox_daudit_test_companies(callable $check, array $opts) {
+    $check('data-audit: company words come off a name', kop_daudit_core_key('Embark Behavioral Health RTC') === 'embark behavioral health'
+        && kop_daudit_core_key('Three Springs, Inc.') === 'three springs' && kop_daudit_core_key('Three Points Center, LLC') === 'three points');
+    $companies = array('sequel tsi' => 'Sequel TSI', 'three springs' => 'Three Springs Inc.', 'embark behavioral health' => 'Embark Behavioral Health');
+    $a = kop_daudit_company_of('Sequel TSI Courtland', $companies);
+    $b = kop_daudit_company_of('Embark Behavioral Health RTC', $companies);
+    $check('data-audit: a company\'s brand and a company\'s own name are told apart', ($a['level'] ?? '') === 'brand' && ($a['company'] ?? '') === 'Sequel TSI'
+        && ($b['level'] ?? '') === 'company' && kop_daudit_company_of('Embark at Flathead Valley', $companies) === null);
+    $check('data-audit: company years are read from operator lines', kop_daudit_company_line_years('Sequel TSI (2009-2022)') === array(2009, 2022)
+        && kop_daudit_company_line_years('Brighter Path (from 2022)') === array(2022, 0) && kop_daudit_company_line_name('Sequel TSI (2009-2022)') === 'Sequel TSI');
+    $pair = function ($e, $l) use ($opts) {
+        $s = kop_daudit_rename_state('test', array('earlier' => $e, 'later' => $l, 'year' => 0), $opts['pdo']);
+        return $s['state'] === 'separate' ? kop_daudit_rename_brands($s, $opts) : null;
+    };
+    $embark = $pair(12685, 100094);
+    if ($embark) $check('data-audit: "Embark Behavioral Health" in Marion is the company\'s name for Embark at Flathead Valley', $embark['company_side'] === 'later', json_encode($embark['lines']));
+    $pathway = $pair(100123, 9626);
+    if ($pathway) $check('data-audit: Pathway Family Center, run under its own name, is a name of its own', $pathway['company_side'] === '', json_encode($pathway['lines']));
+    $madison = $pair(9644, 13678);
+    if ($madison) $check('data-audit: Pathway of Madison County, a company named after its one program, is the later name of the program', $madison['company_side'] === '', json_encode($madison['lines']));
+    $points = $pair(9637, 11939);
+    if ($points) $check('data-audit: Three Points Center (NC) is a name of its own, not Auldern\'s company', $points['company_side'] === '', json_encode($points['lines']));
+    if (!$embark && !$pathway && !$points) kop_rinbox_test_skip('data-audit: company names on real pairs', 'the pairs are merged or gone in this mirror');
+    // KOP_DAUDIT_LIST=1: what the company names say about every rename on every card.
+    if (getenv('KOP_DAUDIT_LIST')) {
+        foreach (kop_daudit_proposals() as $k => $p) {
+            foreach (kop_rinbox_daudit_renames((string) $k, $p) as $r) {
+                if ($r['state']['state'] !== 'separate') continue;
+                $b = $r['brands'];
+                echo '  ' . $k . ' ' . $r['pair'] . ' ' . $r['state']['earlier']['name'] . ' -> ' . $r['state']['later']['name']
+                    . ($b['company_side'] ? ' [company name: ' . $b['company_side'] . ']' : '') . ($b['backwards'] ? ' [backwards]' : '')
+                    . ($b['year'] ? ' [year ' . $b['year'] . ']' : '') . "
+";
+            }
+        }
+    }
+    $steps = kop_daudit_steps(array('key' => 'test-company-past-name', 'facility_id' => 13678, 'ops' => array()));
+    $auto = array_values(array_filter($steps, function ($op) { return !empty($op['auto']) && $op['type'] === 'list_remove'; }));
+    $doc = kop_facility_load(13678, $opts);
+    if ($doc && kop_daudit_list_has(kop_daudit_list($doc['doc'], 'identification.pastNames'), 'Three Springs Inc.')) {
+        $check('data-audit: a company filed as a past name is offered as a past company', $auto && $auto[0]['value'] === 'Three Springs Inc.', json_encode($auto));
+    }
+}
+
+/** Steps: the quote link, ticked steps only, and a map line taken off and back. */
+function kop_rinbox_daudit_test_steps(callable $check, array $opts) {
+    $jump = kop_rinbox_daudit_jump_url('https://example.test/a', 'In 2014, Turn-About Ranch announced that it would no longer be owned by Aspen ... but would');
+    $check('data-audit: a source links to its quote in the page', strpos($jump, '#:~:text=In%202014%2C%20Turn-About%20Ranch') !== false, $jump);
+    $check('data-audit: a quote read from a search summary links to the page only, and says so',
+        kop_rinbox_daudit_jump_url('https://example.test/a', 'Some words here about it (search summary)') === 'https://example.test/a'
+        && strpos(kop_rinbox_daudit_reach('Title only; page not opened.'), 'Title only') === 0);
+    $quotes = array(array('n' => 1, 'quote' => 'Three Springs bought a ranch.'), array('n' => 2, 'quote' => 'Sunrise Ranch closed in 2014 after the state acted.'));
+    $back = kop_rinbox_daudit_backing('Closing year of Sunrise Ranch: 2009 -> 2014', $quotes);
+    $check('data-audit: a step names the quote it rests on', strpos($back, 'Source 2: "') === 0 && strpos($back, '2014') !== false, $back);
+    $check('data-audit: two shared words are not a quote a step rests on', kop_rinbox_daudit_backing('Add to past names: Three Springs Turning Point', $quotes) === '');
+    if (!kop_rinbox_test_options_persist()) {
+        kop_rinbox_test_skip('data-audit: ticked steps only', 'update_option does not store in this harness');
+        return;
+    }
+    // A card with a map line to take off and other steps: only the ticked one is made, and Undo takes it back.
+    $key = '';
+    $idx = '';
+    foreach (kop_daudit_proposals() as $k => $p) {
+        $states = kop_daudit_step_states($p, $opts);
+        foreach (kop_daudit_steps($p) as $i => $op) {
+            if ($op['type'] === 'map_edge_drop' && ($states[$i]['state'] ?? '') === 'ready' && count($states) > 1) { $key = (string) $k; $idx = (string) $i; break 2; }
+        }
+    }
+    if ($key === '') {
+        kop_rinbox_test_skip('data-audit: ticked steps only', 'no ready map line on any card');
+        return;
+    }
+    $edge = (string) kop_daudit_steps(kop_daudit_proposals()[$key])[$idx]['edge'];
+    $msg = call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'approve', array('picked' => array($idx)))['message'];
+    $d = kop_daudit_decisions()[$key] ?? array();
+    $check('data-audit: only the ticked step is made', ($d['decision'] ?? '') === 'applied' && count($d['done']) === 1 && $d['done'][0]['type'] === 'map_edge_drop'
+        && isset(kop_daudit_edge_drops()[$edge]) && isset(kop_daudit_edge_drops_filter(array())[$edge]), $msg);
+    $graph_has = function () use ($edge) {
+        $path = kop_network_map_file('graph.json');
+        $g = json_decode((string) file_get_contents($path), true);
+        // What kop_network_map_graph() leaves out (the harness runs no WordPress filters, so the audit's own filter is called).
+        $drops = kop_daudit_edge_drops_filter(array());
+        foreach ($g['edges'] as $e) if ($e['id'] === $edge && !isset($drops[$edge])) return true;
+        return false;
+    };
+    $check('data-audit: a map line taken off leaves the map\'s lines', !$graph_has());
+    call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'undo', array());
+    $check('data-audit: undo puts the map line back and the card waits again', $graph_has() && kop_rinbox_get_item('data-audit', $key)['status'] === 'waiting');
+
+    // "One program: fold it in" on a company-named pair, and its Undo.
+    $fold_key = '';
+    foreach (kop_daudit_proposals() as $k => $p) {
+        foreach (kop_rinbox_daudit_renames((string) $k, $p) as $r) {
+            if ($r['state']['state'] === 'separate' && $r['brands']['company_side'] !== '' && ($fold_key === '' || strpos($r['pair'], '100094') !== false)) { $fold_key = (string) $k; $pair = $r['pair']; $side = $r['brands']['company_side']; $s = $r['state']; if (strpos($pair, '100094') !== false) break 2; }
+        }
+    }
+    if ($fold_key === '') {
+        kop_rinbox_test_skip('data-audit: fold a company-named record', 'no such pair on file');
+        return;
+    }
+    $pdo = $opts['pdo'];
+    $tables = array('lawsuit_facility_links', 'wpdl_kop_facility_identity', 'wpdl_kop_facility_locations', 'wpdl_fbv',
+        'wpdl_fbv_attachment_folder', 'wpdl_kop_media_folder_tags', 'wpdl_kop_folder_links', 'wpdl_kop_migration_state', 'wpdl_kop_people');
+    foreach (kop_fmerge_ref_tables('wpdl_') as $r) $tables[] = $r['t'];
+    foreach (kop_fmerge_json_tables('wpdl_') as $r) $tables[] = $r['t'];
+    kop_rinbox_test_copy_tables($tables);
+    $snap = function () use ($pdo) {
+        return md5(json_encode($pdo->query('SELECT id, json_data FROM facilities_v2 ORDER BY id')->fetchAll(PDO::FETCH_NUM)));
+    };
+    $before = $snap();
+    $keep = $side === 'later' ? $s['earlier'] : $s['later'];
+    $drop = $side === 'later' ? $s['later'] : $s['earlier'];
+    try {
+        $res = call_user_func(kop_rinbox_source('data-audit')['act'], $fold_key, 'rename_fold', array('pair' => $pair));
+    } catch (Throwable $ex) {
+        $check('data-audit: fold a company-named record into the program', false, $ex->getMessage());
+        return;
+    }
+    $kept = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . (int) $keep['id'])->fetchColumn(), true);
+    $check('data-audit: the company-named record folds into the program, which keeps its name', !$pdo->query('SELECT COUNT(*) FROM facilities_v2 WHERE id = ' . (int) $drop['id'])->fetchColumn()
+        && ($kept['identification']['name'] ?? '') === $keep['name'], $res['message']);
+    $ids = array_column(kop_rinbox_get_item('data-audit', $fold_key)['actions'], 'id');
+    $check('data-audit: the folded card offers its Undo', in_array('rename_unmerge', $ids, true) && !in_array('rename_fold', $ids, true), implode(',', $ids));
+    call_user_func(kop_rinbox_source('data-audit')['act'], $fold_key, 'rename_unmerge', array('pair' => $pair));
+    $check('data-audit: undo of the fold gives the records back exactly', $snap() === $before);
 }

@@ -463,7 +463,7 @@
             var rowKey = e.key || (e.keys && e.keys.length === 1 ? e.keys[0] : '');
             var src = item.source || state.source;
             var tools = item.row_tools || {};
-            if (rowKey && (e.rename || (state.byKey[src] || {}).can_save)) {
+            if (rowKey && !tools.off && (e.rename || (state.byKey[src] || {}).can_save)) {
                 // Each link row has the card tools for that one link: Rename, Kind and "Name it with AI".
                 // A change saves through the queue's own save/ai, then the card is drawn again with its ticks kept.
                 var bar = el('div', { class: 'rinbox-row-tools' });
@@ -558,7 +558,7 @@
             return keys;
         };
         update();
-        return el('div', { class: 'rinbox-check-wrap' }, [head, list]);
+        return el('div', { class: 'rinbox-check-wrap' + (item.checklist_full ? ' is-full' : '') }, [head, list]);
     }
 
     /** Pages follow the queue's own order: set-aside items are skipped, so Next starts where the server says. */
@@ -1215,6 +1215,25 @@
         if (links.childNodes.length) node.appendChild(links);
         node.appendChild(pane);
         if (item.text) node.appendChild(el('p', { class: 'rinbox-text', text: item.text }));
+        // item.compare_first: the comparison comes right after the text (Data audit: KOP as it is now, before the steps).
+        function drawCompare() {
+            if (item.compare && item.compare.rows && item.compare.rows.length) {
+                var table = el('table', { class: 'rinbox-compare' });
+                var headRow = el('tr', null, [el('th', { scope: 'col', text: '' })]);
+                (item.compare.heads || []).forEach(function (h) { headRow.appendChild(el('th', { scope: 'col', text: h })); });
+                table.appendChild(el('thead', null, [headRow]));
+                var body = el('tbody');
+                item.compare.rows.forEach(function (r) {
+                    var tr = el('tr', { class: r.differs ? 'rinbox-differs' : null }, [el('th', { scope: 'row', text: r.label })]);
+                    (r.values || []).forEach(function (v) { tr.appendChild(el('td', { text: Array.isArray(v) ? v.join(', ') : String(v === null || v === undefined ? '' : v) })); });
+                    body.appendChild(tr);
+                });
+                table.appendChild(body);
+                var compareWrap = el('div', { class: 'rinbox-compare-wrap' }, [table]);
+                node.appendChild(item.compare_fold ? fold(item.compare_fold, compareWrap) : compareWrap);
+            }
+        }
+        if (item.compare_first) drawCompare();
         node.kopPicked = null;
         if (item.checklist && item.checklist.length) node.appendChild(checklistBox(item, node, pane, prefix));
         if (item.details && item.details.length) {
@@ -1232,21 +1251,8 @@
             // item.details_fold: the list starts folded under that line (Wiki updates: 100+ lines)
             node.appendChild(item.details_fold ? fold(item.details_fold, dl) : dl);
         }
-        if (item.compare && item.compare.rows && item.compare.rows.length) {
-            var table = el('table', { class: 'rinbox-compare' });
-            var headRow = el('tr', null, [el('th', { scope: 'col', text: '' })]);
-            (item.compare.heads || []).forEach(function (h) { headRow.appendChild(el('th', { scope: 'col', text: h })); });
-            table.appendChild(el('thead', null, [headRow]));
-            var body = el('tbody');
-            item.compare.rows.forEach(function (r) {
-                var tr = el('tr', { class: r.differs ? 'rinbox-differs' : null }, [el('th', { scope: 'row', text: r.label })]);
-                (r.values || []).forEach(function (v) { tr.appendChild(el('td', { text: Array.isArray(v) ? v.join(', ') : String(v === null || v === undefined ? '' : v) })); });
-                body.appendChild(tr);
-            });
-            table.appendChild(body);
-            var compareWrap = el('div', { class: 'rinbox-compare-wrap' }, [table]);
-            node.appendChild(item.compare_fold ? fold(item.compare_fold, compareWrap) : compareWrap);
-        }
+        if (item.sources && item.sources.length) node.appendChild(sourcesBox(item.sources, pane));
+        if (!item.compare_first) drawCompare();
         if (item.preview && safeHref(item.preview.url)) {
             var frameBox = el('div', { class: 'rinbox-preview', hidden: true });
             var label = item.preview.label || 'Show pages';
@@ -1451,6 +1457,30 @@
         }).catch(function (e) {
             fillCard(node, item, s, src, e.message, true);
         });
+    }
+
+    /**
+     * item.sources [{n, title, url, jump, host, date, quote, reach}]: each source
+     * with its quote in full, how much of it was read, and links that open the
+     * page at the quote (jump: a text fragment) or show it beside the card.
+     */
+    function sourcesBox(sources, pane) {
+        var list = el('ol', { class: 'rinbox-sources' });
+        sources.forEach(function (s) {
+            var head = el('div', { class: 'rinbox-source-head' });
+            if (safeHref(s.jump || s.url)) {
+                head.appendChild(el('a', { href: s.jump || s.url, target: '_blank', rel: 'noopener', text: s.title,
+                    title: s.jump && s.jump !== s.url ? 'Opens the page at this quote' : s.url }));
+                head.appendChild(previewButton(s.url, pane));
+            } else {
+                head.appendChild(el('span', { text: s.title }));
+            }
+            var li = el('li', { class: 'rinbox-source', value: String(s.n) }, [head,
+                el('div', { class: 'rinbox-source-meta', text: [s.host, s.date, s.reach].filter(Boolean).join(' · ') })]);
+            if (s.quote) li.appendChild(el('blockquote', { class: 'rinbox-source-quote', text: s.quote }));
+            list.appendChild(li);
+        });
+        return el('section', { class: 'rinbox-sources-wrap', 'aria-label': 'Sources' }, [el('h4', { class: 'rinbox-sources-title', text: 'Sources' }), list]);
     }
 
     function fold(label, body) {

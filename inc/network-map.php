@@ -68,7 +68,22 @@ if (!function_exists('kop_network_map_graph')) {
         if (!is_array($decoded) || empty($decoded['nodes'])) {
             return $graph = null;
         }
+        // Lines taken off since the build (the Data audit's "take this map line off"): gone from every page at once.
+        $drops = kop_network_map_edge_drops();
+        if ($drops && isset($decoded['edges'])) {
+            $decoded['edges'] = array_values(array_filter((array) $decoded['edges'], function ($e) use ($drops) {
+                return !isset($drops[(string) ($e['id'] ?? '')]);
+            }));
+        }
         return $graph = $decoded;
+    }
+}
+
+if (!function_exists('kop_network_map_edge_drops')) {
+    /** Map line ids taken off since graph.json was built, id => true (store.js drops them too: KOP_NETWORK_CONFIG.edgeDrops). */
+    function kop_network_map_edge_drops() {
+        $drops = function_exists('apply_filters') ? apply_filters('kop_network_map_edge_drops', array()) : array();
+        return is_array($drops) ? $drops : array();
     }
 }
 
@@ -306,6 +321,8 @@ if (!function_exists('kop_network_map_config')) {
             'yearOverrides' => (object) kop_network_map_year_overrides(),
             // "earlier>later" rename lines the owner swapped (Map Renames).
             'renameFlips' => function_exists('kop_network_map_rename_flips') ? kop_network_map_rename_flips() : array(),
+            // Line ids taken off since the build (Data audit); store.js leaves them out.
+            'edgeDrops' => array_map('strval', array_keys(kop_network_map_edge_drops())),
         );
     }
 }
@@ -693,7 +710,7 @@ if (!function_exists('kop_network_map_cached_slice')) {
         $overrides = kop_network_map_status_overrides();
         $year_overrides = kop_network_map_year_overrides();
         $flips = function_exists('kop_network_map_rename_flips') ? kop_network_map_rename_flips() : array();
-        $cache_key .= ':' . substr(md5(wp_json_encode(array($overrides, $year_overrides, $flips))), 0, 8) . ':v2';
+        $cache_key .= ':' . substr(md5(wp_json_encode(array($overrides, $year_overrides, $flips, array_keys(kop_network_map_edge_drops())))), 0, 8) . ':v2';
         $transient = 'kop_nm_slice_' . md5($kind . ':' . $key);
         $cached = get_transient($transient);
         if (is_array($cached) && ($cached['_key'] ?? '') === $cache_key) {

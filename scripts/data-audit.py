@@ -28,7 +28,12 @@ Kinds (patterns found by the 2026-10-06 spot check of the wiki pilot):
   rename_years      a renamed program kept as two records whose years
                     disagree because of the rename (the later name holds the
                     earlier one's opening year, the earlier one never ends);
-                    the inbox card merges them as a rename right there
+                    the inbox card merges them as a rename right there; when one
+                    of the two is only the name of the company that runs the
+                    other (a bare "Embark Behavioral Health" record in Marion,
+                    MT beside Embark at Flathead Valley) the flag says so
+                    ('company_name': the side), and the card offers to fold it
+                    in as one program (inc/data-audit.php, kop_daudit_rename_brands())
 
 A flag on a record that is one name of a renamed pair carries 'renames':
 [{earlier, later, year, why}] (record ids, the rename year as guessed from
@@ -93,6 +98,51 @@ def company_key(s):
 
 def name_key(s):
     return re.sub(r'[^a-z0-9]+', ' ', (s or '').lower()).strip()
+
+
+GENERIC_WORDS = {'inc', 'incorporated', 'llc', 'l', 'c', 'corp', 'corporation', 'co', 'company', 'ltd', 'lp', 'llp', 'pllc', 'pc',
+                 'the', 'rtc', 'residential', 'treatment', 'center', 'centre', 'campus', 'program', 'programs', 'holdings', 'group'}
+
+
+def core_key(s):
+    """kop_daudit_core_key(): a name key without the words that say nothing about which company or program it is."""
+    return ' '.join(w for w in name_key((s or '').replace('&', ' and ')).split() if w not in GENERIC_WORDS)
+
+
+def company_line_name(s):
+    return re.sub(r'\s*[\(\[].*$', '', str(s or '')).strip()
+
+
+def operator_keys(rec, links):
+    """Core keys of the companies that run or ran a record: its operator lines and company links."""
+    ident = rec['ident']
+    lines = [ident.get('currentOperator') or ''] + as_list(ident.get('pastOperators')) + as_list(ident.get('otherOperators'))
+    keys = {core_key(company_line_name(x)) for x in lines if isinstance(x, str)}
+    keys |= {core_key(n) for n in links.get(rec['id'], [])}
+    return {k for k in keys if k}
+
+
+def company_reach(recs, links):
+    """kop_daudit_company_reach(): company core key => the records it runs or ran."""
+    out = defaultdict(set)
+    for r in recs.values():
+        for k in operator_keys(r, links):
+            out[k].add(r['id'])
+    return out
+
+
+def company_named(me, other, links, reach):
+    """kop_daudit_rename_brands()' company side: me is only the name of a company that runs the other record and
+    other programs too (Embark, Three Springs; not Pathway of Madison County, LLC, named after its one program), and
+    has no years of its own outside the other's (Three Points Center in Siler City ran on after Auldern closed)."""
+    k = core_key(me['name'])
+    if not k or k == core_key(other['name']) or k not in operator_keys(other, links):
+        return False
+    if len(reach.get(k, set()) - {me['id'], other['id']}) < 2:
+        return False
+    lo, hi = other['start'], other['end']
+    outside = lambda y: bool(y) and ((lo and y < lo) or (hi and y > hi))
+    return not (outside(me['start']) or outside(me['end']))
 
 
 def lev(a, b):
@@ -200,10 +250,20 @@ def rename_year(e, l):
     return None
 
 
-def check_rename_years(recs, renames):
+def check_rename_years(recs, renames, links=None):
+    links = links or {}
+    reach = company_reach(recs, links)
     out = []
     for (eid, lid), why in sorted(renames.items()):
         e, l = recs[eid], recs[lid]
+        side = 'later' if company_named(l, e, links, reach) else ('earlier' if company_named(e, l, links, reach) else '')
+        if side:
+            me, other = (l, e) if side == 'later' else (e, l)
+            out.append(flag('rename_years', l, f"{me['name']} is only the name of the company that runs {other['name']}: one program filed twice, not a rename",
+                            {'earlier': [e['name'], eid, e['status'], e['start'], e['end']],
+                             'later': [l['name'], lid, l['status'], l['start'], l['end']]},
+                            company_name=side, renames=[{'earlier': eid, 'later': lid, 'year': rename_year(e, l), 'why': why}]))
+            continue
         off = []
         if not l['start'] or (e['start'] and l['start'] <= e['start']):
             off.append(f"{l['name']} opens {l['start'] or '(no year)'}, the earlier name's opening year or none")
@@ -404,6 +464,18 @@ def check_memorial(con):
     return out
 
 
+def operator_links(con):
+    """Record id => names of the companies linked to it (wpdl_kop_operator_facilities), {} without the tables."""
+    out = defaultdict(list)
+    try:
+        for fid, name in con.execute('SELECT f.facility_id, o.name FROM wpdl_kop_operator_facilities f '
+                                     'JOIN wpdl_kop_operators o ON o.id = f.operator_id'):
+            out[fid].append(name or '')
+    except sqlite3.Error:
+        pass
+    return out
+
+
 def years_text(r):
     if r['start'] and r['end']:
         return '%d to %d' % (r['start'], r['end'])
@@ -428,13 +500,20 @@ def propose_renames(recs, flags):
             continue
         e, l = recs[r['earlier']], recs[r['later']]
         y = r['year']
+        if f.get('company_name'):
+            me, other = (l, e) if f['company_name'] == 'later' else (e, l)
+            finding = ('%s is only the name of the company that runs %s (%s): record #%d is most likely %s filed under its company, '
+                       'not an earlier or later name of it. Fold it in as one program, unless the program really went by that name.'
+                       % (me['name'], other['name'], r['why'], me['id'], other['name']))
+        else:
+            finding = ('%s and %s are one program under two names (%s), kept as two records, so their years disagree: %s.'
+                       % (e['name'], l['name'], r['why'], f['why'].split(': ', 1)[-1])
+                       + (' The records suggest the name changed in %d; check it before merging.' % y if y
+                          else ' The records do not say when the name changed: give the year when merging.'))
         props.append({
             'key': key, 'kind': 'rename_years', 'title': l['name'], 'place': f.get('place', ''), 'facility_id': l['id'],
             'verdict': 'unsure', 'confidence': 'medium' if y else 'low',
-            'finding': '%s and %s are one program under two names (%s), kept as two records, so their years disagree: %s.'
-                       % (e['name'], l['name'], r['why'], f['why'].split(': ', 1)[-1])
-                       + (' The records suggest the name changed in %d; check it before merging.' % y if y
-                          else ' The records do not say when the name changed: give the year when merging.'),
+            'finding': finding,
             'kop_now': '%s (#%d): %s, %s. %s (#%d): %s, %s.' % (e['name'], e['id'], e['status'] or 'no status', years_text(e),
                                                               l['name'], l['id'], l['status'] or 'no status', years_text(l)),
             'sources': [], 'ops': [],
@@ -468,7 +547,7 @@ def main():
         'operator_inherited': lambda: check_operator_inherited(recs, graph),
         'person_spelling': lambda: check_people(con, recs),
         'memorial': lambda: check_memorial(con),
-        'rename_years': lambda: check_rename_years(recs, renames),
+        'rename_years': lambda: check_rename_years(recs, renames, operator_links(con)),
     }
     flags = []
     for kind, fn in checks.items():

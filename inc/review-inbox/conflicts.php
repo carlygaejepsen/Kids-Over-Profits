@@ -1,14 +1,14 @@
 <?php
 /**
  * Review inbox source: every waiting item that disagrees with its record, in
- * one place to settle. Woodbury Facts, Fornits and Data audit name theirs
- * through 'conflicts' (and leave them out of their own waiting lists); each
+ * one place to settle. Woodbury Facts and Fornits name theirs through
+ * 'conflicts' (and leave them out of their own waiting lists; Data audit
+ * shows a moved value on its own card, step by step); each
  * card shows what the record says beside what the item says and offers:
  *
  *   Keep the record   the item is filed as rejected, the record unchanged
  *   Use this value    the item's value is written over the record's, citing
- *                     its source (Woodbury/Fornits: kop_wbf_doc_overwrite();
- *                     Data audit: approved over the changed 'from')
+ *                     its source (kop_wbf_doc_overwrite())
  *   Edit              a value the reviewer types is written instead
  *
  * Each goes through the queue's own 'resolve', and Undo is the queue's own
@@ -70,7 +70,7 @@ kop_rinbox_register('conflicts', function () {
 /** The queues that name conflicts, [key => label]. */
 function kop_rinbox_conflicts_queues() {
     $out = array();
-    foreach (array('woodbury-facts' => 'Woodbury Facts', 'fornits' => 'Fornits', 'data-audit' => 'Data audit') as $k => $label) {
+    foreach (array('woodbury-facts' => 'Woodbury Facts', 'fornits' => 'Fornits') as $k => $label) {
         if (isset($GLOBALS['kop_rinbox_builders'][$k])) $out[$k] = $label;
     }
     return $out;

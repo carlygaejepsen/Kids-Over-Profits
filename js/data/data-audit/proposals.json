@@ -437,8 +437,9 @@
     "value": "Correctional Services Corporation (parent, until 2005)"
    },
    {
-    "type": "manual",
-    "text": "Find a Florida DJJ contract record for Blackwater STOP Camp (Milton) to confirm YSI ran it and its years; Florida's STOP camps date from 2006, so the 2003 start year on record 100145 may belong to an earlier camp."
+    "type": "check",
+    "text": "Find a Florida DJJ contract record for Blackwater STOP Camp (Milton) confirming YSI ran it and its years; Florida's STOP camps date from 2006, so the 2003 start year on record 100145 may belong to an earlier camp.",
+    "step_text": "Find a Florida DJJ contract record for Blackwater STOP Camp (Milton) to confirm YSI ran it and its years; Florida's STOP camps date from 2006, so the 2003 start year on record 100145 may belong to an earlier camp."
    }
   ]
  },
@@ -1035,8 +1036,17 @@
     "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Jacksonville Youth Academy (October 2026), after TrueCore Behavioral Solutions (formerly G4S Youth Services)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "p0504",
+    "label": "Wayne Halfway House -> Jacksonville Youth Academy: operator (operator profile)",
     "text": "Remove map line p0439 (Wayne Halfway House to Jacksonville Youth Academy) in network-overrides.json and unlink Wayne Halfway House (company #27) from record 11106, unless a source shows Wayne ran an earlier Jacksonville program (KOP's own Wayne history seed lists it as transferred)."
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11106,
+    "operator_id": 27,
+    "from": "current",
+    "to": "remove"
    }
   ]
  },
@@ -2033,7 +2043,11 @@
     "text": "Since 2021 Capital Academy has been controlled by Willow Grove LLC and runs under the same name."
    },
    {
-    "type": "manual",
+    "type": "operator_link",
+    "facility_id": 12761,
+    "operator_id": 26,
+    "from": "current",
+    "to": "remove",
     "text": "Vivant Behavioral Health (company #26) is linked to record 12761 as current, but sources say Willow Grove LLC took Capital Academy from Sequel; unlink Vivant if it never ran it."
    }
   ]
@@ -2801,7 +2815,8 @@
    },
    {
     "type": "manual",
-    "text": "Map nodes kids-helping-kids and kids-helping-kids-of-hebron-ky look like one organisation; merge them in network-overrides.json if confirmed."
+    "text": "Merge network map nodes kids-helping-kids and kids-helping-kids-of-hebron-ky in network-overrides.json if they are confirmed to be one organisation.",
+    "step_text": "Map nodes kids-helping-kids and kids-helping-kids-of-hebron-ky look like one organisation; merge them in network-overrides.json if confirmed."
    }
   ]
  },
@@ -3276,8 +3291,9 @@
   "notes": "Wikipedia and WWASP Survivors only; the years Red Rock Academy used its name were not found.",
   "ops": [
    {
-    "type": "manual",
-    "text": "On the map, Cross Creek Center for Boys (cross-creek-center-for-boys) should start in the late 1990s, not 1988; the exact year was not found, so set it at KOP Tools > Map Years once known."
+    "type": "check",
+    "text": "Find the year the boys' Cross Creek Center opened (late 1990s), then set map node cross-creek-center-for-boys (now 1988-2011) at KOP Tools > Map Years.",
+    "step_text": "On the map, Cross Creek Center for Boys (cross-creek-center-for-boys) should start in the late 1990s, not 1988; the exact year was not found, so set it at KOP Tools > Map Years once known."
    }
   ]
  },
@@ -3543,7 +3559,8 @@
    },
    {
     "type": "manual",
-    "text": "Correct the educational consultant record that names \"Kelly Cole\" (from Woodbury's uncorrected October 2009 item) to Kelly Corey."
+    "text": "Correct the educational consultant record that names 'Kelly Cole' (Woodbury's uncorrected October 2009 item) to Kelly Corey.",
+    "step_text": "Correct the educational consultant record that names \"Kelly Cole\" (from Woodbury's uncorrected October 2009 item) to Kelly Corey."
    }
   ]
  },
@@ -3614,7 +3631,8 @@
   "ops": [
    {
     "type": "manual",
-    "text": "Split Jenny Jones off person #181 at KOP Tools > People for records 10347 (Aspen Ranch) and 10389 (Aspen Achievement Academy); #181 keeps Oxbow Academy (10336), Discovery Academy (10333) and the map node, and the alias \"Jenny Jones\" moves with the split."
+    "text": "At KOP Tools > People, split 'Jenny Jones' off person #181 for records 10347 (Aspen Ranch) and 10389 (Aspen Achievement Academy), alias 'Jenny Jones' moving with the split; #181 keeps Oxbow Academy (10336), Discovery Academy (10333) and the map node.",
+    "step_text": "Split Jenny Jones off person #181 at KOP Tools > People for records 10347 (Aspen Ranch) and 10389 (Aspen Achievement Academy); #181 keeps Oxbow Academy (10336), Discovery Academy (10333) and the map node, and the alias \"Jenny Jones\" moves with the split."
    }
   ]
  },
@@ -3663,11 +3681,21 @@
   "notes": "His Academy at Ivy Ridge role comes only from the r/troubledteens wiki and is unconfirmed.",
   "ops": [
    {
-    "type": "manual",
+    "type": "staff_role",
+    "facility_id": 11977,
+    "list": "notableStaff",
+    "name": "Glenn F. Bender",
+    "from": "Admissions Director (2025-2026, HEAL), left",
+    "to": "Admissions (1997, StrugglingTeens)",
     "text": "On Academy at Swift River (record 11977), change Glenn F. Bender's staff role \"Admissions Director (2025-2026, HEAL), left\" to \"Admissions (1997, StrugglingTeens)\"."
    },
    {
-    "type": "manual",
+    "type": "staff_role",
+    "facility_id": 14017,
+    "list": "notableStaff",
+    "name": "Glenn F. Bender",
+    "from": "Director of Admissions and Marketing (2022, HEAL)",
+    "to": "Director of Admissions (1999, StrugglingTeens)",
     "text": "On Alldredge Wilderness Journey (record 14017), change Glenn F. Bender's staff role \"Director of Admissions and Marketing (2022, HEAL)\" to \"Director of Admissions (1999, StrugglingTeens)\"."
    }
   ]
@@ -3686,8 +3714,9 @@
   "notes": "",
   "ops": [
    {
-    "type": "manual",
-    "text": "No source was found on who runs Three Springs of Marion (Ocala, 2007-2010) now or whether it closed, and its current operator \"Youth Opportunity Investments\" is unsourced. Find what the Ocala program became (Florida DJJ records), then set record 9650 to status Open with Three Springs Inc. (company #24) as past, or Closed with end year 2010."
+    "type": "check",
+    "text": "Already done: record 9650 (Three Springs of Marion) was merged into 11095 Marion Youth Academy as a rename on 2026-10-11 (2007-2010); 11095 is Open under Youth Opportunity Investments with Three Springs Inc. as a past company. Nothing left to change here.",
+    "step_text": "No source was found on who runs Three Springs of Marion (Ocala, 2007-2010) now or whether it closed, and its current operator \"Youth Opportunity Investments\" is unsourced. Find what the Ocala program became (Florida DJJ records), then set record 9650 to status Open with Three Springs Inc. (company #24) as past, or Closed with end year 2010."
    }
   ]
  },
@@ -3712,8 +3741,9 @@
   "notes": "Wikipedia only (lead).",
   "ops": [
    {
-    "type": "manual",
-    "text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 as a rename at KOP Tools > Merge Duplicates (Merge as a rename), or find what became of it and set status Closed (2009) or Open."
+    "type": "check",
+    "text": "Already done: record 9653 (Three Springs of Osceola) was merged into 11129 Kissimmee Youth Academy as a rename on 2026-10-11 (2002-2009). Merging Sequel TSI Kissimmee (11097) into 11129 is on cards sequel_history-11097 / -11129.",
+    "step_text": "Sequel TSI Kissimmee (record 11097) lists \"Three Springs of Osceola\" as its other name, so record 9653 is likely the same program before 2009: merge 9653 into 11097 as a rename at KOP Tools > Merge Duplicates (Merge as a rename), or find what became of it and set status Closed (2009) or Open."
    }
   ],
   "renames": [
@@ -3770,8 +3800,23 @@
     "text": "Three Springs School of Tuskegee became Sequel TSI of Tuskegee after Sequel bought Three Springs in 2009, then Brighter Path Tuskegee under Vivant Behavioral Healthcare."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 9657,
+    "rename": true,
+    "year": 2010,
     "text": "Brighter Path Tuskegee (13641) and Sequel TSI of Tuskegee (100078) are this program's later names: merge 9657 and 100078 into 13641 as renames at KOP Tools > Merge Duplicates > Renamed programs, and confirm it still runs (latest source 2021-22) before setting status Open; the current operator \"Alabama Department of Human Resources\" is a placing agency, not the operator."
+   },
+   {
+    "type": "merge",
+    "keep": 13641,
+    "drop": 100078,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "check",
+    "text": "Before setting Brighter Path Tuskegee Open, confirm it still runs (latest source 2021-22; website down by July 2025). 'Alabama Department of Human Resources' on 9657 is a placing agency, not the operator (fixed on card sequel_history-9657)."
    }
   ],
   "renames": [
@@ -4141,8 +4186,9 @@
   "notes": "The identification with Polk County YTC is an inference.",
   "ops": [
    {
-    "type": "manual",
-    "text": "Who took over Bartow Youth Training Center (probably the 350-bed Polk County Youth Training Center CSC ran) and when it closed was not found, and its years disagree (1995-1999 vs 1999-2004 in the years text); the current operator \"AMIkids\" is unsourced. Search Tampa Bay Times and Florida DJJ archives, then set record 11131 to status Open with the new company or Closed with its end year."
+    "type": "check",
+    "text": "Record 11131 (Bartow Youth Training Center) was already merged into 11135 AMIkids Polk Inc. as a rename on 2026-10-11 (1995-1999). Still open: who took over the Polk County Youth Training Center CSC ran and when it closed (years text said 1999-2004), and whether 'AMIkids' has a source; search Tampa Bay Times and Florida DJJ archives.",
+    "step_text": "Who took over Bartow Youth Training Center (probably the 350-bed Polk County Youth Training Center CSC ran) and when it closed was not found, and its years disagree (1995-1999 vs 1999-2004 in the years text); the current operator \"AMIkids\" is unsourced. Search Tampa Bay Times and Florida DJJ archives, then set record 11131 to status Open with the new company or Closed with its end year."
    }
   ]
  },
@@ -4196,8 +4242,30 @@
   "notes": "The county quote is a search summary.",
   "ops": [
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 100003,
+    "path": "operatingPeriod.status",
+    "from": "Transferred",
+    "to": "Open",
     "text": "Bell County bought the Killeen site (4800 E Rancier) in 1996 and runs its Juvenile Services Center there, but no source shows the 1999 private operator or that this is the same facility; confirm, then set record 100003 to status Open with Bell County Juvenile Probation Department current and YSI/CSC (companies #30, #31) past."
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 100003,
+    "operator_id": 30,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 100003,
+    "operator_id": 31,
+    "from": "current",
+    "to": "past"
+   },
+   {
+    "type": "check",
+    "text": "Only if confirmed: no source shows the 1999 private operator (YSI/CSC) or that it is the same Killeen facility Bell County runs at 4800 E Rancier; currentOperator already reads Bell County Juvenile Probation Department."
    }
   ]
  },
@@ -5417,7 +5485,11 @@
     "to": "Several blood clots after days of complaints of chest pain went unanswered (state report)"
    },
    {
-    "type": "manual",
+    "type": "memorial",
+    "memorial_id": 73,
+    "column": "name",
+    "from": "Dyskeha Streeter",
+    "to": "Dysheka Streeter",
     "text": "Name: the WCTI source spells her first name Dysheka, not Dyskeha; correct the name on memorial entry 73."
    }
   ]
@@ -7125,8 +7197,16 @@
   "notes": "VisionQuest ran programs in several states; Arizona is only the company's home, so no location value is proposed.",
   "ops": [
    {
-    "type": "manual",
+    "type": "memorial",
+    "memorial_id": 183,
+    "column": "location",
+    "from": "Utah",
+    "to": "Arizona",
     "text": "Location 'Utah' has no source: the Salt Lake Tribune lists Carlos Ruiz only as in the Tucson, Ariz.-based VisionQuest, and no source says where he died. Reviewer: set the location to Arizona or mark it unknown. The cause wording comes from WitnessLA, not the linked Tribune list; consider citing WitnessLA."
+   },
+   {
+    "type": "check",
+    "text": "No source says where Carlos Ruiz died (VisionQuest was Tucson-based); untick the location change to leave it, or clear it. The cause wording comes from WitnessLA, not the linked Salt Lake Tribune list: consider citing WitnessLA."
    }
   ]
  },
@@ -7688,8 +7768,9 @@
     "to": 1988
    },
    {
-    "type": "manual",
-    "text": "Map nodes bethel-baptist-childrens-home, eagle-point-christian-academy and gulf-coast-academy all read 1978-2005; set each name's years once the rename years are confirmed in Map Renames."
+    "type": "check",
+    "text": "Map nodes bethel-baptist-childrens-home, eagle-point-christian-academy and gulf-coast-academy all read 1978-2005: once the rename years are confirmed at KOP Tools > Map Renames, set each name's years.",
+    "step_text": "Map nodes bethel-baptist-childrens-home, eagle-point-christian-academy and gulf-coast-academy all read 1978-2005; set each name's years once the rename years are confirmed in Map Renames."
    }
   ]
  },
@@ -7848,8 +7929,9 @@
   "notes": "Do not split him: the sources fit one career. The list of programs seems to come from a 2014 StrugglingTeens item about Squaw Valley Academy that could not be opened; read it before changing anything.",
   "ops": [
    {
-    "type": "manual",
-    "text": "Find a source naming Jeff Johnson (#34) at Boulder Creek Academy, Allynwood Academy and Auldern Academy (likely the 2014 StrugglingTeens Squaw Valley Academy item); take him off any of the three it does not name, and give his remaining roles their years (Mount Bachelor 1988-2000, Trails Carolina 2012-2013)."
+    "type": "check",
+    "text": "Find a source naming Jeff Johnson (#34) at Boulder Creek Academy, Allynwood Academy and Auldern Academy (likely the 2014 StrugglingTeens Squaw Valley Academy item); take him off any it does not name, and give his remaining roles years (Mount Bachelor 1988-2000, Trails Carolina 2012-2013).",
+    "step_text": "Find a source naming Jeff Johnson (#34) at Boulder Creek Academy, Allynwood Academy and Auldern Academy (likely the 2014 StrugglingTeens Squaw Valley Academy item); take him off any of the three it does not name, and give his remaining roles their years (Mount Bachelor 1988-2000, Trails Carolina 2012-2013)."
    }
   ]
  },
@@ -8521,8 +8603,21 @@
     ]
    },
    {
+    "type": "note_remove",
+    "facility_id": 10459,
+    "path": "operatingPeriod.notes",
+    "text": "Closed per news report: The Imprint, \"Behavioral Health Contractor Sequel Absorbs Two Blows\", 2021-10-25 https://imprintnews.org/news-briefs/behavioral-health-contractor-sequel-absorbs-two-blows/59863",
+    "step_text": "On record #10459 (Clearfield, UT) take out the notes \"Closed per news report\" and \"Announced closing (2020-06-20)\" and the Vivant provider-report links: they are about Kalamazoo."
+   },
+   {
+    "type": "note_remove",
+    "facility_id": 10459,
+    "path": "operatingPeriod.notes",
+    "text": "Announced closing (2020-06-20) per news report: WKZO, \"Gov. Whitmer issues statement on Lakeside Academy death | WKZO | Everything Kalamazoo | 590 AM · 106.9 FM\", 2020-06-20 https://wkzo.com/2020/06/21/gov-whitmer-issues-statement-on-lakeside-academy-death/1031567/"
+   },
+   {
     "type": "manual",
-    "text": "On record #10459 (Clearfield, UT) take out the notes \"Closed per news report\" and \"Announced closing (2020-06-20)\" and the Vivant provider-report links: they are about Kalamazoo."
+    "text": "Take the 'Google Doc: Vivant Provider Report - 2024(CM)' resourceLinks off record 10459 (Clearfield, UT) and put them on 100098 (Kalamazoo): they are about Sequel/Vivant."
    }
   ]
  },
@@ -8903,8 +8998,44 @@
   ],
   "ops": [
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 100075,
+    "rename": true,
+    "year": 2022,
     "text": "Merge as renames: #100075 into #13639, #100077 into #13640, #100078 into #13641 (rename year 2022). Merge duplicates: #14054 with #14058. Merge #100272 into Auldern Academy #9637 after checking the APM story."
+   },
+   {
+    "type": "merge",
+    "keep": 13640,
+    "drop": 100077,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "merge",
+    "keep": 13641,
+    "drop": 100078,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "merge",
+    "keep": 14058,
+    "drop": 14054,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "merge",
+    "keep": 9637,
+    "drop": 100272,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "check",
+    "text": "Read the APM Reports story (2021-12-03, news 726) before merging #100272 into Auldern Academy #9637."
    }
   ],
   "renames": [
@@ -9051,24 +9182,67 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 9647,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9647 (Three Springs of Courtland) and 100075 (Sequel TSI Courtland) into 13639 (Brighter Path Courtland) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs of Courtland (1990-2009) and Sequel TSI Courtland (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 100075,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1464",
+    "label": "Pathway of Madison County -> Brighter Path Courtland: operates (current)",
     "text": "Map: the line \"Pathway of Madison County -> Brighter Path Courtland: operates (current)\" and the owner's sheet ('Current Operator: Pathway of Madison Co.') are not supported by any source read: the 2025 licence fight and lawsuit name Brighter Path Alabama. Check and remove the line if it was a copy from the Owens Cross Roads row."
    },
    {
     "type": "manual",
-    "text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
+    "text": "Merge the duplicate network map nodes three-springs-courtland ('Three Springs Courtland') and three-springs-of-courtland ('Three Springs of Courtland') in network-overrides.json (both point at record 9647).",
+    "step_text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 3 on this card) Keep 13639 Brighter Path Courtland, 349 Madison St.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
    }
   ]
  },
@@ -9149,20 +9323,43 @@
     "text": "Three Springs opened the School of Madison in 1999 as a medium-risk secure program for boys placed by Alabama DHR and DYS; Sequel ran it as Sequel TSI Madison from 2010 until it closed in 2019 (Three Springs program page, 2007; owner's research sheet)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 100076,
+    "drop": 9656,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9656 (Three Springs School of Madison) into 100076 (Sequel TSI Madison) at KOP Tools > Merge Duplicates > Renamed programs; add past name Three Springs School of Madison (1999-2009) and the address 1329 Browns Ferry Rd, Madison, AL 35758."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 100076,
+    "path": "location.street",
+    "from": "",
+    "to": "1329 Browns Ferry Rd"
+   },
+   {
+    "type": "field",
+    "facility_id": 100076,
+    "path": "location.zip",
+    "from": "",
+    "to": "35758"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100076,
+    "path": "identification.otherNames",
+    "value": "Three Springs New Directions",
     "text": "Remove \"Three Springs New Directions\" from the other names of 100076: New Directions was the girls' program in Huntsville and later on the Owens Cross Roads campus (NPI 1568793362, 318A Hamer Rd, 2010), now part of 13678."
    },
    {
-    "type": "manual",
-    "text": "Check the closing year: the owner's sheet says Sequel ran Madison to 2019; KOP's Three Springs company history says it lost its business license in 2017."
+    "type": "check",
+    "text": "Closing year of Sequel TSI Madison: the owner's sheet says 2019; KOP's Three Springs company history says it lost its business license in 2017. Pick one.",
+    "step_text": "Check the closing year: the owner's sheet says Sequel ran Madison to 2019; KOP's Three Springs company history says it lost its business license in 2017."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9656, 100076 are one program; keep 100076. One campus at 1329 Browns Ferry Rd, Madison, AL: Three Springs School of Madison (1999-2009), then Sequel TSI Madison (2010-2019). Keep the last name."
+    "type": "check",
+    "text": "(same merge as step 5 on this card) Keep 100076 Sequel TSI Madison.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9656, 100076 are one program; keep 100076. One campus at 1329 Browns Ferry Rd, Madison, AL: Three Springs School of Madison (1999-2009), then Sequel TSI Madison (2010-2019). Keep the last name."
    }
   ]
  },
@@ -9263,19 +9460,58 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13640,
+    "drop": 100077,
+    "rename": true,
+    "year": 2022,
     "text": "Merge 100077 (Sequel TSI Montgomery) into 13640 (Brighter Path Montgomery) at KOP Tools > Merge Duplicates > Renamed programs; add past name Sequel TSI Montgomery (2013-2022)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1482",
+    "label": "Alabama Department of Human Resources -> Sequel TSI Montgomery: operates (current)",
     "text": "Map: replace \"Alabama Department of Human Resources -> Sequel TSI Montgomery: operates (current)\" with Brighter Path Alabama, LLC (DHR licenses and places children: EJI, 2022) and add the name Brighter Path Montgomery from 2022."
    },
    {
-    "type": "manual",
-    "text": "Check the owner's sheet and the map line \"Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009\": no Montgomery program appears on Three Springs' 2007 program list (Wayback), and the owner's notes say 'Sequel TSI Montgomery (est 2013)'. If Three Springs ran an earlier Montgomery program, it was probably a different site."
+    "type": "check",
+    "text": "After the merges and the Brighter Path Alabama, LLC company row, check that the map shows Brighter Path Alabama, LLC as the operator; the rename merge gives the node its Brighter Path name from 2022."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Check the map line 'Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009' (edge e1413) and the owner's sheet: no Montgomery program is on Three Springs' 2007 list and the owner's notes say 'est 2013'. If Three Springs had an earlier Montgomery program it was probably another site; drop the line if not.",
+    "step_text": "Check the owner's sheet and the map line \"Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009\": no Montgomery program appears on Three Springs' 2007 program list (Wayback), and the owner's notes say 'Sequel TSI Montgomery (est 2013)'. If Three Springs ran an earlier Montgomery program, it was probably a different site."
+   },
+   {
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    }
   ]
@@ -9400,24 +9636,71 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 9657,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9657 (Three Springs School of Tuskegee) and 100078 (Sequel TSI of Tuskegee) into 13641 (Brighter Path Tuskegee) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs School of Tuskegee (1998-2009) and Sequel TSI of Tuskegee (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 100078,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1483",
+    "label": "Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)",
     "text": "Map: replace the line \"Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)\" with Brighter Path Alabama, LLC as current operator (DHR and DYS license and place children there: EJI, 2022), and add a Brighter Path Tuskegee name for the node from 2022."
    },
    {
-    "type": "manual",
-    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+    "type": "check",
+    "text": "After the merges and the Brighter Path Alabama, LLC company row, check that the map shows Brighter Path Alabama, LLC as the operator; the rename merge gives the node its Brighter Path name from 2022."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025.",
+    "step_text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+   },
+   {
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 3 on this card) Keep 13641 Brighter Path Tuskegee, 4280 US Hwy 29 S.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
    }
   ]
  },
@@ -9508,20 +9791,34 @@
     "text": "Florida DJJ listed G4S Youth Services as provider of Daytona Juvenile Residential Facility in 2015-2016, TrueCore Behavioral Solutions in 2019 and Rite of Passage, Inc. from June 2021 (DJJ program pages, Wayback 2015-04-21, 2019-04-05, 2021-06-03)."
    },
    {
-    "type": "manual",
-    "text": "Edit the existing note 'Florida ended its Youth Services International contracts in 2016; the Daytona Beach site now runs ... under Rite of Passage': DJJ named G4S here in 2015-2016, so YSI's tenure ended earlier (sheet: Three Springs by 2001)."
+    "type": "note_remove",
+    "facility_id": 100084,
+    "path": "operatingPeriod.notes",
+    "text": "Florida ended its Youth Services International contracts in 2016; the Daytona Beach site now runs as Daytona Juvenile Residential Facility under Rite of Passage, Inc. (Daytona Juvenile Residential Facility (DJJ), 2026: https://www.djj.state.fl.us/programs-facilities/residential-facilities/daytona-juvenile-residential-facility)",
+    "step_text": "Edit the existing note 'Florida ended its Youth Services International contracts in 2016; the Daytona Beach site now runs ... under Rite of Passage': DJJ named G4S here in 2015-2016, so YSI's tenure ended earlier (sheet: Three Springs by 2001)."
    },
    {
-    "type": "manual",
+    "type": "note",
+    "facility_id": 100084,
+    "text": "The Daytona Beach site now runs as Daytona Juvenile Residential Facility under Rite of Passage, Inc.; Florida DJJ named G4S Youth Services as provider in 2015-2016, so Youth Services International's years there ended earlier (Daytona Juvenile Residential Facility (DJJ), 2026: https://www.djj.state.fl.us/programs-facilities/residential-facilities/daytona-juvenile-residential-facility)."
+   },
+   {
+    "type": "merge",
+    "keep": 100084,
+    "drop": 9606,
+    "rename": false,
+    "year": null,
     "text": "Merge 9606 Daytona Juvenile Residential Facility into 100084 (or as a rename the other way, keeping the current name)."
    },
    {
-    "type": "manual",
-    "text": "Three Springs' years at Daytona (owner's sheet: 2001) and who ran it 2002-2014 are not sourced; G4S's start may be earlier than 2015."
+    "type": "check",
+    "text": "Find sources for Three Springs' years at Daytona (owner's sheet: 2001) and who ran it 2002-2014; G4S may have started before 2015.",
+    "step_text": "Three Springs' years at Daytona (owner's sheet: 2001) and who ran it 2002-2014 are not sourced; G4S's start may be earlier than 2015."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 100084, 9606 are one program; keep 100084. same DJJ program at 1386 Indian Lake Road, Daytona Beach; 100084 holds the history"
+    "type": "check",
+    "text": "(same merge as step 7 on this card) Keep 100084, which holds the history.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 100084, 9606 are one program; keep 100084. same DJJ program at 1386 Indian Lake Road, Daytona Beach; 100084 holds the history"
    }
   ]
  },
@@ -9578,12 +9875,15 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1385",
+    "label": "Sequel Youth and Family Services -> Medina County Detention Center: operated (1998)",
     "text": "Remove the network map line 'Sequel Youth and Family Services -> Medina County Detention Center: operated (1998)'; no source puts Sequel there (the sheet's '1998' sits in the Sequel column by mistake)."
    },
    {
-    "type": "manual",
-    "text": "Fix the owner's sheet row: CSC 1998-2001, Sequel blank."
+    "type": "check",
+    "text": "Fix the owner's sheet row for Medina County Detention Center: CSC 1998-2001, Sequel blank.",
+    "step_text": "Fix the owner's sheet row: CSC 1998-2001, Sequel blank."
    }
   ]
  },
@@ -9641,8 +9941,16 @@
     "to": 2021
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9637,
+    "drop": 100272,
+    "rename": false,
+    "year": null,
     "text": "Merge this record into 9637 Auldern Academy (keep 9637); move the APM Reports 2021-12-03 article (news id 726) to Auldern Academy."
+   },
+   {
+    "type": "check",
+    "text": "The merge moves the APM Reports 2021-12-03 article (news 726) to Auldern Academy with the record."
    }
   ]
  },
@@ -9703,8 +10011,9 @@
     "text": "Mount Pleasant Academy was one of the CARE Schools (Centers for Adolescent Recovery and Education) of Frank and Melanie Habibian until August 16, 2016, when Sequel Youth and Family Services bought the schools' operating assets; Sequel closed it in July 2019 (SEC proxy filing, January 2017; The Salt Lake Tribune, 2019-07-15)."
    },
    {
-    "type": "manual",
-    "text": "The ProPublica 2016 article (news 707) describes the 2016 raid and a 2014 conviction, both before Sequel bought the school: they belong to the CARE years, not Sequel's."
+    "type": "check",
+    "text": "ProPublica 2016 (news 707) describes the 2016 raid and a 2014 conviction, before Sequel bought Mount Pleasant Academy: they belong to the CARE years. Nothing to change on the record; keep this in mind for the page's era wording.",
+    "step_text": "The ProPublica 2016 article (news 707) describes the 2016 raid and a 2014 conviction, both before Sequel bought the school: they belong to the CARE years, not Sequel's."
    }
   ]
  },
@@ -9772,11 +10081,13 @@
    },
    {
     "type": "manual",
-    "text": "Wiki entry 661 linked to this record is 'Red Rock Academy' (a WWASP program, 1999-2000, near Zion), not Red Rock Canyon School: unlink it from record 10368 (it belongs with a Red Rock Academy / WWASP record if KOP has one). No wiki edits were made for it."
+    "text": "Unlink wiki entry 661 ('Red Rock Academy', a WWASP program near Zion, 1999-2000; link status 'suggested') from record 10368 Red Rock Canyon School at Review inbox > Wiki links; link it to a Red Rock Academy / WWASP record if KOP has one.",
+    "step_text": "Wiki entry 661 linked to this record is 'Red Rock Academy' (a WWASP program, 1999-2000, near Zion), not Red Rock Canyon School: unlink it from record 10368 (it belongs with a Red Rock Academy / WWASP record if KOP has one). No wiki edits were made for it."
    },
    {
     "type": "manual",
-    "text": "Add Frank Habibian and Melanie Habibian as founders/owners (owner sheet: 'Founded 2006 by Frank and Melanie Habibian'; the year conflicts with the SEC table's 1999 and the 2003/2005 items on the record)."
+    "text": "Add Frank Habibian and Melanie Habibian as founders/owners of Red Rock Canyon School (record 10368). The owner's sheet says 'Founded 2006 by Frank and Melanie Habibian'; that year conflicts with the SEC table's 1999 and the 2003/2005 items on the record.",
+    "step_text": "Add Frank Habibian and Melanie Habibian as founders/owners (owner sheet: 'Founded 2006 by Frank and Melanie Habibian'; the year conflicts with the SEC table's 1999 and the 2003/2005 items on the record)."
    }
   ]
  },
@@ -9838,28 +10149,62 @@
     "to": "1907-2020"
    },
    {
-    "type": "manual",
+    "type": "operator_link",
+    "facility_id": 10459,
+    "operator_id": 20,
+    "from": "current",
+    "to": "remove",
     "text": "Remove the Sequel TSI (operator 20) company link from record 10459 (Clearfield, UT); it was never a Sequel program. The equivalent link is added to record 100098 by the ops."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 10459,
+    "path": "operatingPeriod.endYear",
+    "from": 2020,
+    "to": null,
     "text": "Remove from 10459 the end year 2020 and the two operatingPeriod notes about the Kalamazoo closure (The Imprint 2021-10-25; WKZO 2020-06-20), and add them to 100098."
    },
    {
-    "type": "manual",
-    "text": "Move every news article and lawsuit filed under 10459 to 100098 (news 607 is Lakeside Academy of Kansas, record 12592; all the others, 602, 994, 612, 609, 988, 599, 1079, 987, 608, 611, 597, 604, 598, 614, 610, 600, 603 and the Sequel-wide pieces, are about Kalamazoo or Sequel; lawsuits 75, 76, 77 are the Frederick/Goshay cases in Kalamazoo)."
+    "type": "note_remove",
+    "facility_id": 10459,
+    "path": "operatingPeriod.notes",
+    "text": "Closed per news report: The Imprint, \"Behavioral Health Contractor Sequel Absorbs Two Blows\", 2021-10-25 https://imprintnews.org/news-briefs/behavioral-health-contractor-sequel-absorbs-two-blows/59863"
+   },
+   {
+    "type": "note_remove",
+    "facility_id": 10459,
+    "path": "operatingPeriod.notes",
+    "text": "Announced closing (2020-06-20) per news report: WKZO, \"Gov. Whitmer issues statement on Lakeside Academy death | WKZO | Everything Kalamazoo | 590 AM · 106.9 FM\", 2020-06-20 https://wkzo.com/2020/06/21/gov-whitmer-issues-statement-on-lakeside-academy-death/1031567/"
+   },
+   {
+    "type": "note",
+    "facility_id": 100098,
+    "text": "Closed per news report: The Imprint, \"Behavioral Health Contractor Sequel Absorbs Two Blows\", 2021-10-25 https://imprintnews.org/news-briefs/behavioral-health-contractor-sequel-absorbs-two-blows/59863"
+   },
+   {
+    "type": "note",
+    "facility_id": 100098,
+    "text": "Announced closing (2020-06-20) per news report: WKZO, \"Gov. Whitmer issues statement on Lakeside Academy death | WKZO | Everything Kalamazoo | 590 AM · 106.9 FM\", 2020-06-20 https://wkzo.com/2020/06/21/gov-whitmer-issues-statement-on-lakeside-academy-death/1031567/"
+   },
+   {
+    "type": "check",
+    "text": "Covered by card sequel-lakeside-kalamazoo, whose links_move changes sort each article on 10459 (Kalamazoo items and lawsuits 75, 76, 77 to 100098; 607 to Lakeside Academy of Kansas; 628, 641, 718, 726/947, 945, 987/988 to the Sequel programs they are about). That card sends 987 and 988 to Starr Albion Prep, not Kalamazoo as this step says; news 762 and 949 are on 10459 and neither card moves them: check them.",
+    "step_text": "Move every news article and lawsuit filed under 10459 to 100098 (news 607 is Lakeside Academy of Kansas, record 12592; all the others, 602, 994, 612, 609, 988, 599, 1079, 987, 608, 611, 597, 604, 598, 614, 610, 600, 603 and the Sequel-wide pieces, are about Kalamazoo or Sequel; lawsuits 75, 76, 77 are the Frederick/Goshay cases in Kalamazoo)."
    },
    {
     "type": "manual",
-    "text": "Move the 'Google Doc: Vivant Provider Report - 2024(CM)' resourceLinks from 10459 to 100098 (they are about Sequel/Vivant, not Youth Health Associates)."
+    "text": "Move the 'Google Doc: Vivant Provider Report - 2024(CM)' resourceLinks from record 10459 to 100098 (they are about Sequel/Vivant, not Youth Health Associates).",
+    "step_text": "Move the 'Google Doc: Vivant Provider Report - 2024(CM)' resourceLinks from 10459 to 100098 (they are about Sequel/Vivant, not Youth Health Associates)."
    },
    {
-    "type": "manual",
-    "text": "Point the network map node 'Lakeside Academy' (id lakeside-academy, from 1907) at record 100098, not 10459."
+    "type": "check",
+    "text": "Already done: map node lakeside-academy ('Lakeside Academy', from 1907) now points at record 100098.",
+    "step_text": "Point the network map node 'Lakeside Academy' (id lakeside-academy, from 1907) at record 100098, not 10459."
    },
    {
-    "type": "manual",
-    "text": "Record 100098 (Kalamazoo): consider adding Lakeside for Children (the Kalamazoo nonprofit sued with Sequel in Goshay v. Lakeside for Children, W.D. Mich. 1:2021cv00848) as the licence-holding owner before and during Sequel's management; KOP has no company row for it."
+    "type": "check",
+    "text": "Consider adding Lakeside for Children (Kalamazoo nonprofit, co-defendant in Goshay v. Lakeside for Children, W.D. Mich. 1:2021cv00848) as the licence-holding owner of record 100098 before and during Sequel's management; KOP has no company row for it.",
+    "step_text": "Record 100098 (Kalamazoo): consider adding Lakeside for Children (the Kalamazoo nonprofit sued with Sequel in Goshay v. Lakeside for Children, W.D. Mich. 1:2021cv00848) as the licence-holding owner before and during Sequel's management; KOP has no company row for it."
    }
   ]
  },
@@ -9950,16 +10295,29 @@
     "text": "Florida DJJ listed Sequel TSI of Florida as the provider of Alachua Academy from 2016 through June 2022, Wayne Halfway House from at least May 2023 to July 2025, and Rite of Passage, Inc. in 2026 (DJJ program page, Wayback captures 2016-08-23, 2022-06-07, 2023-05-04, 2025-07-22; live page 2026-10)."
    },
    {
-    "type": "manual",
-    "text": "Edit the existing note 'Florida DJJ lists Rite of Passage ... after Wayne Halfway House (Sequel, then Vivant) ran it from 2016': Wayne Halfway House is not part of Sequel or Vivant; Sequel ran it 2016-2022, Wayne from about 2023."
+    "type": "note_remove",
+    "facility_id": 11091,
+    "path": "operatingPeriod.notes",
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Alachua Academy (October 2026), after Wayne Halfway House (Sequel, then Vivant) ran it from 2016. (Florida DJJ Residential Facilities, 2026-10: https://www.djj.state.fl.us/programs-facilities/residential-facilities)",
+    "step_text": "Edit the existing note 'Florida DJJ lists Rite of Passage ... after Wayne Halfway House (Sequel, then Vivant) ran it from 2016': Wayne Halfway House is not part of Sequel or Vivant; Sequel ran it 2016-2022, Wayne from about 2023."
    },
    {
-    "type": "manual",
+    "type": "note",
+    "facility_id": 11091,
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Alachua Academy (October 2026); Sequel TSI of Florida ran it from 2016 to 2022 and Wayne Halfway House, a separate Tennessee company not part of Sequel or Vivant, from about 2023. (Florida DJJ Residential Facilities, 2026-10: https://www.djj.state.fl.us/programs-facilities/residential-facilities)"
+   },
+   {
+    "type": "field",
+    "facility_id": 11091,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2016-2022",
+    "to": "",
     "text": "yearsOfOperation reads '2016-2022' (Sequel's years) on an open program; clear it or set it to '2009-'."
    },
    {
-    "type": "manual",
-    "text": "Owner's notes list '2006: First Step Adolescent Services' and '2010: North American Family Institute' under Alachua Academy; if those were its earlier DJJ providers, add them as past operators (no source checked here)."
+    "type": "check",
+    "text": "The owner's notes list '2006: First Step Adolescent Services' and '2010: North American Family Institute' under Alachua Academy; if a source shows they were its earlier DJJ providers, add them as past operators.",
+    "step_text": "Owner's notes list '2006: First Step Adolescent Services' and '2010: North American Family Institute' under Alachua Academy; if those were its earlier DJJ providers, add them as past operators (no source checked here)."
    }
   ]
  },
@@ -10090,7 +10448,10 @@
     "text": "Florida DJJ listed G4S Youth Services / TrueCore Behavioral Solutions as provider of the Columbus program to 2018, Sequel TSI of Florida from October 2018 through December 2021, TrueCore again in 2023-2024 and Rite of Passage, Inc. from July 2025 (DJJ program pages, Wayback 2015-04-19, 2018-10-02, 2021-12-14, 2023-03-29, 2025-07-22)."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 11093,
+    "path": "identification.pastNames",
+    "value": "Columbus Juvenile Residential Facility",
     "text": "Add past name 'Columbus Juvenile Residential Facility' (DJJ's name under G4S/TrueCore, 2015-2018)."
    }
   ]
@@ -10207,15 +10568,30 @@
     "text": "Youth Services International ran Duval Academy for Florida DJJ from July 2013 until Sequel TSI of Florida took over in 2016; DJJ listed Sequel through December 2021, Wayne Halfway House from at least March 2023 to December 2025, and Rite of Passage, Inc. in 2026 (DJJ program page, Wayback captures 2016-08-23, 2021-12-14, 2023-03-13, 2025-12-28)."
    },
    {
-    "type": "manual",
-    "text": "Edit the existing note '... after Sequel's Wayne Halfway House ran it from 2016': Wayne Halfway House is not part of Sequel; Sequel ran it 2016-2022, Wayne from about 2023 to 2025."
+    "type": "note_remove",
+    "facility_id": 11094,
+    "path": "operatingPeriod.notes",
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Duval Academy (October 2026), after Sequel's Wayne Halfway House ran it from 2016. (Florida DJJ Residential Facilities, 2026-10: https://www.djj.state.fl.us/programs-facilities/residential-facilities)",
+    "step_text": "Edit the existing note '... after Sequel's Wayne Halfway House ran it from 2016': Wayne Halfway House is not part of Sequel; Sequel ran it 2016-2022, Wayne from about 2023 to 2025."
    },
    {
-    "type": "manual",
+    "type": "note",
+    "facility_id": 11094,
+    "text": "Florida DJJ lists Rite of Passage, Inc. as the provider of Duval Academy (October 2026); Sequel TSI of Florida ran it from 2016 to 2022 and Wayne Halfway House, a separate Tennessee company not part of Sequel, from about 2023 to 2025. (Florida DJJ Residential Facilities, 2026-10: https://www.djj.state.fl.us/programs-facilities/residential-facilities)"
+   },
+   {
+    "type": "field",
+    "facility_id": 11094,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2016-2022",
+    "to": "",
     "text": "yearsOfOperation reads '2016-2022' on an open program; clear it or set it to '2013-'."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 11094,
+    "path": "identification.otherOperators",
+    "value": "Youth Services International",
     "text": "identification.otherOperators holds 'Youth Services International', now also a dated past operator; remove it from otherOperators."
    }
   ]
@@ -10306,16 +10682,27 @@
     "text": "Florida DJJ listed Youth Services International as provider of Marion Youth Academy in 2015 and Sequel TSI of Florida from 2016 through June 2022; the program at 10420 NW Gainesville Road now runs as Silver Springs Youth Academy under Youth Opportunity Investments (DJJ program pages, Wayback 2015-04-23, 2022-06-07; live page 2026-10)."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 11095,
+    "path": "identification.otherOperators",
+    "value": "Youth Services International",
     "text": "identification.otherOperators holds 'Youth Services International' and otherNames holds 'Marion Youth Academy' (the record's own name); remove both."
    },
    {
-    "type": "manual",
-    "text": "Three Springs of Marion's own years (2007-2010) stay on its rename entry from the 2026-10-11 merge; the record's startYear 2010 is left as is."
+    "type": "list_remove",
+    "facility_id": 11095,
+    "path": "identification.otherNames",
+    "value": "Marion Youth Academy"
    },
    {
-    "type": "manual",
-    "text": "Map: 'Youth Services International -> Three Springs of Marion: operator' and 'Youth Opportunity Investments -> Three Springs of Marion: past operator' point at the earlier name; move them to Marion Youth Academy / Silver Springs Youth Academy (see map_lines)."
+    "type": "check",
+    "text": "No change: Three Springs of Marion keeps its own years (2007-2010) on its rename entry from the 2026-10-11 merge, and the record's startYear 2010 stays.",
+    "step_text": "Three Springs of Marion's own years (2007-2010) stay on its rename entry from the 2026-10-11 merge; the record's startYear 2010 is left as is."
+   },
+   {
+    "type": "check",
+    "text": "The map lines 'Youth Opportunity Investments -> Three Springs of Marion: past operator' (p0230) and 'Youth Services International -> Three Springs of Marion: operator' (p0231) come from this record's own operator lists, drawn on its earlier name; op 0 and step 5 take out their source (YOI as a past operator, YSI as an other operator). The map already has YSI -> Marion Youth Academy 2010-2016 and YOI -> Silver Springs Youth Academy (current). Check after the next map build that both lines are gone.",
+    "step_text": "Map: 'Youth Services International -> Three Springs of Marion: operator' and 'Youth Opportunity Investments -> Three Springs of Marion: past operator' point at the earlier name; move them to Marion Youth Academy / Silver Springs Youth Academy (see map_lines)."
    }
   ]
  },
@@ -10429,16 +10816,22 @@
     "text": "Sequel TSI of Florida took over Pompano Youth Treatment Center from Youth Services International in 2016; it failed a DJJ inspection in August 2021 and shut down the following month (APM Reports, 2022-04-26). By May 2026 Florida DJJ listed Pompano Youth Academy, a girls' program run by Rite of Passage, Inc., at the same address, 3090 N Powerline Road."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 11096,
+    "path": "identification.currentName",
+    "from": "",
+    "to": "Pompano Youth Academy",
     "text": "Add current name 'Pompano Youth Academy' (Rite of Passage, girls 13-18, DJJ page captured 2026-05-18)."
    },
    {
-    "type": "manual",
-    "text": "Address: the owner's sheet has 2090 N Powerline Rd; DJJ (2015-2026) and the owner's notes have 3090 N Powerline Road, Pompano Beach, FL 33069."
+    "type": "check",
+    "text": "Already right: record 11096's street is 3090 N Powerline Rd, 33069 (as DJJ and the owner's notes have it); only the owner's sheet has 2090. Fix the sheet.",
+    "step_text": "Address: the owner's sheet has 2090 N Powerline Rd; DJJ (2015-2026) and the owner's notes have 3090 N Powerline Road, Pompano Beach, FL 33069."
    },
    {
-    "type": "manual",
-    "text": "If the owner does not count the 2026 girls' program as the same program, skip the status/currentOperator/link-18 ops and set endYear 2021 instead."
+    "type": "check",
+    "text": "If the 2026 girls' program (Pompano Youth Academy) is not the same program, untick the status, currentOperator and Rite of Passage link changes and the current name, and set endYear 2021 instead.",
+    "step_text": "If the owner does not count the 2026 girls' program as the same program, skip the status/currentOperator/link-18 ops and set endYear 2021 instead."
    }
   ]
  },
@@ -10517,16 +10910,24 @@
     "text": "Sequel TSI of Florida ran this Kissimmee DJJ program (Kissimmee Juvenile Correctional Facility, 2330 New Beginnings Road) from January 2010 until 2016; it was Three Springs of Osceola before and has run as Kissimmee Youth Academy under Youth Opportunity Investments since (DJJ program pages 2015 and 2018)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 11129,
+    "drop": 11097,
+    "rename": true,
+    "year": 2016,
     "text": "Merge 11097 into 11129 Kissimmee Youth Academy as a rename (Merge Duplicates > Renamed programs), keeping 2010-2016 for this name."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 11097,
+    "path": "identification.pastNames",
+    "value": "Three Springs, Inc.",
     "text": "Remove 'Three Springs, Inc.' from identification.pastNames (it is the company, not a name; the program's earlier name 'Three Springs of Osceola' is already an other name)."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11129, 11097 are one program; keep 11129. same DJJ program at 2330 New Beginnings Road; 11129 holds the current name"
+    "type": "check",
+    "text": "(same merge as step 3 on this card) Keep 11129, which holds the current name.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11129, 11097 are one program; keep 11129. same DJJ program at 2330 New Beginnings Road; 11129 holds the current name"
    }
   ]
  },
@@ -10617,16 +11018,46 @@
     "text": "Youth Services International ran St. Johns Youth Academy for Florida DJJ until 2015, when Sequel TSI of Florida took it over; after DJJ ended Sequel's contract in October 2022 the site at 4500 Avenue D reopened as St. Augustine Youth Academy under Youth Opportunity Investments (DJJ program pages, Wayback 2015-03-15, 2016-04-05, 2024-06-16)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 11130,
+    "drop": 11098,
+    "rename": true,
+    "year": null,
     "text": "Merge 11098 St. John's Youth Academy (2009-2022 era) and 9654 Three Springs of St. Johns into 11130 St. Augustine Youth Academy as renames (Merge Duplicates > Renamed programs). After the merge 11130 should carry past operators 'Youth Services International (2009-2015)' and 'Sequel TSI (2015-2022)' and a past Sequel link (20)."
    },
    {
-    "type": "manual",
-    "text": "The YSI years are approximate: YSI is the DJJ provider in 2015 captures; whether YSI ran it from 2009 was not confirmed."
+    "type": "merge",
+    "keep": 11130,
+    "drop": 9654,
+    "rename": false,
+    "year": null
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11130, 11098, 9654 are one program; keep 11130. one DJJ program at 4500 Avenue D, St. Augustine: St. John's Youth Academy (YSI, Sequel 2015-2022) -> St. Augustine Youth Academy (Youth Opportunity Investments); 11130 holds the current name, 11098 the most data (merge it as the earlier name)"
+    "type": "list_add",
+    "facility_id": 11098,
+    "path": "identification.pastOperators",
+    "value": "Sequel TSI (2015-2022)"
+   },
+   {
+    "type": "operator_link",
+    "facility_id": 11130,
+    "operator_id": 20,
+    "from": null,
+    "to": "past"
+   },
+   {
+    "type": "check",
+    "text": "The rename year (St. John's Youth Academy -> St. Augustine Youth Academy) is between October 2022 and June 2024; set it at KOP Tools > Map Renames. YSI (2009-2015) reaches 11130 through op 1 and the merge."
+   },
+   {
+    "type": "check",
+    "text": "The YSI years at St. John's are approximate: YSI is the DJJ provider in 2015 captures; whether it ran it from 2009 was not confirmed.",
+    "step_text": "The YSI years are approximate: YSI is the DJJ provider in 2015 captures; whether YSI ran it from 2009 was not confirmed."
+   },
+   {
+    "type": "check",
+    "text": "(same merges as step 3 on this card) Keep 11130 St. Augustine Youth Academy, 4500 Avenue D.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11130, 11098, 9654 are one program; keep 11130. one DJJ program at 4500 Avenue D, St. Augustine: St. John's Youth Academy (YSI, Sequel 2015-2022) -> St. Augustine Youth Academy (Youth Opportunity Investments); 11130 holds the current name, 11098 the most data (merge it as the earlier name)"
    }
   ]
  },
@@ -10717,20 +11148,29 @@
     "text": "The program at 2330 New Beginnings Road was Three Springs of Osceola (Three Springs, Inc., from 2002), run by Sequel TSI of Florida after Sequel took over Three Springs in January 2010 (DJJ 2015: Kissimmee Juvenile Correctional Facility), and by Youth Opportunity Investments as Kissimmee Youth Academy from 2016 (DJJ program pages, Wayback 2015-04-21, 2018-12-04; Sequel deck, September 2016)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 11129,
+    "drop": 11097,
+    "rename": true,
+    "year": 2016,
     "text": "Merge record 11097 'Sequel TSI Kissimmee' into 11129 as a rename (Merge Duplicates > Renamed programs): its years are the Sequel era, 2010-2016."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 11129,
+    "path": "identification.pastNames",
+    "value": "Kissimmee Juvenile Correctional Facility",
     "text": "Add past name 'Kissimmee Juvenile Correctional Facility' (DJJ's name for the Sequel program, 2015)."
    },
    {
-    "type": "manual",
-    "text": "startYear is 2009 on the record; the program began as Three Springs of Osceola in 2002 (owner's sheet). Set 2002 if the record should carry the whole program's years (left alone here because the 2026-10-11 rename merge set it)."
+    "type": "check",
+    "text": "startYear on 11129 is 2009 (set by the 2026-10-11 rename merge); the program began as Three Springs of Osceola in 2002. Set 2002 only if the record should carry the whole program's years.",
+    "step_text": "startYear is 2009 on the record; the program began as Three Springs of Osceola in 2002 (owner's sheet). Set 2002 if the record should carry the whole program's years (left alone here because the 2026-10-11 rename merge set it)."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11129, 11097 are one program; keep 11129. same DJJ program at 2330 New Beginnings Road, Kissimmee: Three Springs of Osceola -> Sequel TSI Kissimmee -> Kissimmee Youth Academy; 11129 holds the current name"
+    "type": "check",
+    "text": "(same merge as step 5 on this card) Keep 11129.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11129, 11097 are one program; keep 11129. same DJJ program at 2330 New Beginnings Road, Kissimmee: Three Springs of Osceola -> Sequel TSI Kissimmee -> Kissimmee Youth Academy; 11129 holds the current name"
    }
   ]
  },
@@ -10854,16 +11294,25 @@
     "text": "Florida DJJ listed Youth Services International as provider of Charles Britt Academy in 2015 and Sequel TSI of Florida from 2016 until DJJ closed it in June 2022; the program reopened at 3001 26th Avenue South as Britt Technical Youth Academy under Wayne Halfway House (DJJ provider 2025) and was closed by DJJ in 2026 (DJJ program pages, Wayback 2015-03-08, 2022-06-07, 2025-12-30; Tampa Bay Times, 2026-09-29)."
    },
    {
-    "type": "manual",
-    "text": "Start year set to 2013 (Sequel's deck: Charles Britt Academy founded 2013). The site was earlier 'Britt Halfway House' (a DJJ program page slug Britt_Halfway_House existed); if the owner treats Britt Halfway House as the same program, its earlier years and operator still need a source."
+    "type": "check",
+    "text": "Start year set to 2013 (Sequel's deck). The site was earlier 'Britt Halfway House' (already an other name); if it is the same program, its earlier years and operator still need a source.",
+    "step_text": "Start year set to 2013 (Sequel's deck: Charles Britt Academy founded 2013). The site was earlier 'Britt Halfway House' (a DJJ program page slug Britt_Halfway_House existed); if the owner treats Britt Halfway House as the same program, its earlier years and operator still need a source."
    },
    {
-    "type": "manual",
-    "text": "The Tampa Bay Times article (KOP news 523) has no URL in news_submissions; add it."
+    "type": "check",
+    "text": "Find the URL of the Tampa Bay Times article 'A juvenile boys program in St. Pete closed. Where did the kids go?' (2026-09-29, news 523); its article_url is empty. Add it to the news record.",
+    "step_text": "The Tampa Bay Times article (KOP news 523) has no URL in news_submissions; add it."
    },
    {
-    "type": "manual",
+    "type": "map_years",
+    "node": "charles-britt-academy",
+    "from": "until 2022",
+    "to": "2013-2022",
     "text": "Rename years for the map/eras: Charles Britt Academy 2013-2022, Britt Technical Youth Academy 2022-2026 (Map Renames)."
+   },
+   {
+    "type": "check",
+    "text": "Set the rename years at KOP Tools > Map Renames: Charles Britt Academy 2013-2022, Britt Technical Youth Academy 2022-2026 (the merge entry already has 2022). The map has no Britt Technical Youth Academy node yet."
    }
   ]
  },
@@ -10917,8 +11366,9 @@
     "text": "Kingston Academy was a Camelot program until Sequel bought Camelot System of Care in 2011 (Levine Leichtman Capital Partners, 2011-03-04; owner's research sheet); Tennessee DCS removed 18 children in February 2019 and Sequel closed it that year (WBIR, 2019-02-22)."
    },
    {
-    "type": "manual",
-    "text": "Start year: KOP has 2009; Sequel's 2017 SEC proxy gives 'CY Year Founded 2002'; the owner's sheet says 'Founded 1985, previously Camelot Schools'. Pick one and set operatingPeriod.startYear and the map node years (now 2009-2019) to match."
+    "type": "check",
+    "text": "Kingston Academy start year: KOP has 2009, Sequel's 2017 SEC proxy 'CY Year Founded 2002', the owner's sheet 'Founded 1985, previously Camelot Schools'. Pick one; then set operatingPeriod.startYear and map node kingston-academy (now 2009-2019) to match.",
+    "step_text": "Start year: KOP has 2009; Sequel's 2017 SEC proxy gives 'CY Year Founded 2002'; the owner's sheet says 'Founded 1985, previously Camelot Schools'. Pick one and set operatingPeriod.startYear and the map node years (now 2009-2019) to match."
    }
   ]
  },
@@ -10973,20 +11423,29 @@
     "text": "Three Springs, Inc. ran this Pittsboro outdoor program as Three Springs of North Carolina from about 1990; in September 2009 it was adding a day treatment program (Woodbury Reports, October 2009, p. 15). Sequel Youth and Family Services took it over with Three Springs in January 2010 and closed it soon after."
    },
    {
-    "type": "manual",
-    "text": "Merge 9652 'Three Springs of North Carolina' into 11903 'Sequel TSI of North Carolina' (keep 11903: it has years and the Sequel link); keep 'Three Springs of North Carolina' as a past name."
+    "type": "check",
+    "text": "Already done: 9652 Three Springs of North Carolina was merged into 11903 as a rename on 2026-10-11, and 'Three Springs of North Carolina' is a past name of 11903.",
+    "step_text": "Merge 9652 'Three Springs of North Carolina' into 11903 'Sequel TSI of North Carolina' (keep 11903: it has years and the Sequel link); keep 'Three Springs of North Carolina' as a past name."
    },
    {
     "type": "manual",
-    "text": "Merge map nodes 'Sequel TSI North Carolina' (sequel-tsi-north-carolina, status rebranded) and 'Sequel TSI of North Carolina' (sequel-tsi-of-north-carolina, closed): one program; drop the rebrand line between them."
+    "text": "Merge network map nodes sequel-tsi-north-carolina ('Sequel TSI North Carolina', rebranded) and sequel-tsi-of-north-carolina ('Sequel TSI of North Carolina', closed), both record 11903, in network-overrides.json.",
+    "step_text": "Merge map nodes 'Sequel TSI North Carolina' (sequel-tsi-north-carolina, status rebranded) and 'Sequel TSI of North Carolina' (sequel-tsi-of-north-carolina, closed): one program; drop the rebrand line between them."
    },
    {
-    "type": "manual",
-    "text": "Closure year: KOP 11903 says 2010, the owner sheet says Sequel ran it to 2011. No direct source found; open the NC Division of Non-Public Education list 'conventional schools closed 2010-11' (https://www.doa.nc.gov/documents/files/conventional-schools-closed-10-11/open, refuses scripted fetches) in a browser for the closing date."
+    "type": "map_edge_drop",
+    "edge": "e1644",
+    "label": "Sequel TSI North Carolina -> Sequel TSI of North Carolina: rebrand"
    },
    {
-    "type": "manual",
-    "text": "Address 2480 Hadley Mill Rd, Pittsboro, NC 27312 (owner sheet) is not on either record; add it."
+    "type": "check",
+    "text": "Closure year: 11903 says 2010, the owner's sheet says Sequel ran it to 2011. Open the NC Division of Non-Public Education list 'conventional schools closed 2010-11' (https://www.doa.nc.gov/documents/files/conventional-schools-closed-10-11/open) in a browser for the closing date.",
+    "step_text": "Closure year: KOP 11903 says 2010, the owner sheet says Sequel ran it to 2011. No direct source found; open the NC Division of Non-Public Education list 'conventional schools closed 2010-11' (https://www.doa.nc.gov/documents/files/conventional-schools-closed-10-11/open, refuses scripted fetches) in a browser for the closing date."
+   },
+   {
+    "type": "check",
+    "text": "Already on the record: 11903's address is 2480 Hadley Mill Rd, Pittsboro, NC 27312.",
+    "step_text": "Address 2480 Hadley Mill Rd, Pittsboro, NC 27312 (owner sheet) is not on either record; add it."
    }
   ]
  },
@@ -11086,12 +11545,16 @@
     "text": "Sequel Youth Services of Arizona took over management of Mingus Mountain Academy on January 12, 2004 under an agreement with Mingus Mountain Estate Residential Center, Inc., the nonprofit licence holder; Sequel sold it to Vivant Behavioral Healthcare in 2021, which runs it as Mingus Mountain Youth Treatment Center (SEC proxy filing, January 2017; Senate Finance Committee, Warehouses of Neglect, 2024)."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 12163,
+    "path": "identification.otherNames",
+    "value": "Mingus Mountain Youth Treatment Center",
     "text": "Add other name 'Mingus Mountain Youth Treatment Center' (Vivant's name for it, Senate Finance Committee 2024 p. 104; KGUN/ABC15 2025 'Mingus Mountain YTC')."
    },
    {
-    "type": "manual",
-    "text": "Add 'Mingus Mountain Estate Residential Center, Inc.' as the licence-holding owner (nonprofit; Arizona ADHS licensing and the Senate report use the name 'Mingus Mountain Estate Resident Center'). KOP has facility records 12251-12254 under that licensee name (Phoenix, Amber Hills, Emily House, Farrington House); check whether 12251 is the same licence as the Prescott Valley campus or a separate home, and tie the homes to this program if they are its group homes (Program Homes)."
+    "type": "check",
+    "text": "Add Mingus Mountain Estate Residential Center, Inc. (nonprofit licence holder; ADHS and the Senate report write 'Mingus Mountain Estate Resident Center') as the owner of Mingus Mountain Academy. KOP has records 12251-12254 under that name (Phoenix, Amber Hills, Emily House, Farrington House): check whether 12251 is the Prescott Valley licence or a separate home, and tie the homes to this program at KOP Tools > Program Homes if they are its group homes.",
+    "step_text": "Add 'Mingus Mountain Estate Residential Center, Inc.' as the licence-holding owner (nonprofit; Arizona ADHS licensing and the Senate report use the name 'Mingus Mountain Estate Resident Center'). KOP has facility records 12251-12254 under that licensee name (Phoenix, Amber Hills, Emily House, Farrington House); check whether 12251 is the same licence as the Prescott Valley campus or a separate home, and tie the homes to this program if they are its group homes (Program Homes)."
    }
   ]
  },
@@ -11165,16 +11628,30 @@
     "to": "2008-2011"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 12164,
+    "drop": 9658,
+    "rename": true,
+    "year": 2010,
     "text": "Merge record 9658 (Three Springs Sierra Vista Schools) into 12164: same program, same address (4120 E Ramsey Rd, Hereford, AZ 85615)."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 12164,
+    "path": "identification.pastNames",
+    "value": "Three Springs, Inc.",
     "text": "Replace the past name 'Three Springs, Inc.' (a company, not a name) with 'Three Springs of Sierra Vista', the name on its 2008-2010 web page; keep 'Three Springs Sierra Vista Schools' as an other name."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 12164, 9658 are one program; keep 12164. one program at 4120 E Ramsey Rd, Hereford, AZ; 12164 has the years, operator and map node"
+    "type": "list_add",
+    "facility_id": 12164,
+    "path": "identification.pastNames",
+    "value": "Three Springs of Sierra Vista"
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 5 on this card) Keep 12164.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 12164, 9658 are one program; keep 12164. one program at 4120 E Ramsey Rd, Hereford, AZ; 12164 has the years, operator and map node"
    }
   ]
  },
@@ -11234,16 +11711,52 @@
     "to": "from 2008"
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Successful Dreams",
+    "fields": {
+     "headquarters": "Parsons, KS",
+     "notes": [
+      "Nonprofit; Kansas DCF lists it at 321 N. 17th St., Parsons, KS, CEO Roger Thompson. Took over Lakeside Academy in Goddard from Sequel on May 1, 2022 (KCUR, 2022-04-04)."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 12592,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Successful Dreams (Parsons, KS; Kansas DCF lists it at 321 N. 17th St., Parsons, CEO Roger Thompson) and link it to record 12592 as current."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Sequel TSI stays linked as current and currentOperator still reads 'Sequel TSI' on 12592; if Successful Dreams runs it now, make Sequel past and set the operator text."
+   },
+   {
+    "type": "field",
+    "facility_id": 12592,
+    "path": "identification.currentName",
+    "from": "",
+    "to": "Successful Dreams Goddard",
     "text": "Add 'Successful Dreams Goddard' as an other name (current name) of record 12592."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 12592,
+    "path": "operatingPeriod.status",
+    "from": "Closed",
+    "to": "Open",
     "text": "Map: node years 2008-2020 to 'from 2008' and status closed to open."
+   },
+   {
+    "type": "field",
+    "facility_id": 12592,
+    "path": "operatingPeriod.endYear",
+    "from": 2020,
+    "to": null
+   },
+   {
+    "type": "check",
+    "text": "The map node's status follows the record's; the years change ('from 2008') is already op 1 on this card."
    }
   ]
  },
@@ -11292,8 +11805,9 @@
     "to": "2007-2019"
    },
    {
-    "type": "manual",
-    "text": "Who ran Riverside Academy from 2007 to 2011 was not found; if the owner knows, add it to pastOperators."
+    "type": "check",
+    "text": "Who ran Riverside Academy from 2007 to 2011 was not found; add it to pastOperators if the owner knows.",
+    "step_text": "Who ran Riverside Academy from 2007 to 2011 was not found; if the owner knows, add it to pastOperators."
    }
   ]
  },
@@ -11341,8 +11855,9 @@
     "text": "Bernalillo Academy was founded in 2009 and joined Sequel Youth and Family Services in 2011 (operated as Sequel of New Mexico, LLC); Sequel closed it in December 2021 after a state investigation found staff had physically abused children (SEC proxy filing, January 2017; APM Reports, 2021-12-03; The Imprint, 2021-12-15)."
    },
    {
-    "type": "manual",
-    "text": "Lead, not confirmed: Sequel's 2011 additions (Norris, Bernalillo, Kingston and Northern Illinois academies) match its 2011 purchase of CHG Health Services d/b/a Camelot System of Care (owner's notes, Bengur Bryan). If confirmed, add past operator 'Camelot System of Care (2009-2011)'; KOP has no company row for Camelot."
+    "type": "check",
+    "text": "Lead, not confirmed: Sequel's 2011 additions (Norris, Bernalillo, Kingston, Northern Illinois) match its 2011 purchase of CHG Health Services d/b/a Camelot System of Care. If confirmed, add past operator 'Camelot System of Care (2009-2011)' to Bernalillo Academy; KOP has no company row for Camelot.",
+    "step_text": "Lead, not confirmed: Sequel's 2011 additions (Norris, Bernalillo, Kingston and Northern Illinois academies) match its 2011 purchase of CHG Health Services d/b/a Camelot System of Care (owner's notes, Bengur Bryan). If confirmed, add past operator 'Camelot System of Care (2009-2011)'; KOP has no company row for Camelot."
    }
   ]
  },
@@ -11391,12 +11906,25 @@
     "text": "Sequel's 2017 SEC proxy lists Capital Academy (Sequel of New Jersey, Inc.) as founded in 2001 and part of Sequel since 2011; APM Reports was told in 2022 that it 'was not part of Vivant' (2022-04-26)."
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Willow Grove, LLC",
+    "fields": {
+     "notes": [
+      "Took Capital Academy (Camden, NJ) from Sequel in 2021 (APM Reports, 2022-04-26)."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 12761,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Willow Grove, LLC and link it to record 12761 as current (there is none in wpdl_kop_operators)."
    },
    {
-    "type": "manual",
-    "text": "Years: KOP and the owner's sheet have Sequel 2013-2021 and a 2013 start; Sequel's 2017 SEC proxy has 'CY Year Founded 2001, CY Joined Sequel 2011', and the owner's notes say 'est. 2011'. If the owner accepts the proxy, set startYear 2001 and change 'Sequel TSI (2013-2021)' to 'Sequel TSI (2011-2021)' (and the map line)."
+    "type": "check",
+    "text": "Capital Academy years: KOP and the owner's sheet have Sequel 2013-2021 (start 2013); Sequel's 2017 SEC proxy has 'Founded 2001, Joined Sequel 2011' and the owner's notes 'est. 2011'. If accepted, set startYear 2001, change 'Sequel TSI (2013-2021)' to 'Sequel TSI (2011-2021)' and the map line (e1334, operated 2013-2021).",
+    "step_text": "Years: KOP and the owner's sheet have Sequel 2013-2021 and a 2013 start; Sequel's 2017 SEC proxy has 'CY Year Founded 2001, CY Joined Sequel 2011', and the owner's notes say 'est. 2011'. If the owner accepts the proxy, set startYear 2001 and change 'Sequel TSI (2013-2021)' to 'Sequel TSI (2011-2021)' (and the map line)."
    }
   ]
  },
@@ -11450,15 +11978,21 @@
     "text": "Starr Commonwealth ran residential care on its Albion campus from 1913; Sequel managed it as Starr Albion Prep from 2014 until Starr's board voted on July 1, 2020 to cut ties with Sequel and end residential programs there (WILX, 2020-07-02)."
    },
    {
-    "type": "manual",
-    "text": "Record 13209 'Starr Commonwealth' (Albion, MI, Open) is the same campus and program; decide whether to merge 13090 into it (Starr Albion Prep and Albion Academy as past names). If merged, the kept record's start year is 1913."
+    "type": "check",
+    "text": "Decide whether Starr Albion Prep (13090) and Starr Commonwealth (13209, Albion, Open) are one campus and program; step 4 merges them (13209 kept, start year 1913).",
+    "step_text": "Record 13209 'Starr Commonwealth' (Albion, MI, Open) is the same campus and program; decide whether to merge 13090 into it (Starr Albion Prep and Albion Academy as past names). If merged, the kept record's start year is 1913."
    },
    {
-    "type": "manual",
-    "text": "Since 2021 the Albion campus has housed a federal (ORR) emergency intake shelter for migrant children (WWMT, 2021-07-15, already filed on this record); that is a different program, not a reopening."
+    "type": "check",
+    "text": "No change: the federal (ORR) emergency intake shelter on the Albion campus since 2021 (WWMT, 2021-07-15, on this record) is a different program, not a reopening.",
+    "step_text": "Since 2021 the Albion campus has housed a federal (ORR) emergency intake shelter for migrant children (WWMT, 2021-07-15, already filed on this record); that is a different program, not a reopening."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13209,
+    "drop": 13090,
+    "rename": false,
+    "year": null,
     "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 13090, 13209 are one program; keep 13209. Starr Albion Prep was Starr Commonwealth's Albion campus residential program, managed by Sequel 2014-2020; same site and owner."
    }
   ]
@@ -11532,12 +12066,26 @@
     "to": "2007-2021"
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13226,
+    "path": "identification.pastNames",
+    "value": "Pomegranate Health Systems",
     "text": "Add past names 'Pomegranate Health Systems' and 'Sequel Pomegranate'; Torii Behavioral Health (its last name) could be the current name."
    },
    {
-    "type": "manual",
-    "text": "The wiki's 'Active Programs in Ohio' page lists it twice: Sequel Pomegranate (active) and Torii Behavioral Health (closed); they are one program."
+    "type": "list_add",
+    "facility_id": 13226,
+    "path": "identification.pastNames",
+    "value": "Sequel Pomegranate"
+   },
+   {
+    "type": "check",
+    "text": "Torii Behavioral Health (its last name, 2021) is an other name now; it could be set as the current name."
+   },
+   {
+    "type": "check",
+    "text": "The r/troubledteens wiki page 'Active Programs in Ohio' lists this program twice (Sequel Pomegranate, active; Torii Behavioral Health, closed); fix the wiki entry.",
+    "step_text": "The wiki's 'Active Programs in Ohio' page lists it twice: Sequel Pomegranate (active) and Torii Behavioral Health (closed); they are one program."
    }
   ]
  },
@@ -11586,24 +12134,60 @@
     "text": "Three Springs opened the program on the Englishton Park campus in 1996 and ran it as Three Springs at Englishton Park until Sequel took over Three Springs in January 2010; Sequel ran it as Lexington Academy, a staff-secure residential program for ages 12 to 19 (Sequel website, May 2016: https://web.archive.org/web/20160519114144/http://www.threesprings.com:80/html/staffsecure-lexington.html)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13285,
+    "drop": 9649,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9649 'Three Springs of Englishton Park' into 13285 'Lexington Academy' (keep 13285, the last name and the map node); keep 'Three Springs of Englishton Park' / 'Three Springs at Englishton Park' / 'Sequel TSI of Indiana' as past names and move 9649's note."
    },
    {
-    "type": "manual",
-    "text": "Address 2426 Parker Ln, Lexington, IN 47138 (owner sheet) is not on the records; add it."
+    "type": "list_add",
+    "facility_id": 13285,
+    "path": "identification.pastNames",
+    "value": "Three Springs at Englishton Park"
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 13285,
+    "path": "identification.otherNames",
+    "value": "Sequel TSI of Indiana"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13285,
+    "path": "identification.pastNames",
+    "value": "Sequel TSI of Indiana"
+   },
+   {
+    "type": "check",
+    "text": "Already on the records: 2426 S Parker Ln (13285) / 2426 Parker Ln (9649), Lexington, IN 47138.",
+    "step_text": "Address 2426 Parker Ln, Lexington, IN 47138 (owner sheet) is not on the records; add it."
+   },
+   {
+    "type": "field",
+    "facility_id": 13285,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2009-2017",
+    "to": "1996-2017",
     "text": "9649's operatingPeriod.yearsOfOperation '1996-2009' and 13285's '2009-2017' are company years; set both to '1996-2017' (or drop after the merge)."
    },
    {
-    "type": "manual",
-    "text": "Closure in 2017 rests on the owner's sheet; no closure notice was found (the May 2016 Sequel page is the last capture). Keep 2017."
+    "type": "field",
+    "facility_id": 9649,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "1996-2009",
+    "to": "1996-2017"
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9649, 13285 are one program; keep 13285. One program on the Englishton Park campus, 2426 Parker Ln, Lexington, IN: Three Springs at Englishton Park renamed Lexington Academy under Sequel."
+    "type": "check",
+    "text": "No change: the 2017 closure rests on the owner's sheet (the May 2016 Sequel page is the last capture); keep 2017.",
+    "step_text": "Closure in 2017 rests on the owner's sheet; no closure notice was found (the May 2016 Sequel page is the last capture). Keep 2017."
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 3 on this card) Keep 13285.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9649, 13285 are one program; keep 13285. One program on the Englishton Park campus, 2426 Parker Ln, Lexington, IN: Three Springs at Englishton Park renamed Lexington Academy under Sequel."
    }
   ]
  },
@@ -11677,7 +12261,10 @@
     "to": "1992-2021"
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 13378,
+    "path": "identification.otherOperators",
+    "value": "Youth Services International",
     "text": "Remove 'Youth Services International' from identification.otherOperators once it is in pastOperators."
    }
   ]
@@ -11739,16 +12326,25 @@
     "text": "Founded in 1983, Forest Ridge was bought by Youth Services International in February 1993 (YSI website, 1997) and by Sequel on December 1, 2014 (Sequel's 2017 SEC proxy); Sequel closed both Forest Ridge locations in December 2021 (APM Reports, 2022-04-26)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1456",
+    "label": "Vivant Behavioral Healthcare -> Forest Ridge Youth Services: operates from 2022",
     "text": "Remove the network map line 'Vivant Behavioral Healthcare -> Forest Ridge Youth Services: operates from 2022' (APM: closed December 2021; Senate 2024 p. 104 names Woodward Academy as Vivant's Iowa facility)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1316",
+    "label": "Correctional Services Corporation -> Forest Ridge Youth Services: operated 1993-1999",
     "text": "Replace the map line 'Correctional Services Corporation -> Forest Ridge Youth Services: operated 1993-1999' with YSI 1993-2014 (see map_lines): YSI bought it in 1993; CSC owned YSI from 1999."
    },
    {
-    "type": "manual",
-    "text": "Correct the owner's sheet row (CSC 1993-1999, Vivant 2022-Present)."
+    "type": "check",
+    "text": "The map already has 'Youth Services International -> Forest Ridge Youth Services: operated 1993-2014' (e1317), so only the CSC line goes."
+   },
+   {
+    "type": "check",
+    "text": "Correct the owner's sheet row for Forest Ridge (CSC 1993-1999, Vivant 2022-Present): YSI 1993-2014, Sequel 2014-2021, no Vivant.",
+    "step_text": "Correct the owner's sheet row (CSC 1993-1999, Vivant 2022-Present)."
    }
   ]
  },
@@ -11821,12 +12417,15 @@
     "text": "YSI and the Clarinda Youth Corporation opened Woodward Academy in 1995; it joined Sequel in 2000 (Sequel's 2017 SEC proxy) and passed to Vivant Behavioral Health in 2021, which still ran it in 2024 (Senate Finance Committee, Warehouses of Neglect, p. 104)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1294",
+    "label": "Woodward Academy -> Georgia Military School: rebrand",
     "text": "Remove the network map line 'Woodward Academy -> Georgia Military School: rebrand': that is the unrelated Woodward Academy in College Park, Georgia."
    },
    {
-    "type": "manual",
-    "text": "The owner's sheet and the map give Sequel from 2001; Sequel's 2017 SEC proxy says 'CY Joined Sequel 2000', and the wiki says YSI's part lasted the first 5 years. The ops use 2000."
+    "type": "check",
+    "text": "No change: the owner's sheet gives Sequel from 2001, Sequel's 2017 SEC proxy 'Joined Sequel 2000'; the card and the map (e1470, 2000-2021) use 2000. Fix the sheet if 2000 is right.",
+    "step_text": "The owner's sheet and the map give Sequel from 2001; Sequel's 2017 SEC proxy says 'CY Joined Sequel 2000', and the wiki says YSI's part lasted the first 5 years. The ops use 2000."
    }
   ]
  },
@@ -11881,12 +12480,16 @@
     "to": "1991-2021"
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13410,
+    "path": "identification.otherNames",
+    "value": "Normative Services Institute",
     "text": "Add other name 'Normative Services Institute' (NSI), used by former residents and Wyoming Public Media ('NSI Academy')."
    },
    {
-    "type": "manual",
-    "text": "Who ran it 1991-2003 is not known; the closure was announced by 'Normative Services Academy, Inc.' (owner's notes), so a nonprofit or local company may have held the licence under Sequel's management."
+    "type": "check",
+    "text": "Who ran Normative Services Academy 1991-2003 is not known; the closure was announced by 'Normative Services Academy, Inc.', so a local company or nonprofit may have held the licence under Sequel's management.",
+    "step_text": "Who ran it 1991-2003 is not known; the closure was announced by 'Normative Services Academy, Inc.' (owner's notes), so a nonprofit or local company may have held the licence under Sequel's management."
    }
   ]
  },
@@ -11940,12 +12543,31 @@
     "to": "2003-2021"
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 13447,
+    "path": "location.street",
+    "from": "40 Timberline Dr",
+    "to": "998 Corporate Blvd",
     "text": "Fix the place: Aurora, IL (998 Corporate Blvd, Aurora, IL 60502, owner's sheet), not Lemont."
    },
    {
-    "type": "manual",
-    "text": "Sequel's start: the owner's sheet and the map say 2006; Sequel's 2017 SEC proxy says 'CY Joined Sequel 2011' (it was a Sequel Schools, LLC program like the Camelot autism programs). Decide which to keep; if 2011, add 'Camelot System of Care (until 2011)' as a past operator."
+    "type": "field",
+    "facility_id": 13447,
+    "path": "location.city",
+    "from": "Lemont",
+    "to": "Aurora"
+   },
+   {
+    "type": "field",
+    "facility_id": 13447,
+    "path": "location.zip",
+    "from": "60439",
+    "to": "60502"
+   },
+   {
+    "type": "check",
+    "text": "Sequel's start at Northern Illinois Academy: the owner's sheet and the map say 2006, Sequel's 2017 SEC proxy 'Joined Sequel 2011'. Decide; if 2011, add 'Camelot System of Care (until 2011)' as a past operator.",
+    "step_text": "Sequel's start: the owner's sheet and the map say 2006; Sequel's 2017 SEC proxy says 'CY Joined Sequel 2011' (it was a Sequel Schools, LLC program like the Camelot autism programs). Decide which to keep; if 2011, add 'Camelot System of Care (until 2011)' as a past operator."
    }
   ]
  },
@@ -11975,8 +12597,9 @@
     "text": "Sequel announced on March 14, 2016 that Rose Rock Academy would close on May 12, 2016, citing Oklahoma's budget crisis; about 100 employees and more than 30 patients were affected (KFOR, 2016-03-14)."
    },
    {
-    "type": "manual",
-    "text": "The owner's notes list 'Rose Rock Academy Oklahoma City, OK (2007-2016)'; KOP and the sheet have 2011. If 2007 is sourced, set startYear 2007 and add the operator before Sequel (possibly Camelot System of Care, bought by Sequel in 2011)."
+    "type": "check",
+    "text": "The owner's notes list Rose Rock Academy as 2007-2016; KOP and the sheet have 2011. If 2007 is sourced, set startYear 2007 and add the operator before Sequel (possibly Camelot System of Care).",
+    "step_text": "The owner's notes list 'Rose Rock Academy Oklahoma City, OK (2007-2016)'; KOP and the sheet have 2011. If 2007 is sourced, set startYear 2007 and add the operator before Sequel (possibly Camelot System of Care, bought by Sequel in 2011)."
    }
   ]
  },
@@ -12166,24 +12789,67 @@
     "to": "from 2022"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 9647,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9647 (Three Springs of Courtland) and 100075 (Sequel TSI Courtland) into 13639 (Brighter Path Courtland) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs of Courtland (1990-2009) and Sequel TSI Courtland (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 100075,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1464",
+    "label": "Pathway of Madison County -> Brighter Path Courtland: operates (current)",
     "text": "Map: the line \"Pathway of Madison County -> Brighter Path Courtland: operates (current)\" and the owner's sheet ('Current Operator: Pathway of Madison Co.') are not supported by any source read: the 2025 licence fight and lawsuit name Brighter Path Alabama. Check and remove the line if it was a copy from the Owens Cross Roads row."
    },
    {
     "type": "manual",
-    "text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
+    "text": "Merge the duplicate network map nodes three-springs-courtland ('Three Springs Courtland') and three-springs-of-courtland ('Three Springs of Courtland') in network-overrides.json (both point at record 9647).",
+    "step_text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 13 on this card) Keep 13639 Brighter Path Courtland, 349 Madison St.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
    }
   ]
  },
@@ -12301,19 +12967,58 @@
     "text": "Sequel opened Sequel TSI Montgomery in 2013; its Alabama company passed to Vivant Behavioral Healthcare on October 1, 2021 and was renamed Brighter Path Alabama, LLC in 2022, and the program kept running under that company after Vivant divested its Alabama facilities in 2023 (NPPES; J.P. v. Sequel TSI of Alabama, 2022; Senate Finance Committee, Warehouses of Neglect, 2024, p. 24)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13640,
+    "drop": 100077,
+    "rename": true,
+    "year": 2022,
     "text": "Merge 100077 (Sequel TSI Montgomery) into 13640 (Brighter Path Montgomery) at KOP Tools > Merge Duplicates > Renamed programs; add past name Sequel TSI Montgomery (2013-2022)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1482",
+    "label": "Alabama Department of Human Resources -> Sequel TSI Montgomery: operates (current)",
     "text": "Map: replace \"Alabama Department of Human Resources -> Sequel TSI Montgomery: operates (current)\" with Brighter Path Alabama, LLC (DHR licenses and places children: EJI, 2022) and add the name Brighter Path Montgomery from 2022."
    },
    {
-    "type": "manual",
-    "text": "Check the owner's sheet and the map line \"Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009\": no Montgomery program appears on Three Springs' 2007 program list (Wayback), and the owner's notes say 'Sequel TSI Montgomery (est 2013)'. If Three Springs ran an earlier Montgomery program, it was probably a different site."
+    "type": "check",
+    "text": "After the merges and the Brighter Path Alabama, LLC company row, check that the map shows Brighter Path Alabama, LLC as the operator; the rename merge gives the node its Brighter Path name from 2022."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Check the map line 'Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009' (edge e1413) and the owner's sheet: no Montgomery program is on Three Springs' 2007 list and the owner's notes say 'est 2013'. If Three Springs had an earlier Montgomery program it was probably another site; drop the line if not.",
+    "step_text": "Check the owner's sheet and the map line \"Three Springs Inc. -> Sequel TSI Montgomery: operated 2003-2009\": no Montgomery program appears on Three Springs' 2007 program list (Wayback), and the owner's notes say 'Sequel TSI Montgomery (est 2013)'. If Three Springs ran an earlier Montgomery program, it was probably a different site."
+   },
+   {
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    }
   ]
@@ -12475,24 +13180,71 @@
     "text": "Sequel gave up control of Sequel TSI of Tuskegee on October 1, 2021, when its Alabama company passed to Vivant Behavioral Healthcare; the company was renamed Brighter Path Alabama, LLC about March 1, 2022, and Vivant later divested all its Alabama facilities, which continued under new management (J.P. v. Sequel TSI of Alabama, 2022; Senate Finance Committee, Warehouses of Neglect, 2024, pp. 24, 122)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 9657,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9657 (Three Springs School of Tuskegee) and 100078 (Sequel TSI of Tuskegee) into 13641 (Brighter Path Tuskegee) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs School of Tuskegee (1998-2009) and Sequel TSI of Tuskegee (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 100078,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1483",
+    "label": "Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)",
     "text": "Map: replace the line \"Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)\" with Brighter Path Alabama, LLC as current operator (DHR and DYS license and place children there: EJI, 2022), and add a Brighter Path Tuskegee name for the node from 2022."
    },
    {
-    "type": "manual",
-    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+    "type": "check",
+    "text": "After the merges and the Brighter Path Alabama, LLC company row, check that the map shows Brighter Path Alabama, LLC as the operator; the rename merge gives the node its Brighter Path name from 2022."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025.",
+    "step_text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+   },
+   {
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 9 on this card) Keep 13641 Brighter Path Tuskegee, 4280 US Hwy 29 S.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
    }
   ]
  },
@@ -12652,28 +13404,124 @@
     "text": "Pathway of Madison County, LLC (formerly Pathway Inc.) opened on the campus in June 2024; Owens Cross Roads voted not to renew its business license after a September 2024 riot, then renewed it with conditions on August 5, 2025 (WHNT, 2025-03-03 and 2025-08-05)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9644,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9644 (Three Springs New Beginnings), 9659 (Turning Point - Girls) and 13709 (Three Springs New Direction) into 13678 (Pathway of Madison County) at KOP Tools > Merge Duplicates > Renamed programs."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9659,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "merge",
+    "keep": 13678,
+    "drop": 13709,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "check",
+    "text": "9659 (Turning Point) and 13709 (New Directions) were transitional programs on the same campus, so they merge as plain duplicates; only Three Springs New Beginnings (9644) is merged as an earlier name (2010)."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Inc.",
     "text": "On 13678 remove \"Three Springs Inc.\" from pastNames (it is the company, not a name) and add past names Three Springs New Beginnings (1996-2009), Three Springs Turning Point, Three Springs New Directions, Sequel TSI Owens Cross Roads (2010-2022), Brighter Path Owens Cross Roads (2022-2024); add other name Pathway Inc."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Turning Point"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs New Directions"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Brighter Path Owens Cross Roads"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.otherNames",
+    "value": "Pathway Inc."
+   },
+   {
+    "type": "check",
+    "text": "'Three Springs New Beginnings' becomes a past name through the rename merge of 9644. Years for the names (New Beginnings 1996-2009, Sequel TSI Owens Cross Roads 2010-2022, Brighter Path Owens Cross Roads 2022-2024) go in at KOP Tools > Map Renames; 'Sequel TSI Owens Cross Roads' is already a past name as 'Sequel TSI Owens Cross Rds'."
+   },
+   {
+    "type": "operator_create",
+    "name": "Pathway of Madison County, LLC",
+    "fields": {
+     "headquarters": "Owens Cross Roads, AL",
+     "notes": [
+      "Formerly Pathway Inc.; opened on the former Three Springs / Sequel TSI campus at 318 Hamer Rd, Owens Cross Roads, in June 2024. Its owners were not found."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13678,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Pathway of Madison County, LLC (formerly Pathway Inc.) and link 13678 to it as current; its owners were not found."
    },
    {
     "type": "manual",
-    "text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
+    "text": "Add 1007 Douglas Rd, Huntsville, AL (Three Springs New Directions, owner's sheet, 2000) to record 13678 as a former location (KOP addresses).",
+    "step_text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 10 on this card) Keep 13678 Pathway of Madison County, 318 Hamer Rd.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
    }
   ]
  },
@@ -12828,28 +13676,99 @@
   "notes": "No source gives New Directions' own opening or closing years. The owner's research notes call Sequel TSI Owens Cross Roads 'fka Three Springs New Directions & Three Springs New Beginnings', and the NPI record puts New Directions at 318A Hamer Rd under Sequel in 2010, so this record is the same program as 13678; it moved from Huntsville to the Owens Cross Roads campus at an unknown date. If the owner prefers to keep the Huntsville years separate, merge it as a rename with no years. History: Three Springs, Inc. 1996-2009 as Three Springs New Beginnings / Three Springs Turning Point / Three Springs New Directions; Sequel TSI 2010-2021 as Sequel TSI Owens Cross Roads; Vivant Behavioral Health 2021-2023 as Sequel TSI Owens Cross Roads, closed 2022-04-30 and reopened as Brighter Path Owens Cross Roads; Pathway of Madison County, LLC 2024- as Pathway of Madison County.",
   "ops": [
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9644,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9644 (Three Springs New Beginnings), 9659 (Turning Point - Girls) and 13709 (Three Springs New Direction) into 13678 (Pathway of Madison County) at KOP Tools > Merge Duplicates > Renamed programs."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9659,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "merge",
+    "keep": 13678,
+    "drop": 13709,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "check",
+    "text": "9659 (Turning Point) and 13709 (New Directions) were transitional programs on the same campus, so they merge as plain duplicates; only Three Springs New Beginnings (9644) is merged as an earlier name (2010)."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Inc.",
     "text": "On 13678 remove \"Three Springs Inc.\" from pastNames (it is the company, not a name) and add past names Three Springs New Beginnings (1996-2009), Three Springs Turning Point, Three Springs New Directions, Sequel TSI Owens Cross Roads (2010-2022), Brighter Path Owens Cross Roads (2022-2024); add other name Pathway Inc."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Turning Point"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs New Directions"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Brighter Path Owens Cross Roads"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.otherNames",
+    "value": "Pathway Inc."
+   },
+   {
+    "type": "check",
+    "text": "'Three Springs New Beginnings' becomes a past name through the rename merge of 9644. Years for the names (New Beginnings 1996-2009, Sequel TSI Owens Cross Roads 2010-2022, Brighter Path Owens Cross Roads 2022-2024) go in at KOP Tools > Map Renames; 'Sequel TSI Owens Cross Roads' is already a past name as 'Sequel TSI Owens Cross Rds'."
+   },
+   {
+    "type": "operator_create",
+    "name": "Pathway of Madison County, LLC",
+    "fields": {
+     "headquarters": "Owens Cross Roads, AL",
+     "notes": [
+      "Formerly Pathway Inc.; opened on the former Three Springs / Sequel TSI campus at 318 Hamer Rd, Owens Cross Roads, in June 2024. Its owners were not found."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13678,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Pathway of Madison County, LLC (formerly Pathway Inc.) and link 13678 to it as current; its owners were not found."
    },
    {
     "type": "manual",
-    "text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
+    "text": "Add 1007 Douglas Rd, Huntsville, AL (Three Springs New Directions, owner's sheet, 2000) to record 13678 as a former location (KOP addresses).",
+    "step_text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 100076,
+    "path": "identification.otherNames",
+    "value": "Three Springs New Directions",
     "text": "Remove \"Three Springs New Directions\" from the other names of 100076 (Sequel TSI Madison): New Directions was the Owens Cross Roads/Huntsville girls' program, not the Madison boys' campus."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 0 on this card) Keep 13678 Pathway of Madison County, 318 Hamer Rd.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
    }
   ]
  },
@@ -12931,7 +13850,11 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 14058,
+    "drop": 14054,
+    "rename": false,
+    "year": null,
     "text": "Merge record 14054 into 14058; see 14058's result."
    }
   ]
@@ -13038,20 +13961,33 @@
     "to": "from 2022"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 14058,
+    "drop": 14054,
+    "rename": false,
+    "year": null,
     "text": "Merge record 14054 (Brighter Transition Youth Treatment Center) into 14058: same program; 14054 carries the Vivant link and operator text, 14058 the address and map node. After the merge, consider naming the kept record 'Brighter Transition Youth Treatment Center' with 'Falls Academy' as an other name."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "After the merge, consider naming the kept record 'Brighter Transition Youth Treatment Center' with 'Falls Academy' as an other name."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 14058,
+    "path": "identification.otherNames",
+    "value": "Brighter Transition Youth Academy",
     "text": "Add other name 'Brighter Transition Youth Academy' (the licence study's agency name) and keep 'Sequel Transition Academy' as the past name."
    },
    {
-    "type": "manual",
-    "text": "Address: the state licences give 45650 264th Street; the owner sheet and DOC list give 46560 264th St. Check which is right."
+    "type": "check",
+    "text": "Address: the state licences give 45650 264th Street; the owner's sheet and DOC list (and record 14058) give 46560 264th St. Check which is right.",
+    "step_text": "Address: the state licences give 45650 264th Street; the owner sheet and DOC list give 46560 264th St. Check which is right."
    },
    {
-    "type": "manual",
-    "text": "Falls Academy (established 2018 per a job posting, a QRTP for youth 13-21 on the same campus and licence, licence number R26561) is filed on this record; if the owner wants it apart it would need its own record, but it shares the campus, licence and operator."
+    "type": "check",
+    "text": "Falls Academy (from 2018, a QRTP for youth 13-21, same campus and licence R26561) is filed on this record; it would need its own record only if the owner wants it apart.",
+    "step_text": "Falls Academy (established 2018 per a job posting, a QRTP for youth 13-21 on the same campus and licence, licence number R26561) is filed on this record; if the owner wants it apart it would need its own record, but it shares the campus, licence and operator."
    }
   ]
  },
@@ -13148,16 +14084,20 @@
     "to": "from 2008"
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1002",
+    "label": "Norris Academy -> Vivant Behavioral Healthcare: affiliated",
     "text": "Remove the network map line 'Norris Academy -> Vivant Behavioral Healthcare: affiliated' (Vivant held no Tennessee facility: Senate Finance Committee 2024, p. 24)."
    },
    {
-    "type": "manual",
-    "text": "The owner's sheet gives Sequel 2009-2021; Sequel's 2017 SEC proxy gives 'CY Year Founded 2008, CY Joined Sequel 2011'. The ops use the SEC years; keep the sheet's 2009 instead if the owner has a source for it."
+    "type": "check",
+    "text": "The owner's sheet gives Sequel 2009-2021 at Norris Academy; Sequel's 2017 SEC proxy 'Founded 2008, Joined Sequel 2011'. The card uses the SEC years; keep the sheet's 2009 instead only if it has a source.",
+    "step_text": "The owner's sheet gives Sequel 2009-2021; Sequel's 2017 SEC proxy gives 'CY Year Founded 2008, CY Joined Sequel 2011'. The ops use the SEC years; keep the sheet's 2009 instead if the owner has a source for it."
    },
    {
-    "type": "manual",
-    "text": "Camelot System of Care as the 2008-2011 operator is an inference (Sequel Schools, LLC held Norris, Kingston and Northern Illinois Academy, and the 2011 Camelot deal brought Sequel its autism programs); skip that list_add if the owner wants only stated facts."
+    "type": "check",
+    "text": "Camelot System of Care as the 2008-2011 operator (op 3) is an inference from the 2011 Camelot deal; untick op 3 if only stated facts should go on the record.",
+    "step_text": "Camelot System of Care as the 2008-2011 operator is an inference (Sequel Schools, LLC held Norris, Kingston and Northern Illinois Academy, and the 2011 Camelot deal brought Sequel its autism programs); skip that list_add if the owner wants only stated facts."
    }
   ]
  },
@@ -13235,16 +14175,36 @@
     "text": "Sequel TSI of Florida took over the Palm Beach Juvenile Correctional Facility from Youth Services International on April 1, 2016 and ran it as Palm Beach Youth Academy; Florida DJJ listed Sequel as provider through at least December 2021 and Rite of Passage, Inc. by May 2023 (Florida DJJ program page, Wayback captures 2021-12-14 and 2023-05-04)."
    },
    {
-    "type": "manual",
+    "type": "map_edge_drop",
+    "edge": "e1318",
+    "label": "Correctional Services Corporation -> Palm Beach Youth Academy: operated 1997-1999",
     "text": "The map's corporate lines on Palm Beach Youth Academy mix in Pahokee Youth Development Center (record 100268): 'Correctional Services Corporation -> Palm Beach Youth Academy operated 1997-1999' and 'Youth Services International -> Palm Beach Youth Academy operated 2003-2005' belong to Pahokee / Sago Palm Academy, a different campus in Pahokee (the owner's sheet row 'Pahokee Youth Development Center/ Sago Palm Academy/ Palm Beach Youth Academy' joins them). Move those lines to the Pahokee node."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 100268,
+    "path": "identification.pastOperators",
+    "value": "Correctional Services Corporation (1997-1999)"
+   },
+   {
+    "type": "check",
+    "text": "The CSC line belongs to Pahokee Youth Development Center / Sago Palm Academy (record 100268, no map node). The YSI line on Palm Beach Youth Academy now reads 2006-2016 (e1319), which fits YSI's 2006 Palm Beach Regional center; the 2003-2005 YSI years for Pahokee still need a source."
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9616,
+    "path": "identification.pastNames",
+    "value": "Palm Beach Juvenile Correctional Facility",
     "text": "Add 'Palm Beach Juvenile Correctional Facility' (YSI's name, used by DJJ to 2016) and, once checked, 'Palm Beach Regional Juvenile Correctional Center' (YSI 2006) as past names of record 9616; see tmp/sequel-audit/results/no-record-florida.json."
    },
    {
-    "type": "manual",
-    "text": "Start year: Sequel's 2016 deck gives 'CY Year Founded 2006' while the record's past operator line says YSI from 2003. Check which is right and set operatingPeriod.startYear (not changed here)."
+    "type": "check",
+    "text": "Once checked, also add 'Palm Beach Regional Juvenile Correctional Center' (YSI, 2006) as a past name of 9616 (see tmp/sequel-audit/results/no-record-florida.json)."
+   },
+   {
+    "type": "check",
+    "text": "Start year of Palm Beach Youth Academy: Sequel's 2016 deck says founded 2006; the past operator line says YSI from 2003. Check which is right and set operatingPeriod.startYear.",
+    "step_text": "Start year: Sequel's 2016 deck gives 'CY Year Founded 2006' while the record's past operator line says YSI from 2003. Check which is right and set operatingPeriod.startYear (not changed here)."
    }
   ]
  },
@@ -13330,24 +14290,41 @@
     "text": "Three Springs, Inc. opened Auldern Academy in 2001; Sequel Youth and Family Services took it over with the rest of Three Springs in January 2010 and closed it in early 2021, saying demand had fallen (APM Reports, 2021-02-10: https://www.apmreports.org/story/2021/02/10/embattled-sequel-closes-three-more-facilities)."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 9637,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2001-2009",
+    "to": "2001-2021",
     "text": "Change operatingPeriod.yearsOfOperation from '2001-2009' to '2001-2021' (2009 was the end of Three Springs ownership, not of the school)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9637,
+    "drop": 100272,
+    "rename": false,
+    "year": null,
     "text": "Merge record 100272 'North Carolina boarding school (girls)' into this record: it was created from the APM Reports 2021-12-03 sentence 'Sequel also closed a boarding school in North Carolina that catered to girls from wealthy families', which is Auldern."
    },
    {
-    "type": "manual",
-    "text": "Map node 'Auldern Academy' (auldern-academy) has status 'rebranded'; set it to closed (closed 2021)."
+    "type": "check",
+    "text": "Map node auldern-academy reads 'rebranded' because of the line 'Auldern Academy -> Sequel TSI North Carolina: rebrand' (step 9); the record is already Closed 2001-2021, so the node turns closed once that line goes.",
+    "step_text": "Map node 'Auldern Academy' (auldern-academy) has status 'rebranded'; set it to closed (closed 2021)."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 9637,
+    "path": "identification.otherOperators",
+    "value": "Three Points Center",
     "text": "Check 'Three Points Center' as other operator (record otherOperators, map line 'Three Points Center -> Auldern Academy: operator', and the owner's notes 'Current: Three Points Center'): no source was found that Three Points Center ran or took over the Siler City campus; the only ties found are staff (a clinician 'later: Three Points Center', a youth mentor at Three Points Center 2021-2022). If it is only a staff link, remove it from otherOperators and the map."
    },
    {
-    "type": "manual",
-    "text": "Check otherNames 'Three Springs of North Carolina' and the map line 'Auldern Academy -> Sequel TSI North Carolina: rebrand'. Woodbury shows both running at once (Three Springs North Carolina's outdoor program in Pittsboro expanding in September 2009; Auldern visited in February 2010), but Woodbury also gave Auldern's town as Pittsboro in 2006-2007 and the NC non-public school list (lead) puts a 'Three Springs of NC School' at Auldern's Siler City address, so the two shared a campus or school licence at some point. Decide which tie is right before the map line stays."
+    "type": "check",
+    "text": "The map line 'Three Points Center -> Auldern Academy: operator' (facility profile) is drawn from this other-operator entry and goes with it. Untick if a source shows Three Points Center ran the Siler City campus; the only ties found are staff."
+   },
+   {
+    "type": "check",
+    "text": "Decide the tie between Auldern Academy and Three Springs of North Carolina: otherNames holds 'Three Springs of North Carolina' and the map has 'Auldern Academy -> Sequel TSI North Carolina: rebrand' (p0010). Woodbury shows both running at once in 2009-2010, but Auldern was in Pittsboro in 2006-2007 and the NC non-public school list puts a 'Three Springs of NC School' at Auldern's Siler City address. If they are separate programs, remove the other name (which draws the rebrand line).",
+    "step_text": "Check otherNames 'Three Springs of North Carolina' and the map line 'Auldern Academy -> Sequel TSI North Carolina: rebrand'. Woodbury shows both running at once (Three Springs North Carolina's outdoor program in Pittsboro expanding in September 2009; Auldern visited in February 2010), but Woodbury also gave Auldern's town as Pittsboro in 2006-2007 and the NC non-public school list (lead) puts a 'Three Springs of NC School' at Auldern's Siler City address, so the two shared a campus or school licence at some point. Decide which tie is right before the map line stays."
    }
   ]
  },
@@ -13395,20 +14372,60 @@
     "text": "L.E.A.P.S. was the 8-week short-term outdoor program of Three Springs of Duck River for boys 13-17 (Three Springs website, 1998: https://web.archive.org/web/19980629053358/http://www.threesprings.com:80/boys_progs/leaps.html); Three Springs moved the Duck River program to Paint Rock Valley, Alabama, in October 2008 (Woodbury Reports, November 2008, p. 18)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9648,
+    "drop": 9639,
+    "rename": false,
+    "year": null,
     "text": "Merge 9639 'L.E.A.P.S. Program at Duck River' into 9648 'Three Springs of Duck River' (keep 9648, the program's name and the map node); keep 'L.E.A.P.S. Program at Duck River' and 'Letting Experiential Adventure Prepare for Success' as other names, and move 9639's Woodbury notes."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 9648,
+    "path": "identification.otherNames",
+    "value": "L.E.A.P.S. Program at Duck River"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9648,
+    "path": "identification.otherNames",
+    "value": "Letting Experiential Adventure Prepare for Success"
+   },
+   {
+    "type": "check",
+    "text": "The merge moves 9639's Woodbury notes to 9648."
+   },
+   {
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.street",
+    "from": "",
+    "to": "168 Three Springs Rd",
     "text": "Address 168 Three Springs Rd, Nunnelly, TN 37137 (owner sheet) is not on the record; add it."
    },
    {
-    "type": "manual",
-    "text": "Start year: Woodbury's November 2008 closures table gives 1990, but Woodbury March 2008 says Duck River would 'celebrate its 20 year anniversary' in 2008 (about 1988). KOP's 1990 stands unless the owner prefers 1988."
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.city",
+    "from": "Centerville",
+    "to": "Nunnelly"
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9639, 9648 are one program; keep 9648. L.E.A.P.S. was a program of Three Springs of Duck River on the same campus (Three Springs site, 1998)."
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.zip",
+    "from": "",
+    "to": "37137"
+   },
+   {
+    "type": "check",
+    "text": "Start year of Three Springs of Duck River: Woodbury's November 2008 closures table gives 1990, Woodbury March 2008 a 20-year anniversary in 2008 (about 1988). 1990 stands unless the owner prefers 1988.",
+    "step_text": "Start year: Woodbury's November 2008 closures table gives 1990, but Woodbury March 2008 says Duck River would 'celebrate its 20 year anniversary' in 2008 (about 1988). KOP's 1990 stands unless the owner prefers 1988."
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 1 on this card) Keep 9648.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9639, 9648 are one program; keep 9648. L.E.A.P.S. was a program of Three Springs of Duck River on the same campus (Three Springs site, 1998)."
    }
   ]
  },
@@ -13444,12 +14461,16 @@
     "text": "Three Springs New Dominion Maryland closed in September 2008 after 27 years; the remaining students were transferred to another facility (Woodbury Reports, October 2008, p. 29, citing the Cumberland Times-News of September 11, 2008)."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 9642,
+    "path": "identification.otherNames",
+    "value": "Three Springs New Dominion Maryland",
     "text": "Add the name 'Three Springs New Dominion Maryland' (Woodbury, 2008; the r/troubledteens wiki uses it) as another name."
    },
    {
-    "type": "manual",
-    "text": "Who ran New Dominion before Three Springs (1981-1994) is not on the record; the owner's staff sheet names James Mac O'Connor as co-founder of New Dominion School. Add the earlier operator if the owner has it."
+    "type": "check",
+    "text": "Who ran New Dominion School of Maryland before Three Springs (1981-1994) is not on the record; the owner's staff sheet names James Mac O'Connor as co-founder. Add the earlier operator if known.",
+    "step_text": "Who ran New Dominion before Three Springs (1981-1994) is not on the record; the owner's staff sheet names James Mac O'Connor as co-founder of New Dominion School. Add the earlier operator if the owner has it."
    }
   ]
  },
@@ -13479,12 +14500,17 @@
     "text": "Three Springs closed the New Dominion campus in Dillwyn, Virginia, effective May 20, 2009, citing changes in the state's referral model that would cut enrollment (Woodbury Reports, May 2009, p. 16)."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 9643,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "1994-2009",
+    "to": "1976-2009",
     "text": "Change operatingPeriod.yearsOfOperation from '1994-2009' (the Three Springs years) to '1976-2009'."
    },
    {
-    "type": "manual",
-    "text": "Who ran New Dominion before 1994 is not on the record (staff sheet: James Mac O'Connor, co-founder); add the earlier operator if the owner has it."
+    "type": "check",
+    "text": "Who ran New Dominion School of Virginia before 1994 is not on the record (staff sheet: James Mac O'Connor, co-founder); add the earlier operator if known.",
+    "step_text": "Who ran New Dominion before 1994 is not on the record (staff sheet: James Mac O'Connor, co-founder); add the earlier operator if the owner has it."
    }
   ]
  },
@@ -13606,24 +14632,92 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9644,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9644 (Three Springs New Beginnings), 9659 (Turning Point - Girls) and 13709 (Three Springs New Direction) into 13678 (Pathway of Madison County) at KOP Tools > Merge Duplicates > Renamed programs."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9659,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "merge",
+    "keep": 13678,
+    "drop": 13709,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "check",
+    "text": "9659 (Turning Point) and 13709 (New Directions) were transitional programs on the same campus, so they merge as plain duplicates; only Three Springs New Beginnings (9644) is merged as an earlier name (2010)."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Inc.",
     "text": "On 13678 remove \"Three Springs Inc.\" from pastNames (it is the company, not a name) and add past names Three Springs New Beginnings (1996-2009), Three Springs Turning Point, Three Springs New Directions, Sequel TSI Owens Cross Roads (2010-2022), Brighter Path Owens Cross Roads (2022-2024); add other name Pathway Inc."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Turning Point"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs New Directions"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Brighter Path Owens Cross Roads"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.otherNames",
+    "value": "Pathway Inc."
+   },
+   {
+    "type": "check",
+    "text": "'Three Springs New Beginnings' becomes a past name through the rename merge of 9644. Years for the names (New Beginnings 1996-2009, Sequel TSI Owens Cross Roads 2010-2022, Brighter Path Owens Cross Roads 2022-2024) go in at KOP Tools > Map Renames; 'Sequel TSI Owens Cross Roads' is already a past name as 'Sequel TSI Owens Cross Rds'."
+   },
+   {
+    "type": "operator_create",
+    "name": "Pathway of Madison County, LLC",
+    "fields": {
+     "headquarters": "Owens Cross Roads, AL",
+     "notes": [
+      "Formerly Pathway Inc.; opened on the former Three Springs / Sequel TSI campus at 318 Hamer Rd, Owens Cross Roads, in June 2024. Its owners were not found."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13678,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Pathway of Madison County, LLC (formerly Pathway Inc.) and link 13678 to it as current; its owners were not found."
    },
    {
     "type": "manual",
-    "text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
+    "text": "Add 1007 Douglas Rd, Huntsville, AL (Three Springs New Directions, owner's sheet, 2000) to record 13678 as a former location (KOP addresses).",
+    "step_text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 4 on this card) Keep 13678 Pathway of Madison County, 318 Hamer Rd.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
    }
   ]
  },
@@ -13659,8 +14753,9 @@
     "text": "Three Springs Augusta was an alcohol and drug treatment program 'operated exclusively for the State of Georgia Department of Juvenile Justice' for committed boys (Three Springs website, 2001: https://web.archive.org/web/20010717090249/http://www.threesprings.com:80/our.programs/secure/programs/tsa.html)."
    },
    {
-    "type": "manual",
-    "text": "End year: the record says 2007, KOP's Three Springs article says the Georgia programs were shut down in 2006 when DJJ funding was withdrawn. Check which year applies to Augusta."
+    "type": "check",
+    "text": "End year of Three Springs of Augusta: the record says 2007, KOP's Three Springs article says the Georgia programs shut in 2006 when DJJ funding was withdrawn. Check which applies.",
+    "step_text": "End year: the record says 2007, KOP's Three Springs article says the Georgia programs were shut down in 2006 when DJJ funding was withdrawn. Check which year applies to Augusta."
    }
   ]
  },
@@ -13716,12 +14811,14 @@
     "to": "1993-2006"
    },
    {
-    "type": "manual",
-    "text": "Staff sheet row 'Braley, Erin - Vivant: Executive Director at Three Springs of Blue Ridge': no source found for an Erin Braley at any Three Springs, Sequel or Vivant program. Three Springs of Blue Ridge closed in 2006 and Vivant was formed in 2021, so the line is probably mislabelled (a different program or company); check where it came from before it goes on any page."
+    "type": "check",
+    "text": "Staff sheet row 'Braley, Erin - Vivant: Executive Director at Three Springs of Blue Ridge' has no source and cannot be about this program (closed 2006; Vivant formed 2021). Find where it came from before it goes on any page.",
+    "step_text": "Staff sheet row 'Braley, Erin - Vivant: Executive Director at Three Springs of Blue Ridge': no source found for an Erin Braley at any Three Springs, Sequel or Vivant program. Three Springs of Blue Ridge closed in 2006 and Vivant was formed in 2021, so the line is probably mislabelled (a different program or company); check where it came from before it goes on any page."
    },
    {
-    "type": "manual",
-    "text": "Address 1022 Fjord Rd, Blue Ridge, GA 30513 (owner sheet) is not on the record; add it."
+    "type": "check",
+    "text": "Already on the record: 9646's address is 1022 Old Fjord Rd, Blue Ridge, GA 30513.",
+    "step_text": "Address 1022 Fjord Rd, Blue Ridge, GA 30513 (owner sheet) is not on the record; add it."
    }
   ]
  },
@@ -13888,24 +14985,67 @@
     "text": "The Town of Courtland voted on April 14, 2025 to revoke the business license of Brighter Path Courtland, the former Three Springs and Sequel TSI campus, and Brighter Path Alabama sued the mayor and council in May 2025; no closure was found (WAFF, 2025-04-14 and 2025-05-13)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 9647,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9647 (Three Springs of Courtland) and 100075 (Sequel TSI Courtland) into 13639 (Brighter Path Courtland) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs of Courtland (1990-2009) and Sequel TSI Courtland (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13639,
+    "drop": 100075,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1464",
+    "label": "Pathway of Madison County -> Brighter Path Courtland: operates (current)",
     "text": "Map: the line \"Pathway of Madison County -> Brighter Path Courtland: operates (current)\" and the owner's sheet ('Current Operator: Pathway of Madison Co.') are not supported by any source read: the 2025 licence fight and lawsuit name Brighter Path Alabama. Check and remove the line if it was a copy from the Owens Cross Roads row."
    },
    {
     "type": "manual",
-    "text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
+    "text": "Merge the duplicate network map nodes three-springs-courtland ('Three Springs Courtland') and three-springs-of-courtland ('Three Springs of Courtland') in network-overrides.json (both point at record 9647).",
+    "step_text": "Merge the duplicate map nodes three-springs-courtland and three-springs-of-courtland."
    },
    {
-    "type": "manual",
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 9 on this card) Keep 13639 Brighter Path Courtland, 349 Madison St.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9647, 100075, 13639 are one program; keep 13639. One campus at 349 Madison St, Courtland, AL: Three Springs of Courtland (1990), Sequel TSI Courtland (2010), Brighter Path Courtland (2022). Keep the current name."
    }
   ]
  },
@@ -13986,20 +15126,60 @@
     "to": "1990-2008"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9648,
+    "drop": 9639,
+    "rename": false,
+    "year": null,
     "text": "Merge 9639 'L.E.A.P.S. Program at Duck River' into 9648 'Three Springs of Duck River' (keep 9648, the program's name and the map node); keep 'L.E.A.P.S. Program at Duck River' and 'Letting Experiential Adventure Prepare for Success' as other names, and move 9639's Woodbury notes."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 9648,
+    "path": "identification.otherNames",
+    "value": "L.E.A.P.S. Program at Duck River"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 9648,
+    "path": "identification.otherNames",
+    "value": "Letting Experiential Adventure Prepare for Success"
+   },
+   {
+    "type": "check",
+    "text": "The merge moves 9639's Woodbury notes to 9648."
+   },
+   {
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.street",
+    "from": "",
+    "to": "168 Three Springs Rd",
     "text": "Address 168 Three Springs Rd, Nunnelly, TN 37137 (owner sheet) is not on the record; add it."
    },
    {
-    "type": "manual",
-    "text": "Start year: Woodbury's November 2008 closures table gives 1990, but Woodbury March 2008 says Duck River would 'celebrate its 20 year anniversary' in 2008 (about 1988). KOP's 1990 stands unless the owner prefers 1988."
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.city",
+    "from": "Centerville",
+    "to": "Nunnelly"
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9639, 9648 are one program; keep 9648. L.E.A.P.S. was a program of Three Springs of Duck River on the same campus (Three Springs site, 1998)."
+    "type": "field",
+    "facility_id": 9648,
+    "path": "location.zip",
+    "from": "",
+    "to": "37137"
+   },
+   {
+    "type": "check",
+    "text": "Start year of Three Springs of Duck River: Woodbury's November 2008 closures table gives 1990, Woodbury March 2008 a 20-year anniversary in 2008 (about 1988). 1990 stands unless the owner prefers 1988.",
+    "step_text": "Start year: Woodbury's November 2008 closures table gives 1990, but Woodbury March 2008 says Duck River would 'celebrate its 20 year anniversary' in 2008 (about 1988). KOP's 1990 stands unless the owner prefers 1988."
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 5 on this card) Keep 9648.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9639, 9648 are one program; keep 9648. L.E.A.P.S. was a program of Three Springs of Duck River on the same campus (Three Springs site, 1998)."
    }
   ]
  },
@@ -14057,28 +15237,67 @@
     "to": "current"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13285,
+    "drop": 9649,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9649 'Three Springs of Englishton Park' into 13285 'Lexington Academy' (keep 13285, the last name and the map node); keep 'Three Springs of Englishton Park' / 'Three Springs at Englishton Park' / 'Sequel TSI of Indiana' as past names and move 9649's note."
    },
    {
-    "type": "manual",
-    "text": "Address 2426 Parker Ln, Lexington, IN 47138 (owner sheet) is not on the records; add it."
+    "type": "list_add",
+    "facility_id": 13285,
+    "path": "identification.pastNames",
+    "value": "Three Springs at Englishton Park"
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 13285,
+    "path": "identification.otherNames",
+    "value": "Sequel TSI of Indiana"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13285,
+    "path": "identification.pastNames",
+    "value": "Sequel TSI of Indiana"
+   },
+   {
+    "type": "check",
+    "text": "Already on the records: 2426 S Parker Ln (13285) / 2426 Parker Ln (9649), Lexington, IN 47138.",
+    "step_text": "Address 2426 Parker Ln, Lexington, IN 47138 (owner sheet) is not on the records; add it."
+   },
+   {
+    "type": "field",
+    "facility_id": 13285,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2009-2017",
+    "to": "1996-2017",
     "text": "9649's operatingPeriod.yearsOfOperation '1996-2009' and 13285's '2009-2017' are company years; set both to '1996-2017' (or drop after the merge)."
    },
    {
-    "type": "manual",
-    "text": "Closure in 2017 rests on the owner's sheet; no closure notice was found (the May 2016 Sequel page is the last capture). Keep 2017."
+    "type": "field",
+    "facility_id": 9649,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "1996-2009",
+    "to": "1996-2017"
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "No change: the 2017 closure rests on the owner's sheet (the May 2016 Sequel page is the last capture); keep 2017.",
+    "step_text": "Closure in 2017 rests on the owner's sheet; no closure notice was found (the May 2016 Sequel page is the last capture). Keep 2017."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 9649,
+    "path": "identification.otherOperators",
+    "value": "Sequel TSI",
     "text": "Remove 'Sequel TSI' from 9649's otherOperators once it is the current operator."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9649, 13285 are one program; keep 13285. One program on the Englishton Park campus, 2426 Parker Ln, Lexington, IN: Three Springs at Englishton Park renamed Lexington Academy under Sequel."
+    "type": "check",
+    "text": "(same merge as step 4 on this card) Keep 13285.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9649, 13285 are one program; keep 13285. One program on the Englishton Park campus, 2426 Parker Ln, Lexington, IN: Three Springs at Englishton Park renamed Lexington Academy under Sequel."
    }
   ]
  },
@@ -14162,12 +15381,23 @@
     "to": "current"
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 9651,
+    "path": "identification.otherOperators",
+    "value": "Sequel TSI",
     "text": "Merge record 9651 into 9686 (Mountain Home Academy); see 9686's result. Remove 'Sequel TSI' from otherOperators once it is the current operator."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9686, 9651 are one program; keep 9686. one program at 2850 Industrial Way, Mountain Home, ID; 9686 has the current name, map node and wiki entry"
+    "type": "merge",
+    "keep": 9686,
+    "drop": 9651,
+    "rename": true,
+    "year": 2010
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 6 on this card) Keep 9686.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9686, 9651 are one program; keep 9686. one program at 2850 Industrial Way, Mountain Home, ID; 9686 has the current name, map node and wiki entry"
    }
   ]
  },
@@ -14255,16 +15485,29 @@
     "to": "current"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 11130,
+    "drop": 11098,
+    "rename": true,
+    "year": null,
     "text": "Merge 9654 into 11130 St. Augustine Youth Academy (with 11098); see 11098.json."
    },
    {
-    "type": "manual",
-    "text": "The Three Springs link is unsourced (owner's sheet marks Three Springs 'x', the map says 'Three Springs Inc. -> St John's Youth Academy: operated' with no years). Confirm or drop it at the merge."
+    "type": "merge",
+    "keep": 11130,
+    "drop": 9654,
+    "rename": false,
+    "year": null
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11130, 11098, 9654 are one program; keep 11130. one DJJ program at 4500 Avenue D, St. Augustine"
+    "type": "check",
+    "text": "The Three Springs link on 9654 is unsourced (owner's sheet 'x'; map 'Three Springs Inc. -> St John's Youth Academy: operated', no years). Confirm it, or remove Three Springs Inc. (company 24) from the merged record.",
+    "step_text": "The Three Springs link is unsourced (owner's sheet marks Three Springs 'x', the map says 'Three Springs Inc. -> St John's Youth Academy: operated' with no years). Confirm or drop it at the merge."
+   },
+   {
+    "type": "check",
+    "text": "(same merges as step 3 on this card) Keep 11130 St. Augustine Youth Academy, 4500 Avenue D.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 11130, 11098, 9654 are one program; keep 11130. one DJJ program at 4500 Avenue D, St. Augustine"
    }
   ]
  },
@@ -14340,20 +15583,43 @@
     "to": "current"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 100076,
+    "drop": 9656,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9656 (Three Springs School of Madison) into 100076 (Sequel TSI Madison) at KOP Tools > Merge Duplicates > Renamed programs; add past name Three Springs School of Madison (1999-2009) and the address 1329 Browns Ferry Rd, Madison, AL 35758."
    },
    {
-    "type": "manual",
+    "type": "field",
+    "facility_id": 100076,
+    "path": "location.street",
+    "from": "",
+    "to": "1329 Browns Ferry Rd"
+   },
+   {
+    "type": "field",
+    "facility_id": 100076,
+    "path": "location.zip",
+    "from": "",
+    "to": "35758"
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 100076,
+    "path": "identification.otherNames",
+    "value": "Three Springs New Directions",
     "text": "Remove \"Three Springs New Directions\" from the other names of 100076: New Directions was the girls' program in Huntsville and later on the Owens Cross Roads campus (NPI 1568793362, 318A Hamer Rd, 2010), now part of 13678."
    },
    {
-    "type": "manual",
-    "text": "Check the closing year: the owner's sheet says Sequel ran Madison to 2019; KOP's Three Springs company history says it lost its business license in 2017."
+    "type": "check",
+    "text": "Closing year of Sequel TSI Madison: the owner's sheet says 2019; KOP's Three Springs company history says it lost its business license in 2017. Pick one.",
+    "step_text": "Check the closing year: the owner's sheet says Sequel ran Madison to 2019; KOP's Three Springs company history says it lost its business license in 2017."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9656, 100076 are one program; keep 100076. One campus at 1329 Browns Ferry Rd, Madison, AL: Three Springs School of Madison (1999-2009), then Sequel TSI Madison (2010-2019). Keep the last name."
+    "type": "check",
+    "text": "(same merge as step 4 on this card) Keep 100076 Sequel TSI Madison.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9656, 100076 are one program; keep 100076. One campus at 1329 Browns Ferry Rd, Madison, AL: Three Springs School of Madison (1999-2009), then Sequel TSI Madison (2010-2019). Keep the last name."
    }
   ]
  },
@@ -14508,24 +15774,71 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 9657,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9657 (Three Springs School of Tuskegee) and 100078 (Sequel TSI of Tuskegee) into 13641 (Brighter Path Tuskegee) at KOP Tools > Merge Duplicates > Renamed programs; add past names Three Springs School of Tuskegee (1998-2009) and Sequel TSI of Tuskegee (2010-2022)."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13641,
+    "drop": 100078,
+    "rename": true,
+    "year": 2022
+   },
+   {
+    "type": "map_edge_drop",
+    "edge": "e1483",
+    "label": "Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)",
     "text": "Map: replace the line \"Alabama Department of Human Resources -> Sequel TSI Tuskegee: operates (current)\" with Brighter Path Alabama, LLC as current operator (DHR and DYS license and place children there: EJI, 2022), and add a Brighter Path Tuskegee name for the node from 2022."
    },
    {
-    "type": "manual",
-    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+    "type": "check",
+    "text": "After the merges and the Brighter Path Alabama, LLC company row, check that the map shows Brighter Path Alabama, LLC as the operator; the rename merge gives the node its Brighter Path name from 2022."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025.",
+    "step_text": "Check whether Brighter Path Tuskegee still runs: its website showed only the host's error page by July 2025."
+   },
+   {
+    "type": "operator_create",
+    "name": "Brighter Path Alabama, LLC",
+    "fields": {
+     "notes": [
+      "Sequel TSI of Alabama, LLC, renamed Brighter Path Alabama, LLC about March 1, 2022; its parents in 2026 were BHSB Holdings, Inc. and Willow Grove, LLC (docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212)."
+     ],
+     "parentCompanies": [
+      "BHSB Holdings, Inc.",
+      "Willow Grove, LLC"
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13639,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13678,
+      "relationship": "past"
+     },
+     {
+      "facility_id": 13641,
+      "relationship": "current"
+     },
+     {
+      "facility_id": 13640,
+      "relationship": "current"
+     }
+    ],
     "text": "Brighter Path Alabama, LLC (Sequel TSI of Alabama, LLC renamed about March 1, 2022) has no company row: create it (parents in 2026: BHSB Holdings, Inc. and Willow Grove, LLC, per the docket of Brighter Path Alabama, LLC v. Rite of Passage, Inc., D. Nev. 3:2026cv00212) and link the four Alabama campuses (Courtland, Owens Cross Roads until 2024, Tuskegee, Montgomery) to it as current."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 8 on this card) Keep 13641 Brighter Path Tuskegee, 4280 US Hwy 29 S.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9657, 100078, 13641 are one program; keep 13641. One campus at 4280 US Hwy 29 S, Tuskegee, AL: Three Springs School of Tuskegee, Sequel TSI of Tuskegee (2010), Brighter Path Tuskegee (2022). Keep the current name."
    }
   ]
  },
@@ -14557,12 +15870,17 @@
     "to": "Closed"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 12164,
+    "drop": 9658,
+    "rename": true,
+    "year": 2010,
     "text": "Merge record 9658 into 12164 (Sequel TSI Sierra Vista); see 12164's result for the history and ops."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 12164, 9658 are one program; keep 12164. one program at 4120 E Ramsey Rd, Hereford, AZ; 12164 has the years, operator and map node"
+    "type": "check",
+    "text": "(same merge as step 1 on this card) Keep 12164.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 12164, 9658 are one program; keep 12164. one program at 4120 E Ramsey Rd, Hereford, AZ; 12164 has the years, operator and map node"
    }
   ]
  },
@@ -14691,24 +16009,92 @@
     "to": "past"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9644,
+    "rename": true,
+    "year": 2010,
     "text": "Merge 9644 (Three Springs New Beginnings), 9659 (Turning Point - Girls) and 13709 (Three Springs New Direction) into 13678 (Pathway of Madison County) at KOP Tools > Merge Duplicates > Renamed programs."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 13678,
+    "drop": 9659,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "merge",
+    "keep": 13678,
+    "drop": 13709,
+    "rename": false,
+    "year": null
+   },
+   {
+    "type": "check",
+    "text": "9659 (Turning Point) and 13709 (New Directions) were transitional programs on the same campus, so they merge as plain duplicates; only Three Springs New Beginnings (9644) is merged as an earlier name (2010)."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Inc.",
     "text": "On 13678 remove \"Three Springs Inc.\" from pastNames (it is the company, not a name) and add past names Three Springs New Beginnings (1996-2009), Three Springs Turning Point, Three Springs New Directions, Sequel TSI Owens Cross Roads (2010-2022), Brighter Path Owens Cross Roads (2022-2024); add other name Pathway Inc."
    },
    {
-    "type": "manual",
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs Turning Point"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Three Springs New Directions"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.pastNames",
+    "value": "Brighter Path Owens Cross Roads"
+   },
+   {
+    "type": "list_add",
+    "facility_id": 13678,
+    "path": "identification.otherNames",
+    "value": "Pathway Inc."
+   },
+   {
+    "type": "check",
+    "text": "'Three Springs New Beginnings' becomes a past name through the rename merge of 9644. Years for the names (New Beginnings 1996-2009, Sequel TSI Owens Cross Roads 2010-2022, Brighter Path Owens Cross Roads 2022-2024) go in at KOP Tools > Map Renames; 'Sequel TSI Owens Cross Roads' is already a past name as 'Sequel TSI Owens Cross Rds'."
+   },
+   {
+    "type": "operator_create",
+    "name": "Pathway of Madison County, LLC",
+    "fields": {
+     "headquarters": "Owens Cross Roads, AL",
+     "notes": [
+      "Formerly Pathway Inc.; opened on the former Three Springs / Sequel TSI campus at 318 Hamer Rd, Owens Cross Roads, in June 2024. Its owners were not found."
+     ]
+    },
+    "links": [
+     {
+      "facility_id": 13678,
+      "relationship": "current"
+     }
+    ],
     "text": "Create a company row for Pathway of Madison County, LLC (formerly Pathway Inc.) and link 13678 to it as current; its owners were not found."
    },
    {
     "type": "manual",
-    "text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
+    "text": "Add 1007 Douglas Rd, Huntsville, AL (Three Springs New Directions, owner's sheet, 2000) to record 13678 as a former location (KOP addresses).",
+    "step_text": "Map: Three Springs New Directions had an earlier address at 1007 Douglas Rd, Huntsville (owner's sheet, 2000); add it to 13678 as a former location."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
+    "type": "check",
+    "text": "(same merges as step 5 on this card) Keep 13678 Pathway of Madison County, 318 Hamer Rd.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9644, 9659, 13709, 13678 are one program; keep 13678. One campus at 318 Hamer Rd, Owens Cross Roads, AL: Three Springs New Beginnings (girls, secure), Turning Point and New Directions (girls' transitional programs on the same campus; NPI 1568793362 puts Sequel TSI New Directions at 318A Hamer Rd in 2010), then Sequel TSI Owens Cross Roads, Brighter Path Owens Cross Roads (2022) and Pathway of Madison County (from June 2024). Keep the current name."
    }
   ]
  },
@@ -14820,20 +16206,40 @@
     "text": "Florida DJJ revoked Sequel TSI's contract for Union Juvenile Residential Facility in July 2019; Youth Opportunity Investments ran the Raiford program as Redwood Youth Academy from 2019 (DJJ program pages, Wayback 2019-08-05, 2021-06-04), and a DJJ request for information posted 2026-07-29 calls the site the 'former Redwood Youth Academy'."
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9660,
+    "drop": 100071,
+    "rename": false,
+    "year": null,
     "text": "Merge record 100071 Redwood Youth Academy into 9660 as a rename (Union Juvenile Residential Facility 2006-2019, Redwood Youth Academy 2019-), or the other way round if the owner prefers the current name."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "9660 already carries Redwood Youth Academy as its current name, so 100071 merges as a plain duplicate; the rename year is 2019 (Union Juvenile Residential Facility 2006-2019, Redwood Youth Academy 2019-)."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 9660,
+    "path": "identification.otherOperators",
+    "value": "Sequel TSI",
     "text": "Remove 'Sequel TSI' from identification.otherOperators and fix yearsOfOperation '2006-2009' (Three Springs' years) to '2006-2026' or clear it."
    },
    {
-    "type": "manual",
-    "text": "End year: the closure year is not pinned (after June 2021, before July 2026); set operatingPeriod.endYear once found. Wayne Halfway House's years at Redwood also need a dated source (DJJ program page captures after 2021 were not found)."
+    "type": "field",
+    "facility_id": 9660,
+    "path": "operatingPeriod.yearsOfOperation",
+    "from": "2006-2009",
+    "to": ""
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9660, 100071 are one program; keep 9660. Redwood Youth Academy is the 2019 name of the Union Juvenile Residential Facility program at 14692 NE County Road 199, Raiford (same phone fax (386) 431-1089 on DJJ pages); 9660 holds the data"
+    "type": "check",
+    "text": "Closure year of Redwood Youth Academy is not pinned (after June 2021, before July 2026): set operatingPeriod.endYear once found. Wayne Halfway House's years at Redwood also need a dated source.",
+    "step_text": "End year: the closure year is not pinned (after June 2021, before July 2026); set operatingPeriod.endYear once found. Wayne Halfway House's years at Redwood also need a dated source (DJJ program page captures after 2021 were not found)."
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 5 on this card) Keep 9660.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9660, 100071 are one program; keep 9660. Redwood Youth Academy is the 2019 name of the Union Juvenile Residential Facility program at 14692 NE County Road 199, Raiford (same phone fax (386) 431-1089 on DJJ pages); 9660 holds the data"
    }
   ]
  },
@@ -14876,12 +16282,14 @@
     "text": "Three Springs ran the Wayne County Girls Program for the Georgia Department of Juvenile Justice by 2001 (Three Springs website, October 2001) and closed its Georgia programs in 2006 when state funding was withdrawn (Kids Over Profits, Three Springs, Inc.: https://kidsoverprofits.org/three-springs-inc/)."
    },
    {
-    "type": "manual",
-    "text": "Start year: the program was on the Three Springs website by October 2001 (owner sheet says 2003); set the start year if the owner has the opening date."
+    "type": "check",
+    "text": "Start year of Wayne County Girls Program: on the Three Springs site by October 2001 (owner's sheet says 2003); set it if the opening date is known.",
+    "step_text": "Start year: the program was on the Three Springs website by October 2001 (owner sheet says 2003); set the start year if the owner has the opening date."
    },
    {
-    "type": "manual",
-    "text": "Address 249 Joe Naia Rd, Jesup, GA 31545 (owner sheet) is not on the record; add it."
+    "type": "check",
+    "text": "Already on the record: 9661's address is 249 Joe Naia Road, Jesup, GA 31545.",
+    "step_text": "Address 249 Joe Naia Rd, Jesup, GA 31545 (owner sheet) is not on the record; add it."
    }
   ]
  },
@@ -14906,8 +16314,9 @@
   "notes": "Kept KOP's values: nothing found contradicts them. History: Three Springs, Inc. 2005-2007 as Withlacoochee Juvenile Residential Facility.",
   "ops": [
    {
-    "type": "manual",
-    "text": "Operators before 2005 and after 2007 and the closing year are unknown; Florida DJJ contract records (program pages, contract awards) would have them. The 2004 Synnica Canty case in the owner's notes happened at this facility before the owner's Three Springs years; check who ran it in 2004."
+    "type": "check",
+    "text": "Who ran Withlacoochee Juvenile Residential Facility before 2005 and after 2007, and when it closed, is unknown; Florida DJJ contract records would have it. Check who ran it in 2004 (the Synnica Canty case in the owner's notes).",
+    "step_text": "Operators before 2005 and after 2007 and the closing year are unknown; Florida DJJ contract records (program pages, contract awards) would have them. The 2004 Synnica Canty case in the owner's notes happened at this facility before the owner's Three Springs years; check who ran it in 2004."
    }
   ]
  },
@@ -14976,16 +16385,21 @@
     "text": "Three Springs ran this 168-bed Georgia DJJ facility under a state contract by 2001 (Three Springs website, October 2001); by August 2006 Youth Services International listed McIntosh Youth Development Center among its facilities (YSI website, captured 2006-11-15)."
    },
    {
-    "type": "manual",
+    "type": "list_remove",
+    "facility_id": 9663,
+    "path": "identification.otherNames",
+    "value": "Youth Services International",
     "text": "Remove 'Youth Services International' from otherNames: it is the company that ran the facility, not a name of it (it becomes the current operator)."
    },
    {
-    "type": "manual",
-    "text": "The dossier ties this record to the 'Youth Services International' company map node as well as the McIntosh node; the record should map only to 'McIntosh Youth Development Center'."
+    "type": "check",
+    "text": "The map already has only the McIntosh Youth Development Center node for record 9663; the tie to the YSI company node came from the other name 'Youth Services International', which step 5 removes.",
+    "step_text": "The dossier ties this record to the 'Youth Services International' company map node as well as the McIntosh node; the record should map only to 'McIntosh Youth Development Center'."
    },
    {
-    "type": "manual",
-    "text": "Closure year unknown; Georgia DJJ records would have it."
+    "type": "check",
+    "text": "Closure year of McIntosh Youth Development Center is unknown; Georgia DJJ records would have it.",
+    "step_text": "Closure year unknown; Georgia DJJ records would have it."
    }
   ]
  },
@@ -15066,16 +16480,38 @@
     "to": "2001-2021"
    },
    {
-    "type": "manual",
+    "type": "merge",
+    "keep": 9686,
+    "drop": 9651,
+    "rename": true,
+    "year": 2010,
     "text": "Merge record 9651 (Three Springs of Mountain Home) into 9686: same program at 2850 Industrial Way, Mountain Home, ID. 9651's end year 2020 (owner sheet) should become 2021 (APM: closure announced June 2021, listed among Sequel's latest closures in April 2022)."
    },
    {
-    "type": "manual",
+    "type": "check",
+    "text": "9651's end year 2020 (owner's sheet) should be 2021 (closure announced June 2021); that change is on card sequel_history-9651."
+   },
+   {
+    "type": "list_remove",
+    "facility_id": 9686,
+    "path": "identification.otherNames",
+    "value": "Three Springs of Mountain Home",
     "text": "Make 'Three Springs of Mountain Home' a past name (it is now an other name), and keep 'Sequel TSI of Idaho' and 'Sequel Three Springs School' (Mountain Home News) as other names."
    },
    {
-    "type": "manual",
-    "text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9686, 9651 are one program; keep 9686. one program at 2850 Industrial Way, Mountain Home, ID; 9686 has the current name, map node and wiki entry"
+    "type": "list_add",
+    "facility_id": 9686,
+    "path": "identification.otherNames",
+    "value": "Sequel Three Springs School"
+   },
+   {
+    "type": "check",
+    "text": "'Three Springs of Mountain Home' becomes a past name (2001-2010) through the rename merge of 9651 in step 6."
+   },
+   {
+    "type": "check",
+    "text": "(same merge as step 6 on this card) Keep 9686.",
+    "step_text": "Merge duplicates (KOP Tools > Merge Duplicates): records 9686, 9651 are one program; keep 9686. one program at 2850 Industrial Way, Mountain Home, ID; 9686 has the current name, map node and wiki entry"
    }
   ]
  },
@@ -15291,7 +16727,7 @@
   "facility_id": 9928,
   "verdict": "unsure",
   "confidence": "low",
-  "finding": "Embark at San Martin and Embark Behavioral Health RTC are one program under two names (Embark Behavioral Health RTC lists Embark at San Martin as a past name), kept as two records, so their years disagree: Embark Behavioral Health RTC opens (no year), the earlier name's opening year or none; Embark at San Martin has no end year; Embark at San Martin is still Open. The records do not say when the name changed: give the year when merging.",
+  "finding": "Embark Behavioral Health RTC is only the name of the company that runs Embark at San Martin (Embark Behavioral Health RTC lists Embark at San Martin as a past name): record #9928 is most likely Embark at San Martin filed under its company, not an earlier or later name of it. Fold it in as one program, unless the program really went by that name.",
   "kop_now": "Embark at San Martin (#9743): Open, from 2022. Embark Behavioral Health RTC (#9928): Open, no years.",
   "sources": [],
   "ops": [],
@@ -15579,7 +17015,7 @@
   "facility_id": 100129,
   "verdict": "unsure",
   "confidence": "low",
-  "finding": "Embark at The Poconos and Embark Behavioral Health RTC are one program under two names (Embark Behavioral Health RTC lists Embark at The Poconos as a past name), kept as two records, so their years disagree: Embark Behavioral Health RTC opens (no year), the earlier name's opening year or none; Embark at The Poconos has no end year; Embark at The Poconos is still Open. The records do not say when the name changed: give the year when merging.",
+  "finding": "Embark Behavioral Health RTC is only the name of the company that runs Embark at The Poconos (Embark Behavioral Health RTC lists Embark at The Poconos as a past name): record #100129 is most likely Embark at The Poconos filed under its company, not an earlier or later name of it. Fold it in as one program, unless the program really went by that name.",
   "kop_now": "Embark at The Poconos (#11572): Open, no years. Embark Behavioral Health RTC (#100129): Open, no years.",
   "sources": [],
   "ops": [],
@@ -15701,7 +17137,7 @@
   "facility_id": 100094,
   "verdict": "unsure",
   "confidence": "low",
-  "finding": "Embark at Flathead Valley and Embark Behavioral Health are one program under two names (Embark Behavioral Health lists Embark at Flathead Valley as a past name), kept as two records, so their years disagree: Embark Behavioral Health opens (no year), the earlier name's opening year or none; Embark at Flathead Valley has no end year; Embark at Flathead Valley is still Open. The records do not say when the name changed: give the year when merging.",
+  "finding": "Embark Behavioral Health is only the name of the company that runs Embark at Flathead Valley (Embark Behavioral Health lists Embark at Flathead Valley as a past name): record #100094 is most likely Embark at Flathead Valley filed under its company, not an earlier or later name of it. Fold it in as one program, unless the program really went by that name.",
   "kop_now": "Embark at Flathead Valley (#12685): Open, no years. Embark Behavioral Health (#100094): Open, no years.",
   "sources": [],
   "ops": [],

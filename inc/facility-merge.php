@@ -1115,8 +1115,12 @@ if (!function_exists('kop_fmerge_do_merge')) {
      * two records that are a renamed program are refused. 'reversed': the
      * reviewer turned the order round on purpose, so the order the names or
      * the map give is not enforced (the map's line is saved the new way).
+     * $as_duplicate: merge as one name although the names read as a rename
+     * (the Data audit's "one of the two is only the company's name": Embark
+     * Behavioral Health in Marion is Embark at Flathead Valley filed under
+     * its company).
      */
-    function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login, array $rename = null) {
+    function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login, array $rename = null, $as_duplicate = false) {
         if (function_exists('kop_v2_writes_active') && !kop_v2_writes_active($pdo, $prefix)) {
             throw new RuntimeException('The v2 write switch is off, so a merge would not stick.');
         }
@@ -1124,7 +1128,7 @@ if (!function_exists('kop_fmerge_do_merge')) {
         $d = kop_fmerge_row($pdo, $drop);
         if (!$k || !$d) throw new RuntimeException('One of these records is no longer on file. The list has been refreshed.');
         $is_rename = kop_fmerge_rename_of($k['raw'], $d['raw']);
-        if ($rename === null && $is_rename) {
+        if ($rename === null && $is_rename && !$as_duplicate) {
             throw new RuntimeException('These are one program under two names (' . $is_rename[2] . '). Merge them as a rename, '
                 . 'so each name keeps its own years and facts: the Renamed programs tab, or "Merge as a rename" above.');
         }

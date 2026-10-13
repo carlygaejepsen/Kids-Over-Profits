@@ -97,6 +97,16 @@
         return graph;
     }
 
+    /* Lines taken off since the build (the Data audit's "take this map line
+     * off", KOP_NETWORK_CONFIG.edgeDrops, kop_network_map_edge_drops()); the
+     * PHP graph drops them the same way for page slices. */
+    function applyEdgeDrops(graph, drops) {
+        if (!graph || !drops || !drops.length) return graph;
+        var drop = toSet(drops);
+        graph.edges = (graph.edges || []).filter(function (e) { return !drop[e.id]; });
+        return graph;
+    }
+
     function toSet(list) {
         var set = Object.create(null);
         (list || []).forEach(function (v) { set[v] = true; });
@@ -146,7 +156,7 @@
                 fetchJson(config.graphUrl),
                 fetchJson(config.layoutUrl)
             ]).then(function (both) {
-                store.hydrate(applyRenameFlips(applyYearOverrides(applyStatusOverrides(both[0], config.statusOverrides), config.yearOverrides), config.renameFlips), both[1]);
+                store.hydrate(applyRenameFlips(applyYearOverrides(applyStatusOverrides(applyEdgeDrops(both[0], config.edgeDrops), config.statusOverrides), config.yearOverrides), config.renameFlips), both[1]);
                 return store;
             });
         };

@@ -29,6 +29,7 @@
  *   'act'      fn(string $key, string $action, array $params): ['message' => ...]
  *              (throws on failure)
  *   'save'     fn(string $key, array $fields): ['message' => ...]   optional
+ *   'no_ai'    true: no "Fill empty fields with AI" for the 'save' fields   optional
  *   'ai_fill'  fn(string $key, string $text): ['filled' => [...]]   optional;
  *              without it the generic filler reads the item's link and fills
  *              its empty editable fields through save. $text is what the
@@ -594,7 +595,7 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
                 'key' => $key, 'label' => $src['label'], 'group' => $src['group'], 'views' => $src['views'],
                 'count' => $count, 'native' => (bool) $src['native'], 'tool_url' => (string) $src['tool_url'],
                 'help' => (string) ($src['help'] ?? ''), 'can_save' => !empty($src['save']),
-                'can_ai' => !empty($src['save']) || !empty($src['ai_fill']),
+                'can_ai' => (!empty($src['save']) && empty($src['no_ai'])) || !empty($src['ai_fill']),
                 'has_origins' => !empty($src['origins']),
                 'tools' => array_values((array) ($src['tools'] ?? array())),
                 'filters' => array_values((array) ($src['filters'] ?? array())),
