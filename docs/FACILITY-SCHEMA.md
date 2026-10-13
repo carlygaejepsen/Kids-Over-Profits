@@ -19,10 +19,12 @@ inside each facility's JSON document, so no SQL columns are added.
 1. **Fixed top-level keys.** Every document has exactly these keys, in this
    order: `schema_version`, `facility_id`, `identification`, `location`,
    `operatingPeriod`, `facilityDetails`, `staff`, `accreditations`,
-   `memberships`, `certifications`, `licensing`, `profileLinks`, `resourceLinks`, `resources`,
+   `memberships`, `certifications`, `licensing`, `profileLinks`, `resourceLinks`,
+   `federalFunding`, `resources`,
    `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`,
    `philosophy`, `conditions`, `criticalIncidents`, `notes`, `fieldNotes`,
-   `documentFolderId`, `provenance`, `legacy`. Sections are always present,
+   `survivorTestimony`, `documentFolderId`, `provenance`, `legacy`. The set is
+   `kop_facility_top_level_keys()`, the keys of `kop_facility_blank_document()`. Sections are always present,
    even when empty, so readers never need to check for them.
 2. **Lists are always arrays** and **maps are always objects**. An empty map is
    stored as `{}`, never `[]` (`kop_facility_json_encode` handles this).
@@ -42,8 +44,8 @@ inside each facility's JSON document, so no SQL columns are added.
 | `name` | string, required | Display name. Legacy fallback order: `identification.name`, `identification.currentName`, `name`, wrapper `displayName`. |
 | `nameKey` | string, required | `kop_facility_name_key(name)`. Stored as a generated column and used for identity. |
 | `currentName` | string | The name the facility trades under now. Empty when it would only repeat `name`. |
-| `otherNames` | string[] | |
-| `pastNames` | string[] | Legacy `previousNames` is merged in. |
+| `otherNames` | string[] | Other spellings and names in use at the same time. A plain duplicate merge adds the dropped record's name here; a State Lists link adds the listed name when ticked; a Data audit step can add one. |
+| `pastNames` | string[] | Earlier names. Legacy `previousNames` is merged in. A rename merge (KOP Tools > Merge Duplicates > Renamed programs) puts the earlier name here, never in `otherNames`; Woodbury Facts and a Data audit step can add one. |
 | `currentOperator` | string | |
 | `currentOwners` | string[] | Legacy single `currentOwner` is merged in. |
 | `otherOperators` | string[] | Was top-level `otherOperators`. |
@@ -59,6 +61,14 @@ alias map in `kop_facility_name_aliases()` is **not** applied. Search still
 applies it on top of the stored key, because the alias map converts one
 rule-normalized key into another. Storing the aliased key would give two
 aliased facilities the same identity index value.
+
+`currentName`, `otherNames` and `pastNames` are searchable everywhere: the
+cached `kop_v2_alias_index()` feeds the site search, the admin finder and the
+form autocompletes, and each hit is labelled by `kop_alias_label()` ("Now known
+as", "Also known as", "Formerly"). A facility page splits into one section per
+name for a renamed program (`inc/facility-eras.php`); the names come from the
+network map's rename lines or, for a merged rename, from
+`legacy.mergedFacilities` (below).
 
 ### location
 
@@ -149,10 +159,12 @@ a `migration: original status "..."` note.
 | `accreditations` | `{current[], past[]}` | |
 | `memberships`, `certifications`, `licensing`, `notes` | string[] | |
 | `profileLinks` | string[] | URLs. |
-| `resourceLinks` | `{url, label, kind, source}[]` | Outside pages about the facility (licensing reports, court records, survivor posts, staff profiles, reference). One entry per address. `kind` is one of `licensing`, `court`, `government`, `news`, `social`, `people`, `advertising` (the program's ads and paid listings: Woodbury Reports, AllKindsOfTherapy, press releases), `reference`, `archive`, `other`. Shown on the facility page under "Materials and links"; added from KOP Tools > Drive Docs. |
+| `resourceLinks` | `{url, label, kind, source}[]` | Outside pages about the facility (licensing reports, court records, survivor posts, staff profiles, reference). One entry per address. `kind` is one of `licensing`, `court`, `government`, `news`, `social`, `people`, `advertising` (the program's ads and paid listings: Woodbury Reports, AllKindsOfTherapy, press releases), `reference`, `archive`, `other`. `source` says where the link came from (a Drive Docs source, a submission, a Fornits thread, a state list). Shown on the facility page under "Materials and links" and in the app payload (`resource_links`); links whose `source` starts with "Fornits" are listed with the page's forum section instead. Written by KOP Tools > Drive Docs (`kop_gdl_save()`), the review inbox's "Move to" a facility record (`inc/review-destinations.php`; also Submissions Review "refile" in `api/manage-submissions.php`, source "Sent in as news (#N)"), Fornits (kind `social`, `inc/fornits.php`, which also retitles the label from the thread's headline unless a person changed it), and a new record made by `kop_facdisc_create()` for KOP Tools > State Lists (the state list's page, kind `licensing`). |
+| `federalFunding` | `{stream, detail, years, sources[], ref, source}[]` | Federal money the facility received. `stream` is a key of `kop_facility_federal_funding_streams()`: `medicaid`, `medicaid_child_welfare`, `child_welfare`, `orr`, `tricare`, `ppp`, `education`, `other`. `years` is free text. `sources` entries are `{url, label}`. `ref` names the entry so Undo takes off exactly what it added; `source` is who found it ("Federal funding research, October 2026"). Added at Review inbox > Federal funding (`inc/federal-funding.php`, from `js/data/federal-funding/proposals.json`); listed on the facility page grouped by stream (`kop_facility_pages_federal_funding()`) and in the app payload (`federal_funding`). |
 | `resources` | map | Every standard key is present (see Standard shapes): `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Keys the form adds later are typed by the same naming rule. |
 | `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. `targetedDiagnoses` and `targetedBehaviors` hold selected `hasX` booleans; `ttiPractices` holds selected `hasX` booleans and an optional `other` string list. A legacy array becomes `{"_legacy": [...]}`. |
 | `fieldNotes` | map | A legacy array becomes `{"_legacy": [...]}`. |
+| `survivorTestimony` | `{id, text, source, date, movedFrom, publish}[]` | Survivor accounts. `publish` is false until an admin ticks "OK to publish"; only `publish: true` entries reach the facility page, the open data files, and every kop/v1 response and `api/get-master-data.php` for anyone but an admin (`kop_facility_testimony_redact()`), and a public suggestion keeps the record's hidden entries (`kop_preserve_hidden_testimony()` in `api/lib-suggested-edits.php`). Written by the admin form's Survivor Testimony section (`js/data-form/testimony.js`, "Move to testimony"), the pencil on the facility page (`inc/inline-edit.php`) and Fornits (unpublished). |
 | `documentFolderId` | int or null | FileBird folder. |
 
 ### Identity and provenance
@@ -170,7 +182,59 @@ a `migration: original status "..."` note.
 | `provenance.migratedAt` | ISO 8601 string | |
 | `provenance.uniqueName` | string | The row's `unique_name` at migration time. |
 | `provenance.source` | string | Which copy the document was built from (rehearsal and debugging). |
-| `legacy` | map | Keys the normalizer does not know. Empty for every row in the 2026-09-16 dump. |
+| `legacy` | map | Keys the normalizer does not know. Empty for every row in the 2026-09-16 dump. Since then two keys are written on purpose: `matchAliases` (names articles use for the facility, restored by `api/restore-match-aliases.php` and handed to the name index by `kop_facility_to_legacy()`) and `mergedFacilities` (below). |
+
+### legacy.mergedFacilities
+
+Every record folded into this one by KOP Tools > Merge Duplicates
+(`api/merge-facility-duplicates.php`, `kop_mfd_merge_docs()`) adds one entry:
+`{facility_id, unique_name, name, mergedAt}`, the dropped record's id, row
+name, display name and the merge time (ISO 8601).
+
+A rename merge (Merge Duplicates > Renamed programs, or "Merge as a rename")
+keeps the later name's record and adds `rename` to the earlier name's entry:
+
+| Field | Type | Notes |
+|---|---|---|
+| `year` | int | The year the earlier name became the later one. |
+| `startYear`, `endYear` | int or null | The earlier name's own years. `endYear` defaults to `year`. |
+| `status` | string | The earlier name's own status. |
+| `notes` | string[] | The earlier record's `operatingPeriod.notes`. |
+| `operators` | string[] | The earlier name's operators. Its `currentOperator` also goes to the kept record's `pastOperators`. |
+| `facts` | map | What the earlier record listed before the merge, kind => item keys (`kop_facility_eras_item_key()`). |
+| `laterName` | string | The kept record's name at the merge. |
+| `laterFacts` | map | What the kept record listed before the merge, same shape. |
+
+Nothing in the earlier name's `operatingPeriod` fills the kept record's; the
+kept record's years change only when later-name years are given at the merge
+(and then `yearsOfOperation` is cleared). The facility page reads these entries
+(`kop_facility_eras_doc_renames()`, `kop_facility_eras_doc_chain()`) to cut the
+page into one section per name, each item under the name it was filed under;
+the network map build (`scripts/build-network-graph.js`) sends a merged-away
+id or name to the kept record and gives a renamed earlier name its own years.
+Every merge can be undone from the Merged tab (`inc/facility-merge.php`).
+
+### Kept outside the document
+
+Some facts about a facility live in their own tables, keyed by facility id,
+because the form's normalizer rebuilds the document from known fields and
+would drop anything else:
+
+- Homes and cottages of one program: `{prefix}kop_program_homes` (`home_id`,
+  `program_id`, `home_name`; `inc/program-homes.php`, KOP Tools > Program
+  Homes). Never a field in the document. A company converted into one program
+  keeps what it changed in `{prefix}kop_program_conversions`
+  (`inc/program-homes-convert.php`).
+- People: `{prefix}kop_people` and `{prefix}kop_person_roles`
+  (`inc/people.php`). Only the id is copied into the document, as `personId`
+  on staff entries.
+- Parent company links: `{prefix}kop_operator_facilities` (`relationship`
+  `current` or `past`; a rename merge moves the earlier name's links as
+  `past`).
+- Merges: the log for Undo (option `kop_facility_merge_log`, both documents
+  as they were and every row moved) and the dropped page's redirect (option
+  `kop_facility_merged_into`) are kept by `inc/facility-merge.php`; the
+  document holds only `legacy.mergedFacilities`.
 
 ## Standard shapes
 
@@ -190,6 +254,14 @@ re-saved every document on 2026-09-18.
   without an http(s) URL is dropped, a repeat of an address already listed
   (ignoring scheme, `www.` and a trailing slash) is dropped, and an unknown
   `kind` becomes `other`.
+- **Federal funding** (`federalFunding`, `kop_facility_federal_funding_list()`,
+  JS `v2FederalFundingList()`): an unknown `stream` becomes `other`; a source
+  given as a bare string is `{url}`; a source without an http(s) URL or
+  repeating one already listed is dropped; an entry with no `detail` and no
+  source is dropped.
+- **Testimony** (`survivorTestimony`, `kop_facility_testimony_list()`, JS
+  `v2TestimonyList()`): a bare string is `{text}`; an entry with no text is
+  dropped; `publish` is true only for `true`, `1`, `"1"` or `"true"`.
 - **Resources**: `hasNews`, `newsDetails`, `hasPressReleases`,
   `pressReleasesDetails`, `hasInspections`, `hasStateReports`,
   `hasRegulatoryFilings`, `hasViolations`, `hasSettlements`, `hasLawsuits`,
@@ -328,6 +400,7 @@ campus; the identity split gave it its own row:
   "licensing": [],
   "profileLinks": [],
   "resourceLinks": [],
+  "federalFunding": [],
   "resources": { "hasNews": false, "hasLawsuits": false, "customResources": [] },
   "treatmentTypes": {},
   "targetedDiagnoses": {},
@@ -338,6 +411,7 @@ campus; the identity split gave it its own row:
   "criticalIncidents": {},
   "notes": [],
   "fieldNotes": {},
+  "survivorTestimony": [],
   "documentFolderId": null,
   "provenance": {
     "sourceProject": "",

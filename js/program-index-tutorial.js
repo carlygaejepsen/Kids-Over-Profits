@@ -23,7 +23,7 @@
             },
             {
                 title: 'Two Ways to Browse',
-                content: '<strong>By parent company</strong> groups facilities under the business that runs them. <strong>By location</strong> groups them by US state or country - useful when you know roughly where a program was, but not its name.',
+                content: '<strong>By parent company</strong> groups facilities under the business that runs or ran them; a program that was renamed is listed under each company by the name it had then, with the name it goes by now. <strong>By location</strong> groups them by US state or country - useful when you know roughly where a program was, but not its name.',
                 target: '#kop-dir-tab-company, #kop-dir-tab-location',
                 highlightAll: true,
                 position: 'bottom',
@@ -31,7 +31,7 @@
             },
             {
                 title: 'Search by Company',
-                content: 'Type a facility or parent company name here to filter the list as you type.',
+                content: 'Type a facility or parent company name here to filter the list as you type. Past names and other names match too.',
                 target: '#searchInput',
                 position: 'bottom',
                 scrollTarget: '.kop-dir-tabs',
@@ -40,7 +40,7 @@
             },
             {
                 title: 'Narrow and Sort',
-                content: 'Filter to only open, closed or transferred facilities, or sort to put the ones with the most inspection reports first.',
+                content: 'Filter to only open, closed or transferred facilities. Sort to put the ones with the most inspection reports first, or to show only those with inspections or violations on file.',
                 target: '#statusFilter, #sortBy',
                 highlightAll: true,
                 position: 'bottom',

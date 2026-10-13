@@ -24,7 +24,7 @@
             },
             {
                 title: 'Browse Existing Entries',
-                content: `Load an existing wiki entry to edit it. Browse by <strong>${kopIcon('map-pin')} Location</strong> (state), <strong>${kopIcon('building')} Organization</strong> (parent company), or <strong>${kopIcon('pen-line')} Stubs</strong> — empty entries that still need to be written. Stubs are a great place to start contributing!`,
+                content: `Load an existing wiki entry to edit it. Browse by <strong>${kopIcon('map-pin')} Location</strong> (state), <strong>${kopIcon('building')} Organization</strong> (parent company), or <strong>${kopIcon('pen-line')} Stubs</strong> — empty entries that still need to be written. Stubs are a great place to start contributing. An entry marked <strong>Differs from Reddit</strong> has words that no longer match the live r/troubledteens wiki page.`,
                 target: '.index-selection-pane .category-tabs',
                 position: 'bottom'
             },
@@ -72,7 +72,7 @@
             },
             {
                 title: 'Fill in the Fields',
-                content: 'Work through the sections: basic info, history, staff, program structure, rules, allegations, media, and testimonies. Many fields have <strong>autocomplete</strong> — start typing to match existing entries and keep names consistent across the wiki.',
+                content: 'Work through the sections: basic info, history, staff, program structure, rules, allegations, media, and testimonies. Many fields have <strong>autocomplete</strong> — start typing to match existing entries and keep names consistent across the wiki. Put earlier names in <strong>Previous &amp; Alternate Names</strong>, with the years each was used if you know them; they print in bold under the title.',
                 target: '#programName',
                 position: 'bottom',
                 scrollTarget: '#programName',
@@ -80,7 +80,7 @@
             },
             {
                 title: 'List Builders',
-                content: 'Sections like Staff, Lawsuits, and News Articles use "adders": fill the small form, click the <strong>Add</strong> button, and the item appears in a list below. Add as many as you need — each item can be removed from the list before generating.',
+                content: 'Sections like Staff, Lawsuits, and News Articles use "adders": fill the small form, click the <strong>Add</strong> button, and the item appears in a list below. Add as many as you need — each item can be removed from the list before generating. Staff are written one paragraph per person, with the other names and nicknames of one person joined; names that may be one person (Sam could be Samuel or Samantha) are listed above the staff list for you to check.',
                 target: '#addStaffBtn',
                 position: 'top',
                 scrollTarget: '#staffName',

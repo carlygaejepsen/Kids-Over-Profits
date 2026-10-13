@@ -60,7 +60,7 @@ get_header();
             <ul class="kop-htu-tips">
                 <li><strong>Search the whole site.</strong> Press <kbd>/</kbd> on any page, or use the search in the header. It looks through programs, companies, people, inspection reports, lawsuits, news and documents at once, and finds a program under any name it has used, so a program that has been renamed turns up under its old name too.
                     <button type="button" class="kop-htu-search__button" data-kop-open-search>Open search</button></li>
-                <li><strong>Every program has its own page.</strong> It gathers what is on file about that program: the names it has gone by, the company that ran it, the state's inspection findings, lawsuits, news coverage, deaths, staff and documents. A program that changed its name is shown in one section per name, each with the records from its own years.</li>
+                <li><strong>Every program has its own page.</strong> It gathers what is on file about that program: the names it has gone by, the company that ran it, the state's inspection findings, lawsuits, news coverage, deaths, staff and documents, which can be filtered by type. A program that changed its name is shown in one section per name, each with the records from its own years.</li>
                 <?php if ($kop_htu_map !== '') : ?>
                     <li><strong>Every page, A to Z.</strong> The <a href="<?php echo esc_url($kop_htu_map); ?>">site map</a> lists every page of the site, and every program and company page from A to Z.</li>
                 <?php endif; ?>

@@ -50,6 +50,8 @@ Just copy one of these, paste into your WordPress page, and change the ID number
 [kop_folder folder_id="5"]
 ```
 
+The folder shows every document in it and in its subfolders.
+
 ---
 
 ### Folder with Custom Title
@@ -72,15 +74,48 @@ Just copy one of these, paste into your WordPress page, and change the ID number
 
 ## Full Library Template
 
-### All Folders with Search
+For a whole library, link to the Document Archive instead of building one:
+`https://kidsoverprofits.org/document-archive/`. It already has "Start here",
+documents by type, every program A to Z and the newest additions.
+
+The old all-folders shortcode still works, but it lists every folder in the
+media library (thousands of them), so keep it off public pages:
 ```
 [kop_document_library]
 ```
 
-### All Folders Without Search
+---
+
+## Documents of One Type
+
+Every document has a type (student handbook, inspection report, legal filing,
+news clipping...). To send readers to every document of one kind, side by side
+across programs, link to its page:
 ```
-[kop_document_library show_search="no"]
+https://kidsoverprofits.org/documents/student-handbook/
 ```
+`https://kidsoverprofits.org/documents/` lists every type. See
+DOCUMENT-LIBRARY-SIMPLE-GUIDE.md for the full list of type names.
+
+---
+
+## Pull Quote
+
+The easy way needs no code at all: while logged in as an admin, open the page,
+select the words, and press the **Pull quote** button that appears under them.
+Save offers Undo; the pencil on the pull quote changes or removes it later.
+In the WordPress editor, the Pullquote block (type `/pullquote`) looks the same.
+
+If you would rather type it into the page, use this:
+```
+[kop_pullquote credit="Name, role"]The words you want set large.[/kop_pullquote]
+```
+**Beside the text, on the right:**
+```
+[kop_pullquote credit="Name, role" align="right"]The words you want set large.[/kop_pullquote]
+```
+Use `align="left"` for the left side. Beside the text only on a wide screen;
+on a phone it runs across the column.
 
 ---
 
@@ -104,13 +139,13 @@ Download helpful documents:
 [kop_document id="555" style="button" title="Read the Full Report"]
 ```
 
-### Document Library Page
+### One Folder on Its Own Page
 ```
-# Document Center
+# Legal Documents
 
-Search all our documents below:
+Every filing we hold in this case:
 
-[kop_document_library]
+[kop_folder folder_id="12" title="Court Filings"]
 ```
 
 ---
@@ -119,15 +154,18 @@ Search all our documents below:
 
 ### Document ID:
 1. Go to Media Library in WordPress
-2. Click on your document
+2. Click on your document, then "Edit more details"
 3. Look at the browser URL
 4. Find `post=123` - the number is your ID
 
 ### Folder ID:
-1. Go to FileBird folders
-2. Click on a folder
+1. Go to KOP Tools > Sort Media
+2. Click your folder in the list on the left
 3. Look at the browser URL
 4. Find `folder=5` - the number is your ID
+
+Or open the Document Archive, click a collection, and read the number after
+`?collection=` in the browser URL.
 
 ---
 

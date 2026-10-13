@@ -81,6 +81,7 @@ $page('common-survivor-experiences', 'Common Survivor Experiences', 'templates/p
 $page('stray-article', 'An Article Nobody Placed', 'templates/page-article.php');
 $page('tti-program-index', 'TTI Program Index', 'templates/page-tti-program-index.php');
 $page('network-map', 'Network Map', 'templates/page-network-map.php');
+$page('marketing-companies', 'Marketing Companies', 'templates/page-marketer-index.php');
 $page('inspection-reports', 'Inspection Reports', 'templates/page-inspection-reports.php');
 $page('ut-reports', 'Utah Inspection Reports', 'templates/page-state-reports.php');
 $page('wyoming', 'Wyoming', 'templates/page-state.php');
@@ -189,6 +190,10 @@ function kop_v2_search($phrase, $f = 10, $o = 5, $p = 3) {
     return $out;
 }
 function kop_search_v2_result_url($r) { return $r['profile_url'] ?? ''; }
+// Routes that are not WordPress pages.
+function kop_feat_url() { return home_url('/essential-reporting/'); }
+function kop_dt_url($type = '') { return home_url('/documents/' . ($type !== '' ? $type . '/' : '')); }
+function kop_send_page_url() { return home_url('/send/'); }
 
 require ABSPATH . 'inc/site-map.php';
 require ABSPATH . 'inc/how-to-use.php';
@@ -210,14 +215,14 @@ check('an index article holds its own children', $titles_in($history['children']
 check('Survivors holds its article', $titles_in($s['hubs']['items'][1]['children']) === array('Common Survivor Experiences'));
 check('an article no hub holds is under More articles', $titles_in($s['reading']['items']) === array('An Article Nobody Placed'));
 check('placed articles are not listed twice', !in_array('Precursors in Antiquity', $titles_in($s['reading']['items']), true));
-check('directories: parent companies route + directory + map + 18+ programs (part of the industry)', $titles_in($s['records']['items']) === array('Network Map', 'Parent companies', 'TTI Program Index', 'Young Adult Programs'));
+check('directories: parent companies route + directory + map + 18+ programs (part of the industry)', $titles_in($s['records']['items']) === array('Marketing Companies', 'Network Map', 'Parent companies', 'TTI Program Index', 'Young Adult Programs'));
 check('inspections', $titles_in($s['inspections']['items']) === array('Inspection Reports', 'Utah Inspection Reports'));
 check('places', $titles_in($s['places']['items']) === array('Mexico', 'Wyoming'));
-check('sources', $titles_in($s['sources']['items']) === array('Lawsuits', 'TTI News Feed'));
+check('sources: pages + essential reporting and documents by type (routes)', $titles_in($s['sources']['items']) === array('Documents by type', 'Essential reporting', 'Lawsuits', 'TTI News Feed'));
 check('reference (links by slug)', $titles_in($s['reference']['items']) === array('How to use this site', 'Links', 'Report Abuse', 'TTI Glossary'));
 check('boarding schools are set apart, outside the TTI', $titles_in($s['outside']['items']) === array('Indian Boarding Schools and Residential Schools')
     && stripos($s['outside']['title'], 'outside the troubled teen industry') !== false);
-check('take part', $titles_in($s['take-part']['items']) === array('Donate'));
+check('take part: pages + the /send/ route', $titles_in($s['take-part']['items']) === array('Donate', 'Send a link'));
 check('about (contact by slug)', $titles_in($s['about']['items']) === array('Contact', 'Privacy Policy'));
 check('other pages', $titles_in($s['other']['items']) === array('Our Story'));
 check('a merged profile is left out, a written one listed', $titles_in($s['profiles']['items']) === array('Elan School'));
@@ -319,16 +324,18 @@ check('the site map points new readers to how to use this site', strpos($html, '
 $htu = kop_how_to_use_build(kop_site_map_public_pages());
 $htu_groups = array();
 foreach ($htu['groups'] as $g) $htu_groups[$g['title']] = $titles_in($g['items']);
-check('how to use: groups by what a reader came to do', array_keys($htu_groups) === array('Look up a program', 'Records of harm', 'Get help or take action', 'Understand the industry', 'Written for you'));
+check('how to use: groups by what a reader came to do', array_keys($htu_groups) === array('Look up a program', 'The businesses around the programs', 'Records of harm', 'Get help or take action', 'Understand the industry', 'Outside the troubled teen industry', 'Written for you'));
 check('how to use: unpublished pages dropped, routes kept', $htu_groups['Look up a program'] === array('Facility directory', 'Parent companies', 'Network map', 'Young adult programs')
-    && $htu_groups['Records of harm'] === array('Inspection reports', 'Lawsuits', 'News feed', 'Essential reporting'));
+    && $htu_groups['Records of harm'] === array('Inspection reports', 'Lawsuits', 'News feed', 'Essential reporting', 'Documents by type')
+    && $htu_groups['The businesses around the programs'] === array('Marketing companies')
+    && $htu_groups['Outside the troubled teen industry'] === array('Indian boarding schools and residential schools'));
 check('how to use: every group says what it is for, every link what is there', !array_filter($htu['groups'], function ($g) { return $g['intro'] === '' || array_filter($g['items'], function ($i) { return strlen($i['note']) < 60; }); }));
 check('how to use: the in-danger line links report abuse', $htu['urgent']['report'] === 'https://kidsoverprofits.org/report-abuse/');
 $GLOBALS['kop_how_to_use'] = $htu;
 ob_start();
 include ABSPATH . 'templates/how-to-use.php';
 $htu_html = ob_get_clean();
-check('how to use: page renders its groups, search tips and the site map link', substr_count($htu_html, 'class="kop-htu-group"') === 5 && strpos($htu_html, 'kop-htu-urgent') !== false
+check('how to use: page renders its groups, search tips and the site map link', substr_count($htu_html, 'class="kop-htu-group"') === count($htu['groups']) && strpos($htu_html, 'kop-htu-urgent') !== false
     && strpos($htu_html, 'data-kop-open-search') !== false && strpos($htu_html, 'href="https://kidsoverprofits.org/site-map/"') !== false);
 check('how to use: listed in the site map', in_array('How to use this site', $titles_in($s['reference']['items']), true));
 

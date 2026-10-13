@@ -4,7 +4,7 @@ Here's what each shortcode looks like and when to use it.
 
 ---
 
-## 🔗 Single Document - Link Style
+## Single Document - Link Style
 **Use when:** You want a simple text link to a document
 
 **Code:**
@@ -14,13 +14,13 @@ Here's what each shortcode looks like and when to use it.
 
 **Looks like:**
 ```
-📄 PDF My Important Report (2.3 MB)
+[PDF] My Important Report (2.3 MB)
 ```
-*(clickable link with file icon and size)*
+*(navy link with a small file type badge and the size; highlighted on hover)*
 
 ---
 
-## 🔘 Single Document - Button Style
+## Single Document - Button Style
 **Use when:** You want to emphasize a download or important document
 
 **Code:**
@@ -30,15 +30,15 @@ Here's what each shortcode looks like and when to use it.
 
 **Looks like:**
 ```
-┌────────────────────────┐
-│  PDF  Download Now     │  ← Blue button
-└────────────────────────┘
+┌──────────────────────────────┐
+│  [PDF]  Download Now  (2 MB) │  ← Teal button
+└──────────────────────────────┘
 ```
-*(clickable button with hover effect)*
+*(turns navy and lifts slightly on hover)*
 
 ---
 
-## 📦 Single Document - Card Style
+## Single Document - Card Style
 **Use when:** You want a nice visual display (default style)
 
 **Code:**
@@ -48,18 +48,17 @@ Here's what each shortcode looks like and when to use it.
 
 **Looks like:**
 ```
-┌─────────────────────────┐
-│   [PDF Icon/Thumbnail]  │
-│                         │
-│   Document Title        │
-│   1.5 MB               │
-└─────────────────────────┘
+┌──────────────────────────────────┐
+│ [preview]   Document Title       │
+│             1.5 MB               │
+└──────────────────────────────────┘
 ```
-*(card with border, icon, title, and size)*
+*(bordered card: a preview of the first page for PDFs and images, otherwise a
+file type badge, then the title and size)*
 
 ---
 
-## 📁 Single Folder
+## Single Folder
 **Use when:** You want to show all documents from one category
 
 **Code:**
@@ -70,37 +69,95 @@ Here's what each shortcode looks like and when to use it.
 **Looks like:**
 ```
 Legal Documents (5)
+─────────────────────────────────────────────
+[All (5)] [Legal filings (4)] [Depositions and discovery (1)]
 
-📄 Document 1.pdf      2.1 MB
-📄 Document 2.pdf      1.8 MB  
-📄 Document 3.docx     450 KB
-📄 Document 4.pdf      3.2 MB
-📄 Document 5.pdf      1.1 MB
+┌──────────┐ ┌──────────┐ ┌──────────┐
+│[preview] │ │[preview] │ │[preview] │
+│Complaint │ │Order     │ │Deposition│
+│Legal     │ │Legal     │ │Deposition│
+│filing    │ │filing    │ │or discov.│
+│2.1 MB    │ │1.8 MB    │ │3.2 MB    │
+└──────────┘ └──────────┘ └──────────┘
+...
 ```
-*(expandable folder with all documents listed)*
+*(a grid of tiles, documents in subfolders included; each tile has a small
+label for its document type. The row of type buttons only appears when the
+folder holds two or more types. Add `layout="list"` for one document per row.)*
 
 ---
 
-## 📚 Full Library
-**Use when:** You want a complete searchable document library
+## Documents by Type
+**Use when:** You want readers to compare one kind of document across programs
 
-**Code:**
+**Link:**
 ```
-[kop_document_library]
+https://kidsoverprofits.org/documents/inspection-report/
 ```
 
 **Looks like:**
 ```
-┌────────────────────────────────┐
-│ Search folders and documents...|  ← Search box
-└────────────────────────────────┘
+Inspection and licensing reports
+State inspection, licensing, monitoring and complaint investigation reports.
+212 documents from 40 programs.
 
-📁 Legal Documents (5)        ▼
-📁 Reports (12)               ▼
-📁 Forms (8)                  ▼
-📁 Media (23)                 ▼
+Legal filings · News clippings · Student and resident handbooks · ...  ← other types
+
+Program or title [Name a program, company or word]  State [Every state]  Decade [Any year]
+
+Program A  UT  (3)
+   [doc] [doc] [doc]
+Program B  MT  (2)
+   [doc] [doc]
+...
 ```
-*(searchable, collapsible folders)*
+*(every document of that type, grouped by program; `/documents/` lists every type)*
+
+---
+
+## Full Library
+**Use when:** You want a complete document library
+
+**Link (recommended):**
+```
+https://kidsoverprofits.org/document-archive/
+```
+
+**Looks like:**
+```
+Start here           a few documents to read first
+By type              government reports, legislation, research, handbooks...
+Networks             the chains and trade groups with the largest archives
+Every program        each program's folder A to Z, with a filter
+Recently added       the newest documents filed anywhere
+```
+
+The `[kop_document_library]` shortcode (a search box over every folder,
+each one opening and closing) still exists, but it lists thousands of folders,
+so use the link above instead.
+
+---
+
+## Pull Quote
+**Use when:** One line of an article deserves to be read twice
+
+**How:** Logged in as an admin, select the words on the page and press the
+**Pull quote** button under them. Or type:
+```
+[kop_pullquote credit="Name, role"]The words you want set large.[/kop_pullquote]
+```
+
+**Looks like:**
+```
+═══════════════════════════════════════  ← orange rule
+                   "
+     The words you want set large,
+       in a big serif typeface.
+          — NAME, ROLE
+───────────────────────────────────────  ← teal rule
+```
+*(across the text column by default; "right" or "left" puts it beside the text
+on a computer screen, and on a phone every pull quote runs across)*
 
 ---
 
@@ -128,31 +185,38 @@ View all our legal documents below:
 [kop_folder folder_id="15" title="Legal Documents"]
 ```
 
-### Example 3: Full Document Center
+### Example 3: Pointing to the Whole Archive
 ```markdown
-# Document Library
+## Read the Documents Yourself
 
-Search and browse all available documents:
-
-[kop_document_library]
+Browse every handbook, inspection report and court filing we hold in the
+[Document Archive](https://kidsoverprofits.org/document-archive/), or compare
+[every student handbook](https://kidsoverprofits.org/documents/student-handbook/)
+program by program.
 ```
 
 ---
 
 ## Quick Decision Guide
 
-**"I just need a link to one PDF"**  
+**"I just need a link to one PDF"**
 → `[kop_document id="X" style="link"]`
 
-**"I want a download button"**  
+**"I want a download button"**
 → `[kop_document id="X" style="button"]`
 
-**"Show everything in the Legal folder"**  
+**"Show everything in the Legal folder"**
 → `[kop_folder folder_id="X"]`
 
-**"I want a full searchable library"**  
-→ `[kop_document_library]`
+**"Show every handbook from every program"**
+→ link to `/documents/student-handbook/`
+
+**"I want a full library"**
+→ link to `/document-archive/`
+
+**"Make this sentence stand out"**
+→ select it and press **Pull quote**
 
 ---
 
-That's it! Pick the style that fits your need, copy the code, change the ID, done! 🎉
+That's it! Pick the style that fits your need, copy the code, change the ID, done!

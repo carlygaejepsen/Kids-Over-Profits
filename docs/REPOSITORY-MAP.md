@@ -1,6 +1,7 @@
 # Kids Over Profits Repository Map
 
-Baseline: 2026-09-24
+Baseline: 2026-09-24. Templates, routes and the tools repository's scrapers
+checked against the code on 2026-10-13.
 
 This workspace contains two related repositories. The web repository is the
 WordPress child theme and application source. The tools repository contains
@@ -61,7 +62,90 @@ provided by the hosting environment.
 - Program datasets: source files under `js/data/reddit-wiki/` are aggregated
   by `scripts/aggregate-all-programs.js`.
 - Network map: source CSVs and overrides under `js/data/network/` produce the
-  graph consumed by `js/network-map/`.
+  graph consumed by `js/network-map/`. `inc/network-rebuild.php` notices when
+  the data the build reads has changed and starts
+  `.github/workflows/build-network-map.yml`, which rebuilds, tests, commits
+  and deploys `graph.json`.
+- Review: every approval queue (news, lawsuits, bills, imports, AI drafts,
+  merges, document types) is one source in `inc/review-inbox/` shown on the
+  Submissions Review page (`inc/review-inbox.php`). Approving calls the
+  queue's own apply function; Recently done keeps an exact Undo.
+- People: everyone named in the records has a `{prefix}kop_people` id
+  (`inc/people.php`); facility pages, company pages and the map read it.
+- Mobile app and browser extension: the app
+  (`kids-over-profits-mobile`) reads `kop/v1/facility`, `/operator`, `/news`
+  and `/resources` from `inc/mobile-api.php`; the app's Send tab, the
+  "Send to KOP" extension (`browser-extension/send-to-kop/`) and `/send/`
+  post to `inc/mobile-submit.php`, and signed-in reviewers use
+  `kop/v1/extension/*` (`inc/source-submissions.php`).
+
+## Page Templates and Routes
+
+Every template is in `templates/`. `kop_template_assignments()` in
+`inc/admin.php` assigns templates to existing pages by slug, and
+`kop_tool_page_specs()` there creates the pages a template needs when they
+are missing. The slugs below come from `tmp/prod.sqlite` (synced 2026-10-12)
+and those two functions.
+
+### Pages that use a template
+
+| Template | Pages (slug) |
+| --- | --- |
+| `page-home.php` | the home page (`kids-over-profits`) |
+| `page-hub.php` | the 14 hubs (`history`, `survivors`, `researchreports`, `families`, `where-are-the-kids`, `advocates`, `journalists`, `volunteer`, `law-policy`, `resources`, `support`, `editorials`, `investigatory-spotlight`, `reputation-management`), each built from `kop_hub_config()` in `inc/hub-shell.php`; `support` stays published but 301s to `/donate/` |
+| `page-article.php` | long-form articles (39), each placed under a hub by `kop_article_parents()` |
+| `page-state.php`, `page-country.php` | the 50 state hubs and 13 country hubs |
+| `page-state-reports.php` | the `/xx-reports/` inspection trackers (29 pages) |
+| `page-inspection-reports.php`, `page-severe-reports.php` | `inspection-reports`, `severe-reports` |
+| `page-tti-program-index.php` | `tti-program-index` (by parent company, and by location at `?view=location`) |
+| `page-location-index.php` | `location-index`, which 301s to `/tti-program-index/?view=location` (`inc/redirects.php`) |
+| `page-referrer-index.php` | `referrers-educational-consultants` |
+| `page-transporter-index.php` | `youth-transport-companies` |
+| `page-provider-index.php` | `mental-health-providers` |
+| `page-marketer-index.php` | `marketing-companies` (`inc/marketers.php`) |
+| `page-tradeorg-index.php` | `trade-organizations` (`inc/tradeorgs.php`) |
+| `page-young-adult-programs.php` | `young-adult-programs` (`inc/young-adult-programs.php`) |
+| `page-indian-boarding-schools.php` | `indian-boarding-schools` (`inc/indigenous-schools.php`; text in `js/data/pages/indian-boarding-schools.json`) |
+| `page-related-industry.php` | `related-industries`, `foster-care`, `disability-group-homes`, `nursing-homes`, `psychiatric-hospitals`; drafts until the owner publishes them, text in `js/data/pages/<slug>.json` |
+| `page-faq.php` | `faq` (text in `js/data/pages/faq.json`) |
+| `page-glossary.php` | `glossary` |
+| `page-report-abuse.php` | `report-abuse` |
+| `page-memorial.php` | `in-loving-memory` |
+| `page-network-map.php` | `network-map` |
+| `page-news-feed.php` | `tti-news-feed` |
+| `page-wiki-feed.php` | `reddit-wiki`, `r-troubledteens-wiki-backup` |
+| `page-lawsuits.php`, `page-legislation.php` | `lawsuits`, `legislative-efforts` |
+| `page-submit-lawsuit.php`, `page-submit-legislation.php` | `submit-lawsuit`, `submit-legislation` |
+| `page-data.php` | `tti-data-submission` (the public data form) |
+| `page-document-archive.php` | `document-archive` |
+| `page-document-folder.php` | the five `document-library-*` pages |
+| `page-open-data.php` | `open-data` |
+| `page-utility.php` | `contact`, `links`, `anon-submit`, `donate`, `no-access` |
+| `page-legal-document.php` | `richardson-v-elevations-rtc-prelitigation-panel-opinion` |
+| `page-privacy-policy.php`, `page-terms-of-service.php` | `privacy-policy`, `terms-of-service` |
+| `page-volunteers.php` | the volunteer projects page |
+| `single-facility-profile.php` | the 16 hand-written facility profile pages (`hyde`, `elan`, ...); a profile listed in `kop_facility_pages_merged_profiles()` 301s to its `/facility/` page |
+| `single-person-profile.php` | personnel profile pages (49, drafts) |
+| Admin screens | `page-admin-data.php` (`admin-data`), `page-admin-data-manager.php` (`data-manager`), `page-admin-submissions.php` (`admin-submissions`), `page-admin-lawsuits.php`, `page-admin-legislation.php`, `page-admin-volunteers.php`, `page-news-processor.php` (`news-processor`), `page-wiki-editor.php` (`wiki-editor`) |
+
+`data-form-admin.php`, `data-form-public.php`, `data-form-marketer.php` and
+`data-form-tradeorg.php` are parts the data form templates include.
+
+### Generated routes
+
+These have no WordPress page. Each module adds a rewrite rule and renders
+its own template.
+
+| Route | Module | Template |
+| --- | --- | --- |
+| `/facility/<slug>/` | `inc/facility-pages.php` | `facility-page.php` |
+| `/operator/` and `/operator/<slug>/` | `inc/operator-pages.php`, `inc/operator-history.php` | `operator-index.php`, `operator-page.php` |
+| `/documents/` and `/documents/<type>/` | `inc/doc-types.php` | `document-types.php` |
+| `/essential-reporting/` | `inc/featured-reporting.php` | `featured-reporting.php` |
+| `/send/` | `inc/send-page.php` | `send-page.php` |
+| `/site-map/` (`/sitemap/` 301s here) | `inc/site-map.php` | `site-map.php` |
+| `/how-to-use-this-site/` | `inc/how-to-use.php` | `how-to-use.php` |
+| `/volunteer-review/` | `inc/review-volunteers.php` | `volunteer-review.php` |
 
 ## Tools Repository
 
@@ -74,7 +158,9 @@ citation data. The tools repository does not render WordPress pages.
 
 | Area | Responsibility | Starting points |
 | --- | --- | --- |
-| `*_scraper.py` | State-specific source collection and normalization | `ar_scraper.py`, `az_scraper.py`, `ca_scraper.py`, `ct_scraper.py`, `fl_scraper.py`, `ga_scraper.py`, `mn_scraper.py`, `nc_scraper.py`, `nv_scraper.py`, `or_scraper.py`, `tx_scraper.py`, `wa_scraper.py` |
+| `*_scraper.py` | State-specific source collection and normalization | One per state, `<st>_scraper.py`: AR, AZ, CA, CO, CT, FL, GA, HI, IA, ID, MD, ME, MI, MN, NC, NH, NV, OH, OK, OR, PA, SD, TX, VA, WA, WV, WY. Montana's reports are downloaded by `mt_dl.py`; Utah's and Arizona's citations by `utah_citation_scraper.py` and `az_citation_scraper.py` |
+| Other collectors | Referrer and NATSAP lists | `edcon_scraper.py`, `natsap_edcon_scraper.py`, `natsap_program_scraper.py`, `ther_con_scraper.py` |
+| `report_store.py` | Saves each scraped report PDF to the FileBird Google Drive folder and extracts its text once | `report_store.py` |
 | `inspection_api_client.py` | Shared payload construction, batching, retries, and API writes | `inspection_api_client.py` |
 | `scraper_state.py` | Incremental seen-ID and cursor state helpers | `scraper_state.py` |
 | `scraper_launcher.py` | Desktop launcher and scraper registry | `scraper_launcher.py` |
@@ -101,7 +187,11 @@ MySQL inspection_facilities + inspection_reports
 WordPress REST read endpoint -> PHP template + JavaScript renderer
 ```
 
-## Page Template Baseline
+## Page Template Baseline (2026-09-24)
+
+This section and the next record the inventory as it stood on 2026-09-24.
+Every page in them has since been decided and handled; the outcome for each
+is in [PAGE-CLASSIFICATION.md](PAGE-CLASSIFICATION.md).
 
 The local production mirror is `tmp/prod.sqlite`. It contains 182 page
 records in draft, private, or published status.
@@ -164,7 +254,7 @@ These published page records already have explicit 301 destinations:
 | `doe-v-hyde-complaint` | Uploaded PDF | Former single-file court document page |
 | `doe-v-hyde-complaint-amended` | Uploaded PDF | Former single-file court document page |
 | `edcons` | `/referrers-educational-consultants/` | Replaced by the referrer index |
-| `international` | `/location-index/?type=country` | Replaced by the location index |
+| `international` | `/tti-program-index/?view=location&type=country` | Replaced by the location index (now a tab of the program index) |
 | `overt-and-covert-conversion-therapy-practices-in-therapeutic-boarding-schools` | Uploaded PDF | Former single-file document page |
 | `richardson-complaint` | Uploaded PDF | Former single-file court document page |
 | `shiver-v-southstone-complaint` | Uploaded PDF | Former single-file court document page |
@@ -226,8 +316,12 @@ From the web repository:
 python scripts/check-bare-text.py
 php scripts/test-facility-pages.php
 php scripts/test-operator-pages.php
+php scripts/test-site-map.php
 node scripts/test-network-modules.js
 ```
+
+`CLAUDE.md` at the repository root lists every other build and test
+command.
 
 From the tools repository:
 

@@ -29,7 +29,7 @@ kop_rinbox_register('wiki-links', function () {
     return array(
         'label'    => 'Wiki links',
         'group'    => 'Suggestions to check',
-        'help'     => 'Each r/troubledteens wiki entry tied to the KOP record it is about, so the entry can be brought up to date from the record (closures, news, lawsuits, deaths, findings). Link the record it describes (a program, a company, an educational consultant, a mental health provider or a transporter); Set aside a page KOP has no record for. Undo on the Linked here and Set aside tabs.',
+        'help'     => 'Each r/troubledteens wiki entry tied to the KOP record it is about, so the entry can be brought up to date from the record (closures, news, lawsuits, deaths, findings). Link the record it describes (a program, a company, an educational consultant, a mental health provider or a transporter), or create that record if KOP has none; Set aside a page that needs no record. Undo on the Linked here and Set aside tabs.',
         'views'    => array('clear' => 'One clear match', 'choose' => 'Pick the record', 'none' => 'No record found', 'linked' => 'Linked here', 'skip' => 'Set aside'),
         'count'    => function () {
             $c = kop_rinbox_wlinks_view_counts();

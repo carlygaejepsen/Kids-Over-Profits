@@ -173,6 +173,8 @@ function get_posts($args) {
     return $stmt->fetchAll(PDO::FETCH_OBJ);
 }
 function kop_hub_pdo() { return $GLOBALS['kop_db']; }
+// The /essential-reporting/ route (inc/featured-reporting.php, not loaded here)
+function kop_feat_url() { return home_url('/essential-reporting/'); }
 
 // The loop, one post.
 function have_posts() { return !$GLOBALS['kop_test_done']; }

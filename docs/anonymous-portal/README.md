@@ -4,7 +4,8 @@ The **Anonymous Portal** lets whistleblowers, survivors and staff send a documen
 
 ## Where it lives
 
-- **Page:** `/anon-submit/` on the live site (linked from the home page's "Encrypted Upload" card, the inspection reports page, and the Get Involved header menu built by `api/rebuild-header-menu.php`). The page content is just the shortcode `[anonymous_doc_portal]`.
+- **Page:** `/anon-submit/` on the live site. The page content is just the shortcode `[anonymous_doc_portal]`; the page itself uses the shared Utility Page template (`templates/page-utility.php`, assigned in `kop_template_assignments()` in `inc/admin.php`), whose settings in `kop_utility_config()` (`inc/utility-pages.php`) give it a standfirst ("Submit documents securely for review by Kids Over Profits.") and turn the share row off.
+- **Linked from:** the home page's "Encrypted Upload" card, the inspection reports page, the Get Involved header menu built by `api/rebuild-header-menu.php`, the Survivors, Research reports, Volunteer and Reputation management hub pages (their contribute and action links in `inc/hub-shell.php`), the Document Archive landing page (`inc/document-archive.php`) and /how-to-use-this-site/ (`inc/how-to-use.php`).
 - **Backend:** the `AnonymousDocPortal` class in `inc/features.php`, created on `after_setup_theme` by `kop_initialize_anonymous_doc_portal()`. It registers the shortcode, the AJAX action `submit_anonymous_doc` (both `wp_ajax_` and `wp_ajax_nopriv_`, so logged-out visitors can submit), the front-end assets and the admin screen.
 - **Frontend:** `js/anonymous-portal.js` (jQuery) and `css/anonymous-portal.css`. `AnonymousDocPortal::enqueue_scripts()` loads both only on a post whose content carries the shortcode.
 - **Guided tour:** `js/tool-tutorials.js` has a tour for the portal; `kop_enqueue_tool_tutorials()` in `inc/enqueue.php` loads it on any page carrying the shortcode.
@@ -52,7 +53,9 @@ Recipients come from the `kop_submission_notify_emails` option (comma or newline
 
 ## Reviewing submissions
 
-1. WordPress admin > **Anonymous Docs** (`admin.php?page=anonymous-docs`, `manage_options` only) lists the sealed submissions, newest first, with a **Download (encrypted)** button for each (`admin-post.php?action=kop_anon_download`, nonce-checked).
+1. KOP Tools > Review Inbox > **Anonymous documents** (`inc/review-inbox/anonymous-docs.php`) lists the sealed submissions, newest first, each with a **Download (encrypted)** link (`admin-post.php?action=kop_anon_download`, nonce-checked per file). Its help line says which key is in use and warns when uploads are being refused (no public key, or no `CLOUDMERSIVE_API_KEY`) or when older unencrypted files remain, with a "Lock the older documents now" button for those. **Mark handled** moves a submission to the Handled view (the file name is kept in the `kop_anon_docs_handled` option; nothing on the server changes); **Mark not handled** puts it back. Volunteer reviewers can never be given this queue (`kop_vol_never_sources()` in `inc/review-volunteers.php`).
+
+   The older **Anonymous Docs** screen (`admin.php?page=anonymous-docs`, `manage_options` only) still works and is still where the notification email links, but its sidebar entry is hidden (`inc/review-inbox-menu.php`); open it from the inbox tab's "Open the full Anonymous documents screen" link or the KOP Tools dashboard's "Old review screens".
 2. Open the downloaded files on your own computer with the private key. With the PHP bundled in Flywheel Local:
 
    ```

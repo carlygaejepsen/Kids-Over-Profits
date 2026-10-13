@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KOP Tools
  * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
- * Version: 2.3.0
+ * Version: 2.4.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -38,7 +38,7 @@ function kop_tools_registry() {
         'Review queue' => array(
             array(
                 'title'    => 'Submissions Review',
-                'desc'     => 'The one place to approve, reject or edit every submission: news, data (facility edit suggestions), wiki, lawsuits and legislation.',
+                'desc'     => 'The Review Inbox: every approval queue in one place (news, data, wiki, lawsuits, legislation, the news scans, imports, merges, map years and renames, inspection findings, conflicts...), with Recently done and Undo, Later, Preview and volunteer recommendations.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-submissions.php',
             ),
@@ -86,7 +86,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Woodbury Facts',
-                'desc'     => 'Staff, careers, incidents, openings, closings, names and owners read from every Woodbury Reports issue; adding one is live at once, with Undo.',
+                'desc'     => 'Staff, careers, incidents, openings, closings, names and owners read from every Woodbury Reports issue (HEAL and wiki facts too), with a tab for young adult programs; adding one is live at once, with Undo.',
                 'type'     => 'screen',
                 'screen'   => 'kop-woodbury-facts',
                 'requires' => 'kop_render_woodbury_facts_page',
@@ -123,13 +123,13 @@ function kop_tools_registry() {
         'Records & editors' => array(
             array(
                 'title'    => 'Data Manager',
-                'desc'     => 'Every record in one list (facilities, companies, referrers, transporters, news, lawsuits, bills) with filters; merge, reclassify and reassign, with Undo.',
+                'desc'     => 'Every record in one list (facilities, program homes, companies, referrers, transporters, providers, marketing companies, trade organizations, young adult programs, Indian boarding schools, people, news, lawsuits, bills, merged and converted records) with filters; merge, reclassify and reassign, with Undo.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-data-manager.php',
             ),
             array(
                 'title'    => 'Admin Data Form',
-                'desc'     => 'Edit facility, operator, referrer and provider records directly.',
+                'desc'     => 'Edit parent company, operator, location, referrer, transporter, mental health provider, marketing company and trade organization records directly.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-data.php',
             ),
@@ -172,21 +172,28 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Page Text',
-                'desc'     => 'Edit the words of pages whose text lives in js/data/pages/ (e.g. Indian Boarding Schools); drafts stay private until published.',
+                'desc'     => 'Edit the words of pages whose text lives in js/data/pages/ (Indian Boarding Schools, FAQ, the related industries pages); drafts stay private until published.',
                 'type'     => 'screen',
                 'screen'   => 'kop-page-text',
                 'requires' => 'kop_render_page_text_editor',
             ),
             array(
+                'title'    => 'Proper Names',
+                'desc'     => 'Words and names the site always capitalises as written (NATSAP, WWASP, MacLaren, LLC...) wherever it changes the case of text; one per line, Undo for the last save.',
+                'type'     => 'screen',
+                'screen'   => 'kop-proper-names',
+                'requires' => 'kop_proper_names_page',
+            ),
+            array(
                 'title'    => 'Merge Duplicates',
-                'desc'     => 'Facility records stored twice, found automatically and merged with one click (documents, links and folders follow); exact Undo from the Merged tab.',
+                'desc'     => 'Facility records stored twice, found automatically and merged with one click (documents, links and folders follow); renamed programs merge only as a rename, each name keeping its years. Exact Undo from the Merged tab.',
                 'type'     => 'screen',
                 'screen'   => 'kop-merge-duplicates',
                 'requires' => 'kop_fmerge_page',
             ),
             array(
                 'title'    => 'People',
-                'desc'     => 'One id per person named on a staff list, operator or map node; separate a name that is two people.',
+                'desc'     => 'One id per person named anywhere in the records (staff lists, owners, consultants, map people, lawsuits, journalists), in its pool (industry, harmed, press); where each is named, and separate a name that is two people.',
                 'type'     => 'screen',
                 'screen'   => 'kop-people',
                 'requires' => 'kop_people_admin_page',
@@ -207,7 +214,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Young Adult Programs',
-                'desc'     => 'Programs for people 18 and older, kept apart from the TTI facility records.',
+                'desc'     => 'Programs for people 18 and older, kept apart from the TTI facility records: add or edit one, its Woodbury facts, and whether /young-adult-programs/ lists it.',
                 'type'     => 'screen',
                 'screen'   => 'kop-young-adult-programs',
                 'requires' => 'kop_render_ya_admin',
@@ -233,6 +240,13 @@ function kop_tools_registry() {
             ),
         ),
         'News' => array(
+            array(
+                'title'    => 'Essential Reporting',
+                'desc'     => 'Articles picked as especially good journalism, each with a note on why: find and pick, edit notes, Recent changes with Undo. Shown on /essential-reporting/, the news and home pages and facility pages; nominations wait in the Review Inbox (Nominated).',
+                'type'     => 'screen',
+                'screen'   => 'kop-essential-reporting',
+                'requires' => 'kop_render_feat_admin',
+            ),
             array(
                 'title' => 'Manage Story Arcs',
                 'desc'  => 'Create and edit the ongoing story arcs featured on the news feed; attach or detach member articles and scan the archive for candidates.',
@@ -268,7 +282,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Map Renames',
-                'desc'     => 'Set the year a program was renamed, which splits the two names\' years on the map at once.',
+                'desc'     => 'Set the year a program was renamed (or swap a pair\'s order), which splits the two names\' years on the map and the facility page at once.',
                 'type'     => 'screen',
                 'screen'   => 'kop-network-renames',
                 'requires' => 'kop_network_renames_page',
@@ -302,7 +316,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title'    => 'Inspection Links',
-                'desc'     => 'Tie facility records to state inspection rows filed under a different name.',
+                'desc'     => 'Tie facility records to state inspection rows filed under a different name (a program with homes links as one unit), or link any row by hand.',
                 'type'     => 'screen',
                 'screen'   => 'kop-inspection-links',
                 'requires' => 'kop_render_inspection_links_page',

@@ -18,7 +18,7 @@
             },
             {
                 title: 'Search a Name',
-                content: 'Type a person, program or company here to find it on the map instead of hunting for it by eye.',
+                content: 'Type a person, program or company here to find it on the map instead of hunting for it by eye. Earlier names of a program find it too.',
                 target: '#kop-network-search',
                 position: 'bottom',
                 highlightPadding: 6
@@ -62,8 +62,8 @@
             },
             {
                 title: 'Reset, Zoom and Share',
-                content: '<strong>Reset view</strong> and <strong>Fit to screen</strong> bring a lost view back; the <strong>+</strong> and <strong>&minus;</strong> buttons zoom. <strong>Copy link</strong> grabs a URL that reopens the map exactly as you have it set up, to share or save.',
-                target: '#kop-network-reset-view, #kop-network-zoom-fit, #kop-network-share',
+                content: '<strong>Reset view</strong> and <strong>Fit to screen</strong> bring a lost view back; the <strong>+</strong> and <strong>&minus;</strong> buttons zoom, and <strong>Full screen</strong> gives the map the whole window. <strong>Simplify</strong> keeps only the lines about who owns, runs and belongs to what. <strong>Copy link</strong> grabs a URL that reopens the map exactly as you have it set up, to share or save.',
+                target: '#kop-network-reset-view, #kop-network-fullscreen, #kop-network-simplify, #kop-network-zoom-fit, #kop-network-share',
                 highlightAll: true,
                 position: 'top',
                 highlightPadding: 4

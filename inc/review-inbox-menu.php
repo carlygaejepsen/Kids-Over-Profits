@@ -37,12 +37,17 @@ function kop_rinbox_menu_registry($tools) {
         foreach ((array) $list as $i => $tool) {
             if (($tool['type'] ?? '') === 'wp-page' && ($tool['template'] ?? '') === 'page-admin-submissions.php') {
                 $tools[$category][$i]['title'] = 'Review Inbox';
-                $tools[$category][$i]['desc'] = 'Every approval queue in one place: news, data, wiki, lawsuits, legislation, the news scans, imports, '
-                    . 'Woodbury, Fornits, Drive Docs, merges, map years and renames, scraper finds and more.';
+                $tools[$category][$i]['desc'] = 'Every approval queue in one place: news, data, wiki, lawsuits, legislation; what readers send in; '
+                    . 'the news scans (closures, new facilities, scraper finds, bill and lawsuit updates); imports (Woodbury, Fornits, Drive Docs, '
+                    . 'young adult programs); suggestions (duplicates, people, program homes, map years and renames, inspection and wiki links, '
+                    . 'wiki updates, data audit, federal funding); serious violations and plain summaries; document types; Nominated; Conflicts. '
+                    . 'Your inbox: Assigned to you, Snoozed, Volunteers recommend, Recently done with Undo.';
                 continue;
             }
             $screen = ($tool['type'] ?? '') === 'screen' ? (string) ($tool['screen'] ?? '') : '';
             $path = (string) ($tool['path'] ?? '');
+            // A screen kept on the sidebar holds tools the inbox does not: it stays in its own category.
+            if ($screen !== '' && in_array($screen, kop_rinbox_menu_keep_listed(), true)) continue;
             if (($screen !== '' && in_array($screen, $covered, true))
                 || $path === 'api/review-inspection-highlights.php' || $path === 'api/publish-approved-records.php') {
                 $moved[] = $tool;
@@ -57,10 +62,11 @@ function kop_rinbox_menu_registry($tools) {
 
 /**
  * Screens that stay on the sidebar although the inbox covers them: they hold
- * tools the inbox does not (Program Homes: Companies that are one program).
+ * tools the inbox does not (Program Homes: Companies that are one program;
+ * Essential Reporting: find and pick any article, notes, Recent changes).
  */
 function kop_rinbox_menu_keep_listed() {
-    return array('kop-program-homes');
+    return array('kop-program-homes', 'kop-essential-reporting');
 }
 
 /**

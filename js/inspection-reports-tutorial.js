@@ -29,7 +29,7 @@
             },
             {
                 title: 'Sort the List',
-                content: 'Put facilities with violations first, the most inspected first, or leave it alphabetical.',
+                content: 'Put the facilities with the most violations first or the most recently inspected first, show only facilities with violations, or leave it alphabetical.',
                 target: '#sortBy',
                 position: 'bottom',
                 highlightPadding: 6

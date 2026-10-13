@@ -48,7 +48,7 @@
             },
             {
                 title: 'Add What You Know',
-                content: '<strong>My facility used this too</strong> tells us a term applied somewhere not yet listed. <strong>Suggest a correction</strong> flags something wrong. Either way, a person reads it before anything on the page changes.',
+                content: '<strong>My facility used this too</strong> tells us a term applied somewhere not yet listed. <strong>Suggest a correction</strong> flags something wrong. Either way, a person reads it before anything on the page changes, and you can ask to be emailed once it has been reviewed.',
                 target: '.kop-gl-fb-row',
                 position: 'top',
                 scrollTarget: '.kop-gl-fb-row',

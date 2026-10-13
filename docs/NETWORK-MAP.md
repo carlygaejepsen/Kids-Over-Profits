@@ -3,13 +3,18 @@
 An interactive map of the connections between troubled teen industry
 facilities, the people who ran and staffed them, the companies that owned
 them, and the trade groups that accredited them. Built from the project's
-Miro board export.
+Miro board export, joined to the site's own records, and rebuilt from them
+within the hour whenever they change (since 2026-09-30).
 
 This document is the working plan. Phase 1 is done. Phase 2 is planned below
 in detail. The fix list raised on 2026-09-17 is reconciled against what has
 been built in its own section before Phase 3, and the ten reader suggestions
-of 2026-09-22 the same way (Phase 2d). Phase 3 is built except corrections;
-Phase 4 is specified at the end, piece by piece, ready to build.
+of 2026-09-22 the same way (Phase 2d). Phase 3 is built except corrections.
+Phase 4 is built except the board re-import, which was dropped. What
+shipped after it, when the map began following the records (hourly
+rebuild, Map Years, Map Renames, every known rebrand, person ids, closures,
+Data audit line drops, the mobile app's Map tab), is recorded in the last
+section, "After Phase 4".
 
 ## Status
 
@@ -19,9 +24,10 @@ Phase 4 is specified at the end, piece by piece, ready to build.
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile, keyboard | Steps 1 to 7 done (keyboard 2026-09-21) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
-| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster, zoom controls and the fuller legend done (2026-09-22); hover cards next; the rest itemised below in build order |
+| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Done except 2d.4 hulls and group-by-network, not built: opening cluster, zoom controls, legend (2026-09-22), hover cards, Simplify, Show all (2026-09-24), highlight on the board, kind marks (2026-09-28); itemised below |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view done (2026-09-28); corrections outlined |
-| 4 | Integration: facility page embed, board re-import from wp-admin, timeline, the history page's Miro board retired for the map | Specified (2026-09-29), in build order 4.4 still, 4.1, 4.4 live, 4.3, 4.2 |
+| 4 | Integration: facility page embed, board re-import from wp-admin, timeline, the history page's Miro board retired for the map | Built 2026-09-29: 4.1 embed, 4.3 timeline, 4.4 history page (still and live preview); 4.2 dropped, nobody edits the board |
+| After 4 | The map follows the records: hourly rebuild, Map Years second pass, Map Renames, every known rebrand, consultants, person ids, closures, Data audit line drops, Key on phones, the app's Map tab | Done 2026-09-29 to 2026-10-13, recorded in the last section |
 
 ## Phase 1 recap
 
@@ -2626,6 +2632,10 @@ into the live page.
 
 *Dropped 2026-09-29: the owner says nobody edits the Miro board, so there
 is nothing to re-import. Kept below as the record of what was specified.*
+The workflow name it proposed, `build-network-map.yml`, was used the next
+day for another job: the hourly rebuild from the live records (see "After
+Phase 4"), which reads production over an SSH key kept as a GitHub secret,
+the route this section turned down for the import.
 
 *What it has.* The board is two CSVs exported from the Miro copy, plus the
 overrides, the staff lists and the movement CSV, turned into graph.json and
@@ -2948,8 +2958,11 @@ commit.
 
 1. A click on a name in the embed goes to the full map (proposed), or to
    the neighbour's own page when it has one?
+   *Built as proposed (2026-09-29): a click opens the full map on that
+   name, Ctrl-click the profile.*
 2. The 14 Facility Profile posts get the embed too (proposed), or only the
    generated pages?
+   *Built as proposed (2026-09-29): list and map, under the post text.*
 3. Re-import: wire GitHub Actions with a token in `config.local.php`, or
    stop at `--pull`, with the owner building on request?
    *Answered 2026-09-29: stop at `--pull` for now (steps 1 to 3); the
@@ -2970,3 +2983,233 @@ commit.
    repository.*
 6. History page: Miro goes entirely (proposed), or one sentence keeps
    "the original working board is on Miro" as a text link?
+   *Built as proposed (2026-09-29): no Miro link or screenshot is left.*
+
+## After Phase 4: the map follows the records (2026-09-29 to 2026-10-13)
+
+Until Phase 4 the map was the board's last export, rebuilt by hand. Since
+then it is rebuilt from the site's own records whenever they change, and
+several owner decisions made in wp-admin go over the built graph at once,
+with no rebuild. This section records what shipped, checked against the
+code at the time of writing.
+
+### What goes over graph.json at request time
+
+`graph.json` is what the last build wrote. Four layers, each kept in
+WordPress, are applied on top of it by `kop_network_map_config()` (the full
+map, as `KOP_NETWORK_CONFIG`) and by the slice functions (facility page
+embeds and the history preview), so a decision shows on the next request:
+
+| Layer | Where it is kept | Map config key | What it does |
+|---|---|---|---|
+| Line drops | `kop_network_map_edge_drops` filter (Data audit, option `kop_data_audit_map_edge_drops`) | `edgeDrops` | The line is left out. `kop_network_map_graph()` drops it, so slices, connection lists and the app's Connections lose it too |
+| Status | `kop_network_map_status_overrides()`, from `facilities_v2` | `statusOverrides` | A name drawn open or unrecorded whose facility is Closed in the records is drawn closed. One way only: the board's closed and rebranded names are never reopened |
+| Years | `kop_network_map_year_overrides()`: Map Years (option `kop_network_years_review`), then Map Renames (filter, priority 10), then the Data audit's `map_years` (priority 20, wins) | `yearOverrides` | Replaces a name's years |
+| Rename order | `kop_network_map_rename_flips()` (Map Renames) | `renameFlips` | Reverses a rebrand line the board drew backwards and moves the rebranded colour to the earlier name |
+
+`store.js` applies them in that order (drops, status, years, flips) before
+`hydrate`. The slice cache key (`kop_network_map_cached_slice`) includes all
+four, so an embed never shows a stale decision. The status layer is cached
+in a transient keyed by the graph build and `facilities_v2`'s row count and
+last update.
+
+### Closures from the news (2026-09-29)
+
+Confirming a closure at KOP Tools > Closure Reports (`inc/closure-reports.php`)
+sets the facility's status in `facilities_v2`, and the status layer above
+carries it to the map and the embeds. Any other edit that closes a record
+does the same. A closure dated inside an earlier name's years (a renamed
+program merged as a rename) never closes the record.
+
+### Map Years, second pass (2026-09-29)
+
+The second research pass (smaller batches, told what the first had tried)
+found years for 99 more of the undated names. Map Years now holds 250
+candidates with sourced years (85 high, 111 medium, 54 low confidence); 81
+have none. Low-confidence entries are mostly "operating by" dates (a first
+archived website) or the year an operator took a place over, and say so.
+Since 2026-10-03 the candidates are also a tab of the Submissions Review
+page (`inc/review-inbox/map-years.php`), deciding through the same
+functions as the screen.
+
+### Map Renames (2026-09-29 to 2026-10-12)
+
+A renamed program is two names joined by a rebrand line, and each name
+belongs to its own years and operator (Copper Canyon Academy under Aspen,
+then Sedona Sky Academy under Family Help & Wellness from 2014). The board
+gave most renamed pairs the site's whole life on both names, so the
+timeline showed both at once, and drew some lines backwards.
+
+KOP Tools > Map Renames (`inc/network-renames.php`, also a Submissions
+Review tab, `inc/review-inbox/map-renames.php`) lists every rename line with
+both names' operators and years and flags what looks wrong. Decisions are
+the option `kop_network_rename_review`, keyed `earlier>later` in the line's
+direction as the board drew it.
+
+- **A saved year** ends the earlier name and starts the later one in it,
+  over graph.json and over Map Years' accepted years.
+- **Swap** reverses a backwards line (`renameFlips`). Since 2026-10-12 a
+  saved rename has "Swap order", which saves it the other way with its year
+  kept.
+- **No year** (since 2026-10-05): a rename can be saved with the year blank
+  (stored as 0). The order is confirmed, the names' years stay as they
+  were, the year can be added later from the Saved tab, and the facility
+  pages still cut the record into one section per name
+  (`inc/facility-eras.php`).
+- **Research on the cards.** `scripts/build-rename-candidates.js` turns the
+  research into `js/data/network/rename-candidates.json`: a year no quoted
+  source contains is dropped; a "backwards" finding is kept only when a
+  quote backs it; Kids Over Profits' own articles count as sources like
+  any other (the owner's research is often the only one online); a year
+  taken from a source's date rather than its words stays, with a note to
+  check the link. At the time 50 of 94 renames had a sourced year (16
+  high confidence) and 19 were found backwards. A backwards card opens
+  swapped, and "Save all high-confidence years" saves the strong ones in
+  one click, leaving the date-only ones to be saved one by one.
+
+`php scripts/test-network-renames.php` tests it offline.
+
+### Every known rebrand on the map (2026-10-09)
+
+The records hold renames the board never drew. The facility records' past
+and current names and the Map Renames decisions gave 297 names the map
+lacked and 181 "Became" lines, added through `network-overrides.json`
+(`nodes` and `edges`, each citing "KOP facility records (pastNames /
+currentName) and Map Renames, 2026-10-09 rebrand list"). A history with
+nothing else on the map sits in the Unframed area. Left off: records that
+list an operator as a past name (Three Springs, Inc.; records named Embark
+Behavioral Health) and operators recorded as a program's old name.
+graph.json now has 301 rebrand lines (direction `renamed`).
+
+Since 2026-10-08 two records of one renamed program can be merged as a
+rename (Merge Duplicates > Renamed programs). The earlier name's own years
+are kept on the kept record's `legacy.mergedFacilities` entry (`rename`),
+and the build reads them: a map name that is such an earlier name takes
+those years, not the kept record's, and is not given the kept record's
+deaths.
+
+### Rebuilt every hour the records change (2026-09-30)
+
+The server has no Node, so graph.json used to be rebuilt by hand, and staff
+accepted at Woodbury Facts never reached the map on their own.
+
+- **When.** `inc/network-rebuild.php` hashes exactly what the build reads,
+  hourly by WP-Cron (`kop_network_rebuild_hourly`, a 10-minute lock):
+  each `facilities_v2` row's name, state, status and years columns with
+  the `identification`, `staff` and `operatingPeriod` parts of its JSON;
+  the operator rows and their facility links; the consultants
+  (`referrers_master`); published memorial counts per program; and the
+  industry pool of `{prefix}kop_people` (so a person merge redraws the map).
+  Unrelated edits (inspections, documents, descriptions) start nothing.
+  When the hash moves it asks GitHub to run the workflow
+  (`workflow_dispatch` through the REST API with `KOP_GITHUB_DISPATCH_TOKEN`
+  from `api/config.local.php` or `.env`; a fine-grained token, this
+  repository, Actions read and write). State is the option
+  `kop_network_rebuild_state`; a failed dispatch keeps the old hash so the
+  next hour tries again.
+- **The build.** `.github/workflows/build-network-map.yml` copies seven
+  tables from the live database over SSH (`facilities_v2`,
+  `wpdl_kop_operators`, `wpdl_kop_operator_facilities`, `memorial_victims`,
+  `referrers_master`, `wpdl_kop_people`, `wpdl_kop_person_roles`, through
+  `scripts/sync-prod-sqlite.py`, which reads the database login from
+  wp-config.php on the server), runs `build-network-graph.js`, then
+  `build-network-layout.js` to place new names (since 2026-10-12), then
+  `test-network-graph.js` and `test-network-layout.js`, and commits
+  graph.json and layout.json only when they changed ("data(network map):
+  rebuild from the live records"), pushing with three tries and then
+  starting deploy.yml. The rows the build guessed at go in the run's
+  summary. One build at a time (concurrency group `network-map-build`).
+  Repository secret `KOP_SSH_KEY` (a key pasted on Windows has its CRLF
+  stripped); `KOP_SSH_KNOWN_HOSTS` is optional, else ssh-keyscan.
+- **The screen.** KOP Tools > Map Rebuild
+  (https://kidsoverprofits.org/wp-admin/admin.php?page=kop-network-rebuild)
+  shows the last check, the last dispatch and its reason, any error, and a
+  "Rebuild now" button.
+- **Test.** `php scripts/test-network-rebuild.php` runs the fingerprint and
+  the dispatch against `tmp/prod.sqlite`, never calling GitHub.
+
+This is the workflow name 4.2 proposed, put to a different job; it reaches
+the data with an SSH key kept in GitHub, which 4.2 turned down for the
+board import. The first automatic build's tests found that Fulshear Ranch
+Academy's record had moved to the young adult programs (never on the map),
+and the override linking it was taken off.
+
+*The layout gap (fixed 2026-10-12).* layout.json had not been rebuilt since
+2026-09-24, so names added by the hourly builds had no position and the
+store left them off the map. It was rebuilt with every existing name pinned,
+and the workflow now places new names before it tests and commits.
+
+### Educational consultants (2026-09-30)
+
+The build reads `referrers_master`. Each consultant's `pastTTIJobs` becomes
+a staff line to that program ("former <role>, now an educational
+consultant") and known referrals a referral line. A consultant with an
+industry past gets a person node (`edCon`) even with one program; 22 today.
+
+### Person ids (2026-10-02, 2026-10-09)
+
+Every person node carries a `personId` from `{prefix}kop_people`
+(`inc/people.php`): the build's `readPeople()` reads the people table (the
+industry pool only, since 2026-10-09: victims, plaintiffs and journalists
+have ids of their own and are never on the map) and the ids the sync gave
+each map node last time (`{prefix}kop_person_roles`, `record_kind = 'map'`),
+so two board people with one name stay two until merged. Two person nodes
+with one id after a merge at KOP Tools > Merge People are drawn as one
+node. Without a merge the map is unchanged. 765 of the 768 person nodes
+carry an id today.
+
+### Lines taken off by the Data audit (2026-10-13)
+
+A Data audit card (Submissions Review > Data audit, `inc/data-audit.php`)
+can carry a `map_edge_drop` step: "Take the network map line off". Ticked,
+it saves the line id to the option `kop_data_audit_map_edge_drops`, which
+the `kop_network_map_edge_drops` filter hands to
+`kop_network_map_edge_drops()`; the line is gone from the map, the embeds
+and the app at once, and Undo puts it back. A `map_years` step corrects a
+name's years the same way, over Map Years and Map Renames.
+
+The step is keyed by line id, and only the `e` ids (board rows) are fixed
+now that the board is no longer re-exported. The `p` (profile claims), `s`
+(staff movement) and `l` (staff lists) ids are numbered in build order, so
+an hourly rebuild after a record change can give a dropped id to a
+different line. The audit checks only that the id still exists before it
+applies a step, not that it is still the same line; one proposal already
+names `p0439` in its words and `p0504` as its id.
+
+### Key on phones, full screen in the app, arrow keys (2026-10-12)
+
+- The Key ("How to read this") has its own Close button
+  (`button.kop-network__key-close`), and on a phone a tap on the map puts
+  it away; the small Key chip did not read as a way out.
+- On a phone the Key's full-width box lay over Reset view and Full screen
+  even when closed and took their taps; now only its button and the open
+  panel take taps.
+- Full screen pins the map over the window when a web view accepts the
+  browser's full screen request and then does nothing (the mobile app's
+  Map tab).
+- Left and right arrows walk along the row first; two names in Aspen
+  Ranch's view were reached by no arrow.
+
+### The mobile app's Map tab
+
+The app (github.com/carlygaejepsen/kids-over-profits-mobile) does not have
+a map of its own. Its Map tab is this page in a web view
+(`src/lib/mapPage.ts`): it loads `/network-map/`, opens a name with
+`#open=<node id>` and moves to another by changing the hash, which
+url-state.js follows. Before the page's scripts run it hides the site's
+header, footer, drawers, search trigger, tutorial and bug-report link, and
+the map's own `.kop-network__title` and `.kop-network__donate`, and restyles
+`.kop-network`. So renaming those classes, the `#open=` hash or the page's
+path breaks the app; change them only with the app. The app's Connections
+drawing on facility screens comes from `kop_mobile_facility_network()` in
+`inc/mobile-api.php`, which reads the same graph, drops included.
+
+### Tests added since Phase 4
+
+```bash
+php scripts/test-network-rebuild.php            # fingerprint + dispatch, against tmp/prod.sqlite, never calls GitHub
+php scripts/test-network-years.php && python scripts/check-network-years-page.py
+php scripts/test-network-renames.php
+node scripts/test-network-embed.js [--php=<Local php.exe>]   # embed slices: PHP == focus.js
+node scripts/test-network-timeline.js
+```

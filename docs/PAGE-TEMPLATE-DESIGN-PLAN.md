@@ -35,6 +35,14 @@ specialized template. The source inventory and repository relationship are in
   tracked in [PLAN.md](PLAN.md) section 3.2.
 - 2026-09-29: "In this article" and "In this section" name boxes for the
   history pages specified at the end of this document (PLAN.md 3.2 item 6).
+- 2026-10-13: templates added since, outside this plan's phases, are listed
+  with their slugs in [REPOSITORY-MAP.md](REPOSITORY-MAP.md#page-templates-and-routes):
+  the marketer, trade organization, young adult, Indian boarding school,
+  related industry, FAQ and person profile templates, and the generated
+  routes (`/documents/<type>/`, `/essential-reporting/`, `/send/`,
+  `/site-map/`, `/how-to-use-this-site/`). The 404 page (`404.php`) is done;
+  articles take pull quotes (`inc/pull-quotes.php`). Phase 4 (posts) is
+  still at its inventory script.
 
 ## Goal
 

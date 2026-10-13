@@ -35,7 +35,7 @@ Related admin screen: `templates/page-admin-data-manager.php` (rename, move, rea
 ### Frontend Modules
 Plain scripts (not ES modules), ordered by WordPress dependencies.
 - `js/data-form-modules/`: `config.js` -> `data-normalizer.js` -> `api.js` -> `project.js`, then the UI modules `ui-render.js`, `ui-state.js`, `ui-events.js`, `ui-actions.js`, and the page modules `data-page.js` (both forms) and `admin-data-page.js` (admin only). `ui.js` is not enqueued.
-- `js/data-form/`: the `data-form.v4.js` orchestrator (loads after the modules above), the sub-forms `location-form.js`, `referrer-form.js`, `transporter-form.js`, `provider-form.js`, plus `notes.js`, `data-search.js`, `data-toolbar.js`, `custom-modals.js`, `report-config.js` and `data-report-generator.js`.
+- `js/data-form/`: the `data-form.v4.js` orchestrator (loads after the modules above), the sub-forms `location-form.js`, `referrer-form.js`, `transporter-form.js`, `provider-form.js`, `marketer-form.js`, `tradeorg-form.js`, plus `notes.js`, `data-search.js`, `data-toolbar.js`, `custom-modals.js`, `report-config.js` and `data-report-generator.js`. Admin form only: `testimony.js` and `submission-editor.js`. Public form only: `data-wizard.js` (with `css/data-wizard.css`), the guided start.
 - Supporting scripts: `js/autocomplete.js`, `js/field-tooltips.js`, `js/tutorial-overlay.js`, and on the admin form `js/admin-news-links.js` (linked news articles panel).
 - `data-normalizer.js` holds `facilityToV2` / `facilityFromV2`, a port of the PHP normalizer; keep them in step with `scripts/check-facility-normalizer-parity.js`.
 
@@ -52,7 +52,7 @@ The v2 write switch has been on since 2026-09-18. The legacy facility tables are
 
 - Everything that writes a facility goes through `inc/facility-store.php`: `kop_facility_normalize()`, `kop_facility_validate()`, `kop_facility_save()` (which validates and refuses error-severity violations).
 - `inc/facility-v2-writer.php` translates between the form's project shape and the v2 tables (`facilities_v2`, operators, joins, location memberships). `kop_v2_save_form_project()` splits a project into one `kop_facility_save()` per facility; `kop_v2_form_projects()` builds the projects the form loads.
-- `api/save-master.php`: saves of parent-company and location projects, renames and deletes go through the v2 writer when `kop_v2_writes_active()` is true. Referrer, transporter and provider projects still save to `referrers_master` / `transporters_master` / `providers_master`. Location rebuild/cleanup actions return 409.
+- `api/save-master.php`: saves of parent-company and location projects, renames and deletes go through the v2 writer when `kop_v2_writes_active()` is true. Referrer, transporter and provider projects still save to `referrers_master` / the transporter table / `providers_master`. The transporter table is `wpdl_transporters_master` on the live site (`transporters_master` on older copies); PHP that reads or writes it asks `kop_transporters_table()` (`inc/utilities.php`) for the name rather than hard-coding it. Location rebuild/cleanup actions return 409.
 - Approving a suggestion applies it with `kop_v2_save_form_project()` in partial mode, so a suggestion only changes the fields it lists.
 - `facilities_master` takes no writes. `locations_master` keeps only state-level data with no v2 home (referrer consultants, field notes).
 - Tools that still write the legacy tables must call `kop_v2_exit_if_legacy_frozen()`.
@@ -68,6 +68,40 @@ these groups when the form loads from or saves to `facilities_v2.json_data`.
 The SQL table already stores the facility document as JSON, so these additions
 do not require new relational columns.
 
+## Guided start (public form)
+
+The public form (/tti-data-submission/) opens on a guided start instead of the full form (`js/data-form/data-wizard.js`, `css/data-wizard.css`, mounted in `#kop-wizard` at the top of `templates/data-form-public.php`; the admin form does not load it).
+
+1. **Find the record** by searching the projects the form has already loaded (past and other names match too, labelled "Formerly X" / "Also known as X" / "Now known as X"), or **add a new** facility, parent company, mental health provider, transporter, referrer, marketing company or trade organization (`TYPES`).
+2. **Pick topics**: what to add or fix (names, place, dates, owner, staff, incidents, sources, ...). `TOPICS` maps each topic of each record type to the form section ids that hold it; a new record starts with `NEW_DEFAULT_TOPICS` ticked.
+3. **Edit**: the form shows only those sections, plus the submit block of the current view (`ALWAYS_ON`). "Show every field" drops back to the full form.
+
+It drives the existing form through its own functions (`KOP_Project.loadProject`, `navigateToFacility`, `updateAllUI`), so saving still goes through `submitSuggestion()` -> `api/save-suggestion.php` unchanged. Body classes: `kop-wiz-pick` (steps 1-2), `kop-wiz-focus` (step 3), neither (full form).
+
+- Links: `?find=<name>` starts a search, `?add=<type>` (`facility`, `company`, `provider`, `transporter`, `referrer`, `marketer`, `tradeorg`) opens a new record of that type, `?full=1` opens the full form.
+- A new section that should be reachable from the guided start needs its id in `TOPICS`.
+- `ui-events.js` swaps every plain text input in the form for a growing textarea; the wizard's own inputs carry `data-growing-text-field="true"` so they are left alone. Any text input that must stay an `<input>` needs the same attribute.
+- Tested by `python scripts/test-data-wizard.py` (the live page with the working tree's wizard, 1280 and 390 px).
+
+## Facility names in lists
+
+- **Facility lists** (`knownReferrals`, `facilitiesReferred`, a provider's `ttiReferrals`, a marketer's `clientFacilities`, a trade organization's `memberFacilities`) use the `facilityref` autocomplete (`js/autocomplete.js`, picked in `ui-render.js`): suggestions come from the public `kop/v1/facility-suggest` route (`inc/facility-suggest.php`, reusing `kop_v2_search()`), current names first, then past and other names, each with its city and state. Free text is still allowed and the lists stay arrays of plain strings.
+- Each entry is checked against `kop/v1/facility-links` (one request for the names not yet checked) and a hint appears under a name that will not link to a facility page: "Matches more than one facility" or "No exact facility match". A long sentence gets "This reads as a note, not a program".
+- A pasted comma list (two or more commas) becomes one entry per name, and an entry already saved that way gets a "Split into N entries" button (`facilityRefSplit()`, the same rule as `/mental-health-providers/`). Tested by `node scripts/test-facility-ref-split.js` and `php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-links.php`.
+- **Alternate names** in every facility and operator autocomplete: past names, other names and current names are suggested too, with a second line saying which ("Formerly A", "Also known as B", "Now known as C", or "Past name of X" / "Other name of X" on the alternate name itself; `alternateNameDetail()` in `js/autocomplete.js`).
+
+## Transporters
+
+A transporter project holds one company (`formData.transporterCompany`) and its people (`formData.transporters`).
+
+- List paths resolve by prefix in `resolvePathTarget()` (`js/data-form/utilities.js`): `transporterCompany.*` to the company, `transporterIndividual.*` and `transporter.*` to the person being edited. Before 2026-10-13 these lists (key personnel, websites, licensing, known facilities, a person's affiliations) were written onto the facility block instead.
+- Opening a saved transporter fills the company's fields and lists (`updateTransportersUI()` runs `loadTransporterData()`). Websites are edited as plain addresses.
+- Storage: the transporter table named by `kop_transporters_table()` (see the write path above); search, the directory, the REST routes and Data Manager use the same function.
+
+## Email me when this has been reviewed
+
+The public form's submit dialog carries the shared follow-up block (`kop_followup_fields('suggestionFollowup')`, `js/submission-followup.js`): "Email me when this has been reviewed", and "Also sign me up for the newsletter" (never ticked by default). `submitSuggestion()` posts them as `notify_email` and `newsletter_email`; `api/save-suggestion.php` calls `kop_followup_register('suggested_edit', ...)` after its insert. A cron mails once the decision has stood 10 minutes (an Undo inside that cancels it), then blanks the address (`inc/submission-followup.php`); the newsletter address goes to MailerLite through `inc/newsletter-signup.php`.
+
 ## Editing a submission before approval
 
 Open the admin data form with `?submission=<id>` to load a pending data submission (a `suggested_edits` row) into the full form. The **Edit in data form** link on each data suggestion in Approve Edits (`api/approve-edits.php`) and in the Submissions Review modal does this. `js/data-form/submission-editor.js` handles it:
@@ -82,7 +116,7 @@ Open the admin data form with `?submission=<id>` to load a pending data submissi
 
 Each facility (and provider site) has a `survivorTestimony` list of `{id, text, source, date, movedFrom, publish}`, edited in the admin form's **Survivor Testimony** section (`js/data-form/testimony.js`).
 
-- **Move to testimony:** the section lists every note on the facility that could be an account (general notes, field notes, the custom treatment/philosophy/incident entries and a provider's other TTI practices). Moving one takes the text out of the note and into a new entry. Inside a submission opened with `?submission=<id>` the entry is credited to that submission and its date.
+- **Move to testimony:** the section lists every note on the facility that could be an account (general notes, field notes, operating period and resources notes, the parent company notes, the custom treatment/philosophy/incident entries, a provider's other TTI practices and referral notes, and an open submission's reason). Moving one takes the text out of the note. One survivor's account is one entry: a moved note becomes a paragraph of the entry picked in "Moved notes go into" (by default the open submission's entry, or the only entry). "Move all" moves every note at once and "Combine into one account" joins existing entries. A note that repeats text already in testimony gets "Remove copy" instead, which only deletes the note, so every copy of a moved account can be cleared. Text from a submission opened with `?submission=<id>` is sourced "Submitted by a survivor (submission #N)" with that submission's date. Tested by `node scripts/test-testimony-move.js`.
 - **Private until marked:** `publish` is false until "OK to publish" is ticked. Only published entries appear on `/facility/<slug>/` (Survivor testimony section, `kop_facility_pages_testimony()`), credited as "Survivor account, shared <month year>"; the source stays internal.
 - **Never sent to the public:** `kop_facility_testimony_redact()` (`inc/facility-store.php`) strips unpublished entries from `api/get-master-data.php` and from every `kop/v1` REST response (`rest_post_dispatch`) unless the viewer has `manage_options`. The data form's search requests send the REST nonce so an admin gets the full record.
 - **Kept on approval:** a public suggestion comes back without the hidden entries, so `kop_preserve_hidden_testimony()` (`api/lib-suggested-edits.php`) puts them back before the suggestion replaces the facility.
@@ -119,7 +153,7 @@ The **Marketers** tab (`data-category="marketers"`) is for companies that market
 The **Trade Organizations** tab (`data-category="tradeorgs"`) works like Marketers: markup in `templates/data-form-tradeorg.php`, JS in `js/data-form/tradeorg-form.js`, one organization per project in `formData.tradeOrg` (keys in `api/lib-tradeorgs.php`, checked against the JS and markup by `scripts/test-tradeorgs.php`), stored in `tradeorgs_master` as `{tradeOrg, category}` by every save path, merged into the record on file on approval. List paths `tradeOrg.*` resolve to `formData.tradeOrg`; `memberFacilities` autocompletes facility records and `memberCompanies` operators.
 
 - Fields: `name`, `acronym`, `orgType`, place, `founded`, `status`, `notes`; lists `otherNames`, `websites`, `keyPersonnel`, `otherActivities`, `memberFacilities`, `memberCompanies`, `memberOthers`, `publications`, `lobbying`, `funding`, `affiliations`, `lawsuits`, `sourceUrls`, `socialMedia`; `activities` checkboxes.
-- Members are not retyped: /trade-organizations/ lists every program whose facility record names the organization (by name, acronym or other name) under memberships or accreditations, current and former (`kop_tradeorgs_members()`). `memberFacilities` is for members no record lists yet.
+- Members are not retyped: /trade-organizations/ lists every program whose facility record names the organization (by name, acronym or other name) under memberships or accreditations, current and former (`kop_tradeorgs_members()`), and every transport company whose record lists the organization among its company affiliations (`kop_tradeorgs_transport_members()`). `memberFacilities` is for members no record lists yet.
 - The guided start offers "Trade organization" (`?add=tradeorg`).
 
 ## Key Features
@@ -159,6 +193,11 @@ The **Trade Organizations** tab (`data-category="tradeorgs"`) works like Markete
 - `node scripts/test-form-help.js` checks the panel help keys and field tooltips against both templates
 - `node scripts/check-facility-normalizer-parity.js` checks the JS and PHP facility normalizers agree
 - `php scripts/test-facility-v2-writer.php` exercises the v2 save path end to end (destructive; throwaway MySQL copy only)
+- `python scripts/test-data-wizard.py` runs the guided start on the live page with the working tree's wizard
+- `node scripts/test-facility-ref-split.js` and `php -d extension=pdo_sqlite -d extension=mbstring scripts/test-facility-links.php` check the facility lists' splitting and linking
+- `node scripts/test-testimony-move.js` checks Move to testimony and Remove copy
+- `php -d extension=pdo_sqlite -d extension=mbstring scripts/test-marketers.php` and `scripts/test-tradeorgs.php` check the two newest categories
+- `php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-followup.php` checks the follow-up and newsletter block
 
 ## Configuration Notes
 

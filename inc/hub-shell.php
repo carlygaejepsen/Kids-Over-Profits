@@ -137,7 +137,7 @@ function kop_hub_config($slug) {
                 'heading' => 'Share what you know',
                 'links'   => array(
                     array('label' => 'Upload documents anonymously', 'slug' => 'anon-submit',
-                          'note' => 'Records, letters or photos from a program. Encrypted before they leave your browser.'),
+                          'note' => 'Records, letters or photos from a program. Encrypted as soon as they reach our server; only the site owner holds the key.'),
                     array('label' => 'Tell us about a program', 'template' => 'page-data.php', 'path' => '/tti-data-submission/',
                           'note' => 'Add or correct what we hold on a facility.'),
                 ),
@@ -155,7 +155,7 @@ function kop_hub_config($slug) {
                 'heading' => 'Have a report we should read?',
                 'links'   => array(
                     array('label' => 'Upload it anonymously', 'slug' => 'anon-submit',
-                          'note' => 'Encrypted before it leaves your browser.'),
+                          'note' => 'Encrypted as soon as it reaches our server; only the site owner holds the key.'),
                 ),
             ),
         ),

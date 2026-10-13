@@ -448,6 +448,11 @@ Open:
 4. **Act on decisions 12 to 14** once answered.
 5. **Category archive layout and a 404 page** (6.6), with search and links to
    the main hubs, after 2 to 4. Both on a solid panel.
+   The 404 page is done (2026-10-06,
+   [13826135](https://github.com/carlygaejepsen/Kids-Over-Profits/commit/13826135e025cf1605e1024050bee5896a3d1507):
+   `404.php`, "Did you mean" from the address's words, a prefilled search
+   box, the main destinations and the site map). The category archive
+   layout is still open.
 6. **"In this article" and "In this section" on the history pages**
    (owner's suggestion 2026-09-29; spec at the end of
    PAGE-TEMPLATE-DESIGN-PLAN.md). Programs, people and companies each

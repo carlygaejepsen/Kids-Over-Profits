@@ -18,7 +18,7 @@ diagnosis, behavior, and common TTI practice maps inside the existing JSON
 document. The relational table layout is unchanged. Historical cutover counts
 and `schema_version: 2` checks below refer to the original 2026-09-16 migration.
 
-## Status (2026-09-16)
+## Status (2026-09-16, write path updated 2026-10-13)
 
 | Phase | State |
 |---|---|
@@ -28,11 +28,11 @@ and `schema_version: 2` checks below refer to the original 2026-09-16 migration.
 | 1 Schema, normalizer, validator | Done. `docs/FACILITY-SCHEMA.md`, `inc/facility-store.php` (not loaded by `functions.php` until phase 3), `scripts/normalize-dump.php`, and the v2 port in `js/data-form-modules/data-normalizer.js`, which matches PHP on all 10,199 copies (`scripts/check-facility-normalizer-parity.js`). |
 | 2 Rehearsal | Done. `scripts/rehearse-migration.php` passes the zero-loss gate. **Waiting for the owner to sign off** on `tmp/rehearsal/identity_splits.tsv`, `review.tsv`, and the new decisions in section 9. |
 | Live page fix | Code ready, not deployed. State and country pages now parse the free-text location instead of substring matching it (section 10.1). Offline against the production data this removes 63 wrong placements and adds 1 correct one. |
-| 3 Apply | Code ready, not deployed or run (section 7, phase 3 "As built"). `api/migrate-facility-model.php` (dry run, batched apply), `inc/facility-migration.php` (shared with the rehearsal), `inc/facility-v2-sync.php` (10-minute re-sync), `inc/facility-v2-readers.php` (`?model=v2`). End-to-end test against MySQL 8.0 loaded with the production copy: all 20 checks pass. |
+| 3 Apply | Built (section 7, phase 3 "As built"), deployed and run on 2026-09-16 (next row). `api/migrate-facility-model.php` (dry run, batched apply), `inc/facility-migration.php` (shared with the rehearsal), `inc/facility-v2-sync.php` (10-minute re-sync), `inc/facility-v2-readers.php` (`?model=v2`). End-to-end test against MySQL 8.0 loaded with the production copy: all 20 checks pass. |
 | 3 Applied | 2026-09-16 21:19 UTC on production: 4,679 facilities, 4,718 memberships, 45 operators, 15 operator links. Snapshot diff of all 67 pages (legacy vs `?model=v2`): 0 facilities lost, 26 operator-only facilities gained their own tile, inspection report totals unchanged. |
 | 4 Reader switches | Deployed 2026-09-16. All five public areas read v2 on production (checked 2026-09-16 23:00 UTC: `kop_data_model_areas` lists all five). |
-| 4 Write path | Built and tested offline 2026-09-16, not deployed (phase 4 "Write path, as built"). The admin form, approvals, REST fallback and seeds save to v2 once the write switch is on. The switch page stays locked until the remaining blockers are ported. |
-| 5 | Not started. |
+| 4 Write path | On since 2026-09-18 00:34 UTC (phase 4 "Write path, as built"). The last write paths were ported and the switch unlocked on 2026-09-17 (9e129fb7); the switch (`kop_migration_state` key `writes`, mode `v2`, read by `kop_v2_writes_on()` in `inc/facility-v2-readers.php`) was turned on the next day. Every facility write goes to `facilities_v2` through `inc/facility-v2-writer.php` and `inc/facility-store.php`; `facilities_master` is frozen (its fingerprint is recorded with the switch, the re-sync and batched apply refuse to run, and the old-table maintenance tools exit with a 409 from `kop_v2_exit_if_legacy_frozen()`). |
+| 5 | Not started (checked 2026-10-13): the legacy tables are frozen but still exist. |
 
 **Data changed after the baseline (2026-09-16, init step version 16):** the
 Google Alerts review shipped three seeds that change live facility data. Re-run

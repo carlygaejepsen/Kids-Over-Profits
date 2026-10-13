@@ -964,8 +964,24 @@ if (window.TutorialOverlay) {
                 target: null // Center
             },
             {
+                // Public form only (templates/data-form-public.php): the guided start
+                // in js/data-form/data-wizard.js hides the full form until it is
+                // dismissed, so Next opens the full form for the rest of the tour.
+                title: 'Start With the Guided Form',
+                content: 'The form opens on a guided start. Search for the program, company or person (an old name works too), or add a new one, then pick what you want to add or fix. Only those parts of the form open.<br><br>The rest of this tour covers the <strong>full form</strong>, which has every field. Clicking <strong>Next</strong> opens it; <strong>Use the guided form instead</strong> brings the guided start back.',
+                target: '#kop-wizard',
+                position: 'bottom',
+                highlightPadding: 6,
+                onlyIf: '#kop-wizard',
+                onNext: () => {
+                    if (!document.body.classList.contains('kop-wiz-pick') && !document.body.classList.contains('kop-wiz-focus')) return;
+                    const full = document.querySelector('#kop-wizard [data-act="full"]');
+                    if (full) full.click();
+                }
+            },
+            {
                 title: 'Category Selection',
-                content: 'Let\'s explore the five types of data you can collect. Each category organizes information differently to help you research the TTI effectively.',
+                content: 'Each tab below is a kind of record you can add or correct. Here is what each one holds.',
                 target: '.category-tabs',
                 position: 'bottom'
             },
@@ -1005,6 +1021,14 @@ if (window.TutorialOverlay) {
                 clearOf: '.category-tabs'
             },
             {
+                title: 'Marketers and Trade Organizations',
+                content: '<strong>Marketers</strong> are the companies that sell programs to parents: program websites, "independent" directories, help lines, sold inquiries and reputation work. <strong>Trade Organizations</strong> are the industry\'s associations, such as NATSAP, IECA and the OBH Council, and the programs that belong to them.',
+                target: '.category-tab[data-category="marketers"], .category-tab[data-category="tradeorgs"]',
+                highlightAll: true,
+                position: 'bottom',
+                highlightPadding: 4
+            },
+            {
                 title: 'Choose a Category to Edit',
                 content: 'Pick the category tab that matches the data you want to update. This keeps saved projects and fields organized by type.',
                 target: '.category-tabs',
@@ -1013,9 +1037,9 @@ if (window.TutorialOverlay) {
             {
                 title: 'Select a Saved Project',
                 content: 'Click a project in the Saved Projects list to load it for editing.',
-                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list',
+                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list, #marketer-saved-projects-list, #tradeorg-saved-projects-list',
                 position: 'right',
-                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list',
+                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list, #marketer-saved-projects-list, #tradeorg-saved-projects-list',
                 highlightPadding: 8
             },
             {
@@ -1044,7 +1068,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Autocomplete & Field Help',
-                content: 'Many fields have autocomplete to help prevent duplicates. Start typing to see existing entries.<br><br><strong>DIY Remember:</strong> Each field has a <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background-color: #6b7280; color: white; border-radius: 50%; font-size: 11px; font-weight: bold; margin: 0 3px;">?</span> tooltip explaining what data is expected. Tap or hover over these icons for guidance!',
+                content: 'Many fields have autocomplete to help prevent duplicates. Start typing to see existing entries; past and other names match too, and the suggestion says which name it matched.<br><br><strong>DIY Remember:</strong> Each field has a <span style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background-color: #6b7280; color: white; border-radius: 50%; font-size: 11px; font-weight: bold; margin: 0 3px;">?</span> tooltip explaining what data is expected. Tap or hover over these icons for guidance!',
                 target: '#operator-name',
                 position: 'bottom',
                 // Scroll the surrounding content into view so fields are visible
@@ -1062,7 +1086,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Open the Data Toolbar',
-                content: 'The <strong>Data Toolbar</strong> sits pinned at the top of the screen and stays visible as you scroll. It starts minimized to save space. Click the <strong>▼ button</strong> on the right of the toolbar (or just click <strong>Next</strong>) to expand it and reveal the quick-action buttons.',
+                content: 'The <strong>Data Toolbar</strong> sits pinned at the top of the screen and stays visible as you scroll. It starts minimized to save space. Click <strong>Show tools</strong> on the right of the toolbar (or just click <strong>Next</strong>) to expand it and reveal the quick-action buttons.',
                 target: '#toolbar-toggle-btn',
                 position: 'bottom',
                 highlightPadding: 6,
@@ -1146,7 +1170,11 @@ if (window.TutorialOverlay) {
             }
         ];
 
-        window.kopTutorial = new TutorialOverlay(tutorialSteps);
+        // A step with onlyIf is kept only on pages that have that element
+        // (the guided start is on the public form, not the admin form).
+        const pageSteps = tutorialSteps.filter(step => !step.onlyIf || document.querySelector(step.onlyIf));
+
+        window.kopTutorial = new TutorialOverlay(pageSteps);
     };
 
     window.initTutorialOverlay = initTutorialOverlay;

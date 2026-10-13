@@ -36,7 +36,7 @@
                 },
                 {
                     title: 'Basic Details',
-                    content: 'Title, author, date, and publication. The small save buttons remember values you use often - authors and outlets autocomplete on your next article.',
+                    content: 'Title, author, date, and publication. Put the article\'s own address in <strong>URL</strong> and a Wayback Machine or archive.today copy in <strong>Archived copy</strong>; a Wayback link pasted as the URL is split into both for you. The small save buttons remember authors and outlets you use often.',
                     target: '.news-section-header',
                     position: 'bottom',
                     highlightPadding: 4
@@ -75,7 +75,7 @@
                 },
                 {
                     title: 'Submit for Review',
-                    content: '<strong>Submit to Database</strong> sends the entry to our team - a dialog asks for an optional email and notes first. The export buttons let you keep a JSON or text copy for yourself.',
+                    content: '<strong>Submit to Database</strong> sends the entry to our team - a dialog asks for an optional email and notes first, and can email you once the article has been reviewed. The export buttons let you keep a JSON or text copy for yourself.',
                     target: '#submit-to-db, #export-json',
                     highlightAll: true,
                     position: 'top',
@@ -94,6 +94,13 @@
                     title: 'Submitting a Lawsuit',
                     content: 'Know of a court case involving a TTI facility, operator, or staff member? This form adds it to our public tracker after review. <strong>A case name and a source link are enough</strong> - fill in whatever else you know.',
                     target: null
+                },
+                {
+                    title: 'Let Us Fill It In',
+                    content: 'Have the complaint or another court filing? Upload it (PDF, DOCX or TXT; scanned PDFs work too) and the form is filled in from it. For a federal case you can enter the docket number instead and we look it up. Check the filled-in fields before you submit.',
+                    target: '#kop-autofill-box',
+                    position: 'bottom',
+                    highlightPadding: 6
                 },
                 {
                     title: 'Case Name',
@@ -135,7 +142,7 @@
                 },
                 {
                     title: 'About You (Optional)',
-                    content: 'Entirely optional - leave it blank to submit anonymously. An email lets us follow up if we have questions.',
+                    content: 'Entirely optional - leave it blank to submit anonymously. An email lets us follow up if we have questions, and <strong>Email me when this has been reviewed</strong> sends you one message once we decide.',
                     target: '.kop-submitter-box',
                     position: 'top',
                     scrollTarget: '.kop-submitter-box',
@@ -144,9 +151,9 @@
                 {
                     title: 'Submit for Review',
                     content: 'Our team reviews every submission before it appears on the public Lawsuits tracker. Thank you for helping hold the industry accountable.',
-                    target: '.kop-submit-btn',
+                    target: '#kop-submit-lawsuit-form button[type="submit"]',
                     position: 'top',
-                    scrollTarget: '.kop-submit-btn',
+                    scrollTarget: '#kop-submit-lawsuit-form button[type="submit"]',
                     highlightPadding: 6
                 }
             ], { storageKey: 'kop_submit_lawsuit_tutorial_seen' });
@@ -194,7 +201,7 @@
                 },
                 {
                     title: 'About You (Optional)',
-                    content: 'Entirely optional - leave it blank to submit anonymously. An email lets us follow up if we have questions.',
+                    content: 'Entirely optional - leave it blank to submit anonymously. An email lets us follow up if we have questions, and <strong>Email me when this has been reviewed</strong> sends you one message once we decide.',
                     target: '.kop-submitter-box',
                     position: 'top',
                     scrollTarget: '.kop-submitter-box',
@@ -203,9 +210,9 @@
                 {
                     title: 'Submit for Review',
                     content: 'Our team verifies every bill before it appears on the tracker. Thank you for keeping an eye on the laws that shape this industry.',
-                    target: '.kop-submit-btn',
+                    target: '#kop-submit-legislation-form button[type="submit"]',
                     position: 'top',
-                    scrollTarget: '.kop-submit-btn',
+                    scrollTarget: '#kop-submit-legislation-form button[type="submit"]',
                     highlightPadding: 6
                 }
             ], { storageKey: 'kop_submit_legislation_tutorial_seen' });

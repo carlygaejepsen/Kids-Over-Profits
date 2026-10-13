@@ -19,6 +19,13 @@ Kids Over Profits is a WordPress child theme (Kadence parent) that powers a data
 - **CMS**: WordPress with Kadence parent theme
 - **No build process**: Plain PHP, vanilla JavaScript (plain scripts loaded in order by `wp_enqueue_script` dependencies, not ES modules), CSS
 
+## Adding something new
+
+Many lists name every kind of record, page or screen by hand (search, site map, open data, the app, merges, people ids,
+Woodbury, the tools registry, tutorials). Before adding a data category, a facility field, a page or route, an admin screen,
+a review queue, a table holding facility ids, a state inspection page, a public form or seeded records, read
+`docs/ADDING-CONTENT.md`: one checklist per kind of addition, naming every function and doc to update.
+
 ## Key Commands
 
 ```bash
@@ -34,7 +41,7 @@ node scripts/build-network-graph.js
 node scripts/test-network-graph.js
 
 # The map rebuilds itself: inc/network-rebuild.php hashes what the build reads (staff, owners, names, years, status,
-# consultants) hourly and, when it moves, starts .github/workflows/build-network-map.yml (sync 5 tables over SSH,
+# consultants) hourly and, when it moves, starts .github/workflows/build-network-map.yml (sync 7 tables over SSH,
 # build, test, commit graph.json, deploy). Status and "Rebuild now" at KOP Tools > Map Rebuild.
 # Needs repo secret KOP_SSH_KEY and KOP_GITHUB_DISPATCH_TOKEN in api/config.local.php or .env on the server
 php scripts/test-network-rebuild.php            # fingerprint + dispatch, against tmp/prod.sqlite, never calls GitHub
@@ -82,6 +89,9 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-citation-cleanup.
 # The app lists document libraries itself (/facility/<slug>/documents, /operator/<slug>/documents: the folder tree with file links) and
 # opens our own PDFs (sources included, #page=N kept) in its own viewer, never the website
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-mobile-api.php [--id=14182] [--fixture]   # payloads, privacy walk, news filters; --fixture = made-up DB, no mirror needed
+# The app's admin mode (inc/mobile-admin.php): kop/v1/app/session trades an administrator's application password for a one-use
+# 2-minute token, /app-login/ spends it (remember-me cookie, same-site redirect); /app/tools lists KOP Tools, /app/signout ends every
+# session; a session ends when its application password is revoked
 # A renamed program's page is cut into one section per name, earliest first ("As Copper Canyon Academy", "As Sedona Sky
 # Academy"; inc/facility-eras.php): names from the map's rename lines, years from Map Renames; each holds the deaths, serious
 # findings, lawsuits, incidents, news and staff of its years, another name's record included (both pages print every name).
@@ -203,7 +213,7 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-submission-follow
 # is compared with its LIVE Reddit page (never markdown_output/, which is stale): fetch reads the pages in a real Chrome window
 # (solve Reddit's human check when it asks; resumable), compare pairs entries by the page they were imported from, never by name
 # -> js/data/reddit-wiki/live-compare.json (commit it) -> editor index badge + /wiki-feed/ note; no result = no mark
-python scripts/reddit-wiki-live.py fetch [--slugs a b] [--refresh] && python scripts/reddit-wiki-live.py compare [--list]   # sync tmp/prod.sqlite first
+python scripts/reddit-wiki-live.py fetch [--pages a b] [--refresh] && python scripts/reddit-wiki-live.py compare [--list]   # sync tmp/prod.sqlite first
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-contact.php [--list]   # rewrite, PHP == JS, migration on a copy, live-result states
 # The editor (js/wiki-generation.js) writes staff as the drafts do: "a therapist" / "the Executive Director" / "worked in admissions",
 # no "Former" or abbreviations in a role, a year only as "from X to Y", a closed program's staff in the past, one paragraph per person;
@@ -235,10 +245,6 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # running the other record and 2+ more programs, with no years outside it (bare "Embark Behavioral Health" in Marion = Embark at Flathead Valley)
 # is folded in as one program, not a rename; "Sequel TSI Courtland" dates its name by Sequel's years in the operator lines; a company filed as
 # a past name ("Three Springs Inc.") becomes a past-company step. KOP_DAUDIT_LIST=1 / KOP_DAUDIT_EXPORT=<file> on the test print / dump cards
-# Another name, not a rename: past names / "now called" / a map rebrand line read as renames; other names never do (but the map build still
-# draws a rebrand line to an other name that is its own board node, so it is also marked "Not a rename" at Map Renames). kop_fmerge_do_merge(...,
-# null, 'alias') merges two records as one program with the name filed as an other name (Merge Duplicates and Data audit: "Just another name, not
-# a rename"); Data audit "A past name is only another name" moves one record's past name (kop_daudit_name_alias()); each has its Undo
 python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
 # Federal funding (docs/PLAN.md 3.15): Medicaid, foster care funds, ORR, TRICARE, PPP and Education money found for programs,
@@ -355,6 +361,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-name-under-operat
 # the admin finder, facility-search.php (Data Manager, news processor, wiki picker), the data forms' autocompletes
 # (js/autocomplete.js alternateNameDetail()), the wizard and the map search carry the kind too. A new box does the same
 php scripts/test-search-aliases.php               # against tmp/prod.sqlite
+# Wherever companies and facilities share a list, each row carries a Company / Facility pill: kop_kind_pill() == kopKindPill() (inc/kind-pill.php)
+php scripts/test-kind-pill.php                    # PHP == JS markup (needs node)
 # Reader's site map (/site-map/, a route like /operator/, inc/site-map.php + templates/site-map.php + js/site-map.js): every public
 # page by section (hubs with their articles from kop_article_parents(), placed by template in kop_site_map_template_sections(), admin
 # tools/redirected/password pages never), posts by category, every /facility/ and /operator/ page A to Z, a "Find a page" filter.
@@ -403,15 +411,15 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-featured-reportin
 # note and a reason; Feature picks it with the note as edited in its box (Undo = kop_feat_undo of that pick), Pass over changes nothing.
 # New ones go in js/data/featured/nominations.json with a higher 'version' (adds missing ones only, never changes a decided one)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=featured-nominations
+# "Also covered by" on the news feed is the automatic story grouping (api/news-story-groups.php); an admin corrects it with the pencil on
+# the list ('storycov:<id>', inc/story-coverage.php: untick a wrong article, paste a link or #id to add one, exact Undo). Every row it
+# touches gets story_group_manual = 1, which the automatic grouping (each save, the rebuild) never changes or joins to another story
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-story-coverage.php   # take off, add, move, rebuild keeps it, undo; made-up table
 # Document types (inc/doc-types.php): what kind each media library document is (student handbook, enrollment document, inspection
 # report, news clipping, legal filing... kop_dt_types(); a new type is one entry there). {prefix}kop_doc_types, one row per document
 # and type. Hourly: the folder and title rules (kop_dt_rules(), nearest folder first, strong titles win; bump KOP_DOC_TYPES_RULES_VERSION
 # after changing them) type most documents with no review, one logged change; the AI reads the rest and its guess waits at Review inbox >
 # Document types ("Typed by rule" there spot-checks the rules). Readers: /documents/ and /documents/<type>/ (a route,
-# "Also covered by" on the news feed is the automatic story grouping (api/news-story-groups.php); an admin corrects it with the pencil on
-# the list ('storycov:<id>', inc/story-coverage.php: untick a wrong article, paste a link or #id to add one, exact Undo). Every row it
-# touches gets story_group_manual = 1, which the automatic grouping (each save, the rebuild) never changes or joins to another story
-php -d extension=pdo_sqlite -d extension=mbstring scripts/test-story-coverage.php   # take off, add, move, rebuild keeps it, undo; made-up table
 # templates/document-types.php: grouped by program, filter by name/state/decade), a chip on every document tile, a type filter over
 # facility/company libraries (js/doc-type-filter.js), 'types' in the app's document payloads; set with the pencil on a tile or at KOP Tools >
 # Document Types (counts, tag many, Recent changes with Undo; log in the kop_doc_types_log option)
@@ -541,12 +549,16 @@ php scripts/test-survivor-archives.php
 # proposes staff, incidents, survivor accounts (unpublished) and leads; reviewed at KOP Tools > Fornits, with exact Undo.
 # Each read thread gets a headline from its summary (20 a call) that replaces the forum title on its links, on records too unless
 # a person changed the label; a lead sent to News/Lawsuits is retitled from the article by the hourly enrich (api/lib-record-enrich.php)
+php scripts/test-record-enrich.php                # which bare-link news/lawsuits the enrich picks, title handling, offline
 # "Check AI keys" there sends one request per provider through the site's own code (keys never shown)
 python scripts/test-gemini.py                     # is a Gemini key usable? lists its models, names the fix
 python scripts/fornits-crawl.py                   # resumable, one request per 3 s
 python scripts/fornits-process.py [--no-upload] [--keep-crawling]   # --no-upload: dry run, marks nothing read
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-fornits.php   # every link + each kind on real docs, exact undo
-# Scraper report PDFs on Drive -> wp-content/uploads/inspection-reports/<st>/ + index.json,
+# Podcast series transcribed locally with Whisper (scripts/podcast-transcribe.py), each episode's prompt primed with the KOP names its
+# feed mentions + scripts/podcast-vocab/<show>.json (corrections there, 'fix' re-applies); transcripts in tmp/podcasts/, never committed
+py -3.13 scripts/podcast-transcribe.py feed|vocab|run|fix|suspects|status [--show sftf]   # resumable; stops when C: runs low
+# Scraper report PDFs stay in link-shared Drive folders; the sync writes only wp-content/uploads/inspection-reports/<st>/index.json of Drive links,
 # linked as "Archived copy" on the state report pages (server CLI + nightly cron; no apply = dry run)
 php api/sync-inspection-archive.php apply --limit=2000 --minutes=25
 # robots.txt (inc/robots.php): every Disallow line goes inside Yoast's "User-agent: *" group (lines outside a group are ignored);
@@ -602,11 +614,11 @@ to the program aggregate otherwise.
 ## Architecture
 
 ### Dual-Workflow Data System
-1. **Admin workflow**: Direct writes to `facilities_master` table via `api/save-master.php`
+1. **Admin workflow**: Direct writes via `api/save-master.php` (to `facilities_v2` through `inc/facility-v2-writer.php` since the 2026-09-18 write switch)
 2. **Public workflow**: Writes to `suggested_edits` table for approval via `api/save-suggestion.php`
 
 ### Database Tables
-- `facilities_master` - Official facility records
+- `facilities_v2` (+ `{prefix}kop_operators`, `kop_operator_facilities`, `kop_facility_locations`) - Facility records, one JSON document per facility (`docs/FACILITY-SCHEMA.md`); `facilities_master` is the frozen legacy copy
 - `suggested_edits` - Public submissions pending approval
 - `locations_master` / `referrers_master` - Related data
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables

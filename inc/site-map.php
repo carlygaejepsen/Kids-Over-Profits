@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
 }
 
 if (!defined('KOP_SITE_MAP_REWRITE_VERSION')) {
-    define('KOP_SITE_MAP_REWRITE_VERSION', '4');
+    define('KOP_SITE_MAP_REWRITE_VERSION', '5');
 }
 
 // ---------------------------------------------------------------------------
@@ -488,6 +488,12 @@ if (!function_exists('kop_site_map_build')) {
         }
         if (function_exists('kop_feat_url')) {
             $sections['sources']['items'][] = kop_site_map_item('Essential reporting', kop_feat_url(), 'The reporting on the industry we recommend most');
+        }
+        if (function_exists('kop_dt_url')) {
+            $sections['sources']['items'][] = kop_site_map_item('Documents by type', kop_dt_url(), 'Handbooks, manuals, court filings and other documents, one kind at a time across programs');
+        }
+        if (function_exists('kop_send_page_url')) {
+            $sections['take-part']['items'][] = kop_site_map_item('Send a link', kop_send_page_url(), 'An article, lawsuit, bill or website we are missing, from any browser');
         }
 
         foreach ($pages as $slug => $p) {

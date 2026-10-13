@@ -27,7 +27,7 @@ kop_rinbox_register('program-homes', function () {
     return array(
         'label'    => 'Program homes',
         'group'    => 'Suggestions to check',
-        'help'     => 'Records named like "Program – Home" in one state, which may be the separate licensed homes of one program. Group puts them under one program record: its page then lists every home with their news and findings. Clear a home\'s name to leave it out. Undo is on the Grouped tab.',
+        'help'     => 'Records in one state that may be the separate licensed homes of one program: "Program – Home" names, numbered homes, one name in several towns, "Program X House" names and records sharing their first two words (each card says why). Group puts them under one program record: its page then lists every home with their news and findings. Clear a home\'s name to leave it out. Undo is on the Grouped tab.',
         'views'    => array('suggested' => 'Suggested', 'grouped' => 'Grouped', 'dismissed' => 'Not one program'),
         'tool_url' => admin_url('admin.php?page=kop-program-homes'),
         'count'    => function () {
