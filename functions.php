@@ -140,6 +140,8 @@ require_once get_stylesheet_directory() . '/inc/site-map.php';
 
 // /how-to-use-this-site/: where to start, the main destinations grouped by what a reader came to do.
 require_once get_stylesheet_directory() . '/inc/how-to-use.php';
+// Cite and print on /facility/ and /operator/ pages, and the press desk on /journalists/
+require_once get_stylesheet_directory() . '/inc/press-tools.php';
 
 // Essential reporting: news articles picked as especially good journalism, with a note (/essential-reporting/,
 // the news feed and home page strip, flags on facility/company pages, KOP Tools > Essential Reporting)
