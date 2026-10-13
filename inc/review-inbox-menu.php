@@ -1,24 +1,15 @@
 <?php
 /**
- * One menu entry for reviewing: every queue the review inbox covers
- * (inc/review-inbox.php) leaves the KOP Tools sidebar, and Submissions
- * Review is listed as "Review Inbox" with how many items wait. The old
- * screens still work (each inbox tab links "Open the full ... screen") and
- * are listed on the KOP Tools dashboard under "Old review screens".
+ * Submissions Review is listed as "Review Inbox" with how many items wait.
+ * Every screen, the queues the inbox covers included, stays on the KOP Tools
+ * sidebar in its own category (each inbox tab also links "Open the full ...
+ * screen"), and the inbox's "All tools" tab lists every tool.
+ * Never remove_submenu_page()/remove_menu_page(): a screen taken out of the
+ * menu loses its registration and its address answers 403.
  */
 
 if (!defined('ABSPATH')) {
     exit;
-}
-
-/** wp-admin screen slugs ("page=" values) of the queues the inbox covers. */
-function kop_rinbox_menu_covered_screens() {
-    $slugs = array();
-    foreach (kop_rinbox_sources() as $src) {
-        $url = (string) ($src['tool_url'] ?? '');
-        if ($url !== '' && preg_match('/[?&]page=([^&#]+)/', $url, $m)) $slugs[] = urldecode($m[1]);
-    }
-    return array_values(array_unique($slugs));
 }
 
 /** Items waiting across every queue, from the minute-old cache only (never counted on a menu load). */
@@ -27,12 +18,15 @@ function kop_rinbox_menu_waiting() {
     return is_array($counts) ? array_sum(array_map('intval', array_filter($counts, 'is_numeric'))) : 0;
 }
 
-/** The KOP Tools registry: Submissions Review becomes "Review Inbox"; the screens it covers move off the sidebar. */
+/**
+ * The KOP Tools registry: Submissions Review becomes "Review Inbox". Every other
+ * screen stays in its own category and on the sidebar, the queues the inbox covers
+ * included (the owner wants every tool one click away, 2026-10-13); the inbox's
+ * "All tools" tab lists the same registry (kop_rinbox_all_tools()).
+ */
 add_filter('kop_tools_registry', 'kop_rinbox_menu_registry');
 function kop_rinbox_menu_registry($tools) {
-    if (!is_array($tools) || !function_exists('kop_rinbox_sources')) return $tools;
-    $covered = kop_rinbox_menu_covered_screens();
-    $moved = array();
+    if (!is_array($tools)) return $tools;
     foreach ($tools as $category => $list) {
         foreach ((array) $list as $i => $tool) {
             if (($tool['type'] ?? '') === 'wp-page' && ($tool['template'] ?? '') === 'page-admin-submissions.php') {
@@ -41,59 +35,40 @@ function kop_rinbox_menu_registry($tools) {
                     . 'the news scans (closures, new facilities, scraper finds, bill and lawsuit updates); imports (Woodbury, Fornits, Drive Docs, '
                     . 'young adult programs); suggestions (duplicates, people, program homes, map years and renames, inspection and wiki links, '
                     . 'wiki updates, data audit, federal funding); serious violations and plain summaries; document types; Nominated; Conflicts. '
-                    . 'Your inbox: Assigned to you, Snoozed, Volunteers recommend, Recently done with Undo.';
-                continue;
-            }
-            $screen = ($tool['type'] ?? '') === 'screen' ? (string) ($tool['screen'] ?? '') : '';
-            $path = (string) ($tool['path'] ?? '');
-            // A screen kept on the sidebar holds tools the inbox does not: it stays in its own category.
-            if ($screen !== '' && in_array($screen, kop_rinbox_menu_keep_listed(), true)) continue;
-            if (($screen !== '' && in_array($screen, $covered, true))
-                || $path === 'api/review-inspection-highlights.php' || $path === 'api/publish-approved-records.php') {
-                $moved[] = $tool;
-                unset($tools[$category][$i]);
+                    . 'Your inbox: Assigned to you, Snoozed, Volunteers recommend, Recently done with Undo. All tools: every KOP tool.';
             }
         }
-        $tools[$category] = array_values((array) $tools[$category]);
     }
-    if ($moved) $tools['Old review screens'] = $moved;
     return $tools;
 }
 
 /**
- * Screens that stay on the sidebar although the inbox covers them: they hold
- * tools the inbox does not (Program Homes: Companies that are one program;
- * Essential Reporting: find and pick any article, notes, Recent changes).
+ * Every KOP tool for the inbox's "All tools" tab, in registry order:
+ * [{category, title, desc, url, external, action, available, missing}].
+ * Empty when the KOP Tools plugin is not active.
  */
-function kop_rinbox_menu_keep_listed() {
-    return array('kop-program-homes', 'kop-essential-reporting');
-}
-
-/**
- * The sidebar entries hidden for the covered screens: [submenu slugs, top-level slugs].
- * Hidden with CSS, never remove_submenu_page()/remove_menu_page(): a screen taken
- * out of the menu loses its registration and its address answers 403
- * ("Sorry, you are not allowed to access this page").
- */
-function kop_rinbox_menu_hidden() {
-    if (!function_exists('kop_rinbox_sources')) return array(array(), array());
-    $subs = array_values(array_diff(kop_rinbox_menu_covered_screens(), kop_rinbox_menu_keep_listed()));
-    $subs[] = 'edit.php?post_type=' . (defined('KOP_EXT_SOURCE_CPT') ? KOP_EXT_SOURCE_CPT : 'kop_source');
-    return array($subs, array('anonymous-docs'));
-}
-
-add_action('admin_head', function () {
-    list($subs, $tops) = kop_rinbox_menu_hidden();
-    $rules = array();
-    foreach ($subs as $slug) {
-        $href = strpos($slug, '.php') !== false ? $slug : 'admin.php?page=' . $slug;
-        $rules[] = '#adminmenu .wp-submenu li:has(> a[href="' . esc_attr($href) . '"])';
+function kop_rinbox_all_tools() {
+    if (!function_exists('kop_tools_registry') || !function_exists('kop_tools_resolve')) return array();
+    $out = array();
+    foreach (kop_tools_registry() as $category => $list) {
+        foreach ((array) $list as $tool) {
+            $where = kop_tools_resolve($tool);
+            $out[] = array(
+                'category'  => (string) $category,
+                'title'     => (string) ($tool['title'] ?? ''),
+                'desc'      => (string) ($tool['desc'] ?? ''),
+                'url'       => (string) $where['url'],
+                'external'  => !empty($where['external']),
+                'action'    => ($tool['type'] ?? '') === 'action',
+                'available' => !empty($where['available']),
+                'missing'   => (string) ($where['missing'] ?? ''),
+            );
+        }
     }
-    foreach ($tops as $slug) $rules[] = '#adminmenu #toplevel_page_' . sanitize_html_class($slug);
-    if ($rules) echo '<style id="kop-rinbox-menu">' . implode(",\n", $rules) . ' { display: none; }</style>';
-});
+    return $out;
+}
 
-/** Take the covered screens off the sidebar (still reachable by address) and put the waiting count on Review Inbox. */
+/** Put the waiting count on Review Inbox in the sidebar. */
 add_action('admin_menu', function () {
     if (!function_exists('kop_rinbox_sources') || !function_exists('kop_tools_parent_slug')) return;
     $parent = kop_tools_parent_slug();

@@ -1,7 +1,7 @@
 <?php
 /**
  * Renamed programs merged as a rename (KOP Tools > Merge Duplicates >
- * Renamed programs; inc/facility-merge.php, api/merge-facility-duplicates.php,
+ * Renamed programs; inc/facility-merge.php, api/lib-merge-facility-docs.php,
  * inc/facility-eras.php), against the SQLite mirror of production.
  *
  * Merges Copper Canyon Academy (the Aspen-era name, 1998 to 2014) into Sedona

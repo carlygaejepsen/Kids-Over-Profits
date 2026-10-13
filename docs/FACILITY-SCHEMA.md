@@ -187,7 +187,7 @@ a `migration: original status "..."` note.
 ### legacy.mergedFacilities
 
 Every record folded into this one by KOP Tools > Merge Duplicates
-(`api/merge-facility-duplicates.php`, `kop_mfd_merge_docs()`) adds one entry:
+(`api/lib-merge-facility-docs.php`, `kop_mfd_merge_docs()`) adds one entry:
 `{facility_id, unique_name, name, mergedAt}`, the dropped record's id, row
 name, display name and the merge time (ISO 8601).
 

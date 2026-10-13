@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KOP Tools
  * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
- * Version: 2.4.0
+ * Version: 2.5.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -414,14 +414,24 @@ function kop_tools_registry() {
 }
 
 /**
- * Categories whose tools are also listed in the wp-admin sidebar. The rest
- * (repair and batch tools) are one hover away in the admin bar dropdown and
- * on the dashboard; listing all of them in the sidebar makes a flyout taller
- * than the screen. A tool elsewhere can join the sidebar on its own with
- * 'sidebar' => true.
+ * Categories whose tools are listed in the wp-admin sidebar: every one, so
+ * every tool is one click away (the owner's choice, 2026-10-13). The flyout
+ * scrolls when it is taller than the screen (kop_tools_sidebar_css()).
  */
 function kop_tools_sidebar_categories() {
-    return apply_filters('kop_tools_sidebar_categories', array('Review queue', 'Records & editors'));
+    return apply_filters('kop_tools_sidebar_categories', array_keys(kop_tools_registry()));
+}
+
+/** The dashboard row of a tool: actions in the sidebar link to it, where their Run button lives. */
+function kop_tools_row_id(array $tool) {
+    return 'kop-tool-' . sanitize_title($tool['title']);
+}
+
+/** A sidebar flyout longer than the window scrolls instead of running off the bottom. */
+add_action('admin_head', 'kop_tools_sidebar_css');
+function kop_tools_sidebar_css() {
+    echo '<style id="kop-tools-sidebar">#adminmenu #toplevel_page_kop-tools.wp-not-current-submenu .wp-submenu'
+       . '{max-height:calc(100vh - 48px);overflow-y:auto}</style>';
 }
 
 /**
@@ -516,10 +526,18 @@ add_action('admin_menu', function () {
                 continue;
             }
             $type = isset($tool['type']) ? $tool['type'] : 'page';
-            if ($type === 'screen' || $type === 'action') {
-                continue;
+            if ($type === 'screen') {
+                continue;   // registered by the theme under this menu itself
             }
             $where = kop_tools_resolve($tool);
+            if ($type === 'action') {
+                // No page of its own: the entry opens the dashboard at its Run button.
+                if ($where['available']) {
+                    add_submenu_page('kop-tools', $tool['title'], $tool['title'] . ' (run)', 'manage_options',
+                        admin_url('admin.php?page=kop-tools#' . kop_tools_row_id($tool)), '');
+                }
+                continue;
+            }
             if ($where['available']) {
                 add_submenu_page('kop-tools', $tool['title'], $tool['title'], 'manage_options', $where['url'], '');
             }
@@ -541,7 +559,8 @@ function kop_tools_order_sidebar() {
     foreach (kop_tools_registry() as $tools) {
         foreach ($tools as $tool) {
             $type = isset($tool['type']) ? $tool['type'] : 'page';
-            $key = $type === 'screen' ? $tool['screen'] : kop_tools_resolve($tool)['url'];
+            $key = $type === 'screen' ? $tool['screen']
+                : ($type === 'action' ? admin_url('admin.php?page=kop-tools#' . kop_tools_row_id($tool)) : kop_tools_resolve($tool)['url']);
             if ($key !== '' && !isset($rank[$key])) {
                 $rank[$key] = $i;
             }
@@ -621,7 +640,7 @@ function kop_tools_render_dashboard() {
 
     echo '<div class="wrap"><h1>KOP Tools</h1>';
     echo '<p>Every Kids Over Profits admin tool on this site (theme <code>' . esc_html(get_stylesheet()) . '</code>). '
-       . 'The sidebar and the KOP Tools dropdown in the admin bar list the same tools. '
+       . 'The sidebar, the KOP Tools dropdown in the admin bar and the All tools tab of the Review Inbox list the same tools. '
        . 'Pages and api tools open in a new tab; each enforces its own admin login check. '
        . 'Greyed-out entries are registered here but missing on this site.</p>';
 
@@ -638,7 +657,7 @@ function kop_tools_render_dashboard() {
             } else {
                 $where_label = $tool['path'] . (!empty($tool['query']) ? '?' . $tool['query'] : '');
             }
-            echo '<tr' . ($where['available'] ? '' : ' style="opacity:.45"') . '>';
+            echo '<tr id="' . esc_attr(kop_tools_row_id($tool)) . '"' . ($where['available'] ? '' : ' style="opacity:.45"') . '>';
             echo '<td style="width:240px"><strong>' . esc_html($tool['title']) . '</strong><br>'
                . '<code style="font-size:11px">' . esc_html($where_label) . '</code></td>';
             echo '<td>' . esc_html($tool['desc']) . '</td>';

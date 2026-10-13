@@ -55,7 +55,7 @@ Recipients come from the `kop_submission_notify_emails` option (comma or newline
 
 1. KOP Tools > Review Inbox > **Anonymous documents** (`inc/review-inbox/anonymous-docs.php`) lists the sealed submissions, newest first, each with a **Download (encrypted)** link (`admin-post.php?action=kop_anon_download`, nonce-checked per file). Its help line says which key is in use and warns when uploads are being refused (no public key, or no `CLOUDMERSIVE_API_KEY`) or when older unencrypted files remain, with a "Lock the older documents now" button for those. **Mark handled** moves a submission to the Handled view (the file name is kept in the `kop_anon_docs_handled` option; nothing on the server changes); **Mark not handled** puts it back. Volunteer reviewers can never be given this queue (`kop_vol_never_sources()` in `inc/review-volunteers.php`).
 
-   The older **Anonymous Docs** screen (`admin.php?page=anonymous-docs`, `manage_options` only) still works and is still where the notification email links, but its sidebar entry is hidden (`inc/review-inbox-menu.php`); open it from the inbox tab's "Open the full Anonymous documents screen" link or the KOP Tools dashboard's "Old review screens".
+   The older **Anonymous Docs** screen (`admin.php?page=anonymous-docs`, `manage_options` only) still works, is on the sidebar, and is still where the notification email links; the inbox tab's "Open the full Anonymous documents screen" link opens it too.
 2. Open the downloaded files on your own computer with the private key. With the PHP bundled in Flywheel Local:
 
    ```

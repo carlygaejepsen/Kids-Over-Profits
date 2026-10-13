@@ -1250,7 +1250,7 @@
         'sourceProject', 'source_project', 'sourceProjectId', 'source_project_id',
         'sourceCategory', 'source_category', 'source_operator',
         // Database bookkeeping: the facility's FileBird folder and the copies
-        // merged into it (api/merge-facility-duplicates.php).
+        // merged into it (api/lib-merge-facility-docs.php).
         'documentFolderId', 'mergedFacilities',
         // Read out of the raw records into their own rows (collectRawFlags,
         // rawOwnership below).

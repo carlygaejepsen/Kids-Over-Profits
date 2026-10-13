@@ -2,7 +2,7 @@
 /**
  * Review inbox source: lawsuits and legislation that were approved but never
  * published (approved before "approve also publishes"), the rows the old
- * api/publish-approved-records.php page publishes all at once. Here each can
+ * api/publish-approved-records.php page (removed 2026-10-13) published at once. Each can
  * be published on its own (or several with the bulk buttons), or all of them
  * with the tool; both go through kop_publish_approved_records()
  * (api/lib-publish-approved.php). Undo puts one back to approved with its
@@ -22,7 +22,7 @@ kop_rinbox_register('publish-approved', function () {
         'group'    => 'Submissions',
         'help'     => 'Lawsuits and bills that were approved before approving also published them, so they are still off the site. Publish puts one on the site; Publish all does every one.',
         'views'    => array('approved' => 'Waiting to publish'),
-        'tool_url' => get_stylesheet_directory_uri() . '/api/publish-approved-records.php',
+        'tool_url' => '',
         'tools'    => array(array('id' => 'publish_all', 'label' => 'Publish all of them', 'style' => 'approve',
             'confirm' => 'Publish every approved lawsuit and bill now?')),
         'tool'     => function ($id, array $params) {

@@ -566,6 +566,7 @@ add_action('rest_api_init', function () {
         'ai'      => array('POST', 'kop_rinbox_rest_ai'),
         'tool'    => array('POST', 'kop_rinbox_rest_tool'),
         'lookup'  => array('GET', 'kop_rinbox_rest_lookup'),
+        'all-tools' => array('GET', 'kop_rinbox_rest_all_tools'),
     );
     foreach ($routes as $path => $r) {
         register_rest_route('kop/v1', '/review-inbox/' . $path, array(
@@ -603,6 +604,13 @@ function kop_rinbox_rest_sources(WP_REST_Request $req) {
         }
         return array('sources' => $out, 'tags' => kop_rinbox_known_tags(), 'admins' => kop_rinbox_admins(),
             'me' => get_current_user_id(), 'held' => kop_rinbox_held_counts() + array('volunteers' => function_exists('kop_vol_open_count') ? kop_vol_open_count() : 0));
+    });
+}
+
+/** The "All tools" tab: every KOP tool, from the KOP Tools registry (kop_rinbox_all_tools(), inc/review-inbox-menu.php). */
+function kop_rinbox_rest_all_tools(WP_REST_Request $req) {
+    return kop_rinbox_rest(function () {
+        return array('tools' => function_exists('kop_rinbox_all_tools') ? kop_rinbox_all_tools() : array());
     });
 }
 

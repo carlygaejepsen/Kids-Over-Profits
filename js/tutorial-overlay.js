@@ -964,20 +964,13 @@ if (window.TutorialOverlay) {
                 target: null // Center
             },
             {
-                // Public form only (templates/data-form-public.php): the guided start
-                // in js/data-form/data-wizard.js hides the full form until it is
-                // dismissed, so Next opens the full form for the rest of the tour.
-                title: 'Start With the Guided Form',
-                content: 'The form opens on a guided start. Search for the program, company or person (an old name works too), or add a new one, then pick what you want to add or fix. Only those parts of the form open.<br><br>The rest of this tour covers the <strong>full form</strong>, which has every field. Clicking <strong>Next</strong> opens it; <strong>Use the guided form instead</strong> brings the guided start back.',
-                target: '#kop-wizard',
+                // Public form only: shown when the reader has left the guided start.
+                title: 'Back to the Guided Form',
+                content: 'This is the full form, with every field. <strong>Use the guided form instead</strong> goes back to the short version that asks what you want to add or fix and shows only those fields.',
+                target: '#kop-wizard [data-act="guided"]',
                 position: 'bottom',
                 highlightPadding: 6,
-                onlyIf: '#kop-wizard',
-                onNext: () => {
-                    if (!document.body.classList.contains('kop-wiz-pick') && !document.body.classList.contains('kop-wiz-focus')) return;
-                    const full = document.querySelector('#kop-wizard [data-act="full"]');
-                    if (full) full.click();
-                }
+                onlyIf: '#kop-wizard [data-act="guided"]'
             },
             {
                 title: 'Category Selection',
@@ -1170,11 +1163,90 @@ if (window.TutorialOverlay) {
             }
         ];
 
-        // A step with onlyIf is kept only on pages that have that element
-        // (the guided start is on the public form, not the admin form).
-        const pageSteps = tutorialSteps.filter(step => !step.onlyIf || document.querySelector(step.onlyIf));
+        // The guided start (public form, js/data-form/data-wizard.js) has its own
+        // short tour: it never leaves the guided form, and covers only the steps
+        // on screen when the tour starts (search, a new record, topics, filling in).
+        const guidedSteps = [
+            {
+                title: 'Welcome to the Data Form!',
+                content: 'This form starts with three short steps: find the record (or add a new one), pick what you want to add or fix, then fill in only those fields. Nothing is sent to us until you press <strong>Submit for review</strong>, and a volunteer checks every suggestion before it goes on the site.',
+                target: null
+            },
+            {
+                title: 'Find the Record',
+                content: 'Type the name of the program, company, provider, transporter, consultant, marketing company or trade group. Programs change names often, so an old name works too. Pick it from the results.',
+                target: '#kop-wiz-q',
+                position: 'bottom',
+                highlightPadding: 6,
+                onlyIf: '#kop-wiz-q'
+            },
+            {
+                title: 'Not on File Yet?',
+                content: 'If it is not in the results, add it as new: pick what kind of record it is.',
+                target: '.kop-wiz-new',
+                position: 'top',
+                highlightPadding: 6,
+                onlyIf: '.kop-wiz-new'
+            },
+            {
+                title: 'Name a New Record',
+                content: 'Type its name and, if you know it, the state or country, then press <strong>Continue</strong>.',
+                target: '.kop-wiz-form',
+                position: 'bottom',
+                highlightPadding: 6,
+                onlyIf: '.kop-wiz-form'
+            },
+            {
+                title: 'Pick What to Add or Fix',
+                content: 'Tick one or more topics. Only those parts of the form open. <strong>Show every field</strong> opens all of them. Nobody is expected to fill in everything: leave blank whatever you do not know.',
+                target: '.kop-wiz-topics',
+                position: 'bottom',
+                highlightPadding: 6,
+                onlyIf: '.kop-wiz-topics'
+            },
+            {
+                title: 'Fill In What You Know',
+                content: 'The fields below are the topics you picked. <strong>Add something else too</strong> opens more topics without losing what you typed. <strong>Change</strong> or <strong>Start over</strong> picks another record.',
+                target: '.kop-wiz-bar',
+                position: 'bottom',
+                highlightPadding: 6,
+                onlyIf: '.kop-wiz-bar'
+            },
+            {
+                title: 'Submit for Review',
+                content: 'When you are done, press <strong>Submit for review</strong> and say where you learned it: a link, a document, or your own time there. You can ask to be emailed when it has been reviewed.',
+                target: '#submit-suggestion-btn-section',
+                position: 'top',
+                highlightPadding: 6,
+                onlyIf: '.kop-wiz-bar',
+                scrollTarget: '#submission-section'
+            },
+            {
+                title: 'Prefer Every Field?',
+                content: '<strong>Show the full form</strong> opens every field at once. Press the tour button again there for a tour of the full form.',
+                target: '#kop-wizard [data-act="full"]',
+                position: 'top',
+                highlightPadding: 6,
+                onlyIf: '#kop-wizard [data-act="full"]'
+            }
+        ];
 
-        window.kopTutorial = new TutorialOverlay(pageSteps);
+        // A step with onlyIf is kept only when that element is on the page
+        // (the guided start is on the public form, not the admin form).
+        const present = step => !step.onlyIf || document.querySelector(step.onlyIf);
+        const inGuidedStart = () => document.body.classList.contains('kop-wiz-pick') || document.body.classList.contains('kop-wiz-focus');
+
+        window.kopTutorial = new TutorialOverlay(tutorialSteps.filter(present));
+        if (document.querySelector('#kop-wizard')) {
+            // Which tour runs is decided when it starts: the guided start's own
+            // steps while it is showing, the full form's after it is dismissed.
+            const tour = window.kopTutorial;
+            const startTour = tour.start.bind(tour);
+            tour.start = function () {
+                this.steps = (inGuidedStart() ? guidedSteps : tutorialSteps).filter(present);
+                startTour();
+            };
+        }
     };
 
     window.initTutorialOverlay = initTutorialOverlay;

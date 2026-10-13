@@ -168,7 +168,9 @@ foreach (kop_tools_sidebar_categories() as $cat) {
         if (!$where['available']) {
             continue;
         }
-        $key = $tool['type'] === 'screen' ? $tool['screen'] : $where['url'];
+        // A batch tool ('action') opens the dashboard at its Run button.
+        $key = $tool['type'] === 'screen' ? $tool['screen']
+            : ($tool['type'] === 'action' ? admin_url('admin.php?page=kop-tools#' . kop_tools_row_id($tool)) : $where['url']);
         check(in_array($key, $slugs, true), "sidebar is missing {$tool['title']}");
     }
 }

@@ -1359,3 +1359,68 @@ button.rinbox-pv-btn:focus-visible {
         flex: 1 1 140px;
     }
 }
+
+/* All tools tab (renderAllTools in js/review-inbox.js) */
+.rinbox-tools-heading {
+    margin: 18px 0 6px !important;
+    font-size: 16px;
+}
+.rinbox-tools-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 8px;
+}
+.rinbox-tools-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 8px 10px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
+}
+.rinbox-tools-row.is-missing {
+    opacity: .6;
+}
+.rinbox-tools-text {
+    min-width: 0;
+}
+.rinbox-tools-text .rinbox-help {
+    margin: 2px 0 0;
+    font-size: 13px;
+}
+.rinbox-panel a.rinbox-tools-open,
+.rinbox-panel a.rinbox-tools-open:hover,
+.rinbox-panel a.rinbox-tools-open:focus,
+.rinbox-panel a.rinbox-tools-open:active {
+    flex: none;
+    border: 1px solid var(--rv-line-strong, #A9B1BD);
+    border-radius: var(--rv-radius);
+    padding: 1px 10px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy, #000080);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+.rinbox-panel a.rinbox-tools-open:hover {
+    background: var(--rv-subtle);
+}
+.rinbox-tools-missing {
+    flex: none;
+    font-size: 12px;
+    color: var(--kop-text-muted, #4A5568);
+}
+.rinbox-tools-output {
+    max-height: 320px;
+    overflow: auto;
+    white-space: pre-wrap;
+    background: var(--rv-subtle, #F7F8FA);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--rv-line);
+    border-radius: var(--rv-radius);
+    padding: 10px;
+    font-size: 12px;
+}

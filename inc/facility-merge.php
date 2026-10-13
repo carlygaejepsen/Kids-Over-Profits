@@ -9,7 +9,7 @@
  * "Not the same" hides a pair for good (option kop_facility_merge_dismissed).
  *
  * Merging (kop_fmerge_execute()) leaves one record. The kept record's
- * document takes everything the other one had (api/merge-facility-duplicates.php
+ * document takes everything the other one had (api/lib-merge-facility-docs.php
  * kop_mfd_merge_docs: empty fields fill, lists join, the other name becomes an
  * otherName), every row anywhere that points at the dropped id or unique name
  * moves to the kept one (kop_fmerge_ref_tables()), and its document library
@@ -504,8 +504,7 @@ if (!function_exists('kop_fmerge_join_folder')) {
 if (!function_exists('kop_fmerge_load_mfd')) {
     function kop_fmerge_load_mfd() {
         if (!function_exists('kop_mfd_merge_docs')) {
-            if (!defined('KOP_MERGE_FACILITY_DUPLICATES_LIB')) define('KOP_MERGE_FACILITY_DUPLICATES_LIB', true);
-            require_once dirname(__DIR__) . '/api/merge-facility-duplicates.php';
+            require_once dirname(__DIR__) . '/api/lib-merge-facility-docs.php';
         }
     }
 }

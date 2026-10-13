@@ -78,6 +78,9 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/api/clear-cache.php
     - /bin/rm -f $DEPLOYPATH/api/debug-master-data.php
     - /bin/rm -f $DEPLOYPATH/api/test-connection.php
+    # One-time batch endpoints replaced by screens with Undo (2026-10-13): Merge Duplicates
+    # (merge rules now in api/lib-merge-facility-docs.php) and Review inbox > Approved, not published.
+    - /bin/rm -f $DEPLOYPATH/api/merge-facility-duplicates.php $DEPLOYPATH/api/publish-approved-records.php
     - /bin/rm -f $DEPLOYPATH/api/test-get.php
     - /bin/rm -f $DEPLOYPATH/api/debug-recent-projects.php
     - /bin/rm -f $DEPLOYPATH/api/validate-json.php

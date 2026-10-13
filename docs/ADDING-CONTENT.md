@@ -192,9 +192,9 @@ Tests: `scripts/test-facility-pages.php`, `scripts/test-inline-edit.php`
 - Register it with `add_submenu_page()` under KOP Tools.
 - `wp-plugins/kop-tools/kop-tools.php`: an entry in the tools registry with a
   one-line description of what the screen does (bump the plugin version).
-- If the review inbox covers it, it is hidden from the sidebar with CSS
-  (`inc/review-inbox-menu.php`); a screen that also does things the inbox
-  cannot goes in `kop_rinbox_menu_keep_listed()`. Never
+- Every tool is on the sidebar (every registry category is a sidebar
+  category) and in the Review Inbox's **All tools** tab, both read from the
+  registry, so the registry entry is all it takes. Never hide a screen with
   `remove_submenu_page()`: it makes the screen answer 403.
 - A facility id box is always `kop_facility_finder_field()`
   (`inc/facility-finder.php`), never a bare id input.

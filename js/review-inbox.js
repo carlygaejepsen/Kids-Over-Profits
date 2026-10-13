@@ -149,6 +149,15 @@
             });
             tabsRow.appendChild(row);
         });
+        // Every KOP tool, the same list as the KOP Tools menu (kop_rinbox_all_tools()).
+        tabsRow.appendChild(el('div', { class: 'rinbox-group rinbox-group-tools' }, [
+            el('span', { class: 'rinbox-group-label', text: 'Tools' }),
+            el('button', {
+                type: 'button', role: 'tab', class: 'submission-tab rinbox-tab' + (state.special === '_tools' ? ' is-active' : ''),
+                'aria-selected': state.special === '_tools' ? 'true' : 'false', 'data-special': '_tools',
+                onclick: function () { openSpecial('_tools'); }, text: 'All tools'
+            })
+        ]));
         // The page's own five tabs show their counts in data-count-for; a
         // native source's count is already there.
     }
@@ -1007,7 +1016,82 @@
         panel.hidden = false;
         renderTabs();
         setUrl();
-        if (k === '_done') renderDone(); else renderHeld(k === '_mine' ? 'mine' : k === '_volunteers' ? 'volunteers' : 'snoozed');
+        if (k === '_tools') renderAllTools();
+        else if (k === '_done') renderDone(); else renderHeld(k === '_mine' ? 'mine' : k === '_volunteers' ? 'volunteers' : 'snoozed');
+    }
+
+    /* ---- All tools: every KOP tool, grouped as in the KOP Tools menu ---------- */
+
+    var allTools = null;
+
+    function renderAllTools() {
+        panel.innerHTML = '';
+        panel.appendChild(el('div', { class: 'rinbox-head' }, [
+            el('h2', { text: 'All tools' }),
+            el('p', { class: 'rinbox-help', text: 'Every KOP tool, the same list as the KOP Tools menu in wp-admin. Open goes to the tool; Run starts a batch job and shows here what it reported.' })
+        ]));
+        var search = el('input', { type: 'search', class: 'rinbox-search', placeholder: 'Find a tool…', 'aria-label': 'Find a tool' });
+        var status = el('p', { class: 'rinbox-status', role: 'status', text: 'Loading…' });
+        var out = el('pre', { class: 'rinbox-tools-output', hidden: true });
+        var list = el('div', { class: 'rinbox-tools' });
+        panel.appendChild(el('div', { class: 'rinbox-toolbar' }, [el('span', { class: 'rinbox-filters' }, [search])]));
+        panel.appendChild(status);
+        panel.appendChild(out);
+        panel.appendChild(list);
+
+        function run(t, btn) {
+            if (!window.confirm('Run "' + t.title + '" now?')) return;
+            btn.disabled = true;
+            out.hidden = false;
+            out.textContent = 'Running ' + t.title + '…';
+            fetch(t.url, { method: 'POST', credentials: 'same-origin' })
+                .then(function (res) { return res.text().then(function (text) { return { status: res.status, text: text }; }); })
+                .then(function (r) {
+                    var body = r.text;
+                    try { body = JSON.stringify(JSON.parse(r.text), null, 2); } catch (e) { /* not JSON: show it as sent */ }
+                    out.textContent = t.title + ': HTTP ' + r.status + '\n' + body;
+                })
+                .catch(function (e) { out.textContent = t.title + ': request failed: ' + e.message; })
+                .then(function () { btn.disabled = false; });
+        }
+
+        function draw() {
+            var q = search.value.trim().toLowerCase();
+            list.innerHTML = '';
+            var shown = 0;
+            var current = null;
+            (allTools || []).forEach(function (t) {
+                if (q && (t.title + ' ' + t.desc + ' ' + t.category).toLowerCase().indexOf(q) === -1) return;
+                if (!current || current.category !== t.category) {
+                    current = { category: t.category, box: el('div', { class: 'rinbox-tools-group' }) };
+                    list.appendChild(el('h3', { class: 'rinbox-tools-heading', text: t.category }));
+                    list.appendChild(current.box);
+                }
+                var act;
+                if (!t.available) act = el('em', { class: 'rinbox-tools-missing', text: t.missing || 'Not on this site' });
+                else if (t.action) {
+                    act = el('button', { type: 'button', class: 'rinbox-pv-btn', text: 'Run' });
+                    act.addEventListener('click', function () { run(t, act); });
+                } else act = el('a', { class: 'rinbox-tools-open', href: t.url, target: t.external ? '_blank' : null, rel: t.external ? 'noopener' : null, text: 'Open' });
+                current.box.appendChild(el('div', { class: 'rinbox-tools-row' + (t.available ? '' : ' is-missing') }, [
+                    el('div', { class: 'rinbox-tools-text' }, [
+                        el('strong', { text: t.title }),
+                        t.desc ? el('p', { class: 'rinbox-help', text: t.desc }) : null
+                    ]),
+                    act
+                ]));
+                shown++;
+            });
+            if (!allTools) return;
+            status.textContent = !allTools.length ? 'The KOP Tools plugin is not active, so there is no list of tools.'
+                : shown ? shown + (shown === 1 ? ' tool' : ' tools') : 'No tool matches.';
+        }
+
+        search.addEventListener('input', draw);
+        (allTools ? Promise.resolve({ tools: allTools }) : api('all-tools')).then(function (data) {
+            allTools = data.tools || [];
+            draw();
+        }).catch(function (e) { status.textContent = 'Could not load the tools: ' + e.message; });
     }
 
     function renderHeld(which) {
@@ -1799,7 +1883,7 @@
         decorateNative();
         var wanted = null;
         try { wanted = new URL(window.location.href).searchParams.get('type'); } catch (e) { wanted = null; }
-        if (wanted && SPECIAL[wanted]) openSpecial(wanted);
+        if (wanted && (SPECIAL[wanted] || wanted === '_tools')) openSpecial(wanted);
         else if (wanted && state.byKey[wanted] && !state.byKey[wanted].native) openSource(wanted);
     });
 })();

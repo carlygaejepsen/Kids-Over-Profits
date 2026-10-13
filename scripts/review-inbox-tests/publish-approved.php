@@ -2,7 +2,7 @@
 /**
  * scripts/test-review-inbox.php checks for the 'publish-approved' source
  * (inc/review-inbox/publish-approved.php over api/lib-publish-approved.php,
- * which api/publish-approved-records.php also calls). One lawsuit and one
+ * which the removed api/publish-approved-records.php also called). One lawsuit and one
  * bill in the scratch copy are set back to approved, as if approved before
  * "approve also publishes".
  */
