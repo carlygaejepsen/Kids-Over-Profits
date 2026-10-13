@@ -319,7 +319,7 @@ if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
             }
             if (!$is_location && !$deleted) {
                 // Not an operator: a referrer, transporter or provider project of that name.
-                foreach (['referrers_master', 'transporters_master', $providers_table, $marketers_table] as $table) {
+                foreach (['referrers_master', $transporters_table, $providers_table, $marketers_table] as $table) {
                     try {
                         $stmt = $pdo->prepare("DELETE FROM `$table` WHERE unique_name = :projectName");
                         $stmt->execute([':projectName' => $projectName]);
@@ -1107,7 +1107,7 @@ if ($action === 'delete') {
 
         // transporters_master may not exist yet (auto-created on first save)
         try {
-            $stmt = $pdo->prepare("DELETE FROM transporters_master WHERE unique_name = :projectName");
+            $stmt = $pdo->prepare("DELETE FROM `{$transporters_table}` WHERE unique_name = :projectName");
             $stmt->execute([':projectName' => $projectName]);
             $deletedFromTransporters = $stmt->rowCount() > 0;
         } catch (PDOException $e) {
@@ -1139,7 +1139,7 @@ if ($action === 'delete') {
             $fromTable = $deletedFromReferrers
                 ? 'referrers_master'
                 : ($deletedFromTransporters
-                    ? 'transporters_master'
+                    ? $transporters_table
                     : ($deletedFromProviders
                         ? $providers_table
                         : ($deletedFromMarketers

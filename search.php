@@ -186,7 +186,7 @@ global $wpdb;
         ),
         array(
             'title'    => 'Transporters',
-            'table'    => 'transporters_master',
+            'table'    => (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'),
             'template' => 'page-transporter-index.php',
             'linkable' => true,
             'results'  => array(),

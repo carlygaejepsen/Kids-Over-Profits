@@ -99,7 +99,7 @@ function kop_global_search_collect($phrase) {
     $master_tables = array(
         array('key' => 'facilities',   'label' => 'Facilities & programs', 'table' => $facilities_table,     'template' => 'page-tti-program-index.php', 'limit' => 6),
         array('key' => 'referrers',    'label' => 'Referrers',             'table' => 'referrers_master',    'template' => 'page-referrer-index.php',    'limit' => 4),
-        array('key' => 'transporters', 'label' => 'Transporters',          'table' => 'transporters_master', 'template' => 'page-transporter-index.php', 'limit' => 4),
+        array('key' => 'transporters', 'label' => 'Transporters',          'table' => (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'template' => 'page-transporter-index.php', 'limit' => 4),
         array('key' => 'marketers',    'label' => 'Marketing companies',   'table' => 'marketers_master',    'template' => 'page-marketer-index.php',    'limit' => 4),
         array('key' => 'locations',    'label' => 'Locations',             'table' => 'locations_master',    'template' => 'page-location-index.php',    'limit' => 4),
     );

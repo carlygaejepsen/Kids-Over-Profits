@@ -400,3 +400,22 @@ function kop_loading_skeleton($label, $rows = 3) {
     }
     return $out . '</div>';
 }
+
+if (!function_exists('kop_transporters_table')) {
+    /**
+     * The transporter table on this site: wpdl_transporters_master on the live site, transporters_master
+     * on older copies. Prefixed when neither exists yet, as api/save-master.php creates it.
+     */
+    function kop_transporters_table() {
+        static $table = null;
+        if ($table !== null) return $table;
+        global $wpdb;
+        $prefix = isset($wpdb->prefix) ? (string) $wpdb->prefix : '';
+        foreach (array_unique(array($prefix . 'transporters_master', 'transporters_master')) as $candidate) {
+            if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $candidate)) === $candidate) {
+                return $table = $candidate;
+            }
+        }
+        return $table = $prefix . 'transporters_master';
+    }
+}

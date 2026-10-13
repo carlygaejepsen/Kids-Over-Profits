@@ -526,6 +526,33 @@ function resolvePathTarget(path) {
         return { scope, normalizedPath, target };
     }
 
+    // Transport company lists, and the current individual transporter's
+    // (transporterIndividual.* / transporter.*; js/data-form/transporter-form.js).
+    // Without these they fell through to the facility and saved there.
+    if (path.startsWith('transporterCompany.')) {
+        if (!window.formData.transporterCompany || typeof window.formData.transporterCompany !== 'object') {
+            window.formData.transporterCompany = typeof window.createDefaultTransporterCompany === 'function'
+                ? window.createDefaultTransporterCompany() : {};
+        }
+        scope = 'transporterCompany';
+        normalizedPath = path.replace('transporterCompany.', '');
+        target = window.formData.transporterCompany;
+        return { scope, normalizedPath, target };
+    }
+
+    if (path.startsWith('transporterIndividual.') || path.startsWith('transporter.')) {
+        if (!Array.isArray(window.formData.transporters) || !window.formData.transporters.length) {
+            window.formData.transporters = [typeof window.createDefaultTransporterIndividual === 'function'
+                ? window.createDefaultTransporterIndividual() : {}];
+        }
+        const index = Math.min(Math.max(window.currentTransporterIndex || 0, 0), window.formData.transporters.length - 1);
+        scope = 'transporterIndividual';
+        normalizedPath = path.replace(/^transporter(Individual)?\./, '');
+        target = window.formData.transporters[index];
+        window.formData.transporterIndividual = target;
+        return { scope, normalizedPath, target };
+    }
+
     // Marketing company lists (js/data-form/marketer-form.js)
     if (path.startsWith('marketerCompany.')) {
         if (typeof window.ensureMarketerDataStructures === 'function') {

@@ -65,7 +65,7 @@ function kop_asl_collect_database_matches($phrase) {
     $master_tables = array(
         array('table' => $facilities_table,      'label' => 'Facility record',    'template' => 'page-tti-program-index.php', 'limit' => 4),
         array('table' => 'referrers_master',     'label' => 'Referrer',           'template' => 'page-referrer-index.php',    'limit' => 2),
-        array('table' => 'transporters_master',  'label' => 'Transporter',        'template' => 'page-transporter-index.php', 'limit' => 2),
+        array('table' => (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'label' => 'Transporter',        'template' => 'page-transporter-index.php', 'limit' => 2),
         array('table' => 'marketers_master',     'label' => 'Marketing company',  'template' => 'page-marketer-index.php',    'limit' => 2),
         array('table' => 'locations_master',     'label' => 'Location',           'template' => 'page-location-index.php',    'limit' => 2),
     );
@@ -83,7 +83,7 @@ function kop_asl_collect_database_matches($phrase) {
             );
         }
         $master_tables = array_values(array_filter($master_tables, function ($cfg) {
-            return in_array($cfg['table'], array('referrers_master', 'transporters_master', 'marketers_master'), true);
+            return in_array($cfg['table'], array('referrers_master', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'marketers_master'), true);
         }));
     }
 

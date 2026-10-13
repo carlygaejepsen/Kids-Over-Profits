@@ -37,7 +37,7 @@ function kop_directory_feed_fingerprint() {
     if ($key !== null) return $key;
     global $wpdb;
     $parts = array(function_exists('kop_state_feed_fingerprint') ? kop_state_feed_fingerprint() : '-');
-    foreach (array($wpdb->prefix . 'kop_operators' => 'COUNT(*), MAX(updated_at)', 'referrers_master' => 'COUNT(*)', 'transporters_master' => 'COUNT(*)') as $table => $select) {
+    foreach (array($wpdb->prefix . 'kop_operators' => 'COUNT(*), MAX(updated_at)', 'referrers_master' => 'COUNT(*)', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master') => 'COUNT(*)') as $table => $select) {
         $row = $wpdb->get_row("SELECT {$select} FROM `{$table}`", ARRAY_N);
         $parts[] = $table . ':' . (is_array($row) ? implode('|', array_map('strval', $row)) : '-');
     }

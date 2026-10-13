@@ -787,8 +787,8 @@ function kop_save_project_rest_callback($request) {
         'companies' => 'facilities_master',
         'referrers' => 'referrers_master',
         'referrer' => 'referrers_master',
-        'transporters' => 'transporters_master',
-        'transporter' => 'transporters_master',
+        'transporters' => kop_transporters_table(),
+        'transporter' => kop_transporters_table(),
         'providers' => 'providers_master',
         'provider' => 'providers_master',
         'marketers' => 'marketers_master',
@@ -800,7 +800,7 @@ function kop_save_project_rest_callback($request) {
     $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
 
     // Transporter and provider tables are created on first save.
-    if (in_array($table_name, array('transporters_master', 'providers_master', 'marketers_master'), true)) {
+    if (in_array($table_name, array(kop_transporters_table(), 'providers_master', 'marketers_master'), true)) {
         $wpdb->query("CREATE TABLE IF NOT EXISTS `{$table_name}` (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             unique_name VARCHAR(255) NOT NULL,
@@ -903,8 +903,8 @@ function kop_delete_project_rest_callback($request) {
         'companies' => 'facilities_master',
         'referrers' => 'referrers_master',
         'referrer' => 'referrers_master',
-        'transporters' => 'transporters_master',
-        'transporter' => 'transporters_master',
+        'transporters' => kop_transporters_table(),
+        'transporter' => kop_transporters_table(),
         'providers' => 'providers_master',
         'provider' => 'providers_master',
         'marketers' => 'marketers_master',
@@ -1017,7 +1017,7 @@ function kop_autocomplete_rest_callback($request) {
         'facility' => array('facilities_master', 'referrers_master'),  // referrers may have facilitiesReferred
         'human' => array('facilities_master'),
         'referrer' => array('facilities_master', 'referrers_master'),
-        'transporter' => array('transporters_master', 'facilities_master'),
+        'transporter' => array(kop_transporters_table(), 'facilities_master'),
         'type' => array('facilities_master'),
         'status' => array('facilities_master'),
         'gender' => array('facilities_master'),
@@ -2004,7 +2004,7 @@ function kop_search_database_rest_callback($request) {
     // search box on the data form targets these). Same shape as the referrer
     // branch above; the table is created lazily on first save, so it may not exist.
     if ($transporter_query !== '') {
-        $transporters_table = 'transporters_master';
+        $transporters_table = kop_transporters_table();
         $transporters_exists = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
             DB_NAME,

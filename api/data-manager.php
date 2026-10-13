@@ -100,7 +100,8 @@ require_once __DIR__ . '/data-manager-extra.php';
 $CATEGORY_TABLE = [
     'companies'    => 'facilities_master',
     'referrers'    => 'referrers_master',
-    'transporters' => 'transporters_master',
+    // wpdl_transporters_master on the live site (kop_transporters_table(), inc/utilities.php)
+    'transporters' => function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master',
     'providers'    => 'providers_master',
     'marketers'    => 'marketers_master',
     'locations'    => 'locations_master',
@@ -1446,7 +1447,7 @@ try {
 
         // Transporter and provider tables are created on first use. Do it
         // before the transaction: CREATE TABLE commits implicitly.
-        if (in_array($targetTable, ['transporters_master', 'providers_master', 'marketers_master'], true)) {
+        if (in_array($targetTable, [$CATEGORY_TABLE['transporters'], 'providers_master', 'marketers_master'], true)) {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `$targetTable` (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 unique_name VARCHAR(255) NOT NULL,
@@ -1957,7 +1958,7 @@ try {
 
         // Build the ordered work list (cheap: id + unique_name only).
         $work = [];
-        foreach (['facilities_master', 'referrers_master', 'transporters_master'] as $table) {
+        foreach (['facilities_master', 'referrers_master', $CATEGORY_TABLE['transporters']] as $table) {
             if ($table === 'facilities_master' && kop_dm_v2_writes($pdo)) {
                 foreach (kop_dm_master_rows($pdo) as $r) {
                     $work[] = ['table' => $table, 'id' => (int)$r['id'], 'unique_name' => $r['unique_name'],

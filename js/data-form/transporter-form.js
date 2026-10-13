@@ -199,6 +199,17 @@ function buildTransporterEntries(formData) {
 }
 
 /**
+ * Websites as plain addresses: the form's list editor shows strings, and older
+ * records keep them as {url, displayText} (the directory reads either).
+ */
+function transporterWebsiteStrings(list) {
+    return (Array.isArray(list) ? list : [])
+        .map(item => (item && typeof item === 'object') ? String(item.url || item.displayText || '') : String(item ?? ''))
+        .map(url => url.trim())
+        .filter((url, i, all) => url && all.indexOf(url) === i);
+}
+
+/**
  * Ensure transporter data structures exist and are properly initialized
  */
 function ensureTransporterDataStructures() {
@@ -215,16 +226,12 @@ function ensureTransporterDataStructures() {
 
     const legacyCompany = window.formData.transporterCompany || window.formData.transporterAgency || window.formData.transporterGroup || {};
     const company = Object.assign(createDefaultTransporterCompany(), legacyCompany);
-    if (typeof company.website === 'string' && company.website.trim()) {
-        if (!Array.isArray(company.websites) || company.websites.length === 0) {
-            company.websites = [{ url: company.website.trim(), displayText: "" }];
-        }
-    }
-    if (!Array.isArray(company.websites)) {
-        company.websites = [];
+    company.websites = transporterWebsiteStrings(company.websites);
+    if (typeof company.website === 'string' && company.website.trim() && company.websites.length === 0) {
+        company.websites = [company.website.trim()];
     }
     if (company.websites.length && (!company.website || typeof company.website !== 'string')) {
-        company.website = company.websites[0]?.url || "";
+        company.website = company.websites[0];
     }
 
     [
@@ -255,16 +262,12 @@ function ensureTransporterDataStructures() {
 
     window.formData.transporters = window.formData.transporters.map((transporter) => {
         const merged = Object.assign(createDefaultTransporterIndividual(), transporter || {});
-        if (typeof merged.website === 'string' && merged.website.trim()) {
-            if (!Array.isArray(merged.websites) || merged.websites.length === 0) {
-                merged.websites = [{ url: merged.website.trim(), displayText: "" }];
-            }
-        }
-        if (!Array.isArray(merged.websites)) {
-            merged.websites = [];
+        merged.websites = transporterWebsiteStrings(merged.websites);
+        if (typeof merged.website === 'string' && merged.website.trim() && merged.websites.length === 0) {
+            merged.websites = [merged.website.trim()];
         }
         if (merged.websites.length && (!merged.website || typeof merged.website !== 'string')) {
-            merged.website = merged.websites[0]?.url || "";
+            merged.website = merged.websites[0];
         }
         if (!Array.isArray(merged.affiliations)) {
             merged.affiliations = [];
@@ -752,7 +755,8 @@ function updateTransporterDropdown() {
 }
 
 function updateTransportersUI() {
-    ensureTransporterDataStructures();
+    // The company's fields and lists too (loadTransporterData), not only the current person's
+    loadTransporterData();
     loadTransporterIndividualData();
     updateTransportersOverview();
     updateTransporterDropdown();
