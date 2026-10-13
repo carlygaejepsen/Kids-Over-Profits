@@ -363,6 +363,21 @@
                     list.appendChild(el('label', { class: 'kop-ie-check' }, [cb, document.createTextNode(' ' + o.label)]));
                 });
                 finish(list);
+                // Two or more boxes: one button ticks or unticks them all.
+                if (boxes.length > 1) {
+                    var allOn = function () { return boxes.every(function (b) { return b.checked; }); };
+                    var toggle = el('button', { type: 'button', class: 'kop-ie-mini kop-ie-checks-all' });
+                    var relabel = function () { toggle.textContent = allOn() ? 'Uncheck all' : 'Check all'; };
+                    toggle.addEventListener('click', function () {
+                        var on = !allOn();
+                        boxes.forEach(function (b) { b.checked = on; });
+                        relabel();
+                        list.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    list.addEventListener('change', relabel);
+                    relabel();
+                    wrap.insertBefore(toggle, list);
+                }
                 get = function () { return boxes.filter(function (b) { return b.checked; }).map(function (b) { return b.value; }); };
                 break;
             }

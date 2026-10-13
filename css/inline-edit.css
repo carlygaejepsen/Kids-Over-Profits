@@ -386,7 +386,11 @@ button.kop-ie-save[disabled] {
 /* ---- Where a document is filed (inc/doc-placement.php) ------------------- */
 
 .kop-ie-checks--wide {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+button.kop-ie-checks-all {
+    margin: 0 0 6px;
 }
 
 .kop-ie-field[hidden] {
