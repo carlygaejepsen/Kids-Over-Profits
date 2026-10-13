@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "_note": "Trade organizations added to tradeorgs_master once per version (inc/tradeorgs.php kop_tradeorgs_apply_seed()). Only records not on file are added; an existing record is never changed. Facts from the reputation series (seeds/reputation/) and the documents it cites. Member programs are not typed here: the page lists every program whose record names the organization.",
   "records": [
     {
@@ -211,6 +211,261 @@
         "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=26",
         "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=27",
         "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=30"
+      ]
+    },
+    {
+      "name": "National Independent Private Schools Association",
+      "acronym": "NIPSA",
+      "orgType": "Accrediting association of private schools",
+      "activities": {
+        "accreditation": true
+      },
+      "memberFacilities": [
+        "Ashby Academy",
+        "Greenbrier Academy for Girls",
+        "Elan School",
+        "Turning Winds Academic Institute",
+        "Auldern Academy",
+        "Chrysalis",
+        "Echo Springs Transition Study Center",
+        "King George School",
+        "Monarch School",
+        "Montana Academy"
+      ],
+      "notes": "Accredits private schools, including programs' schools. Woodbury Reports announced: Ashby Academy starting NIPSA accreditation (December 2006); Greenbrier Academy for Girls a NIPSA Candidate School, \"a pre-requisite for full accreditation\" (June 2008); Elan School receiving NIPSA accreditation (2010); Turning Winds Academic Institute's \"accreditation and membership\" (2011). The other programs listed name NIPSA in their own NATSAP member profiles (2009 to 2016-17).",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=28",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0708.pdf#page=30",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0410.pdf#page=9",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0611.pdf#page=13",
+        "https://kidsoverprofits.org/document-library-natsap/"
+      ]
+    },
+    {
+      "name": "Small Boarding School Association",
+      "acronym": "SBSA",
+      "orgType": "Association of small boarding schools",
+      "websites": [
+        "smallboardingschools.org"
+      ],
+      "keyPersonnel": [
+        "Betsy Deane (board of directors, elected 2010; admissions director, Cherokee Creek Boys School)"
+      ],
+      "activities": {
+        "conferences": true
+      },
+      "otherActivities": [
+        "Yearly conference: The Rectory School, Pomfret, CT (2008); Grand River Academy (2012); Purnell School, Pottersville, NJ (2013), where staff of Shortridge Academy (2012) and The Family Foundation School (2013) presented"
+      ],
+      "memberFacilities": [
+        "Cherokee Creek Boys School",
+        "Academy at Swift River",
+        "Auldern Academy",
+        "Cherry Gulch",
+        "Little Keswick School",
+        "New Leaf Academy of Oregon",
+        "Spring Ridge Academy",
+        "The Glenholme School"
+      ],
+      "notes": "Its conferences have been hosted by ordinary boarding schools (The Rectory School, Purnell School) as well as by programs. The programs listed name SBSA in their own NATSAP member profiles (2009 to 2016-17); Woodbury Reports also described Cherokee Creek Boys School as a member of NATSAP and SBSA (2010).",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=29",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0810.pdf#page=11",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0810.pdf#page=15",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0212.pdf#page=16",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0412.pdf#page=13",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0413.pdf#page=7",
+        "https://kidsoverprofits.org/document-library-natsap/"
+      ]
+    },
+    {
+      "name": "Young Adult Transition Association",
+      "acronym": "YATA",
+      "orgType": "Association of young adult (18+) transition programs",
+      "founded": "2012",
+      "otherActivities": [
+        "\"A forum for the collaboration on issues of mutual concern, including young adult issues, operational issues, and other aspects related to providing young adult transitional services\""
+      ],
+      "memberFacilities": [
+        "AIM House",
+        "Benchmark Transitions",
+        "Dragonfly Transitions",
+        "Echo Springs Transition Study Center",
+        "Fulshear Ranch Academy",
+        "SFYI International School",
+        "Cascade Crest Transitions",
+        "Living Well Transitions",
+        "Northwest College Support",
+        "Urban Edge Denver"
+      ],
+      "notes": "Announced its formation at the IECA conference in Boston on May 2, 2012; its members had met since October 2011. The founding members were AIM House, Benchmark Transitions, Dragonfly Transitions, Echo Springs Transition Study Center, Fulshear Ranch Academy and SFYI International School. The others listed name YATA in their own NATSAP member profiles (2012-13 to 2016-17). Young adult programs are listed apart from teen programs on this site.",
+      "affiliations": [
+        "Independent Educational Consultants Association (IECA): announced its formation at IECA's 2012 conference"
+      ],
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0612.pdf#page=2",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0612.pdf#page=13",
+        "https://kidsoverprofits.org/document-library-natsap/",
+        "https://kidsoverprofits.org/young-adult-programs/"
+      ]
+    },
+    {
+      "name": "Association of Mediation and Transport Services",
+      "acronym": "AMATS",
+      "orgType": "Association of youth transport companies",
+      "city": "Bend",
+      "state": "OR",
+      "country": "United States",
+      "founded": "2007",
+      "keyPersonnel": [
+        "Jeff Johnson (founder and executive director, 2007-2008; OnPoint Consultants, Loa, UT)",
+        "Cathy Villines (executive committee, 2007; Center for Safe Youth)",
+        "Bill Lane (executive committee, 2007; Bill Lane and Associates)",
+        "Brian Shepherd (executive committee, 2007; Right Directions)"
+      ],
+      "activities": {
+        "standards": true
+      },
+      "otherActivities": [
+        "\"AMATS Standards for Ethical Practices\" (2007) for \"any person or organization which contracts directly with parents, guardians, government agencies, programs or educational institutions for the transportation of minors or young adults\""
+      ],
+      "memberOthers": [
+        "Adolescent Intervention Services (founding member, 2007)",
+        "Bill Lane and Associates (founding member, 2007)",
+        "Center for Safe Youth (founding member, 2007)",
+        "Crossroads Youth Transport (founding member, 2007)",
+        "Right Direction Crisis Intervention (founding member, 2007)",
+        "Safeguard Adolescent Services (founding member, 2007)",
+        "West Shield Adolescent Services (founding member, 2007)",
+        "Youth Transportation Services (founding member, 2007)",
+        "Adolescent Guidance Services (provisional member, 2007)",
+        "Journeys Adolescent Services (provisional member, 2007)",
+        "Traverse Youth Transport (provisional member, 2007)"
+      ],
+      "notes": "Formed in May 2007 \"to establish best practices and standards as guidelines for the transport industry.\" Woodbury Reports printed its ethical standards in September 2007 beside NATSAP's, IECA's and OBHIC's, in an issue on the ethics of professional relationships in the field, including \"secret agreements, understandings, or payment of any kind for favored treatment.\" Its 2007 members were youth transport companies, the businesses that take teenagers to programs.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=29",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0807.pdf#page=31",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=3",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0907.pdf#page=9",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0108.pdf#page=30",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0308.pdf#page=25",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0909.pdf#page=14",
+        "https://kidsoverprofits.org/youth-transport-companies/"
+      ]
+    },
+    {
+      "name": "Association for Experiential Education",
+      "acronym": "AEE",
+      "otherNames": [
+        "Association of Experiential Education"
+      ],
+      "orgType": "Professional association for experiential and adventure education (members inside and outside the industry)",
+      "status": "Active",
+      "websites": [
+        "aee.org"
+      ],
+      "activities": {
+        "accreditation": true,
+        "conferences": true,
+        "research": true
+      },
+      "otherActivities": [
+        "Accredits programs: Wilderness Treatment Center announced its AEE re-accreditation in 2007",
+        "Yearly international conference and regional conferences",
+        "Symposium on Experiential Education Research (SEER); with Project Adventure, the Research and Evaluation in Adventure Programming (REAP) symposium (2010)"
+      ],
+      "affiliations": [
+        "Therapeutic Adventure Professionals Group (TAPG): a professional group within AEE"
+      ],
+      "memberFacilities": [
+        "Wilderness Treatment Center",
+        "Penrith Farms",
+        "ANASAZI Foundation",
+        "Blue Ridge Therapeutic Wilderness",
+        "EDGE Learning Wellness Collegiate Community",
+        "Elk River Treatment Program",
+        "Evoke Entrada",
+        "Evoke at Cascades",
+        "Expedition Therapy Associates",
+        "Explorations",
+        "Gray Wolf Ranch",
+        "Kailana",
+        "Monarch Center for Family Healing",
+        "Morningside Recovery",
+        "Mount Bachelor Academy",
+        "New Summit Academy of Costa Rica",
+        "New Vision Wilderness Therapy",
+        "Northwest Academy",
+        "Oakley School",
+        "Open Sky Wilderness Therapy",
+        "Pacific Quest",
+        "Pine River Institute",
+        "SUWS of the Carolinas",
+        "Second Nature Blue Ridge",
+        "Summit Achievement",
+        "Trails Carolina",
+        "True North Wilderness Program",
+        "Wendigo Lake Expeditions"
+      ],
+      "notes": "A broad association of outdoor, adventure and experiential educators, many of them outside the troubled teen industry; wilderness therapy programs join it and present at its conferences. The programs listed name AEE in their own NATSAP member profiles (2009 to 2016-17); Woodbury Reports called Penrith Farms an \"organizational member of AEE\" (2008).",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0707.pdf#page=29",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0308.pdf#page=27",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=8",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0410.pdf#page=11",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0212.pdf#page=10",
+        "https://kidsoverprofits.org/document-library-natsap/"
+      ]
+    },
+    {
+      "name": "Equine Assisted Growth and Learning Association",
+      "acronym": "EAGALA",
+      "orgType": "Association and certifying body for equine assisted psychotherapy",
+      "city": "Santaquin",
+      "state": "UT",
+      "country": "United States",
+      "status": "Active",
+      "websites": [
+        "eagala.org"
+      ],
+      "keyPersonnel": [
+        "Greg Kersten (co-founder; founder of Equine Assisted Psychotherapy; joined Silverado Boys Ranch in 2006)"
+      ],
+      "activities": {
+        "conferences": true
+      },
+      "otherActivities": [
+        "Certifies practitioners in \"the EAGALA Model\" of equine assisted psychotherapy and learning (Part 1 and Part 2 trainings); programs advertise \"EAGALA certified\" staff",
+        "Yearly conference (7th in Ogden, UT, 2006; 10th in Asheville, NC, 2009; 13th in Las Vegas, 2012)"
+      ],
+      "publications": [
+        "EAGALA in Practice (magazine for members)"
+      ],
+      "lawsuits": [
+        "Greg Kersten v. EAGALA, filed June 26, 2007, Fourth Judicial District Court of Utah: wrongful termination, defamation, breach of intellectual property license, conversion of intellectual property and of personal property (as announced by Kersten's company)"
+      ],
+      "memberFacilities": [
+        "Penrith Farms",
+        "Alpine Academy",
+        "Elk River Treatment Program",
+        "Falcon Ridge Ranch",
+        "New Haven",
+        "Solstice RTC",
+        "Sunrise RTC",
+        "Trinity Teen Solutions"
+      ],
+      "notes": "The programs listed name EAGALA in their own NATSAP member profiles (2009 to 2016-17); Woodbury Reports called Penrith Farms an organizational member (2008). Many programs advertise horse work led by EAGALA-certified staff.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0106.pdf#page=29",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1006.pdf#page=30",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1207.pdf#page=28",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0308.pdf#page=30",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=8",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1208.pdf#page=21",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-1009.pdf#page=14",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0212.pdf#page=16",
+        "https://kidsoverprofits.org/document-library-natsap/"
       ]
     }
   ]

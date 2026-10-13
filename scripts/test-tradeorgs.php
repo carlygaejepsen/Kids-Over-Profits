@@ -37,6 +37,9 @@ if (!function_exists('kop_seed_pdo')) {
     function kop_seed_pdo() { return $GLOBALS['kop_test_tro_pdo']; }
 }
 $GLOBALS['kop_test_tro_pdo'] = $db;
+if (!function_exists('kop_transporters_table')) {
+    require_once dirname(__DIR__) . '/inc/utilities.php';
+}
 require_once dirname(__DIR__) . '/inc/marketers.php';
 require_once dirname(__DIR__) . '/inc/tradeorgs.php';
 
@@ -87,7 +90,10 @@ $check('a second run adds nothing', kop_tradeorgs_apply_seed($db) === array());
 
 echo "-- The page (/trade-organizations/) --\n";
 $all = kop_tradeorgs_all();
-$check('listed A to Z', $all[0]['org']['name'] === 'Independent Educational Consultants Association', $all[0]['org']['name']);
+$names = array_map(function ($o) { return $o['org']['name']; }, $all);
+$sorted = $names;
+usort($sorted, 'strcasecmp');
+$check('listed A to Z', $names === $sorted, $names[0]);
 foreach ($all as $o) {
     $m = kop_tradeorgs_members($o['org']);
     echo '     ' . str_pad($o['org']['acronym'] ?: $o['org']['name'], 12) . count($m['current']) . ' current, ' . count($m['former']) . " former member records\n";
@@ -95,6 +101,14 @@ foreach ($all as $o) {
         $check('NATSAP: its members come from the records, current and former', count($m['current']) > 20 && count($m['former']) > 20);
         $sample = $m['former'][0] ?? null;
         $check('a member links to its facility page', $sample && strpos($sample['url'], '/facility/') !== false, $sample['url'] ?? '');
+    }
+}
+foreach ($all as $o) {
+    if ($o['org']['acronym'] === 'AMATS') {
+        $t = kop_tradeorgs_transport_members($o['org']);
+        echo '     AMATS: ' . count($t) . " transport company records list it
+";
+        $check('AMATS: transport companies come from their records', count($t) >= 5, implode('; ', array_column($t, 'name')));
     }
 }
 ob_start();

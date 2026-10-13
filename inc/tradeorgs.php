@@ -106,6 +106,35 @@ if (!function_exists('kop_tradeorgs_members')) {
     }
 }
 
+if (!function_exists('kop_tradeorgs_transport_members')) {
+    /** Transport companies whose records name $org among their affiliations: [{name, entry}], A to Z. */
+    function kop_tradeorgs_transport_members(array $org) {
+        global $wpdb;
+        $table = function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master';
+        $names = kop_tradeorg_names($org);
+        if (!$names || !isset($wpdb)) {
+            return array();
+        }
+        $rows = $wpdb->get_results("SELECT unique_name, json_data FROM `{$table}`", ARRAY_A);
+        $out = array();
+        foreach ((array) $rows as $row) {
+            $p = json_decode((string) $row['json_data'], true);
+            $d = is_array($p) && isset($p['data']) && is_array($p['data']) ? $p['data'] : (is_array($p) ? $p : array());
+            $co = is_array($d['transporterCompany'] ?? null) ? $d['transporterCompany'] : array();
+            foreach ((array) ($co['affiliations'] ?? array()) as $a) {
+                $a = is_array($a) ? (string) ($a['name'] ?? '') : (string) $a;
+                if (kop_tradeorg_membership_match($a, $org) !== '') {
+                    $name = trim((string) ($co['name'] ?? '')) ?: (string) $row['unique_name'];
+                    $out[$name] = array('name' => $name, 'entry' => $a);
+                    break;
+                }
+            }
+        }
+        ksort($out, SORT_FLAG_CASE | SORT_STRING);
+        return array_values($out);
+    }
+}
+
 if (!function_exists('kop_tradeorgs_render_public')) {
     function kop_tradeorgs_render_public() {
         $orgs = kop_tradeorgs_all();
@@ -197,7 +226,22 @@ if (!function_exists('kop_tradeorgs_render_public')) {
                 }
                 echo '</ul></details>';
             }
-            $list($members['current'] || $members['former'] ? 'Other member programs' : 'Member programs', $c['memberFacilities'], $program_html);
+            // Typed members the records above already show are left out
+            $on_file = array();
+            foreach (array_merge($members['current'], $members['former']) as $m) {
+                $on_file[strtolower($m['name'])] = true;
+            }
+            $typed = array_values(array_filter($c['memberFacilities'], function ($n) use ($on_file) { return !isset($on_file[strtolower(trim($n))]); }));
+            $list($on_file ? 'Other member programs' : 'Member programs', $typed, $program_html);
+            // Transport companies whose records list it (inc/utilities.php kop_transporters_table())
+            $transport = kop_tradeorgs_transport_members($c);
+            if ($transport) {
+                $index = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-transporter-index.php') : '';
+                $list('Transport companies on file that list it', $transport, function ($t) use ($e, $index) {
+                    $label = $e($t['name']) . (preg_match('/\(([^)]+)\)/', $t['entry'], $m) ? ' <span class="kop-tro-muted">(' . $e($m[1]) . ')</span>' : '');
+                    return $index !== '' ? '<a href="' . esc_url($index) . '">' . $label . '</a>' : $label;
+                });
+            }
             $list('Member companies', $c['memberCompanies'], $company_html);
             $list('Other members (consultants, transporters, marketers)', $c['memberOthers'], $e);
 
