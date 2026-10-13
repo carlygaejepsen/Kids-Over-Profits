@@ -150,6 +150,9 @@ function kop_normalize_lawsuit_extraction(array $raw): array {
         $out['jurisdiction'] = strcasecmp($out['jurisdiction'], 'federal') === 0
             ? 'Federal'
             : ucwords(strtolower($out['jurisdiction']));
+        if (function_exists('kop_proper_names_apply')) {
+            $out['jurisdiction'] = kop_proper_names_apply($out['jurisdiction']);
+        }
     }
 
     return $out;

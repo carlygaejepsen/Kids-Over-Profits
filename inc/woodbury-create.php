@@ -75,7 +75,8 @@ function kop_wbc_title_case($name) {
             $words[$i] = preg_replace_callback('/(^|[-\/(])([a-z])/', function ($m) { return $m[1] . strtoupper($m[2]); }, $w);
         }
     }
-    return implode(' ', $words);
+    $name = implode(' ', $words);
+    return function_exists('kop_proper_names_apply') ? kop_proper_names_apply($name) : $name;
 }
 
 /**

@@ -2748,7 +2748,8 @@ if (!function_exists('kop_facility_pages_type_phrase')) {
             if ($w === '') continue;
             $out[] = preg_match('/[A-Z].*[A-Z]/', $w) ? $w : mb_strtolower($w);
         }
-        return implode(' ', $out);
+        $out = implode(' ', $out);
+        return function_exists('kop_proper_names_apply') ? kop_proper_names_apply($out) : $out;
     }
 }
 

@@ -1006,6 +1006,7 @@ if (!function_exists('kop_program_homes_page')) {
                 foreach ($dismissed as $key => $when) {
                     // "company:<id>" is a company kept as a company (the Companies that are one program tab).
                     $label = ucwords(str_replace('|', ' in ', $key));
+                    if (function_exists('kop_proper_names_apply')) $label = kop_proper_names_apply($label);
                     if (strpos($key, 'company:') === 0) {
                         $cname = (string) $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}kop_operators WHERE id = %d", (int) substr($key, 8)));
                         $label = 'Company: ' . ($cname !== '' ? $cname : '#' . substr($key, 8));

@@ -378,7 +378,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return dates.length > 0 ? Math.max(...dates) : new Date(0);
     }
 
+    // Names on the sitewide list keep their capitals (js/proper-names.js).
     function toTitleCase(str) {
+        var t = toTitleCaseRaw(str);
+        return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+    }
+
+    function toTitleCaseRaw(str) {
         if (!str) return str;
         
         const acronyms = [

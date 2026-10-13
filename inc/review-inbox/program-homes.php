@@ -209,11 +209,13 @@ function kop_rinbox_ph_group_item($pid) {
 
 function kop_rinbox_ph_dismissed_item($key, $when) {
     list($base, $state) = array_pad(explode('|', $key, 2), 2, '');
+    $base = ucwords($base);
+    if (function_exists('kop_proper_names_apply')) $base = kop_proper_names_apply($base);
     return array(
         'key'          => $key,
-        'title'        => ucwords($base) . ($state !== '' ? ' (' . $state . ')' : ''),
+        'title'        => $base . ($state !== '' ? ' (' . $state . ')' : ''),
         'subtitle'     => 'Marked not one program' . (is_numeric($when) ? ' on ' . gmdate('Y-m-d', (int) $when) : ''),
-        'text'         => 'Records named "' . ucwords($base) . ' – ..." in ' . ($state !== '' ? $state : 'this state') . ' are not offered as one program.',
+        'text'         => 'Records named "' . $base . ' – ..." in ' . ($state !== '' ? $state : 'this state') . ' are not offered as one program.',
         'status'       => 'dismissed',
         'status_label' => 'Not one program',
         'actions'      => array(array('id' => 'undismiss', 'label' => 'Back in the suggestions', 'style' => 'undo',

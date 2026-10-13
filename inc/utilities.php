@@ -277,7 +277,7 @@ function kop_title_case($text) {
         }
     }
 
-    return $output;
+    return function_exists('kop_proper_names_apply') ? kop_proper_names_apply($output) : $output;
 }
 
 /**

@@ -296,7 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
 
+    // Names on the sitewide list keep their capitals (js/proper-names.js).
     function toTitleCase(str) {
+        var t = toTitleCaseRaw(str);
+        return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+    }
+
+    function toTitleCaseRaw(str) {
         if (!str) return str;
         const acronyms = ['LLC', 'LLP', 'INC', 'CORP', 'CO', 'LTD', 'MD', 'RN', 'LPN', 'LCSW',
             'CEO', 'COO', 'CFO', 'HR', 'IT', 'VP', 'DOH', 'USA', 'US', 'WA', 'RTF', 'FS', 'BHA', 'III', 'II'];

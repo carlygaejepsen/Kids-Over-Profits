@@ -17,6 +17,11 @@
  * already stored, run api/normalize-news-tags.php as an admin.
  */
 
+// Names on the sitewide list keep their capitals (inc/proper-names.php).
+if (!function_exists('kop_proper_names_apply') && is_readable(__DIR__ . '/../inc/proper-names.php')) {
+    require_once __DIR__ . '/../inc/proper-names.php';
+}
+
 if (!function_exists('kop_news_tag_synonyms')) {
     function kop_news_tag_synonyms(): array {
         static $map = null;
@@ -237,7 +242,8 @@ if (!function_exists('kop_news_tag_case')) {
                 $out[] = implode('-', array_map('ucfirst', explode('-', $lower)));
             }
         }
-        return implode(' ', $out);
+        $out = implode(' ', $out);
+        return function_exists('kop_proper_names_apply') ? kop_proper_names_apply($out) : $out;
     }
 }
 

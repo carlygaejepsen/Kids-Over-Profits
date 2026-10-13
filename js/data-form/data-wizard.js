@@ -154,7 +154,13 @@
             .toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim();
     }
 
+    // Names on the sitewide list keep their capitals (js/proper-names.js).
     function titleCase(text) {
+        var t = titleCaseRaw(text);
+        return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+    }
+
+    function titleCaseRaw(text) {
         return String(text || '').replace(/\b([a-z])/g, (m) => m.toUpperCase());
     }
 

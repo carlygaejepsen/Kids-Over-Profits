@@ -840,7 +840,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
 
+        // Names on the sitewide list keep their capitals (js/proper-names.js).
         function toTitleCase(str) {
+            var t = toTitleCaseRaw(str);
+            return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+        }
+
+        function toTitleCaseRaw(str) {
     if (!str) return str;
     
     // Common acronyms/abbreviations to keep all caps

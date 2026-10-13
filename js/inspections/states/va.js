@@ -128,7 +128,13 @@
         return s.slice(0, max).replace(/\s+\S*$/, '') + '…';
     }
 
+    // Names on the sitewide list keep their capitals (js/proper-names.js).
     function sentenceCase(text) {
+        var t = sentenceCaseRaw(text);
+        return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+    }
+
+    function sentenceCaseRaw(text) {
         var t = safeString(text).toLowerCase();
         return t ? t.charAt(0).toUpperCase() + t.slice(1) : '';
     }

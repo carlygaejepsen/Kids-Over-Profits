@@ -1943,9 +1943,10 @@ function kop_find_location_name_in_text($value) {
 
 function kop_format_location_project_name($locationName) {
     $formatted = ucwords(strtolower(trim((string) $locationName)));
-    return preg_replace_callback('/\\b([A-Za-z])([A-Za-z]*)\\b/u', function($matches) {
+    $formatted = preg_replace_callback('/\\b([A-Za-z])([A-Za-z]*)\\b/u', function($matches) {
         return strtoupper($matches[1]) . strtolower($matches[2]);
     }, $formatted);
+    return function_exists('kop_proper_names_apply') ? kop_proper_names_apply($formatted) : $formatted;
 }
 
 function kop_get_project_payload_data($projectJson) {

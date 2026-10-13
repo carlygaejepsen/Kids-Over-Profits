@@ -102,7 +102,13 @@
         };
     }
 
+    // Names on the sitewide list keep their capitals (js/proper-names.js).
     function sentenceCase(text) {
+        var t = sentenceCaseRaw(text);
+        return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+    }
+
+    function sentenceCaseRaw(text) {
         var t = safeString(text);
         if (!t || /[a-z]/.test(t)) return t;
         return t.toLowerCase()

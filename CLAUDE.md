@@ -437,6 +437,10 @@ php -d extension=mbstring scripts/test-pull-quotes.php [--wp=<WordPress root>]  
 # kopUrlLabel() (js/url-labels.js, on every page, relabels JS-drawn lists as they appear) must give the same label;
 # a new renderer that prints a link uses one of them for its text. data-kop-keep-url opts an element out
 php -d extension=mbstring scripts/test-url-labels.php    # labels, PHP == JS (needs node), the content filter
+# Proper names (inc/proper-names.php, js/proper-names.js): one sitewide list of names always capitalised as written (NATSAP,
+# MacLaren, LLC), edited at KOP Tools > Proper Names (option kop_proper_names; js/data/proper-names.json only until first save).
+# Every function that recases text ends with kop_proper_names_apply() / kopProperNames(); a new one does the same
+php -d extension=mbstring scripts/test-proper-names.php   # rules, every case changer wrapped, PHP == JS (needs node)
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # ...and no text unreadable against its own panel, incl. forced :hover/:focus (see "Kadence colour traps")

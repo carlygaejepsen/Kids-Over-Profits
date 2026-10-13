@@ -81,7 +81,13 @@ const escapeHtmlValue = value => {
     }[char] || char));
 };
 
+// Names on the sitewide list keep their capitals (js/proper-names.js).
 const toTitleCase = value => {
+    const t = toTitleCaseRaw(value);
+    return typeof kopProperNames === 'function' ? kopProperNames(t) : t;
+};
+
+const toTitleCaseRaw = value => {
     if (value === null || value === undefined) return '';
     const text = typeof value === 'string' ? value : String(value);
     if (!text) return '';
