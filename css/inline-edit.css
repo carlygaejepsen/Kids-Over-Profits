@@ -57,6 +57,46 @@ button.kop-ie-pen:active {
     outline-offset: 1px;
 }
 
+/* "Pull quote" under selected words (js/inline-edit.js, inc/pull-quotes.php). */
+button.kop-ie-pq,
+button.kop-ie-pq:hover,
+button.kop-ie-pq:focus,
+button.kop-ie-pq:active {
+    position: absolute;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 0;
+    margin: 0;
+    padding: 7px 12px;
+    border: 2px solid #fff;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 4, 53, 0.35);
+}
+
+button.kop-ie-pq {
+    color: #fff;
+    background: var(--kop-midnight, #000435);
+}
+
+button.kop-ie-pq:hover,
+button.kop-ie-pq:focus,
+button.kop-ie-pq:active {
+    color: #fff;
+    background: var(--kop-orange-fill, #A3570D);
+    outline: 2px solid var(--kop-midnight, #000435);
+    outline-offset: 1px;
+}
+
+button.kop-ie-pq[hidden] {
+    display: none;
+}
+
 /* ---- Toolbar ---------------------------------------------------------- */
 
 /* Above the search button, which owns the bottom-left corner (css/global-search.css:

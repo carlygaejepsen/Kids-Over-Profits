@@ -1,15 +1,21 @@
 <?php
 /**
- * Pull quotes (inc/pull-quotes.php): the [kop_pullquote] markup, and "> "
- * lines in page text (inc/page-text.php) turning into the same thing.
+ * Pull quotes (inc/pull-quotes.php): the [kop_pullquote] markup, "> " lines
+ * in page text (inc/page-text.php), and the "Pull quote" button's dialog
+ * (pq: refs through inc/inline-edit.php): add after/before a block, edit,
+ * take off, exact Undo, every other block left byte for byte.
  *
- *   php scripts/test-pull-quotes.php
+ * The add/edit part reads and writes post content with WordPress's own block
+ * parser and serializer, taken from a WordPress install (Local's by default).
+ *
+ *   php -d extension=mbstring scripts/test-pull-quotes.php [--wp=<path to WordPress root>]
  */
 
 if (PHP_SAPI !== 'cli') {
     exit("CLI only.\n");
 }
 define('ABSPATH', __DIR__ . '/');
+define('DAY_IN_SECONDS', 86400);
 function add_filter() {}
 function add_action() {}
 function add_shortcode() {}
@@ -56,6 +62,141 @@ $check('a lone ">" with nothing after it prints nothing', trim(kop_page_text_bod
 $css = file_get_contents(dirname(__DIR__) . '/css/pull-quotes.css');
 $check('the stylesheet styles both kinds', strpos($css, 'figure.kop-pullquote') !== false && strpos($css, 'figure.wp-block-pullquote') !== false);
 $check('no bright accent as text colour', !preg_match('/(?<![-\w])color:\s*var\(--kop-(orange|teal|coral-pink)[,)]/', $css));
+
+/* ---- The "Pull quote" button's dialog, on real block markup ----------------- */
+
+$wp = null;
+foreach ($argv as $a) {
+    if (strpos($a, '--wp=') === 0) $wp = rtrim(substr($a, 5), '/\\');
+}
+if ($wp === null) {
+    $local = (getenv('USERPROFILE') ?: '') . '/Local Sites/kids-over-profits/app/public';
+    $wp = is_dir($local) ? $local : '';
+}
+$inc = $wp . '/wp-includes';
+if ($wp === '' || !is_file($inc . '/class-wp-block-parser.php')) {
+    echo "\nSKIP the dialog checks: no WordPress found (pass --wp=<WordPress root>)\n";
+} else {
+    // WordPress's own parser classes, and its serializer functions lifted out of blocks.php.
+    require $inc . '/class-wp-block-parser-block.php';
+    require $inc . '/class-wp-block-parser-frame.php';
+    require $inc . '/class-wp-block-parser.php';
+    $src = file_get_contents($inc . '/blocks.php');
+    foreach (array('serialize_block_attributes', 'strip_core_block_namespace', 'get_comment_delimited_block_content', 'serialize_block', 'serialize_blocks', 'parse_blocks') as $fn) {
+        if (!preg_match('/^function ' . $fn . '\(.*?^}$/ms', $src, $m)) {
+            exit("Cannot find $fn in blocks.php\n");
+        }
+        eval($m[0]);
+    }
+
+    // The WordPress calls inline-edit.php and the dialog make, against one post in memory.
+    $GLOBALS['t_post'] = null;
+    $GLOBALS['t_transients'] = array();
+    function is_admin() { return false; }
+    function wp_doing_ajax() { return false; }
+    function is_user_logged_in() { return true; }
+    function current_user_can() { return true; }
+    function get_post($id) { return (int) $id === 7 ? clone $GLOBALS['t_post'] : null; }
+    function get_post_field($f, $id) { return $GLOBALS['t_post']->$f; }
+    function has_blocks($c) { return strpos((string) $c, '<!-- wp:') !== false; }
+    function wp_slash($v) { return $v; }
+    function wp_update_post($u) { $GLOBALS['t_post']->post_content = $u['post_content']; return 7; }
+    function is_wp_error($v) { return false; }
+    function clean_post_cache() {}
+    function do_action() {}
+    function wp_generate_password() { static $n = 0; return 'tok' . (++$n); }
+    function set_transient($k, $v) { $GLOBALS['t_transients'][$k] = $v; }
+    function get_transient($k) { return $GLOBALS['t_transients'][$k] ?? false; }
+    function delete_transient($k) { unset($GLOBALS['t_transients'][$k]); }
+    function wp_kses($t, $allowed) { return preg_replace('/&(?![a-zA-Z]+;|#\d+;)/', '&amp;', strip_tags($t, '<' . implode('><', array_keys($allowed)) . '>')); }
+    function wp_json_encode($data, $options = 0) { return json_encode($data, $options); }
+    require dirname(__DIR__) . '/inc/inline-edit.php';
+
+    $original = "<!-- wp:paragraph -->\n<p>First paragraph.</p>\n<!-- /wp:paragraph -->\n\n"
+        . "<!-- wp:paragraph -->\n<p>Staff signed off checks that were never done.</p>\n<!-- /wp:paragraph -->\n\n"
+        . "<!-- wp:code -->\n<pre class=\"wp-block-code\"><code>keep\n\n\n\nthese blank lines</code></pre>\n<!-- /wp:code -->\n\n"
+        . "<!-- wp:paragraph -->\n<p>Last paragraph.</p>\n<!-- /wp:paragraph -->";
+    $GLOBALS['t_post'] = (object) array('ID' => 7, 'post_title' => 'Test', 'post_content' => $original);
+    $blocks = parse_blocks($original);
+    $second = 2; // [0] para, [1] whitespace, [2] para
+    $hash = kop_ie_block_hash($blocks[$second]);
+
+    $load = kop_pull_quote_ie_load(array('7', (string) $second, $hash, 'new'));
+    $check('the new dialog asks for words, credit, placement and where', array_column($load['fields'], 'name') === array('text', 'credit', 'align', 'place'));
+
+    $res = kop_pull_quote_ie_save(array('7', (string) $second, $hash, 'new'),
+        array('text' => "Staff signed off checks\nthat were never done & nobody knew.", 'credit' => '-- FOX13, 2024', 'align' => 'right', 'place' => 'after'));
+    $now = $GLOBALS['t_post']->post_content;
+    $piece = kop_pull_quote_block("Staff signed off checks\nthat were never done & nobody knew.", '-- FOX13, 2024', 'right');
+    $check('saved: "Pull quote added." with Undo', $res['message'] === 'Pull quote added.' && $res['undo'] === 'pqundo:tok1', json_encode($res));
+    $check('...the block goes right after the paragraph, everything else byte for byte',
+        str_replace("\n\n" . $piece . "\n\n", '', $now) === $original, $now);
+    $after = parse_blocks($now);
+    $pq = null;
+    foreach ($after as $i => $b) {
+        if ($b['blockName'] === 'core/pullquote') { $pq = $i; }
+    }
+    $check('...WordPress reads it as a Pullquote block aligned right', $pq !== null && ($after[$pq]['attrs']['align'] ?? '') === 'right');
+    $check('...in core\'s own markup', $pq !== null && trim($after[$pq]['innerHTML']) === '<figure class="wp-block-pullquote alignright"><blockquote><p>Staff signed off checks<br>that were never done &amp; nobody knew.</p><cite>FOX13, 2024</cite></blockquote></figure>', $pq !== null ? $after[$pq]['innerHTML'] : '');
+    $check('...and serializes back unchanged', serialize_blocks($after) === $now);
+
+    $read = kop_pull_quote_read($after[$pq]);
+    $check('its pencil reads back the words, credit and placement', $read === array('text' => "Staff signed off checks\nthat were never done & nobody knew.", 'credit' => 'FOX13, 2024', 'align' => 'right'), json_encode($read));
+    $pqhash = kop_ie_block_hash($after[$pq]);
+    $edit = kop_pull_quote_ie_load(array('7', (string) $pq, $pqhash, 'edit'));
+    $check('...offers "take it off" and the source', in_array('remove', array_column($edit['fields'], 'name'), true) && $edit['alt']['ref'] === 'post:7:block:' . $pq . ':' . $pqhash);
+
+    $res2 = kop_pull_quote_ie_save(array('7', (string) $pq, $pqhash, 'edit'), array('text' => $read['text'], 'credit' => '', 'align' => 'center'));
+    $now2 = $GLOBALS['t_post']->post_content;
+    $after2 = parse_blocks($now2);
+    $check('an edit changes only that block (centred, no credit)', $after2[$pq]['blockName'] === 'core/pullquote' && empty($after2[$pq]['attrs']) && strpos($after2[$pq]['innerHTML'], '<cite>') === false
+        && str_replace(kop_pull_quote_block($read['text'], '', 'center'), $piece, $now2) === $now);
+
+    try {
+        kop_pull_quote_ie_save(array('7', (string) $pq, $pqhash, 'edit'), array('text' => 'x'));
+        $check('a stale pencil is refused', false);
+    } catch (RuntimeException $e) {
+        $check('a stale pencil is refused', strpos($e->getMessage(), 'changed since') !== false);
+    }
+    try {
+        kop_pull_quote_ie_load(array('7', '0', kop_ie_block_hash($after2[0]), 'edit'));
+        $check('a paragraph is not opened as a pull quote', false);
+    } catch (RuntimeException $e) {
+        $check('a paragraph is not opened as a pull quote', true);
+    }
+
+    $u = kop_pull_quote_ie_undo(array('tok2'), array());
+    $check('Undo puts the page back exactly (before the edit)', $u['message'] === 'Undone.' && $GLOBALS['t_post']->post_content === $now);
+    try {
+        kop_pull_quote_ie_undo(array('tok2'), array());
+        $check('...and only once', false);
+    } catch (RuntimeException $e) {
+        $check('...and only once', true);
+    }
+
+    $pqhash = kop_ie_block_hash(parse_blocks($now)[$pq]);
+    kop_pull_quote_ie_save(array('7', (string) $pq, $pqhash, 'edit'), array('text' => 'x', 'remove' => true));
+    $removed = $GLOBALS['t_post']->post_content;
+    $check('"Take this pull quote off" removes only the block', str_replace($piece, '', $now) === $removed && strpos($removed, 'wp:pullquote') === false);
+    $GLOBALS['t_post']->post_content .= "\n<!-- wp:paragraph --><p>Someone else's edit.</p><!-- /wp:paragraph -->";
+    try {
+        kop_pull_quote_ie_undo(array('tok3'), array());
+        $check('Undo refuses when the page changed since', false);
+    } catch (RuntimeException $e) {
+        $check('Undo refuses when the page changed since', strpos($e->getMessage(), 'Revisions') !== false);
+    }
+
+    $GLOBALS['t_post']->post_content = $original;
+    $b = parse_blocks($original);
+    try {
+        kop_pull_quote_ie_save(array('7', '0', kop_ie_block_hash($b[0]), 'new'), array('text' => '  ', 'credit' => '', 'align' => 'center', 'place' => 'before'));
+        $check('empty words are refused', false);
+    } catch (RuntimeException $e) {
+        $check('empty words are refused, the page untouched', $GLOBALS['t_post']->post_content === $original);
+    }
+    kop_pull_quote_ie_save(array('7', '0', kop_ie_block_hash($b[0]), 'new'), array('text' => 'Up top.', 'credit' => '', 'align' => 'left', 'place' => 'before'));
+    $check('"Before that paragraph" puts it first', strpos($GLOBALS['t_post']->post_content, '<!-- wp:pullquote {"align":"left"} -->') === 0);
+}
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);

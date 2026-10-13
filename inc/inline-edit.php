@@ -11,6 +11,9 @@
  *   post:12:page            title, excerpt and whole content of post 12
  *   post:12:block:3:ab12cd  the 4th top-level block of post 12's content (hash
  *                           of its source, so a changed page cannot be overwritten)
+ *   pq:12:3:ab12cd:new|edit a pull quote after/before block 3, or that pull quote block's
+ *                           words, credit and placement (inc/pull-quotes.php; "new" is
+ *                           opened by the "Pull quote" button under selected words)
  *   pt:faq:intro            a Page Text section (inc/page-text.php)
  *   gl:<entry anchor>       a glossary entry (inc/glossary-editor.php's save)
  *   facility:45:staff       a group of a facility's fields (facilities_v2)
@@ -308,6 +311,10 @@ add_filter('the_content', function ($content) {
             continue;
         }
         $ref = 'post:' . $id . ':block:' . $index . ':' . kop_ie_block_hash($block);
+        if ($block['blockName'] === 'core/pullquote' && function_exists('kop_pull_quote_ie_load')) {
+            // Words, credit and placement as fields (inc/pull-quotes.php); the source is one click on.
+            $ref = 'pq:' . $id . ':' . $index . ':' . kop_ie_block_hash($block) . ':edit';
+        }
         $out .= "
 <div class=\"kop-ie-block\"" . kop_ie_attr($ref) . ">
 " . $html . "

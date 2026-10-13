@@ -190,7 +190,8 @@
         dialog = null;
     }
 
-    function openEditor(ref) {
+    /** prefill: {fieldName: value} put over what the server sent (the pull quote's selected words). */
+    function openEditor(ref, prefill) {
         if (!ref) return;
         closeDialog();
         dialog = el('dialog', { class: 'kop-ie-dialog', 'aria-labelledby': 'kop-ie-title' });
@@ -225,6 +226,7 @@
                     holder = el('fieldset', { class: 'kop-ie-section' }, [el('legend', { text: section })]);
                     body.appendChild(holder);
                 }
+                if (prefill && prefill[f.name] != null) f.value = prefill[f.name];
                 var built = buildField(f);
                 holder.appendChild(built.node);
                 getters.push({ name: f.name, get: built.get, confirm: f.confirm });
@@ -588,6 +590,57 @@
         note.appendChild(shut);
         document.body.appendChild(note);
     }
+
+    /* ---- Pull quote from selected words (inc/pull-quotes.php) ---------------
+     * Selecting words inside a block of the page's own content shows a
+     * "Pull quote" button under the selection; it opens the new pull quote's
+     * dialog with the words filled in. */
+
+    var pqBtn = el('button', { type: 'button', class: 'kop-ie-pq', hidden: '', html: icon('quote') + ' <span>Pull quote</span>' });
+    var pqPick = null; // {ref, text}
+    layer.appendChild(pqBtn);
+    // Keep the selection: a mousedown on a button would otherwise clear it.
+    pqBtn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    pqBtn.addEventListener('click', function () {
+        var pick = pqPick;
+        pqBtn.hidden = true;
+        if (pick) openEditor(pick.ref, { text: pick.text });
+    });
+
+    function blockOf(node) {
+        var n = node && node.nodeType === 1 ? node : node && node.parentNode;
+        return n && n.closest ? n.closest('.kop-ie-block[data-kop-edit^="post:"]') : null;
+    }
+
+    function pqUpdate() {
+        pqPick = null;
+        pqBtn.hidden = true;
+        var s = window.getSelection ? window.getSelection() : null;
+        if (!on || dialog || !s || s.isCollapsed || !s.rangeCount) return;
+        var text = s.toString().replace(/[ \t ]+/g, ' ').replace(/ *\n[\s]*/g, '\n').trim();
+        if (text.length < 3) return;
+        var range = s.getRangeAt(0);
+        // A triple-click runs the selection to the very start of the next block: that block is not part of it.
+        var end = range.endOffset === 0 && range.endContainer !== range.startContainer ? range.startContainer : range.endContainer;
+        var block = blockOf(end) || blockOf(range.startContainer);
+        var m = block && /^post:(\d+):block:(\d+):([0-9a-f]+)$/.exec(block.getAttribute('data-kop-edit'));
+        if (!m) return;
+        var rects = range.getClientRects();
+        var r = rects.length ? rects[rects.length - 1] : range.getBoundingClientRect();
+        if (!r || (!r.width && !r.height)) return;
+        pqPick = { ref: 'pq:' + m[1] + ':' + m[2] + ':' + m[3] + ':new', text: text };
+        pqBtn.hidden = false;
+        var w = pqBtn.offsetWidth || 120;
+        var maxX = document.documentElement.clientWidth - w - 8;
+        pqBtn.style.top = Math.round(r.bottom + window.scrollY + 8) + 'px';
+        pqBtn.style.left = Math.round(Math.min(Math.max(r.right - w / 2, 8), maxX) + window.scrollX) + 'px';
+    }
+
+    var pqTimer = null;
+    document.addEventListener('selectionchange', function () {
+        clearTimeout(pqTimer);
+        pqTimer = setTimeout(pqUpdate, 180);
+    });
 
     /* ---- Start ------------------------------------------------------------- */
 
