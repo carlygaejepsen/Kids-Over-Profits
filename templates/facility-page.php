@@ -642,9 +642,7 @@ get_header();
                                 </details>
                             <?php endif; ?>
                         <?php endif; ?>
-                        <?php foreach ($kop_fp_hist['paragraphs'] as $kop_fp_para) : ?>
-                            <p><?php echo kop_operator_history_paragraph_html($kop_fp_para); // Escaped inside. ?></p>
-                        <?php endforeach; ?>
+                        <?php echo kop_operator_history_paragraphs_html($kop_fp_hist['paragraphs'], 'p', (int) $kop_fp_ph['operator_id']); // Escaped inside; "> " paragraphs are pull quotes. ?>
                         <?php if ($kop_fp_hist['sources']) : ?>
                             <h3 class="kop-fp-subhead">Sources</h3>
                             <ol class="kop-op-sources">

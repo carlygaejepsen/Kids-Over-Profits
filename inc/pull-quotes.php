@@ -30,7 +30,8 @@ if (!defined('ABSPATH')) {
  * through wp_kses_post when WordPress is loaded); $args: credit, align.
  */
 function kop_pull_quote($html, $args = array()) {
-    $args = array_merge(array('credit' => '', 'align' => 'center'), (array) $args);
+    // attrs: extra attributes for the figure, already escaped (an admin's pencil).
+    $args = array_merge(array('credit' => '', 'align' => 'center', 'attrs' => ''), (array) $args);
 
     $html = trim((string) $html);
     // The editor's own paragraph wrapping (wpautop around shortcode content)
@@ -63,7 +64,7 @@ function kop_pull_quote($html, $args = array()) {
         $credit_html = '<figcaption class="kop-pullquote__credit">' . $credit . '</figcaption>';
     }
 
-    return '<figure class="kop-pullquote kop-pullquote--' . $align . '">'
+    return '<figure class="kop-pullquote kop-pullquote--' . $align . '"' . (string) $args['attrs'] . '>'
         . '<blockquote class="kop-pullquote__text">' . $body . '</blockquote>'
         . $credit_html . '</figure>';
 }
@@ -222,7 +223,16 @@ function kop_pull_quote_ie_undo(array $p, array $v) {
     $key = 'kop_pq_undo_' . preg_replace('/[^A-Za-z0-9]/', '', (string) ($p[0] ?? ''));
     $saved = get_transient($key);
     if (!is_array($saved)) {
-        throw new RuntimeException('That change can no longer be undone here. WordPress keeps the earlier version under Revisions in the editor.');
+        throw new RuntimeException('That change can no longer be undone here. Use the pencil to change it back.');
+    }
+    if (isset($saved['kind'])) {
+        // A company's written history.
+        if (md5(wp_json_encode(kop_pull_quote_history_get($saved['kind'], $saved['oid']))) !== $saved['after']) {
+            throw new RuntimeException('The history has changed since. Use its pencil to change it back.');
+        }
+        kop_pull_quote_history_put($saved['kind'], $saved['oid'], $saved['before']);
+        delete_transient($key);
+        return array('message' => 'Undone.');
     }
     $post = kop_ie_post_get($saved['post']);
     if (md5($post->post_content) !== $saved['after']) {
@@ -237,9 +247,181 @@ function kop_pull_quote_ie_undo(array $p, array $v) {
     return array('message' => 'Undone.');
 }
 
+/* ---- In a company's written history (inc/operator-history.php) -----------
+ *
+ * The history is a list of paragraphs of plain text (operator.history). A
+ * paragraph whose every line starts with "> " is a pull quote:
+ *
+ *   > the words, as many lines as needed ("> " alone starts a new paragraph)
+ *   > -- who said it
+ *   > (right)            or (left); across the column when left out
+ *
+ * Typed by hand in the history's own pencil, or made by selecting words on
+ * the page: ref pqh:<o|p>:<company id>:<paragraph>:<hash>:new|edit, where o is
+ * the /operator/ page and p a program page made from the company
+ * (inc/program-homes-convert.php). The hash is the paragraph's words, so a
+ * history changed meanwhile is never written over.
+ */
+
+/** {paras, credit, align} when the history paragraph is a pull quote, else null. */
+function kop_pull_quote_parse_text($text) {
+    $lines = preg_split('/\R/', trim((string) $text));
+    $out = array('paras' => array(''), 'credit' => '', 'align' => 'center');
+    foreach ($lines as $line) {
+        $t = trim($line);
+        if ($t !== '>' && strpos($t, '> ') !== 0) {
+            return null;
+        }
+        $q = trim(substr($t, 1));
+        if (preg_match('/^\((left|right|center)\)$/i', $q, $a)) {
+            $out['align'] = strtolower($a[1]);
+        } elseif (preg_match('/^(?:--|\x{2014})\s*(.+)$/u', $q, $c)) {
+            $out['credit'] = trim($c[1]);
+        } elseif ($q === '') {
+            $out['paras'][] = '';
+        } else {
+            $last = count($out['paras']) - 1;
+            $out['paras'][$last] = trim($out['paras'][$last] . ' ' . $q);
+        }
+    }
+    $out['paras'] = array_values(array_filter($out['paras'], 'strlen'));
+    return $out['paras'] ? $out : null;
+}
+
+/** The history paragraph for a pull quote (the reverse of kop_pull_quote_parse_text()). */
+function kop_pull_quote_text($text, $credit = '', $align = 'center') {
+    $paras = array();
+    foreach (preg_split('/\n+/', str_replace(array("\r\n", "\r"), "\n", trim((string) $text))) as $p) {
+        $p = trim(preg_replace('/\s+/u', ' ', $p));
+        if ($p !== '') $paras[] = $p;
+    }
+    if (!$paras) {
+        throw new RuntimeException('Type the words for the pull quote.');
+    }
+    $lines = array();
+    foreach ($paras as $i => $p) {
+        if ($i > 0) $lines[] = '>';
+        $lines[] = '> ' . $p;
+    }
+    $credit = trim(preg_replace('/^(?:--|\x{2014}|\x{2013}|-)\s*/u', '', trim(preg_replace('/\s+/u', ' ', (string) $credit))));
+    if ($credit !== '') $lines[] = '> -- ' . $credit;
+    if (in_array($align, array('left', 'right'), true)) $lines[] = '> (' . $align . ')';
+    return implode("\n", $lines);
+}
+
+/** Its HTML: $inline makes one line of the text safe HTML (links and all). */
+function kop_pull_quote_from_parsed(array $q, $inline, $attrs = '') {
+    return kop_pull_quote(implode("\n\n", array_map($inline, $q['paras'])), array(
+        'credit' => $q['credit'] !== '' ? call_user_func($inline, $q['credit']) : '',
+        'align'  => $q['align'],
+        'attrs'  => $attrs,
+    ));
+}
+
+/** The quote as plain words, for readers that take text (the mobile app). */
+function kop_pull_quote_plain($text) {
+    $q = kop_pull_quote_parse_text($text);
+    if (!$q) return (string) $text;
+    return "\u{201C}" . implode(' ', $q['paras']) . "\u{201D}" . ($q['credit'] !== '' ? " \u{2014} " . $q['credit'] : '');
+}
+
+function kop_pull_quote_para_hash($text) {
+    return substr(md5(trim((string) $text)), 0, 8);
+}
+
+/** The history's paragraphs as the page shows them (blank ones dropped). */
+function kop_pull_quote_history_get($kind, $oid) {
+    if ($kind === 'p') {
+        $c = function_exists('kop_phc_rows') ? (kop_phc_rows(true)[(int) $oid] ?? null) : null;
+        if (!$c) throw new RuntimeException('That history is gone (the conversion was undone?).');
+        $op = $c['op'];
+    } else {
+        $opts = kop_ie_facility_opts();
+        list(, $json) = kop_ie_operator_row($opts['pdo'], (int) $oid);
+        $op = $json['operator'];
+    }
+    $out = array();
+    foreach ((array) ($op['history'] ?? array()) as $p) {
+        $p = trim((string) $p);
+        if ($p !== '') $out[] = $p;
+    }
+    return $out;
+}
+
+/** Writes the paragraphs through the history's own pencil save. */
+function kop_pull_quote_history_put($kind, $oid, array $paras) {
+    if ($kind === 'p') {
+        kop_phc_ie_save(array((string) (int) $oid), array('history' => array_values($paras)));
+    } else {
+        kop_ie_operator_save(array((string) (int) $oid, 'history'), array('history' => array_values($paras)));
+    }
+}
+
+/** ' data-kop-pq="..."' on a history paragraph for an admin: the "Pull quote" button's target. */
+function kop_pull_quote_history_target($kind, $oid, $index, $text) {
+    if (!function_exists('kop_ie_can') || !kop_ie_can()) return '';
+    return ' data-kop-pq="pqh:' . esc_attr($kind . ':' . (int) $oid . ':' . (int) $index . ':' . kop_pull_quote_para_hash($text)) . '"';
+}
+
+function kop_pull_quote_history_ref(array $p) {
+    $kind = ($p[0] ?? '') === 'p' ? 'p' : 'o';
+    $oid = (int) ($p[1] ?? 0);
+    $index = (int) ($p[2] ?? -1);
+    $paras = kop_pull_quote_history_get($kind, $oid);
+    if (!isset($paras[$index]) || kop_pull_quote_para_hash($paras[$index]) !== (string) ($p[3] ?? '')) {
+        throw new RuntimeException('The history has changed since it was loaded. Reload the page and try again.');
+    }
+    return array($kind, $oid, $index, $paras, ($p[4] ?? '') === 'new');
+}
+
+function kop_pull_quote_history_load(array $p) {
+    list($kind, $oid, $index, $paras, $is_new) = kop_pull_quote_history_ref($p);
+    if ($is_new) {
+        return array(
+            'title'  => 'New pull quote',
+            'help'   => 'Sets a line from the history large, like a magazine. Undo is offered after saving.',
+            'fields' => kop_pull_quote_fields(array('text' => '', 'credit' => '', 'align' => 'center'), true),
+        );
+    }
+    $q = kop_pull_quote_parse_text($paras[$index]);
+    if (!$q) {
+        throw new RuntimeException('That paragraph is not a pull quote.');
+    }
+    return array(
+        'title'  => 'Pull quote',
+        'fields' => kop_pull_quote_fields(array('text' => implode("\n", $q['paras']), 'credit' => $q['credit'], 'align' => $q['align']), false),
+        'alt'    => array('ref' => $kind === 'p' ? 'phistory:' . $oid : 'operator:' . $oid . ':history', 'label' => 'The whole history'),
+    );
+}
+
+function kop_pull_quote_history_save(array $p, array $v) {
+    list($kind, $oid, $index, $paras, $is_new) = kop_pull_quote_history_ref($p);
+    if (!$is_new && !kop_pull_quote_parse_text($paras[$index])) {
+        throw new RuntimeException('That paragraph is not a pull quote.');
+    }
+    $remove = !$is_new && !empty($v['remove']);
+    $new = $paras;
+    if ($is_new) {
+        $at = ($v['place'] ?? 'after') === 'before' ? $index : $index + 1;
+        array_splice($new, $at, 0, array(kop_pull_quote_text($v['text'] ?? '', $v['credit'] ?? '', (string) ($v['align'] ?? 'center'))));
+    } elseif ($remove) {
+        array_splice($new, $index, 1);
+    } else {
+        $new[$index] = kop_pull_quote_text($v['text'] ?? '', $v['credit'] ?? '', (string) ($v['align'] ?? 'center'));
+    }
+    kop_pull_quote_history_put($kind, $oid, $new);
+
+    $token = wp_generate_password(20, false);
+    set_transient('kop_pq_undo_' . $token, array('kind' => $kind, 'oid' => $oid, 'before' => $paras,
+        'after' => md5(wp_json_encode(kop_pull_quote_history_get($kind, $oid)))), DAY_IN_SECONDS);
+    $message = $is_new ? 'Pull quote added.' : ($remove ? 'Pull quote taken off the page.' : 'Pull quote saved.');
+    return array('message' => $message, 'undo' => 'pqundo:' . $token);
+}
+
 if (function_exists('add_filter')) {
     add_filter('kop_inline_edit_sources', function ($sources) {
         $sources['pq'] = array('load' => 'kop_pull_quote_ie_load', 'save' => 'kop_pull_quote_ie_save');
+        $sources['pqh'] = array('load' => 'kop_pull_quote_history_load', 'save' => 'kop_pull_quote_history_save');
         $sources['pqundo'] = array('load' => function () { throw new RuntimeException('Nothing to show.'); }, 'save' => 'kop_pull_quote_ie_undo');
         return $sources;
     });

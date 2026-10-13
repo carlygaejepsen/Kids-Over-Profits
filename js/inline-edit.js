@@ -592,7 +592,8 @@
     }
 
     /* ---- Pull quote from selected words (inc/pull-quotes.php) ---------------
-     * Selecting words inside a block of the page's own content shows a
+     * Selecting words inside a block of the page's own content (or a paragraph
+     * marked data-kop-pq="<ref base>", like a company's history) shows a
      * "Pull quote" button under the selection; it opens the new pull quote's
      * dialog with the words filled in. */
 
@@ -607,9 +608,15 @@
         if (pick) openEditor(pick.ref, { text: pick.text });
     });
 
-    function blockOf(node) {
+    /** The pull quote's ref base for the words at node: a paragraph marked data-kop-pq (a company's history), or a block of a post. */
+    function pqBaseOf(node) {
         var n = node && node.nodeType === 1 ? node : node && node.parentNode;
-        return n && n.closest ? n.closest('.kop-ie-block[data-kop-edit^="post:"]') : null;
+        if (!n || !n.closest) return '';
+        var marked = n.closest('[data-kop-pq]');
+        if (marked) return marked.getAttribute('data-kop-pq');
+        var block = n.closest('.kop-ie-block[data-kop-edit^="post:"]');
+        var m = block && /^post:(\d+):block:(\d+):([0-9a-f]+)$/.exec(block.getAttribute('data-kop-edit'));
+        return m ? 'pq:' + m[1] + ':' + m[2] + ':' + m[3] : '';
     }
 
     function pqUpdate() {
@@ -622,13 +629,12 @@
         var range = s.getRangeAt(0);
         // A triple-click runs the selection to the very start of the next block: that block is not part of it.
         var end = range.endOffset === 0 && range.endContainer !== range.startContainer ? range.startContainer : range.endContainer;
-        var block = blockOf(end) || blockOf(range.startContainer);
-        var m = block && /^post:(\d+):block:(\d+):([0-9a-f]+)$/.exec(block.getAttribute('data-kop-edit'));
-        if (!m) return;
+        var base = pqBaseOf(end) || pqBaseOf(range.startContainer);
+        if (!base) return;
         var rects = range.getClientRects();
         var r = rects.length ? rects[rects.length - 1] : range.getBoundingClientRect();
         if (!r || (!r.width && !r.height)) return;
-        pqPick = { ref: 'pq:' + m[1] + ':' + m[2] + ':' + m[3] + ':new', text: text };
+        pqPick = { ref: base + ':new', text: text };
         pqBtn.hidden = false;
         var w = pqBtn.offsetWidth || 120;
         var maxX = document.documentElement.clientWidth - w - 8;

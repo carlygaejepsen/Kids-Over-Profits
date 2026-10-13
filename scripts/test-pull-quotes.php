@@ -196,6 +196,63 @@ if ($wp === '' || !is_file($inc . '/class-wp-block-parser.php')) {
     }
     kop_pull_quote_ie_save(array('7', '0', kop_ie_block_hash($b[0]), 'new'), array('text' => 'Up top.', 'credit' => '', 'align' => 'left', 'place' => 'before'));
     $check('"Before that paragraph" puts it first', strpos($GLOBALS['t_post']->post_content, '<!-- wp:pullquote {"align":"left"} -->') === 0);
+
+    /* ---- A company's written history (pqh:, inc/operator-history.php) ---- */
+
+    $t = kop_pull_quote_text("Staff held him down\n\nfor an hour.", '-- A former student', 'right');
+    $check('history text form', $t === "> Staff held him down\n>\n> for an hour.\n> -- A former student\n> (right)", $t);
+    $check('...reads back', kop_pull_quote_parse_text($t) === array('paras' => array('Staff held him down', 'for an hour.'), 'credit' => 'A former student', 'align' => 'right'));
+    $check('a paragraph that only starts with ">" is not a quote', kop_pull_quote_parse_text("> one\nplain line") === null);
+    $check('a paragraph whose every line starts with "> " is one', kop_pull_quote_parse_text("> 5 staff\n> held him") !== null);
+    $check('the app gets plain words', kop_pull_quote_plain($t) === "\u{201C}Staff held him down for an hour.\u{201D} \u{2014} A former student");
+    $check('...and other paragraphs unchanged', kop_pull_quote_plain('Plain.') === 'Plain.');
+
+    // A program made from a company (kind p) keeps the history in kop_phc rows; stand-ins for those two calls.
+    $GLOBALS['t_hist'] = array('Sequel opened its first program in 1999.', '', 'Its programs [were sued](https://example.org/case) often.', 'It sold them in 2021.');
+    function kop_phc_rows() { return array(44 => array('op' => array('name' => 'Sequel TSI', 'history' => $GLOBALS['t_hist']))); }
+    function kop_phc_ie_save($parts, $values) { $GLOBALS['t_hist'] = $values['history']; return array('message' => 'Saved.'); }
+    function esc_html($s) { return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8'); }
+    function esc_url($s) { return (string) $s; }
+    function esc_attr($s) { return htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8'); }
+    function home_url() { return 'https://kidsoverprofits.org/'; }
+    require dirname(__DIR__) . '/inc/operator-history.php';
+
+    $paras = kop_pull_quote_history_get('p', 44);
+    $check('the history as the page shows it (blank paragraph dropped)', count($paras) === 3);
+    $h1 = kop_pull_quote_para_hash($paras[1]);
+    $html = kop_operator_history_paragraphs_html($paras, 'p', 44);
+    $check('an admin\'s history paragraphs are "Pull quote" targets', strpos($html, '<p data-kop-pq="pqh:p:44:1:' . $h1 . '">Its programs <a href="https://example.org/case" target="_blank" rel="noopener">were sued</a> often.</p>') !== false, $html);
+
+    $load = kop_pull_quote_history_load(array('p', '44', '1', $h1, 'new'));
+    $check('the new dialog opens on a history paragraph', array_column($load['fields'], 'name') === array('text', 'credit', 'align', 'place'));
+    $res = kop_pull_quote_history_save(array('p', '44', '1', $h1, 'new'), array('text' => 'Its programs were sued often.', 'credit' => 'Court records', 'align' => 'left', 'place' => 'after'));
+    $check('saved after that paragraph, the others untouched', $GLOBALS['t_hist'] === array($paras[0], $paras[1], "> Its programs were sued often.\n> -- Court records\n> (left)", $paras[2]), json_encode($GLOBALS['t_hist']));
+    $check('...with Undo', $res['message'] === 'Pull quote added.' && strpos($res['undo'], 'pqundo:') === 0);
+
+    $now = kop_pull_quote_history_get('p', 44);
+    $html = kop_operator_history_paragraphs_html($now, 'p', 44);
+    $h2 = kop_pull_quote_para_hash($now[2]);
+    $check('the page draws it as a pull quote with its own pencil',
+        strpos($html, '<figure class="kop-pullquote kop-pullquote--left" data-kop-edit="pqh:p:44:2:' . $h2 . ':edit" data-kop-edit-label="this pull quote"><blockquote class="kop-pullquote__text"><p>Its programs were sued often.</p></blockquote><figcaption class="kop-pullquote__credit">Court records</figcaption></figure>') !== false, $html);
+    $edit = kop_pull_quote_history_load(array('p', '44', '2', $h2, 'edit'));
+    $vals = array_column($edit['fields'], 'value', 'name');
+    $check('its pencil reads the words, credit and side back', $vals['text'] === 'Its programs were sued often.' && $vals['credit'] === 'Court records' && $vals['align'] === 'left' && $edit['alt']['ref'] === 'phistory:44');
+    try {
+        kop_pull_quote_history_load(array('p', '44', '0', kop_pull_quote_para_hash($now[0]), 'edit'));
+        $check('a plain paragraph is not opened as a pull quote', false);
+    } catch (RuntimeException $e) {
+        $check('a plain paragraph is not opened as a pull quote', true);
+    }
+    $res2 = kop_pull_quote_history_save(array('p', '44', '2', $h2, 'edit'), array('text' => 'x', 'remove' => true));
+    $check('"Take this pull quote off" removes only it', $GLOBALS['t_hist'] === $paras);
+    try {
+        kop_pull_quote_history_save(array('p', '44', '2', $h2, 'edit'), array('text' => 'x'));
+        $check('a stale history pencil is refused', false);
+    } catch (RuntimeException $e) {
+        $check('a stale history pencil is refused', strpos($e->getMessage(), 'changed since') !== false);
+    }
+    kop_pull_quote_ie_undo(array(substr($res2['undo'], 7)), array());
+    $check('Undo brings the pull quote back exactly', $GLOBALS['t_hist'] === $now);
 }
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";

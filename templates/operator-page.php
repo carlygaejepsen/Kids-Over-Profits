@@ -155,9 +155,7 @@ $kop_op_edit = function_exists('kop_ie_attr') ? kop_ie_attr('operator:' . (int) 
                                 </details>
                             <?php endif; ?>
                         <?php endif; ?>
-                        <?php foreach ($page['history']['paragraphs'] as $kop_op_para) : ?>
-                            <p><?php echo kop_operator_history_paragraph_html($kop_op_para); // Escaped inside. ?></p>
-                        <?php endforeach; ?>
+                        <?php echo kop_operator_history_paragraphs_html($page['history']['paragraphs'], 'o', (int) $page['id']); // Escaped inside; "> " paragraphs are pull quotes. ?>
                         <?php if ($page['history']['sources']) : ?>
                             <h3 class="kop-fp-subhead">Sources</h3>
                             <ol class="kop-op-sources">

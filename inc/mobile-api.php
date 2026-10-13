@@ -133,7 +133,7 @@ if (!function_exists('kop_mobile_facility_payload')) {
         $ph = isset($page['program_history']['history']) && is_array($page['program_history']['history']) ? $page['program_history']['history'] : null;
         $out['history'] = $ph && ($ph['status'] ?? '') === 'published' ? array(
             'status'     => 'published',
-            'paragraphs' => array_values(array_map('strval', (array) ($ph['paragraphs'] ?? array()))),
+            'paragraphs' => array_values(array_map(function_exists('kop_pull_quote_plain') ? 'kop_pull_quote_plain' : 'strval', (array) ($ph['paragraphs'] ?? array()))), // a pull quote as plain words
             'sources'    => array_values((array) ($ph['sources'] ?? array())),
         ) : null;
         // A record with a written profile post (/elan/) is that post on the website: its /facility/ page 301s there.
@@ -313,7 +313,7 @@ if (!function_exists('kop_mobile_operator_payload')) {
         $history = isset($page['history']) && is_array($page['history']) ? $page['history'] : null;
         $out['history'] = $history ? array(
             'status'     => (string) ($history['status'] ?? ''),
-            'paragraphs' => array_values(array_map('strval', (array) ($history['paragraphs'] ?? array()))),
+            'paragraphs' => array_values(array_map(function_exists('kop_pull_quote_plain') ? 'kop_pull_quote_plain' : 'strval', (array) ($history['paragraphs'] ?? array()))), // a pull quote as plain words
             'sources'    => array_values((array) ($history['sources'] ?? array())),
         ) : null;
         $docs = isset($page['documents']) && is_array($page['documents']) ? $page['documents'] : array();

@@ -412,7 +412,10 @@ php scripts/test-content-images.php
 # Pull quotes set large like a magazine (inc/pull-quotes.php, css/pull-quotes.css, every page): the block editor's Pullquote
 # block, [kop_pullquote credit="..." align="center|left|right"]words[/kop_pullquote], or "> " lines in page text ("> -- Name" credits it).
 # Admins select words in an article and press "Pull quote" (js/inline-edit.js): pq:<post>:<block>:<hash>:new adds a core Pullquote block
-# before/after that block; a pull quote block's pencil is pq:...:edit (words, credit, placement, take off); Undo = pqundo:<token>
+# before/after that block; a pull quote block's pencil is pq:...:edit (words, credit, placement, take off); Undo = pqundo:<token>.
+# Company histories (operator.history, /operator/ and converted program pages): a paragraph whose lines all start "> " is a pull quote
+# ("> -- Name", "> (right)"); the button there uses pqh:<o|p>:<company>:<paragraph>:<hash>; the app gets it as plain words.
+# Another page joins by marking its paragraphs data-kop-pq="<ref base>" and adding a source
 php -d extension=mbstring scripts/test-pull-quotes.php [--wp=<WordPress root>]   # add/edit/undo on WordPress's own block parser (Local's by default)
 # Links read as words, never as web addresses: kop_url_label() (inc/url-labels.php, a late the_content filter) and
 # kopUrlLabel() (js/url-labels.js, on every page, relabels JS-drawn lists as they appear) must give the same label;

@@ -387,6 +387,33 @@ if (!function_exists('kop_operator_history_paragraph_html')) {
     }
 }
 
+if (!function_exists('kop_operator_history_paragraphs_html')) {
+    /**
+     * The written history's paragraphs. One whose lines all start with "> " is
+     * a pull quote (inc/pull-quotes.php). For an admin each paragraph is a
+     * target for the "Pull quote" button and each pull quote has its pencil;
+     * $kind is 'o' on the /operator/ page, 'p' on a program page made from the
+     * company, $oid the company's id.
+     */
+    function kop_operator_history_paragraphs_html(array $paras, $kind, $oid) {
+        $out = '';
+        $quotes = function_exists('kop_pull_quote_parse_text');
+        foreach (array_values($paras) as $i => $para) {
+            $q = $quotes ? kop_pull_quote_parse_text($para) : null;
+            if ($q) {
+                $edit = function_exists('kop_ie_attr')
+                    ? kop_ie_attr('pqh:' . $kind . ':' . (int) $oid . ':' . $i . ':' . kop_pull_quote_para_hash($para) . ':edit', 'this pull quote')
+                    : '';
+                $out .= kop_pull_quote_from_parsed($q, 'kop_operator_history_paragraph_html', $edit) . "\n";
+            } else {
+                $target = $quotes ? kop_pull_quote_history_target($kind, $oid, $i, $para) : '';
+                $out .= '<p' . $target . '>' . kop_operator_history_paragraph_html($para) . "</p>\n";
+            }
+        }
+        return $out;
+    }
+}
+
 // ---------------------------------------------------------------------------
 // Drafts from seeds/operator-histories.json
 // ---------------------------------------------------------------------------
