@@ -63,6 +63,28 @@ function kop_rinbox_test_wiki_updates(array $src, array $item, callable $check) 
     $check('wiki-updates: drafts with other names get one bold names line under the header', $named && !$bad, count($named) . ' named; wrong: ' . implode(', ', $bad));
     $check('wiki-updates: names carry the years they were used where known', (bool) $dated, count($dated) . ' with years, e.g. ' . implode(' | ', array_slice($dated, 0, 3)));
 
+    // A licence name ("Gateway Academy, LLC – Draper") is one name, never cut at its comma into "LLC – Draper", and
+    // is not listed as another name of the program it licenses.
+    $split = kop_wiki_drafts_split_names('Gateway Academy, LLC – Draper; Old Name, Other Name, Inc.');
+    $lic = array(
+        array('Gateway Academy, LLC – Draper', 'Gateway Academy', true), array('Olympus Academy, LLC', 'Olympus Academy', true),
+        array('Ascent, Inc. – Discovery Ranch for Girls', 'Discovery Ranch for Girls', true),
+        array('Aspen Education Group, Inc.', 'Aspen Ranch', false), array('Discovery Ranch South', 'Discovery Ranch for Girls', false),
+    );
+    $wrong = array();
+    foreach ($lic as $c) if (kop_wiki_drafts_is_licence_name($c[0], array(kop_wiki_upd_key($c[1]))) !== $c[2]) $wrong[] = $c[0];
+    $check('wiki-updates: a comma before LLC/Inc. stays in the name; licence names are not other names',
+        $split === array('Gateway Academy, LLC – Draper', 'Old Name', 'Other Name, Inc.') && !$wrong, json_encode($split) . ' wrong: ' . implode(', ', $wrong));
+    $stubs = array();
+    foreach (kop_wiki_drafts_all() as $id => $d) {
+        $op = $d['ops'][0] ?? array();
+        if (($op['op'] ?? '') !== 'set_alternate_names') continue;
+        foreach (kop_wiki_drafts_split_names($op['text']) as $n) {
+            if (preg_match('/^\s*' . KOP_WIKI_DRAFTS_COMPANY_FORM . '/iu', $n) || kop_wiki_drafts_is_licence_name($n, array(kop_wiki_upd_key($d['program'] ?? '')))) $stubs[] = "$id: $n";
+        }
+    }
+    $check('wiki-updates: no names line holds a licence name or a bare "LLC"', !$stubs, implode(' | ', $stubs));
+
     // An entry whose text is still the one drafted from (an entry already approved and pasted holds the additions
     // itself, so leaving a line out could not take it off): the first such card stands in for the harness's pick.
     $key = (int) $item['key'];

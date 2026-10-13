@@ -72,11 +72,17 @@ function kop_wiki_drafts_years_label($start, $end) {
     return '';
 }
 
-/** "A, B; C" -> unique names, in order, never two with one name key. */
+/** A company form ends a name: "Gateway Academy, LLC", "Ascent, Inc. – Discovery Ranch for Girls". */
+const KOP_WIKI_DRAFTS_COMPANY_FORM = '(?:L\.?L\.?C\.?|P\.?L\.?L\.?C\.?|Inc\.?|Incorporated|Ltd\.?|Corp\.?|Corporation|Co\.|L\.?P\.?)(?![\w.])';
+
+/**
+ * "A, B; C" -> unique names, in order, never two with one name key. A comma before a company form is part of the
+ * name ("Olympus Academy, LLC" is one name, never "Olympus Academy" and "LLC").
+ */
 function kop_wiki_drafts_split_names($text, array $names = array()) {
     $seen = array();
     foreach ($names as $n) $seen[kop_wiki_upd_key($n)] = true;
-    foreach (preg_split('/\s*[;,\n]\s*/u', (string) $text) as $n) {
+    foreach (preg_split('/\s*(?:[;\n]|,(?!\s*' . KOP_WIKI_DRAFTS_COMPANY_FORM . '))\s*/iu', (string) $text) as $n) {
         $n = trim(str_replace('*', '', $n));
         $k = kop_wiki_upd_key($n);
         if ($n === '' || $k === '' || isset($seen[$k])) continue;
@@ -84,6 +90,20 @@ function kop_wiki_drafts_split_names($text, array $names = array()) {
         $names[] = $n;
     }
     return $names;
+}
+
+/**
+ * A licence name is not another name: the program's own name with a company form, before or after it ("Gateway
+ * Academy, LLC – Draper", "Olympus Academy, LLC", "Ascent, Inc. – Discovery Ranch for Girls"). $own: name keys.
+ */
+function kop_wiki_drafts_is_licence_name($name, array $own) {
+    $form = KOP_WIKI_DRAFTS_COMPANY_FORM;
+    if (!preg_match('/^(.+?),?\s+' . $form . '\s*(?:[–—-]\s*(.+))?$/iu', trim((string) $name), $m)) return false;
+    foreach (array($m[1], $m[2] ?? '') as $part) {
+        $k = kop_wiki_upd_key($part);
+        if ($k !== '' && in_array($k, $own, true)) return true;
+    }
+    return false;
 }
 
 /**
@@ -129,9 +149,11 @@ function kop_wiki_drafts_add_names(array $all) {
             if ($label !== '') $years[kop_wiki_upd_key($era['name'])] = $label;
         }
         // The entry's own name never lists itself; kop_wiki_drafts_apply() also drops the header's name.
+        // The record's licence names ("Gateway Academy, LLC – Draper") are left out too.
         $own = kop_wiki_upd_key((string) ($d['program'] ?? ''));
-        $names = array_values(array_filter(kop_wiki_drafts_split_names(implode(';', $list)), function ($n) use ($own) {
-            return kop_wiki_upd_key($n) !== $own;
+        $owns = array_values(array_filter(array($own, kop_wiki_upd_key($list[0]))));
+        $names = array_values(array_filter(kop_wiki_drafts_split_names(implode(';', $list)), function ($n) use ($own, $owns) {
+            return kop_wiki_upd_key($n) !== $own && !kop_wiki_drafts_is_licence_name($n, $owns);
         }));
         if (!$names) continue;
         foreach ($names as $i => $n) {
@@ -507,7 +529,9 @@ function kop_wiki_drafts_apply($md, array $ops) {
                 if (preg_match(KOP_WIKI_DRAFTS_NAMES_RE, $lines[$k], $m)) { $at = $k; $had = $m[1]; break; }
             }
             $own = preg_match('/^#+\s*\*\*(.+?)\*\*/u', $lines[0], $h) ? kop_wiki_upd_key($h[1]) : '';
-            $names = array_values(array_filter(kop_wiki_drafts_split_names($had, kop_wiki_drafts_split_names($text)), function ($n) use ($own) { return kop_wiki_upd_key($n) !== $own; }));
+            $names = array_values(array_filter(kop_wiki_drafts_split_names($had, kop_wiki_drafts_split_names($text)), function ($n) use ($own) {
+                return kop_wiki_upd_key($n) !== $own && !kop_wiki_drafts_is_licence_name($n, array($own));
+            }));
             $line = kop_wiki_drafts_names_line($names);
             if ($line === '' || ($at !== null && $lines[$at] === $line)) continue;
             if ($at !== null) $lines[$at] = $line;

@@ -1290,10 +1290,12 @@ function buildProgramsTableMd(programs, yearsLabel, includeReopened) {
 // The bold line above the type line naming the program's previous and alternate
 // names ("**Previous & alternate names: Old Name (1998-2014), Other Name**", then a blank line so Reddit
 // does not run it into the type line); '' when there are none. The parser reads it back into
-// alternateNames; the wiki updates write the same line (inc/wiki-update-drafts.php).
+// alternateNames; the wiki updates write the same line (inc/wiki-update-drafts.php). A comma before a company form
+// is part of the name ("Olympus Academy, LLC"), as KOP_WIKI_DRAFTS_COMPANY_FORM there.
 function alternateNamesLine(formData) {
     const names = String((formData && formData.alternateNames) || '')
-        .split(/\s*[;,\n]\s*/).map(n => n.replace(/\*/g, '').trim()).filter(Boolean);
+        .split(/\s*(?:[;\n]|,(?!\s*(?:L\.?L\.?C\.?|P\.?L\.?L\.?C\.?|Inc\.?|Incorporated|Ltd\.?|Corp\.?|Corporation|Co\.|L\.?P\.?)(?![\w.])))\s*/i)
+        .map(n => n.replace(/\*/g, '').trim()).filter(Boolean);
     if (!names.length) return '';
     return `**Previous & alternate names: ${[...new Set(names)].map(escapeMarkdown).join(', ')}**\n\n`;
 }
