@@ -1284,7 +1284,10 @@ Here: ${sample.ours || '(nothing)'}`;
 
                 const markdown = await loadLocalIndexMarkdown(slug);
                 if (!markdown) {
-                    throw new Error('Local index markdown not found');
+                    // The wiki exports (markdown_output/) are not on the site, so this
+                    // only works on a checkout that has them. On the live site the
+                    // entry is started from its Reddit page instead.
+                    throw new Error('No saved entry and no local wiki export for "' + slug + '": open the Reddit wiki page and import it.');
                 }
 
                 parseAndPopulate(markdown);

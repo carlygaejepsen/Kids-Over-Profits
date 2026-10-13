@@ -6,16 +6,27 @@ deployment:
     - /bin/cp -R css $DEPLOYPATH
     - /bin/cp -R js $DEPLOYPATH
     - /bin/cp -R images $DEPLOYPATH
-    - /bin/cp -R docs $DEPLOYPATH
     - /bin/cp -R templates $DEPLOYPATH
     - /bin/cp -R seeds $DEPLOYPATH
+    # docs/ is read by people, never by the site; it used to be copied here.
+    - /bin/rm -rf $DEPLOYPATH/docs
     # The discovery cron's rejected log used to be tracked as
     # scripts/discovery-rejected.json; it now lives at the gitignored
     # scripts/.discovery-rejected.json. Carry the live server copy over once,
     # then drop the stale tracked file so it stops shadowing the new one.
     - if [ -f $DEPLOYPATH/scripts/discovery-rejected.json ] && [ ! -f $DEPLOYPATH/scripts/.discovery-rejected.json ]; then /bin/mv $DEPLOYPATH/scripts/discovery-rejected.json $DEPLOYPATH/scripts/.discovery-rejected.json; fi
-    - /bin/cp -R scripts $DEPLOYPATH
+    # Only the scripts the server runs are shipped: the discovery cron
+    # (scripts/discover-articles.php at 01:30 and 13:30 Central, with its two
+    # JSON configs; its state files stay where they are), the open data
+    # rebuild and the anonymous portal key tools. Tests and build scripts
+    # run on a laptop or on GitHub Actions, never here.
+    - /bin/mkdir -p $DEPLOYPATH/scripts
+    - /bin/cp scripts/discover-articles.php scripts/discovery-queries.json scripts/discovery-blacklist.json scripts/build-open-data.php scripts/anon-portal-keygen.php scripts/anon-portal-decrypt.php $DEPLOYPATH/scripts/
     - /bin/rm -f $DEPLOYPATH/scripts/discovery-rejected.json
+    # Scripts shipped by the old "copy the whole folder" step that nothing on
+    # the server runs: tests, builders and the test harness. Keep the dotfiles.
+    - cd $DEPLOYPATH/scripts && /bin/rm -rf -- *.js *.py *.pyw history podcast-vocab review-inbox-tests lib-glossary-test-db.php kop-test-harness.php test-*.php && cd - > /dev/null
+    - /bin/rm -f $DEPLOYPATH/templates/Kids-Over-Profits-Tools.code-workspace
     # The glossary moved into SQL tables (inc/glossary-store.php): the Node build and its output are gone.
     - /bin/rm -f $DEPLOYPATH/js/data/glossary/glossary.json $DEPLOYPATH/scripts/build-glossary.js $DEPLOYPATH/scripts/test-glossary-build.php
     # Legislation corrections ship as seeds/legislation-updates.json (inc/legislation-updates.php) now.

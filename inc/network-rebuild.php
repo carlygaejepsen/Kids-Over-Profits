@@ -27,7 +27,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('KOP_NETWORK_REBUILD_REPO', 'carlygaejepsen/Kids-Over-Profits');
+// The GitHub repository (owner/name) that holds the workflow. api/config.local.php
+// (define('KOP_NETWORK_REBUILD_REPO', ...)) or .env (KOP_NETWORK_REBUILD_REPO=...)
+// overrides this default, so the build can move to another repository without
+// a deploy. kop_network_rebuild_repo() resolves it.
+define('KOP_NETWORK_REBUILD_REPO_DEFAULT', 'carlygaejepsen/Kids-Over-Profits');
 define('KOP_NETWORK_REBUILD_WORKFLOW', 'build-network-map.yml');
 define('KOP_NETWORK_REBUILD_OPTION', 'kop_network_rebuild_state');
 
@@ -97,6 +101,20 @@ if (!function_exists('kop_network_rebuild_token')) {
     }
 }
 
+if (!function_exists('kop_network_rebuild_repo')) {
+    /** owner/name of the GitHub repository holding build-network-map.yml. */
+    function kop_network_rebuild_repo() {
+        if (function_exists('kop_seed_pdo')) {
+            kop_seed_pdo();
+        }
+        if (defined('KOP_NETWORK_REBUILD_REPO') && KOP_NETWORK_REBUILD_REPO) {
+            return (string) KOP_NETWORK_REBUILD_REPO;
+        }
+        $env = getenv('KOP_NETWORK_REBUILD_REPO');
+        return $env ? (string) $env : KOP_NETWORK_REBUILD_REPO_DEFAULT;
+    }
+}
+
 if (!function_exists('kop_network_rebuild_dispatch')) {
     /** Ask GitHub to run the build. Returns '' on success, else the reason. */
     function kop_network_rebuild_dispatch($reason) {
@@ -104,7 +122,7 @@ if (!function_exists('kop_network_rebuild_dispatch')) {
         if ($token === '') {
             return 'No GitHub token: add KOP_GITHUB_DISPATCH_TOKEN to api/config.local.php or .env.';
         }
-        $url = 'https://api.github.com/repos/' . KOP_NETWORK_REBUILD_REPO . '/actions/workflows/'
+        $url = 'https://api.github.com/repos/' . kop_network_rebuild_repo() . '/actions/workflows/'
             . KOP_NETWORK_REBUILD_WORKFLOW . '/dispatches';
         $resp = wp_remote_post($url, array(
             'timeout' => 20,
@@ -209,7 +227,7 @@ if (!function_exists('kop_network_rebuild_page')) {
         $when = function ($t) {
             return $t ? esc_html(wp_date('M j, Y g:i a', (int) $t)) : 'never';
         };
-        $runs = 'https://github.com/' . KOP_NETWORK_REBUILD_REPO . '/actions/workflows/' . KOP_NETWORK_REBUILD_WORKFLOW;
+        $runs = 'https://github.com/' . kop_network_rebuild_repo() . '/actions/workflows/' . KOP_NETWORK_REBUILD_WORKFLOW;
         $pending = !empty($state['current']) && ($state['current'] !== ($state['built'] ?? ''));
         // A check from before the token was added leaves its message behind.
         if (!empty($state['error']) && strpos($state['error'], 'No GitHub token') === 0 && kop_network_rebuild_token() !== '') {

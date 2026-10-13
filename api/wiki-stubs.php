@@ -21,7 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-$overrideFile = __DIR__ . '/../markdown_output/wiki_stub_overrides.json';
+// The manual overrides are runtime state written by the server, so they live
+// in uploads/kop-cache/, never inside the theme (a deploy copies over the theme
+// folder, and markdown_output/ is not shipped at all). A copy left at the old
+// path by an earlier version is read once and carried over on the next save.
+$overrideDir = dirname(__DIR__, 3) . '/uploads/kop-cache';
+$overrideFile = $overrideDir . '/wiki-stub-overrides.json';
+$legacyOverrideFile = __DIR__ . '/../markdown_output/wiki_stub_overrides.json';
 
 function kop_wiki_stub_default_overrides() {
     return [
@@ -48,6 +54,9 @@ function kop_wiki_stub_load_overrides($path) {
 
 function kop_wiki_stub_write_overrides($path, array $data) {
     $dir = dirname($path);
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
     if (!is_dir($dir) || (!is_writable($dir) && !file_exists($path))) {
         return false;
     }
@@ -145,7 +154,7 @@ $COMPLETED_MIN_CHARS = 40;
 $IMPORT_SUBMITTERS = ['bulk-upload', 'batch-import-script', 'reimport-regenerated', 'import', 'system'];
 $completedNames = [];
 $completedSlugs = [];
-$overrides = kop_wiki_stub_load_overrides($overrideFile);
+$overrides = kop_wiki_stub_load_overrides(is_readable($overrideFile) ? $overrideFile : $legacyOverrideFile);
 try {
     require_once __DIR__ . '/config.php';
     if (isset($pdo) && $pdo instanceof PDO) {
