@@ -1061,11 +1061,16 @@ Owner:
   ones that failed" in its window.
 - **Industry PR refiling.** 148 rejected news items to sort through
   (4 refiled so far).
-- **News discovery crontab (2026-10-13).** Both lines exist in cPanel >
-  Cron Jobs (01:30 and 13:30 Central). The sweep now walks every name by a
-  cursor, half per run, so the 13:30 line must lose `--no-facilities`; the
-  01:30 line gets `--recency 30d` for one night after the deploy, then
-  loses it again. The two lines are printed in the hand-over.
+- **News discovery crontab (2026-10-13, section 3.16).** Both lines exist
+  in cPanel > Cron Jobs (01:30 and 13:30 Central). The sweep now walks every
+  name by a cursor, half per run, so: (a) the 13:30 line loses
+  `--no-facilities`; (b) the 01:30 line gets `--recency 30d` after
+  `discover-articles.php` for one night (the last month's backlog), then
+  loses it again; (c) optional, both lines drop `AI_PROVIDER=groq` so the AI
+  step alternates with Gemini like every other job (the confirm step adds
+  calls, and Groq's free tier is 8,000 tokens a minute); (d) optional, a
+  third line (07:30, the 13:30 line's shape with `flock`) makes the full
+  pass daily instead of every day and a half.
 - **Scraper launcher window** (Tools 4a0df69): open it and confirm the
   size and Output pane look right.
 - **Pushing local database changes to prod** (asked 2026-09-17).
@@ -1763,5 +1768,82 @@ Open:
    out-of-state reports, TRICARE manual addenda C7ADD_13/14, the SBA PPP FOIA
    files, USAspending/TAGGS for CFDA 93.676. New finds go in as more
    proposals with the same shape.
+
+### 3.16 News coverage of every tracked program (2026-10-13)
+
+The nightly discovery job (`scripts/discover-articles.php`,
+`docs/news-processor/README.md`) queried a seventh of the open records a
+night, by position in the feed (so the seventh drifted), only their current
+names, never a closed program, with the state's name required in the text,
+and rejected any hit whose headline did not name the program
+(`facility-unmatched`: 185 of 215 sweep rejections in October). 562 requests
+on 2026-10-13 kept 0 stories; the Desert Willow Treatment Center closure
+(three outlets, Oct 10-12) came back three nights running and was rejected
+each time. Since August the sweep's submissions were 45 approved / 109
+rejected; Reddit's 79 / 11.
+
+Shipped 2026-10-13 (45155818, b0df00b8): every record and every name it has
+had (5,304 names, closed programs and past names included); distinctive
+names several to one Google News request within Google's ~32-word reading of
+a query (16 words of names, 9 keywords, the `when:` window first; at the end
+it was the part dropped and 2020 stories came back); short names and
+everyday phrases ("A Mother's Love") one to a request with the state; a
+cursor in the state file (version 3), half the list per run, resuming after
+a crash; a batched hit whose headline names no program is kept with its
+attribution pending and the AI step that reads the article confirms the
+program (30 a run) or logs it `batch-unconfirmed` for Scraper finds; finance
+sites and obituaries blocked; finds submitted every 50 requests while the
+link resolver still answers. `kop_sc_cl_fetch()` falls back to
+`COURTLISTENER_API_KEY`, the name the server holds (the status checks had
+run anonymously). Test: `php scripts/test-discovery-sweep.php`.
+
+Open:
+1. **Owner:** the crontab edits in section 2 (Admin runs).
+2. **Measure after a week** (from about 2026-10-20): `news_submissions`
+   approved vs rejected for `auto-discovery via google-news` against the
+   45 / 109 baseline, how many `batch-unconfirmed` rows Scraper finds holds
+   and whether any is a real story (then the confirm rule is too strict),
+   and the `cursor X -> Y of T` and `AI confirmations` lines in
+   `~/logs/discovery-2026-10.log` (is 30 a run enough; does the resolver
+   still 429 by the end of a run). Tune `AI_CONFIRM_PER_RUN`,
+   `GN_SUBMIT_EVERY` and the blacklist from that, not before.
+3. **New lawsuits from CourtListener** (the owner chose this with the sweep;
+   ships once the sweep has run two nights clean). Tested 2026-10-13:
+   `GET courtlistener.com/api/rest/v4/search/?type=r&q="Provo Canyon School"
+   &order_by=dateFiled desc&filed_after=YYYY-MM-DD` answers (37 dockets),
+   accepts `"A" OR "B"`, and the token gives 5,000 requests an hour.
+   Plan: `inc/lawsuit-discovery.php` + `api/discover-lawsuits.php` (CLI
+   like `api/check-record-statuses.php`: dry run by default, `apply`,
+   `--limit`, `--minutes`, `--names=`; crontab 03:00 Central). Names from
+   `kop_v2_alias_index()` + `facilities_v2.name` + operators, the sweep's
+   distinctive-name rule, 10 per query, `filed_after` = last run minus two
+   days, state in option `kop_lawsuit_discovery_state`. A docket counts for
+   a name only when the name is in `caseName`, `party[]` or a
+   `recap_documents[].description`; others are dropped. Skip a docket whose
+   number matches `lawsuits.case_number` (`kop_on_file_case_key()` rule),
+   whose URL is in any `source_urls`, or that the job filed before
+   (`{prefix}kop_lawsuit_discovery`: docket_id, names, decision, lawsuit_id,
+   found_at; Reject in the inbox marks it so it is never refiled). File with
+   a direct insert like `api/save-lawsuit-suggestion.php:99-127`
+   (`kop_ext_insert_lawsuit()` takes no `filing_date`): case_name, docket
+   number, court, jurisdiction federal, filing_date, status filed/closed,
+   plaintiffs/defendants split around " v. ", facilities_mentioned, the
+   CourtListener URL as the source, `publication_status = 'pending'`,
+   `submitted_by = 'CourtListener search'`, then
+   `kop_sync_lawsuit_facility_links()`; keep the docket id so the status
+   checks need no second search. Drop employment and shareholder suits
+   (nature-of-suit 442, 445, 710-791, ERISA, securities; the owner declines
+   them) with the reason logged. Add `'courtlistener'` to
+   `kop_rinbox_native_origins()` so "Came from" filters them. Test:
+   `scripts/test-lawsuit-discovery.php` on an in-memory copy of
+   `tmp/prod.sqlite` with `$GLOBALS['kop_sc_fetch_stub']` fixtures.
+4. **Scraper finds:** a `batch-unconfirmed` row can be rescued by hand
+   there (it keeps the request's names in "Searched for"); worth a one-click
+   "It is about <name>" that files it with that attribution, once the
+   measurement says such rows exist.
+5. Declined for now (owner, 2026-10-13): a weekly GDELT full-text pass
+   (`scripts/backfill-articles.js` has the query shape; GDELT throttled
+   probes from here at one request per 5 seconds) and Bing News (returned
+   nothing for a known story).
 
 ---
