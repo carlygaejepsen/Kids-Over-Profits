@@ -128,6 +128,8 @@ function kop_scraper_finds_reason_label($reason) {
         'facility-own-website-inferred' => 'The program\'s own website',
         'facility-own-website'         => 'The program\'s own website',
         'generic-alias-unconfirmed'    => 'A common-word name without its town',
+        'batch-unconfirmed'            => 'Found by a program\'s name, but the article is not about it (AI read it)',
+        'one-word-name-unconfirmed'    => 'A one-word name without its state',
     );
     return $labels[$reason] ?? str_replace('-', ' ', (string) $reason);
 }

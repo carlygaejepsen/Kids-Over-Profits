@@ -1056,9 +1056,11 @@ Owner:
   ones that failed" in its window.
 - **Industry PR refiling.** 148 rejected news items to sort through
   (4 refiled so far).
-- **Midday news discovery cron.** The code and
-  `docs/news-processor/README.md` support a second, `--no-facilities`
-  run; confirm the line is in cPanel > Cron Jobs.
+- **News discovery crontab (2026-10-13).** Both lines exist in cPanel >
+  Cron Jobs (01:30 and 13:30 Central). The sweep now walks every name by a
+  cursor, half per run, so the 13:30 line must lose `--no-facilities`; the
+  01:30 line gets `--recency 30d` for one night after the deploy, then
+  loses it again. The two lines are printed in the hand-over.
 - **Scraper launcher window** (Tools 4a0df69): open it and confirm the
   size and Output pane look right.
 - **Pushing local database changes to prod** (asked 2026-09-17).

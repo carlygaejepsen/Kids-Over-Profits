@@ -138,13 +138,13 @@ function kop_sc_fetch($url, $timeout = 30, array $headers = array()) {
 
 /**
  * A CourtListener request. Without an API token CourtListener allows 5 requests a minute, so
- * requests are spaced 13 seconds apart (1 second with KOP_COURTLISTENER_TOKEN, a free token from
- * courtlistener.com: 5,000 an hour). A "throttled" answer is waited out once; a second one throws
- * "rate limit", which leaves the record due for the next run. '' when CourtListener has no answer.
+ * requests are spaced 13 seconds apart (1 second with a token, a free token from courtlistener.com:
+ * 5,000 an hour). A "throttled" answer is waited out once; a second one throws "rate limit", which
+ * leaves the record due for the next run. '' when CourtListener has no answer.
  */
 function kop_sc_cl_fetch($url) {
     static $last = 0.0;
-    $token = defined('KOP_COURTLISTENER_TOKEN') ? (string) KOP_COURTLISTENER_TOKEN : (string) getenv('KOP_COURTLISTENER_TOKEN');
+    $token = kop_sc_cl_token();
     $stub = !empty($GLOBALS['kop_sc_fetch_stub']);
     $gap = $token !== '' ? 1.0 : 13.0;
     for ($try = 0; $try < 2; $try++) {
@@ -166,6 +166,21 @@ function kop_sc_cl_fetch($url) {
         }
     }
     throw new RuntimeException('CourtListener rate limit');
+}
+
+/**
+ * The CourtListener token: KOP_COURTLISTENER_TOKEN, else COURTLISTENER_API_KEY (the name in
+ * .env.example and the one the admin auto-fill, api/fetch-lawsuit-details.php, reads; the server
+ * holds that one), as a constant or in the environment. '' = anonymous, 5 requests a minute.
+ */
+function kop_sc_cl_token() {
+    foreach (array('KOP_COURTLISTENER_TOKEN', 'COURTLISTENER_API_KEY') as $name) {
+        $v = defined($name) ? (string) constant($name) : (string) getenv($name);
+        if ($v === '' && isset($_ENV[$name])) $v = (string) $_ENV[$name];
+        $v = trim($v);
+        if ($v !== '' && $v !== 'your_courtlistener_api_key_here') return $v;
+    }
+    return '';
 }
 
 /** HTML to readable text: scripts and styles dropped, rows and blocks on their own lines. */

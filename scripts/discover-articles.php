@@ -2,24 +2,42 @@
 /**
  * Article Discovery — PHP port of discover-articles.js.
  *
- * Written for the NixiHost cPanel cron, where no Node runtime exists. Behavior
- * mirrors the JS original 1:1 (same flags, same state files, same scoring):
- * pulls candidate articles from r/troubledteens (new posts) and Google News
- * RSS (topic queries, then one query per active facility), pre-filters them
- * with a state-aware scoring pass, then feeds surviving URLs through the AI
- * processor into the news_submissions review queue.
+ * Written for the NixiHost cPanel cron, where no Node runtime exists. It began
+ * as a 1:1 port of discover-articles.js (same flags, same state files, same
+ * scoring); the facility sweep has since moved on (below) and the JS is the
+ * manual-only fallback. Pulls candidate articles from r/troubledteens (new
+ * posts) and Google News RSS (topic queries, then the facility sweep),
+ * pre-filters them with a state-aware scoring pass, then feeds surviving URLs
+ * through the AI processor into the news_submissions review queue.
+ *
+ * The facility sweep (2026-10) queries EVERY record and every name it has
+ * had (current, past, other; closed programs too: that is where lawsuits and
+ * survivor stories come from). Distinctive names (three words or more) go six
+ * to a request, OR'd: Google News matches the article body, so one request
+ * covers six programs. Short names (one or two words: "Grafton", "Day One")
+ * go one to a request with the state name, as before, because a short name
+ * in a body is a street or a surname as often as the program. A cursor in the
+ * state file walks the sorted request list, half per run, so the two daily
+ * runs cover everything once a day and a run that dies resumes where it was.
+ *
+ * A batched hit whose headline names none of the request's programs is not
+ * thrown away (the name was in the body, or Google would not have returned
+ * it): it is queued as 'attribution pending', and the AI step that reads the
+ * article confirms which program it is about before anything is submitted.
+ * Unconfirmed ones are logged as batch-unconfirmed for the Scraper finds screen.
  *
  * Order matters: the Reddit + topic tier is filtered and submitted BEFORE the
- * per-facility sweep. The sweep's ~550 RSS requests get the server IP rate-
- * limited on the article-page step of the Google News link resolver, so any
- * link resolved after it comes back HTTP 429. Candidates a run cannot finish
- * (unresolved link, topic cap, provider quota, time budget) are carried in
- * the state file (`pending`) and submitted first thing next run, before a
- * single Google News request is made.
+ * sweep, and the sweep's own finds are resolved and submitted every
+ * GN_SUBMIT_EVERY requests. Many RSS requests get the server IP rate-limited
+ * on the article-page step of the Google News link resolver, so any link
+ * resolved late comes back HTTP 429. Candidates a run cannot finish
+ * (unresolved link, topic cap, confirm cap, provider quota, time budget) are
+ * carried in the state file (`pending`) and submitted first thing next run,
+ * before a single Google News request is made.
  *
  * Search terms live in scripts/discovery-queries.json (topic queries, the
- * per-facility keyword OR-group, generic facility names to skip). Edit that
- * file to tune what gets searched; no code change needed.
+ * sweep's keyword OR-group and recency windows, generic facility names to
+ * skip). Edit that file to tune what gets searched; no code change needed.
  *
  * Facility data comes live from the WP REST API — NOT from any local JSON
  * snapshot, since the JSON snapshots are out of date.
@@ -28,17 +46,18 @@
  *   php scripts/discover-articles.php              # full run
  *   php scripts/discover-articles.php --dry-run    # discover + score, skip submission
  *   php scripts/discover-articles.php --limit 5    # cap candidates submitted this run
- *   php scripts/discover-articles.php --max-facilities 3   # smoke test
+ *   php scripts/discover-articles.php --max-facilities 3   # smoke test: only 3 sweep requests
  *   php scripts/discover-articles.php --no-topics  # skip the topic-query tier
- *   php scripts/discover-articles.php --no-facilities  # topics + Reddit only (the midday cron run)
+ *   php scripts/discover-articles.php --no-facilities  # topics + Reddit only, no sweep
+ *   php scripts/discover-articles.php --sweep-share 1  # the whole sweep in this run (default: half)
+ *   php scripts/discover-articles.php --recency 30d    # sweep window for this run (default: facilityBatchRecency)
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
  *   AI_PROVIDER            (default: auto - Groq and Gemini take turns)
- *   SHARD_COUNT            (default: 7 — facilities split into N daily shards)
  *   RSS_REQUEST_DELAY_MS   (default: 1500 — pause between Google News requests)
  *   AI_REQUEST_DELAY_MS    (default: 6000 — pause between AI submissions)
- *   RUN_TIME_BUDGET_MS / GN_TIME_BUDGET_MS  (default: 50 min / 35 min)
+ *   RUN_TIME_BUDGET_MS / GN_TIME_BUDGET_MS  (default: 75 min / 45 min)
  *   REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET  (optional OAuth path)
  *
  * Cron note: call /opt/cpanel/ea-php82/root/usr/bin/php explicitly. Bare
@@ -66,13 +85,23 @@ define('QUERIES_FILE',   __DIR__ . '/discovery-queries.json');
 $args = array_slice($argv, 1);
 define('DRY_RUN', in_array('--dry-run', $args, true));
 define('NO_TOPICS', in_array('--no-topics', $args, true));
-// The facility shard is picked by date, so a second run the same day would
-// re-query the same facilities. Extra daily runs pass this flag.
+// Topics + Reddit only. The sweep's cursor is left where it is.
 define('NO_FACILITIES', in_array('--no-facilities', $args, true));
 $limitArg = array_search('--limit', $args, true);
 define('SUBMIT_LIMIT', $limitArg !== false ? (int)($args[$limitArg + 1] ?? 0) : PHP_INT_MAX);
+// Caps the sweep at N requests this run (a smoke test). The cursor still advances.
 $maxFacArg = array_search('--max-facilities', $args, true);
 define('MAX_FACILITIES', $maxFacArg !== false ? (int)($args[$maxFacArg + 1] ?? 0) : null);
+// How many runs share one pass over every name: 2 = the 01:30 and 13:30 crons
+// each take half. --sweep-share 1 does the whole list in one run.
+$shareArg = array_search('--sweep-share', $args, true);
+define('SWEEP_RUNS_PER_DAY', max(1, $shareArg !== false ? (int)($args[$shareArg + 1] ?? 0) : (int)(getenv('SWEEP_RUNS_PER_DAY') ?: 2)));
+// --recency 30d: the sweep's when: window for this run only (the first run
+// after a deploy picks up the backlog with 30d; the nightly default is in
+// discovery-queries.json as facilityBatchRecency).
+$recencyArg = array_search('--recency', $args, true);
+define('RECENCY_OVERRIDE', $recencyArg !== false && preg_match('/^\d+[dhm]$/', (string)($args[$recencyArg + 1] ?? ''))
+    ? 'when:' . $args[$recencyArg + 1] : '');
 
 define('API_BASE', rtrim(getenv('NEWS_API_BASE') ?: 'https://kidsoverprofits.org', '/'));
 define('FACILITIES_URL', API_BASE . '/wp-json/kop/v1/facilities');
@@ -86,7 +115,25 @@ kop_internal_token_load_salts(__DIR__);
 define('KOP_INTERNAL_AI_TOKEN', getenv('KOP_INTERNAL_AI_TOKEN') ?: kop_internal_token('news-ai'));
 
 define('AI_PROVIDER', getenv('AI_PROVIDER') ?: 'auto');
-define('SHARD_COUNT', (int)(getenv('SHARD_COUNT') ?: 7));
+// The sweep: distinctive names go several to one Google News request
+// (tested 2026-10-13: six quoted names OR'd returned stories for all six).
+// Google reads about 32 words of a query and silently drops the rest, so a
+// batch holds at most GN_BATCH_SIZE names and GN_BATCH_WORDS words of names
+// (plus the 9 batch keywords and the when: window, which goes FIRST: at the
+// end it was the part dropped, and years-old stories came back). A batch
+// keeps GN_BATCH_CAP items. Short names go one to a request.
+define('GN_BATCH_SIZE', 6);
+define('GN_BATCH_WORDS', 16);
+define('GN_BATCH_CAP', 25);
+// A batched hit that names no program in its headline is confirmed by the AI
+// step (which reads the article) before it is submitted: at most this many
+// confirmations a run, the rest carried to the next run.
+define('AI_CONFIRM_PER_RUN', (int)(getenv('AI_CONFIRM_PER_RUN') ?: 30));
+// The sweep's finds are resolved and submitted every this many requests,
+// while Google still answers the link resolver (see the header).
+define('GN_SUBMIT_EVERY', 50);
+// When each name was last queried is kept this long in the state file.
+define('SWEPT_AT_DAYS', 30);
 
 define('SCORE_THRESHOLD', 3);
 // Both delays are env-tunable: the cron runs from a permanent IP whose
@@ -122,8 +169,11 @@ define('PENDING_MAX_ENTRIES', 300);
 // Wall-clock budgets (same as the JS). Cap the Google News phase and the
 // overall run so the filter/submit/save-state phases always run with whatever
 // was collected, instead of the job being killed mid-fetch.
-define('RUN_TIME_BUDGET_MS', (int)(getenv('RUN_TIME_BUDGET_MS') ?: 50 * 60 * 1000));
-define('GN_TIME_BUDGET_MS', (int)(getenv('GN_TIME_BUDGET_MS') ?: 35 * 60 * 1000));
+// Half the sweep (about 900 requests at 2.5 s each) needs about 40 minutes
+// of Google time; the two cron runs are 12 hours apart and the midday one
+// holds a lock, so a long run cannot overlap the next.
+define('RUN_TIME_BUDGET_MS', (int)(getenv('RUN_TIME_BUDGET_MS') ?: 75 * 60 * 1000));
+define('GN_TIME_BUDGET_MS', (int)(getenv('GN_TIME_BUDGET_MS') ?: 45 * 60 * 1000));
 // Once Google News starts returning 503s it usually keeps 503ing that IP for
 // the rest of the run: after this many consecutive failures, try one
 // cool-down, then give up on Google News for the day.
@@ -132,9 +182,6 @@ define('GN_COOLDOWN_MS', 120000);
 define('GENERIC_ALIAS_MIN_FACILITIES', 3);
 define('USER_AGENT', 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.org)');
 define('BROWSER_USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36');
-
-$EXCLUDED_FACILITY_STATUSES = ['closed', 'transferred', 'adults only'];
-$EXCLUDED_OPERATOR_STATUSES = ['defunct'];
 
 $ABUSE_KEYWORDS = [
     'abuse', 'abused', 'abusing', 'arrest', 'arrested', 'indict', 'indicted', 'indictment',
@@ -233,10 +280,6 @@ function generate_alias_variants($name): array {
         $out[] = $variant;
     }
     return $out;
-}
-
-function day_of_year_utc(): int {
-    return (int)gmdate('z') + 1;
 }
 
 /**
@@ -445,12 +488,24 @@ function load_state(): array {
         if (!isset($s['stats']) || !is_array($s['stats'])) {
             $s['stats'] = ['discovered' => 0, 'submitted' => 0, 'rejected' => 0];
         }
+        // Version 3 (2026-10): the sweep walks a cursor over the sorted request
+        // list instead of a date-picked shard, and remembers when each name was
+        // last queried. A version-2 file simply starts the walk at 0.
+        if (!isset($s['sweepCursor']) || !is_int($s['sweepCursor']) || $s['sweepCursor'] < 0) $s['sweepCursor'] = 0;
+        if (!isset($s['sweptAt']) || !is_array($s['sweptAt'])) $s['sweptAt'] = [];
+        $s['version'] = 3;
         return $s;
     }
-    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'rejectedUrls' => [], 'pending' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
+    return ['version' => 3, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'rejectedUrls' => [], 'pending' => [],
+        'sweepCursor' => 0, 'sweptAt' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
 }
 
 function save_state(array $state): void {
+    $sweptCutoff = gmdate('Y-m-d', time() - SWEPT_AT_DAYS * 86400);
+    $state['sweptAt'] = array_filter(
+        is_array($state['sweptAt'] ?? null) ? $state['sweptAt'] : [],
+        static fn($d) => is_string($d) && $d >= $sweptCutoff
+    );
     if (count($state['seenUrls']) > MAX_SEEN_URLS) {
         $state['seenUrls'] = array_slice($state['seenUrls'], -MAX_SEEN_URLS);
     }
@@ -517,6 +572,7 @@ function build_blacklist_matcher(): array {
         is_array($bl['spamDomains'] ?? null) ? $bl['spamDomains'] : [],
         is_array($bl['pressReleaseWires'] ?? null) ? $bl['pressReleaseWires'] : [],
         is_array($bl['industryPromoDomains'] ?? null) ? $bl['industryPromoDomains'] : [],
+        is_array($bl['financeDomains'] ?? null) ? $bl['financeDomains'] : [],
         is_array($bl['nonArticleDomains'] ?? null) ? $bl['nonArticleDomains'] : []
     );
     $allowOverrides = array_map(
@@ -591,6 +647,7 @@ function load_discovery_queries(): array {
     };
 
     $facilityKeywords = $strList($raw['facilityKeywords'] ?? null);
+    $batchKeywords = $strList($raw['facilityBatchKeywords'] ?? null);
     $topicQueries = [];
     foreach ((is_array($raw['topicQueries'] ?? null) ? $raw['topicQueries'] : []) as $i => $t) {
         if (!is_array($t) || !is_string($t['q'] ?? null) || trim($t['q']) === '') continue;
@@ -647,7 +704,14 @@ function load_discovery_queries(): array {
 
     return [
         'facilityKeywords' => $facilityKeywords ?: DEFAULT_FACILITY_KEYWORDS,
+        // Fewer words for a batched request, which spends most of Google's
+        // 32 words on the names.
+        'facilityBatchKeywords' => $batchKeywords ?: DEFAULT_FACILITY_KEYWORDS,
         'facilityRecency' => is_string($raw['facilityRecency'] ?? null) ? trim($raw['facilityRecency']) : '',
+        // The batched sweep covers every name daily, so its window is short;
+        // --recency overrides it for one run.
+        'facilityBatchRecency' => RECENCY_OVERRIDE !== '' ? RECENCY_OVERRIDE
+            : (is_string($raw['facilityBatchRecency'] ?? null) ? trim($raw['facilityBatchRecency']) : 'when:3d'),
         'topicRecency' => is_string($raw['topicRecency'] ?? null) ? trim($raw['topicRecency']) : '',
         'maxItemsPerTopic' => $maxPerTopic,
         'maxTopicSubmissionsPerRun' => $maxTopicSubmissions,
@@ -703,7 +767,7 @@ function parse_location($loc): array {
  * ['facilities' => [...], 'ownHosts' => [host => true], 'genericAliases' => [norm => true]]
  */
 function build_facility_index(array $apiResponse, array $ignoreAliases = [], array $genericAliasWords = []): array {
-    global $EXCLUDED_FACILITY_STATUSES, $EXCLUDED_OPERATOR_STATUSES, $STATE_NAMES;
+    global $STATE_NAMES;
 
     // Names that are never a facility in a headline: bad records ("Kansas",
     // "Behavioral Health") from ignoreAliases, plus every bare state name.
@@ -730,16 +794,24 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
             $entry['aliases'],
             static fn($a) => !isset($ignore[normalize_name($a)])
         ));
+        // The names the sweep queries: every name the record has had, as
+        // written (no shortened variants), minus the ignored ones.
+        $entry['queryNames'] = array_values(array_filter(
+            $entry['queryNames'],
+            static fn($a) => !isset($ignore[normalize_name($a)])
+        ));
         $key = normalize_name($entry['queryName']) . '|' . ($entry['state'] ?? '');
         if (isset($byKey[$key])) {
             $existing = &$byKey[$key];
-            $seen = [];
-            foreach ($existing['aliases'] as $a) $seen[normalize_name($a)] = true;
-            foreach ($entry['aliases'] as $alias) {
-                $k = normalize_name($alias);
-                if ($k !== '' && !isset($seen[$k])) {
-                    $existing['aliases'][] = $alias;
-                    $seen[$k] = true;
+            foreach (['aliases', 'queryNames'] as $field) {
+                $seen = [];
+                foreach ($existing[$field] as $a) $seen[normalize_name($a)] = true;
+                foreach ($entry[$field] as $alias) {
+                    $k = normalize_name($alias);
+                    if ($k !== '' && !isset($seen[$k])) {
+                        $existing[$field][] = $alias;
+                        $seen[$k] = true;
+                    }
                 }
             }
             if ($existing['city'] === '' && $entry['city'] !== '') $existing['city'] = $entry['city'];
@@ -749,11 +821,11 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
         $byKey[$key] = $entry;
     };
 
+    // Every record and every name it has had, whatever its status: a closed
+    // program's lawsuits, settlements and survivors' stories are news too.
     foreach ($projects as $project) {
         $data = $project['data'] ?? [];
         $operator = $data['operator'] ?? [];
-        $operatorStatus = strtolower(trim((string)($operator['status'] ?? '')));
-        $operatorIsDefunct = in_array($operatorStatus, $EXCLUDED_OPERATOR_STATUSES, true);
         $operatorName = (string)($operator['name'] ?? ($project['name'] ?? ''));
 
         $collectHosts($operator['websites'] ?? null);
@@ -763,28 +835,25 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
         foreach ($facilities as $f) {
             $ident = $f['identification'] ?? [];
             $period = $f['operatingPeriod'] ?? [];
-            $status = strtolower(trim((string)($period['status'] ?? '')));
 
             $collectHosts($f['profileLinks'] ?? null);
             if (!empty($f['sourceOperator'])) $collectHosts($f['sourceOperator']['websites'] ?? null);
-
-            if (in_array($status, $EXCLUDED_FACILITY_STATUSES, true)) continue;
-            if ($operatorIsDefunct) continue;
 
             $primaryName = trim((string)($ident['currentName'] ?? ''));
             if ($primaryName === '') $primaryName = (string)($ident['name'] ?? '');
             if ($primaryName === '') continue;
 
-            $aliases = [$primaryName];
-            if (!empty($ident['name']) && $ident['name'] !== $primaryName) $aliases[] = $ident['name'];
+            $names = [$primaryName];
+            if (!empty($ident['name']) && $ident['name'] !== $primaryName) $names[] = $ident['name'];
             foreach ([($ident['otherNames'] ?? null), ($ident['pastNames'] ?? null)] as $list) {
                 if (is_array($list)) {
                     foreach ($list as $n) {
-                        if (is_string($n) && trim($n) !== '') $aliases[] = trim($n);
+                        if (is_string($n) && trim($n) !== '') $names[] = trim($n);
                     }
                 }
             }
-            foreach (array_slice($aliases, 0) as $a) {
+            $aliases = $names;
+            foreach ($names as $a) {
                 foreach (generate_alias_variants($a) as $v) $aliases[] = $v;
             }
 
@@ -792,6 +861,7 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
 
             $addEntry([
                 'queryName' => $primaryName,
+                'queryNames' => $names,
                 'aliases' => $aliases,
                 'city' => $cs['city'],
                 'state' => $cs['state'],
@@ -802,20 +872,22 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
         }
 
         // --- Operator-level entry (companies category only) ---
-        if (($project['category'] ?? '') === 'companies' && $operatorName !== '' && !$operatorIsDefunct) {
-            $aliases = [$operatorName];
+        if (($project['category'] ?? '') === 'companies' && $operatorName !== '') {
+            $names = [$operatorName];
             foreach ([($operator['otherNames'] ?? null), ($operator['parentCompanies'] ?? null)] as $list) {
                 if (is_array($list)) {
                     foreach ($list as $n) {
-                        if (is_string($n) && trim($n) !== '') $aliases[] = trim($n);
+                        if (is_string($n) && trim($n) !== '') $names[] = trim($n);
                     }
                 }
             }
-            foreach (array_slice($aliases, 0) as $a) {
+            $aliases = $names;
+            foreach ($names as $a) {
                 foreach (generate_alias_variants($a) as $v) $aliases[] = $v;
             }
             $addEntry([
                 'queryName' => $operatorName,
+                'queryNames' => $names,
                 'aliases' => $aliases,
                 'city' => '',
                 'state' => '',
@@ -862,6 +934,117 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = [], arr
     }
 
     return ['facilities' => $facilities, 'ownHosts' => $ownHosts, 'genericAliases' => $genericAliases];
+}
+
+/**
+ * The sweep's request list: one line per distinct name across every record,
+ * sorted by name key so the cursor walks the same order run after run.
+ * Each line: ['name', 'key', 'entries' => [index into $facilityIndex, ...],
+ * 'state', 'city', 'bucket', 'mode' => 'batch'|'single'].
+ *
+ * Generic names (is_generic_query_name: the queries file's list, names shared
+ * by 3+ records, one- or two-word names of common words) are not searched.
+ * Short names, one or two words ("Grafton", "Day One", "Cypress Creek"), are
+ * 'single': one request each with the state name, as the sweep always did,
+ * because such a name in an article body is a street or a surname as often
+ * as the program; so is a three-word name that is an everyday phrase ("A
+ * Mother's Love", "A New Leaf": fewer than two words outside
+ * genericAliasWords), which Google finds in any prose; the first dry run
+ * matched "A Mother's Love" to a footballer's bereavement. Four words or more
+ * ("New Hope Youth Center", "Pathway of Madison County") is a phrase prose
+ * does not produce by chance. A short name with no state to check is dropped.
+ * Everything else is 'batch': several names to one request, no state.
+ */
+function build_sweep_names(array $facilityIndex, array $queries, array $genericAliases): array {
+    $common = $queries['genericAliasWords'];
+    $distinctive = static function (string $key) use ($common): bool {
+        $words = array_filter(explode(' ', $key), static fn($w) => strlen($w) > 1);
+        $sig = count(array_filter($words, static fn($w) => !isset($common[$w])));
+        return count($words) >= 4 || $sig >= 2;
+    };
+    $byKey = [];
+    foreach ($facilityIndex as $i => $fac) {
+        foreach ($fac['queryNames'] as $name) {
+            $key = normalize_name($name);
+            if ($key === '' || mb_strlen($key) < 4) continue;
+            // The queries file's generic names are never searched; a name of
+            // common words ("Day One") is searched single with its state (below),
+            // and one shared by several records is dropped once counted.
+            if (isset($queries['genericQueryNames'][$key])) continue;
+            if (!isset($byKey[$key])) {
+                $byKey[$key] = [
+                    'name' => $name, 'key' => $key, 'entries' => [],
+                    'state' => $fac['state'], 'city' => $fac['city'], 'bucket' => $fac['bucket'],
+                ];
+            }
+            $line = &$byKey[$key];
+            $line['entries'][] = $i;
+            if ($line['state'] === '' && $fac['state'] !== '') { $line['state'] = $fac['state']; $line['city'] = $fac['city']; }
+            unset($line);
+        }
+    }
+    ksort($byKey, SORT_STRING);
+    $out = [];
+    foreach ($byKey as $line) {
+        if (count($line['entries']) >= GENERIC_ALIAS_MIN_FACILITIES) continue;   // several records' name: whose?
+        $words = count(explode(' ', $line['key']));
+        if ($line['bucket'] === 'operator') {
+            // A company has no state to check; one word of it is not searchable.
+            if ($words < 2) continue;
+            $line['mode'] = 'batch';
+        } elseif ($words <= 2 || isset($genericAliases[$line['key']]) || !$distinctive($line['key'])) {
+            if ($line['state'] === '') continue;
+            $line['mode'] = 'single';
+        } else {
+            $line['mode'] = 'batch';
+        }
+        $out[] = $line;
+    }
+    return $out;
+}
+
+/**
+ * Group the sweep names into requests: batch lines up to GN_BATCH_SIZE names
+ * and GN_BATCH_WORDS words of names at a time (in key order, so the same
+ * names share a request every day), single lines one each. Returns
+ * [['mode', 'lines' => [line, ...]], ...], batches first.
+ */
+function build_sweep_requests(array $lines): array {
+    $requests = [];
+    $batch = [];
+    $words = 0;
+    foreach ($lines as $line) {
+        if ($line['mode'] !== 'batch') continue;
+        $w = count(explode(' ', $line['key']));
+        if ($batch && ($words + $w > GN_BATCH_WORDS || count($batch) === GN_BATCH_SIZE)) {
+            $requests[] = ['mode' => 'batch', 'lines' => $batch];
+            $batch = [];
+            $words = 0;
+        }
+        $batch[] = $line;
+        $words += $w;
+    }
+    if ($batch) $requests[] = ['mode' => 'batch', 'lines' => $batch];
+    foreach ($lines as $line) {
+        if ($line['mode'] === 'single') $requests[] = ['mode' => 'single', 'lines' => [$line]];
+    }
+    return $requests;
+}
+
+/**
+ * The requests this run makes: SWEEP_RUNS_PER_DAY runs share one pass, so a
+ * run takes ceil(total / runs) requests from the cursor, wrapping at the end.
+ * Returns [requests, nextCursor].
+ */
+function sweep_slice(array $requests, int $cursor, ?int $cap = null): array {
+    $total = count($requests);
+    if ($total === 0) return [[], 0];
+    $cursor %= $total;
+    $take = (int)ceil($total / SWEEP_RUNS_PER_DAY);
+    if ($cap !== null) $take = min($take, max(0, $cap));
+    $slice = [];
+    for ($i = 0; $i < $take; $i++) $slice[] = $requests[($cursor + $i) % $total];
+    return [$slice, ($cursor + $take) % $total];
 }
 
 // ============================================================
@@ -921,7 +1104,10 @@ function google_news_search_url(string $query): string {
     ]);
 }
 
-/** "<facility>" "<State>" (kw OR kw ...) when:30d */
+/**
+ * A single-name sweep request: when:30d "<facility>" "<State>" (kw OR kw ...).
+ * The window goes first: Google reads about 32 words and drops the rest.
+ */
 function facility_news_query(array $facility, array $queries): string {
     global $STATE_NAMES;
     $nameToken = '"' . $facility['queryName'] . '"';
@@ -929,9 +1115,20 @@ function facility_news_query(array $facility, array $queries): string {
         ? '"' . $STATE_NAMES[$facility['state']] . '"' : '';
     $kwToken = '(' . implode(' OR ', $queries['facilityKeywords']) . ')';
     return implode(' ', array_filter(
-        [$nameToken, $stateToken, $kwToken, $queries['facilityRecency']],
+        [$queries['facilityRecency'], $nameToken, $stateToken, $kwToken],
         static fn($t) => $t !== ''
     ));
+}
+
+/**
+ * A batched sweep request: when:3d ("A" OR "B" OR ...) (kw OR kw ...). No
+ * state: the names are distinctive, and the keyword group is what makes
+ * Google match the body (that is how the Desert Willow closure was found).
+ */
+function batch_news_query(array $names, array $queries): string {
+    $nameToken = '(' . implode(' OR ', array_map(static fn($n) => '"' . str_replace('"', '', $n) . '"', $names)) . ')';
+    $kwToken = '(' . implode(' OR ', $queries['facilityBatchKeywords']) . ')';
+    return implode(' ', array_filter([$queries['facilityBatchRecency'], $nameToken, $kwToken], static fn($t) => $t !== ''));
 }
 
 /** Topic query text plus its recency window (per-query override, else global). */
@@ -961,13 +1158,31 @@ function fetch_google_news_items(string $query, int $cap, string $label): array 
     }
 }
 
-function fetch_google_news_for_facility(array $facility, array $queries): array {
-    $r = fetch_google_news_items(facility_news_query($facility, $queries), PER_FACILITY_CAP, $facility['queryName']);
+/**
+ * One sweep request (see build_sweep_requests). Every item carries the names
+ * it was searched for ('batchNames', their keys in 'batchKeys') and the mode,
+ * so the filter knows which programs to attribute it to. 'facilityQuery'
+ * stays the readable form for the log and the Scraper finds screen.
+ */
+function fetch_google_news_for_request(array $request, array $queries): array {
+    $lines = $request['lines'];
+    $names = array_map(static fn($l) => $l['name'], $lines);
+    if ($request['mode'] === 'single') {
+        $line = $lines[0];
+        $r = fetch_google_news_items(
+            facility_news_query(['queryName' => $line['name'], 'state' => $line['state']], $queries),
+            PER_FACILITY_CAP, $line['name']);
+    } else {
+        $r = fetch_google_news_items(batch_news_query($names, $queries), GN_BATCH_CAP, implode(' | ', $names));
+    }
     $r['items'] = array_map(static fn($item) => array_merge($item, [
         'origin' => 'google-news',
-        'facilityQuery' => $facility['queryName'],
-        'facilityState' => $facility['state'],
-        'facilityCity' => $facility['city']
+        'facilityQuery' => implode(' | ', $names),
+        'sweepMode' => $request['mode'],
+        'batchNames' => $names,
+        'batchKeys' => array_map(static fn($l) => $l['key'], $lines),
+        'facilityState' => $lines[0]['state'],
+        'facilityCity' => $lines[0]['city']
     ]), $r['items']);
     return $r;
 }
@@ -1357,7 +1572,20 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         return ['accept' => false, 'reason' => 'homepage-url', 'meta' => ['link' => $candidate['link']]];
     }
 
-    $match = match_facility($text, $facilityIndex);
+    // A sweep item is matched against the programs it was searched for first
+    // (the request's names; $opts['sweepIndex'] maps a name key to its records),
+    // then against every record as before.
+    $match = null;
+    if ($candidate['origin'] === 'google-news' && !empty($candidate['batchKeys'])) {
+        $own = [];
+        foreach ($candidate['batchKeys'] as $k) {
+            foreach ($opts['sweepIndex'][$k] ?? [] as $i) {
+                if (isset($facilityIndex[$i])) $own[$i] = $facilityIndex[$i];
+            }
+        }
+        if ($own) $match = match_facility($text, $own);
+    }
+    if ($match === null) $match = match_facility($text, $facilityIndex);
     $cityMatched = false;
     // A program's name in the text keeps a topic story even when the tag is
     // dropped below ("Newport Academy Lays Off 68 Workers" has no abuse word).
@@ -1383,7 +1611,9 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
             }
         }
 
-        $cityMatched = text_names_city($text, $fac['city']);
+        // A program named after its town ("Grafton" in Grafton, WI): the town
+        // in the text is the name itself, not a second confirmation.
+        $cityMatched = text_names_city($text, $fac['city']) && normalize_name($fac['city']) !== normalize_name($match['matchedAlias']);
 
         // State-match validation. A generic alias needs POSITIVE state
         // confirmation, not just absence of a mismatch: without it, "Youth
@@ -1451,17 +1681,27 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         }
     }
 
-    // A per-facility Google News query only proves the article mentions the
-    // search words somewhere. When no facility is named in the headline or
-    // blurb, the hit is almost always an unrelated local crime story that
-    // happened to share a keyword ("Teenage suspect charged in hit-and-run"
-    // for Linn County Juvenile Detention).
+    // A sweep item whose headline names no program: Google matched the name
+    // in the article body (the name was the query), so a BATCHED hit (a
+    // distinctive name) is kept with its attribution pending; the AI step,
+    // which reads the article, confirms the program before it is submitted
+    // (the Desert Willow closure stories named the hospital only in the body).
+    // A SINGLE-name hit (a short name: "Grafton", "Cypress Creek") is rejected
+    // as before: a short name in a body is a street or a surname as often as
+    // the program ("Teenage suspect charged in hit-and-run" for Linn County
+    // Juvenile Detention).
+    $attributionPending = false;
     if ($candidate['origin'] === 'google-news' && $match === null) {
-        return [
-            'accept' => false,
-            'reason' => 'facility-unmatched',
-            'meta' => ['query' => $candidate['facilityQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
-        ];
+        if (($candidate['sweepMode'] ?? 'single') === 'batch') {
+            $attributionPending = true;
+            $reasons[] = 'batch:' . implode('|', $candidate['batchNames'] ?? []);
+        } else {
+            return [
+                'accept' => false,
+                'reason' => 'facility-unmatched',
+                'meta' => ['query' => $candidate['facilityQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
+            ];
+        }
     }
 
     // Topic-query boost: the query itself carried the topical constraint
@@ -1509,6 +1749,9 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         }
     }
 
+    if ($attributionPending) {
+        return ['accept' => true, 'score' => $score, 'reasons' => $reasons, 'match' => null, 'attribution' => 'pending'];
+    }
     if ($score >= SCORE_THRESHOLD) {
         return [
             'accept' => true, 'score' => $score, 'reasons' => $reasons,
@@ -1605,10 +1848,11 @@ function resolve_google_news_url(string $url): string {
 // Submission
 // ============================================================
 
-function submit_candidate(array $candidate, array $evalResult, array $options = []): array {
-    $submittedBy = $options['submittedBy'] ?? 'auto-discovery';
-    $noteLabel   = $options['noteLabel'] ?? 'auto-discovery';
-
+/**
+ * The AI step: api/process-news-ai.php reads the article and returns its
+ * fields. ['ok' => true, 'data' => [...]] or ['ok' => false, 'stage' => 'ai', 'error' => ...].
+ */
+function ai_process_candidate(array $candidate): array {
     kop_log('  → AI processing: ' . substr($candidate['link'], 0, 90));
     $aiRes = post_json(AI_ENDPOINT, [
         'url' => $candidate['link'],
@@ -1621,8 +1865,45 @@ function submit_candidate(array $candidate, array $evalResult, array $options = 
         kop_warn('    AI failed: ' . substr((string)$err, 0, 200));
         return ['ok' => false, 'stage' => 'ai', 'error' => substr((string)$err, 0, 500)];
     }
+    return ['ok' => true, 'data' => is_array($aiRes['body']['data'] ?? null) ? $aiRes['body']['data'] : []];
+}
 
-    $data = is_array($aiRes['body']['data'] ?? null) ? $aiRes['body']['data'] : [];
+/**
+ * Which of the programs a batched sweep item was searched for does the
+ * article name? Matched over what the AI read: the facilities it listed, the
+ * title, summary and location. The longest alias wins, as in match_facility.
+ * Null when none of them is named: the article only mentioned the name in
+ * passing, or Google's match was loose.
+ */
+function confirm_batch_attribution(array $candidate, array $data, array $facilityIndex, array $sweepIndex): ?array {
+    $own = [];
+    foreach ($candidate['batchKeys'] ?? [] as $k) {
+        foreach ($sweepIndex[$k] ?? [] as $i) {
+            if (isset($facilityIndex[$i])) $own[$i] = $facilityIndex[$i];
+        }
+    }
+    if (!$own) return null;
+    $join = static fn($v) => is_array($v) ? implode(' ', array_map('strval', $v)) : (string)($v ?? '');
+    $text = implode(' ', [
+        $join($data['facilities'] ?? ''), (string)($data['title'] ?? ''), (string)($data['alternateTitle'] ?? ''),
+        (string)($data['summary'] ?? ''), (string)($data['location'] ?? ''), $candidate['title'] ?? ''
+    ]);
+    return match_facility($text, $own);
+}
+
+/**
+ * Submit one candidate: the AI step (unless $data was read already), then
+ * api/save-news-submission.php.
+ */
+function submit_candidate(array $candidate, array $evalResult, array $options = [], ?array $data = null): array {
+    $submittedBy = $options['submittedBy'] ?? 'auto-discovery';
+    $noteLabel   = $options['noteLabel'] ?? 'auto-discovery';
+
+    if ($data === null) {
+        $ai = ai_process_candidate($candidate);
+        if (!$ai['ok']) return $ai;
+        $data = $ai['data'];
+    }
 
     $joinList = static fn($v) => is_array($v) ? implode("\n", $v) : (string)($v ?? '');
 
@@ -1701,27 +1982,31 @@ function main(): void {
     $facilityIndex = $index['facilities'];
     $facilityOwnHosts = $index['ownHosts'];
     $genericAliases = $index['genericAliases'];
-    kop_log('  built facility index: ' . count($facilityIndex) . ' unique active entries');
+    kop_log('  built facility index: ' . count($facilityIndex) . ' unique entries (every status)');
     kop_log('  facility-owned hosts: ' . count($facilityOwnHosts) . ' (skipped as candidates)');
     kop_log('  generic aliases:      ' . count($genericAliases) . ' (require positive state-signal match)');
 
-    // -- Today's shard (1/N of the active list) --
-    $today = day_of_year_utc();
-    $shardIndex = $today % SHARD_COUNT;
-    $todaysShard = [];
-    foreach ($facilityIndex as $i => $fac) {
-        if ($i % SHARD_COUNT === $shardIndex) $todaysShard[] = $fac;
-    }
-    $slice = NO_FACILITIES ? [] : (MAX_FACILITIES ? array_slice($todaysShard, 0, MAX_FACILITIES) : $todaysShard);
-    kop_log("  today = shard {$shardIndex}/" . SHARD_COUNT . ' → ' . count($slice) . ' facilities to query' .
-        (MAX_FACILITIES ? ' (capped from ' . count($todaysShard) . ')' : ''));
+    // -- The sweep's share for this run (see the header) --
+    $sweepLines = build_sweep_names($facilityIndex, $queries, $genericAliases);
+    $sweepIndex = [];                                   // name key => indices into $facilityIndex
+    $sweepCounts = ['batch' => 0, 'single' => 0];
+    foreach ($sweepLines as $l) { $sweepIndex[$l['key']] = $l['entries']; $sweepCounts[$l['mode']]++; }
+    $sweepRequests = build_sweep_requests($sweepLines);
+    $cursorStart = (int)$state['sweepCursor'];
+    $slice = NO_FACILITIES ? [] : sweep_slice($sweepRequests, $cursorStart, MAX_FACILITIES)[0];
+    $cursorStart = count($sweepRequests) ? $cursorStart % count($sweepRequests) : 0;
+    kop_log('  sweep: ' . count($sweepLines) . " names ({$sweepCounts['batch']} batched " . GN_BATCH_SIZE . " to a request, {$sweepCounts['single']} single) in "
+        . count($sweepRequests) . ' requests; this run: ' . count($slice) . " from request {$cursorStart}"
+        . (NO_FACILITIES ? ' (--no-facilities)' : (MAX_FACILITIES ? ' (--max-facilities)' : ' (1/' . SWEEP_RUNS_PER_DAY . ' of the list)'))
+        . ', window ' . ($queries['facilityBatchRecency'] ?: 'none'));
 
     // Counters accumulated across every submit batch in this run.
     $totals = [
         'candidates' => 0, 'accepted' => 0, 'rejected' => 0,
         'submitted' => 0, 'submitErrors' => 0, 'unreadable' => 0, 'postResolveRejected' => 0,
         'topicSubmitted' => 0, 'topicAttempted' => 0, 'topicDeferred' => 0,
-        'gnResolveDeferred' => 0, 'carriedIn' => 0, 'droppedPending' => 0
+        'gnResolveDeferred' => 0, 'carriedIn' => 0, 'droppedPending' => 0,
+        'pendingAttribution' => 0, 'aiConfirms' => 0, 'confirmed' => 0, 'unconfirmed' => 0, 'confirmDeferred' => 0
     ];
     $stopRun = false;         // provider quota spent or time budget gone: carry what is left
     $dedupeSeen = [];         // URL hashes already queued or evaluated this run
@@ -1746,7 +2031,7 @@ function main(): void {
     // -- Filter one tier's raw items into a submit queue --
     $filterBatch = function (array $candidates, string $label) use (
         &$state, &$seen, &$dedupeSeen, &$dedupeHeadlines, &$totals,
-        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $queries
+        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $queries, $sweepIndex
     ): array {
         $totals['candidates'] += count($candidates);
         $state['stats']['discovered'] += count($candidates);
@@ -1772,9 +2057,10 @@ function main(): void {
             if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
 
             $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases,
-                ['rejectHeadlines' => $queries['rejectHeadlines']]);
+                ['rejectHeadlines' => $queries['rejectHeadlines'], 'sweepIndex' => $sweepIndex]);
             if ($result['accept']) {
                 if ($hk !== '') $dedupeHeadlines[$hk] = true;
+                if (($result['attribution'] ?? '') === 'pending') $totals['pendingAttribution']++;
                 $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
             } else {
                 $state['stats']['rejected'] += 1;
@@ -1791,7 +2077,9 @@ function main(): void {
                 ];
             }
         }
-        kop_log("After filter [{$label}]: " . count($queue) . ' accepted, ' . count($rejected) . ' rejected (threshold ' . SCORE_THRESHOLD . ')');
+        $pendingHere = count(array_filter($queue, static fn($q) => ($q['evalResult']['attribution'] ?? '') === 'pending'));
+        kop_log("After filter [{$label}]: " . count($queue) . ' accepted' . ($pendingHere ? " ({$pendingHere} awaiting AI confirmation)" : '')
+            . ', ' . count($rejected) . ' rejected (threshold ' . SCORE_THRESHOLD . ')');
         $byOrigin = [];
         foreach ($queue as $q) {
             $o = $q['candidate']['origin'];
@@ -1809,10 +2097,16 @@ function main(): void {
         if ($rejected) persist_rejected($rejected);
 
         // Reddit candidates go ahead of topic candidates, so a stalled topic
-        // tier (rate limits, extraction failures) cannot starve them.
+        // tier (rate limits, extraction failures) cannot starve them; sweep
+        // hits awaiting AI confirmation go last, highest score first, so the
+        // confirm cap never starves an attributed one.
+        $isPending = static fn($q) => ($q['evalResult']['attribution'] ?? '') === 'pending';
+        $pendingQ = array_values(array_filter($queue, $isPending));
+        usort($pendingQ, static fn($a, $b) => $b['evalResult']['score'] <=> $a['evalResult']['score']);
         return array_merge(
-            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] !== 'google-news-topic')),
-            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] === 'google-news-topic'))
+            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] !== 'google-news-topic' && !$isPending($q))),
+            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] === 'google-news-topic')),
+            $pendingQ
         );
     };
 
@@ -1822,7 +2116,7 @@ function main(): void {
     // finish is carried to the next run instead of being dropped.
     $submitBatch = function (array $queue, string $label) use (
         &$state, &$seen, &$totals, &$stopRun, &$pending, $defer,
-        $runDeadline, $blacklist, $facilityOwnHosts, $queries
+        $runDeadline, $blacklist, $facilityOwnHosts, $queries, $facilityIndex, $sweepIndex
     ): void {
         if (!$queue) return;
 
@@ -1834,7 +2128,8 @@ function main(): void {
                 $resolved = resolve_google_news_url($orig);
                 $unresolved = str_starts_with($resolved, 'https://news.google.com/');
                 if ($unresolved) $resolveUnresolved++;
-                kop_log("  [score {$q['evalResult']['score']}] " . ($unresolved ? '✗ UNRESOLVED' : '✓') . " {$resolved}");
+                kop_log("  [score {$q['evalResult']['score']}" . (($q['evalResult']['attribution'] ?? '') === 'pending' ? ', AI confirms' : '') . '] '
+                    . ($unresolved ? '✗ UNRESOLVED' : '✓') . " {$resolved}");
                 if ($resolved !== $orig && !$unresolved) kop_log('     was:     ' . substr($orig, 0, 80) . '…');
                 kop_log('     title:   ' . substr($q['candidate']['title'], 0, 100));
                 kop_log('     reasons: ' . implode(', ', $q['evalResult']['reasons']));
@@ -1854,10 +2149,17 @@ function main(): void {
             if ($totals['submitted'] >= SUBMIT_LIMIT) break;   // --limit smoke tests: the rest is rediscovered
             if ($stopRun) { $defer($q, 'run stopped'); continue; }
             $isTopic = $q['candidate']['origin'] === 'google-news-topic';
+            $isPending = ($q['evalResult']['attribution'] ?? '') === 'pending';
             // Per-run cap on topic-query submissions (Groq rate limit).
             if ($isTopic && $topicCap > 0 && $totals['topicAttempted'] >= $topicCap) {
                 $totals['topicDeferred']++;
                 $defer($q, 'topic cap');
+                continue;
+            }
+            // Per-run cap on AI confirmations of batched sweep hits.
+            if ($isPending && $totals['aiConfirms'] >= AI_CONFIRM_PER_RUN) {
+                $totals['confirmDeferred']++;
+                $defer($q, 'confirm cap');
                 continue;
             }
             if (microtime(true) >= $runDeadline) {
@@ -1937,8 +2239,9 @@ function main(): void {
             $seen[$q['urlHash']] = true;
 
             if ($isTopic) $totals['topicAttempted']++;
+            if ($isPending) $totals['aiConfirms']++;
             sleep_ms(AI_REQUEST_DELAY_MS);
-            $r = submit_candidate($q['candidate'], $q['evalResult']);
+            $r = ai_process_candidate($q['candidate']);
 
             // Provider rate limits are transient — wait a cool-down and retry a
             // couple of times within the run before carrying the candidate to
@@ -1947,8 +2250,35 @@ function main(): void {
                  !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? ''); $attempt++) {
                 kop_log("    rate-limited; retry {$attempt}/" . AI_RATE_LIMIT_RETRIES . ' after ' . (AI_RATE_LIMIT_WAIT_MS / 1000) . 's cool-down…');
                 sleep_ms(AI_RATE_LIMIT_WAIT_MS);
-                $r = submit_candidate($q['candidate'], $q['evalResult']);
+                $r = ai_process_candidate($q['candidate']);
             }
+
+            // A batched sweep hit: the article has been read, so now settle
+            // which of the request's programs it names. None: not submitted,
+            // logged for the Scraper finds screen, never retried.
+            if ($r['ok'] && $isPending) {
+                $m = confirm_batch_attribution($q['candidate'], $r['data'], $facilityIndex, $sweepIndex);
+                if ($m === null) {
+                    $totals['unconfirmed']++;
+                    $named = is_array($r['data']['facilities'] ?? null) ? implode(', ', array_map('strval', $r['data']['facilities'])) : (string)($r['data']['facilities'] ?? '');
+                    kop_log('    not about ' . implode(' / ', $q['candidate']['batchNames'] ?? []) . ($named !== '' ? " (names: {$named})" : ''));
+                    $postResolveLog[] = [
+                        'link' => $q['candidate']['link'], 'title' => $q['candidate']['title'], 'origin' => 'google-news',
+                        'host' => host_of($q['candidate']['link']), 'facilityQuery' => $q['candidate']['facilityQuery'] ?? null,
+                        'reason' => 'batch-unconfirmed',
+                        'meta' => ['score' => $q['evalResult']['score'], 'reasons' => $q['evalResult']['reasons'], 'aiFacilities' => $named]
+                    ];
+                    continue;
+                }
+                $totals['confirmed']++;
+                $fac = $m['facility'];
+                $q['evalResult']['match'] = ['alias' => $m['matchedAlias'], 'facility' => $fac['queryName'], 'state' => $fac['state'], 'city' => $fac['city'], 'bucket' => $fac['bucket']];
+                $q['evalResult']['reasons'][] = 'facility:' . $m['matchedAlias'];
+                $q['evalResult']['reasons'][] = 'confirmed-by:ai';
+                $q['evalResult']['score'] += 2;
+                kop_log("    confirmed: {$m['matchedAlias']}");
+            }
+            if ($r['ok']) $r = submit_candidate($q['candidate'], $q['evalResult'], [], $r['data']);
 
             if ($r['ok']) {
                 $totals['submitted']++;
@@ -2085,33 +2415,47 @@ function main(): void {
     kop_log("\nRaw candidates (Reddit + topics): " . count($candidates));
     $submitBatch($filterBatch($candidates, 'reddit + topics'), 'reddit + topics');
 
-    // -- Google News per facility (with politeness delay) --
-    // Runs last on purpose (see above). Whatever it accepts and cannot
-    // resolve is carried to the next run, which resolves it first.
-    $querySlice = array_values(array_filter(
-        $slice,
-        static fn($f) => !is_generic_query_name($f, $queries, $genericAliases)
-    ));
-    $skippedGeneric = count($slice) - count($querySlice);
+    // -- The facility sweep (with politeness delay) --
+    // Runs last on purpose (see above). Its finds are filtered, resolved and
+    // submitted every GN_SUBMIT_EVERY requests, while the resolver still
+    // answers; whatever cannot be resolved is carried to the next run, which
+    // resolves it first. The cursor moves past each request that answered, so
+    // a run that dies resumes where it was.
     $gnDeadline = min(microtime(true) + GN_TIME_BUDGET_MS / 1000, $runDeadline);   // fresh budget for the sweep
     $facilityCandidates = [];
-    $facilitiesQueried = 0;
-    if ($querySlice) {
-        kop_log("\nQuerying Google News per facility (" . count($querySlice) . " facilities, {$skippedGeneric} generic names skipped)...");
-        foreach ($querySlice as $i => $fac) {
-            if (!$gnGate("{$i}/" . count($querySlice) . ' facilities')) break;
+    $sweepItems = 0;
+    $requestsDone = ['batch' => 0, 'single' => 0];
+    $namesSwept = 0;
+    $total = count($sweepRequests);
+    if ($slice) {
+        kop_log("\nSweeping Google News (" . count($slice) . ' requests)...');
+        $today = gmdate('Y-m-d');
+        foreach ($slice as $i => $req) {
+            if (!$gnGate("{$i}/" . count($slice) . ' sweep requests')) break;
             sleep_ms(RSS_REQUEST_DELAY_MS);
-            $r = fetch_google_news_for_facility($fac, $queries);
-            $facilitiesQueried++;
+            $r = fetch_google_news_for_request($req, $queries);
             $gn['consecutiveFailures'] = $r['failed'] ? $gn['consecutiveFailures'] + 1 : 0;
+            if (!$r['failed']) {
+                $requestsDone[$req['mode']]++;
+                foreach ($req['lines'] as $l) { $state['sweptAt'][$l['key']] = $today; $namesSwept++; }
+                $state['sweepCursor'] = ($cursorStart + $i + 1) % $total;
+            }
             if (count($r['items']) > 0) {
-                kop_log("  [{$fac['queryName']}" . ($fac['state'] !== '' ? ' / ' . $fac['state'] : '') . '] ' . count($r['items']) . ' items');
+                kop_log('  [' . $r['items'][0]['facilityQuery'] . ($req['mode'] === 'single' && $req['lines'][0]['state'] !== '' ? ' / ' . $req['lines'][0]['state'] : '') . '] ' . count($r['items']) . ' items');
             }
             array_push($facilityCandidates, ...($r['items'] ?: []));
-            if (($i + 1) % 25 === 0) kop_log('  ...' . ($i + 1) . '/' . count($querySlice) . ' (running total: ' . count($facilityCandidates) . ')');
+            $sweepItems += count($r['items']);
+            $last = $i + 1 === count($slice);
+            if (($i + 1) % 25 === 0 || $last) kop_log('  ...' . ($i + 1) . '/' . count($slice) . " (items so far: {$sweepItems})");
+            if ($facilityCandidates && (($i + 1) % GN_SUBMIT_EVERY === 0 || $last)) {
+                $paused = microtime(true);
+                $submitBatch($filterBatch($facilityCandidates, 'sweep'), 'sweep');
+                $facilityCandidates = [];
+                if (!DRY_RUN) { $state['seenUrls'] = array_keys($seen); $state['pending'] = $pending; save_state($state); }
+                $gnDeadline += microtime(true) - $paused;   // submitting is not Google's time
+            }
         }
-        kop_log("\nRaw candidates (facilities): " . count($facilityCandidates));
-        if ($facilityCandidates) $submitBatch($filterBatch($facilityCandidates, 'facilities'), 'facilities');
+        kop_log("\nRaw candidates (sweep): {$sweepItems}");
     }
 
     if (DRY_RUN) {
@@ -2125,10 +2469,14 @@ function main(): void {
     save_state($state);
 
     kop_log("\n--- Done ---");
-    kop_log("  facilities queried:  {$facilitiesQueried}/" . count($querySlice) . " ({$skippedGeneric} generic skipped, shard " . count($slice) . ')');
+    kop_log('  sweep requests:      ' . ($requestsDone['batch'] + $requestsDone['single']) . '/' . count($slice)
+        . " ({$requestsDone['batch']} batched, {$requestsDone['single']} single), {$namesSwept} of " . count($sweepLines)
+        . " names; cursor {$cursorStart} -> {$state['sweepCursor']} of {$total}");
     kop_log("  topic items:         {$topicCandidates}");
     kop_log("  candidates found:    {$totals['candidates']}");
-    kop_log("  accepted by filter:  {$totals['accepted']}");
+    kop_log("  accepted by filter:  {$totals['accepted']}" . ($totals['pendingAttribution'] ? " ({$totals['pendingAttribution']} awaiting AI confirmation)" : ''));
+    if ($totals['aiConfirms']) kop_log("  AI confirmations:    {$totals['aiConfirms']} ({$totals['confirmed']} confirmed, {$totals['unconfirmed']} not about the program)");
+    if ($totals['confirmDeferred']) kop_log("  confirm deferred (cap): {$totals['confirmDeferred']}");
     if ($totals['carriedIn']) kop_log("  carried in:          {$totals['carriedIn']}");
     kop_log("  submitted (ok):      {$totals['submitted']}" . ($totals['topicSubmitted'] ? " ({$totals['topicSubmitted']} from topic queries)" : ''));
     kop_log("  submitted (errors):  {$totals['submitErrors']}");
@@ -2144,6 +2492,9 @@ function main(): void {
         exit(1);
     }
 }
+
+// scripts/test-discovery-sweep.php loads the functions without running a sweep.
+if (defined('KOP_DISCOVERY_NO_MAIN')) return;
 
 try {
     main();

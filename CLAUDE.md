@@ -265,11 +265,18 @@ php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dr
 # checks every published bill and lawsuit that is not finished: federal bills from govinfo BILLSTATUS (no AI), state bills from the
 # official page (California via CalMatters Digital Democracy), federal lawsuits from the CourtListener docket feed (found by docket
 # number + CourtListener court id, never guessed; remembered per case; anonymous = 5 requests/min, so spaced 13 s; a free token in
-# KOP_COURTLISTENER_TOKEN (api/config.local.php or .env) = 5,000/hour), read by the AI; an unchanged page is not sent to the AI again. Changes
+# KOP_COURTLISTENER_TOKEN or COURTLISTENER_API_KEY (api/config.local.php or .env; kop_sc_cl_token()) = 5,000/hour), read by the AI; an unchanged page is not sent to the AI again. Changes
 # wait at Review inbox > Bill and lawsuit updates (record_status_proposals; Apply, exact Undo, a dismissed change never comes back)
 # Bill corrections and new bills by hand: seeds/legislation-updates.json + seeds/legislation.json (inc/legislation-updates.php, bump 'version')
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-status-checks.php   # parsing, matching, what is a change, runs with a made-up AI
 php api/check-record-statuses.php [--kind=bill --ids=19] [apply]   # on the server (ea-php82): dry run prints what it finds
+# News discovery (scripts/discover-articles.php, cPanel cron 01:30 + 13:30 Central, docs/news-processor/README.md): r/troubledteens, Google News
+# topic queries, then the facility sweep: every record and every name it has had (closed too), distinctive names several to one Google News
+# request (<= 16 words of names, when: first; Google reads ~32 words), short names one to a request with the state; a cursor in
+# scripts/.discovery-state.json walks the sorted list, half per run. A batched hit naming no program in its headline is confirmed by the AI
+# step (<= 30 a run) before it is submitted, else logged batch-unconfirmed (Review inbox > Scraper finds). Terms in scripts/discovery-queries.json
+php scripts/test-discovery-sweep.php              # offline: names, batches, cursor, filter on real headlines, AI confirmation
+php scripts/discover-articles.php --dry-run --max-facilities 40 --no-topics   # against the live API, submits nothing (local php needs -d curl.cainfo=)
 # Facilities the news mentions that have no record (inc/facility-discovery.php): the hourly scan creates
 # them from the article, or links a known one; KOP Tools > Facilities from News to remove or create by hand
 php scripts/test-facility-discovery.php           # offline, against tmp/prod.sqlite, no Groq calls

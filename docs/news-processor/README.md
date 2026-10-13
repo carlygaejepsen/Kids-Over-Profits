@@ -103,11 +103,14 @@ The form captures:
 
 ## Automated Article Discovery
 
-`scripts/discover-articles.php` runs on the NixiHost cPanel cron (nightly at 01:30 Central, plus a midday `--no-facilities` run). It pulls candidates from r/troubledteens and Google News RSS (topic queries, then one query per facility in the day's shard, with facilities read live from `/wp-json/kop/v1/facilities`), scores them, and sends survivors through `api/process-news-ai.php` and `api/save-news-submission.php` with `submittedBy: auto-discovery` and the score details in the submission notes.
+`scripts/discover-articles.php` runs on the NixiHost cPanel cron twice a day (01:30 and 13:30 Central). It pulls candidates from r/troubledteens and Google News RSS (topic queries, then the facility sweep, with facilities read live from `/wp-json/kop/v1/facilities`), scores them, and sends survivors through `api/process-news-ai.php` and `api/save-news-submission.php` with `submittedBy: auto-discovery` and the score details in the submission notes.
 
-- Search terms: `scripts/discovery-queries.json`; blocked sources: `scripts/discovery-blacklist.json`
-- Runtime state (gitignored): `scripts/.discovery-state.json` (seen URLs, carried-over `pending` candidates) and `scripts/.discovery-rejected.json`
-- Flags: `--dry-run`, `--limit N`, `--max-facilities N`, `--no-topics`, `--no-facilities`
+The sweep (2026-10) queries every record and every name it has had (current, past and other names; closed programs too). Distinctive names (three words or more) go several to one Google News request, OR'd, up to 16 words of names a request (Google reads about 32 words of a query and drops the rest, so the `when:` window goes first and the batch keyword list is short); one- and two-word names go one to a request with the state name, as before. The sorted request list is walked by a cursor in the state file, half per run, so the two runs cover every name once a day and a run that dies resumes where it stopped. A batched hit whose headline names none of its programs is kept with its attribution pending; the AI step, which reads the article, confirms which program it is about (at most `AI_CONFIRM_PER_RUN` = 30 a run, the rest carried over) and an unconfirmed one is logged as `batch-unconfirmed` for the Scraper finds screen. Stock-market coverage of the parent companies is blocked by `financeDomains` in the blacklist.
+
+- Search terms: `scripts/discovery-queries.json` (`facilityBatchKeywords`, `facilityBatchRecency` = `when:3d` for the batched sweep; `facilityKeywords`, `facilityRecency` for single names); blocked sources: `scripts/discovery-blacklist.json`
+- Runtime state (gitignored): `scripts/.discovery-state.json` (version 3: seen URLs, carried-over `pending` candidates, `sweepCursor`, `sweptAt` per name) and `scripts/.discovery-rejected.json`
+- Flags: `--dry-run`, `--limit N`, `--max-facilities N` (caps the sweep's requests), `--no-topics`, `--no-facilities`, `--sweep-share N` (1 = the whole list in one run), `--recency 30d` (the batched window for this run; the first run after a deploy, to pick up the backlog)
+- Offline test: `php scripts/test-discovery-sweep.php`
 - The crontab must call `/opt/cpanel/ea-php82/root/usr/bin/php`; bare `php` under cron is php-cgi and the script exits with "CLI only."
 - `scripts/discover-articles.js` is the Node original, kept for the manual-only `.github/workflows/discover-articles.yml`
 
@@ -124,4 +127,4 @@ Environment keys (loaded by `api/config.php` from `.env`, with `api/config.local
 - `GEMINI_API_KEY` (the other half of `auto`; without it every call goes to Groq)
 - `HUGGINGFACE_API_KEY`, `ANTHROPIC_API_KEY` (only for non-default providers)
 
-Discovery reads its own settings from the cron environment: `NEWS_API_BASE`, `AI_PROVIDER` (default `auto`), `SHARD_COUNT`, request delays and time budgets, and optional `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`. See the header of `scripts/discover-articles.php`.
+Discovery reads its own settings from the cron environment: `NEWS_API_BASE`, `AI_PROVIDER` (default `auto`), `SWEEP_RUNS_PER_DAY`, `AI_CONFIRM_PER_RUN`, request delays and time budgets, and optional `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`. See the header of `scripts/discover-articles.php`.
