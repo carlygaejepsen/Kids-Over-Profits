@@ -144,7 +144,7 @@ function kop_mfd_rank(array $row) {
  * (inc/facility-eras.php) and the map build read. Its operator becomes a
  * past operator.
  */
-function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta, array $rename = null) {
+function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta, array $rename = null, $alias = false) {
     $drop_period = is_array($drop['operatingPeriod'] ?? null) ? $drop['operatingPeriod'] : array();
     $drop_operator = trim((string) ($drop['identification']['currentOperator'] ?? ''));
     if ($rename !== null) {
@@ -197,6 +197,15 @@ function kop_mfd_merge_docs(array $keep, array $drop, array $drop_meta, array $r
     } elseif ($drop_name !== '' && kop_facility_name_key($drop_name) !== kop_facility_name_key($name)) {
         // A genuinely different spelling is worth keeping as another name.
         $merged['identification']['otherNames'] = kop_mfd_union(array($merged['identification']['otherNames'] ?? array(), array($drop_name)));
+    }
+    if ($rename === null && $alias) {
+        // $alias: the dropped name is only another name the program goes by, never an earlier one. It leaves the
+        // past names and "now called" (where either record filed it), so nothing reads the pair as a rename.
+        $keys = array(kop_facility_name_key($drop_name), kop_facility_name_key($name));
+        $merged['identification']['pastNames'] = array_values(array_filter((array) ($merged['identification']['pastNames'] ?? array()), function ($n) use ($keys) {
+            return !is_string($n) || !in_array(kop_facility_name_key($n), $keys, true);
+        }));
+        if (in_array(kop_facility_name_key((string) ($merged['identification']['currentName'] ?? '')), $keys, true)) $merged['identification']['currentName'] = '';
     }
 
     // Provenance: the survivor's, with the dropped copy's legacy ids kept.

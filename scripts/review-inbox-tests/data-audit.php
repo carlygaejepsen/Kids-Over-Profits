@@ -212,8 +212,8 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         $ids = array_column($card['actions'], 'id');
         if (!in_array('rename_merge', $ids, true)) continue;
         $check('data-audit: a card holding only a rename offers the merge both ways and "not one program", no Approve',
-            array_values(array_diff($ids, array('rename_fold'))) === array('rename_merge', 'rename_merge_reversed', 'reject')
-            || array_values(array_diff($ids, array('rename_fold'))) === array('rename_merge_reversed', 'rename_merge', 'reject'), $key . ': ' . implode(',', $ids));
+            array_values(array_diff($ids, array('rename_fold', 'alias_merge', 'name_alias'))) === array('rename_merge', 'rename_merge_reversed', 'reject')
+            || array_values(array_diff($ids, array('rename_fold', 'alias_merge', 'name_alias'))) === array('rename_merge_reversed', 'rename_merge', 'reject'), $key . ': ' . implode(',', $ids));
         break;
     }
 
@@ -231,6 +231,7 @@ function kop_rinbox_test_data_audit(array $src, array $item, callable $check) {
         $nsteps . ' steps, ' . count($blocked) . ' blocked: ' . implode(' | ', array_slice($blocked, 0, 4)));
 
     kop_rinbox_daudit_test_companies($check, $opts);
+    kop_rinbox_daudit_test_aliases($check, $opts);
     kop_rinbox_daudit_test_steps($check, $opts);
 
     // KOP_DAUDIT_EXPORT=<file>: a few real cards as JSON, for a look in a browser (scripts/test-review-inbox-ui.py fixtures).
@@ -486,4 +487,89 @@ function kop_rinbox_daudit_test_steps(callable $check, array $opts) {
     $check('data-audit: the folded card offers its Undo', in_array('rename_unmerge', $ids, true) && !in_array('rename_fold', $ids, true), implode(',', $ids));
     call_user_func(kop_rinbox_source('data-audit')['act'], $fold_key, 'rename_unmerge', array('pair' => $pair));
     $check('data-audit: undo of the fold gives the records back exactly', $snap() === $before);
+}
+
+/**
+ * Another name, not a rename: two records merge as one program with the name
+ * filed as an other name (never a past one), and a past name on one record
+ * becomes an other name; both come back exactly with their Undo.
+ */
+function kop_rinbox_daudit_test_aliases(callable $check, array $opts) {
+    $pdo = $opts['pdo'];
+    kop_fmerge_load_mfd();
+    $keep = array('facility_id' => 1, 'identification' => array('name' => 'Sedona Sky Academy', 'pastNames' => array('Copper Canyon Academy', 'Old Ranch'), 'otherNames' => array()));
+    $drop = array('facility_id' => 2, 'identification' => array('name' => 'Copper Canyon Academy', 'pastNames' => array('Sedona Sky Academy')));
+    $m = kop_mfd_merge_docs($keep, $drop, array('id' => 2, 'unique_name' => 'Copper Canyon Academy'), null, true);
+    $plain = kop_mfd_merge_docs($keep, $drop, array('id' => 2, 'unique_name' => 'Copper Canyon Academy'));
+    $check('data-audit: an alternate-name merge takes the name out of the past names', array_values($m['identification']['pastNames']) === array('Old Ranch')
+        && in_array('Copper Canyon Academy', $m['identification']['otherNames'], true)
+        && in_array('Copper Canyon Academy', $plain['identification']['pastNames'], true), json_encode($m['identification']));
+    if (!kop_rinbox_test_options_persist()) {
+        kop_rinbox_test_skip('data-audit: another name on real records', 'update_option does not store in this harness');
+        return;
+    }
+    $tables = array('lawsuit_facility_links', 'wpdl_kop_facility_identity', 'wpdl_kop_facility_locations', 'wpdl_fbv',
+        'wpdl_fbv_attachment_folder', 'wpdl_kop_media_folder_tags', 'wpdl_kop_folder_links', 'wpdl_kop_migration_state', 'wpdl_kop_people');
+    foreach (kop_fmerge_ref_tables('wpdl_') as $r) $tables[] = $r['t'];
+    foreach (kop_fmerge_json_tables('wpdl_') as $r) $tables[] = $r['t'];
+    kop_rinbox_test_copy_tables($tables);
+    $snap = function () use ($pdo) {
+        return md5(json_encode($pdo->query('SELECT id, json_data FROM facilities_v2 ORDER BY id')->fetchAll(PDO::FETCH_NUM)));
+    };
+    // Two records: "Just another name".
+    $key = 'rename_years-9628-11222';
+    $p = kop_daudit_proposals()[$key] ?? null;
+    $pairs = $p ? kop_daudit_alias_pairs($key, $p, $opts) : array();
+    if (!$pairs) {
+        kop_rinbox_test_skip('data-audit: just another name', $key . ' has no separate pair in this mirror');
+    } else {
+        $before = $snap();
+        $pick = (string) array_key_first($pairs);
+        list($keep_id, $drop_id) = array_map('intval', explode('>', $pick));
+        $drop_name = (string) $pdo->query('SELECT name FROM facilities_v2 WHERE id = ' . $drop_id)->fetchColumn();
+        $res = call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'alias_merge', array('pick' => $pick));
+        $kept = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . $keep_id)->fetchColumn(), true);
+        $past = array_map('strtolower', (array) ($kept['identification']['pastNames'] ?? array()));
+        $other = array_map('strtolower', (array) ($kept['identification']['otherNames'] ?? array()));
+        $check('data-audit: "Just another name" files the name as an other name, not a past name', !in_array(strtolower($drop_name), $past, true)
+            && in_array(strtolower($drop_name), $other, true), $res['message']);
+        $item = kop_rinbox_get_item('data-audit', $key);
+        $check('data-audit: the card reads it as another name, with its Undo', in_array('rename_unmerge', array_column($item['actions'], 'id'), true)
+            && strpos(json_encode($item['details']), 'only another name') !== false);
+        call_user_func(kop_rinbox_source('data-audit')['act'], $key, 'rename_unmerge', array('pair' => (string) array_key_first(kop_daudit_decisions()[$key]['merges'])));
+        $check('data-audit: undo of "Just another name" gives the records back exactly', $snap() === $before);
+        $d = kop_daudit_decisions();
+        unset($d[$key]);
+        kop_daudit_save_decisions($d);
+    }
+    // One record: "A past name is only another name".
+    $found = null;
+    foreach (kop_daudit_proposals() as $k => $q) {
+        foreach (kop_daudit_alias_candidates($q, $opts) as $pick => $label) {
+            if (strpos($label, '(past name of') !== false) { $found = array((string) $k, (string) $pick); break 2; }
+        }
+    }
+    if (!$found) {
+        kop_rinbox_test_skip('data-audit: a past name is only another name', 'no past name on any card');
+        return;
+    }
+    list($k, $pick) = $found;
+    list($fid, $value) = explode('|', $pick, 2);
+    try {
+        $res = call_user_func(kop_rinbox_source('data-audit')['act'], $k, 'name_alias', array('pick' => $pick));
+    } catch (Throwable $e) {
+        $check('data-audit: a past name becomes another name', false, $e->getMessage());
+        return;
+    }
+    $doc = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . (int) $fid)->fetchColumn(), true);
+    $check('data-audit: a past name becomes another name', !in_array($value, (array) ($doc['identification']['pastNames'] ?? array()), true)
+        && in_array($value, (array) ($doc['identification']['otherNames'] ?? array()), true), $res['message']);
+    call_user_func(kop_rinbox_source('data-audit')['act'], $k, 'name_alias_undo', array());
+    $doc2 = json_decode((string) $pdo->query('SELECT json_data FROM facilities_v2 WHERE id = ' . (int) $fid)->fetchColumn(), true);
+    $check('data-audit: its Undo makes it a past name again', in_array($value, (array) ($doc2['identification']['pastNames'] ?? array()), true)
+        && !in_array($value, (array) ($doc2['identification']['otherNames'] ?? array()), true));
+    $d = kop_daudit_decisions();
+    unset($d[$k]['aliases']);
+    if (empty($d[$k])) unset($d[$k]);
+    kop_daudit_save_decisions($d);
 }

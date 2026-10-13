@@ -623,7 +623,9 @@ function kop_daudit_op_words(array $op, array $names = array()) {
             return !empty($op['rename'])
                 ? 'Merge as a rename: ' . $rec($op['drop']) . ' is the earlier name of ' . $rec($op['keep'])
                     . (!empty($op['year']) ? ', renamed ' . (int) $op['year'] : '') . ' (each name keeps its own years)'
-                : 'Merge as one program: ' . $rec($op['drop']) . ' folds into ' . $rec($op['keep']) . ', which keeps its name';
+                : (!empty($op['alias'])
+                    ? 'Just another name: ' . $rec($op['drop']) . ' folds into ' . $rec($op['keep']) . ' and its name becomes an other name (not a rename)'
+                    : 'Merge as one program: ' . $rec($op['drop']) . ' folds into ' . $rec($op['keep']) . ', which keeps its name');
         case 'operator_create':
             $to = array_map(function ($l) use ($rec) { return $rec($l['facility_id']) . ' (' . ($l['relationship'] ?? 'current') . ')'; }, (array) ($op['links'] ?? array()));
             return 'New company record "' . $op['name'] . '"' . ($to ? ', linked to ' . implode(', ', $to) : '');
@@ -1112,7 +1114,7 @@ function kop_daudit_merge_apply(array $op, array $opts, $reviewer) {
         if (!empty($op['rename'])) {
             $msg = kop_fmerge_do_merge($pdo, $opts['prefix'], $keep, $drop, (string) $reviewer, kop_daudit_merge_rename_args($pdo, $keep, $drop, (int) $op['year']));
         } else {
-            $msg = kop_fmerge_do_merge($pdo, $opts['prefix'], $keep, $drop, (string) $reviewer, null, true);
+            $msg = kop_fmerge_do_merge($pdo, $opts['prefix'], $keep, $drop, (string) $reviewer, null, !empty($op['alias']) ? 'alias' : true);
         }
     } finally {
         if (function_exists('kop_fmerge_flush')) kop_fmerge_flush();
@@ -1228,7 +1230,7 @@ function kop_daudit_undo($key) {
     }
     $decisions = kop_daudit_decisions();
     unset($decisions[$key]);
-    $keepers = array_intersect_key($d, array('merges' => 1, 'edits' => 1));
+    $keepers = array_intersect_key($d, array('merges' => 1, 'edits' => 1, 'aliases' => 1));
     if ($keepers) $decisions[$key] = $keepers;
     kop_daudit_save_decisions($decisions);
     return 'Undone' . ($kept ? '; left as edited since: ' . implode(', ', $kept) : '') . '. It is waiting for review again.';
@@ -1336,6 +1338,7 @@ function kop_daudit_rename_state($key, array $r, PDO $pdo) {
         $out['state'] = 'merged';
         $out['log'] = (string) $mine['log'];
         $out['year'] = (int) $mine['year'];
+        $out['how'] = !empty($mine['alias']) ? 'alias' : (!empty($mine['fold']) ? 'fold' : 'rename');
     } else {
         $out['state'] = ($l && $resolve($r['earlier']) === $l['id']) ? 'merged_elsewhere' : 'gone';
     }
@@ -1369,6 +1372,8 @@ function kop_daudit_rename_words(array $s) {
     $when = $s['year'] ? 'in ' . $s['year'] : '(year not known)';
     switch ($s['state']) {
         case 'merged':
+            if (($s['how'] ?? '') === 'alias') return 'Merged from this card as one program: the other name is only another name of it, not a rename.';
+            if (($s['how'] ?? '') === 'fold') return 'Merged from this card as one program: the company-named record folded in.';
             return $en . ' became ' . $ln . ' ' . $when . '. Merged as a rename from this card: each name keeps its own years.';
         case 'merged_elsewhere':
             return $en . ' became ' . $ln . ' ' . $when . '. Already merged into one program.';
@@ -1389,6 +1394,7 @@ function kop_daudit_keep_merges(array $old, array $new) {
     // A decision replaced keeps the card's rename merges and record edits (each with its own Undo).
     if (!empty($old['merges'])) $new['merges'] = $old['merges'];
     if (!empty($old['edits'])) $new['edits'] = $old['edits'];
+    if (!empty($old['aliases'])) $new['aliases'] = $old['aliases'];
     return $new;
 }
 
@@ -1828,4 +1834,194 @@ function kop_daudit_record_companies($fid, array $opts) {
         // The links are a help; the record's own lines still count.
     }
     return $out;
+}
+
+/* ---- Another name, not a rename ----------------------------------------- */
+
+/*
+ * Some names are only other names of one program (a legal name, a short
+ * form, a campus name used side by side), never an earlier or later name.
+ * Two ways to say so from a card, each with its own Undo there:
+ *   - two records: "Just another name" merges them as one program, the
+ *     dropped name filed as an other name (kop_fmerge_do_merge(..., 'alias'))
+ *   - a name on a record: "Only another name" moves it from the past names
+ *     (or "now called") to the other names (kop_daudit_name_alias())
+ * Both mark the map's rebrand line between the two names "Not a rename" at
+ * Map Renames, which the facility pages' name sections and Merge Duplicates
+ * read, so the pair is never cut or offered as a rename again.
+ * Decisions: decisions[key]['aliases'][] = {fid, value, done, map, by, at, undone}.
+ */
+
+/** The map's rebrand lines between record $fid's names on the map and the map name $value: "source>target" keys. */
+function kop_daudit_alias_lines($fid, $value) {
+    $graph = function_exists('kop_network_map_graph') ? kop_network_map_graph() : null;
+    if (!$graph) return array();
+    $want = kop_daudit_name_key($value);
+    $mine = array();
+    $named = array();
+    foreach ((array) $graph['nodes'] as $n) {
+        $id = (string) ($n['id'] ?? '');
+        if (kop_daudit_resolve((int) ($n['facilityId'] ?? 0)) === kop_daudit_resolve((int) $fid) && (int) ($n['facilityId'] ?? 0) > 0) $mine[$id] = true;
+        if ($want !== '' && kop_daudit_name_key($n['name'] ?? '') === $want) $named[$id] = true;
+    }
+    $out = array();
+    foreach ((array) ($graph['edges'] ?? array()) as $e) {
+        if (!in_array('rebrand', (array) ($e['roles'] ?? array()), true)) continue;
+        $a = (string) $e['source'];
+        $b = (string) $e['target'];
+        if ((isset($mine[$a]) && isset($named[$b])) || (isset($mine[$b]) && isset($named[$a]))) $out[] = $a . '>' . $b;
+    }
+    return $out;
+}
+
+/** Mark map lines "Not a rename" at Map Renames; returns key => the decision there before (null = none), for Undo. */
+function kop_daudit_skip_lines(array $keys, $reviewer) {
+    if (!$keys || !function_exists('kop_network_renames_decisions')) return array();
+    $decisions = kop_network_renames_decisions();
+    $before = array();
+    foreach ($keys as $k) {
+        $before[$k] = $decisions[$k] ?? null;
+        $decisions[$k] = array('decision' => 'skipped', 'year' => 0, 'swapped' => false, 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'));
+    }
+    update_option('kop_network_rename_review', $decisions, false);
+    return $before;
+}
+
+function kop_daudit_unskip_lines(array $before) {
+    if (!$before || !function_exists('kop_network_renames_decisions')) return;
+    $decisions = kop_network_renames_decisions();
+    foreach ($before as $k => $was) {
+        if (($decisions[$k]['decision'] ?? '') !== 'skipped') continue;
+        if (is_array($was)) $decisions[$k] = $was;
+        else unset($decisions[$k]);
+    }
+    update_option('kop_network_rename_review', $decisions, false);
+}
+
+/** The names on the card's records that read as earlier or later names: [fid|name => "Name (on Record #id, past name)"]. */
+function kop_daudit_alias_candidates(array $p, array $opts) {
+    $out = array();
+    foreach (array_slice(kop_daudit_card_records($p), 0, 6) as $fid) {
+        $stored = kop_facility_load($fid, $opts);
+        if (!$stored) continue;
+        $rec = (string) ($stored['doc']['identification']['name'] ?? ('#' . $fid));
+        foreach (kop_daudit_list($stored['doc'], 'identification.pastNames') as $n) {
+            if (is_string($n) && trim($n) !== '') $out[$fid . '|' . $n] = $n . ' (past name of ' . $rec . ', #' . $fid . ')';
+        }
+        $now = trim((string) ($stored['doc']['identification']['currentName'] ?? ''));
+        if ($now !== '') $out[$fid . '|' . $now] = $now . ' ("now called" on ' . $rec . ', #' . $fid . ')';
+    }
+    return $out;
+}
+
+/**
+ * "Only another name": $pick ("<fid>|<name>") leaves record fid's past names
+ * (or "now called") for its other names, and the map's rebrand lines between
+ * the record and that name are marked "Not a rename". Returns the message.
+ */
+function kop_daudit_name_alias($key, $pick, $reviewer) {
+    $p = kop_daudit_proposals()[$key] ?? null;
+    if (!$p) throw new RuntimeException('That proposal is not in the list any more.');
+    $opts = kop_daudit_opts();
+    if (!isset(kop_daudit_alias_candidates($p, $opts)[(string) $pick])) throw new RuntimeException('That name is not a past name on this card\'s records any more.');
+    list($fid, $value) = explode('|', (string) $pick, 2);
+    $fid = (int) $fid;
+    $done = array();
+    kop_v2_with_write_lock($opts['pdo'], function () use ($fid, $value, $opts, &$done) {
+        $stored = kop_facility_load($fid, $opts);
+        $doc = $stored['doc'];
+        $ops = array(
+            array('type' => 'list_remove', 'facility_id' => $fid, 'path' => 'identification.pastNames', 'value' => $value),
+            array('type' => 'list_add', 'facility_id' => $fid, 'path' => 'identification.otherNames', 'value' => $value),
+        );
+        if (strcasecmp(trim((string) ($doc['identification']['currentName'] ?? '')), trim($value)) === 0) {
+            $ops[] = array('type' => 'field', 'facility_id' => $fid, 'path' => 'identification.currentName', 'from' => $doc['identification']['currentName'], 'to' => null);
+        }
+        $done = kop_daudit_doc_apply($doc, $ops, '');
+        if ($done) kop_wbf_save($doc, $opts);
+    });
+    $map = kop_daudit_skip_lines(kop_daudit_alias_lines($fid, $value), $reviewer);
+    $decisions = kop_daudit_decisions();
+    $decisions[$key]['aliases'][] = array('fid' => $fid, 'value' => $value, 'done' => $done, 'map' => $map,
+        'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'));
+    kop_daudit_save_decisions($decisions);
+    return '"' . $value . '" is now an other name of record #' . $fid . ', not a past name' . ($map ? '; the map\'s rebrand line is marked "Not a rename"' : '')
+        . '. "Undo: another name" on this card puts it back.';
+}
+
+/** Undo the card's last "Only another name". */
+function kop_daudit_name_alias_undo($key) {
+    $decisions = kop_daudit_decisions();
+    $list = (array) ($decisions[$key]['aliases'] ?? array());
+    $n = null;
+    foreach ($list as $i => $a) if (empty($a['undone'])) $n = $i;
+    if ($n === null) throw new RuntimeException('Nothing to undo.');
+    $a = $list[$n];
+    $opts = kop_daudit_opts();
+    $kept = array();
+    kop_v2_with_write_lock($opts['pdo'], function () use ($a, $opts, &$kept) {
+        $stored = kop_facility_load((int) $a['fid'], $opts);
+        if (!$stored) {
+            $kept[] = 'record #' . (int) $a['fid'] . ' (gone)';
+            return;
+        }
+        $doc = $stored['doc'];
+        $kept = kop_daudit_doc_undo($doc, (array) $a['done']);
+        kop_wbf_save($doc, $opts);
+    });
+    kop_daudit_unskip_lines((array) $a['map']);
+    $decisions[$key]['aliases'][$n]['undone'] = true;
+    kop_daudit_save_decisions($decisions);
+    return 'Undone: "' . $a['value'] . '" is a past name again' . ($kept ? ' (left as changed since: ' . implode(', ', $kept) . ')' : '') . '.';
+}
+
+/**
+ * The pairs of records a card could merge as one program with one name only
+ * another name of the other: "keep>drop" => words, both ways round, from its
+ * renames and its rename-merge steps, while both records are on file.
+ */
+function kop_daudit_alias_pairs($key, array $p, array $opts) {
+    $pairs = array();
+    foreach (kop_daudit_renames($p) as $r) $pairs[] = array((int) $r['later'], (int) $r['earlier']);
+    foreach (kop_daudit_steps($p) as $op) {
+        if ($op['type'] === 'merge' && empty($op['alias'])) $pairs[] = array((int) $op['keep'], (int) $op['drop']);
+    }
+    $out = array();
+    foreach ($pairs as $pr) {
+        $a = kop_daudit_rename_side($opts['pdo'], kop_daudit_resolve($pr[0]));
+        $b = kop_daudit_rename_side($opts['pdo'], kop_daudit_resolve($pr[1]));
+        if (!$a || !$b || $a['id'] === $b['id']) continue;
+        foreach (array(array($a, $b), array($b, $a)) as $x) {
+            $out[$x[0]['id'] . '>' . $x[1]['id']] = 'Keep ' . $x[0]['name'] . ' (#' . $x[0]['id'] . '); ' . $x[1]['name'] . ' (#' . $x[1]['id'] . ') is another name of it';
+        }
+    }
+    return $out;
+}
+
+/**
+ * "Just another name": record $drop folds into $keep as one program, its name
+ * filed as an other name, never a past one, and the map's rebrand line between
+ * them marked "Not a rename" (kop_fmerge_do_merge(..., 'alias')). Undo:
+ * kop_daudit_rename_unmerge() with the pair "drop>keep".
+ */
+function kop_daudit_alias_merge($key, $pick, $reviewer) {
+    $p = kop_daudit_proposals()[$key] ?? null;
+    if (!$p) throw new RuntimeException('That proposal is not in the list any more.');
+    $opts = kop_daudit_opts();
+    if (!isset(kop_daudit_alias_pairs($key, $p, $opts)[(string) $pick])) throw new RuntimeException('Those two records are not a pair on this card (or one is merged already).');
+    list($keep, $drop) = array_map('intval', explode('>', (string) $pick));
+    $done = kop_daudit_merge_apply(array('keep' => $keep, 'drop' => $drop, 'alias' => true), $opts, $reviewer);
+    $decisions = kop_daudit_decisions();
+    $pair = $drop . '>' . $keep;
+    // Filed under the card's rename pair when there is one, so the card reads it as merged.
+    foreach (kop_daudit_renames($p) as $k => $r) {
+        if (in_array((int) $r['earlier'], array($keep, $drop), true) && in_array((int) $r['later'], array($keep, $drop), true)) $pair = $k;
+    }
+    $decisions[$key]['merges'][$pair] = array('log' => $done['log'], 'year' => 0, 'alias' => true,
+        'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'));
+    if (!$p['ops'] && empty($decisions[$key]['decision'])) {
+        $decisions[$key] += array('decision' => 'applied', 'by' => (string) $reviewer, 'at' => gmdate('Y-m-d H:i:s'), 'done' => array(), 'by_merge' => true);
+    }
+    kop_daudit_save_decisions($decisions);
+    return $done['message'] . ' Undo is on this card and on the Merged tab of Merge Duplicates.';
 }

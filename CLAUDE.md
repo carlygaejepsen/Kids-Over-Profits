@@ -235,6 +235,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-wiki-gaps.php    
 # running the other record and 2+ more programs, with no years outside it (bare "Embark Behavioral Health" in Marion = Embark at Flathead Valley)
 # is folded in as one program, not a rename; "Sequel TSI Courtland" dates its name by Sequel's years in the operator lines; a company filed as
 # a past name ("Three Springs Inc.") becomes a past-company step. KOP_DAUDIT_LIST=1 / KOP_DAUDIT_EXPORT=<file> on the test print / dump cards
+# Another name, not a rename: past names / "now called" / a map rebrand line read as renames; other names never do (but the map build still
+# draws a rebrand line to an other name that is its own board node, so it is also marked "Not a rename" at Map Renames). kop_fmerge_do_merge(...,
+# null, 'alias') merges two records as one program with the name filed as an other name (Merge Duplicates and Data audit: "Just another name, not
+# a rename"); Data audit "A past name is only another name" moves one record's past name (kop_daudit_name_alias()); each has its Undo
 python scripts/data-audit.py [--kind rename_end_year ...] [--list]   # offline, against tmp/prod.sqlite
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=data-audit
 # Federal funding (docs/PLAN.md 3.15): Medicaid, foster care funds, ORR, TRICARE, PPP and Education money found for programs,

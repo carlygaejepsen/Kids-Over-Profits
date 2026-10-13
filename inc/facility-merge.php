@@ -602,7 +602,7 @@ if (!function_exists('kop_fmerge_execute')) {
             );
         }
 
-        $doc = kop_mfd_merge_docs($keep['doc'], $drop['doc'], array('id' => $drop_id, 'unique_name' => $drop['unique_name']), $rename);
+        $doc = kop_mfd_merge_docs($keep['doc'], $drop['doc'], array('id' => $drop_id, 'unique_name' => $drop['unique_name']), $rename, !empty($opts['alias']));
         $undo = array();
         $report = array('rows' => array(), 'files' => 0, 'subfolders' => 0, 'folders_deleted' => 0);
 
@@ -1122,7 +1122,10 @@ if (!function_exists('kop_fmerge_do_merge')) {
      * $as_duplicate: merge as one name although the names read as a rename
      * (the Data audit's "one of the two is only the company's name": Embark
      * Behavioral Health in Marion is Embark at Flathead Valley filed under
-     * its company).
+     * its company). 'alias': the dropped name is only another name of the
+     * program (an alternate name, never a rename): it is filed as an other
+     * name, taken out of the past names, and the map's rebrand line between
+     * the two is marked "Not a rename" at Map Renames (Undo puts it back).
      */
     function kop_fmerge_do_merge(PDO $pdo, $prefix, $keep, $drop, $login, array $rename = null, $as_duplicate = false) {
         if (function_exists('kop_v2_writes_active') && !kop_v2_writes_active($pdo, $prefix)) {
@@ -1149,8 +1152,9 @@ if (!function_exists('kop_fmerge_do_merge')) {
             'folder_drop' => kop_fmerge_page_folder($drop, $d['doc'], $d['unique_name']),
             'by'          => $login,
             'rename'      => $rename,
+            'alias'       => $as_duplicate === 'alias',
         );
-        $line = $rename !== null ? kop_fmerge_rename_line($drop, $keep) : null;
+        $line = ($rename !== null || $as_duplicate === 'alias') ? kop_fmerge_rename_line($drop, $keep) : null;
         $entry = kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $keep, $drop, $opts) {
             return kop_fmerge_execute($pdo, $prefix, $keep, $drop, $opts);
         });
@@ -1159,7 +1163,10 @@ if (!function_exists('kop_fmerge_do_merge')) {
             // The map's line between the two names gets the rename year at once, as Map Renames would save it.
             $decisions = kop_network_renames_decisions();
             $entry['map_rename'] = array('key' => $line['key'], 'before' => $decisions[$line['key']] ?? null);
-            $decisions[$line['key']] = array('decision' => 'saved', 'year' => (int) $entry['rename']['year'], 'swapped' => !$line['earlier_is_source'],
+            $decisions[$line['key']] = $rename === null
+                // An alternate name: the line is not a rename.
+                ? array('decision' => 'skipped', 'year' => 0, 'swapped' => false, 'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'))
+                : array('decision' => 'saved', 'year' => (int) $entry['rename']['year'], 'swapped' => !$line['earlier_is_source'],
                 'by' => (string) $login, 'at' => gmdate('Y-m-d H:i:s'));
             update_option('kop_network_rename_review', $decisions, false);
         }
@@ -1177,7 +1184,12 @@ if (!function_exists('kop_fmerge_do_merge')) {
                 . $entry['keep']['name'] . '" (' . kop_fmerge_years_text($entry['rename']['later']) . '), and everything filed under it stays with it'
                 . ($entry['report']['files'] ? '; ' . $entry['report']['files'] . ' documents moved into the library' : '') . '.';
         }
-        return 'Merged: "' . $entry['drop']['name'] . '" is now part of "' . $entry['keep']['name'] . '"'
+        if ($as_duplicate === 'alias') {
+            return 'Merged as another name: "' . $entry['drop']['name'] . '" is now an other name of "' . $entry['keep']['name'] . '", not a past name'
+                . ($line ? ', and the rebrand line on the map between them is marked "Not a rename"' : '')
+                . ($entry['report']['files'] ? '; ' . $entry['report']['files'] . ' documents moved into its library' : '') . '.';
+        }
+                return 'Merged: "' . $entry['drop']['name'] . '" is now part of "' . $entry['keep']['name'] . '"'
             . ($entry['report']['files'] ? ', with ' . $entry['report']['files'] . ' documents moved into its library' : '') . '.';
     }
 }
@@ -1375,7 +1387,9 @@ if (!function_exists('kop_fmerge_ajax')) {
      *   merge      keep, drop
      *   rename     earlier, later, year, earlier_start, later_start, later_end
      *              (one program under two names: the later record is kept)
-     *   rename_plan a, b   (what a rename merge of any two records would write)
+     *   alias      keep, drop   (one program; the dropped name is only another name
+ *              of it, never a rename: kop_fmerge_do_merge(..., 'alias'))
+ *   rename_plan a, b   (what a rename merge of any two records would write)
      *   dismiss    a, b      (not the same place)
      *   undismiss  a, b
      *   undo       log       (a merge's log id)
@@ -1408,6 +1422,8 @@ if (!function_exists('kop_fmerge_ajax')) {
                     'later'   => array('start' => (int) ($_POST['later_start'] ?? 0) ?: $year, 'end' => (int) ($_POST['later_end'] ?? 0) ?: null),
                     'reversed' => !empty($_POST['reversed']),
                 )) . ' Undo is on the Merged tab.';
+            } elseif ($op === 'alias') {
+                $note = kop_fmerge_do_merge($pdo, $prefix, (int) ($_POST['keep'] ?? 0), (int) ($_POST['drop'] ?? 0), $login, null, 'alias') . ' Undo is on the Merged tab.';
             } elseif ($op === 'rename_plan') {
                 $a = kop_fmerge_row($pdo, (int) ($_POST['a'] ?? 0));
                 $b = kop_fmerge_row($pdo, (int) ($_POST['b'] ?? 0));
@@ -1772,6 +1788,12 @@ if (!function_exists('kop_fmerge_page')) {
                         later_start: y, later_end: Number(lEnd.input.value) || 0, reversed: flip ? 1 : 0 }, c);
                 });
                 actions.appendChild(go);
+                // Not a rename at all: one program, the other name only another name it goes by.
+                var alias = el('button', 'button', 'Just another name, not a rename');
+                alias.type = 'button';
+                alias.title = 'Keeps "' + l.name + '"; "' + e.name + '" becomes another name of it (no years of its own, no rename on the map)';
+                alias.addEventListener('click', function () { send({ op: 'alias', keep: l.id, drop: e.id }, c); });
+                actions.appendChild(alias);
                 var sw = el('button', 'button', 'The other way round');
                 sw.type = 'button';
                 sw.addEventListener('click', function () { swapped[p.key] = !flip; delete yearsTyped[p.key]; render(); });

@@ -420,8 +420,10 @@ function kop_rinbox_daudit_item($key, array $p) {
         list($e, $l) = array_map('intval', explode('>', $r['pair']));
         return !isset($merged_pairs[min($e, $l) . ':' . max($e, $l)]);
     });
-    $rename_actions = kop_rinbox_daudit_rename_actions($renames);
+    // The card's own Undo for its merges is listed once, below, from every merge it made.
+    $rename_actions = array_values(array_filter(kop_rinbox_daudit_rename_actions($renames), function ($a) { return $a['id'] !== 'rename_unmerge'; }));
     $actions = $checklist ? array_merge($actions, $rename_actions) : array_merge($rename_actions, $actions);
+    if ($opts) $actions = array_merge($actions, kop_rinbox_daudit_alias_actions((string) $key, $p, $d, $opts, $names));
     if (array_filter((array) ($d['edits'] ?? array()), function ($e) { return empty($e['undone']); })) {
         $actions[] = array('id' => 'edit_undo', 'label' => 'Undo my last edit here', 'style' => 'undo',
             'help' => 'Puts back the fields the last "Edit details" save on this card changed (any changed again since stay).');
@@ -473,6 +475,12 @@ function kop_rinbox_daudit_act($key, $action, array $params) {
             return array('message' => kop_daudit_rename_fold($key, (string) ($params['pair'] ?? ''), kop_rinbox_reviewer()));
         case 'rename_unmerge':
             return array('message' => kop_daudit_rename_unmerge($key, (string) ($params['pair'] ?? '')));
+        case 'alias_merge':
+            return array('message' => kop_daudit_alias_merge($key, (string) ($params['pick'] ?? ''), kop_rinbox_reviewer()));
+        case 'name_alias':
+            return array('message' => kop_daudit_name_alias($key, (string) ($params['pick'] ?? ''), kop_rinbox_reviewer()));
+        case 'name_alias_undo':
+            return array('message' => kop_daudit_name_alias_undo($key));
         case 'edit_undo':
             return array('message' => kop_daudit_edit_undo($key));
     }
@@ -696,4 +704,44 @@ function kop_rinbox_daudit_rename_actions(array $renames) {
             'params' => array(array('name' => 'pair', 'label' => 'Merge', 'type' => 'select', 'value' => (string) array_key_first($undo), 'options' => $undo)));
     }
     return $actions;
+}
+
+/* ---- Another name, not a rename ------------------------------------------ */
+
+/**
+ * "Just another name, not a rename" for two records, "Only another name" for
+ * a past name on one, their Undo, and the Undo of every merge this card made.
+ */
+function kop_rinbox_daudit_alias_actions($key, array $p, array $d, array $opts, array $names) {
+    $out = array();
+    $pairs = kop_daudit_alias_pairs($key, $p, $opts);
+    if ($pairs) {
+        $out[] = array('id' => 'alias_merge', 'label' => 'Just another name, not a rename', 'style' => 'approve', 'ask' => true, 'submit' => 'Merge as one program',
+            'help' => 'The two are one program and one of the names is only another name it goes by (a legal name, a short form), never an earlier or later one: the record folds in as one program, its name is filed as an other name with no years of its own, and the rebrand line between them on the map is marked "Not a rename". Undo is on this card.',
+            'params' => array(array('name' => 'pick', 'label' => 'Records', 'type' => 'select', 'value' => (string) array_key_first($pairs), 'options' => $pairs)));
+    }
+    $names_list = kop_daudit_alias_candidates($p, $opts);
+    if ($names_list) {
+        $out[] = array('id' => 'name_alias', 'label' => 'A past name is only another name', 'style' => 'neutral', 'ask' => true, 'submit' => 'Make it another name',
+            'help' => 'The name stays on the record, as an other name instead of a past one: the page is not cut into sections for it and nothing reads it as a rename; the rebrand line to it on the map is marked "Not a rename". Undo is on this card.',
+            'params' => array(array('name' => 'pick', 'label' => 'Name', 'type' => 'select', 'value' => (string) array_key_first($names_list), 'options' => $names_list)));
+    }
+    if (array_filter((array) ($d['aliases'] ?? array()), function ($a) { return empty($a['undone']); })) {
+        $out[] = array('id' => 'name_alias_undo', 'label' => 'Undo: another name', 'style' => 'undo',
+            'help' => 'The last name made another name on this card is a past name again, and its map line goes back to how it was.');
+    }
+    $undo = array();
+    foreach ((array) ($d['merges'] ?? array()) as $pair => $m) {
+        if (empty($m['log'])) continue;
+        list($e, $l) = array_map('intval', explode('>', (string) $pair) + array(0, 0));
+        $how = !empty($m['alias']) ? 'just another name' : (!empty($m['fold']) ? 'one program' : 'a rename');
+        $label = function ($id) use ($names) { return isset($names['rec:' . $id]) ? $names['rec:' . $id] . ' (#' . $id . ')' : 'record #' . $id; };
+        $undo[(string) $pair] = 'Undo: ' . $label($e) . ' and ' . $label($l) . ' apart again (merged as ' . $how . ')';
+    }
+    if ($undo) {
+        $out[] = array('id' => 'rename_unmerge', 'label' => 'Undo the merge', 'style' => 'undo',
+            'help' => 'Splits the two records again, each with everything it had before the merge.',
+            'params' => array(array('name' => 'pair', 'label' => 'Merge', 'type' => 'select', 'value' => (string) array_key_first($undo), 'options' => $undo)));
+    }
+    return $out;
 }
