@@ -1,6 +1,6 @@
 # Data Forms
 
-The Data Forms module covers both the admin master-data form and the public suggestion form. Together they support structured data entry for parent companies (operator projects with their facilities), operators, locations (state and country profiles), referrers, transporters, mental health providers and marketing companies.
+The Data Forms module covers both the admin master-data form and the public suggestion form. Together they support structured data entry for parent companies (operator projects with their facilities), operators, locations (state and country profiles), referrers, transporters, mental health providers, marketing companies and trade organizations.
 
 ## Overview
 
@@ -113,6 +113,14 @@ The **Marketers** tab (`data-category="marketers"`) is for companies that market
 - Storage: `marketers_master`, created on first save, approval or seed. Every save path keeps only `{marketerCompany, category}` (`kop_marketer_keep_data()`): admin saves (`api/save-master.php`, the REST fallback), public submissions (`api/save-suggestion.php`) and approval (`api/lib-suggested-edits.php`). Approving a suggestion for a company on file merges into it (`kop_marketer_merge_company()`): filled text wins, lists join, nothing is emptied. Other categories drop `marketerCompany`.
 - Public page: /marketing-companies/ (`templates/page-marketer-index.php`, `inc/marketers.php`). Industry websites link to the archived copy and to the live site through `/go/`. Programs and companies link to their pages when the name belongs to exactly one record.
 - The guided start offers "Marketing company" (`?add=marketer`).
+
+## Trade Organizations
+
+The **Trade Organizations** tab (`data-category="tradeorgs"`) works like Marketers: markup in `templates/data-form-tradeorg.php`, JS in `js/data-form/tradeorg-form.js`, one organization per project in `formData.tradeOrg` (keys in `api/lib-tradeorgs.php`, checked against the JS and markup by `scripts/test-tradeorgs.php`), stored in `tradeorgs_master` as `{tradeOrg, category}` by every save path, merged into the record on file on approval. List paths `tradeOrg.*` resolve to `formData.tradeOrg`; `memberFacilities` autocompletes facility records and `memberCompanies` operators.
+
+- Fields: `name`, `acronym`, `orgType`, place, `founded`, `status`, `notes`; lists `otherNames`, `websites`, `keyPersonnel`, `otherActivities`, `memberFacilities`, `memberCompanies`, `memberOthers`, `publications`, `lobbying`, `funding`, `affiliations`, `lawsuits`, `sourceUrls`, `socialMedia`; `activities` checkboxes.
+- Members are not retyped: /trade-organizations/ lists every program whose facility record names the organization (by name, acronym or other name) under memberships or accreditations, current and former (`kop_tradeorgs_members()`). `memberFacilities` is for members no record lists yet.
+- The guided start offers "Trade organization" (`?add=tradeorg`).
 
 ## Key Features
 

@@ -128,6 +128,8 @@ try {
                     $default_category = 'providers';
                 } elseif ($sourceLabel === 'marketers') {
                     $default_category = 'marketers';
+                } elseif ($sourceLabel === 'tradeorgs') {
+                    $default_category = 'tradeorgs';
                 } elseif ($sourceLabel === 'locations') {
                     $default_category = 'locations';
                 } elseif ($sourceLabel === 'facilities') {
@@ -172,6 +174,8 @@ try {
 
     // 2c. Marketing companies (own table, api/lib-marketers.php)
     $processTable('marketers_master', 'marketers');
+    // 2d. Trade organizations (own table, api/lib-tradeorgs.php)
+    $processTable('tradeorgs_master', 'tradeorgs');
 
     // 3-4. Operator projects and location profiles. Once admin saves write the
     // v2 tables (inc/facility-v2-writer.php), they are built from there.

@@ -3,6 +3,7 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib-suggested-edits.php';
 require_once __DIR__ . '/lib-marketers.php';
+require_once __DIR__ . '/lib-tradeorgs.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -97,6 +98,10 @@ function kop_infer_submission_category($input, $data, $active_category) {
 
     if (kop_marketer_has_data($data)) {
         return 'marketers';
+    }
+
+    if (kop_tradeorg_has_data($data)) {
+        return 'tradeorgs';
     }
 
     if (!empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']) || !empty($data['referrerConsultants'][0]['lastName'])) {
@@ -309,6 +314,12 @@ try {
     } else {
         unset($data['marketerCompany']);
     }
+    // A trade organization keeps only its tradeOrg block (api/lib-tradeorgs.php); other kinds drop it.
+    if ($effective_category === 'tradeorgs') {
+        $data = kop_tradeorg_keep_data($data);
+    } else {
+        unset($data['tradeOrg']);
+    }
 
     $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];
     
@@ -346,11 +357,15 @@ try {
 
     $hasMarketer = $effective_category === 'marketers' && trim((string) ($data['marketerCompany']['name'] ?? '')) !== '';
 
-    if (!$hasOperator && !$hasFacility && !$hasReferrer && !$hasTransporter && !$hasMarketer) {
+    $hasTradeorg = $effective_category === 'tradeorgs' && trim((string) ($data['tradeOrg']['name'] ?? '')) !== '';
+
+    if (!$hasOperator && !$hasFacility && !$hasReferrer && !$hasTransporter && !$hasMarketer && !$hasTradeorg) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => $effective_category === 'marketers'
+        echo json_encode(['success' => false, 'error' => $effective_category === 'tradeorgs'
+            ? "Please give the trade organization's name"
+            : ($effective_category === 'marketers'
             ? "Please give the marketing company's name"
-            : 'Please provide at least an operator name, facility name, referrer name, or transporter name']);
+            : 'Please provide at least an operator name, facility name, referrer name, or transporter name')]);
         exit;
     }
     
@@ -409,6 +424,11 @@ try {
     // A marketing company is filed under its own name.
     if ($effective_category === 'marketers' && kop_is_placeholder_project_name($master_id)) {
         $master_id = trim((string) ($data['marketerCompany']['name'] ?? ''));
+    }
+
+    // A trade organization is filed under its own name.
+    if ($effective_category === 'tradeorgs' && kop_is_placeholder_project_name($master_id)) {
+        $master_id = trim((string) ($data['tradeOrg']['name'] ?? ''));
     }
 
     // A provider with no project name is filed under its state

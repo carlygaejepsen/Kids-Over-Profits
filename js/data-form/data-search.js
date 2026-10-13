@@ -22,7 +22,8 @@ const KOP_Search = (function() {
             transporter: document.getElementById('transporter-search-input')?.value || '',
             provider: document.getElementById('provider-search-input')?.value || '',
             // Marketing companies are filtered in the loaded list only (no database search for them)
-            marketer: document.getElementById('marketer-search-input')?.value || ''
+            marketer: document.getElementById('marketer-search-input')?.value || '',
+            tradeorg: document.getElementById('tradeorg-search-input')?.value || ''
         };
     }
 
@@ -162,6 +163,13 @@ const KOP_Search = (function() {
             marketerSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
             marketerSearchInput.dataset.listenerAttached = 'true';
         }
+
+        // Trade organization search input (loaded list only)
+        const tradeorgSearchInput = document.getElementById('tradeorg-search-input');
+        if (tradeorgSearchInput && !tradeorgSearchInput.dataset.listenerAttached) {
+            tradeorgSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
+            tradeorgSearchInput.dataset.listenerAttached = 'true';
+        }
     }
 
     /**
@@ -185,6 +193,9 @@ const KOP_Search = (function() {
 
         const marketerSearchInput = document.getElementById('marketer-search-input');
         if (marketerSearchInput) marketerSearchInput.value = '';
+
+        const tradeorgSearchInput = document.getElementById('tradeorg-search-input');
+        if (tradeorgSearchInput) tradeorgSearchInput.value = '';
 
         // Clear database search results
         window.databaseProjects = {};

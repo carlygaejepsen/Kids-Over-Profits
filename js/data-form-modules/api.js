@@ -50,7 +50,7 @@
             // top-level facilities and shows only a blank "Facility 1".
             const hasProjectContent = (obj) => obj && typeof obj === 'object' && [
                 'facilities', 'operator', 'referrerConsultants', 'referrerAgency',
-                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual', 'marketerCompany'
+                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual', 'marketerCompany', 'tradeOrg'
             ].some(key => obj[key] !== undefined);
 
             const dataLayer = parseIfString(source.data);
@@ -416,6 +416,12 @@
                 projectData.data = window.marketerSubmissionData(projectData.data, projectName);
             } else {
                 delete projectData.data.marketerCompany;
+            }
+            // A trade organization saves only its tradeOrg block (js/data-form/tradeorg-form.js).
+            if (category === 'tradeorgs' && typeof window.tradeOrgSubmissionData === 'function') {
+                projectData.data = window.tradeOrgSubmissionData(projectData.data, projectName);
+            } else {
+                delete projectData.data.tradeOrg;
             }
 
             const payload = {

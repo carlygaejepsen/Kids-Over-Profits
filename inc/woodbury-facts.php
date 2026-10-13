@@ -1021,6 +1021,7 @@ function kop_wbf_create_kinds() {
         'transporter' => 'Transporter (youth transport)',
         'provider'   => 'Mental health provider',
         'marketer'   => 'Marketing company',
+        'tradeorg'   => 'Trade organization',
     );
 }
 
@@ -1062,7 +1063,7 @@ function kop_wbf_filed_on(array $r) {
         return '';
     }
     $kinds = array('consultant' => 'educational consultant', 'provider' => 'mental health provider', 'young_adult' => 'young adult program',
-        'company' => 'parent company', 'transporter' => 'transporter', 'marketer' => 'marketing company');
+        'company' => 'parent company', 'transporter' => 'transporter', 'marketer' => 'marketing company', 'tradeorg' => 'trade organization');
     if (!empty($done['existing'])) return 'the notes of the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
     return 'the ' . ($kinds[$done['filed']] ?? $done['filed']) . ' record "' . $done['name'] . '" (#' . (int) $done['id'] . ')';
 }

@@ -51,6 +51,7 @@
     /** The data-form tab a submission belongs on, matching approval's routing. */
     function submissionCategory(name, raw, data) {
         if (String(data.category || raw.category || '').toLowerCase() === 'providers') return 'providers';
+        if (String(data.category || raw.category || '').toLowerCase() === 'tradeorgs' || String(data.tradeOrg?.name || '').trim()) return 'tradeorgs';
         if (String(data.category || raw.category || '').toLowerCase() === 'marketers' || String(data.marketerCompany?.name || '').trim()) return 'marketers';
         if (String(data.referrerAgency?.name || '').trim() || hasName(data.referrerConsultants?.[0])) return 'referrers';
         if (String(data.transporterCompany?.name || data.transporterAgency?.name || '').trim() || hasName(data.transporters?.[0])) return 'transporters';
@@ -63,6 +64,7 @@
         if (session.category === 'referrers') return document.getElementById('referrer-project-name');
         if (session.category === 'transporters') return document.getElementById('transporter-project-name');
         if (session.category === 'marketers') return document.getElementById('marketer-project-name');
+        if (session.category === 'tradeorgs') return document.getElementById('tradeorg-project-name');
         return document.getElementById('project-name');
     }
 
@@ -184,7 +186,7 @@
         api.persistProjectLocally = function() { return true; };
 
         relabel('#submission-section .section-title', 'Save to Submission');
-        relabel('#save-project-btn, #save-referrer-project-btn, #save-transporter-project-btn, #save-marketer-project-btn', 'Save changes to submission');
+        relabel('#save-project-btn, #save-referrer-project-btn, #save-transporter-project-btn, #save-marketer-project-btn, #save-tradeorg-project-btn', 'Save changes to submission');
         relabel('#save-draft-locally-btn, #delete-project-btn', null);
         relabel('.admin-warning', null);
 

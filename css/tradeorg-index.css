@@ -1,0 +1,161 @@
+/*
+ * Trade organizations (templates/page-tradeorg-index.php).
+ *
+ * One white card, one column: a reference list. Text never sits on the
+ * site's gradient; bright accents stay on borders, never behind text.
+ */
+
+.kop-tro-page {
+    max-width: 56rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .kop-tro-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-tro-title {
+    margin: 0 0 1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-tro-intro {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-tro-intro p {
+    margin: 0;
+}
+
+.kop-tro-intro p + p {
+    margin-top: 0.6rem;
+}
+
+.kop-tro-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-tro-page a:hover,
+.kop-tro-page a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-tro-count,
+.kop-tro-empty {
+    margin: 0 0 0.75rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-tro-jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.kop-tro-org {
+    scroll-margin-top: 6rem;
+    margin: 0 0 1.25rem;
+    padding: 0 0 1.1rem;
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+.kop-tro-name {
+    margin: 0 0 0.2rem;
+    font-size: 1.3rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-tro-meta {
+    margin: 0 0 0.5rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-tro-fact {
+    margin: 0 0 0.35rem;
+}
+
+.kop-tro-list-title {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-tro-list {
+    margin: 0 0 0.5rem 1.2rem;
+    padding: 0;
+}
+
+.kop-tro-list li {
+    margin-bottom: 0.3rem;
+}
+
+.kop-tro-sources,
+.kop-tro-muted {
+    font-size: 0.9em;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-tro-sources {
+    margin: 0.5rem 0 0;
+}
+
+.kop-tro-notes p {
+    margin: 0.5rem 0 0;
+}
+
+.kop-tro-list li,
+.kop-tro-sources {
+    overflow-wrap: anywhere;
+}
+
+.kop-tro-acronym {
+    font-weight: 400;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+/* Programs whose records name the organization (kop_tradeorgs_members()) */
+.kop-tro-members {
+    margin: 0.75rem 0 0.5rem;
+}
+
+.kop-tro-members summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-tro-members summary:focus-visible {
+    outline: 2px solid var(--kop-teal-ink, #1D6A73);
+    outline-offset: 2px;
+}
+
+.kop-tro-cols {
+    margin-top: 0.4rem;
+    columns: 2 16rem;
+    column-gap: 2rem;
+}
+
+.kop-tro-cols li {
+    break-inside: avoid;
+}

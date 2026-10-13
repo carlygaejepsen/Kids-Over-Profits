@@ -101,6 +101,7 @@ function kop_global_search_collect($phrase) {
         array('key' => 'referrers',    'label' => 'Referrers',             'table' => 'referrers_master',    'template' => 'page-referrer-index.php',    'limit' => 4),
         array('key' => 'transporters', 'label' => 'Transporters',          'table' => (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'template' => 'page-transporter-index.php', 'limit' => 4),
         array('key' => 'marketers',    'label' => 'Marketing companies',   'table' => 'marketers_master',    'template' => 'page-marketer-index.php',    'limit' => 4),
+        array('key' => 'tradeorgs',    'label' => 'Trade organizations',   'table' => 'tradeorgs_master',    'template' => 'page-tradeorg-index.php',    'limit' => 4),
         array('key' => 'locations',    'label' => 'Locations',             'table' => 'locations_master',    'template' => 'page-location-index.php',    'limit' => 4),
     );
 
@@ -132,7 +133,7 @@ function kop_global_search_collect($phrase) {
         }
         // Referrers and transporters are not part of the facility model.
         $master_tables = array_values(array_filter($master_tables, function ($cfg) {
-            return in_array($cfg['key'], array('referrers', 'transporters', 'marketers'), true);
+            return in_array($cfg['key'], array('referrers', 'transporters', 'marketers', 'tradeorgs'), true);
         }));
     }
 
@@ -172,8 +173,15 @@ function kop_global_search_collect($phrase) {
             if (isset($inner['marketerCompany']['name']) && is_string($inner['marketerCompany']['name']) && trim($inner['marketerCompany']['name']) !== '') {
                 $operator = trim($inner['marketerCompany']['name']);
             }
+            if (isset($inner['tradeOrg']['name']) && is_string($inner['tradeOrg']['name']) && trim($inner['tradeOrg']['name']) !== '') {
+                $operator = trim($inner['tradeOrg']['name']);
+            }
             $display = $operator !== '' ? $operator : $row['unique_name'];
             $profile_url = '';
+            if ($cfg['key'] === 'tradeorgs' && $index_url) {
+                // The organization's own entry on /trade-organizations/ (inc/tradeorgs.php)
+                $profile_url = $index_url . '#kop-tro-' . (int) $row['id'];
+            }
             if ($cfg['key'] === 'marketers' && $index_url) {
                 // The company's own entry on /marketing-companies/ (inc/marketers.php)
                 $profile_url = $index_url . '#kop-mkt-' . (int) $row['id'];

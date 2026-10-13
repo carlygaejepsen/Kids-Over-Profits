@@ -723,6 +723,10 @@ window.updateAllUI = function() {
         if (typeof window.loadMarketerData === 'function') {
             window.loadMarketerData();
         }
+        // ...and the Trade Organizations tab (js/data-form/tradeorg-form.js)
+        if (typeof window.loadTradeOrgData === 'function') {
+            window.loadTradeOrgData();
+        }
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();

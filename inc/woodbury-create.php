@@ -15,6 +15,7 @@
  *   provider    providers_master, one project per provider
  *   transporter transporters_master, a youth transport company
  *   marketer    marketers_master, a marketing company (api/lib-marketers.php)
+ *   tradeorg    tradeorgs_master, a trade organization (api/lib-tradeorgs.php)
  *
  * Every create refuses a name that is already a record, and a facility also
  * refuses a close match (kop_facdisc_near_duplicate) unless "It is a
@@ -50,6 +51,7 @@ function kop_wbc_kinds() {
         'provider'   => 'Mental health provider',
         'transporter' => 'Transporter (youth transport)',
         'marketer'    => 'Marketing company',
+        'tradeorg'    => 'Trade organization',
     );
 }
 
@@ -456,14 +458,43 @@ function kop_wbc_create_marketer(array $r, array $f, PDO $pdo) {
     return array('kind' => 'marketer', 'id' => (int) $pdo->lastInsertId(), 'name' => $f['name'], 'folder' => $folder, 'url' => kop_wbc_marketer_url((int) $pdo->lastInsertId()));
 }
 
+/** A trade organization in tradeorgs_master (kop_tradeorg_keep_data()); the Woodbury issue is its first source note. */
+function kop_wbc_create_tradeorg(array $r, array $f, PDO $pdo) {
+    require_once get_stylesheet_directory() . '/api/lib-tradeorgs.php';
+    if (function_exists('kop_tradeorgs_ensure_table')) {
+        kop_tradeorgs_ensure_table($pdo);
+    }
+    $taken = $pdo->prepare('SELECT unique_name FROM tradeorgs_master WHERE LOWER(unique_name) = LOWER(?) LIMIT 1');
+    $taken->execute(array($f['name']));
+    if ($hit = $taken->fetchColumn()) {
+        throw new RuntimeException('Already a trade organization record: ' . $hit . '.');
+    }
+    $folder = kop_wbc_folder($f['name'], kop_wbc_folder('Trade Organizations', 0));
+    $org = kop_tradeorg_normalize(array(
+        'name'    => $f['name'],
+        'city'    => $f['city'],
+        'state'   => $f['state'],
+        'country' => $f['country'] !== '' ? $f['country'] : ($f['state'] !== '' ? 'United States' : ''),
+        'notes'   => implode(PHP_EOL, array_merge(array(kop_wbc_source_note($r)), kop_wbc_extra_notes($f))),
+    ));
+    $payload = array('name' => $f['name'], 'category' => 'tradeorgs', 'timestamp' => date('c'),
+        'data' => array('tradeOrg' => $org, 'category' => 'tradeorgs', 'documentFolderId' => $folder),
+        'documentFolderId' => $folder, '_source' => 'woodbury');
+    $pdo->prepare('INSERT INTO tradeorgs_master (unique_name, json_data) VALUES (?, ?)')
+        ->execute(array($f['name'], wp_json_encode($payload)));
+    $id = (int) $pdo->lastInsertId();
+    $url = kop_wbc_marketer_url($id, 'templates/page-tradeorg-index.php', '#kop-tro-');
+    return array('kind' => 'tradeorg', 'id' => $id, 'name' => $f['name'], 'folder' => $folder, 'url' => $url);
+}
+
 /** A marketing company's entry on /marketing-companies/ (inc/marketers.php), or ''. */
-function kop_wbc_marketer_url($id) {
+function kop_wbc_marketer_url($id, $template = 'templates/page-marketer-index.php', $anchor = '#kop-mkt-') {
     if ($id <= 0 || !function_exists('get_posts')) {
         return '';
     }
     $pages = get_posts(array('post_type' => 'page', 'post_status' => 'publish', 'numberposts' => 1, 'fields' => 'ids',
-        'meta_key' => '_wp_page_template', 'meta_value' => 'templates/page-marketer-index.php'));
-    return $pages ? get_permalink($pages[0]) . '#kop-mkt-' . (int) $id : '';
+        'meta_key' => '_wp_page_template', 'meta_value' => $template));
+    return $pages ? get_permalink($pages[0]) . $anchor . (int) $id : '';
 }
 
 /* ---- Existing company, consultant, provider or transporter ----------- */
@@ -475,6 +506,7 @@ function kop_wbc_record_tables() {
         'provider'    => array('table' => 'providers_master', 'parent' => 'Mental Health Providers'),
         'transporter' => array('table' => 'transporters_master', 'parent' => 'Transporters'),
         'marketer'    => array('table' => 'marketers_master', 'parent' => 'Marketing Companies'),
+        'tradeorg'    => array('table' => 'tradeorgs_master', 'parent' => 'Trade Organizations'),
     );
 }
 
@@ -521,6 +553,14 @@ function kop_wbc_record_names($kind, $unique_name, array $payload) {
                 $names[$n] = '';
             }
         }
+    } elseif ($kind === 'tradeorg') {
+        $org = (array) ($d['tradeOrg'] ?? array());
+        foreach (array_merge(array($org['name'] ?? '', $org['acronym'] ?? ''), (array) ($org['otherNames'] ?? array())) as $n) {
+            $n = is_string($n) ? trim($n) : '';
+            if ($n !== '' && !isset($names[$n])) {
+                $names[$n] = '';
+            }
+        }
     } elseif ($kind === 'transporter' || $kind === 'marketer') {
         $co = (array) ($d[$kind === 'marketer' ? 'marketerCompany' : 'transporterCompany'] ?? array());
         foreach (array_merge(array($co['name'] ?? ''), (array) ($co['otherNames'] ?? array())) as $n) {
@@ -545,6 +585,8 @@ function kop_wbc_record_place($kind, array $payload) {
         $p = (array) ($d['facilities'][0]['locationDetails'] ?? array());
     } elseif ($kind === 'marketer') {
         $p = (array) ($d['marketerCompany'] ?? array());
+    } elseif ($kind === 'tradeorg') {
+        $p = (array) ($d['tradeOrg'] ?? array());
     } else {
         $p = (array) ($d['transporterCompany'] ?? array());
     }
@@ -772,7 +814,7 @@ function kop_wbc_file_with_ticked(array $r, array $target) {
 
 /** The search box for filing a pending row under an existing non-facility record. */
 function kop_wbc_render_finder() {
-    echo '<div class="kop-wb-add kop-wbr">Or a consultant, company, provider, transporter or marketing company: '
+    echo '<div class="kop-wb-add kop-wbr">Or a consultant, company, provider, transporter, marketing company or trade organization: '
         . '<input type="search" class="kop-wbr-q" placeholder="Name of the firm or person" autocomplete="off">'
         . '<ul class="kop-wbr-hits" hidden></ul></div>';
 }
@@ -1038,7 +1080,7 @@ function kop_wbc_render_assets() {
 function kop_wbc_parse_record_token($value) {
     $value = trim((string) $value);
     if (preg_match('/^\d+$/', $value)) return (int) $value > 0 ? array('facility', (int) $value) : null;
-    if (preg_match('/^(company|consultant|provider|transporter|marketer):(\d+)$/', $value, $m) && (int) $m[2] > 0) return array($m[1], (int) $m[2]);
+    if (preg_match('/^(company|consultant|provider|transporter|marketer|tradeorg):(\d+)$/', $value, $m) && (int) $m[2] > 0) return array($m[1], (int) $m[2]);
     return null;
 }
 
@@ -1055,6 +1097,7 @@ function kop_wbc_note_paths($kind, array $payload) {
     if ($kind === 'provider') return array(array_merge($pre, array('facilities', 0, 'notes')));
     if ($kind === 'transporter') return array(array_merge($pre, array('transporterCompany', 'notes')));
     if ($kind === 'marketer') return array(array_merge($pre, array('marketerCompany', 'notes')));
+    if ($kind === 'tradeorg') return array(array_merge($pre, array('tradeOrg', 'notes')));
     if ($kind === 'consultant') {
         if (($d['referrerType'] ?? '') === 'individual' || (trim((string) ($d['referrerAgency']['name'] ?? '')) === '' && !empty($d['referrerConsultants'][0]))) {
             $paths = array(array_merge($pre, array('referrerConsultants', 0, 'notes')));

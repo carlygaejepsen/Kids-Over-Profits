@@ -230,7 +230,7 @@
             // for company projects (showing only a blank "Facility 1").
             const hasProjectContent = (obj) => obj && typeof obj === 'object' && [
                 'facilities', 'operator', 'referrerConsultants', 'referrerAgency',
-                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual', 'marketerCompany'
+                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual', 'marketerCompany', 'tradeOrg'
             ].some(key => obj[key] !== undefined);
 
             let rawData;

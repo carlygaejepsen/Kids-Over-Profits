@@ -2,7 +2,7 @@
 /**
  * Shared library for applying approved suggested_edits rows to the master
  * tables (facilities_master / referrers_master / transporters_master /
- * providers_master / marketers_master / locations_master).
+ * providers_master / marketers_master / tradeorgs_master / locations_master).
  *
  * Used by process-edit.php (legacy single-submission endpoint) and
  * manage-submissions.php (Submissions Review approve action) so that
@@ -13,6 +13,7 @@
  */
 
 require_once __DIR__ . '/lib-marketers.php';
+require_once __DIR__ . '/lib-tradeorgs.php';
 
 if (!function_exists('kop_ensure_master_table')) {
     /**
@@ -520,6 +521,7 @@ if (!function_exists('kop_apply_suggested_edit')) {
         $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $wp_prefix);
         $providers_table = kop_resolve_table_name($pdo, 'providers_master', '');
         $marketers_table = kop_resolve_table_name($pdo, 'marketers_master', '');
+        $tradeorgs_table = kop_resolve_table_name($pdo, 'tradeorgs_master', '');
         $locations_table = kop_resolve_table_name($pdo, 'locations_master', $wp_prefix);
 
         try {
@@ -527,6 +529,7 @@ if (!function_exists('kop_apply_suggested_edit')) {
             // transaction opens rather than when a provider row is found.
             kop_ensure_master_table($pdo, $providers_table);
             kop_ensure_master_table($pdo, $marketers_table);
+            kop_ensure_master_table($pdo, $tradeorgs_table);
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE id = ? AND status = 'pending' LIMIT 1");
@@ -575,6 +578,17 @@ if (!function_exists('kop_apply_suggested_edit')) {
             $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
             // Marketing companies (api/lib-marketers.php): their own table, filed under the company's name.
             $isMarketer = !$isProvider && kop_marketer_has_data($project_data);
+            // Trade organizations (api/lib-tradeorgs.php): the same, under the organization's name.
+            $isTradeorg = !$isProvider && !$isMarketer && kop_tradeorg_has_data($project_data);
+            if ($isTradeorg) {
+                $project_data = kop_tradeorg_keep_data($project_data);
+                $decoded_data = ['name' => $resolved_master_id, 'category' => 'tradeorgs', 'data' => $project_data];
+                $tradeorg_name = kop_sanitize_project_identifier($project_data['tradeOrg']['name']);
+                if (kop_is_placeholder_project_name($master_id) && $tradeorg_name !== '') {
+                    $resolved_master_id = $tradeorg_name;
+                    $decoded_data['name'] = $tradeorg_name;
+                }
+            }
             if ($isMarketer) {
                 $project_data = kop_marketer_keep_data($project_data);
                 $decoded_data = ['name' => $resolved_master_id, 'category' => 'marketers', 'data' => $project_data];
@@ -615,7 +629,7 @@ if (!function_exists('kop_apply_suggested_edit')) {
                 $resolved_master_id = $masterIdUpper;
             }
             // A provider filed under a state stays in providers_master.
-            if ($isProvider || $isMarketer) {
+            if ($isProvider || $isMarketer || $isTradeorg) {
                 $isLocation = false;
             }
 
@@ -637,6 +651,9 @@ if (!function_exists('kop_apply_suggested_edit')) {
             } elseif ($isMarketer) {
                 $tableName = $marketers_table;
                 $category = 'marketers';
+            } elseif ($isTradeorg) {
+                $tableName = $tradeorgs_table;
+                $category = 'tradeorgs';
             } elseif ($isReferrer) {
                 $tableName = $referrers_table;
                 $category = 'referrers';
@@ -750,6 +767,17 @@ if (!function_exists('kop_apply_suggested_edit')) {
                     }
                     $existingData['timestamp'] = date('c');
                     $json_data = json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                // A trade organization suggestion adds to the one on file the same way.
+                if ($isTradeorg && !empty($exists['json_data'])) {
+                    $merged = kop_tradeorg_merge(kop_tradeorg_from_json($exists['json_data']), $project_data['tradeOrg']);
+                    $kept = json_decode($exists['json_data'], true);
+                    $kept = is_array($kept) ? $kept : [];
+                    $kept['name'] = $resolved_master_id;
+                    $kept['category'] = 'tradeorgs';
+                    $kept['data'] = array_merge(is_array($kept['data'] ?? null) ? $kept['data'] : [], ['tradeOrg' => $merged, 'category' => 'tradeorgs']);
+                    $kept['timestamp'] = date('c');
+                    $json_data = json_encode($kept, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
                 // A marketer suggestion adds to the company on file: lists join, filled text wins, nothing is emptied.
                 if ($isMarketer && !empty($exists['json_data'])) {

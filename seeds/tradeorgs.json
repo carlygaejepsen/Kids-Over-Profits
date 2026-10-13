@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "_note": "Trade organizations added to tradeorgs_master once per version (inc/tradeorgs.php kop_tradeorgs_apply_seed()). Only records not on file are added; an existing record is never changed. Facts from the reputation series (seeds/reputation/) and the documents it cites. Member programs are not typed here: the page lists every program whose record names the organization.",
+  "records": [
+    {
+      "name": "National Association of Therapeutic Schools and Programs",
+      "acronym": "NATSAP",
+      "orgType": "Trade association of programs",
+      "founded": "1999",
+      "status": "Active",
+      "websites": [
+        "https://natsap.org/"
+      ],
+      "keyPersonnel": [
+        "John L. Santa (president, 2006)",
+        "Jan Moss (executive director; testified to Congress in 2007)"
+      ],
+      "activities": {
+        "standards": true,
+        "lobbying": true,
+        "publicRelations": true,
+        "research": true,
+        "conferences": true,
+        "referralNetwork": true,
+        "memberSeal": true
+      },
+      "otherActivities": [
+        "\"Link 'n Learn,\" \"an innovative service that allows educational consultants and NATSAP programs to meet and network\" (2018-2020 strategic plans)",
+        "Engages \"an outside public relations consultant\" to develop \"pro forma press releases and P.R. tool kits that can be used by member programs\""
+      ],
+      "publications": [
+        "Journal of Therapeutic Schools and Programs",
+        "NATSAP News (newsletter)",
+        "Yearly strategic plans"
+      ],
+      "lobbying": [
+        "2006: formed an alliance with a psychiatric hospital trade group \"to mitigate the potential impact of ill conceived regulatory efforts such as the proposed Miller legislation\"",
+        "Testified at the 2007 House hearing on residential programs (executive director Jan Moss)",
+        "Its strategic plans list \"Legislation- Schiff bill,\" \"Miller/Schiff Legislation\" and \"UT/CA repealing funding\" among threats to members; government relations staff were to \"Forward Journals and newsletters to members of Congress\""
+      ],
+      "funding": [
+        "With the Outdoor Behavioral Healthcare Council, named as a funder by the research center that produces most wilderness therapy outcome studies"
+      ],
+      "affiliations": [
+        "Independent Educational Consultants Association (IECA): ex officio seat on NATSAP's board"
+      ],
+      "notes": "NATSAP did not require its members to be licensed until 2009, ten years after it was founded. It says it is \"not about accreditation\" and does not inspect its members (GAO, 2008), but programs show its logo beside accreditation seals, and in GAO's 2008 calls a program told a caller NATSAP \"absolutely\" inspects its members. Its strategic plans list \"HEAL online/Fornits,\" \"Google Reviews,\" \"Anonymous\" and \"Negative press\" as threats. In October 2020, during the Disability Law Center's investigation in Utah, its executive director told about 130 members: \"Let's not email\" (KUER). Its 2024 statement that there were \"no indications of abuse\" in a 12-year-old's death at Trails Carolina, later ruled a homicide, and its press release on The Program have been taken off its website.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/natsap-reputation-plans/",
+        "https://kidsoverprofits.org/investigatory-spotlight-natsap/",
+        "https://kidsoverprofits.org/research-shows/",
+        "https://kidsoverprofits.org/how-troubled-teen-programs-market-themselves-online/",
+        "https://kidsoverprofits.org/silencing-critics-and-survivors/",
+        "https://kidsoverprofits.org/wp-content/uploads/2019NATSAPStratPlan.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/1Q06News-Web-natsap.pdf",
+        "https://www.gao.gov/assets/gao-08-713t.pdf",
+        "https://www.kuer.org/health-science-environment/2020-12-03/natsap-leak"
+      ]
+    },
+    {
+      "name": "Outdoor Behavioral Healthcare Council",
+      "acronym": "OBH Council",
+      "orgType": "Trade association of wilderness programs",
+      "status": "Active",
+      "activities": {
+        "research": true
+      },
+      "funding": [
+        "Gave at least $1 million since 1999 to the research center that produces most wilderness therapy outcome studies (Undark, 2020); the center later named the OBH Council and NATSAP as its funders"
+      ],
+      "notes": "Undark reported in 2020 that all seven of that research center's researchers had worked in the industry or had strong ties to it, and that the studies appeared mainly in journals founded by related trade groups.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/research-shows/",
+        "https://undark.org/2020/01/29/does-science-support-the-wilderness-in-wilderness-therapy/"
+      ],
+      "otherNames": [
+        "Outdoor Behavioral Healthcare Industry Council",
+        "OBHIC",
+        "Outdoor Behavioral Health Council"
+      ]
+    },
+    {
+      "name": "Independent Educational Consultants Association",
+      "acronym": "IECA",
+      "orgType": "Trade association of educational consultants",
+      "status": "Active",
+      "activities": {
+        "referralNetwork": true
+      },
+      "affiliations": [
+        "National Association of Therapeutic Schools and Programs (NATSAP): ex officio seat on NATSAP's board"
+      ],
+      "notes": "The trade group of the educational consultants who refer families to programs. NATSAP's strategic plans give it an ex officio seat on NATSAP's board and describe \"Link 'n Learn,\" where consultants and NATSAP programs \"meet and network.\"",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/free-help-paid-by-programs/",
+        "https://kidsoverprofits.org/natsap-reputation-plans/",
+        "https://kidsoverprofits.org/wp-content/uploads/2019NATSAPStratPlan.pdf"
+      ]
+    },
+    {
+      "name": "Independent Small Programs Alliance",
+      "acronym": "ISPA",
+      "orgType": "Business alliance of small private-pay programs",
+      "city": "Clearwater",
+      "state": "FL",
+      "country": "United States",
+      "founded": "2005",
+      "keyPersonnel": [
+        "Andy Anderson, MRA (founder, managing partner and president; Andy Anderson Consulting)"
+      ],
+      "activities": {
+        "conferences": true
+      },
+      "otherActivities": [
+        "Dinner meetings at which it gives awards to educational consultants: the ISPA Visionary Award (Dana Dean Doering and Martha Moses, Boston, 2007), the Distinguished Service Award (Leslie Goldberg) and the \"ISPA Gem Award\" (Joseph P. Dobson, an IECA member; San Francisco, 2009), awards to Janet Greenwood and Nancy Ike (2011) and the Courage in Service Award (Judith E. Bessette, 2013)"
+      ],
+      "memberFacilities": [
+        "Gersh Experience at Daemen College",
+        "Wilderness Treatment Center",
+        "SeaChange Hawaii",
+        "Soltreks",
+        "Compass Rose Academy",
+        "Latham School",
+        "reStart",
+        "Cedar Ridge Academy",
+        "New Lifestyles"
+      ],
+      "notes": "Woodbury Reports announced its members as they joined: the Gersh Experience at Daemen College (December 2006), Wilderness Treatment Center (April 2008), SeaChange Hawaii and Soltreks (2011), Compass Rose Academy, Latham School and reStart (July 2012) and Cedar Ridge Academy (January 2013). New Lifestyles left before the spring 2013 IECA conference. In August 2012 Anderson wrote that ISPA had 17 members and would stop at twenty, and that he had turned away programs that did not fit its standard: \"caring for families and their loved ones comes first, profits come second.\" Woodbury's February 2007 headline spells it \"IPSA.\"",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=29",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0807.pdf#page=26",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0608.pdf#page=27",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0609.pdf#page=19",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0211.pdf#page=14",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0411.pdf#page=14",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0411.pdf#page=15",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0812.pdf#page=2",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0812.pdf#page=10",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0113.pdf#page=10",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0513.pdf#page=9",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0513.pdf#page=11"
+      ]
+    },
+    {
+      "name": "National Association of Therapeutic Camping",
+      "acronym": "NATC",
+      "otherNames": [
+        "National Association of Therapeutic Wilderness Camps",
+        "National Association of Therapeutic Wilderness Camping",
+        "NATWC"
+      ],
+      "orgType": "Association of therapeutic wilderness camps and outdoor programs",
+      "city": "Markleysburg",
+      "state": "PA",
+      "country": "United States",
+      "founded": "early 1990s",
+      "websites": [
+        "natwc.org"
+      ],
+      "keyPersonnel": [
+        "Rick McClintock (part-time executive director and membership chairman, 2008; retired director of Pressley Ridge at Ohiopyle)",
+        "Sandy McClintock (administrative coordinator, 2008)",
+        "Linda Tatsapaugh (board chair, 2008; Talisman Programs)",
+        "Reginald Jackson (vice chair, 2008; Timber Ridge Treatment Center)",
+        "Deb Hibbard (secretary, 2008; New Horizons for Young Women)",
+        "Shep Young (treasurer, 2008; corporate member Dry Box)",
+        "Mike Angstadt (board, 2008; Twin Cedars Youth Services, liaison to the Council on Accreditation)",
+        "Steve Cockerham (board, 2008; East Tennessee State University, editor of the Journal of Therapeutic Wilderness Camping)",
+        "Jason Brode (board, 2008; Diakon Youth Center)",
+        "Emily Darnell (board, 2008; corporate member Diamond Brand)",
+        "Holly Hunter (board, 2008; corporate member SafePassage Adolescent Services)",
+        "Meghan McIntosh (board, 2008; Three Springs)",
+        "Eric Morlino (board, 2008; Stone Mountain School)",
+        "Angie Senic (board, 2008; Eckerd Youth Alternatives)"
+      ],
+      "activities": {
+        "standards": true,
+        "publicRelations": true,
+        "conferences": true
+      },
+      "otherActivities": [
+        "Helped the Council on Accreditation (COA) draft its Therapeutic Wilderness Camping standards (first \"MM,\" later S28)",
+        "Created the National Board Certification in Wilderness Counseling for wilderness counselors",
+        "Yearly conferences since 1994 (the first at Black Mountain, NC; the 14th and 15th on Jekyll Island, GA)",
+        "Works to \"raise public awareness about the effectiveness of outdoor therapeutic treatment with troubled youth\""
+      ],
+      "publications": [
+        "Journal of Therapeutic Wilderness Camping"
+      ],
+      "memberFacilities": [
+        "Talisman Programs",
+        "Timber Ridge Treatment Center",
+        "New Horizons for Young Women",
+        "Diakon Youth Center",
+        "Three Springs",
+        "Stone Mountain School",
+        "Eckerd Youth Alternatives",
+        "Twin Cedars Youth Services"
+      ],
+      "memberOthers": [
+        "SafePassage Adolescent Services (corporate member; a youth transport company)",
+        "Dry Box (corporate member)",
+        "Diamond Brand (corporate member)"
+      ],
+      "affiliations": [
+        "Council on Accreditation (COA): wrote its wilderness camping standards with it"
+      ],
+      "notes": "Founded in the early 1990s as the National Association of Therapeutic Wilderness Camps, it changed its name in 2006 to the National Association of Therapeutic Wilderness Camping \"to dispel the perception that only a camp could be a member.\" It traces the field to Campbell Loughmiller's Camp Woodland Springs in East Texas. The programs listed above are those whose staff sat on its board in 2008; the transport company SafePassage Adolescent Services was a corporate member with a board seat. Until 2008 it was run by volunteers.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=25",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=26",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0208.pdf#page=27",
+        "https://kidsoverprofits.org/wp-content/uploads/2024/12/woodbury-0207.pdf#page=30"
+      ]
+    }
+  ]
+}

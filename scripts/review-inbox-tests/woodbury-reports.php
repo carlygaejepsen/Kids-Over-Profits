@@ -113,7 +113,7 @@ function kop_rinbox_test_woodbury_reports(array $src, array $item, callable $che
     $check('woodbury-reports: companies are found by name for filing', $hits && preg_match('/^c\d+$/', $hits[0]['value']), $hits ? $hits[0]['label'] : 'none');
     try {
         $hits = call_user_func($src['lookup'], 'record', 'Aspen');
-        $check('woodbury-reports: any non-facility record is found by name', $hits && preg_match('/^(company|consultant|provider|transporter|marketer):\d+$/', $hits[0]['value']), $hits ? $hits[0]['label'] : 'none');
+        $check('woodbury-reports: any non-facility record is found by name', $hits && preg_match('/^(company|consultant|provider|transporter|marketer|tradeorg):\d+$/', $hits[0]['value']), $hits ? $hits[0]['label'] : 'none');
     } catch (PDOException $e) {
         kop_rinbox_test_skip('woodbury-reports: any non-facility record is found by name', 'the master tables need MySQL (SHOW TABLES)');
     }

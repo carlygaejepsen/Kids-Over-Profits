@@ -52,6 +52,7 @@ get_header();
                 <button class="category-tab" data-category="transporters">Transporters</button>
                 <button class="category-tab" data-category="providers">Mental Health Providers</button>
                 <button class="category-tab" data-category="marketers">Marketers</button>
+                <button class="category-tab" data-category="tradeorgs">Trade Organizations</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -199,6 +200,7 @@ get_header();
                 </div>
 
 <?php $kop_marketer_part = 'panel'; $kop_marketer_public = true; include __DIR__ . '/data-form-marketer.php'; ?>
+<?php $kop_tradeorg_part = 'panel'; $kop_tradeorg_public = true; include __DIR__ . '/data-form-tradeorg.php'; ?>
             </div>
         </div>
 
@@ -662,6 +664,7 @@ get_header();
         </div>
 
 <?php $kop_marketer_part = 'editor'; $kop_marketer_public = true; include __DIR__ . '/data-form-marketer.php'; ?>
+<?php $kop_tradeorg_part = 'editor'; $kop_tradeorg_public = true; include __DIR__ . '/data-form-tradeorg.php'; ?>
 
         <!-- Fixed Toolbar -->
         <div class="fixed-toolbar minimized" id="fixed-toolbar">

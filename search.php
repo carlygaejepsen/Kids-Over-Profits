@@ -199,6 +199,13 @@ global $wpdb;
             'results'  => array(),
         ),
         array(
+            'title'    => 'Trade Organizations',
+            'table'    => 'tradeorgs_master',
+            'template' => 'page-tradeorg-index.php',
+            'linkable' => false, // one server-rendered list (inc/tradeorgs.php)
+            'results'  => array(),
+        ),
+        array(
             'title'    => 'Locations',
             'table'    => 'locations_master',
             'template' => 'page-location-index.php',

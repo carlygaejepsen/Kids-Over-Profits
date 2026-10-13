@@ -104,6 +104,7 @@ $CATEGORY_TABLE = [
     'transporters' => function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master',
     'providers'    => 'providers_master',
     'marketers'    => 'marketers_master',
+    'tradeorgs'    => 'tradeorgs_master',
     'locations'    => 'locations_master',
 ];
 $TABLE_CATEGORY = array_flip($CATEGORY_TABLE);
@@ -1447,7 +1448,7 @@ try {
 
         // Transporter and provider tables are created on first use. Do it
         // before the transaction: CREATE TABLE commits implicitly.
-        if (in_array($targetTable, [$CATEGORY_TABLE['transporters'], 'providers_master', 'marketers_master'], true)) {
+        if (in_array($targetTable, [$CATEGORY_TABLE['transporters'], 'providers_master', 'marketers_master', 'tradeorgs_master'], true)) {
             $pdo->exec("CREATE TABLE IF NOT EXISTS `$targetTable` (
                 id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
                 unique_name VARCHAR(255) NOT NULL,

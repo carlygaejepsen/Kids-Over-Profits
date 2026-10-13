@@ -77,6 +77,7 @@
             transporters: [typeof window.createDefaultTransporterIndividual === 'function' ? window.createDefaultTransporterIndividual() : { firstName: "", lastName: "", affiliations: [], pastTTIJobs: [], affiliatedCompanies: [], fieldNotes: {} }],
             isIndependentTransporter: false,
             marketerCompany: typeof window.createDefaultMarketerCompany === 'function' ? window.createDefaultMarketerCompany() : { name: "", services: {}, fieldNotes: {} },
+            tradeOrg: typeof window.createDefaultTradeOrg === 'function' ? window.createDefaultTradeOrg() : { name: "", activities: {}, fieldNotes: {} },
             fieldNotes: {}
         };
 
@@ -164,6 +165,7 @@
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
                 if (typeof window.ensureMarketerDataStructures === 'function') window.ensureMarketerDataStructures();
+                if (typeof window.ensureTradeOrgDataStructures === 'function') window.ensureTradeOrgDataStructures();
                 window.currentFacilityIndex = source.currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                     window.currentFacilityIndex = 0;
@@ -187,11 +189,14 @@
                 if (transporterProjectNameInput && projectCategory === 'transporters') transporterProjectNameInput.value = projectName;
                 const marketerProjectNameInput = document.getElementById('marketer-project-name');
                 if (marketerProjectNameInput && projectCategory === 'marketers') marketerProjectNameInput.value = projectName;
+                const tradeOrgProjectNameInput = document.getElementById('tradeorg-project-name');
+                if (tradeOrgProjectNameInput && projectCategory === 'tradeorgs') tradeOrgProjectNameInput.value = projectName;
 
                 if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
                 if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
                 if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
                 if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
+                if (typeof window.handleTradeOrgToggle === 'function') window.handleTradeOrgToggle();
                 if (typeof updateAllUI === 'function') {
                     updateAllUI();
                     updateLabelsForProjectType(projectName);
@@ -244,6 +249,9 @@
         if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
         const marketerProjectNameInput = document.getElementById('marketer-project-name');
         if (marketerProjectNameInput && activeCategory === 'marketers') marketerProjectNameInput.value = projectName;
+        if (typeof window.handleTradeOrgToggle === 'function') window.handleTradeOrgToggle();
+        const tradeOrgProjectNameInput = document.getElementById('tradeorg-project-name');
+        if (tradeOrgProjectNameInput && activeCategory === 'tradeorgs') tradeOrgProjectNameInput.value = projectName;
 
         showUploadStatus(`New project "${projectName}" created`, 'info');
 
@@ -257,6 +265,8 @@
                 firstSection = document.getElementById('identification-section');
             } else if (activeCategory === 'marketers') {
                 firstSection = document.getElementById('marketer-company-section');
+            } else if (activeCategory === 'tradeorgs') {
+                firstSection = document.getElementById('tradeorg-org-section');
             } else {
                 firstSection = document.getElementById('operator-section');
             }
@@ -292,7 +302,7 @@
             const currentProjectCategory = window.currentProjectName ? (window.projects?.[window.currentProjectName]?.category || determineProjectCategory(window.currentProjectName)) : null;
             
             if (window.currentProjectName && currentProjectCategory && currentProjectCategory !== newCategory) {
-                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0 || window.formData.transporters?.length > 0 || window.formData.marketerCompany?.name);
+                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0 || window.formData.transporters?.length > 0 || window.formData.marketerCompany?.name || window.formData.tradeOrg?.name);
                 if (hasUnsavedWork) {
                     const choice = confirm(`You have "${window.currentProjectName}" (${currentProjectCategory}) loaded.
 
@@ -325,6 +335,7 @@ Click Cancel to stay on the current tab.`);
             if (typeof window.handleTransporterToggle === 'function') window.handleTransporterToggle();
             if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
             if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
+            if (typeof window.handleTradeOrgToggle === 'function') window.handleTradeOrgToggle();
             if (typeof window.applyViewLayout === 'function') window.applyViewLayout(newCategory);
             if (typeof window.refreshSavedProjectPanels === 'function') window.refreshSavedProjectPanels();
             if (typeof window.updateLabelsForProjectType === 'function') window.updateLabelsForProjectType();

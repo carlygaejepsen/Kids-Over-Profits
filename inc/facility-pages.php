@@ -2633,7 +2633,7 @@ if (!function_exists('kop_program_go_hosts')) {
                 if (is_array($doc)) $add($doc);
             }
         }
-        foreach (array('referrers_master', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'marketers_master') as $table) {
+        foreach (array('referrers_master', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'marketers_master', 'tradeorgs_master') as $table) {
             if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) continue;
             foreach ((array) $wpdb->get_col("SELECT json_data FROM {$table}") as $json) {
                 $doc = json_decode((string) $json, true);

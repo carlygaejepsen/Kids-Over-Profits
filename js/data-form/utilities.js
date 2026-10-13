@@ -553,6 +553,17 @@ function resolvePathTarget(path) {
         return { scope, normalizedPath, target };
     }
 
+    // Trade organization lists (js/data-form/tradeorg-form.js)
+    if (path.startsWith('tradeOrg.')) {
+        if (typeof window.ensureTradeOrgDataStructures === 'function') {
+            window.ensureTradeOrgDataStructures();
+        }
+        scope = 'tradeOrg';
+        normalizedPath = path.replace('tradeOrg.', '');
+        target = window.formData.tradeOrg;
+        return { scope, normalizedPath, target };
+    }
+
     // Marketing company lists (js/data-form/marketer-form.js)
     if (path.startsWith('marketerCompany.')) {
         if (typeof window.ensureMarketerDataStructures === 'function') {

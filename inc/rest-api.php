@@ -745,7 +745,7 @@ function kop_save_project_rest_callback($request) {
     if (is_array($data)) {
         $has_operator_data = isset($data['operator']) || isset($data['facilities']);
         $known_non_company = in_array($category, array(
-            'referrers', 'referrer', 'transporters', 'transporter', 'providers', 'provider', 'marketers', 'marketer', 'locations', 'location'
+            'referrers', 'referrer', 'transporters', 'transporter', 'providers', 'provider', 'marketers', 'marketer', 'tradeorgs', 'tradeorg', 'locations', 'location'
         ), true);
         if ($has_operator_data && !$known_non_company) {
             $category = 'companies';
@@ -793,6 +793,8 @@ function kop_save_project_rest_callback($request) {
         'provider' => 'providers_master',
         'marketers' => 'marketers_master',
         'marketer' => 'marketers_master',
+        'tradeorgs' => 'tradeorgs_master',
+        'tradeorg' => 'tradeorgs_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
@@ -800,7 +802,7 @@ function kop_save_project_rest_callback($request) {
     $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
 
     // Transporter and provider tables are created on first save.
-    if (in_array($table_name, array(kop_transporters_table(), 'providers_master', 'marketers_master'), true)) {
+    if (in_array($table_name, array(kop_transporters_table(), 'providers_master', 'marketers_master', 'tradeorgs_master'), true)) {
         $wpdb->query("CREATE TABLE IF NOT EXISTS `{$table_name}` (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             unique_name VARCHAR(255) NOT NULL,
@@ -816,6 +818,12 @@ function kop_save_project_rest_callback($request) {
     if ($table_name === 'marketers_master') {
         require_once get_stylesheet_directory() . '/api/lib-marketers.php';
         $data = array('name' => $project_name, 'category' => 'marketers', 'data' => kop_marketer_keep_data($data), 'timestamp' => gmdate('c'));
+    }
+
+    // A trade organization keeps only its tradeOrg block (api/lib-tradeorgs.php)
+    if ($table_name === 'tradeorgs_master') {
+        require_once get_stylesheet_directory() . '/api/lib-tradeorgs.php';
+        $data = array('name' => $project_name, 'category' => 'tradeorgs', 'data' => kop_tradeorg_keep_data($data), 'timestamp' => gmdate('c'));
     }
 
     // Encode data as JSON
@@ -909,6 +917,8 @@ function kop_delete_project_rest_callback($request) {
         'provider' => 'providers_master',
         'marketers' => 'marketers_master',
         'marketer' => 'marketers_master',
+        'tradeorgs' => 'tradeorgs_master',
+        'tradeorg' => 'tradeorgs_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );

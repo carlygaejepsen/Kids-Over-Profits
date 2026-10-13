@@ -128,6 +128,7 @@
 .dm-cat-locations { background: #666; }
 .dm-cat-providers { background: var(--kop-bubblegum-pink-fill, #CC0587); }
 .dm-cat-marketers { background: var(--kop-coral-pink-fill, #B3243A); }
+.dm-cat-tradeorgs { background: var(--kop-teal-fill, #24757F); }
 .dm-cat-facilities { background: var(--kop-midnight-blue, #000435); }
 .dm-cat-young_adult { background: var(--kop-chartreuse-ink, #5C7401); }
 .dm-cat-indigenous_schools { background: var(--kop-text-muted, #4A5568); }

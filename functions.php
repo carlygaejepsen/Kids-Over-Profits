@@ -171,6 +171,8 @@ require_once get_stylesheet_directory() . '/inc/indigenous-schools-admin.php';
 require_once get_stylesheet_directory() . '/inc/young-adult-programs.php';
 // Marketing companies: /marketing-companies/ from marketers_master (data forms' Marketers tab)
 require_once get_stylesheet_directory() . '/inc/marketers.php';
+// Trade organizations: /trade-organizations/ from tradeorgs_master (data forms' Trade Organizations tab)
+require_once get_stylesheet_directory() . '/inc/tradeorgs.php';
 require_once get_stylesheet_directory() . '/inc/young-adult-programs-admin.php';
 
 // Open data: daily bulk downloads of every public dataset (/open-data/)

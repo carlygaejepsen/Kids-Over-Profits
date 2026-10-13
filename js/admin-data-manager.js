@@ -35,6 +35,7 @@
         transporters: 'Transporter',
         providers: 'Mental Health Provider',
         marketers: 'Marketing company',
+        tradeorgs: 'Trade organization',
         locations: 'Location',
         people: 'Person',
         news: 'News',

@@ -473,6 +473,8 @@ function kop_tool_page_specs() {
         array('template' => 'page-provider-index.php',     'title' => 'Mental Health Providers', 'slug' => 'mental-health-providers', 'status' => 'publish'),
         // Marketing companies, from marketers_master (the data forms' Marketers tab, inc/marketers.php).
         array('template' => 'page-marketer-index.php',     'title' => 'Marketing Companies', 'slug' => 'marketing-companies', 'status' => 'publish'),
+        // Trade organizations, from tradeorgs_master (the data forms' Trade Organizations tab, inc/tradeorgs.php).
+        array('template' => 'page-tradeorg-index.php',     'title' => 'Trade Organizations', 'slug' => 'trade-organizations', 'status' => 'publish'),
         // Indian boarding schools and residential schools: not our story, so it is
         // mostly directions to Indigenous-led organizations. Published by the owner.
         array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'publish'),
@@ -597,6 +599,11 @@ function kop_nav_item_specs() {
             'parent' => 'Monitor',
             'title'  => 'Marketing Companies',
         ),
+        array(
+            'slug'   => 'trade-organizations',
+            'parent' => 'Monitor',
+            'title'  => 'Trade Organizations',
+        ),
     );
 }
 
@@ -719,7 +726,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '27';
+    $version = '28';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -2537,7 +2544,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '114';
+    $version = '115';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

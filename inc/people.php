@@ -451,7 +451,7 @@ if (!function_exists('kop_people_kinds')) {
             'facility' => 'facility', 'operator' => 'company', 'map' => 'map node', 'consultant' => 'consultant record',
             'transport' => 'transport company', 'provider' => 'provider', 'lawsuit' => 'lawsuit', 'memorial' => 'memorial entry',
             'youngadult' => 'young adult program', 'wiki' => 'wiki entry', 'journalist' => 'journalist',
-            'marketer' => 'marketing company',
+            'marketer' => 'marketing company', 'tradeorg' => 'trade organization',
         );
     }
 }
@@ -483,6 +483,7 @@ if (!function_exists('kop_people_record_label')) {
             'transport'  => "SELECT id, unique_name AS name FROM {$prefix}transporters_master",
             'provider'   => 'SELECT id, unique_name AS name FROM providers_master',
             'marketer'   => 'SELECT id, unique_name AS name FROM marketers_master',
+            'tradeorg'   => 'SELECT id, unique_name AS name FROM tradeorgs_master',
             'lawsuit'    => 'SELECT id, case_name AS name FROM lawsuits',
             'memorial'   => 'SELECT id, name, program AS extra FROM memorial_victims',
             'youngadult' => 'SELECT id, name, state AS extra FROM young_adult_programs',
@@ -512,6 +513,10 @@ if (!function_exists('kop_people_record_label')) {
         if ($kind === 'marketer') {
             $url = $page('page-marketer-index.php', '/marketing-companies/');
             if ($url !== '') $url .= '#kop-mkt-' . $id;
+        }
+        if ($kind === 'tradeorg') {
+            $url = $page('page-tradeorg-index.php', '/trade-organizations/');
+            if ($url !== '') $url .= '#kop-tro-' . $id;
         }
         return array('name' => $name, 'url' => $url);
     }
@@ -634,6 +639,12 @@ if (!function_exists('kop_people_named_sources')) {
             $d = json_decode((string) $r['json_data'], true);
             $d = is_array($d['data'] ?? null) ? $d['data'] : array();
             foreach ((array) ($d['marketerCompany']['keyPersonnel'] ?? array()) as $p) $line('marketer', $r['id'], 'personnel', $p);
+        }
+        // Trade organizations' leaders ("Jan Moss (executive director, 2007)"; api/lib-tradeorgs.php).
+        foreach (kop_people_source_rows('SELECT id, json_data FROM tradeorgs_master ORDER BY id', $opts) as $r) {
+            $d = json_decode((string) $r['json_data'], true);
+            $d = is_array($d['data'] ?? null) ? $d['data'] : array();
+            foreach ((array) ($d['tradeOrg']['keyPersonnel'] ?? array()) as $p) $line('tradeorg', $r['id'], 'personnel', $p);
         }
         // Providers outside the TTI: their staff, owners and founders.
         foreach (kop_people_source_rows('SELECT id, json_data FROM providers_master ORDER BY id', $opts) as $r) {

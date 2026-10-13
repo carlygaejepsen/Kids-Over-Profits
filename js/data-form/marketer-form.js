@@ -125,6 +125,7 @@ function handleMarketerToggle() {
         hide(document.querySelector('.facility-loader-panel'));
         hide(document.getElementById('referrer-main-wrapper'));
         hide(document.getElementById('transporter-main-wrapper'));
+        hide(document.getElementById('tradeorg-main-wrapper'));
         show(wrapper);
     } else {
         hide(wrapper);

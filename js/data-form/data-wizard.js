@@ -5,7 +5,7 @@
  * someone who wants to add one fact. This puts three steps in front of it:
  *
  *   1. Find the record (search over the projects the form already loaded), or
- *      add a new facility, parent company, provider, transporter, referrer or marketer.
+ *      add a new facility, parent company, provider, transporter, referrer, marketer or trade organization.
  *   2. Pick what to add or fix (staff, dates, incidents, ...).
  *   3. Edit: the form shows only the sections for those topics, plus Submit.
  *
@@ -52,9 +52,14 @@
             label: 'Marketing company',
             hint: 'A company that markets programs: their websites, "independent" directories, help lines, sold inquiries or reputation work.',
             category: 'marketers'
+        },
+        tradeorg: {
+            label: 'Trade organization',
+            hint: 'An association of programs, consultants or other businesses in the industry, such as NATSAP or IECA.',
+            category: 'tradeorgs'
         }
     };
-    const TYPE_ORDER = ['facility', 'company', 'provider', 'transporter', 'referrer', 'marketer'];
+    const TYPE_ORDER = ['facility', 'company', 'provider', 'transporter', 'referrer', 'marketer', 'tradeorg'];
 
     // Topics: what the person wants to add, and the form sections that hold it.
     // `extra` are non-section blocks shown with the topic.
@@ -100,10 +105,15 @@
             { key: 'company', label: 'The company: name, place, owners, website', sections: ['marketer-company-section'] },
             { key: 'services', label: 'What it does, and the directories or help lines it runs', sections: ['marketer-services-section'] },
             { key: 'clients', label: 'Programs it markets, lawsuits and sources', sections: ['marketer-clients-section'] }
+        ],
+        tradeorg: [
+            { key: 'org', label: 'The organization: name, place, leaders, website', sections: ['tradeorg-org-section'] },
+            { key: 'activities', label: 'What it does: standards, lobbying, research, publications', sections: ['tradeorg-activities-section'] },
+            { key: 'members', label: 'Members, lawsuits and sources', sections: ['tradeorg-members-section'] }
         ]
     };
     // Shown with every topic set: the submit block of each view.
-    const ALWAYS_ON = ['submission-section', 'referrer-submission-section', 'transporter-submission-section', 'marketer-submission-section'];
+    const ALWAYS_ON = ['submission-section', 'referrer-submission-section', 'transporter-submission-section', 'marketer-submission-section', 'tradeorg-submission-section'];
     // What a new record opens with, already ticked.
     const NEW_DEFAULT_TOPICS = {
         facility: ['names', 'place'],
@@ -111,7 +121,8 @@
         provider: ['names', 'care', 'place'],
         transporter: ['company', 'people'],
         referrer: ['agency', 'people'],
-        marketer: ['company', 'services', 'clients']
+        marketer: ['company', 'services', 'clients'],
+        tradeorg: ['org', 'activities', 'members']
     };
 
     const state = {
@@ -230,6 +241,20 @@
             const data = p.data || {};
             const category = p.category || 'companies';
             const list = Array.isArray(data.facilities) ? data.facilities : [];
+
+            if (category === 'tradeorgs') {
+                const org = data.tradeOrg || {};
+                const name = String(org.name || '').trim() || key;
+                entries.push({
+                    type: 'tradeorg',
+                    name,
+                    aliases: [key, org.acronym].concat(nameList(org.otherNames)).filter((a) => a && fold(a) !== fold(name)),
+                    place: [org.city, org.state].map((v) => String(v || '').trim()).filter(Boolean).join(', '),
+                    people: [],
+                    homes: [{ project: key, category }]
+                });
+                return;
+            }
 
             if (category === 'marketers') {
                 const org = data.marketerCompany || {};
@@ -381,7 +406,7 @@
             <section class="kop-wiz-card" aria-labelledby="kop-wiz-h">
                 ${stepLabel(1)}
                 <h2 id="kop-wiz-h">What do you want to tell us about?</h2>
-                <p class="kop-wiz-lead">Search for the program, company, provider, transporter, consultant or marketing company. Programs change names often, so an old name works too.</p>
+                <p class="kop-wiz-lead">Search for the program, company, provider, transporter, consultant, marketing company or trade group. Programs change names often, so an old name works too.</p>
                 <div class="kop-wiz-search">
                     <label for="kop-wiz-q">Name</label>
                     <input type="search" id="kop-wiz-q" data-growing-text-field="true" autocomplete="off" placeholder="e.g. Turn-About Ranch" value="${esc(state.query)}">
@@ -807,6 +832,16 @@
             data.category = 'providers';
             await load(t.name, { data, category: 'providers' });
             return 'providers';
+        }
+
+        if (t.type === 'tradeorg') {
+            data.tradeOrg = typeof window.createDefaultTradeOrg === 'function'
+                ? window.createDefaultTradeOrg()
+                : { name: '', activities: {} };
+            data.tradeOrg.name = t.name;
+            data.category = 'tradeorgs';
+            await load(t.name, { data, category: 'tradeorgs' });
+            return 'tradeorgs';
         }
 
         if (t.type === 'marketer') {

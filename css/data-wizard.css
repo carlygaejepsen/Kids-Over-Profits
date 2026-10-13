@@ -188,7 +188,8 @@ button.kop-wiz-hit:focus-visible {
 .kop-wiz-badge-provider { background: var(--kop-powder-blue, #D6E9F5); }
 .kop-wiz-badge-transporter,
 .kop-wiz-badge-referrer,
-.kop-wiz-badge-marketer { background: var(--kop-sand, #F2EEDF); }
+.kop-wiz-badge-marketer,
+.kop-wiz-badge-tradeorg { background: var(--kop-sand, #F2EEDF); }
 
 /* ---- Add new ------------------------------------------------------------- */
 

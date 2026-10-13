@@ -67,6 +67,7 @@ function kop_asl_collect_database_matches($phrase) {
         array('table' => 'referrers_master',     'label' => 'Referrer',           'template' => 'page-referrer-index.php',    'limit' => 2),
         array('table' => (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'label' => 'Transporter',        'template' => 'page-transporter-index.php', 'limit' => 2),
         array('table' => 'marketers_master',     'label' => 'Marketing company',  'template' => 'page-marketer-index.php',    'limit' => 2),
+        array('table' => 'tradeorgs_master',     'label' => 'Trade organization', 'template' => 'page-tradeorg-index.php',    'limit' => 2),
         array('table' => 'locations_master',     'label' => 'Location',           'template' => 'page-location-index.php',    'limit' => 2),
     );
 
@@ -83,7 +84,7 @@ function kop_asl_collect_database_matches($phrase) {
             );
         }
         $master_tables = array_values(array_filter($master_tables, function ($cfg) {
-            return in_array($cfg['table'], array('referrers_master', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'marketers_master'), true);
+            return in_array($cfg['table'], array('referrers_master', (function_exists('kop_transporters_table') ? kop_transporters_table() : 'transporters_master'), 'marketers_master', 'tradeorgs_master'), true);
         }));
     }
 
@@ -112,6 +113,9 @@ function kop_asl_collect_database_matches($phrase) {
             $profile_url = '';
             if ($cfg['table'] === $facilities_table) {
                 $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
+            } elseif ($cfg['table'] === 'tradeorgs_master' && $index_url) {
+                // The organization's own entry on /trade-organizations/ (inc/tradeorgs.php)
+                $profile_url = $index_url . '#kop-tro-' . (int) $row['id'];
             } elseif ($cfg['table'] === 'marketers_master' && $index_url) {
                 // The company's own entry on /marketing-companies/ (inc/marketers.php)
                 $profile_url = $index_url . '#kop-mkt-' . (int) $row['id'];

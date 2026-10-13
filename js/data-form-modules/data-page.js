@@ -39,7 +39,7 @@
             ? viewName.trim().toLowerCase()
             : 'companies';
 
-        if (normalizedView === activeViewLayout && normalizedView !== 'referrers' && normalizedView !== 'transporters' && normalizedView !== 'marketers') {
+        if (normalizedView === activeViewLayout && normalizedView !== 'referrers' && normalizedView !== 'transporters' && normalizedView !== 'marketers' && normalizedView !== 'tradeorgs') {
             // Allow referrers/transporters to reapply in case of toggles that alter nested forms.
             return;
         }
@@ -644,6 +644,12 @@
                 dataToSubmit = window.marketerSubmissionData(dataToSubmit, actualProjectName);
             } else {
                 delete dataToSubmit.marketerCompany;
+            }
+            // A trade organization sends only its tradeOrg block; every other kind drops it.
+            if (activeCategory === 'tradeorgs' && typeof window.tradeOrgSubmissionData === 'function') {
+                dataToSubmit = window.tradeOrgSubmissionData(dataToSubmit, actualProjectName);
+            } else {
+                delete dataToSubmit.tradeOrg;
             }
 
             const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;
