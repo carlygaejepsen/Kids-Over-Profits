@@ -9,12 +9,16 @@
  *
  * Across the column (default): centred text, at most the article's 72ch
  * reading measure, lined up with the paragraphs' left edge. Left or right:
- * beside the text from 900px up, across the column below that.
+ * beside the text from 900px up, across the column below that. No pull quote
+ * clears a float: next to a page's floated column it narrows beside it.
  */
 
 figure.kop-pullquote,
 .entry-content figure.wp-block-pullquote {
-    clear: both;
+    /* Never clear: a page's own floated column (the facts rail on company and
+       facility pages) would push the quote below it and leave a tall gap. A
+       flow-root box sits beside a float instead, its rules not running under it. */
+    display: flow-root;
     box-sizing: border-box;
     max-width: 72ch;
     margin: 2.5rem auto 2.5rem 0;
@@ -122,9 +126,7 @@ figure.kop-pullquote figcaption.kop-pullquote__credit a,
     color: var(--kop-navy, #000080);
 }
 
-/* Beside the text on a wide screen. A right-hand quote stops at the 72ch
-   reading measure (the margin pushes it in when the column is wider), so it
-   sits against the paragraphs and not out at the page edge. */
+/* Beside the text on a wide screen. */
 @media (min-width: 900px) {
     figure.kop-pullquote--left,
     figure.kop-pullquote--right,
@@ -139,7 +141,6 @@ figure.kop-pullquote figcaption.kop-pullquote__credit a,
     figure.kop-pullquote--left,
     .entry-content figure.wp-block-pullquote.alignleft {
         float: left;
-        clear: left;
         margin-left: 0;
         margin-right: 2rem;
     }
@@ -147,8 +148,13 @@ figure.kop-pullquote figcaption.kop-pullquote__credit a,
     figure.kop-pullquote--right,
     .entry-content figure.wp-block-pullquote.alignright {
         float: right;
-        clear: right;
         margin-left: 2rem;
+        margin-right: 0;
+    }
+
+    /* Articles keep their paragraphs to 72ch: a right-hand quote stops there. */
+    .kop-article .entry-content figure.kop-pullquote--right,
+    .kop-article .entry-content figure.wp-block-pullquote.alignright {
         margin-right: max(0px, calc(100% - 72ch));
     }
 
