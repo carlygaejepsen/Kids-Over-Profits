@@ -638,6 +638,13 @@ a.coverage-link:hover {
     color: var(--kop-white);
 }
 
+/* Admins only: a card with no other coverage still carries the pencil to add some. */
+.news-coverage--empty .coverage-label {
+    font-weight: 400;
+    font-style: italic;
+    color: var(--kop-text-muted, #4A5568);
+}
+
 /* ============================================================
    Ongoing Stories (story arcs)
    ============================================================ */

@@ -398,6 +398,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php 
 # and type. Hourly: the folder and title rules (kop_dt_rules(), nearest folder first, strong titles win; bump KOP_DOC_TYPES_RULES_VERSION
 # after changing them) type most documents with no review, one logged change; the AI reads the rest and its guess waits at Review inbox >
 # Document types ("Typed by rule" there spot-checks the rules). Readers: /documents/ and /documents/<type>/ (a route,
+# "Also covered by" on the news feed is the automatic story grouping (api/news-story-groups.php); an admin corrects it with the pencil on
+# the list ('storycov:<id>', inc/story-coverage.php: untick a wrong article, paste a link or #id to add one, exact Undo). Every row it
+# touches gets story_group_manual = 1, which the automatic grouping (each save, the rebuild) never changes or joins to another story
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-story-coverage.php   # take off, add, move, rebuild keeps it, undo; made-up table
 # templates/document-types.php: grouped by program, filter by name/state/decade), a chip on every document tile, a type filter over
 # facility/company libraries (js/doc-type-filter.js), 'types' in the app's document payloads; set with the pencil on a tile or at KOP Tools >
 # Document Types (counts, tag many, Recent changes with Undo; log in the kop_doc_types_log option)

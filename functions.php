@@ -145,6 +145,7 @@ require_once get_stylesheet_directory() . '/inc/how-to-use.php';
 require_once get_stylesheet_directory() . '/inc/featured-reporting.php';
 require_once get_stylesheet_directory() . '/inc/featured-reporting-admin.php';
 require_once get_stylesheet_directory() . '/inc/featured-nominations.php';
+require_once get_stylesheet_directory() . '/inc/story-coverage.php';
 
 // Research & Reports card library (Academia + Government FileBird folders)
 require_once get_stylesheet_directory() . '/inc/research-library.php';

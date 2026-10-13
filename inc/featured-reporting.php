@@ -416,12 +416,25 @@ if (!function_exists('kop_feat_flag_html')) {
         $f = kop_feat_get($news_id);
         if (!$f) return '';
         kop_feat_enqueue_style();   // any page that lists a pick, whatever its template
-        $icon =function_exists('kop_icon') ? kop_icon('newspaper', array('class' => 'kop-feat-flag__icon')) : '';
+        $icon = function_exists('kop_icon') ? kop_icon('star', array('class' => 'kop-feat-flag__icon')) : '';
         $page = kop_feat_url();
         $html = '<div class="kop-feat-mark">'
             . '<p class="kop-feat-flag">' . $icon . '<a href="' . esc_url($page) . '">' . esc_html(kop_feat_label()) . '</a></p>';
         if ($f['note'] !== '') $html .= '<div class="kop-feat-note">' . kop_feat_note_html($f['note']) . '</div>';
         return $html . '</div>';
+    }
+}
+
+if (!function_exists('kop_feat_star_html')) {
+    /**
+     * The star beside a picked article's headline on its card (news feed); '' when
+     * the article is not picked. The banner with the note is kop_feat_flag_html().
+     */
+    function kop_feat_star_html($news_id) {
+        if (!kop_feat_get($news_id) || !function_exists('kop_icon')) return '';
+        kop_feat_enqueue_style();
+        return '<span class="kop-feat-star" title="' . esc_attr(kop_feat_label()) . '">'
+            . kop_icon('star', array('label' => kop_feat_label())) . '</span>';
     }
 }
 
@@ -447,6 +460,7 @@ if (!function_exists('kop_feat_card_html')) {
             : '<span class="kop-feat-card__thumb kop-feat-card__thumb--' . esc_attr($kind) . '" aria-hidden="true">' . $thumb . '</span>';
         $html .= '<div class="kop-feat-card__body">';
         $meta = array();
+        if (function_exists('kop_icon')) $meta[] = '<span class="kop-feat-star">' . kop_icon('star', array('label' => kop_feat_label())) . '</span>';
         if ($outlet !== '') $meta[] = '<span class="kop-feat-card__outlet">' . esc_html($outlet) . '</span>';
         if ($it['date_label'] !== '') $meta[] = '<span>' . esc_html($it['date_label']) . '</span>';
         if ($meta) $html .= '<p class="kop-feat-card__meta">' . implode('', $meta) . '</p>';

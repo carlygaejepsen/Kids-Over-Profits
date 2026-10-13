@@ -47,6 +47,7 @@ require_once dirname(__DIR__) . '/inc/operator-pages.php';
 require_once dirname(__DIR__) . '/inc/operator-history.php';
 require_once dirname(__DIR__) . '/inc/mobile-api.php';
 require_once dirname(__DIR__) . '/inc/featured-reporting.php';
+require_once dirname(__DIR__) . '/inc/citations.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {

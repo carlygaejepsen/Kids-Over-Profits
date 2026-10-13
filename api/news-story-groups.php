@@ -227,20 +227,63 @@ if (!function_exists('kop_news_normalize_title')) {
     }
 
     /**
+     * news_submissions.story_group_manual exists (MySQL on the site, SQLite in
+     * the offline tests). 1 = an admin set this row's story group by hand
+     * (inc/story-coverage.php): the automatic grouping below never changes it
+     * and never joins another article to it.
+     */
+    function kop_news_story_manual_ensure(PDO $pdo): bool {
+        static $done = [];
+        $key = spl_object_hash($pdo);
+        if (isset($done[$key])) {
+            return $done[$key];
+        }
+        try {
+            $pdo->query('SELECT story_group_manual FROM news_submissions WHERE 1 = 0');
+            return $done[$key] = true;
+        } catch (Throwable $e) {
+            // missing: add it below
+        }
+        try {
+            $sqlite = $pdo->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+            $pdo->exec($sqlite
+                ? 'ALTER TABLE news_submissions ADD COLUMN story_group_manual INTEGER NOT NULL DEFAULT 0'
+                : "ALTER TABLE news_submissions ADD COLUMN story_group_manual tinyint(1) NOT NULL DEFAULT 0 COMMENT '1 = story_group_id set by hand; the automatic grouping leaves the row alone' AFTER story_group_id");
+            return $done[$key] = true;
+        } catch (Throwable $e) {
+            error_log('kop news story groups: could not add story_group_manual: ' . $e->getMessage());
+            return $done[$key] = false;
+        }
+    }
+
+    /** " AND <col> = 0" when the manual flag exists, so automatic queries skip hand-set rows. */
+    function kop_news_story_auto_sql(PDO $pdo, string $col = 'story_group_manual'): string {
+        return kop_news_story_manual_ensure($pdo) ? " AND COALESCE($col, 0) = 0" : '';
+    }
+
+    /**
      * Match a just-saved row against existing coverage and assign/merge its
      * story group. Returns the group id, or null when the row stays standalone.
      * Tolerates a database that predates the story_group_id migration (no-op).
+     * A row grouped by hand keeps its group.
      */
     function kop_news_assign_story_group(PDO $pdo, int $id): ?int {
         try {
+            $auto = kop_news_story_auto_sql($pdo);
             $stmt = $pdo->prepare(
                 "SELECT id, article_title, alternate_title, publication_name,
                         publication_date, facilities_mentioned, story_group_id
-                 FROM news_submissions WHERE id = ?"
+                 FROM news_submissions WHERE id = ?$auto"
             );
             $stmt->execute([$id]);
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (!$row) {
+                if ($auto !== '') {
+                    $g = $pdo->prepare("SELECT story_group_id FROM news_submissions WHERE id = ?");
+                    $g->execute([$id]);
+                    $gid = $g->fetchColumn();
+                    return $gid ? (int) $gid : null;
+                }
                 return null;
             }
             $profile = kop_news_story_profile($row);
@@ -250,7 +293,7 @@ if (!function_exists('kop_news_normalize_title')) {
             $sql = "SELECT id, article_title, alternate_title, publication_name,
                            publication_date, facilities_mentioned, story_group_id
                     FROM news_submissions
-                    WHERE id != ? AND status NOT IN ('rejected', 'deleted')";
+                    WHERE id != ? AND status NOT IN ('rejected', 'deleted')$auto";
             $params = [$id];
             if ($profile['date'] !== null) {
                 $sql .= " AND (publication_date IS NULL OR publication_date BETWEEN ? AND ?)";
@@ -290,7 +333,7 @@ if (!function_exists('kop_news_normalize_title')) {
             // Merge every matched group (and each matched ungrouped row —
             // including anchors, whose id IS their gid) onto the smallest gid.
             $ph = implode(',', array_fill(0, count($gids), '?'));
-            $pdo->prepare("UPDATE news_submissions SET story_group_id = ? WHERE story_group_id IN ($ph)")
+            $pdo->prepare("UPDATE news_submissions SET story_group_id = ? WHERE story_group_id IN ($ph)$auto")
                 ->execute(array_merge([$gid], $gids));
             if (!empty($ungroupedIds)) {
                 $ph = implode(',', array_fill(0, count($ungroupedIds), '?'));
@@ -313,11 +356,13 @@ if (!function_exists('kop_news_normalize_title')) {
      * ['articles' => n, 'groups' => n, 'grouped_articles' => n].
      */
     function kop_news_rebuild_story_groups(PDO $pdo): array {
+        // Rows grouped by hand (story_group_manual) keep their groups and join no other.
+        $auto = kop_news_story_auto_sql($pdo);
         $rows = $pdo->query(
             "SELECT id, article_title, alternate_title, publication_name,
                     publication_date, facilities_mentioned
              FROM news_submissions
-             WHERE status NOT IN ('rejected', 'deleted')
+             WHERE status NOT IN ('rejected', 'deleted')$auto
              ORDER BY id ASC"
         )->fetchAll(PDO::FETCH_ASSOC);
 
@@ -378,7 +423,7 @@ if (!function_exists('kop_news_normalize_title')) {
             $components[$find($id)][] = $id;
         }
 
-        $pdo->exec("UPDATE news_submissions SET story_group_id = NULL");
+        $pdo->exec("UPDATE news_submissions SET story_group_id = NULL WHERE 1 = 1$auto");
         $set = $pdo->prepare("UPDATE news_submissions SET story_group_id = ? WHERE id = ?");
         $groups = 0;
         $groupedArticles = 0;

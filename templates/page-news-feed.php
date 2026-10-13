@@ -664,6 +664,7 @@ try {
                             </a>
                         <?php endif; ?>
                         <h2 class="news-card-title"<?php echo function_exists('kop_feat_attr') ? kop_feat_attr((int) $item['id']) : ''; ?>>
+                            <?php echo $card_feat !== '' && function_exists('kop_feat_star_html') ? kop_feat_star_html((int) $item['id']) : ''; ?>
                             <a href="<?php echo esc_url($itemHref); ?>" target="_blank" rel="noopener noreferrer">
                                 <?php echo esc_html($displayTitle); ?>
                             </a><?php echo kop_news_archive_link_html($item['article_url'] ?? '', $item['archive_url'] ?? ''); ?>
@@ -686,11 +687,12 @@ try {
                         </span>
                     </div>
 
-                    <?php echo $card_feat; ?>
-
-                    <?php if (!empty($also_covered)): ?>
-                        <div class="news-coverage">
-                            <span class="coverage-label">Also covered by:</span>
+                    <?php
+                    // The pencil (admins only): take a wrong article off the list, or add the right one.
+                    $cov_attr = function_exists('kop_story_cov_attr') ? kop_story_cov_attr((int) $item['id']) : '';
+                    if (!empty($also_covered) || $cov_attr !== ''): ?>
+                        <div class="news-coverage<?php echo empty($also_covered) ? ' news-coverage--empty' : ''; ?>"<?php echo $cov_attr; ?>>
+                            <span class="coverage-label"><?php echo empty($also_covered) ? 'Also covered by: no other articles yet' : 'Also covered by:'; ?></span>
                             <?php foreach ($also_covered as $cov):
                                 $covTitle = !empty($cov['alternate_title']) ? $cov['alternate_title'] : $cov['article_title'];
                                 $covOutlet = $cov['publication_name'] ?: (parse_url($cov['article_url'] ?? '', PHP_URL_HOST) ?: 'Unknown outlet');
@@ -729,6 +731,7 @@ try {
                     <?php endif; ?>
 
                     <div class="news-card-body">
+                        <?php echo $card_feat; // Essential reporting: the banner (and note) over the summary ?>
                         <button type="button" class="news-summary-toggle" aria-expanded="false">
                             <span class="toggle-arrow">▸</span> Show Summary
                         </button>

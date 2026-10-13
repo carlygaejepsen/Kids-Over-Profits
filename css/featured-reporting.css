@@ -166,31 +166,65 @@
     margin-top: 0.5rem;
 }
 
-/* ---- The flag inside an article's card (news feed, facility/company pages) */
+/* ---- The banner inside an article's card (news feed, over the summary;
+        facility/company pages) ---------------------------------------------- */
 
 .kop-feat-mark {
-    margin: 0.25rem 0 0.4rem;
+    margin: 0.25rem 0 0.75rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-orange, #EF9034);
+    border-left-width: 4px;
+    border-radius: 6px;
+    overflow: hidden;
 }
 
 .kop-feat-flag {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.45rem;
     margin: 0;
-    padding: 0.1rem 0.55rem;
-    background: var(--kop-white, #fff);
-    border: 1px solid var(--kop-orange, #EF9034);
-    border-radius: 999px;
-    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.82rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--kop-orange-ink, #A3570D);
 }
 
 .kop-feat-flag .kop-icon {
+    width: 1.1em;
+    height: 1.1em;
+    color: var(--kop-orange-ink, #A3570D);
+}
+
+/* In the banner the note is its lower half, not a box of its own. */
+.kop-feat-mark .kop-feat-note {
+    margin: 0;
+    padding: 0 0.75rem 0.55rem;
+    background: transparent;
+    border-left: 0;
+    border-radius: 0;
+}
+
+/* ---- The star beside a picked article's headline -------------------------- */
+
+.kop-feat-star {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.3rem;
+    color: var(--kop-orange-ink, #A3570D);
+    vertical-align: -0.1em;
+}
+
+.kop-feat-star .kop-icon {
     width: 1em;
     height: 1em;
     color: var(--kop-orange-ink, #A3570D);
+}
+
+.kop-feat-card__meta .kop-feat-star {
+    margin-right: 0;
 }
 
 .kop-feat-mark .kop-feat-flag a {
