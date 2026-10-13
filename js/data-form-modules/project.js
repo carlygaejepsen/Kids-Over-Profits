@@ -76,6 +76,7 @@
             transporterCompany: typeof window.createDefaultTransporterCompany === 'function' ? window.createDefaultTransporterCompany() : { name: "", affiliations: [], keyPersonnel: [], serviceAreas: [], vehicleTypes: [], notes: "", fieldNotes: {} },
             transporters: [typeof window.createDefaultTransporterIndividual === 'function' ? window.createDefaultTransporterIndividual() : { firstName: "", lastName: "", affiliations: [], pastTTIJobs: [], affiliatedCompanies: [], fieldNotes: {} }],
             isIndependentTransporter: false,
+            marketerCompany: typeof window.createDefaultMarketerCompany === 'function' ? window.createDefaultMarketerCompany() : { name: "", services: {}, fieldNotes: {} },
             fieldNotes: {}
         };
 
@@ -162,6 +163,7 @@
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
+                if (typeof window.ensureMarketerDataStructures === 'function') window.ensureMarketerDataStructures();
                 window.currentFacilityIndex = source.currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                     window.currentFacilityIndex = 0;
@@ -183,10 +185,13 @@
                 if (referrerProjectNameInput && projectCategory === 'referrers') referrerProjectNameInput.value = projectName;
                 const transporterProjectNameInput = document.getElementById('transporter-project-name');
                 if (transporterProjectNameInput && projectCategory === 'transporters') transporterProjectNameInput.value = projectName;
+                const marketerProjectNameInput = document.getElementById('marketer-project-name');
+                if (marketerProjectNameInput && projectCategory === 'marketers') marketerProjectNameInput.value = projectName;
 
                 if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
                 if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
                 if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
+                if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
                 if (typeof updateAllUI === 'function') {
                     updateAllUI();
                     updateLabelsForProjectType(projectName);
@@ -236,6 +241,9 @@
         if (typeof updateLabelsForProjectType === 'function') updateLabelsForProjectType();
         if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
         if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
+        if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
+        const marketerProjectNameInput = document.getElementById('marketer-project-name');
+        if (marketerProjectNameInput && activeCategory === 'marketers') marketerProjectNameInput.value = projectName;
 
         showUploadStatus(`New project "${projectName}" created`, 'info');
 
@@ -247,6 +255,8 @@
                 firstSection = document.getElementById('transporter-company-section');
             } else if (activeCategory === 'providers') {
                 firstSection = document.getElementById('identification-section');
+            } else if (activeCategory === 'marketers') {
+                firstSection = document.getElementById('marketer-company-section');
             } else {
                 firstSection = document.getElementById('operator-section');
             }
@@ -282,7 +292,7 @@
             const currentProjectCategory = window.currentProjectName ? (window.projects?.[window.currentProjectName]?.category || determineProjectCategory(window.currentProjectName)) : null;
             
             if (window.currentProjectName && currentProjectCategory && currentProjectCategory !== newCategory) {
-                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0 || window.formData.transporters?.length > 0);
+                const hasUnsavedWork = window.formData && (window.formData.facilities?.some(f => f.identification?.name) || window.formData.operator?.name || window.formData.referrerConsultants?.length > 0 || window.formData.transporters?.length > 0 || window.formData.marketerCompany?.name);
                 if (hasUnsavedWork) {
                     const choice = confirm(`You have "${window.currentProjectName}" (${currentProjectCategory}) loaded.
 
@@ -314,6 +324,7 @@ Click Cancel to stay on the current tab.`);
             if (typeof window.handleReferrerToggle === 'function') window.handleReferrerToggle();
             if (typeof window.handleTransporterToggle === 'function') window.handleTransporterToggle();
             if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
+            if (typeof window.handleMarketerToggle === 'function') window.handleMarketerToggle();
             if (typeof window.applyViewLayout === 'function') window.applyViewLayout(newCategory);
             if (typeof window.refreshSavedProjectPanels === 'function') window.refreshSavedProjectPanels();
             if (typeof window.updateLabelsForProjectType === 'function') window.updateLabelsForProjectType();

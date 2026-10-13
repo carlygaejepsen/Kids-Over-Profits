@@ -471,6 +471,8 @@ function kop_tool_page_specs() {
         array('template' => 'page-transporter-index.php',  'title' => 'Youth Transport Companies', 'slug' => 'youth-transport-companies', 'status' => 'publish'),
         // Mental health providers outside the TTI, from providers_master.
         array('template' => 'page-provider-index.php',     'title' => 'Mental Health Providers', 'slug' => 'mental-health-providers', 'status' => 'publish'),
+        // Marketing companies, from marketers_master (the data forms' Marketers tab, inc/marketers.php).
+        array('template' => 'page-marketer-index.php',     'title' => 'Marketing Companies', 'slug' => 'marketing-companies', 'status' => 'publish'),
         // Indian boarding schools and residential schools: not our story, so it is
         // mostly directions to Indigenous-led organizations. Published by the owner.
         array('template' => 'page-indian-boarding-schools.php', 'title' => 'Indian Boarding Schools and Residential Schools', 'slug' => 'indian-boarding-schools', 'status' => 'publish'),
@@ -589,6 +591,11 @@ function kop_nav_item_specs() {
             'slug'   => 'mental-health-providers',
             'parent' => 'Monitor',
             'title'  => 'Mental Health Providers',
+        ),
+        array(
+            'slug'   => 'marketing-companies',
+            'parent' => 'Monitor',
+            'title'  => 'Marketing Companies',
         ),
     );
 }
@@ -712,7 +719,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '26';
+    $version = '27';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -2530,7 +2537,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '113';
+    $version = '114';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

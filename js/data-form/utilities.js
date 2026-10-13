@@ -526,6 +526,17 @@ function resolvePathTarget(path) {
         return { scope, normalizedPath, target };
     }
 
+    // Marketing company lists (js/data-form/marketer-form.js)
+    if (path.startsWith('marketerCompany.')) {
+        if (typeof window.ensureMarketerDataStructures === 'function') {
+            window.ensureMarketerDataStructures();
+        }
+        scope = 'marketerCompany';
+        normalizedPath = path.replace('marketerCompany.', '');
+        target = window.formData.marketerCompany;
+        return { scope, normalizedPath, target };
+    }
+
     scope = 'facility';
     normalizedPath = path;
     if (!Array.isArray(window.formData.facilities) || !window.formData.facilities.length) {

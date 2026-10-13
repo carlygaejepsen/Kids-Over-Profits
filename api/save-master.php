@@ -67,6 +67,7 @@ if (!$request) {
 // Load this BEFORE extracting variables to avoid WordPress variable conflicts
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/facility-promotion.php';
+require_once __DIR__ . '/lib-marketers.php';
 
 // --- Admin authentication ---
 // This endpoint writes directly to the master tables, so it must be admin-only.
@@ -123,6 +124,7 @@ $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $prefix);
 $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $prefix);
 $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $prefix);
 $providers_table = kop_resolve_table_name($pdo, 'providers_master', '');
+$marketers_table = kop_resolve_table_name($pdo, 'marketers_master', '');
 $locations_table = kop_resolve_table_name($pdo, 'locations_master', $prefix);
 $wiki_table = kop_resolve_table_name($pdo, 'wiki_master', $prefix);
 
@@ -247,7 +249,7 @@ if ($projectName) {
 // operator/facilities blocks, so without this list referrer, transporter and
 // provider saves were rewritten into the facility tables (matches the REST
 // save in inc/rest-api.php).
-$kop_known_non_company = ['locations', 'referrers', 'transporters', 'providers', 'wiki'];
+$kop_known_non_company = ['locations', 'referrers', 'transporters', 'providers', 'marketers', 'wiki'];
 if (!in_array($category, $kop_known_non_company, true) && is_array($data)) {
     $has_operator_data = isset($data['operator']) || isset($data['facilities']);
     if ($has_operator_data && $category !== 'companies' && $category !== 'company') {
@@ -317,7 +319,7 @@ if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
             }
             if (!$is_location && !$deleted) {
                 // Not an operator: a referrer, transporter or provider project of that name.
-                foreach (['referrers_master', 'transporters_master', $providers_table] as $table) {
+                foreach (['referrers_master', 'transporters_master', $providers_table, $marketers_table] as $table) {
                     try {
                         $stmt = $pdo->prepare("DELETE FROM `$table` WHERE unique_name = :projectName");
                         $stmt->execute([':projectName' => $projectName]);
@@ -1120,18 +1122,29 @@ if ($action === 'delete') {
             // providers_master is created on first save.
         }
 
+        $deletedFromMarketers = false;
+        try {
+            $stmt = $pdo->prepare("DELETE FROM `{$marketers_table}` WHERE unique_name = :projectName");
+            $stmt->execute([':projectName' => $projectName]);
+            $deletedFromMarketers = $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // marketers_master is created on first save.
+        }
+
         $stmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromLocations = $stmt->rowCount() > 0;
 
-        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromTransporters || $deletedFromProviders || $deletedFromLocations) {
+        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromTransporters || $deletedFromProviders || $deletedFromMarketers || $deletedFromLocations) {
             $fromTable = $deletedFromReferrers
                 ? 'referrers_master'
                 : ($deletedFromTransporters
                     ? 'transporters_master'
                     : ($deletedFromProviders
                         ? $providers_table
-                        : ($deletedFromLocations ? 'locations_master' : 'facilities_master')));
+                        : ($deletedFromMarketers
+                            ? $marketers_table
+                            : ($deletedFromLocations ? 'locations_master' : 'facilities_master'))));
             
             // For non-location projects, also remove this project's entries from all location projects
             $cleanedLocations = [];
@@ -1184,7 +1197,7 @@ if ($action === 'save') {
     // gets the same stamped entries when it clones into state buckets.
     // Provider sites are not TTI facilities: no __facility_ref rows for them.
     $autoPromotedCount = 0;
-    if (is_array($data) && $category !== 'wiki' && $category !== 'providers') {
+    if (is_array($data) && $category !== 'wiki' && $category !== 'providers' && $category !== 'marketers') {
         try {
             $autoPromotedCount = kop_ensure_facility_ids_in_data($pdo, $data);
         } catch (Exception $e) {
@@ -1219,6 +1232,12 @@ if ($action === 'save') {
     } elseif ($category === 'providers') {
         $tableName = $providers_table;
         kop_ensure_master_table($pdo, $tableName);
+    } elseif ($category === 'marketers') {
+        // Marketing companies (js/data-form/marketer-form.js): only the company block is kept
+        $tableName = $marketers_table;
+        kop_ensure_master_table($pdo, $tableName);
+        $projectStructure['data'] = kop_marketer_keep_data($data);
+        $jsonData = json_encode($projectStructure);
     } elseif ($category === 'wiki') {
         $tableName = $wiki_table;
     } else {
@@ -1281,7 +1300,7 @@ if ($action === 'save') {
         // location index and facilities_master in step without a manual
         // backfill.
         $refLinkStats = [];
-        if ($category !== 'wiki' && $category !== 'providers' && function_exists('kop_link_refs_to_locations')) {
+        if ($category !== 'wiki' && $category !== 'providers' && $category !== 'marketers' && function_exists('kop_link_refs_to_locations')) {
             try {
                 $refLinkStats = kop_link_refs_to_locations($pdo);
                 foreach ($refLinkStats['locations_updated'] ?? [] as $loc) {

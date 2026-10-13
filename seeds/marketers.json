@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "_note": "Marketing companies added to marketers_master once per version (inc/marketers.php kop_marketers_apply_seed()). Only records not on file are added; an existing record is never changed. Facts from the reputation series (seeds/reputation/), each with its sources.",
+  "records": [
+    {
+      "name": "Exceed Marketing Solutions",
+      "otherNames": ["Exceed Marketing Solutions, LLC"],
+      "state": "FL",
+      "country": "United States",
+      "founded": "2021",
+      "status": "Active",
+      "websites": ["https://exceedmarketingsolutions.com/"],
+      "keyPersonnel": [
+        "David P. Bolthouse (founder and CEO; manager in Florida's corporate register)",
+        "Barbro M. Bolthouse (manager in Florida's corporate register)"
+      ],
+      "services": {
+        "websiteDesign": true,
+        "seo": true,
+        "cityPages": true,
+        "directories": true,
+        "aiInstructions": true
+      },
+      "otherServices": [
+        "Manages clients' \"ancillary sites, social media, directory listings, hosting and email accounts\"",
+        "\"Search Ranking and AI Inclusion (SEO and GEO)\""
+      ],
+      "sitesRun": [
+        "besttherapeuticboardingschools.com",
+        "militaryschoolusa.com",
+        "therapeuticboardingschools.org",
+        "troubledteenschools.us",
+        "rescueyouth.com",
+        "educationalconsultants.co",
+        "teenchallengeschools.com"
+      ],
+      "clientFacilities": [
+        "Brush Creek Academy",
+        "New Lifehouse Academy",
+        "New Hope Boys Home",
+        "Master's Ranch",
+        "Resolution Ranch",
+        "River View Christian Academy",
+        "Safe Harbor Academy",
+        "Stillwater Academy",
+        "Vive Adolescent Care",
+        "Sunset Bay Academy"
+      ],
+      "clientCompanies": ["Oklahoma Adult and Teen Challenge"],
+      "notes": "Describes itself as \"a leading marketing partner for boarding schools and adolescent therapeutic programs, helping them achieve and maintain full enrollment,\" and tells programs that \"participation with Exceed includes free featured listings in our highly ranked directories.\" Its directories tell parents their owners have \"no ownership, investment, equity interest, or controlling interest in any program featured or listed.\" On October 2, 2026, 15 of the 16 program and directory websites that publish instructions for AI chatbots (llms.txt) were made with Exceed's software; the programs listed above are the ones whose websites were. A former director of Brush Creek Academy and New Lifehouse Academy gives a testimonial on Exceed's site. Exceed's website, the Best Choice Admissions sites and Exceed's directories share one Bing webmaster verification code.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/how-troubled-teen-programs-market-themselves-online/",
+        "https://kidsoverprofits.org/telling-ai-what-to-say/",
+        "https://kidsoverprofits.org/free-help-paid-by-programs/",
+        "https://search.sunbiz.org/Inquiry/CorporationSearch/SearchResultDetail?inquirytype=EntityName&directionType=Initial&searchNameOrder=EXCEEDMARKETINGSOLUTIONS%20L210001392150&aggregateId=flal-l21000139215-07a72a93-7ead-4ac0-8a2b-b33125d8652b&searchTerm=Exceed%20Marketing%20Solutions&listNameOrder=EXCEEDMARKETINGSOLUTIONS%20L210001392150",
+        "https://kidsoverprofits.org/wp-content/uploads/exceedmarketingsolutions.com-home-captured-2026-10-02.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/exceedmarketingsolutions.com-our-story-captured-2026-10-02.pdf",
+        "https://web.archive.org/web/20230329191906/https://thewarren.exposed/exceed-marketing-solutions"
+      ]
+    },
+    {
+      "name": "Best Choice Admissions Services",
+      "otherNames": ["Best Choice Admissions", "Best Choice Network"],
+      "status": "Active",
+      "websites": ["https://bestresidentialtreatment.com/"],
+      "keyPersonnel": ["David Bolthouse (chief executive, as The Warren reported in 2022)"],
+      "services": {
+        "helpLine": true
+      },
+      "otherServices": [
+        "The help line on Exceed Marketing Solutions' directories; TeenChallengeSchools.com labels its pages \"by Best Choice Admissions\""
+      ],
+      "notes": "Its home page says that \"BEST CHOICE IS SPONSORED BY SCHOOLS AND PROGRAMS, THEREFORE OUR HELP IS OFFERED AT NO CHARGE TO FAMILIES.\" It shares a Spanish-language phone number with the Exceed directories. Earlier it told parents it was \"a contracted agent of institutions\" paid \"a flat fee\" for every enrollment; today it says it does not favor programs \"based on financial incentives.\"",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/free-help-paid-by-programs/",
+        "https://kidsoverprofits.org/how-troubled-teen-programs-market-themselves-online/",
+        "https://kidsoverprofits.org/wp-content/uploads/bestresidentialtreatment.com-home-captured-2026-10-02.pdf",
+        "https://web.archive.org/web/20230329203431/https://thewarren.exposed/best-choice-network"
+      ]
+    },
+    {
+      "name": "The Envoy Group",
+      "otherNames": ["Envoy Group"],
+      "status": "Closed",
+      "websites": ["https://www.theenvoygroup.com/"],
+      "keyPersonnel": [
+        "Garret Bolthouse (president and chief executive)",
+        "David Bolthouse (founder, as The Warren reported)"
+      ],
+      "services": {
+        "leadGeneration": true
+      },
+      "otherServices": [
+        "A referral network: programs passed on parents' inquiries that were \"not a good fit for your program (usually 90% or more aren't)\" to other network programs"
+      ],
+      "notes": "Its pitch to programs: \"easily referring inquiries that are not a good fit for your program (usually 90% or more aren't) with other network programs, and offset marketing costs while doing so,\" and \"We custom target leads based on what parents are already searching for.\" Its site now says it \"has closed its doors.\"",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/free-help-paid-by-programs/",
+        "https://web.archive.org/web/20250718105828/https://www.theenvoygroup.com/programs/",
+        "https://web.archive.org/web/20241220130842/https://www.theenvoygroup.com/about/staff/",
+        "https://kidsoverprofits.org/wp-content/uploads/theenvoygroup.duckdns.org-closed-captured-2026-10-02.pdf"
+      ]
+    },
+    {
+      "name": "All Kinds of Therapy",
+      "status": "Active",
+      "websites": ["https://allkindsoftherapy.com/"],
+      "keyPersonnel": ["Jenney Wilder (founder; closed her educational consulting practice in 2015)"],
+      "services": {
+        "directories": true
+      },
+      "otherServices": ["Directory listings for programs at $400 a month"],
+      "notes": "Its listing pages say \"No pay-to-rank listings. Everyone here is human-verified.\" A 2026 press release calls it \"a leading consumer-advocacy platform.\" Its listing for Provo Canyon School still called it \"a leading national provider of residential youth treatment\" after Utah ordered the school's last campus closed in July 2026.",
+      "sourceUrls": [
+        "https://kidsoverprofits.org/free-help-paid-by-programs/",
+        "https://kidsoverprofits.org/wp-content/uploads/allkindsoftherapy.com-about-us-captured-2026-10-02.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/allkindsoftherapy.com-pricing-captured-2026-10-02.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/allkindsoftherapy.com-provo-canyon-school-captured-2026-10-02.pdf",
+        "https://www.prweb.com/releases/all-kinds-of-therapy-expands-directory-ecosystem-with-wave-of-innovative-2026-partners-302820202.html"
+      ]
+    }
+  ]
+}

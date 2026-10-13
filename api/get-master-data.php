@@ -126,6 +126,8 @@ try {
                     $default_category = 'transporters';
                 } elseif ($sourceLabel === 'providers') {
                     $default_category = 'providers';
+                } elseif ($sourceLabel === 'marketers') {
+                    $default_category = 'marketers';
                 } elseif ($sourceLabel === 'locations') {
                     $default_category = 'locations';
                 } elseif ($sourceLabel === 'facilities') {
@@ -167,6 +169,9 @@ try {
     if (!empty($prefix)) {
         $processTable($prefix . 'providers_master', 'providers');
     }
+
+    // 2c. Marketing companies (own table, api/lib-marketers.php)
+    $processTable('marketers_master', 'marketers');
 
     // 3-4. Operator projects and location profiles. Once admin saves write the
     // v2 tables (inc/facility-v2-writer.php), they are built from there.

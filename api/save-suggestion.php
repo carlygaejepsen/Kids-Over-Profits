@@ -2,6 +2,7 @@
 // Save facility data suggestions to the suggested_edits table
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lib-suggested-edits.php';
+require_once __DIR__ . '/lib-marketers.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -92,6 +93,10 @@ function kop_infer_submission_category($input, $data, $active_category) {
 
     if (strtolower(trim((string) ($data['category'] ?? ''))) === 'providers') {
         return 'providers';
+    }
+
+    if (kop_marketer_has_data($data)) {
+        return 'marketers';
     }
 
     if (!empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']) || !empty($data['referrerConsultants'][0]['lastName'])) {
@@ -298,6 +303,13 @@ try {
         kop_strip_provider_submission_data($data);
     }
 
+    // A marketing company keeps only its company block (api/lib-marketers.php); other kinds drop it.
+    if ($effective_category === 'marketers') {
+        $data = kop_marketer_keep_data($data);
+    } else {
+        unset($data['marketerCompany']);
+    }
+
     $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];
     
     if (empty($reason)) {
@@ -332,9 +344,13 @@ try {
         || !empty($data['transporterAgency']['name'])
         || !empty($data['transporters'][0]['firstName']);
 
-    if (!$hasOperator && !$hasFacility && !$hasReferrer && !$hasTransporter) {
+    $hasMarketer = $effective_category === 'marketers' && trim((string) ($data['marketerCompany']['name'] ?? '')) !== '';
+
+    if (!$hasOperator && !$hasFacility && !$hasReferrer && !$hasTransporter && !$hasMarketer) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Please provide at least an operator name, facility name, referrer name, or transporter name']);
+        echo json_encode(['success' => false, 'error' => $effective_category === 'marketers'
+            ? "Please give the marketing company's name"
+            : 'Please provide at least an operator name, facility name, referrer name, or transporter name']);
         exit;
     }
     
@@ -390,6 +406,11 @@ try {
         }
     }
     
+    // A marketing company is filed under its own name.
+    if ($effective_category === 'marketers' && kop_is_placeholder_project_name($master_id)) {
+        $master_id = trim((string) ($data['marketerCompany']['name'] ?? ''));
+    }
+
     // A provider with no project name is filed under its state
     // (lib-suggested-edits.php), not "Unknown Project".
     if ($effective_category === 'providers' && kop_is_placeholder_project_name($master_id)) {

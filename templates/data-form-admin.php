@@ -31,6 +31,7 @@ get_header();
                 <button type="button" class="category-tab" data-category="referrers">Referrers</button>
                 <button type="button" class="category-tab" data-category="transporters">Transporters</button>
                 <button type="button" class="category-tab" data-category="providers">Mental Health Providers</button>
+                <button type="button" class="category-tab" data-category="marketers">Marketers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -188,6 +189,8 @@ get_header();
                     </div>
 
                 </div>
+
+<?php $kop_marketer_part = 'panel'; $kop_marketer_public = false; include __DIR__ . '/data-form-marketer.php'; ?>
             </div>
         </div>
 
@@ -663,6 +666,8 @@ get_header();
             </div>
 
         </div>
+
+<?php $kop_marketer_part = 'editor'; $kop_marketer_public = false; include __DIR__ . '/data-form-marketer.php'; ?>
 
         <!-- Fixed Toolbar -->
         <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters,providers">

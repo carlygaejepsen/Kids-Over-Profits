@@ -745,7 +745,7 @@ function kop_save_project_rest_callback($request) {
     if (is_array($data)) {
         $has_operator_data = isset($data['operator']) || isset($data['facilities']);
         $known_non_company = in_array($category, array(
-            'referrers', 'referrer', 'transporters', 'transporter', 'providers', 'provider', 'locations', 'location'
+            'referrers', 'referrer', 'transporters', 'transporter', 'providers', 'provider', 'marketers', 'marketer', 'locations', 'location'
         ), true);
         if ($has_operator_data && !$known_non_company) {
             $category = 'companies';
@@ -791,6 +791,8 @@ function kop_save_project_rest_callback($request) {
         'transporter' => 'transporters_master',
         'providers' => 'providers_master',
         'provider' => 'providers_master',
+        'marketers' => 'marketers_master',
+        'marketer' => 'marketers_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
@@ -798,7 +800,7 @@ function kop_save_project_rest_callback($request) {
     $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
 
     // Transporter and provider tables are created on first save.
-    if (in_array($table_name, array('transporters_master', 'providers_master'), true)) {
+    if (in_array($table_name, array('transporters_master', 'providers_master', 'marketers_master'), true)) {
         $wpdb->query("CREATE TABLE IF NOT EXISTS `{$table_name}` (
             id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             unique_name VARCHAR(255) NOT NULL,
@@ -808,6 +810,12 @@ function kop_save_project_rest_callback($request) {
             UNIQUE KEY unique_name (unique_name),
             KEY updated_at (updated_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    // A marketing company keeps only its company block (api/lib-marketers.php)
+    if ($table_name === 'marketers_master') {
+        require_once get_stylesheet_directory() . '/api/lib-marketers.php';
+        $data = array('name' => $project_name, 'category' => 'marketers', 'data' => kop_marketer_keep_data($data), 'timestamp' => gmdate('c'));
     }
 
     // Encode data as JSON
@@ -899,6 +907,8 @@ function kop_delete_project_rest_callback($request) {
         'transporter' => 'transporters_master',
         'providers' => 'providers_master',
         'provider' => 'providers_master',
+        'marketers' => 'marketers_master',
+        'marketer' => 'marketers_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );

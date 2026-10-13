@@ -249,6 +249,7 @@ if (!function_exists('kop_site_map_template_sections')) {
             'page-referrer-index.php'          => 'records',
             'page-transporter-index.php'       => 'records',
             'page-provider-index.php'          => 'records',
+            'page-marketer-index.php'          => 'records',
             // Programs for adults 18+ are part of the industry (often the next
             // step after a teen program), so they sit with the directories.
             'page-young-adult-programs.php'    => 'records',

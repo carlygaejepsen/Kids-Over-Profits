@@ -5,7 +5,7 @@
  * someone who wants to add one fact. This puts three steps in front of it:
  *
  *   1. Find the record (search over the projects the form already loaded), or
- *      add a new facility, parent company, provider, transporter or referrer.
+ *      add a new facility, parent company, provider, transporter, referrer or marketer.
  *   2. Pick what to add or fix (staff, dates, incidents, ...).
  *   3. Edit: the form shows only the sections for those topics, plus Submit.
  *
@@ -47,9 +47,14 @@
             label: 'Referrer',
             hint: 'An educational consultant, placement service or school district that sends kids to programs.',
             category: 'referrers'
+        },
+        marketer: {
+            label: 'Marketing company',
+            hint: 'A company that markets programs: their websites, "independent" directories, help lines, sold inquiries or reputation work.',
+            category: 'marketers'
         }
     };
-    const TYPE_ORDER = ['facility', 'company', 'provider', 'transporter', 'referrer'];
+    const TYPE_ORDER = ['facility', 'company', 'provider', 'transporter', 'referrer', 'marketer'];
 
     // Topics: what the person wants to add, and the form sections that hold it.
     // `extra` are non-section blocks shown with the topic.
@@ -90,17 +95,23 @@
         referrer: [
             { key: 'agency', label: 'The business or agency: name, place, website', sections: ['referrer-agency-section'], extra: ['#referrer-agency-toggle-section'] },
             { key: 'people', label: 'Consultants and the programs they send kids to', sections: ['referrer-consultants-section'] }
+        ],
+        marketer: [
+            { key: 'company', label: 'The company: name, place, owners, website', sections: ['marketer-company-section'] },
+            { key: 'services', label: 'What it does, and the directories or help lines it runs', sections: ['marketer-services-section'] },
+            { key: 'clients', label: 'Programs it markets, lawsuits and sources', sections: ['marketer-clients-section'] }
         ]
     };
     // Shown with every topic set: the submit block of each view.
-    const ALWAYS_ON = ['submission-section', 'referrer-submission-section', 'transporter-submission-section'];
+    const ALWAYS_ON = ['submission-section', 'referrer-submission-section', 'transporter-submission-section', 'marketer-submission-section'];
     // What a new record opens with, already ticked.
     const NEW_DEFAULT_TOPICS = {
         facility: ['names', 'place'],
         company: ['company'],
         provider: ['names', 'care', 'place'],
         transporter: ['company', 'people'],
-        referrer: ['agency', 'people']
+        referrer: ['agency', 'people'],
+        marketer: ['company', 'services', 'clients']
     };
 
     const state = {
@@ -219,6 +230,20 @@
             const data = p.data || {};
             const category = p.category || 'companies';
             const list = Array.isArray(data.facilities) ? data.facilities : [];
+
+            if (category === 'marketers') {
+                const org = data.marketerCompany || {};
+                const name = String(org.name || '').trim() || key;
+                entries.push({
+                    type: 'marketer',
+                    name,
+                    aliases: [key].concat(nameList(org.otherNames)).filter((a) => fold(a) !== fold(name)),
+                    place: [org.city, org.state].map((v) => String(v || '').trim()).filter(Boolean).join(', '),
+                    people: [],
+                    homes: [{ project: key, category }]
+                });
+                return;
+            }
 
             if (category === 'referrers' || category === 'transporters') {
                 const isRef = category === 'referrers';
@@ -356,7 +381,7 @@
             <section class="kop-wiz-card" aria-labelledby="kop-wiz-h">
                 ${stepLabel(1)}
                 <h2 id="kop-wiz-h">What do you want to tell us about?</h2>
-                <p class="kop-wiz-lead">Search for the program, company, provider, transporter or consultant. Programs change names often, so an old name works too.</p>
+                <p class="kop-wiz-lead">Search for the program, company, provider, transporter, consultant or marketing company. Programs change names often, so an old name works too.</p>
                 <div class="kop-wiz-search">
                     <label for="kop-wiz-q">Name</label>
                     <input type="search" id="kop-wiz-q" data-growing-text-field="true" autocomplete="off" placeholder="e.g. Turn-About Ranch" value="${esc(state.query)}">
@@ -782,6 +807,16 @@
             data.category = 'providers';
             await load(t.name, { data, category: 'providers' });
             return 'providers';
+        }
+
+        if (t.type === 'marketer') {
+            data.marketerCompany = typeof window.createDefaultMarketerCompany === 'function'
+                ? window.createDefaultMarketerCompany()
+                : { name: '', services: {} };
+            data.marketerCompany.name = t.name;
+            data.category = 'marketers';
+            await load(t.name, { data, category: 'marketers' });
+            return 'marketers';
         }
 
         const isRef = t.type === 'referrer';

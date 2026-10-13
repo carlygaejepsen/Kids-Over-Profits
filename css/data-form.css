@@ -4859,3 +4859,9 @@ button.kop-split-list-btn:focus {
     color: var(--kop-orange-ink, #A3570D);
     background: transparent;
 }
+/* Marketers tab (templates/data-form-marketer.php): one-line help under a field label */
+.kop-marketer-hint {
+    margin: 0 0 6px;
+    color: var(--kop-text-muted, #4A5568);
+    font-size: 13px;
+}

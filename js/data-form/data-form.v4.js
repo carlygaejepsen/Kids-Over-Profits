@@ -719,6 +719,10 @@ window.updateAllUI = function() {
         if (typeof window.loadReferrerData === 'function') {
             window.loadReferrerData();
         }
+        // Fills the Marketers tab when it is the active one (js/data-form/marketer-form.js)
+        if (typeof window.loadMarketerData === 'function') {
+            window.loadMarketerData();
+        }
         loadFacilityData();
         updateFacilityControls();
         updateTableOfContents();

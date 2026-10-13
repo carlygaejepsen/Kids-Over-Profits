@@ -34,6 +34,7 @@
         referrers: 'Referrer',
         transporters: 'Transporter',
         providers: 'Mental Health Provider',
+        marketers: 'Marketing company',
         locations: 'Location',
         people: 'Person',
         news: 'News',

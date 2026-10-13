@@ -192,6 +192,13 @@ global $wpdb;
             'results'  => array(),
         ),
         array(
+            'title'    => 'Marketing Companies',
+            'table'    => 'marketers_master',
+            'template' => 'page-marketer-index.php',
+            'linkable' => false, // one server-rendered list (inc/marketers.php)
+            'results'  => array(),
+        ),
+        array(
             'title'    => 'Locations',
             'table'    => 'locations_master',
             'template' => 'page-location-index.php',

@@ -169,6 +169,8 @@ require_once get_stylesheet_directory() . '/inc/indigenous-schools-admin.php';
 // Young adult programs (18+): their own records, never TTI facilities
 // (listed on /young-adult-programs/, KOP Tools > Young Adult Programs, filled from Woodbury Facts)
 require_once get_stylesheet_directory() . '/inc/young-adult-programs.php';
+// Marketing companies: /marketing-companies/ from marketers_master (data forms' Marketers tab)
+require_once get_stylesheet_directory() . '/inc/marketers.php';
 require_once get_stylesheet_directory() . '/inc/young-adult-programs-admin.php';
 
 // Open data: daily bulk downloads of every public dataset (/open-data/)

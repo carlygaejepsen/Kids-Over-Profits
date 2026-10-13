@@ -39,7 +39,7 @@
             ? viewName.trim().toLowerCase()
             : 'companies';
 
-        if (normalizedView === activeViewLayout && normalizedView !== 'referrers' && normalizedView !== 'transporters') {
+        if (normalizedView === activeViewLayout && normalizedView !== 'referrers' && normalizedView !== 'transporters' && normalizedView !== 'marketers') {
             // Allow referrers/transporters to reapply in case of toggles that alter nested forms.
             return;
         }
@@ -637,6 +637,13 @@
 
             if (activeCategory === 'locations') {
                 dataToSubmit = buildLocationSuggestionPayload(dataToSubmit);
+            }
+
+            // A marketing company sends only its company block; every other kind drops it.
+            if (activeCategory === 'marketers' && typeof window.marketerSubmissionData === 'function') {
+                dataToSubmit = window.marketerSubmissionData(dataToSubmit, actualProjectName);
+            } else {
+                delete dataToSubmit.marketerCompany;
             }
 
             const facilityCount = Array.isArray(dataToSubmit.facilities) ? dataToSubmit.facilities.length : 0;

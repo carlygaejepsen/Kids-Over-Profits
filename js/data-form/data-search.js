@@ -20,7 +20,9 @@ const KOP_Search = (function() {
             location: document.getElementById('location-search-input')?.value || '',
             referrer: document.getElementById('referrer-search-input')?.value || '',
             transporter: document.getElementById('transporter-search-input')?.value || '',
-            provider: document.getElementById('provider-search-input')?.value || ''
+            provider: document.getElementById('provider-search-input')?.value || '',
+            // Marketing companies are filtered in the loaded list only (no database search for them)
+            marketer: document.getElementById('marketer-search-input')?.value || ''
         };
     }
 
@@ -153,6 +155,13 @@ const KOP_Search = (function() {
             providerSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
             providerSearchInput.dataset.listenerAttached = 'true';
         }
+
+        // Marketing company search input
+        const marketerSearchInput = document.getElementById('marketer-search-input');
+        if (marketerSearchInput && !marketerSearchInput.dataset.listenerAttached) {
+            marketerSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
+            marketerSearchInput.dataset.listenerAttached = 'true';
+        }
     }
 
     /**
@@ -173,6 +182,9 @@ const KOP_Search = (function() {
 
         const providerSearchInput = document.getElementById('provider-search-input');
         if (providerSearchInput) providerSearchInput.value = '';
+
+        const marketerSearchInput = document.getElementById('marketer-search-input');
+        if (marketerSearchInput) marketerSearchInput.value = '';
 
         // Clear database search results
         window.databaseProjects = {};

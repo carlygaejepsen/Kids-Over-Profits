@@ -373,6 +373,8 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-featured-reportin
 # note and a reason; Feature picks it with the note as edited in its box (Undo = kop_feat_undo of that pick), Pass over changes nothing.
 # New ones go in js/data/featured/nominations.json with a higher 'version' (adds missing ones only, never changes a decided one)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=featured-nominations
+# Marketing companies (Marketers tab, /marketing-companies/): record shape, seed, page, form markup == marketer-form.js
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-marketers.php [--out=tmp/marketers]
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Facility lists that states publish instead of inspection reports (MO license-exempt registry, KY, AK, LA, IN, KS/MS PRTF) checked
@@ -551,6 +553,7 @@ to the program aggregate otherwise.
 - `suggested_edits` - Public submissions pending approval
 - `locations_master` / `referrers_master` - Related data
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
+- `marketers_master` - Marketing companies that sell programs to parents (websites, "independent" directories, help lines, sold inquiries, reputation work, instructions for AI chatbots): the data forms' Marketers tab (`js/data-form/marketer-form.js`, `templates/data-form-marketer.php`), stored as `{marketerCompany}` only (`api/lib-marketers.php`), listed on /marketing-companies/ (`inc/marketers.php`); seeded once per version from `seeds/marketers.json` (adds missing records, never changes one)
 - `wiki_submissions` / `news_submissions` - Content submissions
 - `{prefix}kop_volunteers` / `{prefix}kop_volunteer_recs` - Volunteer reviewers (name, hash of their link's token) and their approve/reject/not sure recommendations on review inbox items, closed with the admin's decision (`inc/review-volunteers.php`)
 - `{prefix}kop_people` / `{prefix}kop_person_roles` - One id per person named anywhere in the records (`personId` on each `facilities_v2` staff entry; everyone else linked by name), its pool (industry, harmed, press), and where each is named (derived, rebuilt by the hourly sync; `inc/people.php`)

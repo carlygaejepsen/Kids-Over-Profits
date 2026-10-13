@@ -1,6 +1,6 @@
 # Data Forms
 
-The Data Forms module covers both the admin master-data form and the public suggestion form. Together they support structured data entry for parent companies (operator projects with their facilities), operators, locations (state and country profiles), referrers, transporters, and mental health providers.
+The Data Forms module covers both the admin master-data form and the public suggestion form. Together they support structured data entry for parent companies (operator projects with their facilities), operators, locations (state and country profiles), referrers, transporters, mental health providers and marketing companies.
 
 ## Overview
 
@@ -102,6 +102,17 @@ The **Mental Health Providers** tab (`data-category="providers"`) is for provide
 - Storage: `providers_master` (created on first save or approval), never the facility tables. Provider saves skip `__facility_ref` promotion and location linking, so provider sites do not appear on facility pages, state hubs or `/wp-json/kop/v1/facilities`. Every other category strips `providerDetails` before saving or submitting.
 - Approval: `api/lib-suggested-edits.php` files a suggestion whose data carries `category: "providers"` into `providers_master`.
 - Project names: a provider suggestion that arrives with no project name (the form sends "Unknown Project") is filed under its state in uppercase (`MONTANA`), or its country outside the US, by `kop_provider_project_name()` at submit (`save-suggestion.php`) and again on approval. The operator block is usually the provider's own hospital or health system (Billings Clinic for Billings Clinic Psychiatric Center), not a parent company, so it names the project only when no location is given; an admin names a parent-company project in the form. A provider named after a state stays in `providers_master`, and approving into an existing provider project adds or updates sites by name instead of replacing the project.
+
+## Marketers (marketing companies)
+
+The **Marketers** tab (`data-category="marketers"`) is for companies that market programs to parents: they build program websites, publish pages for towns a program is not in, run "independent" directories and help lines, sell or trade parents' inquiries, manage reputations and write instructions for AI chatbots.
+
+- Markup: `templates/data-form-marketer.php`, included by both templates (the saved-projects panel and the editor). JS: `js/data-form/marketer-form.js`.
+- One company per project in `formData.marketerCompany`: text fields (`name`, `city`, `state`, `country`, `address`, `founded`, `status`, `notes`), string lists (`otherNames`, `websites`, `parentCompanies`, `keyPersonnel`, `otherServices`, `sitesRun`, `clientFacilities` (facility autocomplete), `clientCompanies`, `affiliations`, `lawsuits`, `sourceUrls`, `socialMedia`) and `services` checkboxes. The keys are listed in `api/lib-marketers.php` and `marketer-form.js`; `scripts/test-marketers.php` checks they match each other and the markup.
+- List paths `marketerCompany.*` resolve to `formData.marketerCompany` (`resolvePathTarget()` in `js/data-form/utilities.js`).
+- Storage: `marketers_master`, created on first save, approval or seed. Every save path keeps only `{marketerCompany, category}` (`kop_marketer_keep_data()`): admin saves (`api/save-master.php`, the REST fallback), public submissions (`api/save-suggestion.php`) and approval (`api/lib-suggested-edits.php`). Approving a suggestion for a company on file merges into it (`kop_marketer_merge_company()`): filled text wins, lists join, nothing is emptied. Other categories drop `marketerCompany`.
+- Public page: /marketing-companies/ (`templates/page-marketer-index.php`, `inc/marketers.php`). Industry websites link to the archived copy and to the live site through `/go/`. Programs and companies link to their pages when the name belongs to exactly one record.
+- The guided start offers "Marketing company" (`?add=marketer`).
 
 ## Key Features
 

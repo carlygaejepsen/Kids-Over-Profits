@@ -100,6 +100,7 @@ function kop_global_search_collect($phrase) {
         array('key' => 'facilities',   'label' => 'Facilities & programs', 'table' => $facilities_table,     'template' => 'page-tti-program-index.php', 'limit' => 6),
         array('key' => 'referrers',    'label' => 'Referrers',             'table' => 'referrers_master',    'template' => 'page-referrer-index.php',    'limit' => 4),
         array('key' => 'transporters', 'label' => 'Transporters',          'table' => 'transporters_master', 'template' => 'page-transporter-index.php', 'limit' => 4),
+        array('key' => 'marketers',    'label' => 'Marketing companies',   'table' => 'marketers_master',    'template' => 'page-marketer-index.php',    'limit' => 4),
         array('key' => 'locations',    'label' => 'Locations',             'table' => 'locations_master',    'template' => 'page-location-index.php',    'limit' => 4),
     );
 
@@ -131,7 +132,7 @@ function kop_global_search_collect($phrase) {
         }
         // Referrers and transporters are not part of the facility model.
         $master_tables = array_values(array_filter($master_tables, function ($cfg) {
-            return in_array($cfg['key'], array('referrers', 'transporters'), true);
+            return in_array($cfg['key'], array('referrers', 'transporters', 'marketers'), true);
         }));
     }
 
@@ -143,7 +144,7 @@ function kop_global_search_collect($phrase) {
         // Over-fetch: some LIKE hits are __facility_ref stubs that get skipped.
         $rows = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT unique_name, json_data FROM `{$cfg['table']}`
+                "SELECT id, unique_name, json_data FROM `{$cfg['table']}`
                  WHERE unique_name LIKE %s OR json_data LIKE %s
                  LIMIT %d",
                 $like,
@@ -168,8 +169,15 @@ function kop_global_search_collect($phrase) {
             } elseif (isset($inner['referrerAgency']['name']) && is_string($inner['referrerAgency']['name'])) {
                 $operator = $inner['referrerAgency']['name'];
             }
+            if (isset($inner['marketerCompany']['name']) && is_string($inner['marketerCompany']['name']) && trim($inner['marketerCompany']['name']) !== '') {
+                $operator = trim($inner['marketerCompany']['name']);
+            }
             $display = $operator !== '' ? $operator : $row['unique_name'];
             $profile_url = '';
+            if ($cfg['key'] === 'marketers' && $index_url) {
+                // The company's own entry on /marketing-companies/ (inc/marketers.php)
+                $profile_url = $index_url . '#kop-mkt-' . (int) $row['id'];
+            }
             if ($cfg['key'] === 'facilities') {
                 $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
             }

@@ -2,7 +2,7 @@
 /**
  * Shared library for applying approved suggested_edits rows to the master
  * tables (facilities_master / referrers_master / transporters_master /
- * providers_master / locations_master).
+ * providers_master / marketers_master / locations_master).
  *
  * Used by process-edit.php (legacy single-submission endpoint) and
  * manage-submissions.php (Submissions Review approve action) so that
@@ -11,6 +11,8 @@
  * Every definition is guarded with function_exists so this file can be
  * required alongside endpoints that define the same helpers inline.
  */
+
+require_once __DIR__ . '/lib-marketers.php';
 
 if (!function_exists('kop_ensure_master_table')) {
     /**
@@ -517,12 +519,14 @@ if (!function_exists('kop_apply_suggested_edit')) {
         $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix);
         $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $wp_prefix);
         $providers_table = kop_resolve_table_name($pdo, 'providers_master', '');
+        $marketers_table = kop_resolve_table_name($pdo, 'marketers_master', '');
         $locations_table = kop_resolve_table_name($pdo, 'locations_master', $wp_prefix);
 
         try {
             // CREATE TABLE commits implicitly, so create it before the
             // transaction opens rather than when a provider row is found.
             kop_ensure_master_table($pdo, $providers_table);
+            kop_ensure_master_table($pdo, $marketers_table);
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE id = ? AND status = 'pending' LIMIT 1");
@@ -569,6 +573,17 @@ if (!function_exists('kop_apply_suggested_edit')) {
             // Mental health providers (js/data-form/provider-form.js) are tagged
             // on the data; they are facility-shaped but are not TTI facilities.
             $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
+            // Marketing companies (api/lib-marketers.php): their own table, filed under the company's name.
+            $isMarketer = !$isProvider && kop_marketer_has_data($project_data);
+            if ($isMarketer) {
+                $project_data = kop_marketer_keep_data($project_data);
+                $decoded_data = ['name' => $resolved_master_id, 'category' => 'marketers', 'data' => $project_data];
+                $marketer_name = kop_sanitize_project_identifier($project_data['marketerCompany']['name']);
+                if (kop_is_placeholder_project_name($master_id) && $marketer_name !== '') {
+                    $resolved_master_id = $marketer_name;
+                    $decoded_data['name'] = $marketer_name;
+                }
+            }
 
             // A provider named after a bare state or country would land in
             // the form's location project of that name; file it as
@@ -600,7 +615,7 @@ if (!function_exists('kop_apply_suggested_edit')) {
                 $resolved_master_id = $masterIdUpper;
             }
             // A provider filed under a state stays in providers_master.
-            if ($isProvider) {
+            if ($isProvider || $isMarketer) {
                 $isLocation = false;
             }
 
@@ -619,6 +634,9 @@ if (!function_exists('kop_apply_suggested_edit')) {
             } elseif ($isProvider) {
                 $tableName = $providers_table;
                 $category = 'providers';
+            } elseif ($isMarketer) {
+                $tableName = $marketers_table;
+                $category = 'marketers';
             } elseif ($isReferrer) {
                 $tableName = $referrers_table;
                 $category = 'referrers';
@@ -732,6 +750,20 @@ if (!function_exists('kop_apply_suggested_edit')) {
                     }
                     $existingData['timestamp'] = date('c');
                     $json_data = json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+                }
+                // A marketer suggestion adds to the company on file: lists join, filled text wins, nothing is emptied.
+                if ($isMarketer && !empty($exists['json_data'])) {
+                    $merged = kop_marketer_merge_company(
+                        kop_marketer_company_from_json($exists['json_data']),
+                        $project_data['marketerCompany']
+                    );
+                    $kept = json_decode($exists['json_data'], true);
+                    $kept = is_array($kept) ? $kept : [];
+                    $kept['name'] = $resolved_master_id;
+                    $kept['category'] = 'marketers';
+                    $kept['data'] = array_merge(is_array($kept['data'] ?? null) ? $kept['data'] : [], ['marketerCompany' => $merged, 'category' => 'marketers']);
+                    $kept['timestamp'] = date('c');
+                    $json_data = json_encode($kept, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
 
                 $updateStmt = $pdo->prepare("UPDATE `{$tableName}` SET json_data = ?, updated_at = NOW() WHERE unique_name = ?");

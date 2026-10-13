@@ -1,0 +1,130 @@
+/*
+ * Marketing companies (templates/page-marketer-index.php).
+ *
+ * One white card, one column: a reference list. Text never sits on the
+ * site's gradient; bright accents stay on borders, never behind text.
+ */
+
+.kop-mkt-page {
+    max-width: 56rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+    .kop-mkt-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.5rem 1rem 2.5rem;
+        border-radius: 0;
+    }
+}
+
+.kop-mkt-title {
+    margin: 0 0 1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-mkt-intro {
+    margin: 0 0 1.5rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-mkt-intro p {
+    margin: 0;
+}
+
+.kop-mkt-intro p + p {
+    margin-top: 0.6rem;
+}
+
+.kop-mkt-page a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-mkt-page a:hover,
+.kop-mkt-page a:focus {
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-mkt-count,
+.kop-mkt-empty {
+    margin: 0 0 0.75rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-mkt-jump ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+}
+
+.kop-mkt-company {
+    scroll-margin-top: 6rem;
+    margin: 0 0 1.25rem;
+    padding: 0 0 1.1rem;
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+}
+
+.kop-mkt-name {
+    margin: 0 0 0.2rem;
+    font-size: 1.3rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-mkt-meta {
+    margin: 0 0 0.5rem;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-mkt-fact {
+    margin: 0 0 0.35rem;
+}
+
+.kop-mkt-list-title {
+    margin: 0.75rem 0 0.25rem;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-mkt-list {
+    margin: 0 0 0.5rem 1.2rem;
+    padding: 0;
+}
+
+.kop-mkt-list li {
+    margin-bottom: 0.3rem;
+}
+
+.kop-mkt-sources,
+.kop-mkt-muted {
+    font-size: 0.9em;
+    color: var(--kop-text-muted, #4A5568);
+}
+
+.kop-mkt-sources {
+    margin: 0.5rem 0 0;
+}
+
+.kop-mkt-notes p {
+    margin: 0.5rem 0 0;
+}
+
+.kop-mkt-list li,
+.kop-mkt-sources {
+    overflow-wrap: anywhere;
+}

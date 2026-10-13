@@ -131,6 +131,7 @@
                 referrers: document.getElementById('referrer-saved-projects-list'),
                 transporters: document.getElementById('transporter-saved-projects-list'),
                 providers: document.getElementById('provider-saved-projects-list'),
+                marketers: document.getElementById('marketer-saved-projects-list'),
                 // Operators view: an edit-only list of the same parent-company
                 // projects (each carries the operator record). Populated below by
                 // aliasing the companies group.
@@ -202,6 +203,7 @@
                 referrers: [],
                 transporters: [],
                 providers: [],
+                marketers: [],
                 operators: []
             };
 
@@ -220,6 +222,7 @@
                 if (category === 'referrer') category = 'referrers';
                 if (category === 'transporter') category = 'transporters';
                 if (category === 'provider') category = 'providers';
+                if (category === 'marketer') category = 'marketers';
 
                 // Determine search query for this category
                 let searchQuery = '';
@@ -228,6 +231,7 @@
                 else if (category === 'referrers') searchQuery = searchQueries.referrer;
                 else if (category === 'transporters') searchQuery = searchQueries.transporter;
                 else if (category === 'providers') searchQuery = searchQueries.provider;
+                else if (category === 'marketers') searchQuery = searchQueries.marketer;
 
                 let matchSnippet = null;
 
@@ -607,7 +611,8 @@
             else if (path.includes('Referrers') || path.includes('knownReferrers')) defaultCategory = 'referrer';
             // Facility names: suggests real facility records from the server as you type
             // (js/autocomplete.js 'facilityref'), free text still allowed.
-            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred') || path.includes('ttiReferrals')) defaultCategory = 'facilityref';
+            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred') || path.includes('ttiReferrals') || path.includes('clientFacilities')) defaultCategory = 'facilityref';
+            else if (path.includes('clientCompanies')) defaultCategory = 'operator';
             else if (path.includes('transportersUsed')) defaultCategory = 'transporter';
             else if (path.includes('accreditations')) defaultCategory = 'accreditation';
             else if (path === 'memberships' || path.includes('affiliations')) defaultCategory = 'membership';
@@ -1194,7 +1199,7 @@
             // (edit-only) view, where we stay put and just edit the operator fields.
             const operatorsViewActive = document.querySelector('.category-tab.active')?.dataset.category === 'operators';
             if (!operatorsViewActive) {
-                const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', providers: 'providers', companies: 'companies' };
+                const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', providers: 'providers', marketers: 'marketers', companies: 'companies' };
                 const tabCategory = categoryMap[projectData.category] || projectData.category;
                 const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
                 if (targetTab && !targetTab.classList.contains('active')) {
@@ -1223,6 +1228,7 @@
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
+                if (typeof window.ensureMarketerDataStructures === 'function') window.ensureMarketerDataStructures();
                 if (window.updateJSON && typeof window.updateJSON === 'function') {
                     window.updateJSON();
                 }

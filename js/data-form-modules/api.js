@@ -50,7 +50,7 @@
             // top-level facilities and shows only a blank "Facility 1".
             const hasProjectContent = (obj) => obj && typeof obj === 'object' && [
                 'facilities', 'operator', 'referrerConsultants', 'referrerAgency',
-                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual'
+                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual', 'marketerCompany'
             ].some(key => obj[key] !== undefined);
 
             const dataLayer = parseIfString(source.data);
@@ -410,6 +410,12 @@
                 projectData.data.category = 'providers';
             } else if (typeof window.stripProviderData === 'function') {
                 window.stripProviderData(projectData.data);
+            }
+            // A marketing company saves only its company block (js/data-form/marketer-form.js).
+            if (category === 'marketers' && typeof window.marketerSubmissionData === 'function') {
+                projectData.data = window.marketerSubmissionData(projectData.data, projectName);
+            } else {
+                delete projectData.data.marketerCompany;
             }
 
             const payload = {

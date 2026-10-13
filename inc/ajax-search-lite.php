@@ -66,6 +66,7 @@ function kop_asl_collect_database_matches($phrase) {
         array('table' => $facilities_table,      'label' => 'Facility record',    'template' => 'page-tti-program-index.php', 'limit' => 4),
         array('table' => 'referrers_master',     'label' => 'Referrer',           'template' => 'page-referrer-index.php',    'limit' => 2),
         array('table' => 'transporters_master',  'label' => 'Transporter',        'template' => 'page-transporter-index.php', 'limit' => 2),
+        array('table' => 'marketers_master',     'label' => 'Marketing company',  'template' => 'page-marketer-index.php',    'limit' => 2),
         array('table' => 'locations_master',     'label' => 'Location',           'template' => 'page-location-index.php',    'limit' => 2),
     );
 
@@ -82,7 +83,7 @@ function kop_asl_collect_database_matches($phrase) {
             );
         }
         $master_tables = array_values(array_filter($master_tables, function ($cfg) {
-            return in_array($cfg['table'], array('referrers_master', 'transporters_master'), true);
+            return in_array($cfg['table'], array('referrers_master', 'transporters_master', 'marketers_master'), true);
         }));
     }
 
@@ -93,7 +94,7 @@ function kop_asl_collect_database_matches($phrase) {
         $index_url = kop_asl_page_url_by_template($cfg['template']);
         $rows      = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT unique_name, json_data FROM `{$cfg['table']}` WHERE unique_name LIKE %s OR json_data LIKE %s LIMIT %d",
+                "SELECT id, unique_name, json_data FROM `{$cfg['table']}` WHERE unique_name LIKE %s OR json_data LIKE %s LIMIT %d",
                 $like,
                 $like,
                 $cfg['limit']
@@ -111,6 +112,9 @@ function kop_asl_collect_database_matches($phrase) {
             $profile_url = '';
             if ($cfg['table'] === $facilities_table) {
                 $profile_url = kop_search_record_page_url($operator === '' ? $row['unique_name'] : $operator);
+            } elseif ($cfg['table'] === 'marketers_master' && $index_url) {
+                // The company's own entry on /marketing-companies/ (inc/marketers.php)
+                $profile_url = $index_url . '#kop-mkt-' . (int) $row['id'];
             }
             $items[] = array(
                 'title' => $display,
