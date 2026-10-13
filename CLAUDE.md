@@ -156,6 +156,10 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-rename-merge.php 
 # api/manage-submissions.php), Later = snooze / hand to an admin ({prefix}kop_review_holds, off everyone else's list), Preview
 # (review-inbox/preview: framed where allowed, else a reading copy)
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php [--source=closure]   # every source on a scratch copy; checks in scripts/review-inbox-tests/
+# "File under a young adult program" on every waiting card of a content queue (inc/review-inbox/_ya-file-action.php, like "Home of a program";
+# kop_rinbox_cross_act()): a fact (People/Incidents/History/About) citing the card's link, or only the link, on a picked or new (hidden)
+# program; the card moves to "Already on file" (option kop_review_ya_filed), exact Undo. Queues filing their own way are in its skip list
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-review-inbox.php --source=ya-file
 # Imports connect themselves when the name is exact (inc/auto-connect.php, hourly): a name found in the text that is exactly one record's
 # (same name key, more than generic words, no other record's) is connected with no click: Woodbury Reports pages, wiki links, Fornits
 # discussion links (records whose every name is 10+ letters), State Lists rows now on file. Close names, shared names, board/title-only

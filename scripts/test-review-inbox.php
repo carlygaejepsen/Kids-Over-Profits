@@ -260,6 +260,16 @@ if ($only === '' || $only === 'homes') {
     }
 }
 
+if ($only === '' || $only === 'ya-file') {
+    echo "-- File under a young adult program (every content queue's card) --
+";
+    try {
+        kop_rinbox_test_ya_file_action($check);
+    } catch (Throwable $e) {
+        $check('ya-file: no errors', false, get_class($e) . ': ' . $e->getMessage() . ' @ ' . basename($e->getFile()) . ':' . $e->getLine());
+    }
+}
+
 if ($only === '' || $only === 'ya-moved') {
     echo "-- Items of records moved to the young adult programs --\n";
     try {

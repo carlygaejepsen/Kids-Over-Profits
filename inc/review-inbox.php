@@ -129,6 +129,8 @@ function kop_rinbox_sources($rebuild = false) {
             if (!is_array($src) || empty($src['label'])) continue;
             $src['key'] = $key;
             $src += array('group' => 'Other', 'views' => array('pending' => 'Waiting'), 'native' => false, 'tool_url' => '');
+            // Cards filed under a young adult program wait under "Already on file" (inc/review-inbox/_ya-file-action.php).
+            if (function_exists('kop_rinbox_ya_filed_wrap')) $src = kop_rinbox_ya_filed_wrap($key, $src);
             if (!empty($src['on_file'])) {
                 // "Already on file" right after the waiting view.
                 $views = $src['views'];
@@ -343,6 +345,14 @@ function kop_rinbox_finish_items($source, array $items) {
         if (function_exists('kop_rinbox_homes_action') && is_array($it['facility'])) {
             try {
                 if ($h = kop_rinbox_homes_action($source, $it)) $it['actions'][] = $h;
+            } catch (Throwable $e) {
+                // The card still draws without it.
+            }
+        }
+        // "File under a young adult program" on every card of a content queue (inc/review-inbox/_ya-file-action.php).
+        if (function_exists('kop_rinbox_ya_file_action')) {
+            try {
+                if ($y = kop_rinbox_ya_file_action($source, $it)) $it['actions'][] = $y;
             } catch (Throwable $e) {
                 // The card still draws without it.
             }
@@ -704,6 +714,17 @@ function kop_rinbox_after($source, $key) {
     }
 }
 
+/**
+ * The actions every card can have whatever its queue ("Home of a program",
+ * "File under a young adult program") and their Undo; null when $action is
+ * the queue's own.
+ */
+function kop_rinbox_cross_act($source, $key, $action, array $params) {
+    $res = function_exists('kop_rinbox_homes_act') ? kop_rinbox_homes_act($source, $key, $action, $params) : null;
+    if ($res === null && function_exists('kop_rinbox_ya_file_act')) $res = kop_rinbox_ya_file_act($source, $key, $action, $params);
+    return $res;
+}
+
 function kop_rinbox_rest_act(WP_REST_Request $req) {
     return kop_rinbox_rest(function () use ($req) {
         $source = (string) $req->get_param('source');
@@ -713,7 +734,7 @@ function kop_rinbox_rest_act(WP_REST_Request $req) {
         $params = is_array($params) ? wp_unslash($params) : array();
         $action = sanitize_key((string) $req->get_param('action'));
         $before = kop_rinbox_after($source, $key);
-        $res = function_exists('kop_rinbox_homes_act') ? kop_rinbox_homes_act($source, $key, $action, $params) : null;
+        $res = kop_rinbox_cross_act($source, $key, $action, $params);
         if ($res === null) $res = call_user_func($src['act'], $key, $action, $params);
         kop_rinbox_flush_counts();
         $res = is_array($res) ? $res : array();

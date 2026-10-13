@@ -77,7 +77,8 @@ if (!function_exists('kop_rinbox_test_with_wpdb_writes')) {
 if (!function_exists('kop_rinbox_test_own_actions')) {
     /** A card's action ids without the ones every facility card gets (inc/review-inbox/_homes-action.php). */
     function kop_rinbox_test_own_actions(array $item) {
-        $shared = defined('KOP_RINBOX_HOMES_ACTIONS') ? KOP_RINBOX_HOMES_ACTIONS : array();
+        $shared = array_merge(defined('KOP_RINBOX_HOMES_ACTIONS') ? KOP_RINBOX_HOMES_ACTIONS : array(),
+            defined('KOP_RINBOX_YA_FILE_ACTIONS') ? KOP_RINBOX_YA_FILE_ACTIONS : array());
         return array_values(array_diff(array_column($item['actions'], 'id'), $shared));
     }
 }

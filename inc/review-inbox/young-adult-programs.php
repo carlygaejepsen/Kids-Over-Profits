@@ -94,7 +94,7 @@ function kop_rinbox_ya_item(array $p) {
         $lines[] = ($groups[$f['group'] ?? ''] ?? ($f['group'] ?? '')) . ': ' . $text;
         if (($f['key'] ?? '') !== '') $options[(string) $f['key']] = mb_substr($text, 0, 90);
         foreach (array_slice((array) ($f['cites'] ?? array()), 0, 1) as $c) {
-            if (!empty($c['url']) && count($links) < 8) $links[] = array('label' => 'Woodbury Reports, ' . $c['label'] . ', p. ' . (int) $c['page'], 'url' => $c['url']);
+            if (!empty($c['url']) && count($links) < 8) $links[] = array('label' => !empty($c['cite']) ? (string) $c['cite'] : 'Woodbury Reports, ' . $c['label'] . ', p. ' . (int) $c['page'], 'url' => $c['url']);
         }
     }
     $actions = array($hidden
