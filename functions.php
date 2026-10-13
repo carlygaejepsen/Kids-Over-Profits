@@ -81,6 +81,7 @@ require_once get_stylesheet_directory() . '/inc/facility-eras.php';
 require_once get_stylesheet_directory() . '/inc/operator-pages.php';
 require_once get_stylesheet_directory() . '/inc/operator-history.php';
 require_once get_stylesheet_directory() . '/inc/program-homes.php';
+require_once get_stylesheet_directory() . '/inc/campus-programs.php';
 // Parent companies that are really one program of homes, converted into one (KOP Tools > Program Homes)
 require_once get_stylesheet_directory() . '/inc/program-homes-convert.php';
 // Read-only JSON for the mobile app: kop/v1/facility/<slug>, /operator/<slug>, /news

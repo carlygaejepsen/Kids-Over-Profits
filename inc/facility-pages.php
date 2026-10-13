@@ -403,6 +403,8 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
         $parts[] = 'program-homes:' . (function_exists('kop_program_homes_cache_key') ? kop_program_homes_cache_key() : '-');
         // ...and companies converted into a program, whose history prints there (inc/program-homes-convert.php).
         $parts[] = 'program-conversions:' . (function_exists('kop_phc_cache_key') ? kop_phc_cache_key() : '-');
+        // Separate programs on one campus (inc/campus-programs.php).
+        $parts[] = 'campus:' . (function_exists('kop_campus_cache_key') ? kop_campus_cache_key() : '-');
         $parts[] = 'v:5';
         return md5(implode(';', $parts));
     }
@@ -3102,6 +3104,17 @@ if (!function_exists('kop_facility_page_data')) {
             }));
         }
 
+        // ---- Separate programs on one campus (inc/campus-programs.php) ----------
+        // Listed on their own, so they leave the "Same operator" list too.
+        $campus = function_exists('kop_campus_for_page') ? kop_campus_for_page($facility_id) : null;
+        if ($campus) {
+            $on_campus = array();
+            foreach ($campus['others'] as $c) $on_campus[(string) $c['url']] = true;
+            $siblings = array_values(array_filter($siblings, static function ($s) use ($on_campus) {
+                return $s['url'] === '' || !isset($on_campus[(string) $s['url']]);
+            }));
+        }
+
         // ---- Copy ----------------------------------------------------------------
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
         $seo_title = $name . ($place !== '' ? ' (' . $place . ')' : '') . ' | Kids Over Profits';
@@ -3170,6 +3183,7 @@ if (!function_exists('kop_facility_page_data')) {
             // A company converted into this program: its written history (inc/program-homes-convert.php).
             'program_history' => function_exists('kop_phc_program_history') ? kop_phc_program_history($facility_id) : null,
             'home_of'       => $home_of,
+            'campus'        => $campus,
             'addresses'     => $addresses,
             'former_locations' => $former,
             'operated'      => $operated,

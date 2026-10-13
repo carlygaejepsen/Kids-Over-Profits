@@ -1845,8 +1845,11 @@ p.kop-op-draft {
 
 /* Homes of a program (inc/program-homes.php) */
 .kop-fp-generated-body.kop-fp-reorder > .kop-fp-homes-section { order: 4; }
+/* ...and separate programs on one campus (inc/campus-programs.php) */
+.kop-fp-generated-body.kop-fp-reorder > .kop-fp-campus-section { order: 4; }
 
-.kop-fp-home-of {
+.kop-fp-home-of,
+.kop-fp-campus-of {
     font-style: normal;
 }
 

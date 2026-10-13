@@ -956,10 +956,14 @@ if (!function_exists('kop_fmerge_screen_data')) {
             return $in ? (int) $in[0] : (kop_program_homes_homes_of($id) ? (int) $id : 0);
         };
         if (function_exists('kop_program_homes_map')) kop_program_homes_map(true);
+        // ...and separate programs tied as sharing a campus (inc/campus-programs.php).
+        if (function_exists('kop_campus_map')) kop_campus_map(true);
         $out = array();
         foreach (kop_fmerge_find_pairs($rows, $dismissed) as $p) {
             $pa = $program_of((int) $p['a']);
             if ($pa && $pa === $program_of((int) $p['b'])) continue;
+            $ca = function_exists('kop_campus_of') ? kop_campus_of((int) $p['a']) : 0;
+            if ($ca && $ca === kop_campus_of((int) $p['b'])) continue;
             $a = $side($p['a']);
             $b = $side($p['b']);
             $sa = $score($a);
@@ -1378,6 +1382,7 @@ if (!function_exists('kop_fmerge_ajax')) {
      *   homes      a, b, program (existing record id, or 0 for a new one),
      *              program_name, home_a, home_b   (homes of one program)
      *   undo_homes log       (kop_facility_merge_homes_log id)
+     *   campus     a, b      (separate programs on one campus, inc/campus-programs.php)
      * Answers with the screen's data, rebuilt.
      */
     function kop_fmerge_ajax() {
@@ -1426,6 +1431,10 @@ if (!function_exists('kop_fmerge_ajax')) {
                     . ' Undo is on the Not the same tab.';
             } elseif ($op === 'undo_homes') {
                 $note = kop_fmerge_undo_homes((string) ($_POST['log'] ?? ''));
+            } elseif ($op === 'campus' && function_exists('kop_campus_tie')) {
+                kop_campus_install();
+                kop_campus_tie(array((int) ($_POST['a'] ?? 0), (int) ($_POST['b'] ?? 0)), '', 'Merge Duplicates');
+                $note = 'Tied as separate programs on one campus; each page names the other. Undo is at Program Homes > Same campus.';
             } else {
                 throw new RuntimeException('Unknown action.');
             }
@@ -1467,6 +1476,8 @@ if (!function_exists('kop_fmerge_page')) {
                 Every merge can be undone from the <strong>Merged</strong> tab.
                 Two records that are separate homes or cottages of one program are not duplicates: press
                 <strong>Homes of one program</strong> to list both on the program's page instead (Undo on the <strong>Not the same</strong> tab).
+                Two separate programs on one site (two residential programs of one hospital) are not duplicates either: press
+                <strong>Separate programs, one campus</strong> and each page names the other (Undo at Program Homes &gt; Same campus).
             </p>
             <p class="kop-fm__intro">
                 <strong>Renamed programs</strong> (Copper Canyon Academy became Sedona Sky Academy) are one program under two names.
@@ -1651,6 +1662,10 @@ if (!function_exists('kop_fmerge_page')) {
                     hb.setAttribute('aria-expanded', 'false');
                     actions.appendChild(hb);
                 }
+                var cb = el('button', 'button', 'Separate programs, one campus');
+                cb.type = 'button';
+                cb.addEventListener('click', function () { send({ op: 'campus', a: p.a.id, b: p.b.id }, c); });
+                actions.appendChild(cb);
                 actions.appendChild(el('span', 'kop-fm__muted', 'Keeps "' + k.name + '"; "' + d.name + '" becomes another name for it.'));
                 c.appendChild(actions);
                 if (p.homes) {

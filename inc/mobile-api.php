@@ -119,7 +119,7 @@ if (!function_exists('kop_mobile_facility_payload')) {
         $keep = array(
             'id', 'slug', 'url', 'name', 'unique_name', 'current_name', 'formerly', 'formerly_years', 'later', 'aka', 'status', 'end_year',
             'place', 'city', 'state_code', 'state_name', 'country', 'hub_name', 'hub_url',
-            'operator', 'siblings', 'program_homes', 'home_of', 'addresses', 'former_locations', 'operated',
+            'operator', 'siblings', 'program_homes', 'home_of', 'campus', 'addresses', 'former_locations', 'operated',
             'summary', 'facts', 'fact_sources', 'practices', 'incidents', 'staff', 'notes', 'field_notes',
             'testimony', 'forum', 'videos', 'profile_links', 'resources', 'resource_links', 'federal_funding',
             'lawsuits', 'memorials', 'eras', 'wiki', 'updated_at', 'updated_label',

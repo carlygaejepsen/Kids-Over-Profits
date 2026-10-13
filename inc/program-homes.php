@@ -939,6 +939,9 @@ if (!function_exists('kop_program_homes_handle_post')) {
                 $msg = 'Home taken out of the program.';
             } elseif (($do === 'convert' || $do === 'convert_undo') && function_exists('kop_phc_handle')) {
                 $msg = kop_phc_handle($do);
+            } elseif (strpos($do, 'campus_') === 0 && function_exists('kop_campus_handle')) {
+                // Separate programs on one campus (inc/campus-programs.php).
+                $msg = kop_campus_handle($do);
             }
         } catch (Throwable $e) {
             $msg = 'Not done: ' . $e->getMessage();
@@ -975,10 +978,13 @@ if (!function_exists('kop_program_homes_page')) {
         if ($conv) kop_phc_install();
         $companies = $conv ? kop_phc_suggestions() : array();
         $converted = $conv ? kop_phc_rows(true) : array();
+        // Separate programs on one campus (inc/campus-programs.php).
+        $campus = function_exists('kop_campus_page_tab');
+        if ($campus) kop_campus_install();
         ?>
         <div class="wrap kop-ph">
             <h1>Program homes</h1>
-            <p class="kop-ph-lede">Some programs are licensed home by home or cottage by cottage, so they show up as many records ("Newport Academy &ndash; Acre", "&ndash; Aracena", ...). Group them under one program record: the program's page then lists every home, with their news, lawsuits and serious findings, and each home's page names its program. Each home keeps its own record, licence and inspection reports.</p>
+            <p class="kop-ph-lede">Some programs are licensed home by home or cottage by cottage, so they show up as many records ("Newport Academy &ndash; Acre", "&ndash; Aracena", ...). Group them under one program record: the program's page then lists every home, with their news, lawsuits and serious findings, and each home's page names its program. Each home keeps its own record, licence and inspection reports. Separate programs that only share grounds (two residential programs of one hospital) are not homes: press <strong>Separate programs on one campus</strong> instead (the Same campus tab).</p>
             <?php if ($msg) : ?><div class="notice notice-info"><p><?php echo esc_html($msg); ?></p></div><?php endif; ?>
             <nav class="nav-tab-wrapper">
                 <a class="nav-tab<?php echo $tab === 'suggested' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base); ?>">Suggested (<?php echo count($suggestions); ?>)</a>
@@ -988,6 +994,10 @@ if (!function_exists('kop_program_homes_page')) {
                 <a class="nav-tab<?php echo $tab === 'converted' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=converted'); ?>">Converted (<?php echo count($converted); ?>)</a>
                 <?php endif; ?>
                 <a class="nav-tab<?php echo $tab === 'dismissed' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=dismissed'); ?>">Not one program (<?php echo count($dismissed); ?>)</a>
+                <?php if ($campus) : ?>
+                <a class="nav-tab<?php echo $tab === 'campus' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=campus'); ?>">Same campus (<?php echo count(kop_campus_map(true)['campuses']); ?>)</a>
+                <a class="nav-tab<?php echo $tab === 'campus_suggested' ? ' nav-tab-active' : ''; ?>" href="<?php echo esc_url($base . '&tab=campus_suggested'); ?>">Campus suggestions (<?php echo count(kop_campus_suggestions()); ?>)</a>
+                <?php endif; ?>
             </nav>
             <form method="get" class="kop-ph-search">
                 <input type="hidden" name="page" value="kop-program-homes"><input type="hidden" name="tab" value="<?php echo esc_attr($tab); ?>">
@@ -997,6 +1007,8 @@ if (!function_exists('kop_program_homes_page')) {
             <?php
             if ($tab === 'grouped') {
                 kop_program_homes_page_grouped($map, $q, $hidden);
+            } elseif (($tab === 'campus' || $tab === 'campus_suggested') && $campus) {
+                kop_campus_page_tab($tab, $q, $hidden);
             } elseif ($tab === 'companies' && $conv) {
                 kop_phc_page_suggested($companies, $q, $hidden);
             } elseif ($tab === 'converted' && $conv) {
@@ -1113,6 +1125,10 @@ if (!function_exists('kop_program_homes_page_card')) {
                         <input type="hidden" name="program" value="new">
                     <?php endif; ?>
                     <button type="submit" class="button button-primary">Group these homes</button>
+                    <?php if (function_exists('kop_campus_handle')) : ?>
+                        <button type="submit" class="button" name="do" value="campus_tie" title="Separate programs, none over the others: each page names the others on its campus">Separate programs on one campus</button>
+                        <input type="hidden" name="key" value="<?php echo esc_attr($s['key']); ?>">
+                    <?php endif; ?>
                 </div>
             </form>
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="margin-top:8px">

@@ -115,6 +115,12 @@ php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes.php
 # Companies that are one program converts one: homes grouped under a program record, operator.history printed there (pencil phistory:<id>),
 # the company row deleted (saved whole in {prefix}kop_program_conversions), /operator/<slug>/ 301s to the program; exact Undo on the Converted tab
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-program-homes-convert.php [--list]   # converts every suggestion and undoes it on a temp copy
+# Separate programs on one campus (inc/campus-programs.php; {prefix}kop_campuses + kop_campus_programs, one campus per record): not homes
+# (no record over the others), closer than "Same operator". Program Homes > Same campus / Campus suggestions (one street address, one current
+# company, never a rename or homes of one program), "Separate programs on one campus" on a homes suggestion, "Separate programs, one campus"
+# on a Merge Duplicates pair (pairs on one campus leave that list). Pages: "On the <campus> with ..." + "Other programs on ..." ('campus', also
+# in the app's payload), and they leave "Same operator". Every change logged with the campuses as they were (kop_campus_log): exact Undo
+php -d extension=pdo_sqlite -d extension=mbstring scripts/test-campus-programs.php   # suggestions, tie/join/rename/take off + undo, both pages
 # Facility records linked to state inspection rows whose names differ (KOP Tools > Inspection Links, inc/inspection-links.php)
 # A program with homes under it (Program Homes) is one card there, linked as a unit ("Same program"; "Only <home>" for a row one home
 # suggested); rows a home already shows are not offered; "Link an entry by hand" links any row to any record
@@ -615,6 +621,7 @@ to the program aggregate otherwise.
 - `{prefix}kop_woodbury_mentions` - Woodbury Reports pages about a program (article, news item or mention) found by `scripts/woodbury-scan.py`, pending until an admin files them in the program's "Woodbury Reports Mentions" folder
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_doc_types` / `{prefix}kop_doc_type_suggestions` - What kind of document each attachment is (one row per type, with rule / ai / person / checked) and, for documents the rules could not type, the AI's guess and its review status (`inc/doc-types.php`)
+- `{prefix}kop_campuses` / `{prefix}kop_campus_programs` - Separate programs that share one campus (a hospital's two residential programs), one campus per record (`inc/campus-programs.php`)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
 - `{prefix}kop_glossary_nodes` / `_entries` / `_aliases` / `_tags` / `_log` - The TTI glossary: sections and groups, terms, other names, program tags, and each entry change for Undo (`inc/glossary-store.php`)
 - `{prefix}kop_glossary_feedback` - Reader notes from the glossary's "My facility used this too" / "Suggest a correction" buttons (`inc/glossary-feedback.php`; reviewed under KOP Tools > Glossary Feedback)
