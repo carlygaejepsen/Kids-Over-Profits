@@ -94,7 +94,7 @@
 .kop-article .entry-content > h2,
 .kop-article .entry-content > h3,
 .kop-article .entry-content > h4 {
-    max-width: 72ch;
+    max-width: var(--kop-measure, 64ch);
 }
 
 .kop-article .entry-content > p,
@@ -135,7 +135,7 @@
  * Positions are percentages of the span, set inline, so it is fluid at any
  * width and needs no fixed coordinate system. */
 .kop-article-timeline {
-    max-width: 72ch;
+    max-width: var(--kop-measure, 64ch);
     margin: 0 0 2.25rem;
 }
 
@@ -418,7 +418,7 @@ a.kop-article-timeline__mark:focus-visible {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.75rem;
-    max-width: 72ch;
+    max-width: var(--kop-measure, 64ch);
     margin: 2.5rem auto 0;
 }
 
@@ -492,7 +492,7 @@ a.kop-article-timeline__mark:focus-visible {
 }
 
 .kop-article .entry-content .wp-block-quote {
-    max-width: 72ch;
+    max-width: var(--kop-measure, 64ch);
     border-left: 4px solid var(--kop-teal, #33a7b5);
     background: var(--kop-sand, #f2eedf);
     padding: 0.75rem 1.25rem;

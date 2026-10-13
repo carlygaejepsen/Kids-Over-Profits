@@ -1,0 +1,62 @@
+/**
+ * Long text at a comfortable line length. Running text set across a wide
+ * column (100+ characters a line on the company histories) is tiring to read:
+ * the eye loses its place going back to the start of the next line. Every
+ * block of running prose stops at --kop-measure, about 68 characters of text,
+ * left-aligned with its headings; pictures, tables, cards and pull quotes keep
+ * the column's full width (pull quotes sit in the room this leaves:
+ * css/pull-quotes.css).
+ *
+ * Loaded on every page (inc/enqueue.php). Only paragraphs and lists of running
+ * text are capped, never a container, so a page's grid or table layout is
+ * untouched. Articles (css/article.css) and pull quotes read the same token.
+ * A new kind of long text page adds its paragraphs here.
+ */
+
+:root {
+    --kop-measure: 64ch;
+}
+
+/* Posts and pages written in the editor (editorials, hub pages, profiles). */
+.entry-content > p,
+.entry-content > ul,
+.entry-content > ol,
+.entry-content > blockquote:not(.wp-block-pullquote),
+/* Page Text pages (FAQ, Indian boarding schools, related industries; inc/page-text.php). */
+.kop-faq-page section > p,
+.kop-faq-page section > ul,
+.kop-faq-page section > ol,
+.kop-ibs-page section > p,
+.kop-ibs-page section > ul,
+.kop-ibs-page section > ol,
+.kop-ri-page section > p,
+.kop-ri-page section > ul,
+.kop-ri-page section > ol,
+/* Company histories and their year by year list (/operator/ and converted program pages). */
+.kop-op-history-text > p,
+.kop-op-history .kop-fp-tl-text,
+/* Facility pages' running text. */
+.kop-fp-section > p,
+.kop-fp-reporting p,
+.kop-fp-record-summary,
+/* The glossary. */
+.kop-gl-intro p,
+.kop-gl-def p,
+/* Hub pages' post excerpts. */
+.kop-hub-post-body {
+    max-width: var(--kop-measure);
+}
+
+.entry-content > p,
+.kop-op-history-text > p,
+.kop-faq-page section > p,
+.kop-ibs-page section > p,
+.kop-ri-page section > p {
+    line-height: 1.7;
+}
+
+/* A centred paragraph stays centred in the column. */
+.entry-content > p.has-text-align-center {
+    margin-left: auto;
+    margin-right: auto;
+}

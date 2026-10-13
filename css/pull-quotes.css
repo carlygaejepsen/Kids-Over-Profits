@@ -7,8 +7,8 @@
  * block, so every rule names the element and sets its own colour, border,
  * background and spacing rather than inheriting them.
  *
- * Across the column (default): centred text, at most the article's 72ch
- * reading measure, lined up with the paragraphs' left edge. Left or right:
+ * Across the column (default): centred text, at most the reading measure
+ * (--kop-measure, css/reading-measure.css), lined up with the paragraphs' left edge. Left or right:
  * beside the text from 900px up, across the column below that. No pull quote
  * clears a float: next to a page's floated column it narrows beside it.
  */
@@ -20,7 +20,7 @@ figure.kop-pullquote,
        flow-root box sits beside a float instead, its rules not running under it. */
     display: flow-root;
     box-sizing: border-box;
-    max-width: 72ch;
+    max-width: var(--kop-measure, 64ch);
     margin: 2.5rem auto 2.5rem 0;
     padding: 1.1rem 0 1.25rem;
     border: 0;
@@ -152,10 +152,10 @@ figure.kop-pullquote figcaption.kop-pullquote__credit a,
         margin-right: 0;
     }
 
-    /* Articles keep their paragraphs to 72ch: a right-hand quote stops there. */
+    /* Articles keep their paragraphs to the measure: a right-hand quote stops there. */
     .kop-article .entry-content figure.kop-pullquote--right,
     .kop-article .entry-content figure.wp-block-pullquote.alignright {
-        margin-right: max(0px, calc(100% - 72ch));
+        margin-right: max(0px, calc(100% - var(--kop-measure, 64ch)));
     }
 
     figure.kop-pullquote--left blockquote p,

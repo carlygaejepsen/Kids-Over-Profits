@@ -31,6 +31,12 @@ function kadence_child_enqueue_styles() {
         );
     }
 
+    // Long text stops at a comfortable line length on every page (css/reading-measure.css)
+    $measure_css = get_stylesheet_directory() . '/css/reading-measure.css';
+    if (file_exists($measure_css)) {
+        wp_enqueue_style('kop-reading-measure', get_stylesheet_directory_uri() . '/css/reading-measure.css', array('kop-colors'), filemtime($measure_css));
+    }
+
     // Citation links use the saved source details for a lightweight preview.
     $citation_css = get_stylesheet_directory() . '/css/citation-previews.css';
     if (file_exists($citation_css)) {
