@@ -195,7 +195,14 @@ if ($wp === '' || !is_file($inc . '/class-wp-block-parser.php')) {
         $check('empty words are refused, the page untouched', $GLOBALS['t_post']->post_content === $original);
     }
     kop_pull_quote_ie_save(array('7', '0', kop_ie_block_hash($b[0]), 'new'), array('text' => 'Up top.', 'credit' => '', 'align' => 'left', 'place' => 'before'));
-    $check('"Before that paragraph" puts it first', strpos($GLOBALS['t_post']->post_content, '<!-- wp:pullquote {"align":"left"} -->') === 0);
+    $check('"Before" puts it first', strpos($GLOBALS['t_post']->post_content, '<!-- wp:pullquote {"align":"left"} -->') === 0);
+
+    $GLOBALS['t_post']->post_content = $original;
+    $place = array_column(kop_pull_quote_ie_load(array('7', '2', kop_ie_block_hash(parse_blocks($original)[2]), 'new'))['fields'], null, 'name')['place'];
+    $check('the dialog offers "before the paragraph" first and picked', $place['value'] === 'before' && $place['options'][0]['value'] === 'before');
+    kop_pull_quote_ie_save(array('7', '2', kop_ie_block_hash(parse_blocks($original)[2]), 'new'), array('text' => 'Default place.', 'credit' => '', 'align' => 'center'));
+    $after = parse_blocks($GLOBALS['t_post']->post_content);
+    $check('a save with no place given lands before the paragraph', $after[2]['blockName'] === 'core/pullquote' && strpos($after[4]['innerHTML'], 'Staff signed off checks') !== false);
 
     /* ---- A company's written history (pqh:, inc/operator-history.php) ---- */
 

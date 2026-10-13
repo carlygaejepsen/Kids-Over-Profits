@@ -149,9 +149,10 @@ function kop_pull_quote_fields(array $now, $is_new) {
         ), 'help' => 'Beside the text on a computer screen; on a phone every pull quote runs across.')),
     );
     if ($is_new) {
-        $fields[] = kop_ie_field('place', 'Put it', 'select', 'after', array('options' => array(
-            array('value' => 'after', 'label' => 'After the paragraph you selected from'),
-            array('value' => 'before', 'label' => 'Before that paragraph'),
+        // Before the paragraph by default: the reader meets the quote, then the text it comes from.
+        $fields[] = kop_ie_field('place', 'Put it', 'select', 'before', array('options' => array(
+            array('value' => 'before', 'label' => 'Before the paragraph you selected from'),
+            array('value' => 'after', 'label' => 'After that paragraph'),
         )));
     } else {
         $fields[] = kop_ie_field('remove', 'Take this pull quote off the page', 'bool', false);
@@ -197,7 +198,7 @@ function kop_pull_quote_ie_save(array $p, array $v) {
     $piece = $remove ? '' : kop_pull_quote_block($v['text'] ?? '', $v['credit'] ?? '', (string) ($v['align'] ?? 'center'));
     // Every other block goes back byte for byte; only the pull quote changes.
     if ($is_new) {
-        $at = ($v['place'] ?? 'after') === 'before' ? $index : $index + 1;
+        $at = ($v['place'] ?? 'before') === 'after' ? $index + 1 : $index;
         $head = serialize_blocks(array_slice($blocks, 0, $at));
         $tail = serialize_blocks(array_slice($blocks, $at));
         $content = ($head !== '' ? $head . "\n\n" : '') . $piece . ($tail !== '' ? "\n\n" . $tail : '');
@@ -402,7 +403,7 @@ function kop_pull_quote_history_save(array $p, array $v) {
     $remove = !$is_new && !empty($v['remove']);
     $new = $paras;
     if ($is_new) {
-        $at = ($v['place'] ?? 'after') === 'before' ? $index : $index + 1;
+        $at = ($v['place'] ?? 'before') === 'after' ? $index + 1 : $index;
         array_splice($new, $at, 0, array(kop_pull_quote_text($v['text'] ?? '', $v['credit'] ?? '', (string) ($v['align'] ?? 'center'))));
     } elseif ($remove) {
         array_splice($new, $index, 1);
