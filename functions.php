@@ -198,6 +198,8 @@ require_once get_stylesheet_directory() . '/inc/inspection-links.php';
 require_once get_stylesheet_directory() . '/inc/inspection-rollup.php';
 // Pictures in editor content fill the text column or sit centred (css/content-images.css)
 require_once get_stylesheet_directory() . '/inc/content-images.php';
+// Pull quotes set large in articles: [kop_pullquote], the Pullquote block, "> " in page text (css/pull-quotes.css)
+require_once get_stylesheet_directory() . '/inc/pull-quotes.php';
 // Links read as words, never as long web addresses (the_content filter + js/url-labels.js)
 require_once get_stylesheet_directory() . '/inc/url-labels.php';
 // An article's real link and its archived copy (news_submissions.archive_url)

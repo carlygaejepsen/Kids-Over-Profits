@@ -258,6 +258,7 @@ function kop_render_page_text_editor() {
             <li>Leave an empty line between paragraphs.</li>
             <li>Select words and press <strong>Bold</strong>, <strong>Italic</strong> or <strong>Link</strong>, or type <code>**bold**</code>, <code>*italic*</code> and <code>[link text](https://address)</code>.</li>
             <li>A line starting with <code>- </code> is a bullet point. A line starting with <code>### </code> is a small heading.</li>
+            <li>Lines starting with <code>&gt; </code> are a pull quote, printed large like a magazine. Add a last line <code>&gt; -- Name</code> to say who said it.</li>
             <li>Phone numbers written like <code>1-866-925-4419</code> become tap-to-call links on their own.</li>
             <li>In the organizations section, write each one as <code>- [Name](https://address): what they do</code> and it becomes a card.</li>
             <li>Links to this site can start with a slash, like <code>[glossary](/glossary/)</code>. Do not type HTML: it shows up as plain text.</li>

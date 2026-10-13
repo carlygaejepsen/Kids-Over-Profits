@@ -405,6 +405,9 @@ php scripts/test-icons.php
 # Pictures in editor content: 640px+ ones fill the text column (.kop-img-fill from inc/content-images.php), smaller ones
 # are centred, left/right-aligned ones keep their float (css/content-images.css)
 php scripts/test-content-images.php
+# Pull quotes set large like a magazine (inc/pull-quotes.php, css/pull-quotes.css, every page): the block editor's Pullquote
+# block, [kop_pullquote credit="..." align="center|left|right"]words[/kop_pullquote], or "> " lines in page text ("> -- Name" credits it)
+php -d extension=mbstring scripts/test-pull-quotes.php
 # Links read as words, never as web addresses: kop_url_label() (inc/url-labels.php, a late the_content filter) and
 # kopUrlLabel() (js/url-labels.js, on every page, relabels JS-drawn lists as they appear) must give the same label;
 # a new renderer that prints a link uses one of them for its text. data-kop-keep-url opts an element out

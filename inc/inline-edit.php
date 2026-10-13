@@ -335,7 +335,7 @@ function kop_ie_pt_load(array $p) {
     $s = kop_ie_pt_section($p[0] ?? '', $p[1] ?? '');
     return array(
         'title'  => $s['label'],
-        'help'   => 'A blank line between paragraphs; "### " starts a subheading, "- " a list item; **bold**, *italic*, [link text](https://...).',
+        'help'   => 'A blank line between paragraphs; "### " starts a subheading, "- " a list item, "> " a pull quote ("> -- Name" credits it); **bold**, *italic*, [link text](https://...).',
         'fields' => array(
             kop_ie_field('heading', 'Heading', 'text', $s['heading']),
             kop_ie_field('body', 'Text', 'textarea', $s['body'], array('rows' => 14)),

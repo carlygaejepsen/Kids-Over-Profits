@@ -12,6 +12,7 @@
  *   a blank line between paragraphs
  *   ### Subheading
  *   - list item
+ *   > a pull quote, set large (inc/pull-quotes.php); "> -- Name" credits it
  *   **bold**, *italic*, [link text](https://...)
  *   1-800-555-0100 (any 1-xxx-xxx-xxxx number) becomes a tap-to-call link
  *
@@ -244,7 +245,8 @@ function kop_page_text_body_html($body, $style, $prefix) {
     $blocks = array();
     $para = array();
     $list = null;
-    $flush = function () use (&$blocks, &$para, &$list) {
+    $quote = null;
+    $flush = function () use (&$blocks, &$para, &$list, &$quote) {
         if ($para) {
             $blocks[] = array('p', implode(' ', $para));
             $para = array();
@@ -253,10 +255,34 @@ function kop_page_text_body_html($body, $style, $prefix) {
             $blocks[] = array('ul', $list);
             $list = null;
         }
+        if ($quote !== null) {
+            $blocks[] = array('quote', $quote);
+            $quote = null;
+        }
     };
     foreach (explode("\n", kop_page_text_clean($body)) as $line) {
         $t = trim($line);
-        if ($t === '') {
+        $is_quote = $t === '>' || strpos($t, '> ') === 0;
+        if ($quote !== null && !$is_quote) {
+            // The quote ends at the first line without "> ".
+            $flush();
+        }
+        if ($is_quote) {
+            // A pull quote (inc/pull-quotes.php): "> " lines, "> -- Name" credits it.
+            if ($quote === null) {
+                $flush();
+                $quote = array('lines' => array(''), 'credit' => '');
+            }
+            $q = trim(substr($t, 1));
+            if (preg_match('/^(?:--|\x{2014})\s*(.+)$/u', $q, $c)) {
+                $quote['credit'] = $c[1];
+            } elseif ($q === '') {
+                $quote['lines'][] = '';
+            } else {
+                $last = count($quote['lines']) - 1;
+                $quote['lines'][$last] = trim($quote['lines'][$last] . ' ' . $q);
+            }
+        } elseif ($t === '') {
             $flush();
         } elseif (strpos($t, '### ') === 0) {
             $flush();
@@ -283,6 +309,13 @@ function kop_page_text_body_html($body, $style, $prefix) {
             $html .= '<h3>' . kop_page_text_inline($b[1], $prefix) . "</h3>\n";
         } elseif ($b[0] === 'p') {
             $html .= '<p>' . kop_page_text_inline($b[1], $prefix) . "</p>\n";
+        } elseif ($b[0] === 'quote') {
+            $lines = array_filter($b[1]['lines'], 'strlen');
+            if ($lines && function_exists('kop_pull_quote')) {
+                $html .= kop_pull_quote(implode("\n\n", array_map(function ($l) use ($prefix) {
+                    return kop_page_text_inline($l, $prefix);
+                }, $lines)), array('credit' => kop_page_text_inline($b[1]['credit'], $prefix))) . "\n";
+            }
         } elseif ($style === 'cards') {
             $html .= '<ul class="' . $prefix . '-orgs">';
             foreach ($b[1] as $item) {

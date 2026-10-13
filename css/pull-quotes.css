@@ -1,0 +1,189 @@
+/**
+ * Pull quotes (inc/pull-quotes.php): a line from the article set large
+ * between two rules, like a magazine. Our own .kop-pullquote ([kop_pullquote],
+ * "> " in page text) and the block editor's Pullquote block look the same.
+ *
+ * Kadence loads after this file and styles blockquote, cite and the core
+ * block, so every rule names the element and sets its own colour, border,
+ * background and spacing rather than inheriting them.
+ *
+ * Across the column (default): centred text, at most the article's 72ch
+ * reading measure, lined up with the paragraphs' left edge. Left or right:
+ * beside the text from 900px up, across the column below that.
+ */
+
+figure.kop-pullquote,
+.entry-content figure.wp-block-pullquote {
+    clear: both;
+    box-sizing: border-box;
+    max-width: 72ch;
+    margin: 2.5rem auto 2.5rem 0;
+    padding: 1.1rem 0 1.25rem;
+    border: 0;
+    border-top: 5px solid var(--kop-orange, #EF9034);
+    border-bottom: 2px solid var(--kop-teal, #33A7B5);
+    background: transparent;
+    color: var(--kop-midnight, #000435);
+    text-align: center;
+}
+
+/* The opening quote mark: decoration, not read aloud. */
+figure.kop-pullquote::before,
+.entry-content figure.wp-block-pullquote::before {
+    content: "\201C";
+    content: "\201C" / "";
+    display: block;
+    height: 2.4rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--kop-orange-ink, #A3570D);
+}
+
+figure.kop-pullquote blockquote,
+.entry-content figure.wp-block-pullquote blockquote {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--kop-midnight, #000435);
+    font-style: normal;
+    quotes: none;
+}
+
+figure.kop-pullquote blockquote::before,
+figure.kop-pullquote blockquote::after,
+.entry-content figure.wp-block-pullquote blockquote::before,
+.entry-content figure.wp-block-pullquote blockquote::after {
+    content: none;
+}
+
+figure.kop-pullquote blockquote p,
+.entry-content figure.wp-block-pullquote blockquote p,
+.entry-content figure.wp-block-pullquote > p {
+    max-width: none;
+    margin: 0 0 0.75rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.45rem, 1.05rem + 1.5vw, 2.15rem);
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: -0.005em;
+    color: var(--kop-midnight, #000435);
+    text-wrap: balance;
+}
+
+figure.kop-pullquote blockquote p:last-child,
+.entry-content figure.wp-block-pullquote blockquote p:last-of-type {
+    margin-bottom: 0;
+}
+
+figure.kop-pullquote blockquote a,
+.entry-content figure.wp-block-pullquote blockquote a {
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.14em;
+}
+
+figure.kop-pullquote blockquote a:hover,
+figure.kop-pullquote blockquote a:focus,
+.entry-content figure.wp-block-pullquote blockquote a:hover,
+.entry-content figure.wp-block-pullquote blockquote a:focus {
+    color: var(--kop-midnight, #000435);
+    background: transparent;
+}
+
+/* Who said it: small capitals under the quote. */
+figure.kop-pullquote figcaption.kop-pullquote__credit,
+.entry-content figure.wp-block-pullquote cite {
+    display: block;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-style: normal;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--kop-text-muted, #4A5568);
+    background: transparent;
+}
+
+figure.kop-pullquote figcaption.kop-pullquote__credit::before,
+.entry-content figure.wp-block-pullquote cite::before {
+    content: "\2014\00a0";
+}
+
+figure.kop-pullquote figcaption.kop-pullquote__credit a,
+.entry-content figure.wp-block-pullquote cite a {
+    color: var(--kop-navy, #000080);
+}
+
+/* Beside the text on a wide screen. A right-hand quote stops at the 72ch
+   reading measure (the margin pushes it in when the column is wider), so it
+   sits against the paragraphs and not out at the page edge. */
+@media (min-width: 900px) {
+    figure.kop-pullquote--left,
+    figure.kop-pullquote--right,
+    .entry-content figure.wp-block-pullquote.alignleft,
+    .entry-content figure.wp-block-pullquote.alignright {
+        width: min(42%, 22rem);
+        margin-top: 0.4rem;
+        margin-bottom: 1.25rem;
+        text-align: left;
+    }
+
+    figure.kop-pullquote--left,
+    .entry-content figure.wp-block-pullquote.alignleft {
+        float: left;
+        clear: left;
+        margin-left: 0;
+        margin-right: 2rem;
+    }
+
+    figure.kop-pullquote--right,
+    .entry-content figure.wp-block-pullquote.alignright {
+        float: right;
+        clear: right;
+        margin-left: 2rem;
+        margin-right: max(0px, calc(100% - 72ch));
+    }
+
+    figure.kop-pullquote--left blockquote p,
+    figure.kop-pullquote--right blockquote p,
+    .entry-content figure.wp-block-pullquote.alignleft blockquote p,
+    .entry-content figure.wp-block-pullquote.alignright blockquote p {
+        font-size: clamp(1.3rem, 0.95rem + 0.8vw, 1.6rem);
+        text-wrap: pretty;
+    }
+
+    figure.kop-pullquote--left::before,
+    figure.kop-pullquote--right::before,
+    .entry-content figure.wp-block-pullquote.alignleft::before,
+    .entry-content figure.wp-block-pullquote.alignright::before {
+        height: 2rem;
+        font-size: 4rem;
+    }
+}
+
+/* Under 900px every pull quote runs across the column. */
+@media (max-width: 899.98px) {
+    .entry-content figure.wp-block-pullquote.alignleft,
+    .entry-content figure.wp-block-pullquote.alignright {
+        float: none;
+        width: auto;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+@media print {
+    figure.kop-pullquote,
+    .entry-content figure.wp-block-pullquote {
+        break-inside: avoid;
+    }
+}
