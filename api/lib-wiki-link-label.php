@@ -5,7 +5,7 @@
  *
  *   a program's unique_name   -> its facilities_v2 name ("Aspen Education Group #2" -> "Aspen Education Group")
  *   a company's name          -> itself
- *   "consultant:12", "provider:3", "transporter:7"
+ *   "consultant:12", "provider:3", "transporter:7", "marketer:2"
  *                             -> that record's name (inc/wiki-updates.php kop_wiki_upd_pick())
  *
  * Every editor that prints a link shows this name, never the stored value.
@@ -16,7 +16,8 @@ if (!function_exists('kop_wiki_link_labels')) {
     /** The table behind a consultant/provider/transporter token kind, prefixed or not, or ''. */
     function kop_wiki_link_kind_table(PDO $pdo, $kind) {
         static $found = array();
-        $bases = array('consultant' => 'referrers_master', 'provider' => 'providers_master', 'transporter' => 'transporters_master');
+        $bases = array('consultant' => 'referrers_master', 'provider' => 'providers_master', 'transporter' => 'transporters_master',
+            'marketer' => 'marketers_master');
         if (!isset($bases[$kind])) return '';
         if (isset($found[$kind])) return $found[$kind];
         $prefixes = array();
@@ -47,7 +48,7 @@ if (!function_exists('kop_wiki_link_labels')) {
             $v = trim((string) $v);
             if ($v === '' || isset($out[$v])) continue;
             $out[$v] = $v;
-            if (preg_match('/^(consultant|provider|transporter):(\d+)$/', $v, $m)) $tokens[$m[1]][(int) $m[2]] = $v;
+            if (preg_match('/^(consultant|provider|transporter|marketer):(\d+)$/', $v, $m)) $tokens[$m[1]][(int) $m[2]] = $v;
             else $programs[] = $v;
         }
         foreach (array_chunk($programs, 200) as $chunk) {

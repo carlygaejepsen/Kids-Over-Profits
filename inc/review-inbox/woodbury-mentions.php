@@ -312,7 +312,7 @@ function kop_rinbox_wb_names(array $places) {
 function kop_rinbox_wb_record($value) {
     $value = strtolower(trim((string) $value));
     if (preg_match('/^c(\d+)$/', $value, $m)) return array('company', (int) $m[1]);
-    if (preg_match('/^(company|consultant|provider|transporter):(\d+)$/', $value, $m)) return array($m[1], (int) $m[2]);
+    if (preg_match('/^(company|consultant|provider|transporter|marketer):(\d+)$/', $value, $m)) return array($m[1], (int) $m[2]);
     throw new RuntimeException('Pick the record from the list that opens as you type its name.');
 }
 

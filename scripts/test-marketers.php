@@ -102,6 +102,27 @@ preg_match_all('#<a href="(https://example\.test/facility/[^"]+)">([^<]+)</a>#',
 echo '     programs linked to their pages: ' . (count($m[2]) ? implode(', ', $m[2]) : 'none') . "\n";
 $check('nothing escapes unencoded', strpos($html, '<script') === false);
 
+echo "-- Other tools: Woodbury, wiki links, finder, people --\n";
+require_once dirname(__DIR__) . '/inc/woodbury-create.php';
+require_once dirname(__DIR__) . '/inc/woodbury-facts.php';
+require_once dirname(__DIR__) . '/inc/wiki-updates.php';
+require_once dirname(__DIR__) . '/api/lib-wiki-link-label.php';
+require_once dirname(__DIR__) . '/inc/people.php';
+$exceed = $mk->query("SELECT id, unique_name, json_data FROM marketers_master WHERE unique_name = 'Exceed Marketing Solutions'")->fetch(PDO::FETCH_ASSOC);
+$payload = json_decode($exceed['json_data'], true);
+$check('Woodbury can create a marketing company', isset(kop_wbc_kinds()['marketer']) && function_exists('kop_wbc_create_marketer')
+    && isset(kop_wbf_create_kinds()['marketer']));
+$check('Woodbury files under an existing one', (kop_wbc_record_tables()['marketer']['table'] ?? '') === 'marketers_master');
+$check('a marketer token parses', kop_wbc_parse_record_token('marketer:' . $exceed['id']) === array('marketer', (int) $exceed['id']));
+$names = kop_wbc_record_names('marketer', $exceed['unique_name'], $payload);
+$check('found by its other names', isset($names['Exceed Marketing Solutions, LLC']), implode('; ', array_keys($names)));
+$check('its place', kop_wbc_record_place('marketer', $payload) === 'FL', kop_wbc_record_place('marketer', $payload));
+$check('notes go in the company block', kop_wbc_note_paths('marketer', $payload) === array(array('data', 'marketerCompany', 'notes')));
+$check('wiki entries can link to one', isset(kop_wiki_upd_other_kinds()['marketer']));
+$token = 'marketer:' . $exceed['id'];
+$check('a wiki link shows its name', kop_wiki_link_labels($mk, array($token))[$token] === 'Exceed Marketing Solutions');
+$check('the People screens name the kind', (kop_people_kinds()['marketer'] ?? '') === 'marketing company');
+
 echo "-- The form (templates/data-form-marketer.php == js/data-form/marketer-form.js) --\n";
 $render = function ($part, $public) {
     $kop_marketer_part = $part;

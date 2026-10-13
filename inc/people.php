@@ -451,6 +451,7 @@ if (!function_exists('kop_people_kinds')) {
             'facility' => 'facility', 'operator' => 'company', 'map' => 'map node', 'consultant' => 'consultant record',
             'transport' => 'transport company', 'provider' => 'provider', 'lawsuit' => 'lawsuit', 'memorial' => 'memorial entry',
             'youngadult' => 'young adult program', 'wiki' => 'wiki entry', 'journalist' => 'journalist',
+            'marketer' => 'marketing company',
         );
     }
 }
@@ -481,6 +482,7 @@ if (!function_exists('kop_people_record_label')) {
             'consultant' => 'SELECT id, unique_name AS name FROM referrers_master',
             'transport'  => "SELECT id, unique_name AS name FROM {$prefix}transporters_master",
             'provider'   => 'SELECT id, unique_name AS name FROM providers_master',
+            'marketer'   => 'SELECT id, unique_name AS name FROM marketers_master',
             'lawsuit'    => 'SELECT id, case_name AS name FROM lawsuits',
             'memorial'   => 'SELECT id, name, program AS extra FROM memorial_victims',
             'youngadult' => 'SELECT id, name, state AS extra FROM young_adult_programs',
@@ -507,6 +509,10 @@ if (!function_exists('kop_people_record_label')) {
         if ($kind === 'facility' && function_exists('kop_facility_page_url')) $url = (string) kop_facility_page_url($id);
         if ($kind === 'operator' && function_exists('kop_operator_page_url')) $url = (string) kop_operator_page_url($id);
         if ($kind === 'youngadult') $url = $page('page-young-adult-programs.php', '/young-adult-programs/');
+        if ($kind === 'marketer') {
+            $url = $page('page-marketer-index.php', '/marketing-companies/');
+            if ($url !== '') $url .= '#kop-mkt-' . $id;
+        }
         return array('name' => $name, 'url' => $url);
     }
 }
@@ -622,6 +628,12 @@ if (!function_exists('kop_people_named_sources')) {
             $ind = (array) ($d['transporterIndividual'] ?? array());
             $full = trim((string) ($ind['fullName'] ?? '')) ?: trim(($ind['firstName'] ?? '') . ' ' . ($ind['lastName'] ?? ''));
             if ($full !== '') $add('transport', $r['id'], 'personnel', $full, (string) ($ind['role'] ?? ''));
+        }
+        // Marketing companies' owners and key people ("David P. Bolthouse (founder and CEO)"; api/lib-marketers.php).
+        foreach (kop_people_source_rows('SELECT id, json_data FROM marketers_master ORDER BY id', $opts) as $r) {
+            $d = json_decode((string) $r['json_data'], true);
+            $d = is_array($d['data'] ?? null) ? $d['data'] : array();
+            foreach ((array) ($d['marketerCompany']['keyPersonnel'] ?? array()) as $p) $line('marketer', $r['id'], 'personnel', $p);
         }
         // Providers outside the TTI: their staff, owners and founders.
         foreach (kop_people_source_rows('SELECT id, json_data FROM providers_master ORDER BY id', $opts) as $r) {

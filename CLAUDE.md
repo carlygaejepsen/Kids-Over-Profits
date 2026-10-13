@@ -299,7 +299,7 @@ node scripts/test-testimony-move.js
 # KOP Tools > Merge People (inc/people-merge.php): pairs found automatically (short first name, maiden/married name, one letter
 # apart, swapped, same initial at one program, same name under two ids), one-click merge, exact Undo from the Merged tab
 # Everyone else named gets an id too, linked by name (kop_people_named_sources(); docs not rewritten): facility owners, consultants,
-# transport/provider people, published lawsuits' staff + plaintiffs, the memorial, young adult staff, current wiki entries' staff, journalists.
+# transport/provider/marketing company people, published lawsuits' staff + plaintiffs, the memorial, young adult staff, current wiki entries' staff, journalists.
 # Pools (kop_people.pool): industry / harmed (victims, plaintiffs) / press: a name finds an id only in its own pool; map + pages read industry.
 # A different middle initial is a different person (Robert W. and Robert B. Lichfield, father and son; kop_people_find())
 php -d extension=pdo_sqlite -d extension=mbstring scripts/test-people.php [--list] [--no-build]   # sync, pairs, merge+undo, PHP/JS key parity, a map build into tmp/

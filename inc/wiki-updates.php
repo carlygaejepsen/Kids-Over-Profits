@@ -262,7 +262,8 @@ function kop_wiki_upd_candidates(array $entry, PDO $pdo = null) {
 
 /** The kinds of record a wiki entry can be linked to besides a program and a company, with their labels. */
 function kop_wiki_upd_other_kinds() {
-    return array('consultant' => 'Educational consultant', 'provider' => 'Mental health provider', 'transporter' => 'Transporter');
+    return array('consultant' => 'Educational consultant', 'provider' => 'Mental health provider', 'transporter' => 'Transporter',
+        'marketer' => 'Marketing company');
 }
 
 /** The consultant/provider/transporter table of $kind on this copy (prefixed or not), or ''. */
