@@ -273,7 +273,7 @@ php api/check-record-statuses.php [--kind=bill --ids=19] [apply]   # on the serv
 # News discovery (scripts/discover-articles.php, cPanel cron 01:30 + 13:30 Central, docs/news-processor/README.md): r/troubledteens, Google News
 # topic queries, then the facility sweep: every record and every name it has had (closed too), distinctive names several to one Google News
 # request (<= 16 words of names, when: first; Google reads ~32 words), short names one to a request with the state; a cursor in
-# scripts/.discovery-state.json walks the sorted list, half per run. A batched hit naming no program in its headline is confirmed by the AI
+# scripts/.discovery-state.json walks the sorted list (2,865 requests; a run's 45 min covers ~1,000, a full pass is ~3 runs). A batched hit naming no program in its headline is confirmed by the AI
 # step (<= 30 a run) before it is submitted, else logged batch-unconfirmed (Review inbox > Scraper finds). Terms in scripts/discovery-queries.json
 php scripts/test-discovery-sweep.php              # offline: names, batches, cursor, filter on real headlines, AI confirmation
 php scripts/discover-articles.php --dry-run --max-facilities 40 --no-topics   # against the live API, submits nothing (local php needs -d curl.cainfo=)
