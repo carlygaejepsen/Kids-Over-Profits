@@ -10283,5 +10283,30 @@
         "notes": []
       }
     }
+  },
+  {
+    "id": 10334,
+    "unique_name": "Discovery Ranch South",
+    "version": 4,
+    "note": "Other names: \"Ascent, Inc. - Discovery Ranch for Girls\" was listed twice (hyphen and dash); one kept. Identification copied from production 2026-10-13.",
+    "facility": {
+      "identification": {
+        "name": "Discovery Ranch South",
+        "investors": [],
+        "pastNames": [],
+        "otherNames": [
+          "Discovery Ranch for Girls",
+          "Ascent, Inc. – Discovery Ranch for Girls"
+        ],
+        "currentName": "",
+        "currentOwners": [
+          "Ascent Companies (Ascent OPCO, LLC)"
+        ],
+        "pastOperators": [],
+        "knownReferrers": [],
+        "otherOperators": [],
+        "currentOperator": "Ascent Companies"
+      }
+    }
   }
 ]
